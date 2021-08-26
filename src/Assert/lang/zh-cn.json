@@ -23,6 +23,9 @@
   "username": "用户名",
   "nickname": "昵称",
   "sex": "性别",
-  "operator": "操作"
+  "operator": "操作",
+  "selectedAll": "全选",
+  "invert": "反选",
+  "clear": "清空"
 
 }

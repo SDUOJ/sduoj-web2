@@ -23,5 +23,8 @@
   "username": "Username",
   "nickname": "Nickname",
   "sex": "Sex",
-  "operator": "Operator"
+  "operator": "Operator",
+  "selectedAll": "Selected all",
+  "invert": "Invert",
+  "clear": "Clear"
 }

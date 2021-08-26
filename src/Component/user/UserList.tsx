@@ -10,10 +10,11 @@ import DeleteUser from "./DeleteUser";
 
 
 interface IUserListState {
-    userList: IUser[],
-    loading: boolean,
+    userList: IUser[]
+    loading: boolean
     total: number
     showCol: object
+    selectedRowKeys: any[]
 }
 
 interface IUserListCol {
@@ -75,7 +76,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                 id: i,
                 username: i.toString(),
                 nickname: i.toString(),
-                sex: (i%3),
+                sex: (i % 3),
                 roles: []
             })
         }
@@ -83,7 +84,8 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
             userList: userList,
             loading: false,
             total: 199,
-            showCol: {}
+            showCol: {},
+            selectedRowKeys: []
         }
         this.showTotal = this.showTotal.bind(this)
     }
@@ -106,7 +108,58 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
     }
 
+
     render() {
+        const {selectedRowKeys} = this.state;
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: (selectedRowKeys: React.Key[], selectedRows: IUser[]) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                this.setState({selectedRowKeys});
+            },
+            selections: [
+                {
+                    key: 'all',
+                    text: this.props.t("selectedAll"),
+                    onSelect: (changeableRowKeys: any[]) => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changeableRowKeys
+                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key, index) => {
+                            return !changeableRowKeys.includes(key);
+                        }))
+                        this.setState({selectedRowKeys: newSelectedRowKeys});
+                    },
+                },
+                {
+                    key: 'clear',
+                    text: this.props.t("clear"),
+                    onSelect: (changeableRowKeys: any[]) => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = this.state.selectedRowKeys.filter((key, index) => {
+                            return !changeableRowKeys.includes(key);
+                        })
+                        this.setState({selectedRowKeys: newSelectedRowKeys});
+                    },
+                },
+                {
+                    key: 'invert',
+                    text: this.props.t("invert"),
+                    onSelect: (changeableRowKeys: any[]) => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changeableRowKeys.filter((key, index) => {
+                            return !this.state.selectedRowKeys.includes(key);
+                        });
+                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key, index) => {
+                            return !changeableRowKeys.includes(key);
+                        }))
+                        this.setState({selectedRowKeys: newSelectedRowKeys});
+                    },
+                },
+
+            ]
+        };
+
+
         return (
             <>
                 <Table dataSource={this.state.userList}
@@ -120,6 +173,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                            showQuickJumper: true,
                            showTotal: this.showTotal,
                        }}
+                       rowSelection={rowSelection}
 
                 >
                     {
@@ -133,18 +187,20 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                             )
                         })
                     }
-                    {
-                        (
-                            <Table.Column
-                                title={this.props.t("operator")}
-                                render={(user: IUser) => (
-                                    <Space>
-                                        <Button type='primary'>编辑</Button>
-                                        <DeleteUser callback={this.deleteUser} id={user.id}/>
-                                    </Space>
-                                )}/>
-                        )
-                    }
+
+                    <Table.Column
+                        title={this.props.t("operator")}
+                        render={(user: IUser) => (
+                            <Space>
+                                <Button type='primary'>编辑</Button>
+                                {
+                                    [''].map(() => {
+                                        return <DeleteUser callback={this.deleteUser} id={user.id}/>
+                                    })
+                                }
+                            </Space>
+                        )}/>
+
 
                 </Table>
             </>
