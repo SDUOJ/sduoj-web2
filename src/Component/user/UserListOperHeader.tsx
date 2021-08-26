@@ -51,9 +51,12 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
         }
         if (roles.includes(Role.SuperAdmin) && this.props.obj !== null) {
             this.extra.push(
-                <DeleteUser key="2"
-                            callback={this.props.obj.deleteUser}
-                            ids={this.props.data}>
+                <DeleteUser
+                    key="2"
+                    callback={this.props.obj.deleteUser}
+                    btSize={undefined}
+                    ids={this.props.data}>
+
                     {this.props.t("deleteUser")}
                 </DeleteUser>)
         }

@@ -28,6 +28,11 @@
   "invert": "反选",
   "clear": "清空",
   "user_deleteBatch": "批量删除",
-  "user_chooseToDelete": "请在表格中最左侧选择要删除的项目。"
-
+  "user_chooseToDelete": "请在表格中最左侧选择要删除的项目。",
+  "student_id": "学生ID",
+  "sdu_id": "SDU学号",
+  "email": "邮箱",
+  "roles": "权限",
+  "superadmin": "超级管理员",
+  "admin": "管理员"
 }

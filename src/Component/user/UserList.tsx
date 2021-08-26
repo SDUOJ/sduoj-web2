@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 import {IUser, IUserPropRoles, Role, Sex} from '../../Type/Iuser'
-import {Button, Space, Table, TablePaginationConfig} from "antd";
+import {Button, Space, Table, TablePaginationConfig, Tag, Tooltip} from "antd";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {FilterValue, SorterResult, TableCurrentDataSource} from "antd/lib/table/interface";
@@ -21,27 +21,44 @@ interface IUserListCol {
     title_i18n: string
     dataIndex: string,
     render: any
+    width: number | string
 }
 
 const colData: IUserListCol[] = [
     {
         title_i18n: "#",
         dataIndex: "id",
-        render: null
+        render: null,
+        width: 50
     },
     {
         title_i18n: "username",
         dataIndex: "username",
-        render: null
+        width: "auto",
+        render: (str: string) => {
+            return (
+                <Tooltip placement="topLeft" title={str}>
+                    {str}
+                </Tooltip>
+            )
+        }
     },
     {
         title_i18n: "nickname",
         dataIndex: "nickname",
-        render: null
+        width: 100,
+        render: (str: string) => {
+            return (
+                <Tooltip placement="topLeft" title={str}>
+                    {str}
+                </Tooltip>
+            )
+        }
     },
     {
         title_i18n: "sex",
         dataIndex: "sex",
+        width: 50,
         render: (sex: Sex) => {
             switch (sex) {
                 case Sex.Male:
@@ -54,15 +71,41 @@ const colData: IUserListCol[] = [
         }
     },
     {
-        title_i18n: "operator",
-        dataIndex: "id",
-        render: null
+        title_i18n: "student_id",
+        dataIndex: "student_id",
+        width: "auto",
+        render: (str: string) => {
+            return (
+                <Tooltip placement="topLeft" title={str}>
+                    {str}
+                </Tooltip>
+            )
+        }
     },
     {
-        title_i18n: "#",
-        dataIndex: "id",
-        render: null
+        title_i18n: "sdu_id",
+        dataIndex: "sdu_id",
+        width: "auto",
+        render: (str: string) => {
+            return (
+                <Tooltip placement="topLeft" title={str}>
+                    {str}
+                </Tooltip>
+            )
+        }
     },
+    {
+        title_i18n: "email",
+        dataIndex: "email",
+        width: "auto",
+        render: (str: string) => {
+            return (
+                <Tooltip placement="topLeft" title={str}>
+                    {str}
+                </Tooltip>
+            )
+        }
+    }
 ]
 
 
@@ -73,11 +116,14 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         let userList: IUser[] = []
         for (let i = 1; i < 200; i++) {
             userList.push({
-                id: (i * 2),
-                username: i.toString(),
-                nickname: i.toString(),
+                id: i*100,
+                username: "yhf2000",
+                nickname: "尹浩飞",
                 sex: (i % 3),
-                roles: []
+                roles: [i % 3, (i + 1) % 3],
+                student_id: "201805130160",
+                sdu_id: "201805130160",
+                email: "735961159@qq.com"
             })
         }
         this.state = {
@@ -118,7 +164,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
     }
 
     shouldComponentUpdate(nextProps: Readonly<IUserPropRoles & RouteComponentProps>, nextState: Readonly<IUserListState>, nextContext: any): boolean {
-        if(nextState !== this.state){
+        if (nextState !== this.state) {
             this.props.obj && this.props.obj(this, nextState.selectedRowKeys)
             return true
         }
@@ -199,7 +245,10 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                             return (
                                 <Table.Column
                                     title={this.props.t(r.title_i18n)}
+                                    width={r.width}
+                                    align={"center"}
                                     dataIndex={r.dataIndex}
+                                    ellipsis={{showTitle: false}}
                                     render={r.render}
                                 />
                             )
@@ -207,14 +256,33 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                     }
 
                     <Table.Column
+                        title={this.props.t("roles")}
+                        width={"auto"}
+                        align={"center"}
+                        dataIndex="roles"
+                        render={
+                            (roles: Role[]) => (
+                                roles.map((r) => {
+                                    if (r === Role.SuperAdmin)
+                                        return <Tag color="error">{this.props.t("superadmin")}</Tag>
+                                    if (r === Role.Admin)
+                                        return <Tag color="warning">{this.props.t("admin")}</Tag>
+                                    if (r === Role.User)
+                                        return <Tag color="default">{this.props.t("user")}</Tag>
+                                    return <></>
+                                })
+                            )}/>
+                    <Table.Column
                         title={this.props.t("operator")}
+                        width={120}
+                        align={"center"}
                         render={(user: IUser) => (
                             <Space>
-                                <Button type='primary'>编辑</Button>
+                                <Button size={"small"} type='primary'>编辑</Button>
                                 {
                                     [''].map(() => {
                                         if (this.props.roles.includes(Role.SuperAdmin))
-                                            return <DeleteUser callback={this.deleteUser} ids={[user.id]}/>
+                                            return <DeleteUser btSize={"small"} callback={this.deleteUser} ids={[user.id]}/>
                                         return <></>
                                     })
                                 }

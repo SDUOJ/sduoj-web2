@@ -9,7 +9,7 @@ export enum Sex {
 export enum Role {
     SuperAdmin = 0,
     Admin = 1,
-    user = 2
+    User = 2
 }
 
 

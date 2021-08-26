@@ -28,5 +28,11 @@
   "invert": "Invert",
   "clear": "Clear",
   "user_deleteBatch": "Batch deletion",
-  "user_chooseToDelete": "Please select the item to be deleted on the leftmost side of the table."
+  "user_chooseToDelete": "Please select the item to be deleted on the leftmost side of the table.",
+  "student_id": "Student ID",
+  "sdu_id": "SDU ID",
+  "email": "Email",
+  "roles": "Authority",
+  "superadmin": "Super Admin",
+  "admin": "Admin"
 }

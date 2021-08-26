@@ -2,17 +2,21 @@ import React, {Component} from "react";
 import {Button, message, Popconfirm, Popover} from "antd";
 import {IUserPropCbk} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
+import {SizeType} from "antd/lib/config-provider/SizeContext";
 
 interface DeleteUserState {
     disabledButton: boolean | undefined
     MouseIn: boolean
 }
 
+interface ButtonProp{
+    btSize: SizeType
+}
 
-class DeleteUser extends Component<IUserPropCbk, DeleteUserState> {
+class DeleteUser extends Component<IUserPropCbk & ButtonProp, DeleteUserState> {
 
 
-    constructor(props: Readonly<IUserPropCbk> | IUserPropCbk) {
+    constructor(props: Readonly<IUserPropCbk & ButtonProp> | IUserPropCbk & ButtonProp) {
         super(props);
         this.state = {
             disabledButton: true,
@@ -57,7 +61,7 @@ class DeleteUser extends Component<IUserPropCbk, DeleteUserState> {
                             cancelText={this.props.t("no")}
                             disabled={this.state.disabledButton}
                         >
-                            <Button type='primary' danger
+                            <Button size={this.props.btSize} type='primary' danger
                                     disabled={this.state.disabledButton}
                             >{this.props.t("delete")}</Button>
                         </Popconfirm>

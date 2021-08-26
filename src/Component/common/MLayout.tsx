@@ -24,7 +24,7 @@ class MLayout extends Component<IUserPropRoles, any> {
                             </div>
                             <MMenu id={1} roles={[0]}/>
                         </Sider>
-                        <Layout style={{minWidth: 550}}>
+                        <Layout style={{minWidth: 900}}>
                             <MHeader/>
                             <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
                                 <div className="site-layout-background" style={{padding: 24}}>
