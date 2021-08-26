@@ -6,7 +6,7 @@ import MHeader from "./MHeader";
 import Loading from "../../Utils/Loading";
 import {routerM} from "../../Config/router";
 import {BrowserRouter as Router, Route} from "react-router-dom";
-import {IUserPropRoles} from "../user/Iuser";
+import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 
 const {Header, Footer, Sider, Content} = Layout;

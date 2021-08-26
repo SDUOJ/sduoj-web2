@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 
-import {IUser, IUserPropRoles, Sex} from './Iuser'
+import {IUser, IUserPropRoles, Sex} from '../../Type/Iuser'
 import {Button, Space, Table, TablePaginationConfig} from "antd";
 import DeleteUser from "./DeleteUser";
 import {withTranslation} from "react-i18next";

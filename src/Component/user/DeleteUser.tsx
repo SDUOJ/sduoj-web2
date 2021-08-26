@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, message, Popconfirm} from "antd";
-import {IUserPropCbk} from "./Iuser";
+import {IUserPropCbk} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 
 

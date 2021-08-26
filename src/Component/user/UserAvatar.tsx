@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Avatar, Divider} from "antd";
-import {IUserPropAvatar} from "./Iuser";
+import {IUserPropAvatar} from "../../Type/Iuser";
 import {UserOutlined} from '@ant-design/icons';
 import md5 from 'js-md5'
 

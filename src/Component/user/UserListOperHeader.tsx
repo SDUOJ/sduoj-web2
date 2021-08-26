@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, Dropdown, Menu, PageHeader} from "antd";
-import {IUserPropRoles, Role} from "./Iuser";
+import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {EllipsisOutlined} from '@ant-design/icons';
 import {RouteComponentProps, withRouter} from "react-router-dom";
@@ -41,7 +41,7 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
     constructor(props: IUserPropRoles & RouteComponentProps, context: any) {
         super(props, context);
         this.extra = []
-        const roles = array(this.props.roles)
+        const roles = this.props.roles.values()
         console.log(roles)
         if (Role.Admin in roles) {
             this.extra.push(<Button key="1">{this.props.t("addUser")}</Button>)

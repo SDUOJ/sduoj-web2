@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, Popover, Space} from "antd";
-import {IUserPropAvatar} from "./Iuser";
+import {IUserPropAvatar} from "../../Type/Iuser";
 import {BrowserRouter as Router, Link} from "react-router-dom";
 import {RightOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
