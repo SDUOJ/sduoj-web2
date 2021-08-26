@@ -4,7 +4,6 @@ import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {EllipsisOutlined} from '@ant-design/icons';
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import {array} from "js-md5";
 
 const menu = (
     <Menu>
@@ -40,16 +39,15 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
 
     constructor(props: IUserPropRoles & RouteComponentProps, context: any) {
         super(props, context);
-        this.extra = []
-        const roles = this.props.roles.values()
-        console.log(roles)
-        if (Role.Admin in roles) {
+        this.extra = [];
+        const roles = this.props.roles;
+        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(<Button key="1">{this.props.t("addUser")}</Button>)
         }
-        if (Role.SuperAdmin in roles) {
+        if (roles.includes(Role.SuperAdmin)) {
             this.extra.push(<Button key="2" danger>{this.props.t("deleteUser")}</Button>)
         }
-        if (Role.Admin in roles) {
+        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(
                 <Button key="3"> {this.props.t("importUser")}</Button>,
                 <Button key="4"> {this.props.t("exportUser")}</Button>,

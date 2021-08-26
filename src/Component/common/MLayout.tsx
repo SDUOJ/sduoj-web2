@@ -13,11 +13,6 @@ const {Header, Footer, Sider, Content} = Layout;
 
 class MLayout extends Component<IUserPropRoles, any> {
 
-
-    constructor(props: Readonly<IUserPropRoles> | IUserPropRoles) {
-        super(props);
-    }
-
     render() {
         return (
             <>
