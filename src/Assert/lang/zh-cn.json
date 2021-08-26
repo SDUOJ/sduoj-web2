@@ -19,5 +19,10 @@
   "importUser": "导入",
   "exportUser": "导出",
   "total": "共",
-  "item": "项"
+  "item": "项",
+  "username": "用户名",
+  "nickname": "昵称",
+  "sex": "性别",
+  "operator": "操作"
+
 }

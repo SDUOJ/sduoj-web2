@@ -19,5 +19,9 @@
   "importUser": "Import",
   "exportUser": "Export",
   "total": "Total",
-  "item": "item(s)"
+  "item": "item(s)",
+  "username": "Username",
+  "nickname": "Nickname",
+  "sex": "Sex",
+  "operator": "Operator"
 }
