@@ -8,7 +8,15 @@ import {withTranslation} from "react-i18next";
 
     deleteUser = () => {
         message.success(this.props.t('deleteSuccess'))
-        this.props.callback(this.props.id)
+
+        if(this.props.ids.length === 0){
+            console.log(this.props.obj)
+            this.props.callback(this.props.obj.state.selectedRowKeys)
+        }else{
+            this.props.callback(this.props.ids)
+        }
+
+
 
         // message.error(this.props.t("deleteFailed"))
     }

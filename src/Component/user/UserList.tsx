@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 
-import {IUser, IUserPropRoles, Sex} from '../../Type/Iuser'
+import {IUser, IUserPropRoles, Role, Sex} from '../../Type/Iuser'
 import {Button, Space, Table, TablePaginationConfig} from "antd";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
@@ -73,7 +73,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         let userList: IUser[] = []
         for (let i = 1; i < 200; i++) {
             userList.push({
-                id: i,
+                id: (i * 2),
                 username: i.toString(),
                 nickname: i.toString(),
                 sex: (i % 3),
@@ -90,10 +90,16 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         this.showTotal = this.showTotal.bind(this)
     }
 
-    deleteUser = (id: number) => {
+    deleteUser = (ids: number[]) => {
         this.setState((state) => {
-            return {userList: state.userList.filter(user => user.id !== id)}
+            console.log(ids)
+            console.log(state.userList.filter(user => !ids.includes(user.id)))
+            return {
+                userList: state.userList.filter(user => !ids.includes(user.id)),
+                total: state.total - ids.length
+            }
         })
+
     }
 
     showTotal(total: number) {
@@ -108,10 +114,13 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
     }
 
+    componentDidMount() {
+        this.props.obj && this.props.obj(this)
+    }
 
     render() {
         const {selectedRowKeys} = this.state;
-        const rowSelection = {
+        let rowSelection: any = {
             selectedRowKeys,
             onChange: (selectedRowKeys: React.Key[], selectedRows: IUser[]) => {
                 console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -158,7 +167,9 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
             ]
         };
-
+        if (!this.props.roles.includes(Role.SuperAdmin)) {
+            rowSelection = undefined
+        }
 
         return (
             <>
@@ -195,13 +206,12 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                                 <Button type='primary'>编辑</Button>
                                 {
                                     [''].map(() => {
-                                        return <DeleteUser callback={this.deleteUser} id={user.id}/>
+                                        if (this.props.roles.includes(Role.SuperAdmin))
+                                            return <DeleteUser callback={this.deleteUser} ids={[user.id]}/>
                                     })
                                 }
                             </Space>
                         )}/>
-
-
                 </Table>
             </>
         )

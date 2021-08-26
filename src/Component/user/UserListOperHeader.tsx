@@ -4,6 +4,7 @@ import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {EllipsisOutlined} from '@ant-design/icons';
 import {RouteComponentProps, withRouter} from "react-router-dom";
+import DeleteUser from "./DeleteUser";
 
 const menu = (
     <Menu>
@@ -40,12 +41,22 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
     constructor(props: IUserPropRoles & RouteComponentProps, context: any) {
         super(props, context);
         this.extra = [];
+    }
+
+    render() {
+        this.extra = [];
         const roles = this.props.roles;
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(<Button key="1">{this.props.t("addUser")}</Button>)
         }
-        if (roles.includes(Role.SuperAdmin)) {
-            this.extra.push(<Button key="2" danger>{this.props.t("deleteUser")}</Button>)
+        if (roles.includes(Role.SuperAdmin) && this.props.obj !== null) {
+            this.extra.push(
+                <DeleteUser key="2"
+                            callback={this.props.obj.deleteUser}
+                            ids={[]}
+                            obj={this.props.obj}>
+                    {this.props.t("deleteUser")}
+                </DeleteUser>)
         }
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(
@@ -53,9 +64,6 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
                 <Button key="4"> {this.props.t("exportUser")}</Button>,
                 <DropdownMenu key="more"/>)
         }
-    }
-
-    render() {
         return (
             <>
                 <PageHeader

@@ -26,17 +26,19 @@ export interface IUser {
 
 
 export interface IUserPropCbk extends WithTranslation {
-    id: number
-    callback: (id: number) => void
+    ids: number[]
+    callback: (ids: number[]) => void
+    obj? :any
 }
 
 
 export interface IUserPropRoles extends WithTranslation {
     id: number
     roles: Role[]
+    obj?: any
 }
 
-export interface IUserPropAvatar extends WithTranslation{
+export interface IUserPropAvatar extends WithTranslation {
     id: number
     email: string
     username: string
