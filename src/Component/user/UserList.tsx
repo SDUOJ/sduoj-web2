@@ -229,10 +229,10 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                 <Table dataSource={this.state.userList}
                        rowKey='id'
                        loading={this.state.loading}
-                       size={"small"}
+                       size={"middle"}
                        onChange={this.tableChange}
                        pagination={{
-                           size: "small", total: this.state.total,
+                           size: "default", total: this.state.total,
                            showSizeChanger: true,
                            showQuickJumper: true,
                            showTotal: this.showTotal,
