@@ -1,0 +1,23 @@
+{
+  "home": "首页",
+  "welcome": "欢迎来首页",
+  "delete": "删除",
+  "deleteSuccess": "删除成功！",
+  "deleteFailed": "删除失败！",
+  "deleteConfirm": "您确定要删除吗？",
+  "yes": "确定",
+  "no": "取消",
+  "user": "用户",
+  "problem": "题目",
+  "contest": "比赛",
+  "template": "评测模板",
+  "group": "用户组",
+  "backToOJ": "返回OJ",
+  "userList": "用户列表",
+  "addUser": "添加",
+  "deleteUser": "删除",
+  "importUser": "导入",
+  "exportUser": "导出",
+  "total": "共",
+  "item": "项"
+}

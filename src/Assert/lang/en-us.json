@@ -1,0 +1,23 @@
+{
+  "home": "Home",
+  "welcome": "Welcome To Home",
+  "delete": "Del",
+  "deleteSuccess": "Delete success!",
+  "deleteFailed": "Delete Failed!",
+  "deleteConfirm": "Are you sure to delete this?",
+  "yes": "Yes",
+  "no": "No",
+  "user": "User",
+  "problem": "Problem",
+  "contest": "Contest",
+  "template": "Judge Template",
+  "group": "User Group",
+  "backToOJ": "Back to OJ",
+  "userList": "User list",
+  "addUser": "Add",
+  "deleteUser": "Delete",
+  "importUser": "Import",
+  "exportUser": "Export",
+  "total": "Total",
+  "item": "item(s)"
+}
