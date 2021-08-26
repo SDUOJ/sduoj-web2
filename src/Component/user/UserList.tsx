@@ -92,11 +92,10 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
     deleteUser = (ids: number[]) => {
         this.setState((state) => {
-            console.log(ids)
-            console.log(state.userList.filter(user => !ids.includes(user.id)))
             return {
                 userList: state.userList.filter(user => !ids.includes(user.id)),
-                total: state.total - ids.length
+                total: state.total - ids.length,
+                selectedRowKeys: state.selectedRowKeys.filter(id => !ids.includes(id))
             }
         })
 
@@ -115,7 +114,15 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
     }
 
     componentDidMount() {
-        this.props.obj && this.props.obj(this)
+        this.props.obj && this.props.obj(this, this.state.selectedRowKeys)
+    }
+
+    shouldComponentUpdate(nextProps: Readonly<IUserPropRoles & RouteComponentProps>, nextState: Readonly<IUserListState>, nextContext: any): boolean {
+        if(nextState !== this.state){
+            this.props.obj && this.props.obj(this, nextState.selectedRowKeys)
+            return true
+        }
+        return false
     }
 
     render() {
@@ -208,6 +215,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                                     [''].map(() => {
                                         if (this.props.roles.includes(Role.SuperAdmin))
                                             return <DeleteUser callback={this.deleteUser} ids={[user.id]}/>
+                                        return <></>
                                     })
                                 }
                             </Space>

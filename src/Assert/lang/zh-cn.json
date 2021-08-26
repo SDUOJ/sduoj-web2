@@ -26,6 +26,8 @@
   "operator": "操作",
   "selectedAll": "全选",
   "invert": "反选",
-  "clear": "清空"
+  "clear": "清空",
+  "user_deleteBatch": "批量删除",
+  "user_chooseToDelete": "请在表格中最左侧选择要删除的项目。"
 
 }

@@ -28,7 +28,7 @@ export interface IUser {
 export interface IUserPropCbk extends WithTranslation {
     ids: number[]
     callback: (ids: number[]) => void
-    obj? :any
+    obj?: any
 }
 
 
@@ -36,6 +36,7 @@ export interface IUserPropRoles extends WithTranslation {
     id: number
     roles: Role[]
     obj?: any
+    data?: any
 }
 
 export interface IUserPropAvatar extends WithTranslation {

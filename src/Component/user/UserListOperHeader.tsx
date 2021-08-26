@@ -53,8 +53,7 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             this.extra.push(
                 <DeleteUser key="2"
                             callback={this.props.obj.deleteUser}
-                            ids={[]}
-                            obj={this.props.obj}>
+                            ids={this.props.data}>
                     {this.props.t("deleteUser")}
                 </DeleteUser>)
         }

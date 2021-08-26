@@ -26,5 +26,7 @@
   "operator": "Operator",
   "selectedAll": "Selected all",
   "invert": "Invert",
-  "clear": "Clear"
+  "clear": "Clear",
+  "user_deleteBatch": "Batch deletion",
+  "user_chooseToDelete": "Please select the item to be deleted on the leftmost side of the table."
 }

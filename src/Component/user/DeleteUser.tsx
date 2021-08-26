@@ -1,36 +1,68 @@
 import React, {Component} from "react";
-import {Button, message, Popconfirm} from "antd";
+import {Button, message, Popconfirm, Popover} from "antd";
 import {IUserPropCbk} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 
+interface DeleteUserState {
+    disabledButton: boolean | undefined
+    MouseIn: boolean
+}
 
- class DeleteUser extends Component<IUserPropCbk, any> {
+
+class DeleteUser extends Component<IUserPropCbk, DeleteUserState> {
+
+
+    constructor(props: Readonly<IUserPropCbk> | IUserPropCbk) {
+        super(props);
+        this.state = {
+            disabledButton: true,
+            MouseIn: false
+        }
+    }
 
     deleteUser = () => {
+        this.setState({MouseIn: false})
         message.success(this.props.t('deleteSuccess'))
 
-        if(this.props.ids.length === 0){
-            console.log(this.props.obj)
-            this.props.callback(this.props.obj.state.selectedRowKeys)
-        }else{
-            this.props.callback(this.props.ids)
-        }
-
+        this.props.callback(this.props.ids)
 
 
         // message.error(this.props.t("deleteFailed"))
     }
 
+    static getDerivedStateFromProps(nextProps: any, prevState: any) {
+        let newS = nextProps.ids.length === 0
+        if (prevState.disabledButton !== newS) {
+            return {disabledButton: newS}
+        }
+        return null
+    }
+
     render() {
         return (
             <>
-                <Popconfirm
-                    title={this.props.t("deleteConfirm")}
-                    onConfirm={this.deleteUser}
-                    okText={this.props.t("yes")}
-                    cancelText={this.props.t("no")}>
-                    <Button type='primary' danger>{this.props.t("delete")}</Button>
-                </Popconfirm>
+                <span
+                    onMouseEnter={() => {this.setState({MouseIn: true})}}
+                    onMouseLeave={() => {this.setState({MouseIn: false})}}
+                >
+                    <Popover
+                        content={this.props.t("user_chooseToDelete")}
+                        title={this.props.t("user_deleteBatch")}
+                        visible={this.state.disabledButton && this.state.MouseIn}
+                    >
+                        <Popconfirm
+                            title={this.props.t("deleteConfirm")}
+                            onConfirm={this.deleteUser}
+                            okText={this.props.t("yes")}
+                            cancelText={this.props.t("no")}
+                            disabled={this.state.disabledButton}
+                        >
+                            <Button type='primary' danger
+                                    disabled={this.state.disabledButton}
+                            >{this.props.t("delete")}</Button>
+                        </Popconfirm>
+                    </Popover>
+                </span>
             </>
         )
     }
