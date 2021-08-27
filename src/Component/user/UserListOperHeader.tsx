@@ -5,34 +5,8 @@ import {withTranslation} from "react-i18next";
 import {EllipsisOutlined} from '@ant-design/icons';
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import DeleteUser from "./DeleteUser";
+import Search from "antd/es/input/Search";
 
-const menu = (
-    <Menu>
-        <Menu.Item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                1st menu item
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                2nd menu item
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                3rd menu item
-            </a>
-        </Menu.Item>
-    </Menu>
-);
-
-const DropdownMenu = () => (
-    <Dropdown key="more" overlay={menu}>
-        <Button style={{border: 'none', padding: 0,}}>
-            <EllipsisOutlined style={{fontSize: 20, verticalAlign: 'top'}}/>
-        </Button>
-    </Dropdown>
-);
 
 class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps, any> {
 
@@ -45,14 +19,23 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
 
     render() {
         this.extra = [];
+        if(this.props.obj === null) return <></>
+        this.extra.push(
+            <Search
+                placeholder={this.props.t("searchUser")}
+                onSearch={this.props.obj.onSearch}
+                enterButton
+                style={{ width: 200 }}
+            />)
+
         const roles = this.props.roles;
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
-            this.extra.push(<Button key="1">{this.props.t("addUser")}</Button>)
+            this.extra.push(<Button key="btn-1">{this.props.t("addUser")}</Button>)
         }
-        if (roles.includes(Role.SuperAdmin) && this.props.obj !== null) {
+        if (roles.includes(Role.SuperAdmin)) {
             this.extra.push(
                 <DeleteUser
-                    key="2"
+                    key="btn-2"
                     callback={this.props.obj.deleteUser}
                     btSize={undefined}
                     ids={this.props.data}>
@@ -62,9 +45,9 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
         }
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(
-                <Button key="3"> {this.props.t("importUser")}</Button>,
-                <Button key="4"> {this.props.t("exportUser")}</Button>,
-                <DropdownMenu key="more"/>)
+                <Button key="btn-3"> {this.props.t("importUser")}</Button>,
+                <Button key="btn-4"> {this.props.t("exportUser")}</Button>
+            )
         }
         return (
             <>

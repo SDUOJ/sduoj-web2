@@ -7,10 +7,9 @@ import reportWebVitals from './reportWebVitals';
 import ChangeLang from "./Component/common/ChangeLang";
 
 ReactDOM.render(
-  <React.StrictMode>
-    {/*<ChangeLang/>*/}
-      <App/>
-  </React.StrictMode>,
+  // <React.StrictMode>
+      <App/>,
+  // </React.StrictMode>,
   document.getElementById('root')
 );
 

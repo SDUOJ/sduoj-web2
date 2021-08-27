@@ -22,7 +22,7 @@ export default class ChangeLang extends Component<any, any> {
                         {
                             language.map((r, i) => {
                                 return (
-                                    <Option value={r.id}>{r.name}</Option>
+                                    <Option key={i.toString()} value={r.id}>{r.name}</Option>
                                 )
                             })
                         }

@@ -1,13 +1,15 @@
 import React, {Component} from "react";
 
 import {IUser, IUserPropRoles, Role, Sex} from '../../Type/Iuser'
-import {Button, Space, Table, TablePaginationConfig, Tag, Tooltip} from "antd";
+import {Space, Table, TablePaginationConfig, Tag, Tooltip} from "antd";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {FilterValue, SorterResult, TableCurrentDataSource} from "antd/lib/table/interface";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons"
 import DeleteUser from "./DeleteUser";
 import {Breakpoint} from "antd/lib/_util/responsiveObserve";
+import EditUser from "./EditUser";
+import Loading from "../../Utils/Loading";
 
 
 interface IUserListState {
@@ -125,7 +127,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         let userList: IUser[] = []
         for (let i = 1; i < 200; i++) {
             userList.push({
-                id: i*100,
+                id: i * 100,
                 username: "yhf2000",
                 nickname: "尹浩飞",
                 sex: (i % 3),
@@ -153,6 +155,20 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                 selectedRowKeys: state.selectedRowKeys.filter(id => !ids.includes(id))
             }
         })
+    }
+
+    editUser = (user: IUser): void => {
+        this.setState((state) => {
+            return {
+                userList: state.userList.map((v) => {
+                    if (v.id === user.id) return user
+                    return v
+                })
+            }
+        })
+    }
+
+    onSearch = (value: string) => {
 
     }
 
@@ -179,6 +195,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         }
         return false
     }
+
 
     render() {
         const {selectedRowKeys} = this.state;
@@ -247,9 +264,10 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
                 >
                     {
-                        colData.map((r) => {
+                        colData.map((r, i) => {
                             return (
                                 <Table.Column
+                                    key={"col" + i.toString()}
                                     title={this.props.t(r.title_i18n)}
                                     width={r.width}
                                     align={"center"}
@@ -263,6 +281,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                     }
 
                     <Table.Column
+                        key={"colR"}
                         title={this.props.t("roles")}
                         width={"auto"}
                         align={"center"}
@@ -281,16 +300,18 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                                 })
                             )}/>
                     <Table.Column
+                        key={"colO"}
                         title={this.props.t("operator")}
                         width={120}
                         align={"center"}
                         render={(user: IUser) => (
                             <Space>
-                                <Button size={"small"} type='primary'>编辑</Button>
+                                <EditUser key={"edit" + user.id.toString()} id={this.props.id} roles={this.props.roles} user={user} callback={this.editUser}/>
                                 {
                                     [''].map(() => {
                                         if (this.props.roles.includes(Role.SuperAdmin))
-                                            return <DeleteUser btSize={"small"} callback={this.deleteUser} ids={[user.id]}/>
+                                            return <DeleteUser key={"del" + user.id.toString()} btSize={"small"} callback={this.deleteUser}
+                                                               ids={[user.id]}/>
                                         return <></>
                                     })
                                 }
