@@ -7,6 +7,7 @@ import {RouteComponentProps, withRouter} from "react-router-dom";
 import {FilterValue, SorterResult, TableCurrentDataSource} from "antd/lib/table/interface";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons"
 import DeleteUser from "./DeleteUser";
+import {Breakpoint} from "antd/lib/_util/responsiveObserve";
 
 
 interface IUserListState {
@@ -22,6 +23,7 @@ interface IUserListCol {
     dataIndex: string,
     render: any
     width: number | string
+    responsive: Breakpoint[]
 }
 
 const colData: IUserListCol[] = [
@@ -29,12 +31,14 @@ const colData: IUserListCol[] = [
         title_i18n: "#",
         dataIndex: "id",
         render: null,
-        width: 50
+        width: 50,
+        responsive: ["lg", "sm", "xs"]
     },
     {
         title_i18n: "username",
         dataIndex: "username",
         width: "auto",
+        responsive: ["lg", "sm", "xs"],
         render: (str: string) => {
             return (
                 <Tooltip placement="topLeft" title={str}>
@@ -47,6 +51,7 @@ const colData: IUserListCol[] = [
         title_i18n: "nickname",
         dataIndex: "nickname",
         width: 100,
+        responsive: ["lg", "sm"],
         render: (str: string) => {
             return (
                 <Tooltip placement="topLeft" title={str}>
@@ -59,6 +64,7 @@ const colData: IUserListCol[] = [
         title_i18n: "sex",
         dataIndex: "sex",
         width: 50,
+        responsive: ["lg"],
         render: (sex: Sex) => {
             switch (sex) {
                 case Sex.Male:
@@ -74,6 +80,7 @@ const colData: IUserListCol[] = [
         title_i18n: "student_id",
         dataIndex: "student_id",
         width: "auto",
+        responsive: ["lg"],
         render: (str: string) => {
             return (
                 <Tooltip placement="topLeft" title={str}>
@@ -86,6 +93,7 @@ const colData: IUserListCol[] = [
         title_i18n: "sdu_id",
         dataIndex: "sdu_id",
         width: "auto",
+        responsive: ["lg"],
         render: (str: string) => {
             return (
                 <Tooltip placement="topLeft" title={str}>
@@ -98,6 +106,7 @@ const colData: IUserListCol[] = [
         title_i18n: "email",
         dataIndex: "email",
         width: "auto",
+        responsive: ["lg", "sm"],
         render: (str: string) => {
             return (
                 <Tooltip placement="topLeft" title={str}>
@@ -184,9 +193,8 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                     key: 'all',
                     text: this.props.t("selectedAll"),
                     onSelect: (changeableRowKeys: any[]) => {
-                        let newSelectedRowKeys = [];
-                        newSelectedRowKeys = changeableRowKeys
-                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key, index) => {
+                        let newSelectedRowKeys = changeableRowKeys
+                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key) => {
                             return !changeableRowKeys.includes(key);
                         }))
                         this.setState({selectedRowKeys: newSelectedRowKeys});
@@ -196,8 +204,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                     key: 'clear',
                     text: this.props.t("clear"),
                     onSelect: (changeableRowKeys: any[]) => {
-                        let newSelectedRowKeys = [];
-                        newSelectedRowKeys = this.state.selectedRowKeys.filter((key, index) => {
+                        let newSelectedRowKeys = this.state.selectedRowKeys.filter((key) => {
                             return !changeableRowKeys.includes(key);
                         })
                         this.setState({selectedRowKeys: newSelectedRowKeys});
@@ -207,11 +214,10 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                     key: 'invert',
                     text: this.props.t("invert"),
                     onSelect: (changeableRowKeys: any[]) => {
-                        let newSelectedRowKeys = [];
-                        newSelectedRowKeys = changeableRowKeys.filter((key, index) => {
+                        let newSelectedRowKeys = changeableRowKeys.filter((key) => {
                             return !this.state.selectedRowKeys.includes(key);
                         });
-                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key, index) => {
+                        newSelectedRowKeys = newSelectedRowKeys.concat(this.state.selectedRowKeys.filter((key) => {
                             return !changeableRowKeys.includes(key);
                         }))
                         this.setState({selectedRowKeys: newSelectedRowKeys});
@@ -241,12 +247,13 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
                 >
                     {
-                        colData.map((r, i) => {
+                        colData.map((r) => {
                             return (
                                 <Table.Column
                                     title={this.props.t(r.title_i18n)}
                                     width={r.width}
                                     align={"center"}
+                                    responsive={r.responsive}
                                     dataIndex={r.dataIndex}
                                     ellipsis={{showTitle: false}}
                                     render={r.render}
@@ -259,6 +266,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                         title={this.props.t("roles")}
                         width={"auto"}
                         align={"center"}
+                        responsive={["lg", "sm"]}
                         dataIndex="roles"
                         render={
                             (roles: Role[]) => (

@@ -9,7 +9,7 @@ import {BrowserRouter as Router, Route} from "react-router-dom";
 import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 
-const {Header, Footer, Sider, Content} = Layout;
+const {Footer, Sider, Content} = Layout;
 
 class MLayout extends Component<IUserPropRoles, any> {
 
@@ -24,14 +24,14 @@ class MLayout extends Component<IUserPropRoles, any> {
                             </div>
                             <MMenu id={1} roles={[0]}/>
                         </Sider>
-                        <Layout style={{minWidth: 900}}>
+                        <Layout style={{minWidth: 500}}>
                             <MHeader/>
                             <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
                                 <div className="site-layout-background" style={{padding: 24}}>
                                     <Suspense fallback={<Loading/>}>
                                         {/*对应路由*/}
                                         {
-                                            routerM.map((r, i) => {
+                                            routerM.map((r) => {
                                                 const Page = r.component;
                                                 return (
                                                     <Route key={r.id} path={r.path} exact={r.exact}

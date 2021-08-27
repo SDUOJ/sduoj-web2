@@ -33,6 +33,6 @@
   "sdu_id": "SDU ID",
   "email": "Email",
   "roles": "Authority",
-  "superadmin": "Super Admin",
+  "superadmin": "SuperAdmin",
   "admin": "Admin"
 }
