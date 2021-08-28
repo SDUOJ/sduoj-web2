@@ -1,8 +1,7 @@
 import React, {Component} from "react";
-import {Button, Dropdown, Menu, PageHeader} from "antd";
+import {Button, PageHeader} from "antd";
 import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
-import {EllipsisOutlined} from '@ant-design/icons';
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import DeleteUser from "./DeleteUser";
 import Search from "antd/es/input/Search";
@@ -53,7 +52,7 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             <>
                 <PageHeader
                     ghost={false}
-                    title={this.props.t("userList")}
+                    title={this.props.t("groupList")}
                     extra={this.extra}
                 >
                 </PageHeader>

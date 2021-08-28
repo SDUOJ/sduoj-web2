@@ -3,7 +3,7 @@ import UserAvatarBack from "../user/UserAvatarBack";
 import {Layout} from "antd";
 import ChangeLang from "./ChangeLang";
 
-const {Header, Footer, Sider, Content} = Layout;
+const {Header} = Layout;
 
 export default class MHeader extends Component<any, any>{
     render() {
