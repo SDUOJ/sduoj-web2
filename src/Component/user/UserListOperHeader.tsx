@@ -52,7 +52,7 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             <>
                 <PageHeader
                     ghost={false}
-                    title={this.props.t("groupList")}
+                    title={this.props.t("userList")}
                     extra={this.extra}
                 >
                 </PageHeader>
