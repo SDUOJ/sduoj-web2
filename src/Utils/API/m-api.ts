@@ -31,7 +31,7 @@ const get : Get | GetError = async (url: string, params?: object, config?:AxiosR
         }
 
     //    TODO: Update Time
-    } catch (e) {
+    } catch (e:any) {
         switch (e.data.code) {
             case 429:
         //        TODO
@@ -61,7 +61,7 @@ const post : Post | GetError = async (url: string, data: object, config?:AxiosRe
         }
 
         //    TODO: Update Time
-    } catch (e) {
+    } catch (e:any) {
         switch (e.data.code) {
             case 429:
                 //        TODO
