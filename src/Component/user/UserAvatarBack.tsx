@@ -12,7 +12,6 @@ class UserAvatarBack extends Component<IUserPropAvatar, any> {
         return (
             <>
                 <Router>
-
                     <Popover content={this.props.t("backToOJ")}>
                         <Button type="text" size={"large"}>
                             <Link to={'/'}>

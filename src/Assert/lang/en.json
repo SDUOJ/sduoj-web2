@@ -4,7 +4,10 @@
   "delete": "Del",
   "deleteSuccess": "Delete success!",
   "deleteFailed": "Delete Failed!",
+  "exportSuccess": "Export success!",
+  "exportFailed": "Export Failed!",
   "deleteConfirm": "Are you sure to delete this?",
+  "exportConfirm": "Are you sure to export this?",
   "yes": "Yes",
   "no": "No",
   "user": "User",
@@ -16,8 +19,8 @@
   "userList": "User list",
   "addUser": "Add",
   "deleteUser": "Delete",
-  "importUser": "Import",
-  "exportUser": "Export",
+  "import": "Import",
+  "export": "Export",
   "total": "Total",
   "item": "item(s)",
   "username": "Username",
@@ -53,5 +56,7 @@
   "AddUser": "Add User",
   "Return": "Return",
   "Submit": "Submit",
-  "Edit": "Edit"
+  "Edit": "Edit",
+  "user_exportBatch": "Batch export （xlsx）",
+  "user_chooseToExport": "Please select the item you want to export on the leftmost side of the table. "
 }

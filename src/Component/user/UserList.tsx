@@ -6,10 +6,11 @@ import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {FilterValue, SorterResult, TableCurrentDataSource} from "antd/lib/table/interface";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons"
-import DeleteUser from "./DeleteUser";
+import DeleteUser from "./BatchOperationUser";
 import {Breakpoint} from "antd/lib/_util/responsiveObserve";
 import EditUser from "./EditUser";
 import Loading from "../../Utils/Loading";
+import BatchOperationUser from "./BatchOperationUser";
 
 
 interface IUserListState {
@@ -243,7 +244,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
             ]
         };
-        if (!this.props.roles.includes(Role.SuperAdmin)) {
+        if (!this.props.roles.includes(Role.SuperAdmin) && !this.props.roles.includes(Role.Admin)) {
             rowSelection = undefined
         }
 
@@ -311,9 +312,9 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                                 {
                                     [''].map(() => {
                                         if (this.props.roles.includes(Role.SuperAdmin))
-                                            return <DeleteUser key={"del" + user.id.toString()} btSize={"small"}
-                                                               callback={this.deleteUser}
-                                                               ids={[user.id]}/>
+                                            return <BatchOperationUser key={"del" + user.id.toString()} btSize={"small"}
+                                                                       callback={this.deleteUser} type={"delete"}
+                                                                       ids={[user.id]}/>
                                         return <></>
                                     })
                                 }

@@ -11,7 +11,7 @@ interface IUserFormInfo extends IUserPropRoles{
     showUsername: boolean
 }
 
-class UserFormInfo extends Component<IUserFormInfo, any> {
+class UserFormProfile extends Component<IUserFormInfo, any> {
 
     render() {
 
@@ -86,6 +86,4 @@ class UserFormInfo extends Component<IUserFormInfo, any> {
         )
     }
 }
-
-
-export default withTranslation()(UserFormInfo)
+export default withTranslation()(UserFormProfile)

@@ -3,7 +3,7 @@ import {Button, PageHeader} from "antd";
 import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import DeleteUser from "../user/DeleteUser";
+import DeleteUser from "../user/BatchOperationUser";
 
 class GroupListOperHead extends Component<IUserPropRoles & RouteComponentProps> {
     extra: any[] = []
@@ -21,14 +21,14 @@ class GroupListOperHead extends Component<IUserPropRoles & RouteComponentProps> 
         }
         if (roles.includes(Role.SuperAdmin) && this.props.obj !== null) {
             this.extra.push(
-                <DeleteUser
-                    key="2"
-                    callback={this.props.obj.deleteGroup}
-                    btSize={undefined}
-                    ids={this.props.data}
-                >
-                            {this.props.t("deleteUser")}
-                </DeleteUser>
+                // <DeleteUser
+                //     key="2"
+                //     callback={this.props.obj.deleteGroup}
+                //     btSize={undefined}
+                //     ids={this.props.data}
+                // >
+                //             {this.props.t("deleteUser")}
+                // </DeleteUser>
             )
         }
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {

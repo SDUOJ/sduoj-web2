@@ -7,6 +7,7 @@ import MLayout from "./Component/common/MLayout";
 import {ConfigProvider} from "antd";
 import Editor from "./Component/common/Editor";
 import "vditor/src/assets/scss/index.scss";
+import TestCase from "./Component/submission/TestCase";
 
 class App extends Component<any, any> {
 
@@ -22,12 +23,26 @@ class App extends Component<any, any> {
     changeLang(value: string) {
         this.setState({local: value})
     }
+    /*
+    * TODO  用户
+    *  1. 把 List 与 头部 抽象出去
+    *  2. 把 Form 单独存放
+    *  3. 实现 上传
+    *  4. 实现 添加
+    *  5. 处理 编辑内修密码与信息的逻辑
+    * */
+
+    /*
+    * TODO  题目
+    *  1.
+    * */
 
     render() {
         return (
             <ConfigProvider locale={this.state.local}>
-                <Editor/>
-                <MLayout id={0} roles={[0]} changeLang={this.changeLang}/>
+                {/*<Editor/>*/}
+                {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
+                <TestCase/>
             </ConfigProvider>
         );
     }
