@@ -11,7 +11,7 @@ export default class MHeader extends Component<any, any>{
             <Header className="site-layout-sub-header-background" style={{minWidth: 550}}>
                 <div style={{float: "right"}}>
                     <UserAvatarBack email={"735961159@qq.com"} id={1} username={"yhf2000"}/>
-                    <ChangeLang/>
+                    <ChangeLang changeLang={this.props.changeLang}/>
                 </div>
             </Header>
         )

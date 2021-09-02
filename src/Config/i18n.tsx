@@ -1,6 +1,9 @@
 import LanguageDetector from 'i18next-browser-languagedetector';
 import i18n from "i18next";
 import {initReactI18next} from 'react-i18next';
+import enUS from 'antd/lib/locale/en_US';
+import zhCN from 'antd/lib/locale/zh_CN';
+import {Locale} from "antd/lib/locale-provider";
 
 interface ILanguage {
     id: string
@@ -18,9 +21,9 @@ export const language: ILanguage[] = [
     }
 ]
 
-export const languageMap = {
-    "zh-CN": "zh",
-    "en-US": "en"
+export const languageMap: {[key: string]: Locale } = {
+    "zh": zhCN,
+    "en": enUS
 }
 
 i18n.use(LanguageDetector) //嗅探当前浏览器语言

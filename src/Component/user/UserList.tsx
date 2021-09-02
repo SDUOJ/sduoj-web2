@@ -306,11 +306,13 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                         align={"center"}
                         render={(user: IUser) => (
                             <Space>
-                                <EditUser key={"edit" + user.id.toString()} id={this.props.id} roles={this.props.roles} user={user} callback={this.editUser}/>
+                                <EditUser key={"edit" + user.id.toString()} id={this.props.id} roles={this.props.roles}
+                                          user={user} callback={this.editUser}/>
                                 {
                                     [''].map(() => {
                                         if (this.props.roles.includes(Role.SuperAdmin))
-                                            return <DeleteUser key={"del" + user.id.toString()} btSize={"small"} callback={this.deleteUser}
+                                            return <DeleteUser key={"del" + user.id.toString()} btSize={"small"}
+                                                               callback={this.deleteUser}
                                                                ids={[user.id]}/>
                                         return <></>
                                     })
