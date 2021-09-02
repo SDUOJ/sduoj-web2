@@ -4,15 +4,11 @@ import lang from "Assert/img/language.png"
 import i18n from "i18next";
 import {language, languageMap} from "../../Config/i18n";
 
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-
 const {Option} = Select;
 
 export default class ChangeLang extends Component<any, any> {
     changeLang(value: string) {
         i18n.changeLanguage(value)
-        moment.locale(value);
         this.props.changeLang(languageMap[value])
     }
     defLang: string = ""

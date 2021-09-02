@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 import './Config/i18n'
 import MLayout from "./Component/common/MLayout";
 import {ConfigProvider} from "antd";
+import Editor from "rich-markdown-editor";
 
 class App extends Component<any, any> {
 
@@ -23,11 +24,12 @@ class App extends Component<any, any> {
 
     render() {
         return (
-            <ConfigProvider locale={this.state.local}>
-                <>
-                    <MLayout id={0} roles={[0]} changeLang={this.changeLang}/>
-                </>
-            </ConfigProvider>
+            // <ConfigProvider locale={this.state.local}>
+                    <Editor
+                        defaultValue="Hello world!"
+                    />
+                    // {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
+            // </ConfigProvider>
         );
     }
 
