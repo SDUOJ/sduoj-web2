@@ -102,44 +102,42 @@ class UserInfo extends Component<UserInfoProp, UserInfoState> {
 
 
         return (
-            <>
-                <Modal
-                    visible={this.props.visible}
-                    title={this.props.t(this.props.type)}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>
-                            {this.props.t("Return")}
-                        </Button>,
-                        <Button key="submit" type="primary" loading={this.state.loading} onClick={this.submit}>
-                            {this.props.t("Submit")}
-                        </Button>,
-                    ]}
-                >
-                    {
-                        [''].map(() => {
-                            if (showTab.length === 1) {
-                                return contentList[showTab[0]]
-                            } else {
-                                return (
-                                    <Tabs defaultActiveKey={showTab[0]}>
-                                        {
-                                            showTab.map((v) => {
-                                                return (
-                                                    <Tabs.TabPane tab={tabList[v]} key={v}>
-                                                        {contentList[v]}
-                                                    </Tabs.TabPane>
-                                                )
-                                            })
-                                        }
-                                    </Tabs>
-                                )
-                            }
-                        })
-                    }
+            <Modal
+                visible={this.props.visible}
+                title={this.props.t(this.props.type)}
+                onCancel={this.handleCancel}
+                footer={[
+                    <Button key="back" onClick={this.handleCancel}>
+                        {this.props.t("Return")}
+                    </Button>,
+                    <Button key="submit" type="primary" loading={this.state.loading} onClick={this.submit}>
+                        {this.props.t("Submit")}
+                    </Button>,
+                ]}
+            >
+                {
+                    [''].map(() => {
+                        if (showTab.length === 1) {
+                            return contentList[showTab[0]]
+                        } else {
+                            return (
+                                <Tabs key="tabs" defaultActiveKey={showTab[0]}>
+                                    {
+                                        showTab.map((v) => {
+                                            return (
+                                                <Tabs.TabPane tab={tabList[v]} key={v}>
+                                                    {contentList[v]}
+                                                </Tabs.TabPane>
+                                            )
+                                        })
+                                    }
+                                </Tabs>
+                            )
+                        }
+                    })
+                }
 
-                </Modal>
-            </>
+            </Modal>
         )
     }
 }

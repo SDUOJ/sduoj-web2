@@ -18,13 +18,14 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
 
     render() {
         this.extra = [];
-        if(this.props.obj === null) return <></>
+        if (this.props.obj === null) return <></>
         this.extra.push(
             <Search
+                key={"search"}
                 placeholder={this.props.t("searchUser")}
                 onSearch={this.props.obj.onSearch}
                 enterButton
-                style={{ width: 200 }}
+                style={{width: 200}}
             />)
 
         const roles = this.props.roles;
@@ -49,15 +50,13 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             )
         }
         return (
-            <>
-                <PageHeader
-                    ghost={false}
-                    title={this.props.t("userList")}
-                    extra={this.extra}
-                >
-                </PageHeader>
-            </>
-
+            <PageHeader
+                key={"PageHeader"}
+                ghost={false}
+                title={this.props.t("userList")}
+                extra={this.extra}
+            >
+            </PageHeader>
         )
     }
 }

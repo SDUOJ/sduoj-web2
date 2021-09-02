@@ -125,7 +125,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
     constructor(props: IUserPropRoles & RouteComponentProps, context: any) {
         super(props, context);
         let userList: IUser[] = []
-        for (let i = 1; i < 200; i++) {
+        for (let i = 1; i <= 20; i++) {
             userList.push({
                 id: i * 100,
                 username: "yhf2000",
@@ -140,7 +140,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         this.state = {
             userList: userList,
             loading: false,
-            total: 199,
+            total: 20,
             showCol: {},
             selectedRowKeys: []
         }
@@ -289,13 +289,13 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                         dataIndex="roles"
                         render={
                             (roles: Role[]) => (
-                                roles.map((r) => {
+                                roles.map((r, i) => {
                                     if (r === Role.SuperAdmin)
-                                        return <Tag color="error">{this.props.t("superadmin")}</Tag>
+                                        return <Tag key={i.toString()} color="error">{this.props.t("superadmin")}</Tag>
                                     if (r === Role.Admin)
-                                        return <Tag color="warning">{this.props.t("admin")}</Tag>
+                                        return <Tag key={i.toString()} color="warning">{this.props.t("admin")}</Tag>
                                     if (r === Role.User)
-                                        return <Tag color="default">{this.props.t("user")}</Tag>
+                                        return <Tag key={i.toString()} color="default">{this.props.t("user")}</Tag>
                                     return <></>
                                 })
                             )}/>

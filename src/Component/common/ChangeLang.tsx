@@ -19,8 +19,8 @@ export default class ChangeLang extends Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        i18n.languages.map((value)=>{
-            if(language.filter((v)=>{return v.id == value}).length !== 0){
+        i18n.languages.map((value):void=>{
+            if(language.filter((v)=>{return v.id === value}).length !== 0){
                 if(this.defLang.length === 0) this.defLang = value
             }
         })
