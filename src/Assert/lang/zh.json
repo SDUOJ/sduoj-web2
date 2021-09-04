@@ -58,5 +58,22 @@
   "Submit": "提交",
   "Edit": "编辑",
   "user_exportBatch": "批量导出（xlsx）",
-  "user_chooseToExport": "请在表格中最左侧选择要导出的项目。"
+  "user_chooseToExport": "请在表格中最左侧选择要导出的项目。",
+  "Pending": "排队",
+  "Done": "完成",
+  "HaiYou": "还有 ",
+  "submissionLeft": "个提交",
+  "Compile" : "编译",
+  "Evaluation": "评测",
+  "Summary": "总结",
+  "Compiling": "编译中",
+  "CompileSuccess": "编译成功",
+  "CompileSuccessWithWarning": "编译成功（带有警告）",
+  "CompileFailed": "编译失败",
+  "NoMoreInfo": "没有更多信息",
+  "SystemError": "系统错误",
+  "CallAdmin": "请联系老师/助教/管理员，提供当前的提交ID",
+  "Time": "时间",
+  "Memory": "内存",
+  "Score": "分数"
 }

@@ -24,8 +24,9 @@ export default class Editor extends Component<any, any> {
         value = value ? value : " ";
         let that = this;
         const vditor = new Vditor("vditor", {
-            height: 800,
-            mode: "wysiwyg", //及时渲染模式
+            height: "auto",
+            minHeight: 1000,
+            mode: "ir", //及时渲染模式
             placeholder: "React Vditor",
             toolbar: [
                 "emoji", "headings", "bold", "italic", "strike", "link", "|",

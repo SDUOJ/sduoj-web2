@@ -58,5 +58,25 @@
   "Submit": "Submit",
   "Edit": "Edit",
   "user_exportBatch": "Batch export （xlsx）",
-  "user_chooseToExport": "Please select the item you want to export on the leftmost side of the table. "
+  "user_chooseToExport": "Please select the item you want to export on the leftmost side of the table. ",
+  "Pending": "Pending",
+  "Done": "Done",
+  "HaiYou": "",
+  "submissionLeft": "submission(s) left",
+  "Compile" : "Compile",
+  "Evaluation": "Evaluation",
+  "Summary": "Summary",
+  "Compiling": "Compiling",
+  "CompileSuccess": "Compile Success",
+  "CompileSuccessWithWarning": "Compile Success (with warning)",
+  "CompileFailed": "Compile Failed",
+  "NoMoreInfo": "No more info",
+  "SystemError": "System Error",
+  "CallAdmin": "Please contact the teacher/teaching assistant/administrator to provide the current submission ID ",
+  "Time": "Time",
+  "Memory": "Memory",
+  "Score": "Score"
+
+
+
 }

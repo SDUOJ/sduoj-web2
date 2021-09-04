@@ -4,10 +4,11 @@ import './App.css';
 import 'antd/dist/antd.css';
 import './Config/i18n'
 import MLayout from "./Component/common/MLayout";
-import {ConfigProvider} from "antd";
+import {Card, ConfigProvider} from "antd";
 import Editor from "./Component/common/Editor";
 import "vditor/src/assets/scss/index.scss";
 import TestCase from "./Component/submission/TestCase";
+import Processing from "./Component/submission/Processing";
 
 class App extends Component<any, any> {
 
@@ -42,7 +43,10 @@ class App extends Component<any, any> {
             <ConfigProvider locale={this.state.local}>
                 {/*<Editor/>*/}
                 {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
-                <TestCase/>
+                {/*<TestCase/>*/}
+                <Card title="评测信息" extra={<a href="#">More</a>} style={{ width: 700 }}>
+                    <Processing TestCaseNumber={10}/>
+                </Card>
             </ConfigProvider>
         );
     }
