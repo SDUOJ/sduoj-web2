@@ -90,6 +90,9 @@
     display: inline-table;
     float: left;
 }
+.test-case .ant-tag{
+    font-size: 15px;
+}
 
 .steps-content-evaluation {
     overflow: hidden

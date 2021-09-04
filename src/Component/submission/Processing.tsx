@@ -36,7 +36,7 @@ class Processing extends Component<IProcessingProp, SProcessing> {
 
         let TestCaseInit: TestCaseProp[] = []
         for(let i = 1; i <= this.props.TestCaseNumber; i ++){
-            TestCaseInit.push({caseIndex: i, caseType: TestCaseStates.Pending})
+            TestCaseInit.push({caseIndex: i, caseType: Math.floor(Math.random()*7)})
         }
 
         this.state = {
