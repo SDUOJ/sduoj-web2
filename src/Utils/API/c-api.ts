@@ -7,9 +7,10 @@ import {
     Post,
     GetError
 } from '../../Type/types'
+import apiAddress from "./apiAddress";
 
 
-const baseUrl = `${process.env["CLIENT_OF_SERVER "]}/api`
+const baseUrl = apiAddress().CLIENT_SERVER
 
 const service = axios.create({
     baseURL: baseUrl,
@@ -17,13 +18,14 @@ const service = axios.create({
 })
 
 const get : Get |  GetError = async (url: string, params?: object, config?:AxiosRequestConfig) => {
+    console.log(service.defaults.baseURL)
     try {
         const response = await service.get(url, {
             params, ...config
         });
         switch (response.data.code) {
             case 0:
-                return response.data.data
+                return response.data
             case 429:
                 //        TODO
                 break;
@@ -34,7 +36,7 @@ const get : Get |  GetError = async (url: string, params?: object, config?:Axios
 
         //    TODO: Update Time
     } catch (e:any) {
-        switch (e.data.code) {
+        switch (e.code) {
             case 429:
                 //        TODO
                 break;
@@ -85,4 +87,5 @@ export default {
     async getCopyright() {
         return request.get<string>('/site/getCopyright');
     },
+    async
 }

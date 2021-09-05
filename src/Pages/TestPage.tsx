@@ -7,6 +7,7 @@ import React, {Component} from "react";
 import {RouteComponentProps} from "react-router-dom";
 import {withRouter} from "react-router";
 import ListHeader from "../Component/common/ListHeader";
+import cApi from '../Utils/API/c-api'
 
 interface listState {
     list: any
@@ -142,6 +143,7 @@ class TestPage extends Component<IUserPropRoles & RouteComponentProps, listState
     render() {
         return (
             <>
+                { cApi.getCopyright().then(res => console.log(res?.data)) }
                 <div style={{marginTop: -20, overflow: "hidden"}}>
                     <ListHeader id={this.props.id} roles={this.props.roles} obj={this.state.list} data={this.state.ids} />
                     <ListTemplate id={this.props.id} roles={this.props.roles}
