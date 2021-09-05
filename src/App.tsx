@@ -3,11 +3,9 @@ import React, {Component} from 'react';
 import './App.css';
 import 'antd/dist/antd.css';
 import './Config/i18n'
-import MLayout from "./Component/common/MLayout";
 import {Card, ConfigProvider} from "antd";
-import Editor from "./Component/common/Editor";
 import "vditor/src/assets/scss/index.scss";
-import TestCase from "./Component/submission/TestCase";
+import TestCase, {TestCaseStates} from "./Component/submission/TestCase";
 import Processing from "./Component/submission/Processing";
 
 class App extends Component<any, any> {
@@ -44,9 +42,14 @@ class App extends Component<any, any> {
                 {/*<Editor/>*/}
                 {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
                 {/*<TestCase/>*/}
-                <Card title="评测信息" extra={<a href="#">More</a>} style={{ width: 700 }}>
-                    <Processing TestCaseNumber={10}/>
-                </Card>
+                <TestCase caseIndex={2} caseType={TestCaseStates.RuntimeError} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>
+                <TestCase caseIndex={2} caseType={TestCaseStates.WrongAnswer} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>
+                <TestCase caseIndex={2} caseType={TestCaseStates.Accepted} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>
+                <TestCase caseIndex={2} caseType={TestCaseStates.TimeLimitExceeded} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>
+                <TestCase caseIndex={2} caseType={TestCaseStates.OutputLimitExceeded} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>
+                {/*<Card title="评测信息" extra={<a href="#">More</a>} style={{ width: 700 }}>*/}
+                {/*    <Processing TestCaseNumber={10}/>*/}
+                {/*</Card>*/}
             </ConfigProvider>
         );
     }

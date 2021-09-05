@@ -75,8 +75,15 @@
   "CallAdmin": "Please contact the teacher/teaching assistant/administrator to provide the current submission ID ",
   "Time": "Time",
   "Memory": "Memory",
-  "Score": "Score"
-
-
-
+  "Score": "Score",
+  "TestCaseInfo": "Test Case Info",
+  "CurrentScore": "Current Score",
+  "Pending-tag": "Pending",
+  "Running": "Running",
+  "Accepted": "Accepted",
+  "WrongAnswer":"Wrong Answer",
+  "TimeLimitExceeded": "Time Limit Exceeded",
+  "MemoryLimitExceeded": "Memory Limit Exceeded",
+  "RuntimeError": "Runtime Error",
+  "OutputLimitExceeded": "Output Limit Exceeded"
 }

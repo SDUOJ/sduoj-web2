@@ -75,5 +75,15 @@
   "CallAdmin": "请联系老师/助教/管理员，提供当前的提交ID",
   "Time": "时间",
   "Memory": "内存",
-  "Score": "分数"
+  "Score": "分数",
+  "TestCaseInfo": "测试点信息",
+  "CurrentScore": "当前分数",
+  "Pending-tag": "等待",
+  "Running": "运行中",
+  "Accepted": "通过",
+  "WrongAnswer":"答案错误",
+  "TimeLimitExceeded": "时间超限",
+  "MemoryLimitExceeded": "内存超限",
+  "RuntimeError": "运行时错误",
+  "OutputLimitExceeded": "输出超限"
 }

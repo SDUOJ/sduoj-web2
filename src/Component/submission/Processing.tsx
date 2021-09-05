@@ -1,9 +1,10 @@
 import {Component} from "react";
-import {Alert, Progress, Spin, Steps, Tag} from 'antd';
+import {Alert, Progress, Spin, Steps} from 'antd';
 import {WithTranslation, withTranslation} from "react-i18next";
 
 import {LoadingOutlined} from '@ant-design/icons';
 import TestCase, {TestCaseProp, TestCaseStates} from "./TestCase";
+import Title from "antd/es/typography/Title";
 
 
 enum CompileStates {
@@ -35,12 +36,12 @@ class Processing extends Component<IProcessingProp, SProcessing> {
         super(props);
 
         let TestCaseInit: TestCaseProp[] = []
-        for(let i = 1; i <= this.props.TestCaseNumber; i ++){
-            TestCaseInit.push({caseIndex: i, caseType: Math.floor(Math.random()*7)})
+        for (let i = 1; i <= this.props.TestCaseNumber; i++) {
+            TestCaseInit.push({caseIndex: i, caseType: Math.floor(Math.random() * 7)})
         }
 
         this.state = {
-            IsRunning: false,
+            IsRunning: true,
             currentStep: 2,
             showStep: 2,
             PendingNumberInit: 0,
@@ -182,7 +183,34 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                 content: (
                     <>
                         {
-                            this.state.TestCaseStateList.map((value)=>{
+                            [''].map(() => {
+                                if (this.state.IsRunning) {
+                                    let scoreAC = 0, scoreSum = 0
+                                    const Tcl = this.state.TestCaseStateList
+                                    for (let i = 0; i < Tcl.length; i++) {
+                                        // @ts-ignore
+                                        const add:number = Tcl[i].caseScore === undefined ? 0 : Tcl[i].caseScore
+                                        if (Tcl[i].caseType === TestCaseStates.Accepted){
+                                            scoreAC +=  add
+                                            scoreSum += add
+                                        }else if(Tcl[i].caseType === TestCaseStates.Pending
+                                            || Tcl[i].caseType === TestCaseStates.Running) scoreSum += add
+
+                                    }
+                                    return (
+                                        <>
+                                            <Title level={3}> {this.props.t("CurrentScore")} </Title>
+                                            <Title level={5}> {scoreAC} / {scoreSum} </Title>
+                                        </>
+                                    )
+                                }
+
+                            })
+                        }
+
+                        <Title level={3}> {this.props.t("TestCaseInfo")} </Title>
+                        {
+                            this.state.TestCaseStateList.map((value) => {
                                 return <TestCase {...value} />
                             })
                         }
