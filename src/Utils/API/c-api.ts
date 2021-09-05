@@ -8,6 +8,7 @@ import {
     GetError
 } from '../../Type/types'
 import apiAddress from "./apiAddress";
+import {forgetInfor, loginInfor, registerInfor} from "../../Type/Iuser";
 
 
 const baseUrl = apiAddress().CLIENT_SERVER
@@ -84,8 +85,22 @@ const request = {
 };
 
 export default {
+    // Config
     async getCopyright() {
         return request.get<string>('/site/getCopyright');
     },
-    async
+
+    // User
+    async login(data: loginInfor) {
+        return request.post('/user/login', data)
+    },
+    async logout() {
+        return request.get('/user/logout')
+    },
+    async register(data: registerInfor) {
+        return request.post('/user/register', data)
+    },
+    async forgetPassword(data: forgetInfor) {
+        return request.post('/user/forgetPassword', data)
+    }
 }
