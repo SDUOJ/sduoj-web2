@@ -11,7 +11,8 @@ declare namespace NodeJS {
 }
 
 declare module 'axios' {
-    export interface CustomSuccessData<T> {
+    export interface CustomSuccessData<T = any> {
+        headers?: any;
         code: number,
         message: string,
         timestamp?: string,

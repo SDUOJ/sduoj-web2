@@ -8,10 +8,10 @@ import {
     GetError
 } from '../../Type/types'
 import apiAddress from "./apiAddress";
-import {forgetInfor, loginInfor, registerInfor} from "../../Type/Iuser";
+import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
 
 
-const baseUrl = apiAddress().CLIENT_SERVER
+const baseUrl = apiAddress().CLIENT_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
@@ -26,7 +26,7 @@ const get : Get |  GetError = async (url: string, params?: object, config?:Axios
         });
         switch (response.data.code) {
             case 0:
-                return response.data
+                return response.data.data
             case 429:
                 //        TODO
                 break;
@@ -91,16 +91,25 @@ export default {
     },
 
     // User
-    async login(data: loginInfor) {
+    async login(data: loginInfo) {
         return request.post('/user/login', data)
     },
     async logout() {
         return request.get('/user/logout')
     },
-    async register(data: registerInfor) {
+    async register(data: registerInfo) {
         return request.post('/user/register', data)
     },
-    async forgetPassword(data: forgetInfor) {
+    async forgetPassword(data: forgetInfo) {
         return request.post('/user/forgetPassword', data)
+    },
+    async updateProfile(data: profileInfo) {
+        return request.post('/user/updateProfile', data)
+    },
+    async sendVerificationEmail(data: verificationEmail) {
+        return request.post('user/sendVerificationEmail', data)
+    },
+    async resetPassword(data: resetPassWord) {
+        return request.post('user/eressetPassword', data)
     }
 }
