@@ -28,6 +28,10 @@ export enum TestCaseStates {
     OutputLimitExceeded
 }
 
+export const StateList =
+    ["Pending", "Running", "Accepted", "WrongAnswer", "TimeLimitExceeded",
+        "MemoryLimitExceeded", "RuntimeError", "OutputLimitExceeded"]
+
 interface ViewType {
     type?: "tag" | "text" | "tag-simple" | "index"
 
@@ -37,8 +41,8 @@ export interface TestCaseProp {
     caseIndex?: number
     caseType: TestCaseStates
     caseScore?: number
-    caseTime?: string
-    caseMemory?: string
+    caseTime?: number
+    caseMemory?: number
     casePreview?: string
 }
 
@@ -56,27 +60,25 @@ class TestCase extends Component<ITestCaseProp, any> {
     }
 
     render() {
-        const NameList =
-            ["Pending", "Running", "Accepted",
-                "WrongAnswer", "TimeLimitExceeded",
-                "MemoryLimitExceeded", "RuntimeError", "OutputLimitExceeded"]
+        const NameList = StateList
+        const {t} = this.props
         const CaseList: { [key: string]: any } = {
             Pending: {
                 icon: <ClockCircleOutlined/>,
                 text: "Pending",
-                textAll: "Pending",
+                textAll: t("Pending"),
                 color: undefined,
             },
             Running: {
                 icon: <SyncOutlined spin/>,
                 text: "Running",
-                textAll: "Running",
+                textAll: t("Running"),
                 color: 'blue'
             },
             Accepted: {
                 icon: <CheckCircleOutlined/>,
                 text: "AC",
-                textAll: "Accepted",
+                textAll: t("Accepted"),
                 color: "success",
                 type: "success",
                 tagColor: "#3ad506"
@@ -84,7 +86,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             WrongAnswer: {
                 icon: <CloseCircleOutlined/>,
                 text: "WA",
-                textAll: "Wrong Answer",
+                textAll: t("WrongAnswer"),
                 color: "error",
                 type: "danger",
                 tagColor: "#ff1500"
@@ -92,7 +94,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             TimeLimitExceeded: {
                 icon: <FieldTimeOutlined/>,
                 text: "TLE",
-                textAll: "Time Limit Exceeded",
+                textAll: t("TimeLimitExceeded"),
                 color: "orange",
                 type: "warning",
                 tagColor: "rgb(16, 142, 233)"
@@ -100,7 +102,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             MemoryLimitExceeded: {
                 icon: <Icon component={Memory}/>,
                 text: "MLE",
-                textAll: "Memory Limit Exceeded",
+                textAll: t("MemoryLimitExceeded"),
                 color: "orange",
                 type: "warning",
                 tagColor: "#d46b08"
@@ -108,15 +110,15 @@ class TestCase extends Component<ITestCaseProp, any> {
             RuntimeError: {
                 icon: <Icon component={RE}/>,
                 text: "RE",
-                textAll: "Runtime Error",
-                color: "purple",
+                textAll: t("RuntimeError"),
+                color: "error",
                 type: "danger",
                 tagColor: "#531dab"
             },
             OutputLimitExceeded: {
                 icon: <Icon component={OLE}/>,
                 text: "OLE",
-                textAll: "Output Limit Exceeded",
+                textAll: t("OutputLimitExceeded"),
                 color: "orange",
                 type: "warning",
                 tagColor: "#d46b08"
@@ -125,22 +127,30 @@ class TestCase extends Component<ITestCaseProp, any> {
 
         const type = NameList[this.props.caseType]
 
-        const content: any = (
-            <>
-                <Text strong>{this.props.t("Time")}</Text>:{this.props.caseTime}
-                <br/><Text strong>{this.props.t("Memory")}</Text>:{this.props.caseMemory}
-                {
-                    [""].map(() => {
-                        if (this.props.caseScore !== undefined)
-                            return <><br/><Text strong>{this.props.t("Score")}</Text>:{this.props.caseScore}</>
-                    })
-                }
-            </>
-        )
         const visible =
             !(this.props.caseTime === undefined &&
                 this.props.caseMemory === undefined &&
                 this.props.caseScore === undefined)
+
+
+        const content: any = visible ? (
+            <>
+                <Text strong>{this.props.t("Time")}</Text> : {this.props.caseTime} ms
+
+                <br/><Text strong>{this.props.t("Memory")}</Text> : {
+                // @ts-ignore
+                Math.floor(this.props.caseMemory / 1024)
+            } MB
+                {
+                    [""].map(() => {
+                        if (this.props.caseScore !== undefined)
+                            return <><br/><Text
+                                strong>{this.props.t("Score")}</Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0} / {this.props.caseScore}</>
+                    })
+                }
+            </>
+        ) : <></>
+
 
         return (
             <>
@@ -157,7 +167,7 @@ class TestCase extends Component<ITestCaseProp, any> {
                                         onMouseLeave={() => {
                                             this.setState({MouseIn: false})
                                         }}
-                                        className={"test-case"}
+                                        className={"test-case-e"}
                                     >
                                         <Popover content={content} visible={visible && this.state.MouseIn}>
                                             <Tag icon={CaseList[type].icon} color={CaseList[type].color}>
@@ -169,7 +179,7 @@ class TestCase extends Component<ITestCaseProp, any> {
                             case "tag-simple":
                                 return (
                                     <Tooltip title={CaseList[type].textAll}>
-                                        <Tag color={CaseList[type].tagColor}>
+                                        <Tag color={CaseList[type].tagColor} className={"tag-simple"}>
                                             {CaseList[type].text}
                                         </Tag>
                                     </Tooltip>
@@ -177,7 +187,8 @@ class TestCase extends Component<ITestCaseProp, any> {
 
                             case "text":
                                 return (
-                                    <Title level={4} type={CaseList[type].type}>{CaseList[type].textAll}</Title>
+                                    <Title level={4} type={CaseList[type].type}
+                                           className={"TestCase-text"}>{CaseList[type].textAll}</Title>
                                 )
                             case "index":
                                 return (

@@ -85,5 +85,14 @@
   "TimeLimitExceeded": "Time Limit Exceeded",
   "MemoryLimitExceeded": "Memory Limit Exceeded",
   "RuntimeError": "Runtime Error",
-  "OutputLimitExceeded": "Output Limit Exceeded"
+  "OutputLimitExceeded": "Output Limit Exceeded",
+  "JudgeResult": "Judge Result",
+  "ScoreSummary": "Score Summary",
+  "TotalScore": "Total Score",
+  "Overview": "Overview",
+  "Statistics" : "Statistics",
+  "MaximumTime":"Maximum time",
+  "MaximumMemory" :"Maximum memory",
+  "Loading": "Loading"
+
 }

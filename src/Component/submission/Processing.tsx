@@ -1,10 +1,11 @@
 import {Component} from "react";
-import {Alert, Progress, Spin, Steps} from 'antd';
+import {Alert, Card, Col, Progress, Row, Spin, Statistic, Steps} from 'antd';
 import {WithTranslation, withTranslation} from "react-i18next";
 
 import {LoadingOutlined} from '@ant-design/icons';
 import TestCase, {TestCaseProp, TestCaseStates} from "./TestCase";
 import Title from "antd/es/typography/Title";
+import JudgeResult from "./JudgeResult";
 
 
 enum CompileStates {
@@ -24,40 +25,82 @@ interface SProcessing {
     CompileState: CompileStates
     CompileMessage: string
     IsRunning: boolean
-    TestCaseStateList: TestCaseProp[]
+    TestCaseStateList: TestCaseProp[],
+    OkTestCase: number
 }
 
 interface IProcessingProp extends WithTranslation {
     TestCaseNumber: number
+    TimeLimit: number
+    MemoryLimit: number,
+    TestCaseScore: number[]
 }
 
 class Processing extends Component<IProcessingProp, SProcessing> {
+
+    cnt: number = 0
+    infoList: any
+
+    flag: boolean = false
+
     constructor(props: Readonly<IProcessingProp> | IProcessingProp) {
         super(props);
 
         let TestCaseInit: TestCaseProp[] = []
         for (let i = 1; i <= this.props.TestCaseNumber; i++) {
-            TestCaseInit.push({caseIndex: i, caseType: Math.floor(Math.random() * 7)})
+            TestCaseInit.push({
+                caseIndex: i,
+                caseType: TestCaseStates.Pending,
+                caseScore: this.props.TestCaseScore[i - 1]
+            })
         }
 
         this.state = {
             IsRunning: true,
-            currentStep: 2,
-            showStep: 2,
-            PendingNumberInit: 0,
+            currentStep: 0,
+            showStep: 0,
+            PendingNumberInit: -1,
             PendingNumberLeft: 0,
-            CompileState: CompileStates.Compiling,
-            CompileMessage: "solution.cc: In function 'int main()':\n" +
-                "solution.cc:22:9: error: 'sortList' was not declared in this scope\n" +
-                "  list = sortList(list);\n" +
-                "         ^~~~~~~~\n" +
-                "solution.cc:22:9: note: suggested alternative: 'sort'\n" +
-                "  list = sortList(list);\n" +
-                "         ^~~~~~~~\n" +
-                "         sort",
-            TestCaseStateList: TestCaseInit
+            CompileState: CompileStates.Waiting,
+            CompileMessage: "",
+            TestCaseStateList: TestCaseInit,
+            OkTestCase: 0
         }
 
+        this.infoList = [
+            [0, 6],
+            [0, 5],
+            [0, 4],
+            [0, 3],
+            [0, 2],
+            [0, 1],
+            [0, 0],
+            // 1 改变状态
+            [1, 1], // 1 编译中
+            [1, 2],
+            // "\"solution.cc: In function 'int main()':\\n\" +\n" +
+            // "            \"solution.cc:22:9: error: 'sortList' was not declared in this scope\\n\" +\n" +
+            // "            \"  list = sortList(list);\\n\" +\n" +
+            // "            \"         ^~~~~~~~\\n\" +\n" +
+            // "            \"solution.cc:22:9: note: suggested alternative: 'sort'\\n\" +\n" +
+            // "            \"  list = sortList(list);\\n\" +\n" +
+            // "            \"         ^~~~~~~~\\n\" +\n" +
+            // "            \"         sort\""], // 2 编译成功 3 编译带有警告  4 编译失败  5 系统错误
+            // [1, 5],
+            // 2 测试点信息
+            [2, 1, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 2, TestCaseStates.WrongAnswer, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 3, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 4, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 5, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 6, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 50), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 7, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 50), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 8, TestCaseStates.RuntimeError, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 9, TestCaseStates.RuntimeError, 200 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 10, TestCaseStates.Accepted, 250 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 11, TestCaseStates.OutputLimitExceeded, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 50000)], // index, score, 状态， 时间， 内存
+            [2, 12, TestCaseStates.RuntimeError, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 5000)], // index, score, 状态， 时间， 内存
+        ]
 
         /*
         "solution.cc: In function 'int main()':\n" +
@@ -69,6 +112,132 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                     "         ^~~~~~~~\n" +
                     "         sort"
         * */
+
+        setInterval(() => {
+            if (this.cnt < 0) {
+                const tpp = this.infoList[this.cnt][0]
+                if (tpp === 0) this.addNewState(this.infoList[this.cnt][1])
+                else if (tpp === 1) this.addNewState(undefined, this.infoList[this.cnt][1], this.infoList[this.cnt][2])
+                else if (tpp === 2) this.addNewState(undefined, undefined, undefined, {
+                    caseIndex: this.infoList[this.cnt][1],
+                    caseType: this.infoList[this.cnt][2],
+                    caseTime: this.infoList[this.cnt][3],
+                    caseMemory: this.infoList[this.cnt][4]
+                })
+                this.cnt += 1
+            } else if (!this.flag) {
+                this.flag = true
+                setInterval(() => {
+                    if (this.cnt < this.infoList.length) {
+                        const tpp = this.infoList[this.cnt][0]
+                        if (tpp === 0) this.addNewState(this.infoList[this.cnt][1])
+                        else if (tpp === 1) this.addNewState(undefined, this.infoList[this.cnt][1], this.infoList[this.cnt][2])
+                        else if (tpp === 2) this.addNewState(undefined, undefined, undefined, {
+                            caseIndex: this.infoList[this.cnt][1],
+                            caseType: this.infoList[this.cnt][2],
+                            caseTime: this.infoList[this.cnt][3],
+                            caseMemory: this.infoList[this.cnt][4]
+                        })
+
+                        this.cnt += 1
+                    }
+                }, 1000)
+            }
+        }, 1)
+
+
+    }
+
+    addNewState = (pending?: number,
+                   nowStatus?: TestCaseStates,
+                   compileInfo?: string,
+                   testCase?: TestCaseProp
+    ) => {
+        if (pending !== undefined) {
+            if (this.state.PendingNumberInit === -1)
+                this.setState({
+                    PendingNumberInit: pending + 1,
+                    PendingNumberLeft: pending
+                })
+            else {
+                this.setState({
+                    PendingNumberLeft: pending
+                })
+            }
+        }
+        if (nowStatus !== undefined) {
+            if (nowStatus === 1) {
+                this.setState({
+                    currentStep: 1,
+                    showStep: 1,
+                    CompileState: CompileStates.Compiling
+                })
+            } else if (nowStatus === 2) {
+                this.setState({
+                    CompileState: CompileStates.Success
+                })
+                setTimeout(() => {
+                    this.setState({
+                        currentStep: 2,
+                        showStep: 2,
+                    })
+                }, this.state.OkTestCase <= 4 ? 1000 : 0)
+            } else if (nowStatus === 3) {
+                this.setState({
+                    CompileState: CompileStates.Warning
+                })
+                setTimeout(() => {
+                    this.setState({
+                        currentStep: 2,
+                        showStep: 2,
+                    })
+                }, this.state.OkTestCase <= 4 ? 1000 : 0)
+            } else if (nowStatus === 4) {
+                this.setState({
+                    currentStep: 1,
+                    showStep: 1,
+                    CompileState: CompileStates.Failed,
+                    IsRunning: false
+                })
+            } else if (nowStatus === 5) {
+                this.setState({
+                    currentStep: 1,
+                    showStep: 1,
+                    CompileState: CompileStates.SystemError,
+                    IsRunning: false
+                })
+            }
+        }
+        if (compileInfo !== undefined) {
+            this.setState({
+                CompileMessage: compileInfo
+            })
+        }
+        if (testCase !== undefined) {
+            this.setState((state) => {
+                // @ts-ignore
+                testCase.caseScore = state.TestCaseStateList[testCase.caseIndex - 1].caseScore
+                // @ts-ignore
+                state.TestCaseStateList[testCase.caseIndex - 1] = testCase
+                if (testCase.caseIndex !== this.props.TestCaseNumber) {
+                    // @ts-ignore
+                    state.TestCaseStateList[testCase.caseIndex].caseType = TestCaseStates.Running
+                }
+                return {
+                    TestCaseStateList: state.TestCaseStateList,
+                    OkTestCase: state.OkTestCase + 1
+                }
+            })
+            if (testCase.caseIndex === this.props.TestCaseNumber) {
+                setTimeout(() => {
+                    this.setState({
+                        IsRunning: false,
+                        currentStep: 3,
+                        showStep: 3
+                    })
+                }, 500)
+            }
+        }
     }
 
 
@@ -110,7 +279,36 @@ class Processing extends Component<IProcessingProp, SProcessing> {
 
             )
         }
+        const getCaseInfo = () => {
+            let scoreAC = 0, scoreSum = 0, scoreAll = 0, mxTime: number = 0, mxMem: number = 0
+            let SumTime = 0, SumMem = 0
+            const Tcl = this.state.TestCaseStateList
+            for (let i = 0; i < Tcl.length; i++) {
+                // @ts-ignore
+                const add: number = Tcl[i].caseScore === undefined ? 0 : Tcl[i].caseScore
+                if (Tcl[i].caseType === TestCaseStates.Accepted) {
+                    scoreAC += add
+                    scoreSum += add
+                } else if (Tcl[i].caseType === TestCaseStates.Pending
+                    || Tcl[i].caseType === TestCaseStates.Running) scoreSum += add
+                scoreAll += add
+                // @ts-ignore
+                const caseTime: number = Tcl[i].caseTime === undefined ? 0 : Tcl[i].caseTime
+                // @ts-ignore
+                const caseMem: number = Tcl[i].caseMemory === undefined ? 0 : Tcl[i].caseMemory
 
+                if (mxTime < caseTime) mxTime = caseTime
+                if (mxMem < caseMem) mxMem = caseMem
+                SumTime += caseTime
+                SumMem += caseMem
+            }
+            return {
+                AC: scoreAC, SumRunning: scoreSum, SumAll: scoreAll,
+                mxTime: mxTime, mxMem: mxMem, SumTime: SumTime, AvgMem: SumMem / Tcl.length
+            }
+        }
+
+        const info = getCaseInfo()
         let steps: { [key: string]: any } = {
             pending: {
                 title: this.props.t("Pending"),
@@ -120,20 +318,25 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                 cssClass: "steps-content-pending",
                 content: (
                     <>
-                        {
-                            [''].map(() => {
-                                if (this.state.PendingNumberLeft === 0) {
-                                    return <Progress type="circle" percent={100}
-                                                     format={() => this.props.t("Done")}/>
-                                } else {
-                                    return <Progress
-                                        className={"Progress-pending"}
-                                        type="circle"
-                                        percent={this.state.PendingNumberLeft * 100 / this.state.PendingNumberInit}
-                                        format={() => `${this.props.t("HaiYou")}${this.state.PendingNumberLeft} ${this.props.t("submissionLeft")}`}/>
-                                }
-                            })
-                        }
+                        <Spin tip={this.props.t("Loading")}
+                              spinning={this.state.PendingNumberInit === -1}
+                              className={"steps-content-compile-spin"}>
+                            {
+                                [''].map(() => {
+                                    if (this.state.PendingNumberInit === -1) return <></>
+                                    if (this.state.PendingNumberLeft === 0) {
+                                        return <Progress type="circle" percent={100}
+                                                         format={() => this.props.t("Done")}/>
+                                    } else {
+                                        return <Progress
+                                            className={"Progress-pending"}
+                                            type="circle"
+                                            percent={this.state.PendingNumberLeft * 100 / this.state.PendingNumberInit}
+                                            format={() => `${this.props.t("HaiYou")}${this.state.PendingNumberLeft} ${this.props.t("submissionLeft")}`}/>
+                                    }
+                                })
+                            }
+                        </Spin>
                     </>
                 )
             },
@@ -185,22 +388,10 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                         {
                             [''].map(() => {
                                 if (this.state.IsRunning) {
-                                    let scoreAC = 0, scoreSum = 0
-                                    const Tcl = this.state.TestCaseStateList
-                                    for (let i = 0; i < Tcl.length; i++) {
-                                        // @ts-ignore
-                                        const add:number = Tcl[i].caseScore === undefined ? 0 : Tcl[i].caseScore
-                                        if (Tcl[i].caseType === TestCaseStates.Accepted){
-                                            scoreAC +=  add
-                                            scoreSum += add
-                                        }else if(Tcl[i].caseType === TestCaseStates.Pending
-                                            || Tcl[i].caseType === TestCaseStates.Running) scoreSum += add
-
-                                    }
                                     return (
                                         <>
                                             <Title level={3}> {this.props.t("CurrentScore")} </Title>
-                                            <Title level={5}> {scoreAC} / {scoreSum} </Title>
+                                            <Title level={5}> {info.AC} / {info.SumRunning} </Title>
                                         </>
                                     )
                                 }
@@ -222,9 +413,88 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                 icon: getIcon("summary"),
                 status: getStatus("summary"),
                 disabled: getDisabled("summary"),
-                cssClass: "steps-content-pending",
+                cssClass: "steps-content-summary",
                 content: (
                     <>
+                        <Title level={3}> {this.props.t("Statistics")}</Title>
+                        <Card size="small"
+                              title={this.props.t("Overview")}
+                              className={"card"}>
+                            {
+                                [''].map(() => {
+                                    return (
+                                        <Row>
+                                            <Col className={"Progress-set"} span={6}>
+                                                <Progress
+                                                    success={{percent: info.AC / info.SumAll * 100}}
+                                                    type="dashboard"
+                                                    format={() => `${info.AC} / ${info.SumAll}`}
+                                                />
+                                                <span>{this.props.t("TotalScore")}</span>
+                                            </Col>
+                                            <Col className={"Progress-set"} span={6}>
+                                                {
+                                                    [''].map(() => {
+                                                        if (info.mxTime > this.props.TimeLimit) {
+                                                            return (
+                                                                <Progress
+                                                                    percent={100}
+                                                                    type="dashboard" status="exception"
+                                                                    format={() => `${info.mxTime} / ${this.props.TimeLimit} ms`}
+                                                                />
+                                                            )
+                                                        } else {
+                                                            return (
+                                                                <Progress
+                                                                    success={{percent: info.mxTime / this.props.TimeLimit * 100}}
+                                                                    type="dashboard"
+                                                                    format={() => `${info.mxTime} / ${this.props.TimeLimit} ms`}
+                                                                />
+                                                            )
+                                                        }
+                                                    })
+                                                }
+                                                <span>{this.props.t("MaximumTime")}</span>
+                                            </Col>
+                                            <Col className={"Progress-set"} span={6}>
+                                                {
+                                                    [''].map(() => {
+                                                        if (info.mxTime > this.props.TimeLimit) {
+                                                            return (
+                                                                <Progress
+                                                                    percent={100}
+                                                                    type="dashboard" status="exception"
+                                                                    format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(this.props.MemoryLimit / 1024)} MB`}
+                                                                />
+                                                            )
+                                                        } else {
+                                                            return (
+                                                                <Progress
+                                                                    success={{percent: info.mxMem / this.props.MemoryLimit * 100}}
+                                                                    type="dashboard"
+                                                                    format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(this.props.MemoryLimit / 1024)} MB`}
+                                                                />
+                                                            )
+                                                        }
+                                                    })
+                                                }
+                                                <span>{this.props.t("MaximumMemory")}</span>
+                                            </Col>
+                                            <Col className={"Progress-set-Statistic"} span={6}>
+                                                <Statistic title="总运行时间" value={info.SumTime} suffix="ms"/>
+                                                <Statistic className={"Progress-set-Statistic-cell"}
+                                                           title="平均内存" value={Math.floor(info.AvgMem / 1024)}
+                                                           suffix="MB"/>
+                                            </Col>
+                                        </Row>
+
+                                    )
+                                })
+                            }
+                        </Card>
+                        <Title level={3}> {this.props.t("JudgeResult")}</Title>
+                        <JudgeResult type={"Sample"} data={this.state.TestCaseStateList}/>
+                        <JudgeResult type={"Test"} data={this.state.TestCaseStateList}/>
                     </>
                 )
             }

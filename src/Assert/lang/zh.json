@@ -85,5 +85,13 @@
   "TimeLimitExceeded": "时间超限",
   "MemoryLimitExceeded": "内存超限",
   "RuntimeError": "运行时错误",
-  "OutputLimitExceeded": "输出超限"
+  "OutputLimitExceeded": "输出超限",
+  "JudgeResult": "评测结果",
+  "ScoreSummary": "分数总结",
+  "TotalScore": "总分数",
+  "Overview": "概览",
+  "Statistics": "统计",
+  "MaximumTime": "最大时间",
+  "MaximumMemory": "最大内存",
+  "Loading": "加载中"
 }
