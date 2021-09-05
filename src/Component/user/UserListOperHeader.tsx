@@ -3,9 +3,11 @@ import {Button, PageHeader} from "antd";
 import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import DeleteUser from "./DeleteUser";
+import BatchOperationUser from "./BatchOperationUser";
 import Search from "antd/es/input/Search";
 
+
+// 此处的 obj 传递的是表格的 this
 
 class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps, any> {
 
@@ -30,23 +32,21 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
 
         const roles = this.props.roles;
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
-            this.extra.push(<Button key="btn-1">{this.props.t("addUser")}</Button>)
+            this.extra.push(
+                <Button key="btn-1">{this.props.t("addUser")}</Button>
+            )
         }
         if (roles.includes(Role.SuperAdmin)) {
             this.extra.push(
-                <DeleteUser
-                    key="btn-2"
-                    callback={this.props.obj.deleteUser}
-                    btSize={undefined}
-                    ids={this.props.data}>
-
-                    {this.props.t("deleteUser")}
-                </DeleteUser>)
+                <BatchOperationUser key="btn-2" callback={this.props.obj.deleteUser}
+                                    btSize={undefined} ids={this.props.data} type={"delete"}/>)
         }
         if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
             this.extra.push(
-                <Button key="btn-3"> {this.props.t("importUser")}</Button>,
-                <Button key="btn-4"> {this.props.t("exportUser")}</Button>
+                <Button key="btn-3"> {this.props.t("import")}</Button>,
+                <BatchOperationUser callback={undefined}
+                    btSize={undefined} ids={this.props.data} type={"export"}
+                    key="btn-4"/>
             )
         }
         return (

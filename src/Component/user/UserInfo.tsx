@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import {IUser, IUserPropRoles, Role} from '../../Type/Iuser'
 import {Button, FormInstance, Modal, Tabs} from "antd";
 import {withTranslation} from "react-i18next";
-import UserFormInfo from "./UserFormInfo";
+import UserFormProfile from "./UserFormProfile";
 import UserFormPass from "./UserFormPass";
 import UserFormAdditional from "./UserFormAdditional";
 
@@ -77,19 +77,19 @@ class UserInfo extends Component<UserInfoProp, UserInfoState> {
         const contentList: any = {
             profile: (
                 <>
-                    <UserFormInfo key="userInfo" id={this.props.id} roles={this.props.roles} userForm={this.userInfo}
-                                  showUsername={true}/>
+                    <UserFormProfile key="userInfo" id={this.props.id} roles={this.props.roles} userForm={this.userInfo}
+                                     showUsername={true}/>
                     <UserFormPass key="userPass" userForm={this.userPassword}/>
                 </>
             ),
             profileEdit: (
                 <>
-                    <UserFormInfo key="userInfo"
-                                  id={this.props.id}
-                                  roles={this.props.roles}
-                                  userForm={this.userInfo}
-                                  initData={this.props.data}
-                                  showUsername={false}/>
+                    <UserFormProfile key="userInfo"
+                                     id={this.props.id}
+                                     roles={this.props.roles}
+                                     userForm={this.userInfo}
+                                     initData={this.props.data}
+                                     showUsername={false}/>
                 </>
             ),
             additional: (

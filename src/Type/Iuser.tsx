@@ -27,7 +27,7 @@ export interface IUser {
 
 export interface IUserPropCbk extends WithTranslation {
     ids?: number[]
-    callback: (data: any) => void
+    callback: any
     obj?: any
 }
 
