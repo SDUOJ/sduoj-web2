@@ -44,17 +44,12 @@ class App extends Component<any, any> {
         return (
             <ConfigProvider locale={this.state.local}>
                 {/*<Editor/>*/}
-                {/*<MLayout id={0} roles={[1]} changeLang={this.changeLang}/>*/}
-                {/*<TestCase/>*/}
-                {/*<TestCase caseIndex={2} caseType={TestCaseStates.RuntimeError} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>*/}
-                {/*<TestCase caseIndex={2} caseType={TestCaseStates.WrongAnswer} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>*/}
-                {/*<TestCase caseIndex={2} caseType={TestCaseStates.Accepted} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>*/}
-                {/*<TestCase caseIndex={2} caseType={TestCaseStates.TimeLimitExceeded} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>*/}
-                {/*<TestCase caseIndex={2} caseType={TestCaseStates.OutputLimitExceeded} type={"tag-simple"} caseMemory={"123KB"} caseTime={"152ms"} caseScore={10}/>*/}
-                <ChangeLang changeLang={this.changeLang}/>
-                <Card title="评测信息" style={{width: 900}}>
-                    <Processing TestCaseNumber={12} TimeLimit={1000} MemoryLimit={128 * 1024} TestCaseScore={[0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]}/>
-                </Card>
+                <MLayout id={0} roles={[0]} changeLang={this.changeLang}/>
+
+                {/*<ChangeLang changeLang={this.changeLang}/>*/}
+                {/*<Card title="评测信息" style={{width: 900}}>*/}
+                {/*    <Processing TestCaseNumber={12} TimeLimit={1000} MemoryLimit={128 * 1024} TestCaseScore={[0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]}/>*/}
+                {/*</Card>*/}
             </ConfigProvider>
         );
     }

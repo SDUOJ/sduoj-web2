@@ -67,18 +67,10 @@ class UserFormProfile extends Component<IUserFormInfo, any> {
                                rules={[{required: true, message: 'Please select gender!'}]}
                                hasFeedback
                     >
-                        <Select mode="multiple" allowClear defaultValue={[Role.User]}>
-                            {
-                                [
-                                    <Select.Option value={Role.User}>{this.props.t("user")}</Select.Option>,
-                                    <Select.Option value={Role.Admin}>{this.props.t("admin")}</Select.Option>,
-                                    <Select.Option value={Role.SuperAdmin}>{this.props.t("superadmin")}</Select.Option>
-                                ].map((x, index) => {
-                                    if (index === 0) return x;
-                                    else if (this.props.roles.includes(Role.SuperAdmin)) return x;
-                                    else return <></>
-                                })
-                            }
+                        <Select mode="multiple" allowClear defaultValue={[Role.User]} disabled={!this.props.roles.includes(Role.SuperAdmin)}>
+                            <Select.Option value={Role.User}>{this.props.t("user")}</Select.Option>
+                            <Select.Option value={Role.Admin}>{this.props.t("admin")}</Select.Option>
+                            <Select.Option value={Role.SuperAdmin}>{this.props.t("superadmin")}</Select.Option>
                         </Select>
                     </Form.Item>
                 </Form>
