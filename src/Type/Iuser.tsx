@@ -45,4 +45,23 @@ export interface IUserPropAvatar extends WithTranslation {
     username: string
 }
 
+export type loginInfor = {
+    username: string,
+    password: string
+}
+
+export type registerInfor = {
+    username: string,
+    password: string,
+    email: string,
+    emailCode: string
+}
+
+export type forgetInfor = {
+    username: string,
+    email: string,
+    captchaId: string,
+    captcha: string
+}
+
 
