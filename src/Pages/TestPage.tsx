@@ -143,7 +143,7 @@ class TestPage extends Component<IUserPropRoles & RouteComponentProps, listState
     render() {
         return (
             <>
-                { cApi.getCopyright().then(res => console.log(res?.data)) }
+                { cApi.getCopyright().then((res) => console.log(res)) }
                 <div style={{marginTop: -20, overflow: "hidden"}}>
                     <ListHeader id={this.props.id} roles={this.props.roles} obj={this.state.list} data={this.state.ids} />
                     <ListTemplate id={this.props.id} roles={this.props.roles}
