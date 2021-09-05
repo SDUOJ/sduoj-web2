@@ -114,7 +114,7 @@ class Processing extends Component<IProcessingProp, SProcessing> {
         * */
 
         setInterval(() => {
-            if (this.cnt < 0) {
+            if (this.cnt < 8) {
                 const tpp = this.infoList[this.cnt][0]
                 if (tpp === 0) this.addNewState(this.infoList[this.cnt][1])
                 else if (tpp === 1) this.addNewState(undefined, this.infoList[this.cnt][1], this.infoList[this.cnt][2])
@@ -143,7 +143,7 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                     }
                 }, 1000)
             }
-        }, 1)
+        }, 1000)
 
 
     }
@@ -177,9 +177,11 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                     CompileState: CompileStates.Success
                 })
                 setTimeout(() => {
-                    this.setState({
-                        currentStep: 2,
-                        showStep: 2,
+                    this.setState((state) => {
+                        return {
+                            currentStep: Math.max(2, state.currentStep),
+                            showStep: Math.max(2, state.showStep),
+                        }
                     })
                 }, this.state.OkTestCase <= 4 ? 1000 : 0)
             } else if (nowStatus === 3) {
@@ -187,9 +189,11 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                     CompileState: CompileStates.Warning
                 })
                 setTimeout(() => {
-                    this.setState({
-                        currentStep: 2,
-                        showStep: 2,
+                    this.setState((state) => {
+                        return {
+                            currentStep: Math.max(2, state.currentStep),
+                            showStep: Math.max(2, state.showStep),
+                        }
                     })
                 }, this.state.OkTestCase <= 4 ? 1000 : 0)
             } else if (nowStatus === 4) {
@@ -481,9 +485,9 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                                                 <span>{this.props.t("MaximumMemory")}</span>
                                             </Col>
                                             <Col className={"Progress-set-Statistic"} span={6}>
-                                                <Statistic title="总运行时间" value={info.SumTime} suffix="ms"/>
+                                                <Statistic title={this.props.t("TotalRunningTime")} value={info.SumTime} suffix="ms"/>
                                                 <Statistic className={"Progress-set-Statistic-cell"}
-                                                           title="平均内存" value={Math.floor(info.AvgMem / 1024)}
+                                                           title={this.props.t("AvgMemory")} value={Math.floor(info.AvgMem / 1024)}
                                                            suffix="MB"/>
                                             </Col>
                                         </Row>

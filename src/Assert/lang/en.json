@@ -93,6 +93,9 @@
   "Statistics" : "Statistics",
   "MaximumTime":"Maximum time",
   "MaximumMemory" :"Maximum memory",
-  "Loading": "Loading"
-
+  "Loading": "Loading",
+  "TotalRunningTime": "Total running time",
+  "AvgMemory": "Average memory",
+  "SampleDataSet": "Sample data set",
+  "TestDataSet": "Test data set"
 }

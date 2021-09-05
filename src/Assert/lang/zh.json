@@ -63,7 +63,7 @@
   "Done": "完成",
   "HaiYou": "还有 ",
   "submissionLeft": "个提交",
-  "Compile" : "编译",
+  "Compile": "编译",
   "Evaluation": "评测",
   "Summary": "总结",
   "Compiling": "编译中",
@@ -80,8 +80,8 @@
   "CurrentScore": "当前分数",
   "Pending-tag": "等待",
   "Running": "运行中",
-  "Accepted": "通过",
-  "WrongAnswer":"答案错误",
+  "Accepted": "测试通过",
+  "WrongAnswer": "答案错误",
   "TimeLimitExceeded": "时间超限",
   "MemoryLimitExceeded": "内存超限",
   "RuntimeError": "运行时错误",
@@ -93,5 +93,9 @@
   "Statistics": "统计",
   "MaximumTime": "最大时间",
   "MaximumMemory": "最大内存",
-  "Loading": "加载中"
+  "Loading": "加载中",
+  "TotalRunningTime": "总运行时间",
+  "AvgMemory": "平均内存",
+  "SampleDataSet": "样例数据集",
+  "TestDataSet": "测试数据集"
 }

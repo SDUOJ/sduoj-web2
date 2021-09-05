@@ -14,8 +14,8 @@ class JudgeResult extends Component<IJudgeResult, any> {
 
     render() {
         const title = {
-            Sample: this.props.t("样例数据集"),
-            Test: this.props.t("测试数据集")
+            Sample: this.props.t("SampleDataSet"),
+            Test: this.props.t("TestDataSet")
         }
 
         const getInfo = () => {
