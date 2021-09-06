@@ -10,6 +10,7 @@ import Processing from "./Component/submission/Processing";
 import Editor from "./Component/common/Editor";
 import MLayout from "./Component/common/MLayout";
 import ChangeLang from "./Component/common/ChangeLang";
+import DataBaseAnswerSheet from "./Component/answerSheet/dataBase";
 
 class App extends Component<any, any> {
 
@@ -44,12 +45,15 @@ class App extends Component<any, any> {
         return (
             <ConfigProvider locale={this.state.local}>
                 {/*<Editor/>*/}
-                <MLayout id={0} roles={[0]} changeLang={this.changeLang}/>
+                {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
 
                 {/*<ChangeLang changeLang={this.changeLang}/>*/}
                 {/*<Card title="评测信息" style={{width: 900}}>*/}
                 {/*    <Processing TestCaseNumber={12} TimeLimit={1000} MemoryLimit={128 * 1024} TestCaseScore={[0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]}/>*/}
                 {/*</Card>*/}
+
+                <DataBaseAnswerSheet/>
+
             </ConfigProvider>
         );
     }

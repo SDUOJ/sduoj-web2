@@ -151,3 +151,11 @@
     padding: 0 8px;
     margin-top: 4px;
 }
+.Problem-card .ant-card-body{
+    padding-top: 0;
+    height: 100%;
+}
+
+.Problem-card{
+    height: 100%;
+}
