@@ -159,3 +159,9 @@
 .Problem-card{
     height: 100%;
 }
+.Database-list-card .ant-card-body{
+    padding: 0;
+}
+.Database-list-card .ant-tree .ant-tree-treenode{
+    padding-bottom: 0;
+}

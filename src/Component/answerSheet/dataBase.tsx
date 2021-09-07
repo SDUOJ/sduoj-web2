@@ -1,26 +1,30 @@
 import {Component} from "react";
 import {WithTranslation, withTranslation} from "react-i18next";
-import {Row, Col, Card, Tree, Table} from 'antd';
-import {UnControlled as CodeMirror} from 'react-codemirror2'
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/idea.css';
+import {Row, Col, Card, Tree, Table, Tabs, Space, Button} from 'antd';
+
 import Problem from "../problem/Problem";
-import {
+
+import Icon, {
     DownOutlined,
     FrownOutlined,
     SmileOutlined,
     MehOutlined,
     FrownFilled,
 } from '@ant-design/icons';
+import {ReactComponent as DataBaseIcon} from "Assert/img/database.svg"
+import {ReactComponent as TableIcon} from "Assert/img/Table.svg"
+import {ReactComponent as ViewIcon} from "Assert/img/View.svg"
+
+import CodeEditor from "../common/CodeEditor";
 
 require('codemirror/mode/sql/sql');
-
+const {TabPane} = Tabs;
 
 interface IDataBaseAnswerSheet extends WithTranslation {
 
 }
 
-interface SDataBaseAnswerSheet{
+interface SDataBaseAnswerSheet {
     columns: any
     data: any
 }
@@ -136,63 +140,88 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
 
         const treeData = [
             {
-                title: 'parent 1',
-                key: '0-0',
-                icon: <SmileOutlined/>,
+                title: 'pub',
+                key: 'pub',
+                icon: <Icon component={DataBaseIcon}/>,
                 children: [
                     {
-                        title: 'leaf',
-                        key: '0-0-0',
-                        icon: <MehOutlined/>,
+                        title: '表',
+                        key: 'table',
+                        icon: <Icon component={TableIcon}/>,
+                        children: [
+                            {
+                                title: "student",
+                                key: "table_student",
+                                icon: <Icon component={TableIcon}/>
+                            },
+                            {
+                                title: "student_score",
+                                key: "table_student_score",
+                                icon: <Icon component={TableIcon}/>
+                            },
+                            {
+                                title: "student_info",
+                                key: "table_student_info",
+                                icon: <Icon component={TableIcon}/>
+                            },
+                        ]
                     },
                     {
-                        title: 'leaf',
-                        key: '0-0-1',
-                        icon: <MehOutlined/>,
+                        title: '视图',
+                        key: 'view',
+                        icon: <Icon component={ViewIcon}/>,
                     },
                 ],
             },
         ];
 
         return (
-            <div id="root" style={{minWidth: 1000}}>
-                <Row style={{height: "50%"}}>
+            <div id="root" style={{minWidth: 1000, minHeight: 1000}}>
+                <Row style={{height: "60%"}}>
                     <Col span={12} style={{height: "100%"}}>
                         <Card title="题目描述" className={"Problem-card"}>
-                            <Problem markdown={md} style={{overflowY: "scroll", height: "90%"}}/>
+                            <Problem markdown={md} style={{overflowY: "auto", height: "90%"}}/>
                         </Card>
                     </Col>
-                    <Col span={12} >
+                    <Col span={12}>
                         <Card title="编辑代码" style={{minWidth: 500}}>
-                            <CodeMirror
-                                value='<h1>I ♥ react-codemirror2</h1>'
-                                options={{
-                                    mode: 'sql',
-                                    theme: 'idea',
-                                    lineNumbers: true
-                                }}
-                                onChange={(editor, data, value) => {
-                                }}
-                            />
+                            <CodeEditor/>
+                            <Space>
+                                <Button type={"default"} onClick={() => {
+                                }}>{"执行"}</Button>
+                                <Button type={"default"} onClick={() => {
+                                }}>{"提交"}</Button>
+                                <Button type={"default"} onClick={() => {
+                                }}>{"执行并提交"}</Button>
+                                <Button type={"default"} onClick={() => {
+                                }}>{"回滚"}</Button>
+                            </Space>
                         </Card>
-
+                        <Tabs defaultActiveKey="1" type="card" size={"small"}>
+                            <TabPane tab="评测" key="1">
+                                Content of card tab 2
+                            </TabPane>
+                            <TabPane tab="记录" key="2">
+                                Content of card tab 3
+                            </TabPane>
+                        </Tabs>
                     </Col>
                 </Row>
-                <Row style={{height:"50%"}}>
-                    <Col span={5}>
-                        <Card title="数据库列表" >
+                <Row style={{height: "40%"}}>
+                    <Col span={5} style={{height: "100%"}}>
+                        <Card title="数据库列表" className={"Database-list-card"} style={{height: "100%", padding: 0}}>
                             <Tree
                                 showIcon
                                 defaultExpandAll
-                                defaultSelectedKeys={['0-0-0']}
                                 switcherIcon={<DownOutlined/>}
                                 treeData={treeData}
+                                style={{overflowY: "auto", height: "100%"}}
                             />
                         </Card>
                     </Col>
-                    <Col span={19}>
-                        <Card title="查询结果" >
-                            <Table columns={this.state.columns} dataSource={this.state.data} />
+                    <Col span={19} style={{height: "100%"}}>
+                        <Card title="查询结果" style={{height: "100%"}}>
+                            <Table columns={this.state.columns} dataSource={this.state.data}/>
                         </Card>
                     </Col>
                 </Row>
