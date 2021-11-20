@@ -18,9 +18,11 @@ export default class Problem extends Component<IProblemProp, any>{
 
     render() {
         return (
+
             <div id={"problem-content"} style={this.props.style}>
 
             </div>
+
         )
     }
 }

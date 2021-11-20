@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import './App.css';
 import 'antd/dist/antd.css';
 import './Config/i18n'
-import {Card, ConfigProvider, Tooltip} from "antd";
+import {Card, ConfigProvider, Space, Tooltip} from "antd";
 import "vditor/src/assets/scss/index.scss";
 import TestCase, {TestCaseStates} from "./Component/submission/TestCase";
 import Processing from "./Component/submission/Processing";
@@ -16,6 +16,8 @@ import {Role, Sex} from "./Type/Iuser";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import EWait from "./Pages/EWait";
 import {MultipleChoice} from "./Component/answerSheet/MultipleChoice";
+import ProTag from "./Component/exam/ProTag";
+import ExamAnswerSheet from "./Component/exam/ExamAnswerSheet";
 
 class App extends Component<any, any> {
 
@@ -49,7 +51,9 @@ class App extends Component<any, any> {
     render() {
         return (
             <ConfigProvider locale={this.state.local}>
-                <EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>
+                {/*<EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>*/}
+                <ExamAnswerSheet/>
+
                 {/*<Editor/>*/}
                 {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}
                 {/*<ChangeLang changeLang={this.changeLang}/>*/}

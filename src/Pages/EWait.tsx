@@ -4,6 +4,7 @@ import {SmileOutlined} from "@ant-design/icons";
 import Countdown from "antd/lib/statistic/Countdown";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../Component/exam/Timer";
+import ExamLogin from "../Component/exam/ExamLogin";
 
 interface IUserInfo {
     name: string                        // 姓名
@@ -26,11 +27,12 @@ export default class EWait extends Component<IEWait, any> {
     constructor(props: IEWait, context: any) {
         super(props, context);
         this.state = {
-            canStartExam: true
+            canStartExam: true,
+            UserLogin: false
         }
 
-        setInterval(()=>{
-            if(this.props.examStartTime < Date.now()){
+        setInterval(() => {
+            if (this.props.examStartTime < Date.now() && this.state.UserLogin) {
                 this.setState({canStartExam: false})
             }
         }, 1000)
@@ -64,22 +66,46 @@ export default class EWait extends Component<IEWait, any> {
                                         </Button>
                                     ]}
                                 >
-                                    <Meta
-                                        title="考生信息"
-                                        description={
-                                            <Descriptions>
-                                                {
-                                                    UserInfo.map((c) => {
-                                                        if (c.val != undefined) {
-                                                            return (
-                                                                <Descriptions.Item label={c.key} span={3}>{c.val}</Descriptions.Item>
-                                                            )
-                                                        }
-                                                    })
-                                                }
-                                            </Descriptions>
-                                        }
-                                    />
+
+                                    {
+                                        [''].map(() => {
+
+                                            return (
+                                                <Meta
+                                                    title={this.state.UserLogin ? "考生信息" : "请登录"}
+                                                    description={
+                                                        <>
+                                                            {
+                                                                [''].map(() => {
+                                                                    if (!this.state.UserLogin) {
+                                                                        return <ExamLogin/>
+                                                                    } else {
+                                                                        return (
+                                                                            <Descriptions>
+                                                                                {
+                                                                                    UserInfo.map((c) => {
+                                                                                        if (c.val != undefined) {
+                                                                                            return (
+                                                                                                <Descriptions.Item
+                                                                                                    label={c.key}
+                                                                                                    span={3}>{c.val}</Descriptions.Item>
+                                                                                            )
+                                                                                        }
+                                                                                    })
+                                                                                }
+                                                                            </Descriptions>
+                                                                        )
+                                                                    }
+                                                                })
+                                                            }
+                                                        </>
+                                                    }
+                                                />
+                                            )
+                                        })
+                                    }
+
+
                                 </Card>
                             </div>
 

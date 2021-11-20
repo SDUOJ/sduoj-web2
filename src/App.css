@@ -183,16 +183,51 @@
 }
 
 .Timer .ant-statistic-content-value {
-    color: red;
+    color: #e10000;
     font-size: 17px;
 }
 
 .Timer .ant-card {
     max-width: 350px;
     margin: 0 auto;
+    text-align: center;
 }
 
-.Ewait .Ewait-content{
+.Ewait .Ewait-content {
     max-width: 350px;
     margin: 0 auto;
+}
+
+
+.ProTag .ant-badge-count, .ant-badge-dot, .ant-badge .ant-scroll-number-custom-component {
+    right: 10px;
+}
+
+.ProTag {
+    float: left;
+}
+
+.ProTag .ant-tag{
+    text-align: center;
+    min-width: 30px;
+    font-size: 15px;
+}
+
+.ExamAnswerSheet {
+    max-width: 400px;
+}
+
+.ExamAnswerSheet .ant-card-meta-title {
+    text-align: center;
+    font-size: 20px;
+}
+
+.ProTagGroup .ant-card-meta-title {
+    text-align: left;
+    font-size: 16px;
+}
+
+.ProTagGroup {
+    margin-top: 30px;
+    margin-bottom: 5px;
 }
