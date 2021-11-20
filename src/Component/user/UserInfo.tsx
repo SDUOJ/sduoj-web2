@@ -3,9 +3,9 @@ import React, {Component} from "react";
 import {IUser, IUserPropRoles, Role} from '../../Type/Iuser'
 import {Button, FormInstance, Modal, Tabs} from "antd";
 import {withTranslation} from "react-i18next";
-import UserFormProfile from "./UserFormProfile";
-import UserFormPass from "./UserFormPass";
-import UserFormAdditional from "./UserFormAdditional";
+import UserFormProfile from "./Form/UserFormProfile";
+import UserFormPass from "./Form/UserFormPass";
+import UserFormAdditional from "./Form/UserFormAdditional";
 
 
 interface UserInfoProp extends IUserPropRoles {

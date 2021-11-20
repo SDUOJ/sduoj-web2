@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Card, Col, Row, Space, Radio, Tabs, Progress} from "antd";
+import {Card, Col, Row, Space, Tabs, Progress} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
 import TestCase, {StateList, TestCaseProp, TestCaseStates} from "./TestCase";
 

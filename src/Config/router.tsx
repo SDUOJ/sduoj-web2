@@ -52,15 +52,5 @@ export const routerM: IRouter[] = [
         exact: false,
         icon: <UsergroupAddOutlined/>,
         component: lazy(() => import('../Pages/MGroup'))
-    },
-
-
-    {
-        id: 100,
-        path: "/manage/test",
-        title_i18n: 'test',
-        exact: false,
-        icon: <FileOutlined />,
-        component: lazy(() => import('../Pages/TestPage'))
     }
 ]

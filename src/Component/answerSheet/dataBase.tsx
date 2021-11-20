@@ -1,6 +1,6 @@
 import {Component} from "react";
 import {WithTranslation, withTranslation} from "react-i18next";
-import {Row, Col, Card, Tree, Table, Tabs, Space, Button} from 'antd';
+import {Row, Col, Card, Tree, Table, Tabs, Space, Button, Badge, Collapse} from 'antd';
 
 import Problem from "../problem/Problem";
 
@@ -16,9 +16,11 @@ import {ReactComponent as TableIcon} from "Assert/img/Table.svg"
 import {ReactComponent as ViewIcon} from "Assert/img/View.svg"
 
 import CodeEditor from "../common/CodeEditor";
+import Paragraph from "antd/lib/typography/Paragraph";
 
 require('codemirror/mode/sql/sql');
 const {TabPane} = Tabs;
+const {Panel} = Collapse;
 
 interface IDataBaseAnswerSheet extends WithTranslation {
 
@@ -62,79 +64,7 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
             "1910\n" +
             "```\n" +
             "\n" +
-            "\n" +
-            "## Hint\n" +
-            "* C:\n" +
-            "```c\n" +
-            "#include <stdio.h>\n" +
-            "int main(void)\n" +
-            "{\n" +
-            "    int a, b;\n" +
-            "    scanf(\"%d%d\", &a, &b);\n" +
-            "    printf(\"%d\\n\", a + b);\n" +
-            "    return 0;\n" +
-            "}\n" +
-            "```\n" +
-            "* C++:\n" +
-            "```cpp\n" +
-            "#include <iostream>\n" +
-            "using namespace std;\n" +
-            "int main()\n" +
-            "{\n" +
-            "    int a, b;\n" +
-            "    cin >> a >> b;\n" +
-            "    cout << a + b << endl;\n" +
-            "    return 0;\n" +
-            "}\n" +
-            "```\n" +
-            "* Python2:\n" +
-            "```python\n" +
-            "a, b = [int(i) for i in raw_input().split()]\n" +
-            "print(a + b)\n" +
-            "```\n" +
-            "* Python3:\n" +
-            "```python\n" +
-            "a, b = [int(i) for i in input().split()]\n" +
-            "print(a + b)\n" +
-            "```\n" +
-            "* Java:\n" +
-            "```java\n" +
-            "import java.io.*;\n" +
-            "import java.util.Scanner;\n" +
-            "public class Main {\n" +
-            "    public static void main(String[] args) {\n" +
-            "        Scanner sc = new Scanner(System.in);\n" +
-            "        int a = sc.nextInt(), b = sc.nextInt();\n" +
-            "        System.out.println(a + b);\n" +
-            "    }\n" +
-            "}\n" +
-            "```\n" +
-            "* Java With Buffer IO:\n" +
-            "```java\n" +
-            "import java.io.*;\n" +
-            "import java.util.StringTokenizer;\n" +
-            "public class Main\n" +
-            "{\n" +
-            "    public static void main(String[] args)\n" +
-            "    {\n" +
-            "        int a = nextInt(), b = nextInt();\n" +
-            "        out.println(a + b);\n" +
-            "        out.flush();\n" +
-            "    }\n" +
-            "    static BufferedReader in=new BufferedReader(new InputStreamReader(System.in));\n" +
-            "    static StringTokenizer tok;\n" +
-            "    static String next() {hasNext();return tok.nextToken();  }\n" +
-            "    static String nextLine() {try{return in.readLine();}catch (Exception e) {return null;}}\n" +
-            "    static long nextLong() {return Long.parseLong(next());}\n" +
-            "    static int nextInt() {return Integer.parseInt(next());}\n" +
-            "    static PrintWriter out=new PrintWriter(new OutputStreamWriter(System.out));\n" +
-            "    static boolean hasNext()\n" +
-            "    {\n" +
-            "        while(tok==null||!tok.hasMoreTokens()) try{tok=new StringTokenizer(in.readLine());}catch(Exception e){return false;}\n" +
-            "        return true;\n" +
-            "    }\n" +
-            "}\n" +
-            "```"
+            "\n"
 
         console.log(md)
 
@@ -202,7 +132,28 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
                                 Content of card tab 2
                             </TabPane>
                             <TabPane tab="记录" key="2">
-                                Content of card tab 3
+                                <Collapse accordion>
+
+
+                                    <Panel header="This is panel header 1" key="1">
+                                        <Badge.Ribbon text="成功" color={"green"}>
+                                            <Paragraph copyable>This is a copyable text.</Paragraph>
+                                        </Badge.Ribbon>
+                                    </Panel>
+                                    <Badge.Ribbon text="失败" color={"red"}>
+                                        <Panel header="This is panel header 2" key="2">
+                                            <Paragraph copyable>This is a copyable text.</Paragraph>
+                                        </Panel>
+                                    </Badge.Ribbon>
+                                    <Badge.Ribbon text="成功" color={"green"}>
+                                        <Panel header="This is panel header 3" key="3">
+                                            <Paragraph copyable>This is a copyable text.</Paragraph>
+                                        </Panel>
+                                    </Badge.Ribbon>
+                                </Collapse>
+                                <Card title="Pushes open the window" size="small">
+                                    <Paragraph copyable>This is a copyable text.</Paragraph>
+                                </Card>
                             </TabPane>
                         </Tabs>
                     </Col>

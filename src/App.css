@@ -88,11 +88,12 @@
     display: inline-table;
     float: left;
 }
-.test-case .ant-tag{
+
+.test-case .ant-tag {
     font-size: 15px;
 }
 
-.test-case-e .ant-tag{
+.test-case-e .ant-tag {
     padding-top: 3px;
     text-align: left;
     font-size: 15px;
@@ -107,20 +108,21 @@
     padding-top: 10px;
 }
 
-.steps-content-summary{
+.steps-content-summary {
     padding-left: 20px;
     padding-top: 10px;
     padding-right: 20px;
     overflow: hidden;
     text-align: left;
 }
-.steps-content-summary .card{
+
+.steps-content-summary .card {
     padding-bottom: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
 }
 
-.Progress-set{
+.Progress-set {
     display: inline-grid;
     text-align: center;
     padding-left: 10px;
@@ -128,40 +130,69 @@
     width: auto;
 }
 
-.card .ant-card-body{
+.card .ant-card-body {
     text-align: center;
 }
 
-.Progress-set-Statistic{
+.Progress-set-Statistic {
     text-align: center;
 }
-.Progress-set-Statistic-cell{
+
+.Progress-set-Statistic-cell {
     margin-top: 10px;
 }
-.tag-simple{
+
+.tag-simple {
     line-height: 1.4;
     margin-right: 0;
 }
 
-.TestCase-text{
+.TestCase-text {
     text-align: left;
 }
 
-.JudgeResult-tab .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab{
+.JudgeResult-tab .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab {
     padding: 0 8px;
     margin-top: 4px;
 }
-.Problem-card .ant-card-body{
+
+.Problem-card .ant-card-body {
     padding-top: 0;
     height: 100%;
 }
 
-.Problem-card{
+.Problem-card {
     height: 100%;
 }
-.Database-list-card .ant-card-body{
+
+.Database-list-card .ant-card-body {
     padding: 0;
 }
-.Database-list-card .ant-tree .ant-tree-treenode{
+
+.Database-list-card .ant-tree .ant-tree-treenode {
     padding-bottom: 0;
+}
+
+.Progress-set .ant-progress-circle .ant-progress-text {
+    font-size: 15px;
+}
+
+.Timer .ant-statistic-title {
+    color: #282c34;
+    font-size: 20px;
+}
+
+.Timer .ant-statistic-content-value {
+    color: red;
+    font-size: 17px;
+}
+
+.Timer .ant-card {
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.Ewait .Ewait-content{
+    max-width: 350px;
+    margin: 0 auto;
 }

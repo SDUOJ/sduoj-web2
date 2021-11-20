@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 import {IUserPropRoles, Role} from "../../Type/Iuser";
 import {Breakpoint} from "antd/lib/_util/responsiveObserve";
 import {RouteComponentProps} from "react-router-dom";
@@ -8,22 +8,23 @@ import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import judgeAuth from "../../Utils/judgeAhtu";
 import DeleteTemplate from "./DeleteTemplate";
+import {connect} from "react-redux";
 
-interface utilType {
-    id : number,
-    [key : string] : string | number
+interface dataType {
+    id: number,
+    [key: string]: string | number
 }
 
-interface colType {
-    title_i18n: string
+export interface colType {
+    title: string
     dataIndex: string,
     render: any
     width: number | string
-    responsive: Breakpoint[]
+    responsive: Breakpoint[]  // 按照屏幕大小决定是否显示
 }
 
 interface tableState {
-    list: utilType[],
+    list: dataType[],
     loading: boolean,
     total: number,
     showCol: object,
@@ -31,23 +32,23 @@ interface tableState {
 }
 
 export type extraFunction = {
-    functionName: string,
-    minRole: Role,
+    name: string,
+    showRoles: Role[],
     extraFunc?: (...params: any) => any
 }
 
 export interface listItemHeader {
     colData: colType[]
-    func: extraFunction[]
+    func?: extraFunction[]
 }
 
 type propType = IUserPropRoles & RouteComponentProps & listItemHeader
 
-class ListTemplate extends Component<propType, tableState> {
+class MTable extends Component<propType, tableState> {
 
     constructor(props: propType, context: any) {
         super(props, context);
-        let List: utilType[] = []
+        let List: dataType[] = []
         for (let i = 1; i < 200; i++) {
             List.push({
                 id: i * 100,
@@ -85,7 +86,7 @@ class ListTemplate extends Component<propType, tableState> {
 
     tableChange(pagination: TablePaginationConfig,
                 filters: Record<string, FilterValue | null>,
-                sorter: SorterResult<utilType> | SorterResult<any>[],
+                sorter: SorterResult<dataType> | SorterResult<any>[],
                 extra: TableCurrentDataSource<any>): void {
 
 
@@ -114,6 +115,7 @@ class ListTemplate extends Component<propType, tableState> {
             onChange: (selectedRowKeys: React.Key[]) => {
                 this.setState({selectedRowKeys})
             },
+            // 多选时的下拉选项
             selections: [
                 {
                     key: 'all',
@@ -157,25 +159,30 @@ class ListTemplate extends Component<propType, tableState> {
 
         return (
             <>
-                <Table dataSource={this.state.list}
-                       rowKey="id"
-                       loading={this.state.loading}
-                       size={"middle"}
-                       onChange={this.tableChange}
-                       pagination={{
-                           size: "default", total: this.state.total,
-                           showSizeChanger: true,
-                           showQuickJumper: true,
-                           showTotal: this.showTotal
-                       }}
-                       rowSelection={rowSelection}
+                <Table
+                    dataSource={this.state.list}
+                    loading={this.state.loading}
+                    onChange={this.tableChange}
+                    rowKey="id"
+                    size={"middle"}
+                    // 行多选
+                    rowSelection={rowSelection}
+                    // 分页器设计
+                    pagination={{
+                        size: "default",
+                        total: this.state.total,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        showTotal: this.showTotal
+                    }}
                 >
+                    {/*表格内容*/}
                     {
                         this.props.colData.map((r, i) => {
                             return (
                                 <Table.Column
                                     key={"col" + i.toString()}
-                                    title={this.props.t(r.title_i18n)}
+                                    title={this.props.t(r.title)}
                                     width={r.width}
                                     align={"center"}
                                     responsive={r.responsive}
@@ -186,18 +193,29 @@ class ListTemplate extends Component<propType, tableState> {
                             )
                         })
                     }
+                    {
+                        [''].map(() => {
+
+                        })
+                    }
                     <Table.Column
-                        render={(item: utilType) => (
+                        render={(item: dataType) => (
                             <Space>
                                 {
-                                    this.props.func.map((r, i) => {
-                                        if (judgeAuth(this.props.roles, r.minRole)) {
-                                            if (r.functionName === "Delete") {
-                                                return <DeleteTemplate key={"del" + item.id.toString()} btSize={"small"} callback={this.delete}
-                                                                       ids={[item.id]}/>
-                                            }
-                                            return <Button key={"btn-" + i} onClick={r.extraFunc} size={"small"}>{r.functionName}</Button>
-                                        }
+                                    [''].map(() => {
+                                        if (this.props.func != undefined)
+                                            this.props.func.map((r, i) => {
+                                                if (judgeAuth(this.props.roles, r.showRoles)) {
+                                                    if (r.name === "Delete") {
+                                                        return <DeleteTemplate key={"del" + item.id.toString()}
+                                                                               btSize={"small"} callback={this.delete}
+                                                                               ids={[item.id]}/>
+                                                    } else {
+                                                        return <Button key={"btn-" + i} onClick={r.extraFunc}
+                                                                       size={"small"}>{r.name}</Button>
+                                                    }
+                                                }
+                                            })
                                     })
                                 }
                             </Space>
@@ -208,5 +226,14 @@ class ListTemplate extends Component<propType, tableState> {
     }
 }
 
-export default withTranslation()(withRouter(ListTemplate))
+const mapStateToProps = (state: number): {value: number} => ({
+    value: state
+})
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    // onadd: () => dispatch(add()),
+    // onlesen: () => dispatch(lessen())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(MTable)))
 

@@ -7,7 +7,6 @@ import TestCase, {TestCaseProp, TestCaseStates} from "./TestCase";
 import Title from "antd/es/typography/Title";
 import JudgeResult from "./JudgeResult";
 
-
 enum CompileStates {
     Waiting,
     Compiling,
@@ -88,8 +87,8 @@ class Processing extends Component<IProcessingProp, SProcessing> {
             // "            \"         sort\""], // 2 编译成功 3 编译带有警告  4 编译失败  5 系统错误
             // [1, 5],
             // 2 测试点信息
-            [2, 1, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
-            [2, 2, TestCaseStates.WrongAnswer, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 1, TestCaseStates.Accepted, 500 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
+            [2, 2, TestCaseStates.WrongAnswer, 1500 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
             [2, 3, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
             [2, 4, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
             [2, 5, TestCaseStates.Accepted, 50 + Math.floor(Math.random() * 500), 25 * 1024 + Math.floor(Math.random() * 500)], // index, score, 状态， 时间， 内存
@@ -465,11 +464,14 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                                                     [''].map(() => {
                                                         if (info.mxTime > this.props.TimeLimit) {
                                                             return (
-                                                                <Progress
-                                                                    percent={100}
-                                                                    type="dashboard" status="exception"
-                                                                    format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(this.props.MemoryLimit / 1024)} MB`}
-                                                                />
+                                                                <>
+                                                                    <Progress
+                                                                        percent={100}
+                                                                        type="dashboard" status="exception"
+                                                                        format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(this.props.MemoryLimit / 1024)} MB`}
+                                                                    />
+                                                                </>
+
                                                             )
                                                         } else {
                                                             return (
@@ -485,9 +487,11 @@ class Processing extends Component<IProcessingProp, SProcessing> {
                                                 <span>{this.props.t("MaximumMemory")}</span>
                                             </Col>
                                             <Col className={"Progress-set-Statistic"} span={6}>
-                                                <Statistic title={this.props.t("TotalRunningTime")} value={info.SumTime} suffix="ms"/>
+                                                <Statistic title={this.props.t("TotalRunningTime")} value={info.SumTime}
+                                                           suffix="ms"/>
                                                 <Statistic className={"Progress-set-Statistic-cell"}
-                                                           title={this.props.t("AvgMemory")} value={Math.floor(info.AvgMem / 1024)}
+                                                           title={this.props.t("AvgMemory")}
+                                                           value={Math.floor(info.AvgMem / 1024)}
                                                            suffix="MB"/>
                                             </Col>
                                         </Row>
