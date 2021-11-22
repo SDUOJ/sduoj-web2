@@ -80,9 +80,7 @@ class Problem extends Component<any, any> {
                                     )
                                 case "MultipleChoice":
                                     return (
-                                        <>
-
-                                        </>
+                                        <Choice index={this.props.TopProblemIndex}/>
                                     )
                             }
                         })

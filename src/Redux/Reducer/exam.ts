@@ -79,21 +79,21 @@ function getExamInfo(eid: number): SExamInfo {
 
 function getProList(): SProInfo[] {
     return [
-        {pid: "SDUOJ-1000", index: 1, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1001", index: 2, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1002", index: 3, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1003", index: 4, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1004", index: 5, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1005", index: 6, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1006", index: 7, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1007", index: 8, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1008", index: 9, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1009", index: 10, type: "SingleChoice", flag: false, score: 5},
-        {pid: "SDUOJ-1010", index: 11, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "SDUOJ-1011", index: 12, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "SDUOJ-1012", index: 13, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "SDUOJ-1013", index: 14, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "SDUOJ-1014", index: 15, type: "MultipleChoice", flag: false, score: 10}
+        {pid: "第1题", index: 1, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第2题", index: 2, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第3题", index: 3, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第4题", index: 4, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第5题", index: 5, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第6题", index: 6, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第7题", index: 7, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第8题", index: 8, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第9题", index: 9, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第10题", index: 10, type: "SingleChoice", flag: false, score: 5},
+        {pid: "第11题", index: 11, type: "MultipleChoice", flag: false, score: 10},
+        {pid: "第12题", index: 12, type: "MultipleChoice", flag: false, score: 10},
+        {pid: "第13题", index: 13, type: "MultipleChoice", flag: false, score: 10},
+        {pid: "第14题", index: 14, type: "MultipleChoice", flag: false, score: 10},
+        {pid: "第15题", index: 15, type: "MultipleChoice", flag: false, score: 10}
     ]
 }
 

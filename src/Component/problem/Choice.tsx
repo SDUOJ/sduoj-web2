@@ -34,7 +34,6 @@ const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
     if (!State.ProListLoad) {
         return {Loading: !State.ProListLoad}
-
     } else {
         const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
         return {

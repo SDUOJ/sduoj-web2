@@ -213,9 +213,13 @@
     font-size: 15px;
 }
 
+.ProTag-active{
+    border: 4px #40a9ff;
+}
+
 .ExamAnswerSheet {
     width: 400px;
-    margin: 0 auto;
+    margin: 5px auto 0;
 }
 
 .ExamAnswerSheet .ant-card-meta-title {

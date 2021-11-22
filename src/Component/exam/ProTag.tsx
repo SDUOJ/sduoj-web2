@@ -13,7 +13,7 @@ class ProTag extends Component<any, any> {
         let TagState = []
         if (this.props.TagState !== undefined) {
             TagState = this.props.TagState
-        } else if (this.props.ProInfo !== undefined){
+        } else if (this.props.ProInfo !== undefined) {
             const NowPro = (this.props.ProInfo as SProInfo[])[this.props.ProIndex - 1]
             if (NowPro.content === undefined) {
                 TagState.push("d")
@@ -32,13 +32,18 @@ class ProTag extends Component<any, any> {
                            onClick={this.props.ProIndex !== 0 ? (() => this.props.JumpToPro(this.props.ProIndex)) : undefined}
                         >
                             <Badge dot={TagState.indexOf("c") !== -1}>
-                                <Tag color={TagState.indexOf("f") !== -1 ? "green" : undefined}>{
-                                    [''].map(() => {
-                                        if (this.props.ProIndex !== 0) {
-                                            return this.props.ProIndex
-                                        } else return (<>&nbsp;&nbsp;</>)
-                                    })
-                                }</Tag>
+
+                                <Tag
+                                    color={this.props.ProIndex == this.props.TopProblemIndex ? (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") : (TagState.indexOf("f") !== -1 ? "green" : undefined)}>
+                                    {
+                                        [''].map(() => {
+                                            if (this.props.ProIndex !== 0) {
+                                                return this.props.ProIndex
+                                            } else return (<>&nbsp;&nbsp;</>)
+                                        })
+                                    }
+                                </Tag>
+
                             </Badge>
                         </a>
                     </Col>
@@ -60,7 +65,10 @@ class ProTag extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    return {ProInfo: State.proInfo}
+    return {
+        ProInfo: State.proInfo,
+        TopProblemIndex: State.TopProblemIndex
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
