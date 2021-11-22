@@ -110,12 +110,12 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
                 <Row style={{height: "60%"}}>
                     <Col span={12} style={{height: "100%"}}>
                         <Card title="题目描述" className={"Problem-card"}>
-                            <Problem markdown={md} style={{overflowY: "auto", height: "90%"}}/>
+                            <Problem proType={"Program"} markdown={md} style={{overflowY: "auto", height: "90%"}}/>
                         </Card>
                     </Col>
                     <Col span={12}>
                         <Card title="编辑代码" style={{minWidth: 500}}>
-                            <CodeEditor/>
+                            <CodeEditor initValue={""} mode={"sql"}/>
                             <Space>
                                 <Button type={"default"} onClick={() => {
                                 }}>{"执行"}</Button>

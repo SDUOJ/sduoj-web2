@@ -4,16 +4,22 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/idea.css';
 
 
-export default class CodeEditor extends Component<any, any> {
+interface ICodeEditor {
+    mode: string
+    initValue: string
+    className?: string
+}
+
+export default class CodeEditor extends Component<ICodeEditor, any> {
 
     render() {
         return (
             <>
                 <CodeMirror
                     className={this.props.className}
-                    value='select * from pub.student'
+                    value={this.props.initValue}
                     options={{
-                        mode: 'sql',
+                        mode: this.props.mode,
                         theme: 'idea',
                         lineNumbers: true
                     }}

@@ -1,8 +1,11 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 
 import Meta from "antd/lib/card/Meta";
 import ProTag from "./ProTag";
 import {Col, Row} from "antd";
+import {ExamState} from "../../Redux/Reducer/exam";
+import {ExamAction} from "../../Redux/Action/exam";
+import {connect} from "react-redux";
 
 interface IProTagGroup {
     title: string
@@ -10,7 +13,6 @@ interface IProTagGroup {
 }
 
 export default class ProTagGroup extends Component<IProTagGroup, any> {
-
     render() {
         return (
             <>
@@ -23,7 +25,7 @@ export default class ProTagGroup extends Component<IProTagGroup, any> {
                                 this.props.proList.map((index: number) => {
                                     return (
                                         <Col span={3}>
-                                            <ProTag ProIndex={index} ProURL={""} TagState={["d"]}/>
+                                            <ProTag ProIndex={index}/>
                                         </Col>
                                     )
                                 })
@@ -35,3 +37,4 @@ export default class ProTagGroup extends Component<IProTagGroup, any> {
         )
     }
 }
+

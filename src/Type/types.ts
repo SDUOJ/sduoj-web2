@@ -168,3 +168,15 @@ export type resetPassWord = {
     password: string,
     newPassword: string
 }
+
+
+export type examID = {
+    eid: number
+}
+
+
+export type ProblemID = {
+    pid: string
+}
+
+

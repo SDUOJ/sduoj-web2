@@ -18,6 +18,11 @@ import EWait from "./Pages/EWait";
 import {MultipleChoice} from "./Component/answerSheet/MultipleChoice";
 import ProTag from "./Component/exam/ProTag";
 import ExamAnswerSheet from "./Component/exam/ExamAnswerSheet";
+import Problem from "./Component/problem/Problem";
+import Options from "./Component/problem/Options";
+import Choice from "./Component/problem/Choice";
+import ExamPageCtrl from "./Component/exam/ExamPageCtrl";
+import ExamRun from "./Component/exam/ExamRun";
 
 class App extends Component<any, any> {
 
@@ -52,7 +57,13 @@ class App extends Component<any, any> {
         return (
             <ConfigProvider locale={this.state.local}>
                 {/*<EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>*/}
-                <ExamAnswerSheet/>
+                {/*<ExamAnswerSheet/>*/}
+                {/*<Problem proType={"SingleChoice"} score={10} index={3} flag={true} isFlag={false}*/}
+                {/*         markdown={"## A 合并数字\n"}*/}
+                {/*/>*/}
+
+                <ExamRun/>
+
 
                 {/*<Editor/>*/}
                 {/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/}

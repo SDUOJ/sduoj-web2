@@ -207,14 +207,15 @@
     float: left;
 }
 
-.ProTag .ant-tag{
+.ProTag .ant-tag {
     text-align: center;
     min-width: 30px;
     font-size: 15px;
 }
 
 .ExamAnswerSheet {
-    max-width: 400px;
+    width: 400px;
+    margin: 0 auto;
 }
 
 .ExamAnswerSheet .ant-card-meta-title {
@@ -231,3 +232,64 @@
     margin-top: 30px;
     margin-bottom: 5px;
 }
+
+.Problem {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    min-width: 600px;
+}
+
+.Problem .ant-card-head {
+    background: #f7f7f7;
+    font-size: 17px;
+}
+
+.Choice .ant-card-head {
+    border-bottom: 0;
+    font-size: 17px;
+    margin-left: 25px;
+    background: none;
+}
+
+.Choice-title{
+    margin-left: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+
+.ExamPageCtrl {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.ExamPageCtrl-Number {
+    margin-left: 40px;
+    margin-right: 40px;
+    font-size: 16px;
+}
+
+.ExamRun {
+    margin: 50px;
+    min-width: 1300px;
+}
+
+.ExamRun-ExamAnswerSheet {
+    margin-left: 30px;
+}
+
+.Timer .ant-card {
+    min-width: 400px;
+}
+
+.Timer-inline-card .ant-card-body {
+    padding: 5px;
+}
+
+.Timer-inline {
+    font-size: 16px;
+    margin-top: 6px;
+}
+

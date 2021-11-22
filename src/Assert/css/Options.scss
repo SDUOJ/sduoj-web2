@@ -1,0 +1,52 @@
+@mixin option {
+  margin: 10px;
+  font-size: 16px;
+  padding: 6px 15px;
+  border-radius: 20px;
+  position: relative;
+  border: 0;
+  background: #f3f3f3;
+  box-shadow: 0 4px 15px 0 rgba(222, 222, 222, 0.75);
+}
+
+.Options-init {
+  @include option;
+  color: black;
+}
+
+.Options-used {
+  @include option;
+  color: #3ad506;
+}
+
+.Options-unused {
+  @include option;
+  color: rgba(178, 178, 178, 0.75);
+}
+
+.Options-init:hover:before {
+  background-position: left bottom;
+}
+
+.Options-init:before {
+  content: '';
+  display: block;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.6) 50%);
+  background-size: 210% 100%;
+  background-position: right bottom;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border-radius: 20px;
+  transition: all 300ms;
+  -webkit-transition: all 300ms;
+}
+
+.Options-Choice {
+  font-size: 16px;
+  font-weight: bold;
+}

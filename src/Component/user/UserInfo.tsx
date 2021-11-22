@@ -136,7 +136,6 @@ class UserInfo extends Component<UserInfoProp, UserInfoState> {
                         }
                     })
                 }
-
             </Modal>
         )
     }

@@ -1,47 +1,96 @@
-import React, {Component} from "react";
-import {Avatar, Card, Col, Row, Space} from "antd";
+import React, {Component, Dispatch} from "react";
+import {Avatar, Card, Col, Row, Skeleton, Space} from "antd";
 import Timer from "./Timer";
 import Meta from "antd/lib/card/Meta";
 import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
+import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
+import {ExamAction} from "../../Redux/Action/exam";
+import {connect} from "react-redux";
+import {ProNameMap} from "../../Type/IProblem";
 
 
-export default class ExamAnswerSheet extends Component<any, any> {
+class ExamAnswerSheet extends Component<any, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
     }
 
     render() {
+        let ProList: { "title": string, "proList": number[] }[] = []
+        if (!this.props.Loading) {
+            ProList = [
+                {"title": ProNameMap[this.props.ProInfo[0].type], "proList": [this.props.ProInfo[0].index]}
+            ]
+            for (let i = 1; i < this.props.ProInfo.length; i++) {
+                if (this.props.ProInfo[i].type == this.props.ProInfo[i - 1].type) {
+                    ProList[ProList.length - 1].proList.push(this.props.ProInfo[i].index)
+                } else {
+                    ProList.push({
+                        "title": ProNameMap[this.props.ProInfo[i].type],
+                        "proList": [this.props.ProInfo[i].index]
+                    })
+                }
+            }
+        } else {
+            this.props.GetProList()
+        }
         return (
             <div className={"ExamAnswerSheet"}>
                 <Card>
                     <Meta className={"ExamAnswerSheetMeta"}
-                        title="答题卡"
-                        description={
-                            <>
-                                <Row>
-                                    <Col span={7} offset={2}>
-                                        <ProTag ProIndex={0} ProURL={""} TagState={["d"]} exp={"未作答"}/>
-                                    </Col>
-                                    <Col span={7}>
-                                        <ProTag ProIndex={0} ProURL={""} TagState={["f"]} exp={"已作答"}/>
-                                    </Col>
-                                    <Col span={7}>
-                                        <ProTag ProIndex={0} ProURL={""} TagState={["c", "d"]} exp={"标记"}/>
-                                    </Col>
-                                </Row>
-                                <ProTagGroup title={"单选题"} proList={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}/>
-                                <ProTagGroup title={"多选题"} proList={[11, 12, 13, 14, 15]}/>
-                                <ProTagGroup title={"判断题"} proList={[16, 17, 18, 19, 20]}/>
-                            </>
-
-                        }
+                          title="答题卡"
+                          description={
+                              <>
+                                  <Row>
+                                      <Col span={7} offset={2}>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["d"]} exp={"未作答"}/>
+                                      </Col>
+                                      <Col span={7}>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["f"]} exp={"已作答"}/>
+                                      </Col>
+                                      <Col span={7}>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["c", "d"]} exp={"标记"}/>
+                                      </Col>
+                                  </Row>
+                                  <Skeleton active loading={this.props.Loading}>
+                                      {
+                                          ProList.map((Value: { "title": string, "proList": number[] }) => {
+                                              return (
+                                                  <ProTagGroup title={Value.title} proList={Value.proList}/>
+                                              )
+                                          })
+                                      }
+                                  </Skeleton>
+                              </>
+                          }
                     />
-
                 </Card>
             </div>
         )
     }
 
 }
+
+const mapStateToProps = (state: any) => {
+    const State: ExamState = state.ExamReducer
+    return {
+        Loading: !State.ProListLoad,
+        ProInfo: State.proInfo
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
+    JumpToPro: (ProIndex: number) => dispatch({
+        type: "updateTop",
+        topIndex: ProIndex
+    }),
+    GetProList: () => dispatch({
+        type: "GetProList"
+    })
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ExamAnswerSheet)
