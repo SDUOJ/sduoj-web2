@@ -1,7 +1,8 @@
 import {ExamAction} from "../Action/exam";
 import {ChoiceContent, ProContent, ProType} from "../../Type/IProblem";
-import getPro from "Utils/API/e-api"
+import examApi from "Utils/API/e-api"
 import {deepClone} from "@ant-design/charts/es/util";
+import axios from "axios";
 
 
 interface SExamInfo {
@@ -17,7 +18,7 @@ export interface SProInfo {
     type: ProType                       // 题目类型
     flag: boolean                       // 是否标记
     score: number                       // 题目分数
-    content?: ProContent                 // 题目内容
+    content?: ProContent                // 题目内容
 }
 
 export interface ExamState {
@@ -37,8 +38,9 @@ export function IsAnswer(obj: ChoiceContent): boolean {
 }
 
 function getProInfo(pid: string): ProContent {
-    let data = getPro.getPro({pid: pid})
-
+    examApi.getPro({pid: pid}).then(r=>{
+        console.log(r)
+    })
     return {
         content: pid.toString() + ". 中国共产党是中国社会主义事业的领导核心，这句话说明了（）。",
         choice: [
@@ -78,6 +80,7 @@ function getExamInfo(eid: number): SExamInfo {
 }
 
 function getProList(): SProInfo[] {
+
     return [
         {pid: "第1题", index: 1, type: "SingleChoice", flag: false, score: 5},
         {pid: "第2题", index: 2, type: "SingleChoice", flag: false, score: 5},
@@ -153,7 +156,8 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.proInfo = getProList()
                 State.ProListLoad = true
                 State.TopProblemIndex = 1;
-                (State.proInfo as SProInfo[])[State.TopProblemIndex - 1].content = getProInfo((State.proInfo as SProInfo[])[State.TopProblemIndex - 1].pid)
+                const ProInfo = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
+                ProInfo.content = getProInfo(ProInfo.pid)
                 return State
         }
     }

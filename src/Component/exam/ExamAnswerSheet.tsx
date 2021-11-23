@@ -1,10 +1,9 @@
 import React, {Component, Dispatch} from "react";
-import {Avatar, Card, Col, Row, Skeleton, Space} from "antd";
-import Timer from "./Timer";
+import {Card, Col, Row, Skeleton} from "antd";
 import Meta from "antd/lib/card/Meta";
 import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
+import {ExamState} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ProNameMap} from "../../Type/IProblem";

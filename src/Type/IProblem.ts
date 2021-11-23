@@ -1,4 +1,5 @@
 export type ProType = "Program" | "SingleChoice" | "MultipleChoice" | "FillInTheBlank" | "Subjective" | "TrueOrFalse"
+
 export const ProNameMap: { [key: string]: string } = {
     "Program": "编程题",
     "FillInTheBlank": "填空题",
@@ -7,6 +8,8 @@ export const ProNameMap: { [key: string]: string } = {
     "MultipleChoice": "多选题",
     "TrueOrFalse": "判断题"
 }
+
+// 单选题状态（选择，排除，初始）
 export type ChoiceState = "used" | "unused" | "init"
 
 export interface TestCase {

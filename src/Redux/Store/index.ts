@@ -1,8 +1,6 @@
-import { createStore, combineReducers } from "redux";
-import {MTableCalculate} from "../Reducer/MTable";
-import {ExamReducer} from "../Reducer/exam";
+import {createStore, applyMiddleware} from "redux";
+import {rootReducers} from "./rootReducer";
+import thunk from "redux-thunk";
 
-// 全局你可以创建多个reducer 在这里统一在一起
-const rootReducers = combineReducers({MTableCalculate, ExamReducer})
 // 全局就管理一个store
-export const store = createStore(rootReducers)
+export const store = createStore(rootReducers, applyMiddleware(thunk))

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Dispatch} from 'react';
 
 import './App.css';
 import 'antd/dist/antd.css';
@@ -23,20 +23,17 @@ import Options from "./Component/problem/Options";
 import Choice from "./Component/problem/Choice";
 import ExamPageCtrl from "./Component/exam/ExamPageCtrl";
 import ExamRun from "./Component/exam/ExamRun";
+import EExaming from "./Pages/EExaming";
+import {ExamState, SProInfo} from "./Redux/Reducer/exam";
+import {ExamAction} from "./Redux/Action/exam";
+import {connect} from "react-redux";
+import {ConfigState} from "./Type/IConfig";
 
 class App extends Component<any, any> {
 
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            local: "en"
-        }
-        this.changeLang = this.changeLang.bind(this)
-    }
-
-    changeLang(value: string) {
-        this.setState({local: value})
     }
 
     /*
@@ -55,14 +52,14 @@ class App extends Component<any, any> {
 
     render() {
         return (
-            <ConfigProvider locale={this.state.local}>
+            <ConfigProvider locale={this.props.local}>
                 {/*<EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>*/}
                 {/*<ExamAnswerSheet/>*/}
                 {/*<Problem proType={"SingleChoice"} score={10} index={3} flag={true} isFlag={false}*/}
                 {/*         markdown={"## A 合并数字\n"}*/}
                 {/*/>*/}
 
-                <ExamRun/>
+                <EExaming/>
 
 
                 {/*<Editor/>*/}
@@ -81,4 +78,13 @@ class App extends Component<any, any> {
 
 }
 
-export default App;
+const mapStateToProps = (state: any) => {
+    const State: ConfigState = state.ConfigReducer
+    return {
+        local: State.lang
+    }
+}
+
+export default connect(
+    mapStateToProps
+)(App)

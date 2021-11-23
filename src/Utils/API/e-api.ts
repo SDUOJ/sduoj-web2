@@ -1,21 +1,12 @@
-import axios, {
-    AxiosResponse, AxiosRequestConfig
-} from "axios";
-
-import {
-    Get,
-    Post,
-    GetError, examID, ProblemID
-} from '../../Type/types'
+import axios, {AxiosResponse, AxiosRequestConfig} from "axios";
+import {Get, Post, GetError, ProblemID} from '../../Type/types'
 import apiAddress from "./apiAddress";
-import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
 
-
-const baseUrl = apiAddress().CLIENT_SERVER + '/api'
+const baseUrl = apiAddress().EXAM_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 1000,
+    timeout: 10000,
 })
 
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
@@ -24,6 +15,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         const response = await service.get(url, {
             params, ...config
         });
+
         switch (response.data.code) {
             case 0:
                 return response.data.data
@@ -37,6 +29,8 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
 
         //    TODO: Update Time
     } catch (e: any) {
+        console.log("999")
+        console.log(e)
         switch (e.code) {
             case 429:
                 //        TODO
@@ -87,8 +81,8 @@ const request = {
 export default {
 
     // 获取题目信息
-    async getPro(data: ProblemID){
-        return request.get('');
+    async getPro(data: ProblemID) {
+        return request.get('/');
     },
 
 }

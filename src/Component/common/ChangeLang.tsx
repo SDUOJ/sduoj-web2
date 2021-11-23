@@ -1,17 +1,18 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 import {Select, Space} from "antd";
 import lang from "Assert/img/language.png"
 import i18n from "i18next";
 import {language, languageMap} from "../../Config/i18n";
+import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
+import {ExamAction} from "../../Redux/Action/exam";
+import {connect} from "react-redux";
+import {ConfigState} from "../../Type/IConfig";
+import {ConfigAction} from "../../Redux/Action/config";
 
 const {Option} = Select;
 
-export default class ChangeLang extends Component<any, any> {
-    changeLang(value: string) {
-        i18n.changeLanguage(value)
-        this.props.changeLang(languageMap[value])
-    }
-    defLang: string = ""
+class ChangeLang extends Component<any, any> {
+    defLang: string = "zh"
 
     constructor(props: any) {
         super(props);
@@ -22,6 +23,11 @@ export default class ChangeLang extends Component<any, any> {
         })
         this.changeLang = this.changeLang.bind(this)
         this.changeLang(this.defLang)
+    }
+
+    changeLang(value: string) {
+        i18n.changeLanguage(value)
+        this.props.ChangeLanguage(languageMap[value])
     }
 
     render() {
@@ -44,3 +50,22 @@ export default class ChangeLang extends Component<any, any> {
         )
     }
 }
+
+const mapStateToProps = (state: any) => {
+    const State: ConfigState = state.ConfigReducer
+    return {
+        lang: State.lang
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
+    ChangeLanguage: (lang:string) => dispatch({
+        type: "updateLanguage",
+        lang: lang
+    }),
+})
+
+export default connect(
+    undefined,
+    mapDispatchToProps
+)(ChangeLang)
