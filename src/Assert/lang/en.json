@@ -112,5 +112,13 @@
   "MultipleChoice": "Multiple Choice Problem",
   "TrueOrFalse": "True Or False Problem",
   "point": " point",
-  "points": " points"
+  "points": " points",
+  "TimeLimit": "Time Limit",
+  "MemoryLimit": "Memory Limit",
+  "Sample": "Sample",
+  "SampleTestCase": "Sample Testcase",
+  "Input": "Input",
+  "Output": "Output",
+  "Copy": "Copy",
+  "Copied": "Copied"
 }

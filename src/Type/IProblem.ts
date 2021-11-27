@@ -1,3 +1,5 @@
+import {TestCaseType} from "./ISubmission";
+
 export type ProType = "Program" | "SingleChoice" | "MultipleChoice" | "FillInTheBlank" | "Subjective" | "TrueOrFalse"
 
 export const ProNameMap: { [key: string]: string } = {
@@ -22,13 +24,26 @@ export interface JudgeTemplate {
     tid: number             // 模板ID
 }
 
+export interface Submission {
+    sid: string
+    JudgeResult: TestCaseType
+    Score: number
+    Time: number
+    Memory: number
+    JudgeTemplate: JudgeTemplate
+    SubmitTime: number
+
+}
+
 export interface ProgramContent {
+    title: string                   // 题目标题
     markdown: string                // 题目描述
     testCase: TestCase[]            // 测试数据集合
-    code: string                    // 题号
+    // code: string                    // 题号
     TimeLimit: number               // 时间限制
     MemoryLimit: number             // 空间限制
     JudgeTemplate: JudgeTemplate[]  // 评测模板
+    Submissions: Submission[]       // 提交信息
 }
 
 export interface Choice {
@@ -46,3 +61,10 @@ export interface ChoiceContent {
 export type ProContent = ProgramContent | ChoiceContent
 
 
+export function isChoiceContent(x: any): x is ChoiceContent {
+    return (<ChoiceContent>x).content !== undefined
+}
+
+export function isProgramContent(x: any): x is ProgramContent {
+    return (<ProgramContent>x).markdown !== undefined
+}

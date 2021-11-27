@@ -8,6 +8,7 @@ import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../../Redux/Action/config";
+import {Locale} from "antd/lib/locale-provider";
 
 const {Option} = Select;
 
@@ -59,7 +60,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
-    ChangeLanguage: (lang:string) => dispatch({
+    ChangeLanguage: (lang:Locale) => dispatch({
         type: "updateLanguage",
         lang: lang
     }),

@@ -13,9 +13,9 @@ class ExamRun extends Component<any, any> {
     render() {
         return (
             <>
-                <div className={"ExamRun"}>
+                <div className={"ExamRun"} >
                     <Row>
-                        <Col span={18} offset={3}>
+                        <Col span={22} offset={1}>
                             <Row>
                                 <Col span={16}>
                                     <Problem proType={"SingleChoice"} index={2} score={10} flag={true}/>

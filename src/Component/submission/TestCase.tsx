@@ -25,7 +25,7 @@ export enum TestCaseStates {
     "TimeLimitExceeded",
     "MemoryLimitExceeded",
     "RuntimeError",
-    OutputLimitExceeded
+    "OutputLimitExceeded"
 }
 
 export const StateList =
@@ -34,7 +34,6 @@ export const StateList =
 
 interface ViewType {
     type?: "tag" | "text" | "tag-simple" | "index"
-
 }
 
 export interface TestCaseProp {

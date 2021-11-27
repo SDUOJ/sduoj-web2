@@ -1,8 +1,12 @@
 import {ExamAction} from "../Action/exam";
-import {ChoiceContent, ProContent, ProType} from "../../Type/IProblem";
+import {
+    ChoiceContent,
+    ProContent,
+    ProType
+} from "../../Type/IProblem";
 import examApi from "Utils/API/e-api"
 import {deepClone} from "@ant-design/charts/es/util";
-import axios from "axios";
+import {ProgramTest} from "../../Utils/Problem";
 
 
 interface SExamInfo {
@@ -29,42 +33,59 @@ export interface ExamState {
     TopProblemIndex: number
 }
 
-export function IsAnswer(obj: ChoiceContent): boolean {
-    let usedNum = 0;
-    obj.choice.map(value => {
-        if (value.state === "used") usedNum += 1;
-    })
-    return usedNum !== 0
-}
 
 function getProInfo(pid: string): ProContent {
-    examApi.getPro({pid: pid}).then(r=>{
+    examApi.getPro({pid: pid}).then(r => {
         console.log(r)
     })
-    return {
-        content: pid.toString() + ". 中国共产党是中国社会主义事业的领导核心，这句话说明了（）。",
-        choice: [
-            {
-                id: "A",
-                content: "党的阶级性和先进性",
-                state: "init"
-            },
-            {
-                id: "B",
-                content: "党的根本宗旨",
-                state: "init"
-            },
-            {
-                id: "C",
-                content: "党的地位和作用",
-                state: "init"
-            },
-            {
-                id: "D",
-                content: "党的性质",
-                state: "init"
-            },
-        ]
+    if (pid.split('-')[0] == "SDUOJ") {
+        return {
+            title: "合并数字",
+            markdown: ProgramTest,
+            testCase: [
+                {inputData: "3\n-3 -1 4", outputData: "8"},
+                {inputData: "6\n1 -2 4 -3 3 -1", outputData: "14"},
+                {
+                    inputData: "15\n-62208205 -468209857 170731921 595947512 242239468 -24833033 157706648 -351341144 355114451 -481362346 -108966996 -165688094 626521688 -109650172 741981679",
+                    outputData: "4662503214"
+                },
+            ],
+            TimeLimit: 1000,
+            MemoryLimit: 512 * 1024,
+            JudgeTemplate: [
+                {name: "C++11", tid: 10},
+                {name: "C11", tid: 11},
+                {name: "Java8", tid: 12},
+                {name: "Python3", tid: 13}
+            ],
+            Submissions: []
+        }
+    } else {
+        return {
+            content: pid.toString() + ". 中国共产党是中国社会主义事业的领导核心，这句话说明了（）。",
+            choice: [
+                {
+                    id: "A",
+                    content: "党的阶级性和先进性",
+                    state: "init"
+                },
+                {
+                    id: "B",
+                    content: "党的根本宗旨",
+                    state: "init"
+                },
+                {
+                    id: "C",
+                    content: "党的地位和作用",
+                    state: "init"
+                },
+                {
+                    id: "D",
+                    content: "党的性质",
+                    state: "init"
+                },
+            ]
+        }
     }
 }
 
@@ -82,21 +103,26 @@ function getExamInfo(eid: number): SExamInfo {
 function getProList(): SProInfo[] {
 
     return [
-        {pid: "第1题", index: 1, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第2题", index: 2, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第3题", index: 3, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第4题", index: 4, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第5题", index: 5, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第6题", index: 6, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第7题", index: 7, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第8题", index: 8, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第9题", index: 9, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第10题", index: 10, type: "SingleChoice", flag: false, score: 5},
-        {pid: "第11题", index: 11, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "第12题", index: 12, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "第13题", index: 13, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "第14题", index: 14, type: "MultipleChoice", flag: false, score: 10},
-        {pid: "第15题", index: 15, type: "MultipleChoice", flag: false, score: 10}
+        {pid: "Choice-1000", index: 1, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1001", index: 2, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1002", index: 3, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1003", index: 4, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1004", index: 5, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1005", index: 6, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1006", index: 7, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1007", index: 8, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1008", index: 9, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1009", index: 10, type: "SingleChoice", flag: false, score: 5},
+        {pid: "Choice-1010", index: 11, type: "MultipleChoice", flag: false, score: 5},
+        {pid: "Choice-1011", index: 12, type: "MultipleChoice", flag: false, score: 5},
+        {pid: "Choice-1012", index: 13, type: "MultipleChoice", flag: false, score: 5},
+        {pid: "Choice-1013", index: 14, type: "MultipleChoice", flag: false, score: 5},
+        {pid: "Choice-1014", index: 15, type: "MultipleChoice", flag: false, score: 5},
+        {pid: "SDUOJ-1000", index: 16, type: "Program", flag: false, score: 5},
+        {pid: "SDUOJ-1001", index: 17, type: "Program", flag: false, score: 5},
+        {pid: "SDUOJ-1002", index: 18, type: "Program", flag: false, score: 5},
+        {pid: "SDUOJ-1003", index: 19, type: "Program", flag: false, score: 5},
+        {pid: "SDUOJ-1004", index: 20, type: "Program", flag: false, score: 5},
     ]
 }
 

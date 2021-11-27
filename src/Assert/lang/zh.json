@@ -97,6 +97,7 @@
   "TotalRunningTime": "总运行时间",
   "AvgMemory": "平均内存",
   "SampleDataSet": "样例数据集",
+  "Sample": "样例",
   "TestDataSet": "测试数据集",
   "Countdown": "倒计时",
   "PreviousProblem": "上一题",
@@ -112,5 +113,12 @@
   "MultipleChoice": "多选题",
   "TrueOrFalse": "判断题",
   "point": "分",
-  "points": "分"
+  "points": "分",
+  "TimeLimit": "时间限制",
+  "MemoryLimit": "空间限制",
+  "SampleTestCase": "测试样例",
+  "Input": "输入",
+  "Output": "输出",
+  "Copy": "复制",
+  "Copied": "已复制"
 }

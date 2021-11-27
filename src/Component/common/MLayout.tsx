@@ -11,11 +11,7 @@ import {withTranslation} from "react-i18next";
 
 const {Footer, Sider, Content} = Layout;
 
-interface IMLayout extends IUserPropRoles {
-    changeLang: any
-}
-
-class MLayout extends Component<IMLayout, any> {
+class MLayout extends Component<any, any> {
 
     render() {
         return (
@@ -30,7 +26,7 @@ class MLayout extends Component<IMLayout, any> {
                             <MMenu id={1} roles={[0]}/>
                         </Sider>
                         <Layout style={{minWidth: 500}}>
-                            <MHeader changeLang={this.props.changeLang}/>
+                            <MHeader/>
                             <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
                                 <div className="site-layout-background" style={{padding: 24}}>
                                     <Suspense fallback={<Loading/>}>

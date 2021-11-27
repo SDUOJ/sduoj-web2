@@ -51,6 +51,7 @@ class App extends Component<any, any> {
     * */
 
     render() {
+        console.log(this.props.local)
         return (
             <ConfigProvider locale={this.props.local}>
                 {/*<EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>*/}

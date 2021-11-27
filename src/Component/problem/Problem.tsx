@@ -9,6 +9,7 @@ import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {withTranslation} from "react-i18next";
+import Program from "./Program";
 
 class Problem extends Component<any, any> {
 
@@ -17,13 +18,6 @@ class Problem extends Component<any, any> {
             e = e || window.event;
             return false;
         };
-
-        if (this.props.proType === "Program") {
-            VditorPreview.preview(
-                document.getElementById("problem-content"),
-                this.props.markdown
-            )
-        }
     }
 
     render() {
@@ -72,8 +66,7 @@ class Problem extends Component<any, any> {
                             switch (this.props.proType) {
                                 case "Program":
                                     return (
-                                        <div id={"problem-content"} style={this.props.style}>
-                                        </div>
+                                        <Program index={this.props.TopProblemIndex}/>
                                     )
                                 case "SingleChoice":
                                     return (

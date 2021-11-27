@@ -21,7 +21,7 @@ export default class EExaming extends Component<any, any> {
 
     render() {
         return (
-            <>
+            <div className={"exam-container"}>
                 <PageHeader
                     ghost={false}
                     title="《计算导论与程序设计》期末考试"
@@ -32,11 +32,12 @@ export default class EExaming extends Component<any, any> {
                             交卷
                         </Button>,
                     ]}
+                    className={"exam-content"}
                 >
                     <ExamRun/>
                 </PageHeader>
                 <Footer style={{textAlign: 'center'}}>山东大学计算机科学与技术学院 ©2020-2021</Footer>
-            </>
+            </div>
         )
     }
 }

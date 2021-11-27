@@ -213,7 +213,7 @@
     font-size: 15px;
 }
 
-.ProTag-active{
+.ProTag-active {
     border: 4px #40a9ff;
 }
 
@@ -258,7 +258,7 @@
     background: none;
 }
 
-.Choice-title{
+.Choice-title {
     margin-left: 20px;
     margin-bottom: 20px;
     font-size: 18px;
@@ -298,3 +298,13 @@
     margin-top: 6px;
 }
 
+.exam-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.exam-content {
+    width: 100%;
+    flex: 1 0 auto;
+}
