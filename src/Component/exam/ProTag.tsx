@@ -1,10 +1,11 @@
 import React, {Component, Dispatch} from "react";
-import {Badge, Button, Col, Row, Tag} from "antd";
+import {Badge, Button, Col, Row, Space, Tag} from "antd";
 import {ClockCircleOutlined} from "@ant-design/icons";
 import {ExamState, IsAnswer, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent} from "../../Type/IProblem";
+import {withTranslation} from "react-i18next";
 
 
 class ProTag extends Component<any, any> {
@@ -26,37 +27,33 @@ class ProTag extends Component<any, any> {
 
         return (
             <div>
-                <Row>
-                    <Col span={this.props.ProIndex === 0 ? 12 : 24}>
-                        <a className={"ProTag"}
-                           onClick={this.props.ProIndex !== 0 ? (() => this.props.JumpToPro(this.props.ProIndex)) : undefined}
-                        >
-                            <Badge dot={TagState.indexOf("c") !== -1}>
+                <Space>
+                    <a className={"ProTag"}
+                       onClick={this.props.ProIndex !== 0 ? (() => this.props.JumpToPro(this.props.ProIndex)) : undefined}
+                    >
+                        <Badge dot={TagState.indexOf("c") !== -1}>
 
-                                <Tag
-                                    color={this.props.ProIndex == this.props.TopProblemIndex ? (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") : (TagState.indexOf("f") !== -1 ? "green" : undefined)}>
-                                    {
-                                        [''].map(() => {
-                                            if (this.props.ProIndex !== 0) {
-                                                return this.props.ProIndex
-                                            } else return (<>&nbsp;&nbsp;</>)
-                                        })
-                                    }
-                                </Tag>
-
-                            </Badge>
-                        </a>
-                    </Col>
-                    <Col span={this.props.ProIndex === 0 ? 12 : 0}>
-                        {
-                            [''].map(() => {
-                                if (this.props.ProIndex === 0) {
-                                    return <span style={{color: "black", marginLeft: "-10px"}}>{this.props.exp}</span>
+                            <Tag
+                                color={this.props.ProIndex == this.props.TopProblemIndex ? (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") : (TagState.indexOf("f") !== -1 ? "green" : undefined)}>
+                                {
+                                    [''].map(() => {
+                                        if (this.props.ProIndex !== 0) {
+                                            return this.props.ProIndex
+                                        } else return (<>&nbsp;&nbsp;</>)
+                                    })
                                 }
-                            })
-                        }
-                    </Col>
-                </Row>
+                            </Tag>
+
+                        </Badge>
+                    </a>
+                    {
+                        [''].map(() => {
+                            if (this.props.ProIndex === 0) {
+                                return <span style={{color: "black", marginLeft: "-10px"}}>{this.props.exp}</span>
+                            }
+                        })
+                    }
+                </Space>
             </div>
         )
     }
@@ -81,4 +78,4 @@ const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ProTag)
+)(withTranslation()(ProTag))

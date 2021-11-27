@@ -3,7 +3,7 @@ import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../Action/config";
 
 const initState: ConfigState = {
-    lang: "zh"
+    lang: "zh",
 }
 
 

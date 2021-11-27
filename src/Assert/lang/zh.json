@@ -97,5 +97,20 @@
   "TotalRunningTime": "总运行时间",
   "AvgMemory": "平均内存",
   "SampleDataSet": "样例数据集",
-  "TestDataSet": "测试数据集"
+  "TestDataSet": "测试数据集",
+  "Countdown": "倒计时",
+  "PreviousProblem": "上一题",
+  "NextProblem": "下一题",
+  "Unanswered": "未作答",
+  "Answered": "已作答",
+  "Marked": "已标记",
+  "AnswerSheet": "答题卡",
+  "Program": "编程题",
+  "FillInTheBlank": "填空题",
+  "Subjective": "主观题",
+  "SingleChoice": "单选题",
+  "MultipleChoice": "多选题",
+  "TrueOrFalse": "判断题",
+  "point": "分",
+  "points": "分"
 }

@@ -4,6 +4,7 @@ import {LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {connect} from "react-redux";
 import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
+import {withTranslation} from "react-i18next";
 
 
 class ExamPageCtrl extends Component<any, any> {
@@ -15,7 +16,7 @@ class ExamPageCtrl extends Component<any, any> {
                             disabled={this.props.TopProblemIndex == 1 || this.props.Loading}
                             onClick={()=>this.props.JumpToPro(this.props.TopProblemIndex-1)}
                     >
-                        <LeftOutlined/> 上一题
+                        <LeftOutlined/> {this.props.t("PreviousProblem")}
                     </Button>
                     <Spin spinning={this.props.Loading}>
                         <div className={"ExamPageCtrl-Number"}>
@@ -28,7 +29,7 @@ class ExamPageCtrl extends Component<any, any> {
                             disabled={this.props.TopProblemIndex == this.props.ProNumber || this.props.Loading}
                             onClick={()=>this.props.JumpToPro(this.props.TopProblemIndex+1)}
                     >
-                        下一题 <RightOutlined/>
+                        {this.props.t("NextProblem")} <RightOutlined/>
                     </Button>
                 </Space>
             </div>
@@ -56,4 +57,4 @@ const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ExamPageCtrl)
+)(withTranslation()(ExamPageCtrl))

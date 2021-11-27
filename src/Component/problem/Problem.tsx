@@ -8,6 +8,7 @@ import {ProNameMap, ProType} from "../../Type/IProblem";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
+import {withTranslation} from "react-i18next";
 
 class Problem extends Component<any, any> {
 
@@ -32,7 +33,7 @@ class Problem extends Component<any, any> {
                     className={"Problem"}
                     title={
                         <>
-                            【{ProNameMap[this.props.proType]}】
+                            【{this.props.t(this.props.proType)}】
                             {
                                 [''].map(() => {
                                     if (this.props.index !== undefined) {
@@ -43,7 +44,7 @@ class Problem extends Component<any, any> {
                             {
                                 [''].map(() => {
                                     if (this.props.score !== undefined) {
-                                        return <>（{this.props.score}分）</>
+                                        return <>（{this.props.score}{this.props.t(this.props.score == 1 ? "point" : "points")}）</>
                                     }
                                 })
                             }
@@ -91,15 +92,6 @@ class Problem extends Component<any, any> {
     }
 }
 
-interface IProblemProp {
-    proType: ProType
-    markdown?: string
-    style?: any
-    score?: number
-    index?: number
-    flag?: boolean
-    isFlag?: boolean
-}
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
@@ -127,4 +119,4 @@ const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Problem)
+)(withTranslation()(Problem))
