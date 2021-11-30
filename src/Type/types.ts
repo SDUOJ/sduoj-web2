@@ -170,9 +170,7 @@ export type resetPassWord = {
 }
 
 
-export type examID = {
-    eid: number
-}
+export type examID = string
 
 
 export type ProblemID = {
@@ -180,3 +178,7 @@ export type ProblemID = {
 }
 
 
+export type thirdPartyLogin = {
+    thirdParty: string
+    ticket: string
+}

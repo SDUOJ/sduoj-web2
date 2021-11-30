@@ -1,5 +1,4 @@
 import React, {Component, Dispatch} from 'react';
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {WithTranslation, withTranslation} from "react-i18next";
@@ -34,10 +33,7 @@ class CopyableCode extends Component<ICopyableCode & WithTranslation, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
-    const content = (NowPro.content as ProgramContent)
-    return {}
+    return{}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

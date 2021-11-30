@@ -1,5 +1,4 @@
 import React, {Component, Dispatch} from 'react';
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ProgramContent, TestCase} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
@@ -7,6 +6,7 @@ import {Col, Row, Space} from "antd";
 import Paragraph from "antd/lib/typography/Paragraph";
 import CopyableCode from "../submission/CopyableCode";
 import Title from "antd/lib/typography/Title";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 class SampleTestCase extends Component<any, any> {
@@ -14,10 +14,8 @@ class SampleTestCase extends Component<any, any> {
     render() {
         return (
             <>
-                <Title level={3}> {this.props.t("SampleTestCase")} </Title>
                 {
                     this.props.testCase.map((value: TestCase, index: number) => {
-                        console.log(value)
                         return (
                             <>
                                 <Title level={4}> {this.props.t("Sample") + " " + (index + 1)} </Title>

@@ -28,10 +28,10 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             />)
 
         const roles = this.props.roles;
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(<Button key="btn-1">{this.props.t("addUser")}</Button>)
         }
-        if (roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("superadmin")) {
             this.extra.push(
                 <DeleteTemplate
                     key="btn-2"
@@ -42,7 +42,7 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
                     {this.props.t("delete")}
                 </DeleteTemplate>)
         }
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(
                 <Button key="btn-3"> {this.props.t("importUser")}</Button>,
                 <Button key="btn-4"> {this.props.t("exportUser")}</Button>

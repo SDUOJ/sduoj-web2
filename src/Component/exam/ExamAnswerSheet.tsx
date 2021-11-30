@@ -1,13 +1,14 @@
 import React, {Component, Dispatch} from "react";
-import {Card, Col, Row, Skeleton, Space} from "antd";
+import {Card, Skeleton, Space} from "antd";
 import Meta from "antd/lib/card/Meta";
 import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
-import {ExamState} from "../../Redux/Reducer/exam";
-import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
-import {ProNameMap} from "../../Type/IProblem";
 import {withTranslation} from "react-i18next";
+import {ExamState} from "../../Type/IExam";
+import {examID} from "../../Type/types";
+import {withRouter} from "react-router";
+import {getExamProblemListTodo} from "../../Redux/Action/exam";
 
 
 class ExamAnswerSheet extends Component<any, any> {
@@ -16,9 +17,17 @@ class ExamAnswerSheet extends Component<any, any> {
         super(props, context);
     }
 
+    componentDidMount() {
+        if (this.props.examId == undefined) {
+            this.props.setExamID(this.props.match.params.eid)
+        }
+    }
+
     render() {
         let ProList: { "title": string, "proList": number[] }[] = []
+
         if (!this.props.Loading) {
+            // 如果题目列表已经加载完成，构建题目列表
             ProList = [
                 {"title": this.props.t(this.props.ProInfo[0].type), "proList": [this.props.ProInfo[0].index]}
             ]
@@ -33,7 +42,12 @@ class ExamAnswerSheet extends Component<any, any> {
                 }
             }
         } else {
-            this.props.GetProList()
+            // 考试信息未导入成功
+            if (this.props.ExamID == undefined) {
+                console.log(this.props.location.pathname)
+            } else {
+                this.props.GetProList(this.props.ExamID)
+            }
         }
         return (
             <div className={"ExamAnswerSheet"}>
@@ -44,9 +58,12 @@ class ExamAnswerSheet extends Component<any, any> {
                               <>
                                   <div style={{margin: "0 auto", textAlign: "center"}}>
                                       <Space>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["d"]} exp={this.props.t("Unanswered")}/>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["f"]} exp={this.props.t("Answered")}/>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["c", "d"]} exp={this.props.t("Marked")}/>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["d"]}
+                                                  exp={this.props.t("Unanswered")}/>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["f"]}
+                                                  exp={this.props.t("Answered")}/>
+                                          <ProTag ProIndex={0} ProURL={""} TagState={["c", "d"]}
+                                                  exp={this.props.t("Marked")}/>
                                       </Space>
                                   </div>
 
@@ -74,21 +91,23 @@ const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
     return {
         Loading: !State.ProListLoad,
-        ProInfo: State.proInfo
+        ProInfo: State.proInfo,
+        examID: State.examId
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     JumpToPro: (ProIndex: number) => dispatch({
         type: "updateTop",
         topIndex: ProIndex
     }),
-    GetProList: () => dispatch({
-        type: "GetProList"
-    })
+    GetProList: (eid: examID) => dispatch(getExamProblemListTodo())
 })
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(ExamAnswerSheet))
+)(
+    withTranslation()(
+        withRouter(ExamAnswerSheet)
+    ))

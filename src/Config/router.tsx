@@ -1,15 +1,74 @@
 import {lazy} from "react";
 import {AppstoreOutlined, FileOutlined, FolderOutlined, UsergroupAddOutlined, UserOutlined} from "@ant-design/icons"
 
-interface IRouter {
+
+interface IBaseRouter {
     id: number
     path: string
-    title_i18n: string
     exact?: boolean
     component: any
-    icon: any
+}
+
+interface IRouter extends IBaseRouter {
+    title_i18n: string
+    exact?: boolean
+    icon?: any
     children?: IRouter[]
 }
+
+export const routerLayout: IBaseRouter[] = [
+    {
+        id: 0,
+        path: "/manage",
+        exact: false,
+        component: lazy(() => import('../Component/layout/MLayout'))
+    },
+    {
+        id: 2,
+        path: "/exam",
+        exact: false,
+        component: lazy(() => import('../Component/layout/ELayout'))
+    },
+    {
+        id: 3,
+        path: "/thirdPartyLogin",
+        exact: false,
+        component: lazy(() => import('../Pages/thirdPartyLogin'))
+    },
+    {
+        id: 1,
+        path: "/",
+        exact: true,
+        component: lazy(() => import('../Component/layout/MLayout'))
+    },
+]
+
+export const routerE: IBaseRouter[] = [
+    {
+        id: 1,
+        path: "/exam/wait/:eid",
+        exact: true,
+        component: lazy(() => import('../Pages/EWait'))
+    },
+    {
+        id: 2,
+        path: "/exam/running/:eid",
+        exact: true,
+        component: lazy(() => import('../Pages/EWait'))
+    },
+    {
+        id: 3,
+        path: "/exam/list",
+        exact: true,
+        component: lazy(() => import('../Pages/EWait'))
+    },
+    {
+        id: 4,
+        path: "/exam/finish",
+        exact: true,
+        component: lazy(() => import('../Pages/EWait'))
+    }
+]
 
 
 export const routerM: IRouter[] = [

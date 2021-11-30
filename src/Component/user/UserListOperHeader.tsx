@@ -31,17 +31,17 @@ class UserListOperHeader extends Component<IUserPropRoles & RouteComponentProps,
             />)
 
         const roles = this.props.roles;
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(
                 <Button key="btn-1">{this.props.t("addUser")}</Button>
             )
         }
-        if (roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("superadmin")) {
             this.extra.push(
                 <BatchOperationUser key="btn-2" callback={this.props.obj.deleteUser}
                                     btSize={undefined} ids={this.props.data} type={"delete"}/>)
         }
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(
                 <Button key="btn-3"> {this.props.t("import")}</Button>,
                 <BatchOperationUser callback={undefined}

@@ -209,7 +209,7 @@ class GroupList extends Component<IUserPropRoles & RouteComponentProps, IGroupLi
 
             ]
         };
-        if (!this.props.roles.includes(Role.SuperAdmin)) {
+        if (!this.props.roles.includes("superadmin")) {
             rowSelection = undefined
         }
 
@@ -254,7 +254,7 @@ class GroupList extends Component<IUserPropRoles & RouteComponentProps, IGroupLi
                                 <Button size={"small"} type='primary'>编辑</Button>
                                 {
                                     function(roles: Role[], config) {
-                                        if (roles.includes(Role.SuperAdmin))
+                                        if (roles.includes("superadmin"))
                                             return <DeleteGroup btSize={"small"} callback={config} ids={[group.id]}/>
                                         return <></>
                                     }(this.props.roles, this.deleteGroup)

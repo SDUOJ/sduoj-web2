@@ -5,10 +5,12 @@ import axios, {
 import {
     Get,
     Post,
-    GetError
+    GetError, thirdPartyLogin
 } from '../../Type/types'
 import apiAddress from "./apiAddress";
 import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
+import {message} from "antd";
+import {store} from "../../Redux/Store";
 
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api'
@@ -17,6 +19,7 @@ const service = axios.create({
     baseURL: baseUrl,
     timeout: 1000,
 })
+service.defaults.withCredentials = true
 
 const get : Get |  GetError = async (url: string, params?: object, config?:AxiosRequestConfig) => {
     console.log(service.defaults.baseURL)
@@ -27,24 +30,16 @@ const get : Get |  GetError = async (url: string, params?: object, config?:Axios
         switch (response.data.code) {
             case 0:
                 return response.data.data
-            case 429:
-                //        TODO
-                break;
             default:
-                //        TODO
-                break;
+                message.error(response.data.message);
+                return null
         }
-
-        //    TODO: Update Time
     } catch (e:any) {
         switch (e.code) {
-            case 429:
-                //        TODO
-                break;
             default:
-            //        TODO
+                console.log(e);
+                return null
         }
-
         // TODO: Update Time
     }
 }
@@ -57,25 +52,16 @@ const post : Post | GetError = async (url: string, data: object, config?:AxiosRe
         switch (response.data.code) {
             case 0:
                 return response.data.data
-            case 429:
-                //        TODO
-                break;
             default:
-                //        TODO
-                break;
+                message.error(response.data.message);
+                return null
         }
-
-        //    TODO: Update Time
     } catch (e:any) {
         switch (e.data.code) {
-            case 429:
-                //        TODO
-                break;
             default:
-            //        TODO
+                console.log(e);
+                return null
         }
-
-        // TODO: Update Time
     }
 }
 
@@ -107,9 +93,15 @@ export default {
         return request.post('/user/updateProfile', data)
     },
     async sendVerificationEmail(data: verificationEmail) {
-        return request.post('user/sendVerificationEmail', data)
+        return request.post('/user/sendVerificationEmail', data)
     },
     async resetPassword(data: resetPassWord) {
-        return request.post('user/eressetPassword', data)
+        return request.post('/user/resetPassword', data)
+    },
+    async thirdPartyLogin(data: thirdPartyLogin){
+        return request.get('/user/thirdPartyLogin', data)
+    },
+    async getProfile(){
+        return request.get("/user/getProfile")
     }
 }

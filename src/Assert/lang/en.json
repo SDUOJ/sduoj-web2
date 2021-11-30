@@ -104,6 +104,7 @@
   "Unanswered": "Unanswered",
   "Answered": "Answered",
   "Marked": "Marked",
+  "Mark": "Mark",
   "AnswerSheet": "Answer Sheet",
   "Program": "Programing Problem",
   "FillInTheBlank": "Fill In The Blank",
@@ -120,5 +121,15 @@
   "Input": "Input",
   "Output": "Output",
   "Copy": "Copy",
-  "Copied": "Copied"
+  "Copied": "Copied",
+  "Description": "Description",
+  "UploadFile": "Upload File",
+  "Code": "Code",
+  "Logout": "Logout",
+  "ReturnNow": "Return Now",
+  "PleaseLogin": "Please Login",
+  "SDUAuth": "SDU Authentication Login",
+  "ExamDescription": "Exam Description",
+  "CandidateInformation": "Candidate Information",
+  "StartAnswering": "Start Answering"
 }

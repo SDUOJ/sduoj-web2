@@ -11,6 +11,7 @@ export const ProNameMap: { [key: string]: string } = {
     "TrueOrFalse": "判断题"
 }
 
+
 // 单选题状态（选择，排除，初始）
 export type ChoiceState = "used" | "unused" | "init"
 
@@ -21,7 +22,7 @@ export interface TestCase {
 
 export interface JudgeTemplate {
     name: string            // 名称
-    tid: number             // 模板ID
+    tid: string             // 模板ID
 }
 
 export interface Submission {
@@ -67,4 +68,21 @@ export function isChoiceContent(x: any): x is ChoiceContent {
 
 export function isProgramContent(x: any): x is ProgramContent {
     return (<ProgramContent>x).markdown !== undefined
+}
+
+
+export interface ICreateSubmit {
+    code: string
+    contestId?: string
+    examId?: string
+    judgeTemplateId: string
+    problemCode: string
+}
+
+
+
+
+export interface ProblemState {
+    SubmitModalVis: boolean         // 提交对话框是否可见
+    TopSubmissionId?: string
 }

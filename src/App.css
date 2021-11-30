@@ -194,7 +194,7 @@
 }
 
 .Ewait .Ewait-content {
-    max-width: 350px;
+    max-width: 400px;
     margin: 0 auto;
 }
 
@@ -250,6 +250,7 @@
     background: #f7f7f7;
     font-size: 17px;
 }
+
 
 .Choice .ant-card-head {
     border-bottom: 0;
@@ -307,4 +308,38 @@
 .exam-content {
     width: 100%;
     flex: 1 0 auto;
+}
+
+.Problem-Program .ant-card-head{
+    background: white;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.exam-wait-tip .ant-card-meta-description{
+    color: black;
+    text-align: left;
+}
+
+.exam-wait-tip .ant-list-items{
+    font-size: 14px;
+}
+
+.exam-wait-tip .ant-card-meta-title{
+    font-size: 18px;
+}
+
+.exam-wait-card{
+    margin-top: 20px;
+}
+
+.exam-wait-card .ant-card-meta-title{
+    font-size: 18px;
+}
+
+.page-center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -1,6 +1,5 @@
 import React, {Component, Dispatch} from 'react';
 import {connect} from "react-redux";
-import {ExamState} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {Col, Row} from "antd";
 import Problem from "../problem/Problem";

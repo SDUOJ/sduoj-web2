@@ -3,8 +3,6 @@ import {Select, Space} from "antd";
 import lang from "Assert/img/language.png"
 import i18n from "i18next";
 import {language, languageMap} from "../../Config/i18n";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
-import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../../Redux/Action/config";

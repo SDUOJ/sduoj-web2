@@ -2,9 +2,9 @@ import React, {Component, Dispatch} from "react";
 import {Button, Space, Spin} from "antd";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {connect} from "react-redux";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {withTranslation} from "react-i18next";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 class ExamPageCtrl extends Component<any, any> {

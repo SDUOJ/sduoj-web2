@@ -1,17 +1,18 @@
 import React, {Component, Dispatch} from 'react';
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ChoiceContent, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 // @ts-ignore
 import VditorPreview from 'vditor/dist/method.min'
 import Title from "antd/lib/typography/Title";
 import {withTranslation} from "react-i18next";
-import {Button, Space, Badge, DatePicker, Skeleton} from "antd";
+import {Button, Space, Badge, DatePicker, Skeleton, Card} from "antd";
 import {GetMaxScore, getPoint, IsAnswer} from "../../Utils/Problem";
 import SampleTestCase from "./SampleTestCase";
+import {ExamState, SProInfo} from "../../Type/IExam";
+import Submit from "../submission/Submit";
 
 
-class Program extends Component<any> {
+class Program extends Component<any, any> {
 
 
     componentDidMount() {
@@ -19,6 +20,21 @@ class Program extends Component<any> {
             document.getElementById("problem-content"),
             this.props.markdown
         )
+    }
+
+    componentWillUpdate(nextProps: Readonly<any>, nextState: Readonly<any>, nextContext: any) {
+        if (this.props.markdown != nextProps.markdown) {
+            (document.getElementById("problem-content") as HTMLElement).innerHTML = "<Skeleton active/>"
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
+        if (this.props.markdown != prevProps.markdown) {
+            VditorPreview.preview(
+                document.getElementById("problem-content"),
+                this.props.markdown
+            )
+        }
     }
 
 
@@ -40,14 +56,14 @@ class Program extends Component<any> {
                 </div>
                 <div style={{marginTop: "10px"}}>
                     <Space size={20}>
-                        <Button type={"primary"}>提交</Button>
+                        <Submit/>
                         <Button type={"default"}>记录</Button>
                     </Space>
                 </div>
             </div>
         )
         return (
-            <>
+            <div className={"Problem-Program"}>
                 {
                     [''].map(() => {
                         {
@@ -62,12 +78,15 @@ class Program extends Component<any> {
                         }
                     })
                 }
-                <div id={"problem-content"} style={this.props.style}>
-                    <Skeleton active/>
-                </div>
-                <SampleTestCase/>
-
-            </>
+                <Card title={this.props.t("Description")} style={{marginTop:"20px"}}>
+                    <div id={"problem-content"}>
+                        <Skeleton active/>
+                    </div>
+                </Card>
+                <Card title={this.props.t("SampleTestCase")} style={{marginTop:"20px"}}>
+                    <SampleTestCase/>
+                </Card>
+            </div>
         )
     }
 }
@@ -82,13 +101,11 @@ const mapStateToProps = (state: any) => {
         TimeLimit: content.TimeLimit,
         MemoryLimit: content.MemoryLimit,
         Score: GetMaxScore(content),
-        IsAnswer: IsAnswer(content)
+        IsAnswer: IsAnswer(content),
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    updateChoice: () => dispatch({})
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

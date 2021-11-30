@@ -1,13 +1,13 @@
 import React, {Component} from "react";
-import {Button, Popover, Space} from "antd";
+import {Avatar, Button, Divider, Popover, Space} from "antd";
 import {IUserPropAvatar} from "../../Type/Iuser";
 import {BrowserRouter as Router, Link} from "react-router-dom";
-import {RightOutlined} from '@ant-design/icons';
-import {withTranslation} from "react-i18next";
-import UserAvatarBase from "./UserAvatar";
+import {RightOutlined, UserOutlined} from '@ant-design/icons';
+import {WithTranslation, withTranslation} from "react-i18next";
+import md5 from "js-md5";
 
 
-class UserAvatarBack extends Component<IUserPropAvatar, any> {
+class UserAvatarBack extends Component<IUserPropAvatar & WithTranslation, any> {
     render() {
         return (
             <>
@@ -16,16 +16,15 @@ class UserAvatarBack extends Component<IUserPropAvatar, any> {
                         <Button type="text" size={"large"}>
                             <Link to={'/'}>
                                 <Space>
-                                    <UserAvatarBase
-                                        id={this.props.id}
-                                        email={this.props.email}
-                                        username={this.props.username}
-                                        t={this.props.t}
-                                        i18n={this.props.i18n}
-                                        tReady={this.props.tReady}/>
+                                    <div style={{marginTop: -10}}>
+                                        <Avatar icon={<UserOutlined/>}
+                                                src={"https://gravatar.inwao.com/avatar/" + md5(this.props.email)} alt={"头像"}
+                                        />
+                                        <Divider type="vertical"/>
+                                        {this.props.username}
+                                    </div>
                                     <RightOutlined style={{fontSize: 10, marginBottom: 20}}/>
                                 </Space>
-
                             </Link>
                         </Button>
                     </Popover>

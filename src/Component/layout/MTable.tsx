@@ -7,7 +7,7 @@ import {FilterValue, SorterResult, TableCurrentDataSource} from "antd/lib/table/
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import judgeAuth from "../../Utils/judgeAhtu";
-import DeleteTemplate from "./DeleteTemplate";
+import DeleteTemplate from "../common/DeleteTemplate";
 import {connect} from "react-redux";
 
 interface dataType {
@@ -153,7 +153,7 @@ class MTable extends Component<propType, tableState> {
                 },
             ]
         };
-        if (!this.props.roles.includes(Role.SuperAdmin)) {
+        if (!this.props.roles.includes("superadmin")) {
             rowSelection = undefined
         }
 

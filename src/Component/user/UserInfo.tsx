@@ -61,7 +61,7 @@ class UserInfo extends Component<UserInfoProp, UserInfoState> {
 
 
     render() {
-        if (this.props.roles.includes(Role.SuperAdmin)) {
+        if (this.props.roles.includes("superadmin")) {
             typeList['EditUser'] = ["profileEdit", "additional", "password"]
         }
 

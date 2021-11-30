@@ -132,7 +132,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                 username: "yhf2000",
                 nickname: "尹浩飞",
                 sex: (i % 3),
-                roles: [i % 3, (i + 1) % 3],
+                roles: ["admin", 'user'],
                 student_id: "201805130160",
                 sdu_id: "201805130160",
                 email: "735961159@qq.com"
@@ -244,7 +244,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
 
             ]
         };
-        if (!this.props.roles.includes(Role.SuperAdmin) && !this.props.roles.includes(Role.Admin)) {
+        if (!this.props.roles.includes("superadmin") && !this.props.roles.includes("admin")) {
             rowSelection = undefined
         }
 
@@ -291,11 +291,11 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                         render={
                             (roles: Role[]) => (
                                 roles.map((r, i) => {
-                                    if (r === Role.SuperAdmin)
+                                    if (r === "superadmin")
                                         return <Tag key={i.toString()} color="error">{this.props.t("superadmin")}</Tag>
-                                    if (r === Role.Admin)
+                                    if (r === "admin")
                                         return <Tag key={i.toString()} color="warning">{this.props.t("admin")}</Tag>
-                                    if (r === Role.User)
+                                    if (r === "user")
                                         return <Tag key={i.toString()} color="default">{this.props.t("user")}</Tag>
                                     return <></>
                                 })
@@ -311,7 +311,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
                                           user={user} callback={this.editUser}/>
                                 {
                                     [''].map(() => {
-                                        if (this.props.roles.includes(Role.SuperAdmin))
+                                        if (this.props.roles.includes("superadmin"))
                                             return <BatchOperationUser key={"del" + user.id.toString()} btSize={"small"}
                                                                        callback={this.deleteUser} type={"delete"}
                                                                        ids={[user.id]}/>

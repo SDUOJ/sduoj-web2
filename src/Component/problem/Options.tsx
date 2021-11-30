@@ -2,10 +2,10 @@ import React, {Component, Dispatch} from 'react';
 import {Card, Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, ChoiceState} from "../../Type/IProblem";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 interface SOptions {

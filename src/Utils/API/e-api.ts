@@ -1,13 +1,16 @@
 import axios, {AxiosResponse, AxiosRequestConfig} from "axios";
-import {Get, Post, GetError, ProblemID} from '../../Type/types'
+import {Get, Post, GetError, ProblemID, examID} from '../../Type/types'
 import apiAddress from "./apiAddress";
+import {ICreateSubmit} from "../../Type/IProblem";
+import {store} from "../../Redux/Store";
 
 const baseUrl = apiAddress().EXAM_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 10000,
+    timeout: 1000,
 })
+service.defaults.withCredentials = true
 
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     console.log(service.defaults.baseURL)
@@ -15,7 +18,6 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         const response = await service.get(url, {
             params, ...config
         });
-
         switch (response.data.code) {
             case 0:
                 return response.data.data
@@ -27,19 +29,16 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
                 break;
         }
 
-        //    TODO: Update Time
     } catch (e: any) {
-        console.log("999")
         console.log(e)
         switch (e.code) {
             case 429:
                 //        TODO
                 break;
             default:
-            //        TODO
+                console.log(e);
+                return null
         }
-
-        // TODO: Update Time
     }
 }
 
@@ -59,17 +58,15 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
                 break;
         }
 
-        //    TODO: Update Time
     } catch (e: any) {
         switch (e.data.code) {
             case 429:
                 //        TODO
                 break;
             default:
-            //        TODO
+                console.log(e);
+                return null
         }
-
-        // TODO: Update Time
     }
 }
 
@@ -81,8 +78,16 @@ const request = {
 export default {
 
     // 获取题目信息
-    async getPro(data: ProblemID) {
-        return request.get('/');
+    async getExamProblemList(data: examID) {
+        return request.get("/exam/getExamProblemList/" + data)
+    },
+    // 提交代码
+    async CreateSubmit(data: ICreateSubmit) {
+        return request.post('exam/createSubmission', data)
+    },
+    // 获取考试信息
+    async getExamInfo(data: examID) {
+        return request.get('/exam/getExamInfo/' + data);
     },
 
 }

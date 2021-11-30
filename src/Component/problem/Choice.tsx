@@ -1,10 +1,10 @@
 import React, {Component, Dispatch} from 'react';
 import {Skeleton} from "antd";
 import Options from "./Options";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent} from "../../Type/IProblem";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 class Choice extends Component<any, any> {

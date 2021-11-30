@@ -21,6 +21,7 @@ import {
     userListQuery
 } from '../../Type/types'
 import apiAddress from "./apiAddress";
+import {store} from "../../Redux/Store";
 
 const baseUrl = apiAddress().MANAGE_SERVER + '/api'
 
@@ -28,8 +29,9 @@ const service = axios.create({
     baseURL: baseUrl,
     timeout: 1000,
 })
+service.defaults.withCredentials = true
 
-const get : Get | GetError = async (url: string, params?: object, config?:AxiosRequestConfig) => {
+const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.get(url, {
             params, ...config
@@ -38,28 +40,25 @@ const get : Get | GetError = async (url: string, params?: object, config?:AxiosR
             case 0:
                 return response.data.data
             case 429:
-        //        TODO
+                //        TODO
                 break;
             default:
-        //        TODO
+                //        TODO
                 break;
         }
-
-    //    TODO: Update Time
-    } catch (e:any) {
+    } catch (e: any) {
         switch (e.data.code) {
             case 429:
-        //        TODO
+                //        TODO
                 break;
             default:
-        //        TODO
+                console.log(e);
+                return null
         }
-
-        // TODO: Update Time
     }
 }
 
-const post : Post | GetError = async (url: string, data: object, config?:AxiosRequestConfig) => {
+const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.post(url, data, {
             ...config
@@ -74,18 +73,15 @@ const post : Post | GetError = async (url: string, data: object, config?:AxiosRe
                 //        TODO
                 break;
         }
-
-        //    TODO: Update Time
-    } catch (e:any) {
+    } catch (e: any) {
         switch (e.data.code) {
             case 429:
                 //        TODO
                 break;
             default:
-            //        TODO
+                console.log(e);
+                return null
         }
-
-        // TODO: Update Time
     }
 }
 
@@ -122,7 +118,7 @@ export default {
         return request.post('/manage/user/update', data);
     },
     // 批量添加用户
-    addUsers: async function (data: (studentBasic & {password: string})[]) {
+    addUsers: async function (data: (studentBasic & { password: string })[]) {
         return request.post('/manage/user/addUsers', data);
     },
     // 删除用户
@@ -135,7 +131,7 @@ export default {
         return request.get('/manage/problem/list', params);
     },
     // 查询题目
-    getProblem: async function (params: {problemCode: string}) {
+    getProblem: async function (params: { problemCode: string }) {
         return request.get('/manage/problem/query', params);
     },
     // 更新题目信息
@@ -148,11 +144,11 @@ export default {
     },
     // ---------------------- 题面相关 ----------------------
     // 查询题目的描述列表
-    getProblemDescriptionList: async function (params: {problemCode: string}) {
+    getProblemDescriptionList: async function (params: { problemCode: string }) {
         return request.get('/manage/problem/queryDescriptionList', params);
     },
     // 查询题目描述
-    getProblemDescription: async function (params: {descriptionId: number}) {
+    getProblemDescription: async function (params: { descriptionId: number }) {
         return request.get('/manage/problem/queryDescription', params);
     },
     // 更新题面描述
@@ -163,7 +159,7 @@ export default {
     createDescription: async function (data: problemDescription) {
         return request.post('/manage/problem/createDescription', data);
     },
-    deleteDescription: async function(params: {id: number}) {
+    deleteDescription: async function (params: { id: number }) {
         return request.get('/manage/problem/deleteDescription', params);
     },
     // ---------------------- 测试点相关 ----------------------
@@ -177,11 +173,11 @@ export default {
     },
     // 获取题目的checkpoint列表
     getCheckpointList: async function (problemCode: string) {
-        return request.get('/manage/checkpoint/list', { problemCode });
+        return request.get('/manage/checkpoint/list', {problemCode});
     },
     // 获取checkpoint详情
     getCheckpointPreview: async function (checkpointId: number) {
-        return request.get('/manage/checkpoint/query', { checkpointId });
+        return request.get('/manage/checkpoint/query', {checkpointId});
     },
     // 全量更新题目的checkpoint
     updateProblemCheckpoints: async function (data: modifyProblemsCheckPoint) {
@@ -193,7 +189,7 @@ export default {
         return request.get('/manage/contest/page', params);
     },
     // 获取单个比赛详情
-    getContest: async function (params: {contestId: number}) {
+    getContest: async function (params: { contestId: number }) {
         return request.get('/manage/contest/query', params);
     },
     // TODO
@@ -209,9 +205,9 @@ export default {
     // 综合报表
     exportComprehensive: async function (data: {}) {
         return new Promise((resolve, reject) => {
-            request.post<any>('/manage/contest/exportComprehensiveReport', data, { responseType: 'blob' }).then(ret => {
+            request.post<any>('/manage/contest/exportComprehensiveReport', data, {responseType: 'blob'}).then(ret => {
                 resolve(ret);
-                const blob = new Blob([ret.data], { type: ret.headers['content-type'] });
+                const blob = new Blob([ret.data], {type: ret.headers['content-type']});
                 const elink = document.createElement('a');
                 const filename = new Date().getTime().toString();
                 if ('download' in elink) {
@@ -227,47 +223,47 @@ export default {
     },
     // ----------------- 评测模板相关 -------------------
     // 查询单个评测模板
-    getOneTemplate: async function(id: number) {
-        return request.get('/manage/judgetemplate/query', { id });
+    getOneTemplate: async function (id: number) {
+        return request.get('/manage/judgetemplate/query', {id});
     },
     // 查询多页评测模板
-    pageTemplateList: async function(params: groupListQuery) {
+    pageTemplateList: async function (params: groupListQuery) {
         return request.get('/manage/judgetemplate/page', params);
     },
-    getJudgeTemplateList: async function(params: {type: number, problemCode: string}) {
+    getJudgeTemplateList: async function (params: { type: number, problemCode: string }) {
         return request.get('/manage/judgetemplate/list', params);
     },
     // 创建评测模板
-    createTemplate: async function(data: judgeTemplate) {
+    createTemplate: async function (data: judgeTemplate) {
         return request.post('/manage/judgetemplate/create', data);
     },
     // 更新评测模板
-    updateTemplate: async function(data: judgeTemplate) {
+    updateTemplate: async function (data: judgeTemplate) {
         return request.post('/manage/judgetemplate/update', data);
     },
     // 评测模板title右模糊匹配
-    queryTemplateTitle: async function(title: string) {
-        return request.get('/manage/judgetemplate/listByTitle', { title });
+    queryTemplateTitle: async function (title: string) {
+        return request.get('/manage/judgetemplate/listByTitle', {title});
     },
     // ----------------- 评测模板相关 -------------------
     // 单文件上传
-    singleUpload: async function(data: {file: any}) {
+    singleUpload: async function (data: { file: any }) {
         return request.post('/filesys/upload', data);
     },
     // 多文件上传
-    multiUpload: async function(data: {files: any}) {
+    multiUpload: async function (data: { files: any }) {
         return request.post('/filesys/uploadFiles', data);
     },
     // 用 md5 查文件
-    checkMD5: async function(md5: string) {
-        return request.get('/filesys/queryByMd5', { md5 });
+    checkMD5: async function (md5: string) {
+        return request.get('/filesys/queryByMd5', {md5});
     },
     // 以zip包下载多个文件
-    zipDownload: async function(data: {}) {
+    zipDownload: async function (data: {}) {
         return new Promise((resolve, reject) => {
-            request.post<any>('filesys/zipDownload', data, { responseType: 'blob' }).then(ret => {
+            request.post<any>('filesys/zipDownload', data, {responseType: 'blob'}).then(ret => {
                 resolve(ret);
-                const blob = new Blob([ret.data], { type: ret.headers['content-type'] });
+                const blob = new Blob([ret.data], {type: ret.headers['content-type']});
                 const elink = document.createElement('a');
                 const filename = new Date().getTime().toString();
                 if ('download' in elink) {
@@ -288,7 +284,7 @@ export default {
     updateGroup: async function (data: groupInfo) {
         return request.post('/manage/group/update', data);
     },
-    getGroupDetail: async function (params: {groupId: number}) {
+    getGroupDetail: async function (params: { groupId: number }) {
         return request.get('/manage/group/query', params);
     },
     getGroupList: async function (params: groupInfo) {
@@ -297,13 +293,13 @@ export default {
     updateUserStatus: async function (data: updateUserStates) {
         return request.post('/manage/group/updateUserStatus', data);
     },
-    addUsersToGroup: async function (data: {groupId: number, usernames: string[]}) {
+    addUsersToGroup: async function (data: { groupId: number, usernames: string[] }) {
         return request.post('/manage/group/addUser', data);
     },
-    deleteGroup: async function (params: {groupId: number}) {
+    deleteGroup: async function (params: { groupId: number }) {
         return request.get('/manage/group/delete', params);
     },
-    queryGroupTitle: async function (params: {title: string}) {
+    queryGroupTitle: async function (params: { title: string }) {
         return request.get('/manage/group/listByTitle', params);
     }
 }

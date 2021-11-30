@@ -4,7 +4,7 @@ import UserList from "../Component/user/UserList";
 import UserListOperHeader from "../Component/user/UserListOperHeader";
 import {IUserPropRoles, Role, Sex} from "../Type/Iuser";
 import {RouteComponentProps} from "react-router-dom";
-import MTable, {colType, extraFunction} from "../Component/common/MTable";
+import MTable, {colType, extraFunction} from "../Component/layout/MTable";
 import {Tooltip} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 
@@ -127,12 +127,12 @@ class MUser extends Component<IUserPropRoles & RouteComponentProps, MUserState> 
         const func: extraFunction[] = [
             {
                 name: "Add",
-                showRoles: [Role.Admin, Role.SuperAdmin],
+                showRoles: ["admin", "superadmin"],
                 extraFunc: (id: number) => alert(111)
             },
             {
                 name: "Delete",
-                showRoles: [Role.SuperAdmin],
+                showRoles: ["superadmin"],
                 extraFunc: (id: number) => alert(222)
             }
         ]
@@ -140,7 +140,7 @@ class MUser extends Component<IUserPropRoles & RouteComponentProps, MUserState> 
         return (
             <>
                 <div style={{marginTop: -20, overflow: "hidden"}}>
-                    <MTable id={1} roles={[Role.SuperAdmin]} colData={colData} func={func}/>
+                    <MTable id={1} roles={["superadmin"]} colData={colData} func={func}/>
 
                     {/*<UserListOperHeader id={this.props.id} roles={this.props.roles} data={this.state.ids} obj={this.state.UserListObj}/>*/}
                     {/*<UserList id={this.props.id} roles={this.props.roles} obj={this.Ref}/>*/}

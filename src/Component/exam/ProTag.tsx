@@ -1,12 +1,12 @@
 import React, {Component, Dispatch} from "react";
 import {Badge, Button, Col, Popover, Progress, Row, Space, Tag} from "antd";
 import {ClockCircleOutlined} from "@ant-design/icons";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, isProgramContent} from "../../Type/IProblem";
 import {withTranslation} from "react-i18next";
 import {GetMaxScore, getPoint, IsAnswer} from "../../Utils/Problem";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 class ProTag extends Component<any, any> {

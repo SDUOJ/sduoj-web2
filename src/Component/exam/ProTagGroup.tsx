@@ -3,9 +3,6 @@ import React, {Component, Dispatch} from "react";
 import Meta from "antd/lib/card/Meta";
 import ProTag from "./ProTag";
 import {Col, Row} from "antd";
-import {ExamState} from "../../Redux/Reducer/exam";
-import {ExamAction} from "../../Redux/Action/exam";
-import {connect} from "react-redux";
 
 interface IProTagGroup {
     title: string

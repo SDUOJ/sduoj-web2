@@ -16,10 +16,10 @@ class GroupListOperHead extends Component<IUserPropRoles & RouteComponentProps> 
     render() {
         this.extra = [];
         const roles = this.props.roles;
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(<Button key="1">{this.props.t("addUser")}</Button>)
         }
-        if (roles.includes(Role.SuperAdmin) && this.props.obj !== null) {
+        if (roles.includes("superadmin") && this.props.obj !== null) {
             this.extra.push(
                 // <DeleteUser
                 //     key="2"
@@ -31,7 +31,7 @@ class GroupListOperHead extends Component<IUserPropRoles & RouteComponentProps> 
                 // </DeleteUser>
             )
         }
-        if (roles.includes(Role.Admin) || roles.includes(Role.SuperAdmin)) {
+        if (roles.includes("admin") || roles.includes("superadmin")) {
             this.extra.push(
                 <Button key="3"> {this.props.t("importUser")}</Button>,
                 <Button key="4"> {this.props.t("exportUser")}</Button>)

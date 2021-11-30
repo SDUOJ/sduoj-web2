@@ -2,10 +2,6 @@ import React, {Component, Dispatch} from "react";
 import Countdown from "antd/lib/statistic/Countdown";
 import {Card, Space} from "antd";
 import {ClockCircleOutlined} from "@ant-design/icons"
-import {ExamState} from "../../Redux/Reducer/exam";
-import {ExamAction} from "../../Redux/Action/exam";
-import {connect} from "react-redux";
-import {ConfigState} from "../../Type/IConfig";
 import {WithTranslation, withTranslation} from "react-i18next";
 
 interface ITimer {

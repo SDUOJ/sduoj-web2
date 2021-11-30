@@ -27,8 +27,6 @@ export function IsAnswer(obj: ProContent): boolean {
 }
 
 export const ProgramTest =
-    "### 题目描述\n" +
-    "\n" +
     "给定一个长度为 $n$ 的序列 $A$，其元素记为 $A_1, A_2, \\dots, A_n$。\n" +
     "\n" +
     "现在你可以进行合并操作，每次选择序列中两个**当前相邻**的元素 $A_i,A_{j}\\ (i<j)$ ，将其合并为 $A_i^{'}$ （将  $A_j$ 合并到 $A_i$），可以令 $A_i^{'}=A_i+A_j$ 或 $A_i^{'}=A_i-A_j$。显然，在 $n-1$ 次操作后，序列中将只剩下一个元素。\n" +

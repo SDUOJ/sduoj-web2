@@ -7,9 +7,9 @@ import Choice from "./Choice";
 import {ProNameMap, ProType} from "../../Type/IProblem";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
-import {ExamState, SProInfo} from "../../Redux/Reducer/exam";
 import {withTranslation} from "react-i18next";
 import Program from "./Program";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 class Problem extends Component<any, any> {
 
@@ -54,7 +54,7 @@ class Problem extends Component<any, any> {
                                             danger={this.props.isFlag}
                                             onClick={this.props.flipFlag}
                                     >
-                                        标记
+                                        {this.props.t("Mark")}
                                     </Button>
                                 )
                             }

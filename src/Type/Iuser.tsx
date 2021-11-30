@@ -6,11 +6,13 @@ export enum Sex {
     Female = 2
 }
 
-export enum Role {
-    SuperAdmin = 0,
-    Admin = 1,
-    User = 2
-}
+// export enum Role {
+//     SuperAdmin = 0,
+//     Admin = 1,
+//     User = 2
+// }
+
+export type Role = "superadmin" | "admin" | "user"
 
 export enum sex {
     boy = 0,
@@ -44,12 +46,50 @@ export interface IUserPropRoles extends WithTranslation {
     data?: any
 }
 
-export interface IUserPropAvatar extends WithTranslation {
+export interface IUserPropAvatar {
     id: number
     email: string
     username: string
 }
 
 
+export interface UserInfo{
+    userId: string
+    username: string
+    nickname: string
+    realName?: string
+    email: string
+    studentId: string
+    roles: Role[]
+    sduId: string
+    groups?: string[]
+    ipv4?: string
+    userAgent?: string
+}
 
+export interface UserState{
+    isLogin: boolean
+    userInfo?: UserInfo
+}
+
+export interface thirdPartyLoginDataSDUCAS{
+    ticket: string
+}
+
+export type thirdPartyLoginType = "SDUCAS" | "QQ" | "WeChat"
+export type thirdPartyLoginData = thirdPartyLoginDataSDUCAS
+
+
+export interface thirdPartyLoginAction{
+    type: thirdPartyLoginType
+    data: thirdPartyLoginData
+}
+
+export interface thirdPartyLoginResponse{
+    sduId: string
+    sduRealName: string
+    thirdParty: string
+    token: string
+    user: any
+}
 
