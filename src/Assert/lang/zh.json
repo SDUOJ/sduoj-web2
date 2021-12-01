@@ -131,5 +131,10 @@
   "SDUAuth": "SDU 统一身份认证登录",
   "ExamDescription": "考试说明",
   "CandidateInformation": "考生信息",
-  "StartAnswering": "开始答题"
+  "StartAnswering": "开始答题",
+  "exam": "考试",
+  "objective": "客观题",
+  "sort": "排序",
+  "choice": "选项",
+  "content": "内容"
 }

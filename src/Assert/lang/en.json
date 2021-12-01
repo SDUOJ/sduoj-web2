@@ -1,7 +1,7 @@
 {
   "home": "Home",
   "welcome": "Welcome To Home",
-  "delete": "Del",
+  "delete": "Delete",
   "deleteSuccess": "Delete success!",
   "deleteFailed": "Delete Failed!",
   "exportSuccess": "Export success!",
@@ -131,5 +131,11 @@
   "SDUAuth": "SDU Authentication Login",
   "ExamDescription": "Exam Description",
   "CandidateInformation": "Candidate Information",
-  "StartAnswering": "Start Answering"
+  "StartAnswering": "Start Answering",
+  "exam": "Exam",
+  "objective": "Objective Problem",
+  "sort": "Sort",
+  "choice": "Choice",
+  "content": "Content"
+
 }

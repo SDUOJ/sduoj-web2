@@ -21,23 +21,26 @@ class MMenu extends Component<IUserPropRoles & RouteComponentProps, IMenuState> 
         if (this.props.location.pathname === '/' && routerM.length !== 0) {
             this.props.history.replace(routerM[0].path);
         }
+        console.log(this.props.location.pathname, routerM, this.state.selectedKey)
         for (let i = 0; i < routerM.length; i++) {
             if (this.props.location.pathname === routerM[i].path) {
-                if (this.state.selectedKey !== i.toString()) {
+                if (this.state.selectedKey !== routerM[i].id.toString()) {
                     this.setState({
-                        selectedKey: i.toString()
+                        selectedKey: routerM[i].id.toString()
                     })
                 }
             }
         }
+        console.log(this.props.location.pathname, routerM, this.state.selectedKey)
+
     }
 
     componentDidUpdate(prevProps: Readonly<IUserPropRoles & RouteComponentProps>, prevState: Readonly<IMenuState>, snapshot?: any) {
         for (let i = 0; i < routerM.length; i++) {
             if (this.props.location.pathname === routerM[i].path) {
-                if (this.state.selectedKey !== i.toString()) {
+                if (this.state.selectedKey !== routerM[i].id.toString()) {
                     this.setState({
-                        selectedKey: i.toString()
+                        selectedKey: routerM[i].id.toString()
                     })
                 }
             }
