@@ -136,6 +136,11 @@
   "objective": "Objective Problem",
   "sort": "Sort",
   "choice": "Choice",
-  "content": "Content"
+  "content": "Content",
+  "answer": "Answer",
+  "NewOption": "New Option",
+  "PleaseChooseTheAnswer": "Please choose the answer",
+  "ProblemContent": "Problem Content",
+  "Reset": "Reset"
 
 }

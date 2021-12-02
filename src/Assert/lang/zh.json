@@ -136,5 +136,10 @@
   "objective": "客观题",
   "sort": "排序",
   "choice": "选项",
-  "content": "内容"
+  "content": "内容",
+  "answer": "答案",
+  "NewOption": "新增选项",
+  "PleaseChooseTheAnswer": "请选择答案",
+  "ProblemContent": "题干",
+  "Reset": "重置"
 }

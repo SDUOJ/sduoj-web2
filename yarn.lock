@@ -69,6 +69,18 @@
     omit.js "^2.0.2"
     rc-util "^5.4.0"
 
+"@ant-design/pro-card@^1.18.6":
+  version "1.18.6"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-card/-/pro-card-1.18.6.tgz#5294b942cf6d161055c314139681909ab78e0567"
+  integrity sha512-UDpnByDGxlQpCGmtN4aYl8h3X59D12YuAZwIqnRiEmbvtZlsDk77Nm5uilKFhdqOYmzS45rA88Flsg4nXw3XfA==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-utils" "1.28.5"
+    "@babel/runtime" "^7.16.3"
+    classnames "^2.2.6"
+    omit.js "^2.0.2"
+    rc-util "^5.4.0"
+
 "@ant-design/pro-field@1.22.7":
   version "1.22.7"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.22.7.tgz#184483bfd66da0806b30da19b610ce9d55411811"
