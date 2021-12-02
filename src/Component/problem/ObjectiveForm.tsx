@@ -19,6 +19,15 @@ type DataSourceType = {
     content?: string
 };
 
+// 新建 与 修改
+export type ObjectiveFormMode = "new" | "modify"
+
+// TODO 1. 在 Reset 的时候，答案的选项应该按照初始化，变为 4 个
+// TODO 2. 排序后，答案会清空，不能按照原来的答案记忆
+// TODO 3. 客观题文本显示暂时不支持数学公式
+
+
+// 新建是默认的选项
 const defaultData: DataSourceType[] = [
     {id: 0, content: "A"},
     {id: 1, content: "B"},
@@ -29,22 +38,22 @@ const defaultData: DataSourceType[] = [
 const defaultAnswer: string[] = []
 
 const ObjectiveForm = (props: any) => {
+    // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
+    // 页面表单的操作引用
     const formRef = useRef<ProFormInstance<any>>();
+
+    // === State ===
+    // 操作是否开启排序模式
     const [sortSwitch, setSortSwitch] = useState<boolean>(false);
+    // 答案多选项构造
     const [answerList, setAnswerList] = useState<string[]>(["A", "B", "C", "D"]);
+    // 编辑区域构造
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() =>
         defaultData.map((item) => item.id),
     );
 
-    const getAscii = (i: number) => {
-        return String.fromCharCode('A'.charCodeAt(0) + i)
-    }
-
-    const asciiIn = (list: string[], i: number) => {
-        return list.indexOf(getAscii(i)) != -1;
-    }
-
+    // === 拖拽排序 ===
     // 排序结束后
     const onSortEnd = ({oldIndex, newIndex}: any) => {
         // 当前排序是有效的
@@ -165,9 +174,9 @@ const ObjectiveForm = (props: any) => {
                     answer: defaultAnswer
                 }}
                 trigger={
-                    <Button type="primary">
+                    <Button type={props.mode == "add" ? "primary" : "link"}>
                         <PlusOutlined/>
-                        新建表单
+                        {props.mode == "add" ? "新建题目" : "修改"}
                     </Button>
                 }
                 submitter={{
