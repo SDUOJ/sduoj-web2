@@ -20,7 +20,7 @@ class MExam extends Component<any, any> {
 
     componentDidMount() {
         if(!this.props.isLogin){
-            sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
+            // sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
             this.props.history.push(getRouterPath(routerC, 1))
             window.location.reload();
         }
@@ -28,7 +28,7 @@ class MExam extends Component<any, any> {
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if(!this.props.isLogin){
-            sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
+            // sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
             this.props.history.push(getRouterPath(routerC, 1))
             window.location.reload();
         }

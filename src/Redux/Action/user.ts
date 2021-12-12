@@ -31,7 +31,7 @@ export function userLoginTodo(data: loginInfo) {
     return (dispatch: Dispatch<any>, getState: any) => {
         CApi.login(data).then((resData) => {
             console.log("userLoginTodo", resData)
-            if(resData !== null){
+            if (resData !== null) {
                 dispatch({type: "setUserInfo", data: resData})
                 dispatch({type: "userLogin"})
             }
@@ -65,8 +65,6 @@ export function thirdPartyLoginTodo(data: thirdPartyLoginAction) {
                             }
                         )
                         dispatch({type: "setUserInfo", data: userInfo})
-                        // 设置统一身份认证的信息
-                        sessionStorage.setItem("SDU-UserInfo", JSON.stringify(userInfo))
                         dispatch({type: "userLogin"})
                     }
                 })

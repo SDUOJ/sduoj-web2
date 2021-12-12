@@ -17,7 +17,7 @@ class MLayout extends Component<any, any> {
             this.props.location.pathname === ''
             || this.props.location.pathname === '/'
         ) && routerC.length !== 0) {
-            sessionStorage.setItem("returnPath", "/") // TODO
+            // sessionStorage.setItem("returnPath", "/") // TODO
             this.props.history.push(routerC[0].path);
         }
     }

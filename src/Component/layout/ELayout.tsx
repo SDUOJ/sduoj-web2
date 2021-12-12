@@ -22,8 +22,6 @@ const {Footer, Content} = Layout;
 class ELayout extends Component<any, any> {
 
     componentDidMount() {
-        /// TODO 路由转换后不自动刷新
-        console.log("11111111111111W")
         if ((
             this.props.location.pathname === '/exam' ||
             this.props.location.pathname === '/exam/'

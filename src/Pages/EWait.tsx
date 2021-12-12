@@ -34,7 +34,7 @@ class EWait extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            sessionStorage.setItem("returnPath", routerE[2].path)
+            // sessionStorage.setItem("returnPath", routerE[2].path)
             this.props.history.push(routerE[0].path)
         }
         this.props.getExamInfo(this.props.match.params.eid)
@@ -42,7 +42,7 @@ class EWait extends Component<any, any> {
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            sessionStorage.setItem("returnPath", routerE[2].path)
+            // sessionStorage.setItem("returnPath", routerE[2].path)
             this.props.history.push(routerE[0].path)
         }
     }
