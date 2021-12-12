@@ -9,4 +9,5 @@ export interface ConfigState {
     lang: Locale
     mode: ModeType
     timestamp: number
+    copyRight: string
 }

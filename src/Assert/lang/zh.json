@@ -141,5 +141,7 @@
   "NewOption": "新增选项",
   "PleaseChooseTheAnswer": "请选择答案",
   "ProblemContent": "题干",
-  "Reset": "重置"
+  "Reset": "重置",
+  "Login": "登录",
+  "SDUCAS": "SDU 统一身份认证"
 }

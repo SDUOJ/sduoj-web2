@@ -22,6 +22,7 @@ import {
 } from '../../Type/types'
 import apiAddress from "./apiAddress";
 import {store} from "../../Redux/Store";
+import {message} from "antd";
 
 const baseUrl = apiAddress().MANAGE_SERVER + '/api'
 
@@ -47,13 +48,15 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
                 break;
         }
     } catch (e: any) {
-        switch (e.data.code) {
-            case 429:
-                //        TODO
-                break;
+        const response = e.response
+        if(response == undefined){
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
     }
 }
@@ -74,13 +77,15 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
                 break;
         }
     } catch (e: any) {
-        switch (e.data.code) {
-            case 429:
-                //        TODO
-                break;
+        const response = e.response
+        if(response == undefined){
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
     }
 }
@@ -301,5 +306,8 @@ export default {
     },
     queryGroupTitle: async function (params: { title: string }) {
         return request.get('/manage/group/listByTitle', params);
+    },
+    getChoiceProblem: async function (params: {problemCode: string}){
+        return request.get("/manage/problem/queryChoiceProblem", params)
     }
 }

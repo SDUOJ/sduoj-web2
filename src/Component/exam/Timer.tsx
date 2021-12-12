@@ -8,6 +8,7 @@ interface ITimer {
     name?: string        // 如：距离考试结束还有
     deadline: number
     inline?: boolean
+    onFinish?:any
 }
 
 class Timer extends Component<ITimer & WithTranslation, any> {
@@ -32,7 +33,9 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                             return (
                                 <Card>
                                     <Countdown title={this.props.name} value={this.props.deadline}
-                                               format="H 时 m 分 s 秒"/>
+                                               format="H 时 m 分 s 秒"
+                                               onFinish={this.props.onFinish}
+                                    />
                                 </Card>
                             )
                         }

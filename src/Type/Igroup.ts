@@ -15,3 +15,8 @@ export interface IGroupPropCbk extends WithTranslation{
     callback: (ids: number[]) => void,
     obj?: any
 }
+
+export interface groupSelection{
+    groupId: string
+    title: string
+}

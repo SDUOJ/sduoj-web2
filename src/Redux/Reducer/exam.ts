@@ -65,21 +65,21 @@ function getProInfo(pid: string): ProContent {
     }
 }
 
-function getContent(proInfo: SProInfo[] | undefined, topIndex: number): ProContent | undefined{
-    if(proInfo == undefined) return undefined
+function getContent(proInfo: SProInfo[] | undefined, topIndex: number): ProContent | undefined {
+    if (proInfo == undefined) return undefined
     return proInfo[topIndex - 1].content
 }
 
 export function getProblemTitle(proInfo: SProInfo[] | undefined, topIndex: number): string | undefined {
     const content = getContent(proInfo, topIndex)
-    if(content == undefined) return undefined
+    if (content == undefined) return undefined
     if (isProgramContent(content)) return content.title
     else return undefined;
 }
 
-export function getJudgeTemplate(proInfo: SProInfo[] | undefined, topIndex: number):  JudgeTemplate[]{
+export function getJudgeTemplate(proInfo: SProInfo[] | undefined, topIndex: number): JudgeTemplate[] {
     const content = getContent(proInfo, topIndex)
-    if(content == undefined) return []
+    if (content == undefined) return []
     if (isProgramContent(content)) return content.JudgeTemplate
     else return [];
 }
@@ -87,12 +87,15 @@ export function getJudgeTemplate(proInfo: SProInfo[] | undefined, topIndex: numb
 const initState: ExamState = {
     ExamInfoLoad: false,
     ProListLoad: false,
-    TopProblemIndex: 0
+    TopProblemIndex: 0,
+    ExamListInfo: [],
+
+
 }
 
 export const ExamReducer = (state: ExamState = initState, action: ExamAction) => {
     // 此处不做深拷贝，redux无法检测到更新
-    let State:ExamState = deepClone(state)
+    let State: ExamState = deepClone(state)
     if (State.ProListLoad) {
         let ProInfo = (State.proInfo as SProInfo[])
         let nowPro = ProInfo[State.TopProblemIndex - 1]
@@ -115,7 +118,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                         nowChoice[index].state = action.ChoiceState
                     }
                 })
-                return State
+                break
 
             // 切换当前题目
             case "updateTop":
@@ -124,15 +127,15 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 if (ProInfo[State.TopProblemIndex - 1].content === undefined) {
                     ProInfo[State.TopProblemIndex - 1].content = getProInfo(ProInfo[State.TopProblemIndex - 1].pid)
                 }
-                return State
+                break
 
             // 切换当前组件标记
             case "flipFlag":
                 nowPro.flag = !nowPro.flag
-                return State
+                break
 
             default:
-                return State
+                break
         }
     } else {
         switch (action.type) {
@@ -142,14 +145,17 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.TopProblemIndex = 1;
                 const ProInfo = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
                 ProInfo.content = getProInfo(ProInfo.pid)
-                return State
+                break
             case "setExamID":
                 State.examId = action.ExamID
-                return State
+                break
             case "setExamInfo":
                 State.ExamInfoLoad = true
                 State.examInfo = action.data
-                return State
+                break
+            case "setExamListInfo":
+                State.ExamListInfo = action.data
+                break
         }
     }
 

@@ -141,6 +141,7 @@
   "NewOption": "New Option",
   "PleaseChooseTheAnswer": "Please choose the answer",
   "ProblemContent": "Problem Content",
-  "Reset": "Reset"
-
+  "Reset": "Reset",
+  "Login": "login",
+  "SDUCAS": "SDU Unified identity authentication"
 }

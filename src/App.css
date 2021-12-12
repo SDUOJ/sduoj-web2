@@ -310,34 +310,34 @@
     flex: 1 0 auto;
 }
 
-.Problem-Program .ant-card-head{
+.Problem-Program .ant-card-head {
     background: white;
     font-weight: bold;
     font-size: 22px;
 }
 
-.exam-wait-tip .ant-card-meta-description{
+.exam-wait-tip .ant-card-meta-description {
     color: black;
     text-align: left;
 }
 
-.exam-wait-tip .ant-list-items{
+.exam-wait-tip .ant-list-items {
     font-size: 14px;
 }
 
-.exam-wait-tip .ant-card-meta-title{
+.exam-wait-tip .ant-card-meta-title {
     font-size: 18px;
 }
 
-.exam-wait-card{
+.exam-wait-card {
     margin-top: 20px;
 }
 
-.exam-wait-card .ant-card-meta-title{
+.exam-wait-card .ant-card-meta-title {
     font-size: 18px;
 }
 
-.page-center{
+.page-center {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -356,4 +356,45 @@
 
 .row-dragging .drag-visible {
     visibility: visible;
+}
+
+.exam-form .ant-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    min-width: 1300px;
+}
+
+.exam-form-preview .ant-card-meta-title {
+    font-size: 14px;
+}
+
+.ant-form-item-control-input .ant-checkbox-group-item {
+    float: left;
+    margin-left: 10px;
+}
+
+.exam-form-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1250px;
+    height: 58px;
+    text-align: right;
+}
+
+.exam-card-img {
+    position: absolute;
+    top: 21px;
+    right: 20px;
+}
+
+.ant-form-item-explain {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+    margin: 0 auto;
 }

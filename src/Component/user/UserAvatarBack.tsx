@@ -7,7 +7,7 @@ import {WithTranslation, withTranslation} from "react-i18next";
 import md5 from "js-md5";
 
 
-class UserAvatarBack extends Component<IUserPropAvatar & WithTranslation, any> {
+class UserAvatarBack extends Component<any, any> {
     render() {
         return (
             <>

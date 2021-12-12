@@ -18,10 +18,6 @@ class MMenu extends Component<IUserPropRoles & RouteComponentProps, IMenuState> 
     }
 
     componentDidMount() {
-        if (this.props.location.pathname === '/' && routerM.length !== 0) {
-            this.props.history.replace(routerM[0].path);
-        }
-        console.log(this.props.location.pathname, routerM, this.state.selectedKey)
         for (let i = 0; i < routerM.length; i++) {
             if (this.props.location.pathname === routerM[i].path) {
                 if (this.state.selectedKey !== routerM[i].id.toString()) {
@@ -31,8 +27,6 @@ class MMenu extends Component<IUserPropRoles & RouteComponentProps, IMenuState> 
                 }
             }
         }
-        console.log(this.props.location.pathname, routerM, this.state.selectedKey)
-
     }
 
     componentDidUpdate(prevProps: Readonly<IUserPropRoles & RouteComponentProps>, prevState: Readonly<IMenuState>, snapshot?: any) {

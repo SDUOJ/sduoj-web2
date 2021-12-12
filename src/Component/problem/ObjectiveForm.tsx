@@ -22,7 +22,8 @@ type DataSourceType = {
 // 新建 与 修改
 export type ObjectiveFormMode = "new" | "modify"
 
-// TODO 1. 在 Reset 的时候，答案的选项应该按照初始化，变为 4 个
+// TODO 1. 在 Reset 的时候，答案的选项应该按照初始化，变为 4 个，没有同步修改可编辑区域（当前版本暂时移出
+//  ）
 // TODO 2. 排序后，答案会清空，不能按照原来的答案记忆
 // TODO 3. 客观题文本显示暂时不支持数学公式
 
@@ -190,13 +191,13 @@ const ObjectiveForm = (props: any) => {
                     submitButtonProps: {style: {display: 'none'}},
                     render: (prop, defaultDoms) => {
                         return [
-                            <Button
-                                type="default"
-                                key="rest"
-                                onClick={() => formRef.current?.resetFields()}
-                            >
-                                {props.t("Reset")}
-                            </Button>,
+                            // <Button
+                            //     type="default"
+                            //     key="rest"
+                            //     onClick={() => formRef.current?.resetFields()}
+                            // >
+                            //     {props.t("Reset")}
+                            // </Button>,
                             <Button
                                 type="primary"
                                 key="submit"
@@ -222,7 +223,7 @@ const ObjectiveForm = (props: any) => {
                     }
                 }}
             >
-                <ProFormTextArea width="lg" name="content" label={props.t("ProblemContent")}
+                <ProFormTextArea width="xl" name="content" label={props.t("ProblemContent")}
                                  rules={[{required: true}, {type: "string", min: 5, max: 1000}]}/>
                 <EditableProTable<DataSourceType>
                     name="table"

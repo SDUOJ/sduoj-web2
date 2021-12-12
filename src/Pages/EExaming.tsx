@@ -4,7 +4,6 @@ import {SmileOutlined} from "@ant-design/icons";
 import Countdown from "antd/lib/statistic/Countdown";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../Component/exam/Timer";
-import ExamLogin from "../Component/exam/ExamLogin";
 import {Footer} from "antd/lib/layout/layout";
 import ExamRun from "../Component/exam/ExamRun";
 import ChangeLang from "../Component/common/ChangeLang";

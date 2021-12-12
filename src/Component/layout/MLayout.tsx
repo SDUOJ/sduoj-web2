@@ -1,4 +1,4 @@
-import React, {Component, Suspense} from "react";
+import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
 import logo from "../../Assert/img/logo.png";
 import MMenu from "./MMenu";
@@ -8,10 +8,25 @@ import {routerM} from "../../Config/router";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
+import {ManageState} from "../../Type/IManage";
+import {connect} from "react-redux";
+import {withRouter} from "react-router";
+import FooterSDU from "./FooterSDU";
+import {testLoginTodo} from "../../Redux/Action/user";
 
 const {Footer, Sider, Content} = Layout;
 
 class MLayout extends Component<any, any> {
+
+    componentDidMount() {
+        if ((
+            this.props.location.pathname === '/manage'
+            || this.props.location.pathname === '/manage/'
+        ) && routerM.length !== 0) {
+            this.props.history.push(routerM[0].path);
+        }
+        this.props.testLogin()
+    }
 
     render() {
         return (
@@ -44,7 +59,7 @@ class MLayout extends Component<any, any> {
                                     </Suspense>
                                 </div>
                             </Content>
-                            <Footer style={{textAlign: 'center'}}>SDU Online Judge System ©2020-2021</Footer>
+                            <FooterSDU/>
                         </Layout>
                     </Layout>
                 </Router>
@@ -53,4 +68,18 @@ class MLayout extends Component<any, any> {
     }
 }
 
-export default withTranslation()(MLayout)
+const mapStateToProps = (state: any) => {
+    const State: ManageState = state.ManageReducer
+    return {
+        examBasicInfo: State.examData.examBasicInfo
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    testLogin: () => dispatch(testLoginTodo())
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withTranslation()(withRouter(MLayout)))

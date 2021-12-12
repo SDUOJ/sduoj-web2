@@ -29,11 +29,11 @@ class EHeader extends Component<any, any> {
                     <ChangeLang/>
                     {
                         [''].map(() => {
-                            if (this.props.realName != undefined) {
+                            if (this.props.isLogin) {
                                 return (
                                     <Dropdown overlay={
                                         <Menu onClick={this.props.userLogout}>
-                                            <Menu.Item key="1" icon={<LogoutOutlined />}>
+                                            <Menu.Item key="1" icon={<LogoutOutlined/>}>
                                                 {this.props.t("Logout")}
                                             </Menu.Item>
                                         </Menu>
@@ -62,9 +62,12 @@ class EHeader extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
+    const realName = UState.userInfo?.realName
+    const sduId = UState.userInfo?.sduId
     return {
-        realName: UState.userInfo?.realName,
-        sduId: UState.userInfo?.sduId,
+        isLogin: UState.isLogin,
+        realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
+        sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
     }
 }
 

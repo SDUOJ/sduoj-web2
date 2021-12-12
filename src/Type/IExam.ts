@@ -1,10 +1,15 @@
 import {ProContent, ProType} from "./IProblem";
+import {Badge} from "antd";
+import React from "react";
+import {groupSelection} from "./Igroup";
 
 export interface SExamInfo {
+    id: string
     startTime: number       // 开始时间
     endTime: number         // 结束时间
     title: string           // 考试标题
-    description: string     // 考试描述
+    description?: string    // 考试描述
+    participantNum: number  // 考试人数
 }
 
 export interface SProInfo {
@@ -16,6 +21,14 @@ export interface SProInfo {
     content?: ProContent                // 题目内容
 }
 
+export interface ExamListType {
+    examId: string
+    examTitle: string
+    gmtStart: string
+    gmtEnd: string
+    participantNum: number
+}
+
 
 export interface ExamState {
     examInfo?: SExamInfo                // 考试信息
@@ -24,6 +37,9 @@ export interface ExamState {
     proInfo?: SProInfo[]                // 题目信息
     ProListLoad: boolean                // 题目信息是否已加载
     TopProblemIndex: number             // 顶部问题ID
+
+    ExamListInfo: SExamInfo[]                   // 考试列表信息
+
 }
 
 export interface IUserExamInfo {

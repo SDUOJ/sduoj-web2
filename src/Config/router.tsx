@@ -32,49 +32,72 @@ export const routerLayout: IBaseRouter[] = [
         component: lazy(() => import('../Component/layout/MLayout'))
     },
     {
-        id: 2,
+        id: 1,
         path: "/exam",
         exact: false,
         component: lazy(() => import('../Component/layout/ELayout'))
     },
     {
-        id: 3,
+        id: 2,
         path: "/thirdPartyLogin",
         exact: false,
         component: lazy(() => import('../Pages/thirdPartyLogin'))
     },
     {
-        id: 1,
+        id: 3,
+        path: "/c",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 4,
         path: "/",
         exact: true,
-        component: lazy(() => import('../Component/layout/MLayout'))
+        component: lazy(() => import('../Component/layout/CLayout'))
     },
 ]
+
+
+export const routerC: IBaseRouter[] = [
+    {
+        id: 1,
+        path: "/c/login",
+        exact: true,
+        component: lazy(() => import('../Pages/ALogin'))
+    }
+]
+
 
 export const routerE: IBaseRouter[] = [
     {
         id: 1,
+        path: "/exam/login",
+        exact: true,
+        component: lazy(() => import('../Pages/ALogin'))
+    },
+    {
+        id: 2,
+        path: "/exam/list",
+        exact: true,
+        component: lazy(() => import('../Pages/EList'))
+    },
+    {
+        id: 3,
         path: "/exam/wait/:eid",
         exact: true,
         component: lazy(() => import('../Pages/EWait'))
     },
     {
-        id: 2,
+        id: 4,
         path: "/exam/running/:eid",
         exact: true,
-        component: lazy(() => import('../Pages/EWait'))
+        component: lazy(() => import('../Pages/ERunning'))
     },
     {
-        id: 3,
-        path: "/exam/list",
-        exact: true,
-        component: lazy(() => import('../Pages/EWait'))
-    },
-    {
-        id: 4,
+        id: 5,
         path: "/exam/finish",
         exact: true,
-        component: lazy(() => import('../Pages/EWait'))
+        component: lazy(() => import('../Pages/EFinish'))
     }
 ]
 
@@ -125,7 +148,7 @@ export const routerM: IRouter[] = [
         path: "/manage/exam",
         title_i18n: "exam",
         exact: false,
-        icon: <ReadOutlined />,
+        icon: <ReadOutlined/>,
         component: lazy(() => import('../Pages/MExam'))
     },
     {
@@ -133,7 +156,14 @@ export const routerM: IRouter[] = [
         path: "/manage/objective",
         title_i18n: "objective",
         exact: false,
-        icon: <CheckCircleOutlined />,
+        icon: <CheckCircleOutlined/>,
         component: lazy(() => import('../Pages/MObjective'))
     }
 ]
+
+export function getRouterPath(router: any[], id: number) {
+    for (const x of router){
+        if(x.id === id) return x.path
+    }
+    return ''
+}

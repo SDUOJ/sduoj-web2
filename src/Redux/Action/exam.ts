@@ -9,6 +9,8 @@ import cookie from "react-cookies";
 import {testLoginTodo, userGetProfileTodo} from "./user";
 import {message} from "antd";
 import CApi from "../../Utils/API/c-api";
+import moment from "moment";
+import {groupSelection} from "../../Type/Igroup";
 
 
 export type ExamAction =
@@ -17,7 +19,8 @@ export type ExamAction =
     flipFlag |
     setProList |
     setExamID |
-    setExamInfo
+    setExamInfo |
+    setExamListInfo
 
 
 export interface updateChoice {
@@ -49,54 +52,65 @@ export interface setExamInfo {
     data: SExamInfo
 }
 
+export interface setExamListInfo {
+    type: "setExamListInfo"
+    data: SExamInfo[]
+}
+
+
 
 export function getExamProblemListTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
-        eApi.getExamProblemList(EState.examId as examID).then(function (resDate) {
+        eApi.getExamProblemList(EState.examId as examID).then(function (resDate: any) {
+            if (resDate != null) {
 
+
+            }
         })
     }
 }
 
-export function getExamInfoTodo() {
+export function getExamInfoTodo(examId: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
-        const EState: ExamState = getState().ExamReducer
-        eApi.getExamInfo(EState.examId as examID).then(function (resDate) {
-            console.log(resDate)
+        eApi.getExamInfo(examId).then(function (resDate) {
             if (resDate != null) {
-                dispatch({type: "setExamInfo", data: resDate})
+                console.log(resDate)
+                const x: any = resDate
+                const data = {
+                    id: x.examId,
+                    startTime: parseInt(x.gmtStart),
+                    endTime: parseInt(x.gmtEnd),
+                    title: x.examTitle,
+                    participantNum: x.participantNum,
+                    description: x.description.toString()
+                }
+                dispatch({type: "setExamInfo", data: data})
             }
         })
     }
 }
 
 
-export function EWaitInitTodo(eid: examID) {
+export function getExamListTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
-        dispatch({type: "setExamID", ExamID: eid})
+        eApi.getExamList().then(function (resDate: any) {
+            if (resDate != null) {
+                let data: SExamInfo[] = []
 
-        // 判断当前是否处于登录状态，若此时未登录，会删除 isLogin
-        if(cookie.load("SESSION") != undefined){
-            CApi.getProfile().then((resData) => {
-                if (resData !== null) {
-                    dispatch({type: "userLogin"})
-                    // 当前用户处于已登录的状态
-                    // 获取统一身份认证的信息
-                    const thirdUserInfoStr = sessionStorage.getItem("SDU-UserInfo")
-                    if (thirdUserInfoStr != undefined) {
-                        const thirdUserInfo = JSON.parse(thirdUserInfoStr)
-                        // 更新当前用户信息
-                        dispatch({type: "setUserInfo", data: thirdUserInfo})
-                        // 获取考试信息
-                        dispatch(getExamInfoTodo())
-                    }else{
-                        // 若未使用统一身份认证则报错
-                        message.error("考试系统只能使用统一身份认证登录")
-                        dispatch({type: "userLogout"})
-                    }
+                for (const x of resDate.rows) {
+                    data.push({
+                        id: x.examId,
+                        startTime: parseInt(x.gmtStart),
+                        endTime: parseInt(x.gmtEnd),
+                        title: x.examTitle,
+                        participantNum: x.participantNum
+                    })
                 }
-            })
-        }
+
+                console.log("examList", data)
+                dispatch({type: "setExamListInfo", data: data})
+            }
+        })
     }
 }

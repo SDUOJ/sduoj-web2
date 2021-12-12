@@ -3,6 +3,7 @@ import {Get, Post, GetError, ProblemID, examID} from '../../Type/types'
 import apiAddress from "./apiAddress";
 import {ICreateSubmit} from "../../Type/IProblem";
 import {store} from "../../Redux/Store";
+import {message} from "antd";
 
 const baseUrl = apiAddress().EXAM_SERVER + '/api'
 
@@ -30,14 +31,15 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         }
 
     } catch (e: any) {
-        console.log(e)
-        switch (e.code) {
-            case 429:
-                //        TODO
-                break;
+        const response = e.response
+        if(response == undefined){
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
     }
 }
@@ -59,13 +61,15 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         }
 
     } catch (e: any) {
-        switch (e.data.code) {
-            case 429:
-                //        TODO
-                break;
+        const response = e.response
+        if(response == undefined){
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
     }
 }
@@ -87,8 +91,15 @@ export default {
     },
     // 获取考试信息
     async getExamInfo(data: examID) {
-        return request.get('/exam/getExamInfo/' + data);
+        return request.get('/exam/getInfo/' + data);
     },
+
+    async getExamList(data: any = {
+        "pageNow": 0,
+        "pageSize": 20
+    }) {
+        return request.post("/exam/getInfo", data);
+    }
 
 }
 

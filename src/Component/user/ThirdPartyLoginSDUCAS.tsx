@@ -12,7 +12,14 @@ class ThirdPartyLoginSDUCAS extends Component<any, any> {
                 <a href={
                     "https://pass.sdu.edu.cn/cas/login?service=" +
                     server + "/thirdPartyLogin?thirdParty=SDUCAS"}>
-                    <Button danger type={"primary"}> {this.props.t("SDUAuth")} </Button>
+                    <Button danger type={"primary"}>
+                        {
+                            this.props.t(
+                                this.props.title === undefined ?
+                                    "SDUAuth" :
+                                    this.props.title)
+                        }
+                    </Button>
                 </a>
             </>
         )

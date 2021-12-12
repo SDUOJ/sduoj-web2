@@ -81,6 +81,19 @@
     omit.js "^2.0.2"
     rc-util "^5.4.0"
 
+"@ant-design/pro-descriptions@^1.10.8":
+  version "1.10.8"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-descriptions/-/pro-descriptions-1.10.8.tgz#8a7d4e608fed040339d2c73cb7502d1935d4fcc8"
+  integrity sha512-MTRSJDuI/CFx1xxx0HN+wTQqGB1qWtoZVArjTfeUQrmMyJzcKv1wJlERMGcfdcZ87tuMBsYQGGXxfn2JyKY3GQ==
+  dependencies:
+    "@ant-design/pro-field" "1.28.2"
+    "@ant-design/pro-form" "1.49.6"
+    "@ant-design/pro-skeleton" "1.0.3"
+    "@ant-design/pro-utils" "1.28.5"
+    "@babel/runtime" "^7.16.3"
+    rc-util "^5.0.6"
+    use-json-comparison "^1.0.5"
+
 "@ant-design/pro-field@1.22.7":
   version "1.22.7"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.22.7.tgz#184483bfd66da0806b30da19b610ce9d55411811"
@@ -101,6 +114,23 @@
   version "1.28.0"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.28.0.tgz#d3e38766cef227c2862127bd1664b99b6fba194f"
   integrity sha512-bJTDV3g4ogV8qiwIphK6CbrDSwgLzntVNYAd/ajPaIgWhLIAprdCR9WP8bakSbYqVJdEtaxQLOoP/hLXKYRAKw==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-provider" "1.5.0"
+    "@ant-design/pro-utils" "1.28.5"
+    "@babel/runtime" "^7.16.3"
+    classnames "^2.2.6"
+    lodash.tonumber "^4.0.3"
+    moment "^2.27.0"
+    omit.js "^2.0.2"
+    rc-util "^5.4.0"
+    react-color "2.19.3"
+    swr "1.1.0-beta.6"
+
+"@ant-design/pro-field@1.28.2":
+  version "1.28.2"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.28.2.tgz#66a6a5b2198e8cb6c46ae83b448d0b1927330d1a"
+  integrity sha512-V72h+gRz+iAdRVbl7HAdc/9GPOpQQsdmRcgAN3U2RcYNBniFk5CijqnhTKF+br/IMt+5BY5yE1W8htv4BkBY4A==
   dependencies:
     "@ant-design/icons" "^4.2.1"
     "@ant-design/pro-provider" "1.5.0"
@@ -138,6 +168,23 @@
   dependencies:
     "@ant-design/icons" "^4.2.1"
     "@ant-design/pro-field" "1.28.0"
+    "@ant-design/pro-provider" "1.5.0"
+    "@ant-design/pro-utils" "1.28.5"
+    "@babel/runtime" "^7.16.3"
+    "@umijs/use-params" "^1.0.9"
+    classnames "^2.2.6"
+    omit.js "^2.0.2"
+    rc-resize-observer "^0.2.3"
+    rc-util "^5.0.6"
+    use-media-antd-query "^1.0.6"
+
+"@ant-design/pro-form@1.49.6", "@ant-design/pro-form@^1.49.6":
+  version "1.49.6"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-form/-/pro-form-1.49.6.tgz#2843948e6c041d75dc6f739941c2ea98bea2547e"
+  integrity sha512-ExwnrIPscdIUXa9g4/V76ie3c6LST/X8+tQcJK77eZeJmzv0L5ty+pUuxiO0vVIE+N4FZ6i1bNkdzxxCqMICWQ==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-field" "1.28.2"
     "@ant-design/pro-provider" "1.5.0"
     "@ant-design/pro-utils" "1.28.5"
     "@babel/runtime" "^7.16.3"
@@ -202,6 +249,14 @@
     "@babel/runtime" "^7.16.3"
     rc-util "^5.0.1"
     swr "1.1.0-beta.6"
+
+"@ant-design/pro-skeleton@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-skeleton/-/pro-skeleton-1.0.3.tgz#7553d202acb5a879c838c7086f74d45098259271"
+  integrity sha512-jmUhDuLbNBB8sa0ZurzLJdpscUvHOjK7kZCAl4eulQquE8RpZ0FzYNDhWCJWjr/UcYnLJjeHLF2XnX4FieHCVg==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    use-media-antd-query "^1.0.6"
 
 "@ant-design/pro-table@2.56.0":
   version "2.56.0"
@@ -11607,6 +11662,11 @@ redent@^3.0.0:
   dependencies:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
+
+redux-devtools-extension@^2.13.9:
+  version "2.13.9"
+  resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.9.tgz#6b764e8028b507adcb75a1cae790f71e6be08ae7"
+  integrity sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==
 
 redux-thunk@^2.4.0:
   version "2.4.0"

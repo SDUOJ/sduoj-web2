@@ -5,32 +5,22 @@ import 'antd/dist/antd.css';
 import './Config/i18n'
 import {Card, ConfigProvider, Space, Tooltip} from "antd";
 import "vditor/src/assets/scss/index.scss";
-import TestCase, {TestCaseStates} from "./Component/submission/TestCase";
-import Processing from "./Component/submission/Processing";
-import Editor from "./Component/common/Editor";
-import MLayout from "./Component/layout/MLayout";
-import ChangeLang from "./Component/common/ChangeLang";
-import DataBaseAnswerSheet from "./Component/answerSheet/dataBase";
-import ListTemplate, {colType} from "./Component/layout/MTable";
 import {Role, Sex, thirdPartyLoginAction} from "./Type/Iuser";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
-import EWait from "./Pages/EWait";
-import {MultipleChoice} from "./Component/answerSheet/MultipleChoice";
-import ProTag from "./Component/exam/ProTag";
-import ExamAnswerSheet from "./Component/exam/ExamAnswerSheet";
-import Problem from "./Component/problem/Problem";
-import Options from "./Component/problem/Options";
-import Choice from "./Component/problem/Choice";
-import ExamPageCtrl from "./Component/exam/ExamPageCtrl";
-import ExamRun from "./Component/exam/ExamRun";
-import EExaming from "./Pages/EExaming";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout, routerM} from "./Config/router";
 import cookie from "react-cookies";
-import {thirdPartyLoginTodo} from "./Redux/Action/user";
+import {testLoginTodo, thirdPartyLoginTodo} from "./Redux/Action/user";
+import '@ant-design/pro-form/dist/form.css';
+import '@ant-design/pro-table/dist/table.css';
+import '@ant-design/pro-layout/dist/layout.css';
+import "@ant-design/pro-card/dist/card.css";
+import "@ant-design/pro-list/dist/list.css";
+import "@ant-design/pro-descriptions/dist/descriptions.css"
+import {withTranslation} from "react-i18next";
+import {withRouter} from "react-router";
 
 
 class App extends Component<any, any> {
@@ -54,6 +44,10 @@ class App extends Component<any, any> {
     * TODO  题目
     *  1.
     * */
+
+    componentDidMount() {
+
+    }
 
     render() {
         return (
@@ -121,7 +115,8 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     updateTimestamp: (data: number) => dispatch({
         type: "updateTimestamp",
         timestamp: data
-    })
+    }),
+    testLogin: () => dispatch(testLoginTodo())
 })
 
 export default connect(

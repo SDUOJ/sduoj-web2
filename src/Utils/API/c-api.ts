@@ -21,7 +21,7 @@ const service = axios.create({
 })
 service.defaults.withCredentials = true
 
-const get : Get |  GetError = async (url: string, params?: object, config?:AxiosRequestConfig) => {
+const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     console.log(service.defaults.baseURL)
     try {
         const response = await service.get(url, {
@@ -34,33 +34,45 @@ const get : Get |  GetError = async (url: string, params?: object, config?:Axios
                 message.error(response.data.message);
                 return null
         }
-    } catch (e:any) {
-        switch (e.code) {
+    } catch (e: any) {
+        const response = e.response
+        if (response == undefined) {
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
         // TODO: Update Time
     }
 }
 
-const post : Post | GetError = async (url: string, data: object, config?:AxiosRequestConfig) => {
+const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.post(url, data, {
             ...config
         });
+        console.log("post", response)
         switch (response.data.code) {
             case 0:
+                message.success(response.data.message)
                 return response.data.data
             default:
                 message.error(response.data.message);
                 return null
         }
-    } catch (e:any) {
-        switch (e.data.code) {
+    } catch (e: any) {
+        const response = e.response
+        if (response == undefined) {
+            message.error("后端不可达")
+            return null
+        }
+        switch (response.data.code) {
             default:
-                console.log(e);
-                return null
+                message.error(response.data.message);
+                return Promise.reject(response.data.message)
         }
     }
 }
@@ -98,10 +110,10 @@ export default {
     async resetPassword(data: resetPassWord) {
         return request.post('/user/resetPassword', data)
     },
-    async thirdPartyLogin(data: thirdPartyLogin){
+    async thirdPartyLogin(data: thirdPartyLogin) {
         return request.get('/user/thirdPartyLogin', data)
     },
-    async getProfile(){
+    async getProfile() {
         return request.get("/user/getProfile")
     }
 }
