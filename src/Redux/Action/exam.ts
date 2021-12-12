@@ -19,8 +19,7 @@ export type ExamAction =
     flipFlag |
     setProList |
     setExamID |
-    setExamInfo |
-    setExamListInfo
+    setExamInfo
 
 
 export interface updateChoice {
@@ -52,10 +51,6 @@ export interface setExamInfo {
     data: SExamInfo
 }
 
-export interface setExamListInfo {
-    type: "setExamListInfo"
-    data: SExamInfo[]
-}
 
 
 
@@ -92,25 +87,3 @@ export function getExamInfoTodo(examId: examID) {
 }
 
 
-export function getExamListTodo() {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        eApi.getExamList().then(function (resDate: any) {
-            if (resDate != null) {
-                let data: SExamInfo[] = []
-
-                for (const x of resDate.rows) {
-                    data.push({
-                        id: x.examId,
-                        startTime: parseInt(x.gmtStart),
-                        endTime: parseInt(x.gmtEnd),
-                        title: x.examTitle,
-                        participantNum: x.participantNum
-                    })
-                }
-
-                console.log("examList", data)
-                dispatch({type: "setExamListInfo", data: data})
-            }
-        })
-    }
-}

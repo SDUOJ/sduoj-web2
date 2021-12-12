@@ -1,21 +1,25 @@
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {Button, FormInstance, Modal, Tabs} from "antd";
 import {MenuOutlined, PlusOutlined,} from "@ant-design/icons"
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
 import moment from "moment";
 import {connect} from "react-redux";
-import {examProblemGroupType, examProblemListType, ManageState} from "../../../Type/IManage";
+import {
+    examBasicType,
+    examProblemGroupType, examProblemInfo,
+    examProblemListType, examProblemType,
+    examUserType,
+    ManageState, ProGroupTypeStF
+} from "../../../Type/IManage";
 import {formSubmitType, setExamFormVis, SubmitExamFormTodo} from "../../../Redux/Action/manage";
 import ExamBaseForm from "./ExamBaseForm";
 import TabPane from "@ant-design/pro-card/lib/components/TabPane";
 import ExamMemberForm from "./ExamMemberForm";
 import ExamProblemForm from "./ExamProblemForm";
+import mApi from "Utils/API/m-api"
+import {groupSelection} from "../../../Type/Igroup";
 
-// 新建 与 修改
-export type ObjectiveFormMode = "new" | "modify"
-// export type ElementType = "group" | "objective" | "program"
-export type problemGroupProType = "objective" | "program"
 export type problemGroupUIMode = "easy" | "all"
 
 
@@ -23,8 +27,23 @@ const ExamForm = (props: formSubmitType & any) => {
 
     const ExamBaseFormRef = React.createRef<FormInstance>()
     const ExamUserFormRef = React.createRef<FormInstance>()
+
+    // 初始化状态
+    const [baseInit, setBaseInit] = useState<examBasicType>({
+        examDescription: "",
+        examStartEndTime: [],
+        examTitle: ""
+    })
+    const [userInit, setUserInfo] = useState<examUserType>({
+        ManageGroup: "",
+        ParticipatingGroup: [],
+    })
+    const [groupInfo, setGroupInfo] = useState<groupSelection[]>([])
     const [examProGroupData, setExamProGroupData] = useState<examProblemGroupType[]>([])
     const [proListData, setProListDataA] = useState<examProblemListType[]>([])
+    const [examFormVis, setExamFormVis] = useState<boolean>(false)
+    const [isDataLoad, setIsDataLoad] = useState<boolean>(false)
+
 
     const setProListData = (data: examProblemListType[]) => {
         let examPGD = examProGroupData
@@ -49,7 +68,77 @@ const ExamForm = (props: formSubmitType & any) => {
     return (
         <>
             <Button type={props.type == "create" ? "primary" : "link"}
-                    onClick={() => props.setExamFormVis(true)}>
+                    onClick={() => {
+                        setExamFormVis(true)
+                        if (props.type == "update") {
+                            mApi.getExamInfo(props.examID).then((resData: any) => {
+                                if (resData != null) {
+                                    setBaseInit({
+                                        examTitle: resData.examTitle,
+                                        examStartEndTime: [moment(parseInt(resData.gmtStart)), moment(parseInt(resData.gmtEnd))],
+                                        examDescription: resData.description
+                                    })
+                                    let PL = [], GI = [], ManageGroup = null
+                                    if (resData.participatingGroupDTOList != null)
+                                        for (const x of resData.participatingGroupDTOList) {
+                                            PL.push(x.groupId)
+                                            GI.push(x)
+                                        }
+                                    if (resData.managerGroupDTO != null) {
+                                        GI.push(resData.managerGroupDTO)
+                                        ManageGroup = resData.managerGroupDTO.groupId
+                                    }
+                                    setUserInfo({
+                                        ManageGroup: ManageGroup,
+                                        ParticipatingGroup: PL
+                                    })
+                                    setGroupInfo(GI)
+
+                                    let proList: examProblemListType[] = []
+                                    let groupData: examProblemGroupType[] = []
+
+                                    for (const x of resData.problemGroups) {
+                                        let score = 0
+                                        let proInfo: examProblemType[] = []
+                                        for (const y of x.problems) {
+                                            console.log("----", y)
+                                            score += y.problemScore
+                                            proInfo.push({
+                                                id: y.index,
+                                                ProblemCode: y.problemCode,
+                                                ProblemAlias: y.problemTitle,
+                                                ProblemDescription: y.problemDescriptionId,
+                                                ProblemScore: y.problemScore,
+                                                ProblemSubmitNumber: y.submitNum
+                                            })
+                                        }
+                                        groupData.push({
+                                            id: x.index,
+                                            ProblemGroupName: x.title,
+                                            ProblemGroupType: ProGroupTypeStF[x.type],
+                                            ProblemGroupSumScore: score,
+                                            ProblemGroupPremise: x.previous,
+                                            ProblemGroupStartEndTime: [moment(parseInt(x.groupStart)), moment(parseInt(x.groupEnd))],
+                                        })
+                                        proList.push({
+                                            groupId: x.index,
+                                            proList: proInfo,
+                                            problemInfo: [],
+                                            checkedProblemCode: []
+                                        })
+                                    }
+
+                                    console.log("===", proList)
+
+                                    setProListDataA(proList)
+                                    setExamProGroupData(groupData)
+                                    setIsDataLoad(true)
+                                }
+                            })
+                        } else {
+                            setIsDataLoad(true)
+                        }
+                    }}>
                 {
                     [''].map(() => {
                         if (props.type == "create") return <PlusOutlined/>
@@ -58,18 +147,23 @@ const ExamForm = (props: formSubmitType & any) => {
                 {props.type == "create" ? "新建" : "修改"}
             </Button>
             <Modal
-                title={props.type == "create" ? "新建考试" : props.examBasicInfo.examTitle}
+                title={props.type == "create" ? "新建考试" : props.title}
                 className={"exam-form"}
-                visible={props.examFormVis}
+                visible={examFormVis}
                 maskClosable={false}
                 onCancel={() => {
-                    props.setExamFormVis(false)
+                    setExamFormVis(false)
                 }}
                 footer={
                     [<Button
                         type="primary"
                         key="submit"
                         onClick={() => {
+                            if(props.type == "create"){
+
+                            }else if(props.type == "update"){
+                                // TODO
+                            }
                             console.log("Base", ExamBaseFormRef.current?.getFieldsValue())
                             console.log("user", ExamUserFormRef.current?.getFieldsValue())
                             console.log("group-info", examProGroupData)
@@ -82,10 +176,19 @@ const ExamForm = (props: formSubmitType & any) => {
             >
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="基本信息" key="1">
-                        <ExamBaseForm getRef={getExamBaseFormRef}/>
+                        <ExamBaseForm
+                            getRef={getExamBaseFormRef}
+                            initData={baseInit}
+                            isDataLoad={isDataLoad}
+                        />
                     </TabPane>
                     <TabPane tab="人员信息" key="2">
-                        <ExamMemberForm getRef={getExamUserFormRef}/>
+                        <ExamMemberForm
+                            getRef={getExamUserFormRef}
+                            initData={userInit}
+                            groupInfo={groupInfo}
+                            isDataLoad={isDataLoad}
+                        />
                     </TabPane>
                     <TabPane tab="题目信息" key="3">
                         <ExamProblemForm
@@ -93,11 +196,10 @@ const ExamForm = (props: formSubmitType & any) => {
                             setGroupData={setExamProGroupData}
                             listData={proListData}
                             setListData={setProListData}
+                            isDataLoad={isDataLoad}
                         />
                     </TabPane>
                 </Tabs>
-
-
             </Modal>
         </>
     )
@@ -105,18 +207,9 @@ const ExamForm = (props: formSubmitType & any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ManageState = state.ManageReducer
-    return {
-        // examBasicInfo: State.examFrom.examBasicInfo,
-        examFormVis: State.examData.examFormVis
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    setExamFormVis: (data: boolean) => dispatch({
-        type: "setExamFormVis",
-        data: data
-    }),
     SubmitExamForm: (type: formSubmitType) => dispatch(SubmitExamFormTodo)
 })
 

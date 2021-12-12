@@ -79,9 +79,6 @@ export interface ICreateSubmit {
     problemCode: string
 }
 
-
-
-
 export interface ProblemState {
     SubmitModalVis: boolean         // 提交对话框是否可见
     TopSubmissionId?: string

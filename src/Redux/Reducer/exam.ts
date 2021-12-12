@@ -88,9 +88,6 @@ const initState: ExamState = {
     ExamInfoLoad: false,
     ProListLoad: false,
     TopProblemIndex: 0,
-    ExamListInfo: [],
-
-
 }
 
 export const ExamReducer = (state: ExamState = initState, action: ExamAction) => {
@@ -152,9 +149,6 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             case "setExamInfo":
                 State.ExamInfoLoad = true
                 State.examInfo = action.data
-                break
-            case "setExamListInfo":
-                State.ExamListInfo = action.data
                 break
         }
     }

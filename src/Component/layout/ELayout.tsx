@@ -27,7 +27,8 @@ class ELayout extends Component<any, any> {
             this.props.location.pathname === '/exam/'
         ) && routerE.length !== 0) {
             // sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
-            this.props.history.push(getRouterPath(routerE, 1));
+            this.props.history.push(getRouterPath(routerE, 2));
+            this.props.history.push(getRouterPath(routerE, 2));
             window.location.reload();
         }
         this.props.testLogin()

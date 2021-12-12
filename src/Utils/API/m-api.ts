@@ -3,7 +3,7 @@ import axios, {
 } from "axios";
 
 import {
-    checkPointData,
+    checkPointData, examID,
     Get,
     GetError,
     groupInfo,
@@ -309,5 +309,13 @@ export default {
     },
     getChoiceProblem: async function (params: {problemCode: string}){
         return request.get("/manage/problem/queryChoiceProblem", params)
+    },
+    getExamList: async function(data: any) {
+        return request.post("/manage/exam/getInfo", data);
+    },
+    getExamInfo: async function(examId: examID){
+        return request.get("manage/exam/getInfo/" + examId)
     }
+
+
 }

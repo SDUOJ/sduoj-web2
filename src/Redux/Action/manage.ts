@@ -11,6 +11,8 @@ import {examFormChecker} from "../../Utils/Checker/examFormChecker";
 import {FormInstance} from "antd";
 import {groupSelection} from "../../Type/Igroup";
 import mApi from "Utils/API/m-api"
+import eApi from "../../Utils/API/e-api";
+import {SExamInfo, SExamManageInfo} from "../../Type/IExam";
 
 export type ManageAction =
     setProblemList |
@@ -19,40 +21,40 @@ export type ManageAction =
     setExamMember |
     setExamFormVis
 
-
-export interface setProblemList{
+export interface setProblemList {
     type: "setProblemList"
     GroupId: string
     proList: examProblemType[]
 }
 
-export interface setBasicInfo{
+export interface setBasicInfo {
     type: "setBasicInfo"
     data: examBasicType
 }
 
-export interface setProblemGroup{
+export interface setProblemGroup {
     type: "setProblemGroup"
     data: examProblemGroupType[]
 }
 
 
-export interface setExamMember{
+export interface setExamMember {
     type: "setExamMember"
     data: examUserType[]
 }
 
-export interface setExamFormVis{
+export interface setExamFormVis {
     type: "setExamFormVis"
     data: boolean
 }
 
 
 
+
 export type formSubmitType = "create" | "update"
 
 
-export function SubmitExamFormTodo(type: formSubmitType){
+export function SubmitExamFormTodo(type: formSubmitType) {
     return (dispatch: Dispatch<any>, getState: any) => {
         const State: ManageState = getState().ConfigReducer
         // if(!examFormChecker(State.examFrom)) return

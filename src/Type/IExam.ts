@@ -9,7 +9,16 @@ export interface SExamInfo {
     endTime: number         // 结束时间
     title: string           // 考试标题
     description?: string    // 考试描述
-    participantNum: number  // 考试人数
+    participantNum?: number  // 考试人数
+}
+
+export interface SExamManageInfo {
+    id: string
+    startTime: number       // 开始时间
+    endTime: number         // 结束时间
+    title: string           // 考试标题
+    manageGroup: string
+    owner: string
 }
 
 export interface SProInfo {
@@ -38,8 +47,6 @@ export interface ExamState {
     ProListLoad: boolean                // 题目信息是否已加载
     TopProblemIndex: number             // 顶部问题ID
 
-    ExamListInfo: SExamInfo[]                   // 考试列表信息
-
 }
 
 export interface IUserExamInfo {
@@ -48,3 +55,4 @@ export interface IUserExamInfo {
     studentID?: string                  // 学号
     IDNumber?: string                   // 身份证号
 }
+

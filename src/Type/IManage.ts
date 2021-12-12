@@ -1,8 +1,11 @@
 import moment from "moment";
 import React from "react";
+import {SExamInfo, SExamManageInfo} from "./IExam";
 
 
 export type problemGroupProType = "single" | "multi" | "program"
+export const ProGroupTypeStF: any = {"Program": "program", "MultipleChoice": "multi", "SingleChoice": "single"}
+export const ProGroupTypeFtS: any = {"program": "Program", "multi": "MultipleChoice", "single": "SingleChoice"}
 
 export interface examProblemType {
     id: React.Key
@@ -10,6 +13,7 @@ export interface examProblemType {
     ProblemScore?: number
     ProblemAlias?: string
     ProblemDescription?: string
+    ProblemSubmitNumber?: number
 }
 
 export interface examProblemListType {
@@ -29,8 +33,8 @@ export interface examProblemGroupType {
 }
 
 export interface examUserType {
-    id: React.Key
-    username: string
+    ManageGroup?: React.Key
+    ParticipatingGroup?: React.Key[]
 }
 
 export interface examBasicType {
@@ -43,6 +47,7 @@ export interface examDataType {
     examProblemListInfo: examProblemListType[]
     examProblemGroupInfo: examProblemGroupType[]
     examBasicInfo: examBasicType
+
     examFormVis: boolean
 }
 

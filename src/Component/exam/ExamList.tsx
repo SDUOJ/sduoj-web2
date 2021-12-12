@@ -3,16 +3,17 @@ import React, {Component, Dispatch} from 'react';
 import ProList from '@ant-design/pro-list';
 
 import {Table, Tag, Space, Card, Badge} from 'antd';
-import {ExamState, IUserExamInfo, SExamInfo} from "../../Type/IExam";
+import {ExamState, IUserExamInfo, SExamInfo, SExamManageInfo} from "../../Type/IExam";
 import {ConfigState} from "../../Type/IConfig";
 import {UserState} from "../../Type/Iuser";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {getExamListTodo, getExamProblemListTodo} from "../../Redux/Action/exam";
 import moment from "moment";
-import {routerE} from "../../Config/router";
+import eApi from "../../Utils/API/e-api";
+import mApi from "../../Utils/API/m-api";
+import ExamForm from "./Form/ExamForm";
 
 function TimeRangeState(start: number, end: number) {
     if (start > Date.now()) return "wait"
@@ -29,114 +30,203 @@ function getDiffSecond(start: number, end: number) {
 
 class ExamList extends Component<any, any> {
 
-    componentDidMount() {
-        this.props.getExamList()
+
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            ExamListInfo: [],
+            ExamManageListInfo: [],
+            total: 0
+        }
+        this.getList = this.getList.bind(this)
     }
 
-    columns = [
-        {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a: SExamInfo, b: SExamInfo) => parseInt(a.id) - parseInt(b.id)
-        },
-        {
-            title: '考试名',
-            dataIndex: 'title',
-            key: 'title',
-            render: (text: string, record: SExamInfo) => {
-                return (
-                    <a
-                        onClick={() => {
-                            this.props.history.push('/exam/wait/' + record.id.toString())
-                        }}
-                    >{text}</a>
-                )
-            }
-        },
-        {
-            title: '开始时间',
-            dataIndex: "startTime",
-            key: 'startTime',
-            render: (value: number) => {
-                return moment(value).format('YYYY-MM-DD HH:mm:ss')
-            },
-            sorter: (a: SExamInfo, b: SExamInfo) => a.startTime - b.startTime
-        },
-        {
-            title: '结束时间',
-            dataIndex: 'endTime',
-            key: 'endTime',
-            render: (value: number) => {
-                return moment(value).format('YYYY-MM-DD HH:mm:ss')
-            },
-            sorter: (a: SExamInfo, b: SExamInfo) => a.endTime - b.endTime
-        },
-        {
-            title: '考试时长',
-            key: 'examLength',
-            render: (value: number, record: SExamInfo) => {
-                const diffSecond: number = getDiffSecond(record.startTime, record.endTime)
-                return Math.floor(diffSecond / 3600).toString() + "时"
-                    + Math.floor((diffSecond % 3600) / 60).toString() + "分"
-                    + (diffSecond % 60).toString() + "秒"
-            },
-            sorter: (a: SExamInfo, b: SExamInfo) => {
-                return getDiffSecond(a.startTime, a.endTime) - getDiffSecond(b.startTime, b.endTime)
-            }
-        },
-        {
-            title: '考试人数',
-            dataIndex: 'participantNum',
-            key: 'participantNum',
-            sorter: (a: SExamInfo, b: SExamInfo) => a.participantNum - b.participantNum
-        },
-        {
-            title: '状态',
-            key: 'id',
-            render: (text: any, record: SExamInfo) => {
-                const state = TimeRangeState(record.startTime, record.endTime)
-                switch (state) {
-                    case "wait":
-                        return <Badge status="warning" text="等待中"/>
-                    case "end":
-                        return <Badge status="default" text="已结束"/>
-                    case "running":
-                        return <Badge status="processing" text="进行中"/>
-
+    getList = (pageNow: number, pageSize: number | undefined) => {
+        if (this.props.type == "manage") {
+            mApi.getExamList({
+                pageNow: pageNow,
+                pageSize: pageSize == undefined ? 20 : pageSize
+            }).then((resData: any) => {
+                if (resData != null) {
+                    let data: SExamManageInfo[] = []
+                    this.setState({total: resData.totalNum})
+                    console.log(resData.total)
+                    for (const x of resData.rows) {
+                        data.push({
+                            id: x.examId,
+                            startTime: parseInt(x.gmtStart),
+                            endTime: parseInt(x.gmtEnd),
+                            title: x.examTitle,
+                            manageGroup: x.managerGroupDTO == undefined ?
+                                "" : x.managerGroupDTO.groupId + " (" + x.managerGroupDTO.title + ")",
+                            owner: x.username
+                        })
+                    }
+                    this.setState({ExamManageListInfo: data})
                 }
-            },
-            filters: [
-                {
-                    text: <Badge status="warning" text="等待中"/>,
-                    value: 'wait',
-                },
-                {
-                    text: <Badge status="default" text="已结束"/>,
-                    value: 'end',
-                },
-                {
-                    text: <Badge status="processing" text="进行中"/>,
-                    value: 'running',
+            })
+        } else {
+            eApi.getExamList().then((resData: any) => {
+                if (resData != null) {
+                    let data: SExamInfo[] = []
+                    this.setState({total: resData.totalNum})
+                    for (const x of resData.rows) {
+                        data.push({
+                            id: x.examId,
+                            startTime: parseInt(x.gmtStart),
+                            endTime: parseInt(x.gmtEnd),
+                            title: x.examTitle
+                        })
+                    }
+                    this.setState({ExamListInfo: data})
                 }
-            ],
-            onFilter: (value: any, record: SExamInfo) => {
-                return TimeRangeState(record.startTime, record.endTime) == value
-            }
+            })
         }
-    ];
+    }
+
+    componentDidMount() {
+        this.getList(1, 20)
+    }
+
 
     render() {
 
+        let columns: any[] = [
+            {
+                title: 'ID',
+                dataIndex: 'id',
+                key: 'id',
+                sorter: (a: SExamInfo, b: SExamInfo) => parseInt(a.id) - parseInt(b.id)
+            },
+            {
+                title: '考试名',
+                dataIndex: 'title',
+                key: 'title',
+                render: (text: string, record: SExamInfo) => {
+                    if (this.props.type != "manage")
+                        return (
+                            <a
+                                onClick={() => {
+                                    this.props.history.push('/exam/wait/' + record.id.toString())
+                                }}
+                            >{text}</a>
+                        )
+                    else return text
+                }
+            },
+            {
+                title: '开始时间',
+                dataIndex: "startTime",
+                key: 'startTime',
+                render: (value: number) => {
+                    return moment(value).format('YYYY-MM-DD HH:mm:ss')
+                },
+                sorter: (a: SExamInfo, b: SExamInfo) => a.startTime - b.startTime
+            },
+            {
+                title: '结束时间',
+                dataIndex: 'endTime',
+                key: 'endTime',
+                render: (value: number) => {
+                    return moment(value).format('YYYY-MM-DD HH:mm:ss')
+                },
+                sorter: (a: SExamInfo, b: SExamInfo) => a.endTime - b.endTime
+            },
+            {
+                title: '考试时长',
+                key: 'examLength',
+                render: (value: number, record: SExamInfo) => {
+                    const diffSecond: number = getDiffSecond(record.startTime, record.endTime)
+                    let res = ""
+                    if (diffSecond / 3600 / 24 > 1) {
+                        res += Math.floor(diffSecond / 3600 / 24).toString() + "天"
+                    }
+                    res += Math.floor((diffSecond % (3600 * 24)) / 3600).toString() + "时"
+                        + Math.floor((diffSecond % 3600) / 60).toString() + "分"
+                        + (diffSecond % 60).toString() + "秒"
+                    return res
+                },
+                sorter: (a: SExamInfo, b: SExamInfo) => {
+                    return getDiffSecond(a.startTime, a.endTime) - getDiffSecond(b.startTime, b.endTime)
+                }
+            }]
+        let columns2: any[] = [
+            {
+                title: '状态',
+                key: 'id',
+                render: (text: any, record: SExamInfo) => {
+                    const state = TimeRangeState(record.startTime, record.endTime)
+                    switch (state) {
+                        case "wait":
+                            return <Badge status="warning" text="等待中"/>
+                        case "end":
+                            return <Badge status="default" text="已结束"/>
+                        case "running":
+                            return <Badge status="processing" text="进行中"/>
+
+                    }
+                },
+                filters: [
+                    {
+                        text: <Badge status="warning" text="等待中"/>,
+                        value: 'wait',
+                    },
+                    {
+                        text: <Badge status="default" text="已结束"/>,
+                        value: 'end',
+                    },
+                    {
+                        text: <Badge status="processing" text="进行中"/>,
+                        value: 'running',
+                    }
+                ],
+                onFilter: (value: any, record: SExamInfo) => {
+                    return TimeRangeState(record.startTime, record.endTime) == value
+                }
+            }
+        ]
+        let columns3: any[] = [
+            {
+                title: '管理组',
+                dataIndex: 'manageGroup',
+                key: 'manageGroup',
+            },
+            {
+                title: '创建者',
+                dataIndex: 'owner',
+                key: 'owner',
+            },
+            {
+                title: '操作',
+                key: 'operator',
+                render: (text: any, record: SExamInfo)=>{
+                    return <ExamForm type={'update'} title={record.title} examID={record.id}/>
+                }
+            }
+        ]
+        if (this.props.type != "manage") {
+            columns = columns.concat(columns2)
+        } else {
+            columns = columns.concat(columns3)
+        }
+
         return (
-            <Card
-                title={"考试列表"}
-            >
-                <Table
-                    columns={this.columns}
-                    dataSource={this.props.ExamListInfo}
-                />
-            </Card>
+            <Table
+                pagination={{
+                    showQuickJumper: true,
+                    defaultCurrent: 1,
+                    defaultPageSize: 20,
+                    total: this.state.total,
+                    onChange: this.getList,
+                    showSizeChanger: true
+                }}
+                columns={columns}
+                dataSource={
+                    this.props.type == "manage" ?
+                        this.state.ExamManageListInfo :
+                        this.state.ExamListInfo
+                }
+            />
 
         )
     }
@@ -144,15 +234,10 @@ class ExamList extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    return {
-        ExamListInfo: State.ExamListInfo
-    }
+    return {}
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    getExamList: () => dispatch(getExamListTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

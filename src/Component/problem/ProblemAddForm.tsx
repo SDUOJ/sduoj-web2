@@ -94,7 +94,6 @@ const ProblemAddForm = (props: any) => {
                         setEditableRowKeys([])
                         setEditableRowKeys(genNumberList(getListData()))
                         setDescriptionLoading(false)
-
                     }
                 })
         }
@@ -132,6 +131,12 @@ const ProblemAddForm = (props: any) => {
         return <SortableItem index={index} {...restProps} />
     };
 
+    useEffect(() => {
+        console.log("1111111111")
+        setTimeout(() => {
+            form.validateFields()
+        }, 100)
+    }, [props.isDataLoad])
 
     const sortColumns: ProColumns<examProblemType>[] = [
         {
@@ -155,12 +160,14 @@ const ProblemAddForm = (props: any) => {
             title: <Button type="text" onClick={() => {
                 const code = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemCode
                 const score = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemScore
+                const submitNumber = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemSubmitNumber
                 const number = code == undefined ? 0 : parseInt(code.substr(-4))
                 const NewCode = code == undefined ? undefined : code.substr(0, code.length - 4) + (number + 1).toString()
                 actionRef.current?.addEditRecord?.({
                     id: Date.now(),
                     ProblemCode: NewCode,
-                    ProblemScore: score
+                    ProblemScore: score,
+                    ProblemSubmitNumber: submitNumber,
                 }, {newRecordType: "dataSource", recordKey: Date.now()});
                 if (NewCode != undefined)
                     setTimeout(() => {
@@ -205,10 +212,10 @@ const ProblemAddForm = (props: any) => {
                                             return mApi.getChoiceProblem({problemCode: value}).then((resData: any) => {
                                                 if (resData == null) return Promise.reject()
                                                 else {
-                                                    if(resData.isMulti == 1 && props.type == "single"){
+                                                    if (resData.isMulti == 1 && props.type == "single") {
                                                         return Promise.reject("单选题组不能录入多选题")
                                                     }
-                                                    if(resData.isMulti == 0 && props.type == "multi"){
+                                                    if (resData.isMulti == 0 && props.type == "multi") {
                                                         return Promise.reject("多选题组不能录入单选题")
                                                     }
                                                     let str = ""
@@ -251,7 +258,9 @@ const ProblemAddForm = (props: any) => {
                 return false
             },
             render: (t, record) => {
-                return <Paragraph><pre >{record.ProblemDescription}</pre></Paragraph>
+                return <Paragraph>
+                    <pre>{record.ProblemDescription}</pre>
+                </Paragraph>
             }
         }]
     const programColumns: ProColumns<examProblemType>[] = [
@@ -280,7 +289,15 @@ const ProblemAddForm = (props: any) => {
             editable: () => {
                 return true
             }
-        }]
+        },
+        {
+            title: "提交次数限制",
+            dataIndex: "ProblemSubmitNumber",
+            editable: () => {
+                return true
+            }
+        }
+    ]
     const baseBColumns: ProColumns<examProblemType>[] = [
         {
             title: "题目分数",

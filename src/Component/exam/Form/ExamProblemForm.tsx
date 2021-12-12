@@ -1,5 +1,5 @@
 import React, {Dispatch, RefObject, useEffect, useRef, useState} from "react";
-import {Button, Col, Form, List, message, Popconfirm, Row, Space, Radio, FormInstance, Modal} from "antd";
+import {Button, Col, Form, List, message, Popconfirm, Row, Space, Radio, FormInstance, Modal, Skeleton} from "antd";
 import type {ProFormInstance} from '@ant-design/pro-form';
 import ProForm, {
     ProFormTextArea,
@@ -49,7 +49,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
     const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);               // 考试题组展开
     const [sortSwitch, setSortSwitch] = useState<boolean>(false);                       // 操作是否开启排序模式 【ProblemGroup】
     const [UIMode, setUIMode] = useState<problemGroupUIMode>("easy");                   // UI 模式           【ProblemGroup】
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([])              // 编辑区域构造        【ProblemGroup】
+    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genNumberList(props.groupData))              // 编辑区域构造        【ProblemGroup】
 
     const setProblemGroupData = (data: examProblemGroupType[]) => {
         console.log("setProblemGroupData", data)
@@ -222,115 +222,119 @@ const ExamProblemForm = (props: formSubmitType & any) => {
 
     return (
         <>
-            <EditableProTable<examProblemGroupType>
-                headerTitle={"题组列表"}
-                value={props.groupData}
-                columns={problemGroupColumn}
-                rowKey={"id"}
-                recordCreatorProps={false}
-                actionRef={actionRef}
-                expandable={{
-                    expandedRowRender: (record: examProblemGroupType, index: number, indent: number, expanded: boolean) => {
-                        const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
-                        return (
-                            <ProgramAddForm
-                                groupId={record.id}
-                                listData={props.listData}
-                                setListData={props.setListData}
-                                updateGroup={updateGroup}
-                                type={proGroup.ProblemGroupType}/>
-                        )
-                    },
-                    rowExpandable: (record: examProblemGroupType) => {
-                        const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
-                        return proGroup.ProblemGroupType != undefined && !sortSwitch
-                    },
-                    expandRowByClick: false,
-                    expandedRowKeys: expandedRowKeys,
-                    onExpand: (expanded: boolean, record: examProblemGroupType) => {
-                        let NewExpandedRowKeys = expandedRowKeys
-                        if (expanded) NewExpandedRowKeys.push(parseInt(record.id.toString()))
-                        else NewExpandedRowKeys = NewExpandedRowKeys.filter((x: number) => x != parseInt(record.id.toString()))
-                        setExpandedRowKeys(NewExpandedRowKeys)
-                    }
-                }}
-                editable={{
-                    type: 'multiple',
-                    editableKeys: sortSwitch ? [] : editableKeys,
-                    actionRender: (row: any, config: any, defDom: any) => {
-                        return [
-                            <Popconfirm
-                                title={props.t("deleteConfirm")}
-                                onConfirm={() => {
-                                    setProblemGroupData(
-                                        props.groupData.filter((value: examProblemGroupType) => value.id != row.id)
-                                    )
-                                }}
-                                okText={props.t("yes")}
-                                cancelText={props.t("no")}
-                            >
-                                <Button type={"link"} size={"small"}> {props.t("delete")} </Button>
-                            </Popconfirm>
-                        ]
-                    },
-                    onValuesChange: (record: examProblemGroupType, recordList: examProblemGroupType[]) => {
-                        let NewDate = []
-                        for (let i = 0; i < recordList.length; i++) {
-                            if (recordList[i].id != undefined)
-                                NewDate.push(recordList[i])
+            <Skeleton active loading={!props.isDataLoad}>
+                <EditableProTable<examProblemGroupType>
+                    headerTitle={"题组列表"}
+                    value={props.groupData}
+                    columns={problemGroupColumn}
+                    rowKey={"id"}
+                    recordCreatorProps={false}
+                    actionRef={actionRef}
+                    expandable={{
+                        expandedRowRender: (record: examProblemGroupType, index: number, indent: number, expanded: boolean) => {
+                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
+                            return (
+                                <ProgramAddForm
+                                    groupId={record.id}
+                                    listData={props.listData}
+                                    setListData={props.setListData}
+                                    updateGroup={updateGroup}
+                                    type={proGroup.ProblemGroupType}
+                                    isDataLoad={props.isDataLoad}
+                                />
+                            )
+                        },
+                        rowExpandable: (record: examProblemGroupType) => {
+                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
+                            return proGroup.ProblemGroupType != undefined && !sortSwitch
+                        },
+                        expandRowByClick: false,
+                        expandedRowKeys: expandedRowKeys,
+                        onExpand: (expanded: boolean, record: examProblemGroupType) => {
+                            let NewExpandedRowKeys = expandedRowKeys
+                            if (expanded) NewExpandedRowKeys.push(parseInt(record.id.toString()))
+                            else NewExpandedRowKeys = NewExpandedRowKeys.filter((x: number) => x != parseInt(record.id.toString()))
+                            setExpandedRowKeys(NewExpandedRowKeys)
                         }
-                        setProblemGroupData(NewDate)
-                    },
-                    onChange: (editableKeys: React.Key[], editableRows: any) => {
-                        setEditableRowKeys(editableKeys);
-                    },
-                }}
-                components={sortSwitch ? {
-                    body: {
-                        wrapper: DraggableContainer,
-                        row: DraggableBodyRow
-                    }
-                } : undefined}
-            />
-            <Space style={{marginBottom: "20px"}} size={30}>
-                <Button
-                    type="default"
-                    onClick={() => {
-                        actionRef.current?.addEditRecord?.({id: Date.now()}, {newRecordType: "dataSource"});
                     }}
-                    icon={<PlusOutlined/>}
-                >
-                    新建题组
-                </Button>
+                    editable={{
+                        type: 'multiple',
+                        editableKeys: sortSwitch ? [] : editableKeys,
+                        actionRender: (row: any, config: any, defDom: any) => {
+                            return [
+                                <Popconfirm
+                                    title={props.t("deleteConfirm")}
+                                    onConfirm={() => {
+                                        setProblemGroupData(
+                                            props.groupData.filter((value: examProblemGroupType) => value.id != row.id)
+                                        )
+                                    }}
+                                    okText={props.t("yes")}
+                                    cancelText={props.t("no")}
+                                >
+                                    <Button type={"link"} size={"small"}> {props.t("delete")} </Button>
+                                </Popconfirm>
+                            ]
+                        },
+                        onValuesChange: (record: examProblemGroupType, recordList: examProblemGroupType[]) => {
+                            let NewDate = []
+                            for (let i = 0; i < recordList.length; i++) {
+                                if (recordList[i].id != undefined)
+                                    NewDate.push(recordList[i])
+                            }
+                            setProblemGroupData(NewDate)
+                        },
+                        onChange: (editableKeys: React.Key[], editableRows: any) => {
+                            setEditableRowKeys(editableKeys);
+                        },
+                    }}
+                    components={sortSwitch ? {
+                        body: {
+                            wrapper: DraggableContainer,
+                            row: DraggableBodyRow
+                        }
+                    } : undefined}
+                />
+                <Space style={{marginBottom: "20px"}} size={30}>
+                    <Button
+                        type="default"
+                        onClick={() => {
+                            actionRef.current?.addEditRecord?.({id: Date.now()}, {newRecordType: "dataSource"});
+                        }}
+                        icon={<PlusOutlined/>}
+                    >
+                        新建题组
+                    </Button>
 
-                <Radio.Group defaultValue="edit" buttonStyle="solid" onChange={(evt) => {
-                    switch (evt.target.value) {
-                        case "sort":
-                            setExpandedRowKeys([])
-                            setSortSwitch(true)
-                            return
-                        case "edit":
-                            setSortSwitch(false)
-                            return
-                    }
-                }}>
-                    <Radio.Button value="edit">编辑</Radio.Button>
-                    <Radio.Button value="sort">排序</Radio.Button>
-                </Radio.Group>
-                <Radio.Group defaultValue="easy" buttonStyle="solid" onChange={(evt) => {
-                    switch (evt.target.value) {
-                        case "easy":
-                            setUIMode("easy")
-                            return
-                        case "all":
-                            setUIMode("all")
-                            return
-                    }
-                }}>
-                    <Radio.Button value="easy">简单模式</Radio.Button>
-                    <Radio.Button value="all" disabled>完全模式（暂不支持）</Radio.Button>
-                </Radio.Group>
-            </Space>
+                    <Radio.Group defaultValue="edit" buttonStyle="solid" onChange={(evt) => {
+                        switch (evt.target.value) {
+                            case "sort":
+                                setExpandedRowKeys([])
+                                setSortSwitch(true)
+                                return
+                            case "edit":
+                                setSortSwitch(false)
+                                return
+                        }
+                    }}>
+                        <Radio.Button value="edit">编辑</Radio.Button>
+                        <Radio.Button value="sort">排序</Radio.Button>
+                    </Radio.Group>
+                    <Radio.Group defaultValue="easy" buttonStyle="solid" onChange={(evt) => {
+                        switch (evt.target.value) {
+                            case "easy":
+                                setUIMode("easy")
+                                return
+                            case "all":
+                                setUIMode("all")
+                                return
+                        }
+                    }}>
+                        <Radio.Button value="easy">简单模式</Radio.Button>
+                        <Radio.Button value="all" disabled>完全模式（暂不支持）</Radio.Button>
+                    </Radio.Group>
+                </Space>
+            </Skeleton>
         </>
     )
 }
