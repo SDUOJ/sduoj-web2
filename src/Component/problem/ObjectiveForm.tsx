@@ -253,7 +253,9 @@ const ObjectiveForm = (props: any) => {
                                             mApi.createChoiceProblem(data).then((resData) => {
                                                 message.success("成功")
                                                 setModalVis(false)
-                                                props.update()
+                                                setTimeout(()=>{
+                                                    window.location.reload()
+                                                }, 1000)
                                             })
                                         } else if (props.type == "update") {
                                             data['problemCode'] = props.problemCode

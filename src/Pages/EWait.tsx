@@ -10,13 +10,10 @@ import {withRouter} from "react-router";
 import {UserState} from "../Type/Iuser";
 import {getExamInfoTodo} from "../Redux/Action/exam";
 import {routerE} from "../Config/router";
+import moment from "moment";
+import {TimeDiff} from "../Utils/Time";
 
 const {Meta} = Card;
-
-function getIfExist(val: any, def: any) {
-    if (val === undefined) return def
-    return val
-}
 
 class EWait extends Component<any, any> {
 
@@ -34,7 +31,6 @@ class EWait extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            // sessionStorage.setItem("returnPath", routerE[2].path)
             this.props.history.push(routerE[0].path)
         }
         this.props.getExamInfo(this.props.match.params.eid)
@@ -42,19 +38,23 @@ class EWait extends Component<any, any> {
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            // sessionStorage.setItem("returnPath", routerE[2].path)
             this.props.history.push(routerE[0].path)
         }
     }
 
 
     render() {
-        const userInfo = this.props.userInfo
-        const UserInfo = [
-            {"key": "姓名", "val": getIfExist(userInfo?.realName, userInfo?.nickname)},
-            {"key": "学号", "val": getIfExist(userInfo?.sduId, userInfo?.studentId)},
-        ]
         const examInfo = this.props.examInfo
+
+        let description = examInfo.description
+        const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
+        description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
+        if (start.format("LL") == end.format("LL"))
+            description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - " + end.format("h:mm") + "\n" + description
+        else
+            description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - "
+                + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("h:mm") + "\n" + description
+
 
         return (
             <>
@@ -65,20 +65,6 @@ class EWait extends Component<any, any> {
                         title={examInfo?.title}
                         extra={
                             <div className={"Ewait-content"}>
-                                <Meta title={this.props.t("ExamDescription")} description={
-                                    <List
-                                        size="small"
-                                        dataSource={examInfo != undefined ? examInfo.description.split('\n').filter((value: string) => value != "") : undefined}
-                                        renderItem={
-                                            (item: string, index) => {
-                                                return (
-                                                    <List.Item>{index + 1}. <span>{item}</span></List.Item>
-                                                )
-                                            }
-                                        }
-                                    />
-
-                                } className={"exam-wait-tip"}/>
                                 <Card
                                     cover={
                                         <Timer name={this.props.t("Countdown")}
@@ -94,24 +80,20 @@ class EWait extends Component<any, any> {
                                     ]}
                                     className={"exam-wait-card"}
                                 >
-                                    <Meta title={this.props.t("CandidateInformation")}
-                                          className={"exam-wait-userInfo"} description={
-                                        <Descriptions>
-                                            {
-                                                UserInfo.map((c) => {
-                                                    if (c.val != undefined)
-                                                        return (
-                                                            <Descriptions.Item
-                                                                label={c.key}
-                                                                span={3}>
-                                                                {c.val}
-                                                            </Descriptions.Item>
-                                                        )
-                                                })
+                                    <Meta title={this.props.t("ExamDescription")} description={
+                                        <List
+                                            size="small"
+                                            dataSource={description.split('\n').filter((value: string) => value != "")}
+                                            renderItem={
+                                                (item: string, index) => {
+                                                    return (
+                                                        <List.Item>{index + 1}. <span>{item}</span></List.Item>
+                                                    )
+                                                }
                                             }
-                                        </Descriptions>
-                                    }
-                                    />
+                                        />
+
+                                    } className={"exam-wait-tip"}/>
                                 </Card>
                             </div>
                         }
@@ -132,7 +114,6 @@ const mapStateToProps = (state: any) => {
         isLogin: UState.isLogin,
         examInfo: State.examInfo,
         ExamInfoLoad: State.ExamInfoLoad,
-        userInfo: UState.userInfo
     }
 }
 

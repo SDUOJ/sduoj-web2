@@ -221,7 +221,9 @@ const ExamForm = (props: formSubmitType & any) => {
                                 mApi.createExam(formData).then((resData: any) => {
                                     setExamFormVis(false)
                                     message.success("成功")
-                                    props.update()
+                                    setTimeout(()=>{
+                                        window.location.reload()
+                                    }, 1000)
                                 })
                             } else if (props.type == "update") {
                                 formData['examId'] = props.examID
