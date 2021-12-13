@@ -315,6 +315,12 @@ export default {
     },
     getExamInfo: async function(examId: examID){
         return request.get("manage/exam/getInfo/" + examId)
+    },
+    createExam: async function(data: any){
+        return request.post("/manage/exam/create", data)
+    },
+    updateExam: async function(data: any){
+        return request.post("manage/exam/update", data)
     }
 
 

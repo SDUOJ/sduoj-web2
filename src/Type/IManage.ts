@@ -47,8 +47,6 @@ export interface examDataType {
     examProblemListInfo: examProblemListType[]
     examProblemGroupInfo: examProblemGroupType[]
     examBasicInfo: examBasicType
-
-    examFormVis: boolean
 }
 
 export interface ManageState {

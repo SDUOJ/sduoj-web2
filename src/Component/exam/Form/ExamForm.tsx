@@ -10,7 +10,7 @@ import {
     examProblemGroupType, examProblemInfo,
     examProblemListType, examProblemType,
     examUserType,
-    ManageState, ProGroupTypeStF
+    ManageState, ProGroupTypeFtS, ProGroupTypeStF
 } from "../../../Type/IManage";
 import {formSubmitType, setExamFormVis, SubmitExamFormTodo} from "../../../Redux/Action/manage";
 import ExamBaseForm from "./ExamBaseForm";
@@ -19,6 +19,7 @@ import ExamMemberForm from "./ExamMemberForm";
 import ExamProblemForm from "./ExamProblemForm";
 import mApi from "Utils/API/m-api"
 import {groupSelection} from "../../../Type/Igroup";
+import {examFormChecker} from "../../../Utils/Checker/examFormChecker";
 
 export type problemGroupUIMode = "easy" | "all"
 
@@ -101,7 +102,6 @@ const ExamForm = (props: formSubmitType & any) => {
                                         let score = 0
                                         let proInfo: examProblemType[] = []
                                         for (const y of x.problems) {
-                                            console.log("----", y)
                                             score += y.problemScore
                                             proInfo.push({
                                                 id: y.index,
@@ -127,8 +127,6 @@ const ExamForm = (props: formSubmitType & any) => {
                                             checkedProblemCode: []
                                         })
                                     }
-
-                                    console.log("===", proList)
 
                                     setProListDataA(proList)
                                     setExamProGroupData(groupData)
@@ -159,15 +157,80 @@ const ExamForm = (props: formSubmitType & any) => {
                         type="primary"
                         key="submit"
                         onClick={() => {
-                            if(props.type == "create"){
+                            const base = ExamBaseFormRef.current?.getFieldsValue()
+                            const user = ExamUserFormRef.current?.getFieldsValue()
+                            const groupInfo: examProblemGroupType[] = examProGroupData
+                            const proList: examProblemListType[] = proListData
 
-                            }else if(props.type == "update"){
-                                // TODO
+                            console.log("Base", base)
+                            console.log("user", user)
+                            console.log("group-info", groupInfo)
+                            console.log("group-ProList", proList)
+                            if (!examFormChecker({
+                                examProblemListInfo: proList,
+                                examProblemGroupInfo: groupInfo,
+                                examBasicInfo: base
+                            })) return
+                            let proGroup: any = []
+                            for (const x of groupInfo) {
+                                let proListX: any = []
+
+                                const proIndex = proList.findIndex((value) => {
+                                    return value.groupId == x.id
+                                })
+                                if (proIndex != -1) {
+                                    for (const y of proList[proIndex].proList) {
+                                        proListX.push({
+                                            problemCode: y.ProblemCode,
+                                            problemScore: y.ProblemScore,
+                                            problemTitle: y.ProblemAlias,
+                                            submitNum: y.ProblemSubmitNumber,
+                                            problemDescriptionId:
+                                                x.ProblemGroupType == "program" ? y.ProblemDescription : undefined
+                                        })
+                                    }
+                                }
+
+                                proGroup.push({
+                                    index: x.id,
+                                    title: x.ProblemGroupName,
+                                    type: ProGroupTypeFtS[x.ProblemGroupType as string],
+                                    problems: proListX,
+                                    groupStart: x.ProblemGroupStartEndTime == undefined
+                                        ? base.examStartEndTime[0].unix() * 1000
+                                        : x.ProblemGroupStartEndTime[0].unix() * 1000,
+                                    groupEnd: x.ProblemGroupStartEndTime == undefined
+                                        ? base.examStartEndTime[1].unix() * 1000
+                                        : x.ProblemGroupStartEndTime[1].unix() * 1000,
+                                    previous: x.ProblemGroupPremise == undefined
+                                        ? 0 : x.ProblemGroupPremise,
+                                })
                             }
-                            console.log("Base", ExamBaseFormRef.current?.getFieldsValue())
-                            console.log("user", ExamUserFormRef.current?.getFieldsValue())
-                            console.log("group-info", examProGroupData)
-                            console.log("group-ProList", proListData)
+
+                            const formData: any = {
+                                examTitle: base.examTitle,
+                                gmtStart: base.examStartEndTime[0].unix() * 1000,
+                                gmtEnd: base.examStartEndTime[1].unix() * 1000,
+                                description: base.examDescription,
+                                groupId: user?.ManageGroup,
+                                participatingGroups: user?.ParticipatingGroup,
+                                problemGroups: proGroup
+                            }
+                            console.log(base.examStartEndTime[0].unix(), base.examStartEndTime[1].unix())
+                            if (props.type == "create") {
+                                mApi.createExam(formData).then((resData: any) => {
+                                    console.log(resData)
+                                    setExamFormVis(false)
+                                    window.location.reload()
+                                })
+                            } else if (props.type == "update") {
+                                formData['examId'] = props.examID
+                                mApi.updateExam(formData).then((resData: any) => {
+                                    console.log(resData)
+                                    setExamFormVis(false)
+                                    window.location.reload()
+                                })
+                            }
                         }}
                     >
                         {props.t("Submit")}

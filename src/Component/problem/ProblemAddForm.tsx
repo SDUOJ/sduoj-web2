@@ -219,7 +219,7 @@ const ProblemAddForm = (props: any) => {
                                                         return Promise.reject("多选题组不能录入单选题")
                                                     }
                                                     let str = ""
-                                                    const pro = JSON.parse(resData.description)
+                                                    const pro = typeof resData.description == "string" ? JSON.parse(resData.description) : resData.description
                                                     str += pro.content + '\n'
                                                     let len = Object.keys(pro.choice).length
                                                     for (const x of Object.keys(pro.choice)) {

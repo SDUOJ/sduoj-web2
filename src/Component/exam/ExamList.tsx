@@ -2,7 +2,7 @@ import React, {Component, Dispatch} from 'react';
 
 import ProList from '@ant-design/pro-list';
 
-import {Table, Tag, Space, Card, Badge} from 'antd';
+import {Table, Tag, Space, Card, Badge, Button, Popover} from 'antd';
 import {ExamState, IUserExamInfo, SExamInfo, SExamManageInfo} from "../../Type/IExam";
 import {ConfigState} from "../../Type/IConfig";
 import {UserState} from "../../Type/Iuser";
@@ -14,18 +14,7 @@ import moment from "moment";
 import eApi from "../../Utils/API/e-api";
 import mApi from "../../Utils/API/m-api";
 import ExamForm from "./Form/ExamForm";
-
-function TimeRangeState(start: number, end: number) {
-    if (start > Date.now()) return "wait"
-    if (end < Date.now()) return "end"
-    return "running"
-}
-
-function getDiffSecond(start: number, end: number) {
-    const Start: any = moment(start)
-    const End: any = moment(end)
-    return End.diff(Start, "second")
-}
+import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 
 
 class ExamList extends Component<any, any> {
@@ -50,7 +39,6 @@ class ExamList extends Component<any, any> {
                 if (resData != null) {
                     let data: SExamManageInfo[] = []
                     this.setState({total: resData.totalNum})
-                    console.log(resData.total)
                     for (const x of resData.rows) {
                         data.push({
                             id: x.examId,
@@ -136,15 +124,7 @@ class ExamList extends Component<any, any> {
                 title: '考试时长',
                 key: 'examLength',
                 render: (value: number, record: SExamInfo) => {
-                    const diffSecond: number = getDiffSecond(record.startTime, record.endTime)
-                    let res = ""
-                    if (diffSecond / 3600 / 24 > 1) {
-                        res += Math.floor(diffSecond / 3600 / 24).toString() + "天"
-                    }
-                    res += Math.floor((diffSecond % (3600 * 24)) / 3600).toString() + "时"
-                        + Math.floor((diffSecond % 3600) / 60).toString() + "分"
-                        + (diffSecond % 60).toString() + "秒"
-                    return res
+                    return TimeDiff(record.startTime, record.endTime)
                 },
                 sorter: (a: SExamInfo, b: SExamInfo) => {
                     return getDiffSecond(a.startTime, a.endTime) - getDiffSecond(b.startTime, b.endTime)
@@ -199,8 +179,15 @@ class ExamList extends Component<any, any> {
             {
                 title: '操作',
                 key: 'operator',
-                render: (text: any, record: SExamInfo)=>{
-                    return <ExamForm type={'update'} title={record.title} examID={record.id}/>
+                render: (text: any, record: SExamInfo) => {
+                    if (record.startTime > Date.now())
+                        return <ExamForm type={'update'} title={record.title} examID={record.id}/>
+                    else
+                        return (
+                            <Popover content={"已开始的考试不能修改"}>
+                                <Button type={"link"} disabled>修改</Button>
+                            </Popover>
+                        )
                 }
             }
         ]

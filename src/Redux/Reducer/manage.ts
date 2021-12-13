@@ -13,7 +13,6 @@ const initState: ManageState = {
         },
         examProblemListInfo: [],
         examProblemGroupInfo: [],
-        examFormVis: false,
     },
 }
 
@@ -22,9 +21,6 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
     // 此处不做深拷贝，redux无法检测到更新
     let State: ManageState = state
     switch (action.type) {
-        case "setExamFormVis":
-            State.examData.examFormVis = action.data
-            break
 
         default:
             break

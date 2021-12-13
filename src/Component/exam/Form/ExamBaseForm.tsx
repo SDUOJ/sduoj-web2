@@ -7,6 +7,8 @@ import TextArea from "antd/lib/input/TextArea";
 import {connect} from "react-redux";
 import {examBasicType, ManageState} from "../../../Type/IManage";
 import {withRouter} from "react-router";
+import moment from "moment";
+import {TimeDiff} from "../../../Utils/Time";
 
 const {RangePicker} = DatePicker;
 
@@ -17,6 +19,18 @@ const ExamBaseForm = (props: any) => {
     // === State ===
     // 考试描述
     const [examDescription, setExamDescription] = useState<string[]>([]);
+    const [examTime, setExamTime] = useState<moment.Moment[]>();
+
+    useEffect(()=>{
+        if (props.initData != undefined) {
+            if (props.initData.examDescription != undefined)
+                setExamDescription(
+                    props.initData.examDescription.split('\n').filter((value: string) => value != "")
+                )
+            if (props.initData.examStartEndTime != undefined)
+                setExamTime(props.initData.examStartEndTime)
+        }
+    }, [props.initData])
 
     return (
         <>
@@ -30,6 +44,9 @@ const ExamBaseForm = (props: any) => {
                             setExamDescription(
                                 changedValues.examDescription.split('\n').filter((value: string) => value != "")
                             )
+                        }
+                        if (changedValues.examStartEndTime !== undefined) {
+                            setExamTime(changedValues.examStartEndTime)
                         }
                     }}
                 >
@@ -47,12 +64,16 @@ const ExamBaseForm = (props: any) => {
                                 label="考试起止时间"
                                 rules={[{type: 'array' as const, required: true}]}
                             >
-                                <RangePicker showTime/>
+                                <RangePicker showTime={{minuteStep: 5, secondStep: 30}} format={"YYYY-MM-DD HH:mm:ss"}/>
                             </Form.Item>
                         </Col>
                         <Col span={11} offset={1}>
                             <Meta title={"考试时长"} description={
-                                <span> 暂不支持 </span>
+                                [''].map(() => {
+                                    if (examTime?.length == 2) {
+                                        return TimeDiff(examTime[0].unix() * 1000, examTime[1].unix() * 1000)
+                                    }
+                                })
                             } className={"exam-form-preview"}/>
                         </Col>
 
