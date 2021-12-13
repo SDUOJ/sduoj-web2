@@ -12,6 +12,8 @@ import {userGetProfileTodo} from "../Redux/Action/user";
 import {getExamInfoTodo} from "../Redux/Action/exam";
 import {ConfigState} from "../Type/IConfig";
 import cookie from "react-cookies";
+import ExamRun from "../Component/exam/ExamRun";
+import {routerE} from "../Config/router";
 
 const {Meta} = Card;
 
@@ -22,13 +24,24 @@ class ERunning extends Component<any, any> {
         super(props, context);
     }
 
+    componentDidMount() {
+        if (!this.props.isLogin) {
+            this.props.history.push(routerE[0].path)
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
+        if (!this.props.isLogin) {
+            this.props.history.push(routerE[0].path)
+        }
+    }
 
     render() {
 
 
         return (
             <>
-                ERunning
+                <ExamRun/>
             </>
         )
     }
@@ -36,25 +49,10 @@ class ERunning extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    const CState: ConfigState = state.ConfigReducer
     const UState: UserState = state.UserReducer
-    let userInfo: IUserExamInfo = {
-        name: UState.userInfo?.realName,
-        studentID: UState.userInfo?.sduId
-    }
     return {
-        isLogin: UState.isLogin,
-        userInfo: userInfo,
+        isLogin: UState.isLogin
 
-        ExamInfoLoad: State.ExamInfoLoad,
-        examTitle: State.examInfo?.title,
-        examStartTime: State.examInfo?.startTime,
-        examDescription: State.examInfo?.description,
-        examId: State.examId,
-
-        ExamStartDisable: State.examInfo?.startTime == undefined ?
-            true : CState.timestamp < State.examInfo?.startTime
     }
 }
 

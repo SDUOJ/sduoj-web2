@@ -12,7 +12,7 @@ import {ExamState, SProInfo} from "../../Type/IExam";
 class ProTag extends Component<any, any> {
 
     render() {
-        let TagState = [], score:any = undefined, isProgram = false
+        let TagState = [], score: any = undefined, isProgram = false
         if (this.props.TagState !== undefined) {
             TagState = this.props.TagState
         } else if (this.props.ProInfo !== undefined) {
@@ -21,7 +21,7 @@ class ProTag extends Component<any, any> {
             if (NowPro.content === undefined) {
                 TagState.push("d")
             } else {
-                if(isProgramContent(NowPro.content)) {
+                if (isProgramContent(NowPro.content)) {
                     score = GetMaxScore(NowPro.content)
                     isProgram = true
                 }
@@ -37,8 +37,11 @@ class ProTag extends Component<any, any> {
                    onClick={this.props.ProIndex !== 0 ? (() => this.props.JumpToPro(this.props.ProIndex)) : undefined}
                 >
                     <Badge dot={TagState.indexOf("c") !== -1}>
-                        <Tag
-                            color={this.props.ProIndex == this.props.TopProblemIndex ? (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") : (TagState.indexOf("f") !== -1 ? "green" : undefined)}>
+                        <Tag color={
+                            this.props.ProIndex != 0 && this.props.ProIndex == this.props.TopProblemIndex ?
+                                (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") :
+                                (TagState.indexOf("f") !== -1 ? "green" : undefined)
+                        }>
                             {
                                 [''].map(() => {
                                     if (this.props.ProIndex !== 0) {
@@ -62,8 +65,8 @@ class ProTag extends Component<any, any> {
         return (
             <div>
                 {
-                    [''].map(()=>{
-                        if(isProgram) {
+                    [''].map(() => {
+                        if (isProgram) {
                             return (
                                 <Popover
                                     content={
@@ -81,7 +84,7 @@ class ProTag extends Component<any, any> {
                                     {tagComp}
                                 </Popover>
                             )
-                        }else {
+                        } else {
                             return tagComp
                         }
                     })

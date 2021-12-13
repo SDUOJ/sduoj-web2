@@ -26,7 +26,8 @@ class EWait extends Component<any, any> {
     }
 
     setExamStart = (data: boolean) => {
-        this.setState({ExamStart: data})
+        if (data != this.state.ExamStart)
+            this.setState({ExamStart: data})
     }
 
     componentDidMount() {
@@ -44,17 +45,20 @@ class EWait extends Component<any, any> {
 
 
     render() {
+
         const examInfo = this.props.examInfo
-
-        let description = examInfo.description
-        const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
-        description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
-        if (start.format("LL") == end.format("LL"))
-            description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - " + end.format("h:mm") + "\n" + description
-        else
-            description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - "
-                + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("h:mm") + "\n" + description
-
+        let description = ""
+        if (examInfo != undefined) {
+            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now()) this.setExamStart(true)
+            description = examInfo.description
+            const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
+            description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
+            if (start.format("LL") == end.format("LL"))
+                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - " + end.format("h:mm") + "\n" + description
+            else
+                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - "
+                    + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("h:mm") + "\n" + description
+        }
 
         return (
             <>
@@ -74,7 +78,11 @@ class EWait extends Component<any, any> {
                                     }
                                     actions={[
                                         <Button type="primary"
-                                                disabled={!this.state.ExamStart}>
+                                                disabled={!this.state.ExamStart}
+                                                onClick={()=>{
+                                                    this.props.history.push("/exam/running/" + this.props.match.params.eid)
+                                                }}
+                                        >
                                             {this.props.t("StartAnswering")}
                                         </Button>
                                     ]}
@@ -109,7 +117,6 @@ class EWait extends Component<any, any> {
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
     const UState: UserState = state.UserReducer
-    console.log("State", State.examInfo)
     return {
         isLogin: UState.isLogin,
         examInfo: State.examInfo,

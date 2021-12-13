@@ -5,7 +5,7 @@ import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {ExamState} from "../../Type/IExam";
+import {ExamState, SProGroupInfo} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {withRouter} from "react-router";
 import {getExamProblemListTodo} from "../../Redux/Action/exam";
@@ -18,37 +18,13 @@ class ExamAnswerSheet extends Component<any, any> {
     }
 
     componentDidMount() {
-        if (this.props.examId == undefined) {
-            this.props.setExamID(this.props.match.params.eid)
-        }
+        console.log("AnswerSheet", this.props.match.params.eid)
+        this.props.GetProList(this.props.match.params.eid)
     }
 
     render() {
         let ProList: { "title": string, "proList": number[] }[] = []
 
-        if (!this.props.Loading) {
-            // 如果题目列表已经加载完成，构建题目列表
-            ProList = [
-                {"title": this.props.t(this.props.ProInfo[0].type), "proList": [this.props.ProInfo[0].index]}
-            ]
-            for (let i = 1; i < this.props.ProInfo.length; i++) {
-                if (this.props.ProInfo[i].type == this.props.ProInfo[i - 1].type) {
-                    ProList[ProList.length - 1].proList.push(this.props.ProInfo[i].index)
-                } else {
-                    ProList.push({
-                        "title": this.props.t(this.props.ProInfo[i].type),
-                        "proList": [this.props.ProInfo[i].index]
-                    })
-                }
-            }
-        } else {
-            // 考试信息未导入成功
-            if (this.props.ExamID == undefined) {
-                console.log(this.props.location.pathname)
-            } else {
-                this.props.GetProList(this.props.ExamID)
-            }
-        }
         return (
             <div className={"ExamAnswerSheet"}>
                 <Card>
@@ -70,11 +46,14 @@ class ExamAnswerSheet extends Component<any, any> {
 
                                   <Skeleton active loading={this.props.Loading}>
                                       {
-                                          ProList.map((Value: { "title": string, "proList": number[] }) => {
-                                              return (
-                                                  <ProTagGroup title={Value.title} proList={Value.proList}/>
-                                              )
-                                          })
+
+                                          this.props.ProGroupInfo != undefined && (
+                                              this.props.ProGroupInfo.map((Value: SProGroupInfo) => {
+                                                  return (
+                                                      <ProTagGroup title={Value.title} proList={Value.proList}/>
+                                                  )
+                                              })
+                                          )
                                       }
                                   </Skeleton>
                               </>
@@ -92,7 +71,8 @@ const mapStateToProps = (state: any) => {
     return {
         Loading: !State.ProListLoad,
         ProInfo: State.proInfo,
-        examID: State.examId
+        examID: State.examId,
+        ProGroupInfo: State.proGroupInfo
     }
 }
 
@@ -101,7 +81,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
         type: "updateTop",
         topIndex: ProIndex
     }),
-    GetProList: (eid: examID) => dispatch(getExamProblemListTodo())
+    GetProList: (eid: examID) => dispatch(getExamProblemListTodo(eid))
 })
 
 export default connect(

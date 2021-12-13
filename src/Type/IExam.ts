@@ -30,6 +30,11 @@ export interface SProInfo {
     content?: ProContent                // 题目内容
 }
 
+export interface SProGroupInfo{
+    title: string
+    proList: React.Key[]
+}
+
 export interface ExamListType {
     examId: string
     examTitle: string
@@ -44,9 +49,9 @@ export interface ExamState {
     examId?: string                     // 考试ID
     ExamInfoLoad: boolean               // 考试信息是否已加载
     proInfo?: SProInfo[]                // 题目信息
+    proGroupInfo?: SProGroupInfo[]      // 题组信息
     ProListLoad: boolean                // 题目信息是否已加载
     TopProblemIndex: number             // 顶部问题ID
-
 }
 
 export interface IUserExamInfo {

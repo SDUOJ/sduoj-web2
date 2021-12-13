@@ -83,7 +83,7 @@ export default {
 
     // 获取题目信息
     async getExamProblemList(data: examID) {
-        return request.get("/exam/getExamProblemList/" + data)
+        return request.get("/exam/" + data + "/getGroupList")
     },
     // 提交代码
     async CreateSubmit(data: ICreateSubmit) {

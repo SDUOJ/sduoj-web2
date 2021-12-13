@@ -54,12 +54,11 @@ export interface setExamInfo {
 
 
 
-export function getExamProblemListTodo() {
+export function getExamProblemListTodo(eid: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
-        const EState: ExamState = getState().ExamReducer
-        eApi.getExamProblemList(EState.examId as examID).then(function (resDate: any) {
-            if (resDate != null) {
-
+        eApi.getExamProblemList(eid).then(function (resData: any) {
+            if (resData != null) {
+                console.log("123", resData)
 
             }
         })

@@ -6,7 +6,7 @@ import {Col, Row} from "antd";
 
 interface IProTagGroup {
     title: string
-    proList: number[]
+    proList: React.Key[]
 }
 
 export default class ProTagGroup extends Component<IProTagGroup, any> {
@@ -19,7 +19,7 @@ export default class ProTagGroup extends Component<IProTagGroup, any> {
                     description={
                         <Row gutter={[0, 16]}>
                             {
-                                this.props.proList.map((index: number) => {
+                                this.props.proList.map((index: React.Key) => {
                                     return (
                                         <Col span={3}>
                                             <ProTag ProIndex={index}/>
