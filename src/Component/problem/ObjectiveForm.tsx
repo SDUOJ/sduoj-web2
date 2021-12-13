@@ -251,16 +251,16 @@ const ObjectiveForm = (props: any) => {
                                         }
                                         if (props.type == "create") {
                                             mApi.createChoiceProblem(data).then((resData) => {
-                                                console.log(resData)
+                                                message.success("成功")
                                                 setModalVis(false)
-                                                window.location.reload()
+                                                props.update()
                                             })
                                         } else if (props.type == "update") {
                                             data['problemCode'] = props.problemCode
                                             mApi.updateChoiceProblem(data).then((resData) => {
-                                                console.log(resData)
+                                                message.success("成功")
                                                 setModalVis(false)
-                                                window.location.reload()
+                                                props.update()
                                             })
                                         }
                                     }).catch(error => {
@@ -276,7 +276,7 @@ const ObjectiveForm = (props: any) => {
             >
                 <Skeleton active loading={!isDataLoad}>
                     <Form.Item label={"类型"} name={"isMulti"} rules={[{required: true}]}>
-                        <Radio.Group buttonStyle="solid">
+                        <Radio.Group buttonStyle="solid" disabled={props.type == "update"}>
                             <Radio.Button value="0">单选题</Radio.Button>
                             <Radio.Button value="1">多选题</Radio.Button>
                         </Radio.Group>

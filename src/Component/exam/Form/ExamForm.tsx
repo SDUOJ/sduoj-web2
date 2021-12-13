@@ -1,5 +1,5 @@
 import React, {Dispatch, useEffect, useState} from "react";
-import {Button, FormInstance, Modal, Tabs} from "antd";
+import {Button, FormInstance, message, Modal, Tabs} from "antd";
 import {MenuOutlined, PlusOutlined,} from "@ant-design/icons"
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
@@ -219,16 +219,16 @@ const ExamForm = (props: formSubmitType & any) => {
                             console.log(base.examStartEndTime[0].unix(), base.examStartEndTime[1].unix())
                             if (props.type == "create") {
                                 mApi.createExam(formData).then((resData: any) => {
-                                    console.log(resData)
                                     setExamFormVis(false)
-                                    window.location.reload()
+                                    message.success("成功")
+                                    props.update()
                                 })
                             } else if (props.type == "update") {
                                 formData['examId'] = props.examID
                                 mApi.updateExam(formData).then((resData: any) => {
-                                    console.log(resData)
                                     setExamFormVis(false)
-                                    window.location.reload()
+                                    message.success("成功")
+                                    props.update()
                                 })
                             }
                         }}

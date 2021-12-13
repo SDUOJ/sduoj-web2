@@ -28,6 +28,10 @@ const ProblemList = (props: any) => {
         })
     }
 
+    const update = ()=>{
+        getList(1, 20)
+    }
+
     useEffect(() => {
         getList(1, 20)
     }, [])
@@ -61,7 +65,7 @@ const ProblemList = (props: any) => {
             key: 'operator',
             render: (value: number, record: any) => {
                 if (props.type == "objective")
-                    return <ObjectiveForm type={'update'} title={record.problemTitle} problemCode={record.problemCode}/>
+                    return <ObjectiveForm type={'update'} title={record.problemTitle} problemCode={record.problemCode} update={update}/>
             }
         }
     ]

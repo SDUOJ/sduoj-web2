@@ -30,6 +30,10 @@ class ExamList extends Component<any, any> {
         this.getList = this.getList.bind(this)
     }
 
+    update = () => {
+        this.getList(1, 20)
+    }
+
     getList = (pageNow: number, pageSize: number | undefined) => {
         if (this.props.type == "manage") {
             mApi.getExamList({
@@ -182,7 +186,7 @@ class ExamList extends Component<any, any> {
                 key: 'operator',
                 render: (text: any, record: SExamInfo) => {
                     if (record.startTime > Date.now())
-                        return <ExamForm type={'update'} title={record.title} examID={record.id}/>
+                        return <ExamForm type={'update'} title={record.title} examID={record.id} update={this.update}/>
                     else
                         return (
                             <Popover content={"已开始的考试不能修改"}>
