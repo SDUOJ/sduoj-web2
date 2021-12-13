@@ -28,7 +28,7 @@ const baseUrl = apiAddress().MANAGE_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 1000,
+    timeout: 5000,
 })
 service.defaults.withCredentials = true
 
@@ -49,7 +49,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         }
     } catch (e: any) {
         const response = e.response
-        if(response == undefined){
+        if (response == undefined) {
             message.error("后端不可达")
             return null
         }
@@ -78,7 +78,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         }
     } catch (e: any) {
         const response = e.response
-        if(response == undefined){
+        if (response == undefined) {
             message.error("后端不可达")
             return null
         }
@@ -307,21 +307,32 @@ export default {
     queryGroupTitle: async function (params: { title: string }) {
         return request.get('/manage/group/listByTitle', params);
     },
-    getChoiceProblem: async function (params: {problemCode: string}){
+    getChoiceProblem: async function (params: { problemCode: string }) {
         return request.get("/manage/problem/queryChoiceProblem", params)
     },
-    getExamList: async function(data: any) {
+    getExamList: async function (data: any) {
         return request.post("/manage/exam/getInfo", data);
     },
-    getExamInfo: async function(examId: examID){
-        return request.get("manage/exam/getInfo/" + examId)
+    getExamInfo: async function (examId: examID) {
+        return request.get("/manage/exam/getInfo/" + examId)
     },
-    createExam: async function(data: any){
+    createExam: async function (data: any) {
         return request.post("/manage/exam/create", data)
     },
-    updateExam: async function(data: any){
-        return request.post("manage/exam/update", data)
+    updateExam: async function (data: any) {
+        return request.post("/manage/exam/update", data)
+    },
+    getChoiceList: async function (data: any) {
+        return request.post("/manage/problem/listChoiceProblem", data)
+    },
+    createChoiceProblem: async function (data: any) {
+        return request.post("/manage/problem/createChoiceProblem", data)
+    },
+    updateChoiceProblem: async function (data: any){
+        return request.post("/manage/problem/updateChoiceProblem", data)
+    },
+    getChoiceInfo: async function (data: string){
+        return request.get("/manage/problem/queryChoiceProblem?problemCode=" + data)
     }
-
 
 }

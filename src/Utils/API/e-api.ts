@@ -9,7 +9,7 @@ const baseUrl = apiAddress().EXAM_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 1000,
+    timeout: 5000,
 })
 service.defaults.withCredentials = true
 

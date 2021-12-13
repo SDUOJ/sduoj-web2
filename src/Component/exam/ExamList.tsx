@@ -129,7 +129,8 @@ class ExamList extends Component<any, any> {
                 sorter: (a: SExamInfo, b: SExamInfo) => {
                     return getDiffSecond(a.startTime, a.endTime) - getDiffSecond(b.startTime, b.endTime)
                 }
-            }]
+            }
+        ]
         let columns2: any[] = [
             {
                 title: '状态',
@@ -221,9 +222,7 @@ class ExamList extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
-    return {}
 }
-
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(

@@ -1,13 +1,17 @@
 import React, {useRef, useState} from "react";
-import {Button, message, Popconfirm, Space, Switch} from "antd";
+import {Button, Form, message, Popconfirm, Space, Radio, Skeleton} from "antd";
 import type {ProFormInstance} from '@ant-design/pro-form';
-import ProForm, {ProFormTextArea, ModalForm, ProFormCheckbox} from '@ant-design/pro-form';
-import {CheckOutlined, CloseOutlined, MenuOutlined, PlusOutlined,} from "@ant-design/icons"
+import {ProFormTextArea, ModalForm, ProFormCheckbox, ProFormText} from '@ant-design/pro-form';
+import {MenuOutlined, PlusOutlined,} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-
+import {genAnswerList, genEditableList, genNumberList} from "../../Type/IManage";
+import mApi from "Utils/API/m-api"
+import SelectGroup from "../group/SelectGroup";
+import {groupInfo} from "../../Type/types";
+import {groupSelection} from "../../Type/Igroup";
 
 // 可拖拽的排序手柄
 const DragHandle = SortableHandle(() => <MenuOutlined style={{cursor: 'grab', color: '#999'}}/>);
@@ -19,24 +23,17 @@ type DataSourceType = {
     content?: string
 };
 
-// 新建 与 修改
-export type ObjectiveFormMode = "new" | "modify"
 
-// TODO 1. 在 Reset 的时候，答案的选项应该按照初始化，变为 4 个，没有同步修改可编辑区域（当前版本暂时移出
-//  ）
-// TODO 2. 排序后，答案会清空，不能按照原来的答案记忆
-// TODO 3. 客观题文本显示暂时不支持数学公式
-
-
-// 新建是默认的选项
-const defaultData: DataSourceType[] = [
-    {id: 0, content: "A"},
-    {id: 1, content: "B"},
-    {id: 2, content: "C"},
-    {id: 3, content: "D"},
-]
-
-const defaultAnswer: string[] = []
+const initData = {
+    choice: [
+        {id: 0, content: ""},
+        {id: 1, content: ""},
+        {id: 2, content: ""},
+        {id: 3, content: ""}
+    ],
+    content: "",
+    answer: []
+}
 
 const ObjectiveForm = (props: any) => {
     // 可编辑表格的操作引用
@@ -48,11 +45,12 @@ const ObjectiveForm = (props: any) => {
     // 操作是否开启排序模式
     const [sortSwitch, setSortSwitch] = useState<boolean>(false);
     // 答案多选项构造
-    const [answerList, setAnswerList] = useState<string[]>(["A", "B", "C", "D"]);
+    const [answerList, setAnswerList] = useState<string[]>(genAnswerList(initData.choice));
     // 编辑区域构造
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() =>
-        defaultData.map((item) => item.id),
-    );
+    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genEditableList(initData.choice));
+    const [modalVis, setModalVis] = useState<boolean>(false);
+    const [isDataLoad, setIsDataLoad] = useState<boolean>(false);
+    const [groupInfo, setGroupInfo] = useState<groupSelection[]>()
 
     // === 拖拽排序 ===
     // 排序结束后
@@ -61,49 +59,37 @@ const ObjectiveForm = (props: any) => {
         if (oldIndex !== newIndex) {
             // 移动数组中的元素，并设置到当前的状态
             console.log("onSortEnd", oldIndex, newIndex)
-            setFormValue(arrayMoveImmutable(getForm().table, oldIndex, newIndex), undefined, [])
+            setFormValue(arrayMoveImmutable(getForm().choice, oldIndex, newIndex))
         }
     };
-    const DraggableContainer = (props: any) => (
-        <XSortableContainer
-            useDragHandle
-            disableAutoscroll
-            helperClass="row-dragging"
-            onSortEnd={onSortEnd}
-            {...props}
-        />
-    );
+    const DraggableContainer = (props: any) => {
+        return (
+            <XSortableContainer
+                useDragHandle
+                disableAutoscroll
+                helperClass="row-dragging"
+                onSortEnd={onSortEnd}
+                {...props}
+            />
+        );
+    }
     const DraggableBodyRow = ({className, style, ...restProps}: any) => {
-        // function findIndex base on Table rowKey props and should always be a right array index
-        let dataSource = formRef.current?.getFieldsValue().table
+        let dataSource = formRef.current?.getFieldsValue().choice
         const index = dataSource.findIndex((x: DataSourceType) => x.id === restProps['data-row-key']);
         return <SortableItem index={index} {...restProps} />
     };
 
     // 设置当前表单值
-    const setFormValue = (table?: DataSourceType[], content?: string, answer?: string[]) => {
+    const setFormValue = (choice?: DataSourceType[]) => {
         let data = formRef.current?.getFieldsValue()
         const Data = formRef.current?.getFieldsValue()
-        console.log("setFormValue", data)
-        console.log(table, content, answer)
         if (data != undefined) {
-            if (table != undefined) data.table = table
-            if (content != undefined) data.content = content
-            if (answer != undefined) data.answer = answer
-
-            if (Data.table.length != data.table.length) {
-                let list: string[] = []
-                let edit: number[] = []
-                for (let i = 0; i < data.table.length; i++) {
-                    list.push(String.fromCharCode('A'.charCodeAt(0) + i))
-                    edit.push(i)
-                }
-
-                setAnswerList(list)
-                setEditableRowKeys(edit)
+            if (choice != undefined) data.choice = choice
+            if (Data.choice != undefined && Data.choice.length != data.choice.length) {
+                setAnswerList(genAnswerList(data.choice))
+                setEditableRowKeys(genEditableList(data.choice))
                 data.answer = []
             }
-
             formRef.current?.setFieldsValue(data)
         }
     }
@@ -162,22 +148,61 @@ const ObjectiveForm = (props: any) => {
     let columns: ProColumns<DataSourceType>[] = []
     if (sortSwitch) columns = columns.concat(sortColumns)
     columns = columns.concat(choiceColumns)
-    if (!sortSwitch && (getForm()?.table?.length == undefined || getForm()?.table?.length > 2)) columns = columns.concat(operatorColumns)
+    if (!sortSwitch && (getForm()?.choice?.length == undefined || getForm()?.choice?.length > 2)) columns = columns.concat(operatorColumns)
 
     return (
         <>
-            <ModalForm<{ table: DataSourceType[] }>
-                title={"新建题目"}
+            <ModalForm
+                visible={modalVis}
+                onVisibleChange={setModalVis}
+                title={props.type == "create" ? "新建" : props.title}
                 formRef={formRef}
-                initialValues={{
-                    table: defaultData,
-                    content: "",
-                    answer: defaultAnswer
-                }}
+                initialValues={initData}
                 trigger={
-                    <Button type={props.mode == "add" ? "primary" : "link"}>
-                        <PlusOutlined/>
-                        {props.mode == "add" ? "新建题目" : "修改"}
+                    <Button type={props.type == "create" ? "primary" : "link"}
+                            onClick={() => {
+                                setModalVis(true)
+                                if (props.type == "update") {
+                                    mApi.getChoiceInfo(props.problemCode).then((resData: any) => {
+                                        if (resData != null) {
+                                            console.log(resData)
+                                            const choice = resData.description.choice
+                                            setAnswerList(genAnswerList(Object.keys(choice)))
+                                            setEditableRowKeys(genEditableList(Object.keys(choice)))
+                                            setGroupInfo(resData.managerGroupDTOList)
+                                            let Choice = []
+                                            for(let i = 0; i < Object.keys(choice).length; i ++){
+                                                Choice.push({
+                                                    id: i,
+                                                    content: choice[String.fromCharCode('A'.charCodeAt(0) + i)]
+                                                })
+                                            }
+                                            let MG = []
+                                            for(const x of resData.managerGroupDTOList){
+                                                MG.push(x.groupId)
+                                            }
+
+                                            formRef.current?.setFieldsValue({
+                                                isMulti: resData.isMulti.toString(),
+                                                problemTitle: resData.problemTitle,
+                                                content: resData.description.content,
+                                                choice: Choice,
+                                                answer: resData.answer,
+                                                managerGroups: MG
+                                            })
+                                            setIsDataLoad(true)
+                                        }
+                                    })
+                                } else {
+                                    setIsDataLoad(true)
+                                }
+                            }}>
+                        {
+                            [''].map(() => {
+                                if (props.type == "create") return <PlusOutlined/>
+                            })
+                        }
+                        {props.type == "create" ? "新建" : "修改"}
                     </Button>
                 }
                 submitter={{
@@ -191,27 +216,53 @@ const ObjectiveForm = (props: any) => {
                     submitButtonProps: {style: {display: 'none'}},
                     render: (prop, defaultDoms) => {
                         return [
-                            // <Button
-                            //     type="default"
-                            //     key="rest"
-                            //     onClick={() => formRef.current?.resetFields()}
-                            // >
-                            //     {props.t("Reset")}
-                            // </Button>,
                             <Button
                                 type="primary"
-                                key="submit"
                                 onClick={() => {
-                                    console.log(formRef.current?.getFieldsValue())
                                     formRef.current?.validateFields().then(value => {
-                                        for (let i = 0; i < value.table.length; i++) {
-                                            if (value.table[i].content.length == 0) {
+                                        for (let i = 0; i < value.choice.length; i++) {
+                                            if (value.choice[i].content.length == 0) {
                                                 message.error("选项不能为空")
                                                 return
                                             }
                                         }
-
-
+                                        if (value.isMulti == "1" && value.answer.length == 1) {
+                                            message.error("多选题应该有两个及以上答案")
+                                            return;
+                                        }
+                                        if (value.isMulti == "0" && value.answer.length != 1) {
+                                            message.error("单选题只能有一个答案")
+                                            return;
+                                        }
+                                        let choice: any = {}
+                                        for (let i = 0; i < value.choice.length; i++) {
+                                            choice[String.fromCharCode('A'.charCodeAt(0) + i)] = value.choice[i].content
+                                        }
+                                        let data: any = {
+                                            isPublic: 1,
+                                            problemTitle: value.problemTitle,
+                                            isMulti: value.isMulti,
+                                            description: {
+                                                content: value.content,
+                                                choice: choice
+                                            },
+                                            answer: value.answer,
+                                            managerGroups: value.managerGroups == undefined ? [] : value.managerGroups
+                                        }
+                                        if (props.type == "create") {
+                                            mApi.createChoiceProblem(data).then((resData) => {
+                                                console.log(resData)
+                                                setModalVis(false)
+                                                window.location.reload()
+                                            })
+                                        } else if (props.type == "update") {
+                                            data['problemCode'] = props.problemCode
+                                            mApi.updateChoiceProblem(data).then((resData) => {
+                                                console.log(resData)
+                                                setModalVis(false)
+                                                window.location.reload()
+                                            })
+                                        }
                                     }).catch(error => {
                                         console.log(error)
                                     })
@@ -223,81 +274,91 @@ const ObjectiveForm = (props: any) => {
                     }
                 }}
             >
-                <ProFormTextArea width="xl" name="content" label={props.t("ProblemContent")}
-                                 rules={[{required: true}, {type: "string", min: 5, max: 1000}]}/>
-                <EditableProTable<DataSourceType>
-                    name="table"
-                    columns={columns}
-                    rowKey={"id"}
-                    recordCreatorProps={false}
-                    actionRef={actionRef}
-                    editable={{
-                        type: 'multiple',
-                        editableKeys: sortSwitch ? [] : editableKeys,
-                        actionRender: (row: any, config: any, defDom: any) => {
-                            return [
-                                <Popconfirm
-                                    title={props.t("deleteConfirm")}
-                                    onConfirm={() => {
-                                        let table = formRef.current?.getFieldValue("table")
-                                        table = table.filter((value: DataSourceType) => value.id != row.id)
-                                        setFormValue(table)
-                                    }}
-                                    okText={props.t("yes")}
-                                    cancelText={props.t("no")}
-                                >
-                                    <Button type={"link"} size={"small"}> {props.t("delete")} </Button>
-                                </Popconfirm>
-                            ]
-                        },
-                        onValuesChange: (record, recordList) => {
-                            setFormValue(recordList)
-                        },
-                        onChange: setEditableRowKeys,
-                    }}
-                    components={sortSwitch ?
-                        {
-                            body: {
-                                wrapper: DraggableContainer,
-                                row: DraggableBodyRow,
+                <Skeleton active loading={!isDataLoad}>
+                    <Form.Item label={"类型"} name={"isMulti"} rules={[{required: true}]}>
+                        <Radio.Group buttonStyle="solid">
+                            <Radio.Button value="0">单选题</Radio.Button>
+                            <Radio.Button value="1">多选题</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    <ProFormText width="xl" name="problemTitle" label={"标题"} rules={[{required: true}]}/>
+
+                    <ProFormTextArea width="xl" name="content" label={props.t("ProblemContent")}
+                                     rules={[{required: true}, {type: "string", min: 5, max: 1000}]}/>
+                    <EditableProTable<DataSourceType>
+                        name="choice"
+                        columns={columns}
+                        rowKey={"id"}
+                        recordCreatorProps={false}
+                        actionRef={actionRef}
+                        editable={{
+                            type: 'multiple',
+                            editableKeys: sortSwitch ? [] : editableKeys,
+                            actionRender: (row: any, config: any, defDom: any) => {
+                                return [
+                                    <Popconfirm
+                                        title={props.t("deleteConfirm")}
+                                        onConfirm={() => {
+                                            let choice = formRef.current?.getFieldValue("choice")
+                                            choice = choice.filter((value: DataSourceType) => value.id != row.id)
+                                            setFormValue(choice)
+                                        }}
+                                        okText={props.t("yes")}
+                                        cancelText={props.t("no")}
+                                    >
+                                        <Button type={"link"} size={"small"}> {props.t("delete")} </Button>
+                                    </Popconfirm>
+                                ]
                             },
-                        } : undefined
-                    }
-                />
-                <Space style={{marginBottom: "20px"}}>
-                    <Button
-                        type="default"
-                        onClick={() => {
-                            actionRef.current?.addEditRecord?.({
-                                id: Date.now(),
-                                content: ""
-                            }, {newRecordType: "dataSource", recordKey: Date.now()});
+                            onValuesChange: (record, recordList) => {
+                                setFormValue(recordList)
+                            },
+                            onChange: setEditableRowKeys,
                         }}
-                        icon={<PlusOutlined/>}
-                        disabled={getForm()?.table.length >= 26}
-                    >
-                        {props.t("NewOption")}
-                    </Button>
-                    <Button
-                        type="default"
-                        key="operator"
-                        onClick={() => {
+                        components={sortSwitch ?
+                            {
+                                body: {
+                                    wrapper: DraggableContainer,
+                                    row: DraggableBodyRow,
+                                },
+                            } : undefined
+                        }
+                    />
+
+                    <Space style={{marginBottom: "20px"}}>
+                        <Button
+                            type="default"
+                            onClick={() => {
+                                actionRef.current?.addEditRecord?.({
+                                    id: Date.now(),
+                                    content: ""
+                                }, {newRecordType: "dataSource", recordKey: Date.now()});
+                            }}
+                            icon={<PlusOutlined/>}
+                            disabled={getForm()?.choice != undefined && getForm()?.choice.length >= 26}
+                        >
+                            {props.t("NewOption")}
+                        </Button>
+                        <Radio.Group defaultValue="edit" buttonStyle="solid" onChange={(value) => {
                             setSortSwitch(!sortSwitch)
-                        }}
-                    >
-                        {sortSwitch ? props.t("Edit") : props.t("sort")}
-                    </Button>
-                </Space>
+                        }}>
+                            <Radio.Button value="edit">编辑</Radio.Button>
+                            <Radio.Button value="sort">排序</Radio.Button>
+                        </Radio.Group>
+                    </Space>
 
-                <ProFormCheckbox.Group
-                    name="answer"
-                    layout="vertical"
-                    label={props.t("answer")}
-                    options={answerList}
-                    rules={[{required: true, message: props.t("PleaseChooseTheAnswer")}]}
-                />
+                    <ProFormCheckbox.Group
+                        name="answer"
+                        layout="vertical"
+                        label={props.t("answer")}
+                        options={answerList}
+                        rules={[{required: true, message: props.t("PleaseChooseTheAnswer")}]}
+                    />
 
-
+                    <SelectGroup mode={"multiple"} label={"管理组"} name={"managerGroups"}
+                                 groupInfo={groupInfo}/>
+                </Skeleton>
             </ModalForm>
         </>
     );
