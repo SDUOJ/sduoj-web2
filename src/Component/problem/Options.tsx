@@ -2,10 +2,12 @@ import React, {Component, Dispatch} from 'react';
 import {Card, Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
-import {ExamAction} from "../../Redux/Action/exam";
+import {ExamAction, UpdateChoiceTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, ChoiceState} from "../../Type/IProblem";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {withRouter} from "react-router-dom";
+import {examID} from "../../Type/types";
 
 
 interface SOptions {
@@ -25,9 +27,9 @@ class Options extends Component<any, SOptions> {
     // 在处理属性唯一的时候，根据 redux 的 props 更新当前的 state
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<SOptions>, snapshot?: any) {
         let choice = this.props.choice
-        for(let i = 0; i < choice.length; i ++){
-            if(choice[i].id == prevProps.ChoiceID){
-                if(choice[i].state != prevState.choose){
+        for (let i = 0; i < choice.length; i++) {
+            if (choice[i].id == prevProps.ChoiceID) {
+                if (choice[i].state != prevState.choose) {
                     this.setState({
                         choose: choice[i].state
                     })
@@ -38,22 +40,24 @@ class Options extends Component<any, SOptions> {
     }
 
     updateChooseUsed() {
+        const eid = this.props.match.params.eid
         if (this.state.choose === "init" || this.state.choose === "unused") {
             this.setState({choose: "used"})
-            this.props.updateChoice(this.props.ChoiceID, "used")
+            this.props.updateChoice(eid, this.props.ChoiceID, "used")
         } else {
             this.setState({choose: "init"})
-            this.props.updateChoice(this.props.ChoiceID, "init")
+            this.props.updateChoice(eid, this.props.ChoiceID, "init")
         }
     }
 
     updateChooseUnused() {
+        const eid = this.props.match.params.eid
         if (this.state.choose === "init" || this.state.choose === "used") {
             this.setState({choose: "unused"})
-            this.props.updateChoice(this.props.ChoiceID, "unused")
+            this.props.updateChoice(eid, this.props.ChoiceID, "unused")
         } else {
             this.setState({choose: "init"})
-            this.props.updateChoice(this.props.ChoiceID, "init")
+            this.props.updateChoice(eid, this.props.ChoiceID, "init")
         }
     }
 
@@ -84,21 +88,19 @@ class Options extends Component<any, SOptions> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
+    const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
+    const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
     return {
         choice: (NowPro.content as ChoiceContent).choice
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    updateChoice: (ChoiceID: string, ChoiceState: ChoiceState) => dispatch({
-        type: "updateChoice",
-        ChoiceID: ChoiceID,
-        ChoiceState: ChoiceState
-    })
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    updateChoice: (eid: examID, ChoiceID: string, ChoiceState: ChoiceState) =>
+        dispatch(UpdateChoiceTodo(eid, ChoiceID, ChoiceState))
 })
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Options)
+)(withRouter(Options))

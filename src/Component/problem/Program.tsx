@@ -8,7 +8,7 @@ import {withTranslation} from "react-i18next";
 import {Button, Space, Badge, DatePicker, Skeleton, Card} from "antd";
 import {GetMaxScore, getPoint, IsAnswer} from "../../Utils/Problem";
 import SampleTestCase from "./SampleTestCase";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import Submit from "../submission/Submit";
 
 
@@ -93,7 +93,8 @@ class Program extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
+    const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
+    const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
     const content = (NowPro.content as ProgramContent)
     return {
         markdown: content.markdown,

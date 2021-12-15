@@ -19,10 +19,10 @@ export type UserAction =
 export function testLoginTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
         CApi.getProfile().then((resData) => {
-            if (resData !== null) {
-                dispatch({type: "setUserInfo", data: resData})
-                dispatch({type: "userLogin"})
-            } else dispatch({type: "userLogout"})
+            dispatch({type: "setUserInfo", data: resData})
+            dispatch({type: "userLogin"})
+        }).catch(err =>{
+            dispatch({type: "userLogout"})
         })
     }
 }

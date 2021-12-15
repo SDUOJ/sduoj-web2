@@ -1,8 +1,8 @@
-import {ChoiceState} from "../../Type/IProblem";
+import {Choice, ChoiceContent, ChoiceState, IGetProInfo, ProContent} from "../../Type/IProblem";
 import {examID} from "../../Type/types";
-import {Dispatch} from "react";
+import React, {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
-import {ExamState, SExamInfo} from "../../Type/IExam";
+import {ExamState, ProblemAnswerSheet, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {ConfigState} from "../../Type/IConfig";
 import {UserState} from "../../Type/Iuser";
 import cookie from "react-cookies";
@@ -18,8 +18,9 @@ export type ExamAction =
     updateTop |
     flipFlag |
     setProList |
-    setExamID |
-    setExamInfo
+    setExamInfo |
+    setProInfo |
+    setAnswerSheet
 
 
 export interface updateChoice {
@@ -30,20 +31,18 @@ export interface updateChoice {
 
 export interface updateTop {
     type: "updateTop"
-    topIndex: number
+    topProIndex: number
+    topGroupIndex: number
 }
 
 export interface flipFlag {
     type: "flipFlag"
 }
 
+
 export interface setProList {
     type: "setProList"
-}
-
-export interface setExamID {
-    type: "setExamID"
-    ExamID: examID
+    data: SProGroupInfo[]
 }
 
 export interface setExamInfo {
@@ -51,15 +50,99 @@ export interface setExamInfo {
     data: SExamInfo
 }
 
+export interface setProInfo {
+    type: "setProInfo",
+    groupId: number
+    proId: number
+    data: ProContent | undefined
+}
 
+export interface setAnswerSheet {
+    type: "setAnswerSheet",
+    data: ProblemAnswerSheet[]
+    problemGroupId: number
+}
 
+function getAnswer(choice: Choice[], type: ChoiceState) {
+    const res = []
+    for (const x of choice) if (x.state == type) res.push(x.id)
+    return res
+}
+
+function genAnswerSheet(State: ExamState) {
+    const groupInfo = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1]
+    const proInfo: SProInfo[] = groupInfo.proList
+    let res: any = []
+    for (const x of proInfo) {
+        const content: ChoiceContent = x.content as ChoiceContent
+        res.push({
+            index: x.index,
+            answer: content != undefined && content.isLoad ? getAnswer(content.choice, "used") : [],
+            pass: content != undefined && content.isLoad ? getAnswer(content.choice, "unused") : [],
+            marked: x.flag
+        })
+    }
+    return res
+}
+
+export function UpdateChoiceTodo(examId: examID, ChoiceID: string, ChoiceState: ChoiceState) {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        const EState: ExamState = getState().ExamReducer
+        eApi.setAnswerSheet({
+            problemAnswer: genAnswerSheet(EState)
+        }, examId, EState.TopProblemIndex - 1).then((resData: any) => {
+            if (resData != null) {
+                dispatch({
+                    type: "updateChoice",
+                    ChoiceID: ChoiceID,
+                    ChoiceState: ChoiceState
+                })
+            }
+        })
+    }
+}
+
+export function FlipFlagTodo(examId: examID) {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        const EState: ExamState = getState().ExamReducer
+        eApi.setAnswerSheet({
+            problemAnswer: genAnswerSheet(EState)
+        }, examId, EState.TopProblemIndex - 1).then((resData: any) => {
+            if (resData != null) {
+                dispatch({
+                    type: "flipFlag",
+                })
+            }
+        })
+    }
+}
 
 export function getExamProblemListTodo(eid: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
-        eApi.getExamProblemList(eid).then(function (resData: any) {
+        eApi.getExamGroupList(eid).then(function (resData: any) {
             if (resData != null) {
-                console.log("123", resData)
-
+                let data: SProGroupInfo[] = []
+                for (const x of resData) {
+                    const proList: SProInfo[] = []
+                    for (const y of x.problems) {
+                        proList.push({
+                            index: y.index,
+                            score: y.problemScore,
+                            flag: false,
+                        })
+                    }
+                    data.push({
+                        index: x.index,
+                        title: x.title,
+                        previous: x.previous,
+                        type: x.type,
+                        groupStart: parseInt(x.groupStart),
+                        groupEnd: parseInt(x.groupEnd),
+                        proList: proList
+                    })
+                }
+                // 更新当前目录
+                dispatch({type: "setProList", data: data})
             }
         })
     }
@@ -85,4 +168,54 @@ export function getExamInfoTodo(examId: examID) {
     }
 }
 
+export function getProblemTodo(data: IGetProInfo) {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        const State: ExamState = getState().ExamReducer
+        const groupId = data.groupIndex
+        const proId = data.problemIndex
+        eApi.getProInfo(data).then((resData: any) => {
+            if (resData != null) {
+                const type = (State.proGroupInfo as SProGroupInfo[]) [State.TopGroupIndex - 1].type
+                let data: ProContent | undefined = undefined
+                if (type == "Program") {
 
+                }
+                if (type == "SingleChoice" || type == "MultipleChoice") {
+                    let choice: Choice[] = []
+                    for (const x of Object.keys(resData.description.choice)) {
+                        choice.push({
+                            id: x,
+                            content: resData.description.choice[x],
+                            state: "init"
+                        })
+                    }
+                    data = {
+                        isLoad: true,
+                        content: resData.description.content,
+                        choice: choice
+                    }
+                }
+                dispatch({
+                    type: "setProInfo",
+                    groupId: groupId,
+                    proId: proId,
+                    data: data
+                })
+            }
+        })
+    }
+}
+
+export function getAnswerSheetTodo(eid: examID, groupId: number) {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        eApi.getAnswerSheet(eid, groupId).then((resData: any) => {
+            if (resData != null) {
+                dispatch({
+                    type: "setAnswerSheet",
+                    data: resData.problemAnswer,
+                    problemGroupId: groupId
+                })
+            }
+        })
+    }
+}

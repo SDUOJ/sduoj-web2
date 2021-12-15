@@ -1,9 +1,10 @@
 import axios, {AxiosResponse, AxiosRequestConfig} from "axios";
 import {Get, Post, GetError, ProblemID, examID} from '../../Type/types'
 import apiAddress from "./apiAddress";
-import {ICreateSubmit} from "../../Type/IProblem";
+import {ICreateSubmit, IGetProInfo} from "../../Type/IProblem";
 import {store} from "../../Redux/Store";
 import {message} from "antd";
+import React from "react";
 
 const baseUrl = apiAddress().EXAM_SERVER + '/api'
 
@@ -32,9 +33,9 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
 
     } catch (e: any) {
         const response = e.response
-        if(response == undefined){
+        if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:
@@ -62,9 +63,9 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
 
     } catch (e: any) {
         const response = e.response
-        if(response == undefined){
+        if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:
@@ -81,9 +82,17 @@ const request = {
 
 export default {
 
-    // 获取题目信息
-    async getExamProblemList(data: examID) {
+    // 获取题组信息
+    async getExamGroupList(data: examID) {
         return request.get("/exam/" + data + "/getGroupList")
+    },
+    // 获取题目信息
+    async getExamProblemList(examId: examID, groupId: React.Key) {
+        return request.get("/exam/" + examId + "/group/" + groupId)
+    },
+    // 获取题目详细信息
+    async getProInfo(data: IGetProInfo) {
+        return request.get("/exam/getExamProblem", data)
     },
     // 提交代码
     async CreateSubmit(data: ICreateSubmit) {
@@ -93,12 +102,15 @@ export default {
     async getExamInfo(data: examID) {
         return request.get('/exam/getInfo/' + data);
     },
-
-    async getExamList(data: any = {
-        "pageNow": 0,
-        "pageSize": 20
-    }) {
+    // 获取考试列表
+    async getExamList(data: any) {
         return request.post("/exam/getInfo", data);
+    },
+    async setAnswerSheet(data: any, eid: examID, groupId: number){
+        return request.post("/exam/" + eid + "/answerSheet/" + groupId, data)
+    },
+    async getAnswerSheet(eid: examID, groupId: number){
+        return request.get("/exam/" + eid + "/answerSheet/" + groupId)
     }
 
 }

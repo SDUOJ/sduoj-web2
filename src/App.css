@@ -218,7 +218,7 @@
 }
 
 .ExamAnswerSheet {
-    width: 400px;
+    width: 500px;
     margin: 5px auto 0;
 }
 
@@ -280,6 +280,10 @@
 .ExamRun {
     margin: 50px;
     min-width: 1300px;
+}
+
+.ExamRun-ExamAnswerSheet .Timer .Timer-inline-card {
+    min-width: 500px;
 }
 
 .ExamRun-ExamAnswerSheet {

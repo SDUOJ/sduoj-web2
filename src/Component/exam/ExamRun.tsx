@@ -28,7 +28,7 @@ class ExamRun extends Component<any, any> {
                             <Col span={22} offset={1}>
                                 <Row>
                                     <Col span={16}>
-                                        <Problem/>
+                                        <Problem flag={true}/>
                                         <ExamPageCtrl/>
                                     </Col>
                                     <Col span={7} className={"ExamRun-ExamAnswerSheet"}>

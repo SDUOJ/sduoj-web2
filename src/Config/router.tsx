@@ -27,31 +27,31 @@ interface IRouter extends IBaseRouter {
 export const routerLayout: IBaseRouter[] = [
     {
         id: 0,
-        path: "/manage",
+        path: "/v2/manage",
         exact: false,
         component: lazy(() => import('../Component/layout/MLayout'))
     },
     {
         id: 1,
-        path: "/exam",
+        path: "/v2/exam",
         exact: false,
         component: lazy(() => import('../Component/layout/ELayout'))
     },
     {
         id: 2,
-        path: "/thirdPartyLogin",
+        path: "/v2/thirdPartyLogin",
         exact: false,
         component: lazy(() => import('../Pages/thirdPartyLogin'))
     },
     {
         id: 3,
-        path: "/c",
+        path: "/v2/c",
         exact: false,
         component: lazy(() => import('../Component/layout/CLayout'))
     },
     {
         id: 4,
-        path: "/",
+        path: "/v2",
         exact: true,
         component: lazy(() => import('../Component/layout/CLayout'))
     },
@@ -61,7 +61,13 @@ export const routerLayout: IBaseRouter[] = [
 export const routerC: IBaseRouter[] = [
     {
         id: 1,
-        path: "/c/login",
+        path: "/v2/c/build",
+        exact: true,
+        component: lazy(() => import('../Pages/CBuild'))
+    },
+    {
+        id: 2,
+        path: "/v2/c/login",
         exact: true,
         component: lazy(() => import('../Pages/ALogin'))
     }
@@ -71,31 +77,31 @@ export const routerC: IBaseRouter[] = [
 export const routerE: IBaseRouter[] = [
     {
         id: 1,
-        path: "/exam/login",
+        path: "/v2/exam/login",
         exact: true,
         component: lazy(() => import('../Pages/ALogin'))
     },
     {
         id: 2,
-        path: "/exam/list",
+        path: "/v2/exam/list",
         exact: true,
         component: lazy(() => import('../Pages/EList'))
     },
     {
         id: 3,
-        path: "/exam/wait/:eid",
+        path: "/v2/exam/wait/:eid",
         exact: true,
         component: lazy(() => import('../Pages/EWait'))
     },
     {
         id: 4,
-        path: "/exam/running/:eid",
+        path: "/v2/exam/running/:eid",
         exact: true,
         component: lazy(() => import('../Pages/ERunning'))
     },
     {
         id: 5,
-        path: "/exam/finish",
+        path: "/v2/exam/finish",
         exact: true,
         component: lazy(() => import('../Pages/EFinish'))
     }
@@ -145,17 +151,17 @@ export const routerM: IRouter[] = [
     // },
     {
         id: 5,
-        path: "/manage/exam",
+        path: "/v2/manage/exam",
         title_i18n: "exam",
-        exact: false,
+        exact: true,
         icon: <ReadOutlined/>,
         component: lazy(() => import('../Pages/MExam'))
     },
     {
         id: 6,
-        path: "/manage/objective",
+        path: "/v2/manage/objective",
         title_i18n: "objective",
-        exact: false,
+        exact: true,
         icon: <CheckCircleOutlined/>,
         component: lazy(() => import('../Pages/MObjective'))
     }

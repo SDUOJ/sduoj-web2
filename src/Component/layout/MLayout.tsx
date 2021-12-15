@@ -14,14 +14,14 @@ import {withRouter} from "react-router";
 import FooterSDU from "./FooterSDU";
 import {testLoginTodo} from "../../Redux/Action/user";
 
-const {Footer, Sider, Content} = Layout;
+const {Sider, Content} = Layout;
 
 class MLayout extends Component<any, any> {
 
     componentDidMount() {
         if ((
-            this.props.location.pathname === '/manage'
-            || this.props.location.pathname === '/manage/'
+            this.props.location.pathname === '/v2/manage'
+            || this.props.location.pathname === '/v2/manage/'
         ) && routerM.length !== 0) {
             this.props.history.push(routerM[0].path);
         }
@@ -31,38 +31,34 @@ class MLayout extends Component<any, any> {
     render() {
         return (
             <>
-                <Router>
-                    <Layout style={{height: "max-content", minHeight: "100%"}}>
-                        <Sider theme="dark" breakpoint="lg" collapsedWidth="0">
-                            <div className="logo">
-                                <img src={logo} style={{width: "125px", height: '30px'}}
-                                     alt={"SDUOJ-logo"}/>
+                <Layout style={{height: "max-content", minHeight: "100%"}}>
+                    <Sider theme="dark" breakpoint="lg" collapsedWidth="0">
+                        <div className="logo">
+                            <img src={logo} style={{width: "125px", height: '30px'}}
+                                 alt={"SDUOJ-logo"}/>
+                        </div>
+                        <MMenu id={1} roles={["superadmin"]}/>
+                    </Sider>
+                    <Layout style={{minWidth: 500}}>
+                        <MHeader/>
+                        <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
+                            <div className="site-layout-background" style={{padding: 24}}>
+                                <Suspense fallback={<Loading/>}>
+                                    {/*对应路由*/}
+                                    {
+                                        routerM.map((r) => {
+                                            return (
+                                                <Route key={r.id} path={r.path} exact={r.exact}
+                                                       component={r.component}/>
+                                            )
+                                        })
+                                    }
+                                </Suspense>
                             </div>
-                            <MMenu id={1} roles={["superadmin"]}/>
-                        </Sider>
-                        <Layout style={{minWidth: 500}}>
-                            <MHeader/>
-                            <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
-                                <div className="site-layout-background" style={{padding: 24}}>
-                                    <Suspense fallback={<Loading/>}>
-                                        {/*对应路由*/}
-                                        {
-                                            routerM.map((r) => {
-                                                const Page = r.component;
-                                                return (
-                                                    <Route key={r.id} path={r.path} exact={r.exact}
-                                                           component={() => <Page id={this.props.id}
-                                                                                  roles={this.props.roles}/>}/>
-                                                )
-                                            })
-                                        }
-                                    </Suspense>
-                                </div>
-                            </Content>
-                            <FooterSDU/>
-                        </Layout>
+                        </Content>
+                        <FooterSDU/>
                     </Layout>
-                </Router>
+                </Layout>
             </>
         )
     }
@@ -71,7 +67,7 @@ class MLayout extends Component<any, any> {
 const mapStateToProps = (state: any) => {
     const State: ManageState = state.ManageReducer
     return {
-        examBasicInfo: State.examData.examBasicInfo
+
     }
 }
 
@@ -82,4 +78,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(withRouter(MLayout)))
+)(withTranslation()(
+    withRouter(MLayout)
+))

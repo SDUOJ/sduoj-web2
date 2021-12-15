@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import {ChoiceContent, isProgramContent} from "../../Type/IProblem";
 import {withTranslation} from "react-i18next";
 import {GetMaxScore, getPoint, IsAnswer} from "../../Utils/Problem";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 
 class ProTag extends Component<any, any> {
@@ -17,7 +17,6 @@ class ProTag extends Component<any, any> {
             TagState = this.props.TagState
         } else if (this.props.ProInfo !== undefined) {
             const NowPro = (this.props.ProInfo as SProInfo[])[this.props.ProIndex - 1]
-            // console.log(NowPro)
             if (NowPro.content === undefined) {
                 TagState.push("d")
             } else {
@@ -34,11 +33,15 @@ class ProTag extends Component<any, any> {
         const tagComp = (
             <Space>
                 <a className={"ProTag"}
-                   onClick={this.props.ProIndex !== 0 ? (() => this.props.JumpToPro(this.props.ProIndex)) : undefined}
+                   onClick={this.props.ProIndex !== 0 ?
+                       (() => this.props.JumpToPro(this.props.GroupIndex + 1, this.props.ProIndex)) : undefined}
                 >
                     <Badge dot={TagState.indexOf("c") !== -1}>
                         <Tag color={
-                            this.props.ProIndex != 0 && this.props.ProIndex == this.props.TopProblemIndex ?
+                            this.props.ProIndex != 0
+                            && this.props.ProIndex == this.props.TopProblemIndex
+                            && this.props.GroupIndex + 1 == this.props.TopGroupIndex
+                                ?
                                 (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") :
                                 (TagState.indexOf("f") !== -1 ? "green" : undefined)
                         }>
@@ -98,16 +101,20 @@ class ProTag extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
+    console.log(State.proGroupInfo, State.TopGroupIndex)
     return {
-        ProInfo: State.proInfo,
+        ProInfo: State.TopGroupIndex == 0 ? undefined :
+            (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList,
         TopProblemIndex: State.TopProblemIndex,
+        TopGroupIndex: State.TopGroupIndex
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    JumpToPro: (ProIndex: number) => dispatch({
+    JumpToPro: (GroupIndex: number, ProIndex: number) => dispatch({
         type: "updateTop",
-        topIndex: ProIndex
+        topProIndex: ProIndex,
+        topGroupIndex: GroupIndex
     }),
 })
 

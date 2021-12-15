@@ -1,4 +1,6 @@
 import {TestCaseType} from "./ISubmission";
+import {examID} from "./types";
+import React from "react";
 
 export type ProType = "Program" | "SingleChoice" | "MultipleChoice" | "FillInTheBlank" | "Subjective" | "TrueOrFalse"
 
@@ -37,10 +39,10 @@ export interface Submission {
 }
 
 export interface ProgramContent {
+    isLoad: boolean                 // 是否已经加载
     title: string                   // 题目标题
     markdown: string                // 题目描述
     testCase: TestCase[]            // 测试数据集合
-    // code: string                    // 题号
     TimeLimit: number               // 时间限制
     MemoryLimit: number             // 空间限制
     JudgeTemplate: JudgeTemplate[]  // 评测模板
@@ -54,6 +56,7 @@ export interface Choice {
 }
 
 export interface ChoiceContent {
+    isLoad: boolean         // 是否已经加载
     content: string         // 题干
     choice: Choice[]        // 选项
 }
@@ -80,6 +83,11 @@ export interface ICreateSubmit {
 }
 
 export interface ProblemState {
-    SubmitModalVis: boolean         // 提交对话框是否可见
     TopSubmissionId?: string
+}
+
+export interface IGetProInfo {
+    examId: examID
+    groupIndex: React.Key
+    problemIndex: React.Key
 }

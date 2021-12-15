@@ -4,7 +4,7 @@ import {LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {connect} from "react-redux";
 import {ExamAction} from "../../Redux/Action/exam";
 import {withTranslation} from "react-i18next";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 
 class ExamPageCtrl extends Component<any, any> {
@@ -14,7 +14,7 @@ class ExamPageCtrl extends Component<any, any> {
                 <Space>
                     <Button shape="round" type={"primary"}
                             disabled={this.props.TopProblemIndex == 1 || this.props.Loading}
-                            onClick={()=>this.props.JumpToPro(this.props.TopProblemIndex-1)}
+                            onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex - 1)}
                     >
                         <LeftOutlined/> {this.props.t("PreviousProblem")}
                     </Button>
@@ -27,7 +27,7 @@ class ExamPageCtrl extends Component<any, any> {
                     </Spin>
                     <Button shape="round" type={"primary"}
                             disabled={this.props.TopProblemIndex == this.props.ProNumber || this.props.Loading}
-                            onClick={()=>this.props.JumpToPro(this.props.TopProblemIndex+1)}
+                            onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex + 1)}
                     >
                         {this.props.t("NextProblem")} <RightOutlined/>
                     </Button>
@@ -42,15 +42,19 @@ const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
     return {
         Loading: !State.ProListLoad,
-        TopProblemIndex: State.TopProblemIndex === 0 ? undefined : State.TopProblemIndex,
-        ProNumber: State.proInfo !== undefined ? (State.proInfo as SProInfo[]).length : undefined
+        TopGroupIndex: State.TopGroupIndex,
+        TopProblemIndex: State.TopProblemIndex,
+        // 当前题组的题目数量
+        ProNumber: State.TopGroupIndex == 0 ? undefined :
+            ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[]).length
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    JumpToPro: (ProIndex:number) => dispatch({
+    JumpToPro: (GroupIndex: number, ProIndex: number) => dispatch({
         type: "updateTop",
-        topIndex: ProIndex
+        topGroupIndex: GroupIndex,
+        topProIndex: ProIndex
     }),
 })
 

@@ -22,17 +22,20 @@ export interface SExamManageInfo {
 }
 
 export interface SProInfo {
-    pid: string                         // 题库中的题目id
     index: number                       // 在本场考试中的题号
-    type: ProType                       // 题目类型
-    flag: boolean                       // 是否标记
     score: number                       // 题目分数
+    flag: boolean                       // 是否标记
     content?: ProContent                // 题目内容
 }
 
-export interface SProGroupInfo{
+export interface SProGroupInfo {
+    index: number
     title: string
-    proList: React.Key[]
+    previous: number
+    type: ProType                       // 题目类型
+    groupStart: number
+    groupEnd: number
+    proList: SProInfo[]
 }
 
 export interface ExamListType {
@@ -45,13 +48,17 @@ export interface ExamListType {
 
 
 export interface ExamState {
-    examInfo?: SExamInfo                // 考试信息
-    examId?: string                     // 考试ID
     ExamInfoLoad: boolean               // 考试信息是否已加载
-    proInfo?: SProInfo[]                // 题目信息
-    proGroupInfo?: SProGroupInfo[]      // 题组信息
+    examInfo?: SExamInfo                // 考试信息
+
     ProListLoad: boolean                // 题目信息是否已加载
+    proGroupInfo?: SProGroupInfo[]      // 题组信息
+
+    TopGroupIndex: number               // 顶部题组ID
     TopProblemIndex: number             // 顶部问题ID
+
+    AnswerSheetLoad: boolean            // 是否已加载
+    answerSheetSave: GroupAnswerSheet[]
 }
 
 export interface IUserExamInfo {
@@ -59,5 +66,17 @@ export interface IUserExamInfo {
     AdmissionTicketNumber?: string      // 准考证号
     studentID?: string                  // 学号
     IDNumber?: string                   // 身份证号
+}
+
+export interface GroupAnswerSheet{
+    problemGroupId: number
+    problemAnswer: ProblemAnswerSheet[]
+}
+
+export interface ProblemAnswerSheet{
+    index: number
+    answer: string[]
+    pass: string[]
+    marked: boolean
 }
 

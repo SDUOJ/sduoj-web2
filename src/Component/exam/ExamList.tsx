@@ -58,7 +58,10 @@ class ExamList extends Component<any, any> {
                 }
             })
         } else {
-            eApi.getExamList().then((resData: any) => {
+            eApi.getExamList({
+                pageNow: pageNow,
+                pageSize: pageSize == undefined ? 20 : pageSize
+            }).then((resData: any) => {
                 if (resData != null) {
                     let data: SExamInfo[] = []
                     this.setState({total: resData.totalNum})
@@ -99,7 +102,7 @@ class ExamList extends Component<any, any> {
                         return (
                             <a
                                 onClick={() => {
-                                    this.props.history.push('/exam/wait/' + record.id.toString())
+                                    this.props.history.push('/v2/exam/wait/' + record.id.toString())
                                 }}
                             >{text}</a>
                         )

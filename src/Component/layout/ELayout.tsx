@@ -23,43 +23,41 @@ class ELayout extends Component<any, any> {
 
     componentDidMount() {
         if ((
-            this.props.location.pathname === '/exam' ||
-            this.props.location.pathname === '/exam/'
+            this.props.location.pathname === '/v2/exam' ||
+            this.props.location.pathname === '/v2/exam/'
         ) && routerE.length !== 0) {
             // sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
             this.props.history.push(getRouterPath(routerE, 2));
-            this.props.history.push(getRouterPath(routerE, 2));
-            window.location.reload();
+            // window.location.reload();
         }
+        console.log("ELayout")
         this.props.testLogin()
     }
 
     render() {
         return (
             <>
-                <Router>
-                    <Layout style={{height: "max-content", minHeight: "100%"}}>
-                        <Layout style={{minWidth: 500}}>
-                            <EHeader/>
-                            <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
-                                <div className="site-layout-background" style={{padding: 24}}>
-                                    <Suspense fallback={<Loading/>}>
-                                        {/*对应路由*/}
-                                        {
-                                            routerE.map((r) => {
-                                                return (
-                                                    <Route key={r.id} path={r.path} exact={r.exact}
-                                                           component={r.component}/>
-                                                )
-                                            })
-                                        }
-                                    </Suspense>
-                                </div>
-                            </Content>
-                            <FooterSDU/>
-                        </Layout>
+                <Layout style={{height: "max-content", minHeight: "100%"}}>
+                    <Layout style={{minWidth: 500}}>
+                        <EHeader/>
+                        <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
+                            <div className="site-layout-background" style={{padding: 24}}>
+                                <Suspense fallback={<Loading/>}>
+                                    {/*对应路由*/}
+                                    {
+                                        routerE.map((r) => {
+                                            return (
+                                                <Route key={r.id} path={r.path} exact={r.exact}
+                                                       component={r.component}/>
+                                            )
+                                        })
+                                    }
+                                </Suspense>
+                            </div>
+                        </Content>
+                        <FooterSDU/>
                     </Layout>
-                </Router>
+                </Layout>
             </>
         )
     }

@@ -6,7 +6,7 @@ import {Col, Row, Space} from "antd";
 import Paragraph from "antd/lib/typography/Paragraph";
 import CopyableCode from "../submission/CopyableCode";
 import Title from "antd/lib/typography/Title";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 
 class SampleTestCase extends Component<any, any> {
@@ -40,7 +40,8 @@ class SampleTestCase extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
+    const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
+    const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
     const content = (NowPro.content as ProgramContent)
     return {
         testCase: content.testCase

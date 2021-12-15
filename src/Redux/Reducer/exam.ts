@@ -4,10 +4,10 @@ import {
     ProContent, ProgramContent,
     ProType
 } from "../../Type/IProblem";
-import examApi from "Utils/API/e-api"
+import eApi from "Utils/API/e-api"
 import {deepClone} from "@ant-design/charts/es/util";
 import {ProgramTest} from "../../Utils/Problem";
-import {ExamState, SExamInfo, SProInfo} from "../../Type/IExam";
+import {ExamState, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {store} from "../Store";
 import {ProblemAction} from "../Action/problem";
 
@@ -16,6 +16,7 @@ function getProInfo(pid: string): ProContent {
 
     if (pid.split('-')[0] == "SDUOJ") {
         return {
+            isLoad: true,
             title: pid + "合并数字",
             markdown: ProgramTest,
             testCase: [
@@ -38,6 +39,7 @@ function getProInfo(pid: string): ProContent {
         }
     } else {
         return {
+            isLoad: true,
             content: pid.toString() + ". 中国共产党是中国社会主义事业的领导核心，这句话说明了（）。",
             choice: [
                 {
@@ -65,44 +67,31 @@ function getProInfo(pid: string): ProContent {
     }
 }
 
-function getContent(proInfo: SProInfo[] | undefined, topIndex: number): ProContent | undefined {
-    if (proInfo == undefined) return undefined
-    return proInfo[topIndex - 1].content
-}
-
-export function getProblemTitle(proInfo: SProInfo[] | undefined, topIndex: number): string | undefined {
-    const content = getContent(proInfo, topIndex)
-    if (content == undefined) return undefined
-    if (isProgramContent(content)) return content.title
-    else return undefined;
-}
-
-export function getJudgeTemplate(proInfo: SProInfo[] | undefined, topIndex: number): JudgeTemplate[] {
-    const content = getContent(proInfo, topIndex)
-    if (content == undefined) return []
-    if (isProgramContent(content)) return content.JudgeTemplate
-    else return [];
-}
-
 const initState: ExamState = {
     ExamInfoLoad: false,
     ProListLoad: false,
     TopProblemIndex: 0,
+    TopGroupIndex: 0,
+    answerSheetSave: [],
+    AnswerSheetLoad: false
 }
+
 
 export const ExamReducer = (state: ExamState = initState, action: ExamAction) => {
     // 此处不做深拷贝，redux无法检测到更新
     let State: ExamState = deepClone(state)
     if (State.ProListLoad) {
-        let ProInfo = (State.proInfo as SProInfo[])
-        let nowPro = ProInfo[State.TopProblemIndex - 1]
-        switch (action.type) {
+        let ProGroupInfo = (State.proGroupInfo as SProGroupInfo[])
+        let nowGroup = ProGroupInfo[State.TopGroupIndex - 1]
+        let nowPro = (nowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
+        const nowType = nowGroup.type
 
+        switch (action.type) {
             // 更新当前选项
             case "updateChoice":
                 let nowChoice = (nowPro.content as ChoiceContent).choice
                 // 若为单选或判断且当前为选取操作，先取消当前已选的选项
-                if (action.ChoiceState === "used" && nowPro.type === "SingleChoice" || nowPro.type === "TrueOrFalse") {
+                if (action.ChoiceState === "used" && nowType === "SingleChoice" || nowType === "TrueOrFalse") {
                     nowChoice.map((value, index) => {
                         if (value.state === "used") {
                             nowChoice[index].state = "init"
@@ -119,16 +108,23 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
 
             // 切换当前题目
             case "updateTop":
-                if (action.topIndex <= 0 || action.topIndex > ProInfo.length) return State
-                State.TopProblemIndex = action.topIndex
-                if (ProInfo[State.TopProblemIndex - 1].content === undefined) {
-                    ProInfo[State.TopProblemIndex - 1].content = getProInfo(ProInfo[State.TopProblemIndex - 1].pid)
-                }
+                State.TopProblemIndex = action.topProIndex
+                State.TopGroupIndex = action.topGroupIndex
                 break
 
             // 切换当前组件标记
             case "flipFlag":
                 nowPro.flag = !nowPro.flag
+                break
+            case "setProInfo":
+                ProGroupInfo[action.groupId].proList[action.proId].content = action.data
+                break
+
+            case "setAnswerSheet":
+                State.answerSheetSave.push({
+                    problemGroupId: action.problemGroupId,
+                    problemAnswer: action.data
+                })
                 break
 
             default:
@@ -137,15 +133,12 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
     } else {
         switch (action.type) {
             case "setProList":
-                // State.proInfo = getProList()
                 State.ProListLoad = true
+                State.TopGroupIndex = 1;
                 State.TopProblemIndex = 1;
-                const ProInfo = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
-                ProInfo.content = getProInfo(ProInfo.pid)
+                State.proGroupInfo = action.data
                 break
-            case "setExamID":
-                State.examId = action.ExamID
-                break
+
             case "setExamInfo":
                 State.ExamInfoLoad = true
                 State.examInfo = action.data

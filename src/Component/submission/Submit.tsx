@@ -1,15 +1,12 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Form, FormInstance, Modal, Select, Tabs, Upload} from "antd";
-import {ExamState} from "../../Type/IExam";
-import {JudgeTemplate, ProblemState} from "../../Type/IProblem";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {JudgeTemplate, ProblemState, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {
-    CloseSubmitModal,
-    OpenSubmitModal,
     SubmitToGetSubmissionIDTodo
 } from "../../Redux/Action/problem";
-import {getJudgeTemplate, getProblemTitle} from "../../Redux/Reducer/exam";
 import {Option} from "antd/lib/mentions";
 import {UploadOutlined} from "@ant-design/icons"
 import CodeEditor from "../common/CodeEditor";
@@ -24,6 +21,9 @@ class Submit extends Component<any, any> {
 
     constructor(props: any) {
         super(props);
+        this.state = {
+            SubmitModalVis: false
+        }
         this.CodeSubmit = this.CodeSubmit.bind(this)
     }
 
@@ -42,11 +42,11 @@ class Submit extends Component<any, any> {
             <>
                 <Button type={"primary"} onClick={this.props.OpenSubmitModal}>{this.props.t("Submit")}</Button>
                 <Modal title={this.props.SubmitModalTitle}
-                       visible={this.props.SubmitModalVis}
-                       onCancel={this.props.CloseSubmitModal}
+                       visible={this.state.SubmitModalVis}
+                       onCancel={()=>{this.setState({SubmitModalVis: false})}}
                        width={1200}
                        footer={[
-                           <Button key="back" onClick={this.props.CloseSubmitModal}>
+                           <Button key="back" onClick={()=>{this.setState({SubmitModalVis: false})}}>
                                取消
                            </Button>,
                            <Button key="submit" type="primary"
@@ -92,15 +92,17 @@ class Submit extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ProblemState = state.ProblemReducer
     const CState: ConfigState = state.ConfigReducer
     switch (CState.mode) {
         case "exam":
             const EState: ExamState = state.ExamReducer
+            const NowGroup = (EState.proGroupInfo as SProGroupInfo[])[EState.TopGroupIndex - 1];
+            const NowPro = (NowGroup.proList as SProInfo[])[EState.TopProblemIndex - 1]
+            const NowContent = (NowPro.content as ProgramContent)
+
             return {
-                SubmitModalVis: State.SubmitModalVis,
-                SubmitModalTitle: getProblemTitle(EState.proInfo, EState.TopProblemIndex),
-                JudgeTemplate: getJudgeTemplate(EState.proInfo, EState.TopProblemIndex),
+                SubmitModalTitle: NowContent.title,
+                JudgeTemplate: NowContent.JudgeTemplate,
                 ProblemCode: EState.TopProblemIndex
             }
     }
@@ -108,12 +110,6 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    OpenSubmitModal: () => dispatch({
-        type: "OpenSubmitModal",
-    }),
-    CloseSubmitModal: () => dispatch({
-        type: "CloseSubmitModal",
-    }),
     SubmitToGetSubmissionID: (judgeTemplateId: string,
                               code: string,
                               problemCode: string) => dispatch(

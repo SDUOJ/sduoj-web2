@@ -38,7 +38,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         const response = e.response
         if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:
@@ -67,7 +67,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         const response = e.response
         if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:

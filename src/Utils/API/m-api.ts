@@ -51,7 +51,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         const response = e.response
         if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:
@@ -80,7 +80,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         const response = e.response
         if (response == undefined) {
             message.error("后端不可达")
-            return null
+            return Promise.reject("后端不可达")
         }
         switch (response.data.code) {
             default:
@@ -307,9 +307,7 @@ export default {
     queryGroupTitle: async function (params: { title: string }) {
         return request.get('/manage/group/listByTitle', params);
     },
-    getChoiceProblem: async function (params: { problemCode: string }) {
-        return request.get("/manage/problem/queryChoiceProblem", params)
-    },
+    // EXAM -----------------
     getExamList: async function (data: any) {
         return request.post("/manage/exam/getInfo", data);
     },
@@ -322,17 +320,21 @@ export default {
     updateExam: async function (data: any) {
         return request.post("/manage/exam/update", data)
     },
+    getChoiceProblem: async function (params: { problemCode: string }) {
+        return request.get("/manage/exam/queryChoiceProblem", params)
+    },
+    // 选择题
     getChoiceList: async function (data: any) {
-        return request.post("/manage/problem/listChoiceProblem", data)
+        return request.post("/manage/exam/choiceProblem/listChoiceProblem", data)
     },
     createChoiceProblem: async function (data: any) {
-        return request.post("/manage/problem/createChoiceProblem", data)
+        return request.post("/manage/exam/choiceProblem/createChoiceProblem", data)
     },
     updateChoiceProblem: async function (data: any){
-        return request.post("/manage/problem/updateChoiceProblem", data)
+        return request.post("/manage/exam/choiceProblem/updateChoiceProblem", data)
     },
     getChoiceInfo: async function (data: string){
-        return request.get("/manage/problem/queryChoiceProblem?problemCode=" + data)
+        return request.get("/manage/exam/choiceProblem/queryChoiceProblem?problemCode=" + data)
     }
 
 }

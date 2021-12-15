@@ -5,11 +5,13 @@ import {Button, Card, Skeleton} from "antd";
 import {StarOutlined, StarFilled} from '@ant-design/icons';
 import Choice from "./Choice";
 import {ProNameMap, ProType} from "../../Type/IProblem";
-import {ExamAction} from "../../Redux/Action/exam";
+import {ExamAction, FlipFlagTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import Program from "./Program";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {withRouter} from "react-router-dom";
+import {examID} from "../../Type/types";
 
 class Problem extends Component<any, any> {
 
@@ -31,7 +33,7 @@ class Problem extends Component<any, any> {
                             {
                                 [''].map(() => {
                                     if (this.props.index !== undefined) {
-                                        return <>{this.props.index}.</>
+                                        return <>{this.props.index + 1}.</>
                                     }
                                 })
                             }
@@ -45,20 +47,16 @@ class Problem extends Component<any, any> {
                         </>
                     }
                     extra={
-                        [''].map(() => {
-                            if (this.props.flag !== undefined && this.props.flag) {
-                                return (
-                                    <Button type="default"
-                                            shape="round"
-                                            icon={this.props.isFlag ? <StarFilled/> : <StarOutlined/>}
-                                            danger={this.props.isFlag}
-                                            onClick={this.props.flipFlag}
-                                    >
-                                        {this.props.t("Mark")}
-                                    </Button>
-                                )
-                            }
-                        })
+                        this.props.flag !== undefined && this.props.flag && (
+                            <Button type="default"
+                                    shape="round"
+                                    icon={this.props.isFlag ? <StarFilled/> : <StarOutlined/>}
+                                    danger={this.props.isFlag}
+                                    onClick={()=>this.props.flipFlag(this.props.match.params.eid)}
+                            >
+                                {this.props.t("Mark")}
+                            </Button>
+                        )
                     }>
 
                     {
@@ -66,15 +64,14 @@ class Problem extends Component<any, any> {
                             switch (this.props.proType) {
                                 case "Program":
                                     return (
-                                        <Program index={this.props.TopProblemIndex}/>
+                                        <Program GroupIndex={this.props.TopGroupIndex}
+                                                 ProIndex={this.props.TopProblemIndex}/>
                                     )
                                 case "SingleChoice":
-                                    return (
-                                        <Choice index={this.props.TopProblemIndex}/>
-                                    )
                                 case "MultipleChoice":
                                     return (
-                                        <Choice index={this.props.TopProblemIndex}/>
+                                        <Choice GroupIndex={this.props.TopGroupIndex}
+                                                ProIndex={this.props.TopProblemIndex}/>
                                     )
                             }
                         })
@@ -91,11 +88,13 @@ const mapStateToProps = (state: any) => {
     if (!State.ProListLoad) {
         return {Loading: !State.ProListLoad,}
     } else {
-        const NowPro = (State.proInfo as SProInfo[])[State.TopProblemIndex - 1]
+        const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
+        const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
         return {
             Loading: !State.ProListLoad,
-            TopProblemIndex: State.TopProblemIndex === 0 ? undefined : State.TopProblemIndex,
-            proType: NowPro.type,
+            TopProblemIndex: State.TopProblemIndex,
+            TopGroupIndex: State.TopGroupIndex,
+            proType: NowGroup.type,
             score: NowPro.score,
             index: NowPro.index,
             isFlag: NowPro.flag
@@ -103,13 +102,11 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    flipFlag: () => dispatch({
-        type: "flipFlag",
-    }),
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    flipFlag: (examId: examID) => dispatch(FlipFlagTodo(examId)),
 })
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(Problem))
+)(withTranslation()(withRouter(Problem)))

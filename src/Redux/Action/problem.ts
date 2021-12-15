@@ -5,18 +5,8 @@ import eApi from "Utils/API/e-api"
 import {ConfigState, ModeType} from "../../Type/IConfig";
 
 export type ProblemAction =
-    OpenSubmitModal |
-    CloseSubmitModal |
     SetTopSubmissionId |
     GetSubmissionInfo
-
-export interface OpenSubmitModal {
-    type: "OpenSubmitModal"
-}
-
-export interface CloseSubmitModal {
-    type: "CloseSubmitModal"
-}
 
 export interface SetTopSubmissionId {
     type: "SetTopSubmissionId"
