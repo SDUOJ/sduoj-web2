@@ -1,11 +1,7 @@
-// @ts-ignore
-import VditorPreview from 'vditor/dist/method.min'
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Skeleton} from "antd";
 import {StarOutlined, StarFilled} from '@ant-design/icons';
 import Choice from "./Choice";
-import {ProNameMap, ProType} from "../../Type/IProblem";
-import {ExamAction, FlipFlagTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import Program from "./Program";
@@ -103,7 +99,10 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    flipFlag: (examId: examID) => dispatch(FlipFlagTodo(examId)),
+    flipFlag: (examId: examID) =>  dispatch({
+        type: "flipFlag",
+        examId: examId
+    }),
 })
 
 export default connect(

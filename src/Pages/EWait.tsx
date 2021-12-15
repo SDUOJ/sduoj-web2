@@ -80,7 +80,7 @@ class EWait extends Component<any, any> {
                                         <Button type="primary"
                                                 disabled={!this.state.ExamStart}
                                                 onClick={()=>{
-                                                    this.props.history.push("/exam/running/" + this.props.match.params.eid)
+                                                    this.props.history.push("/v2/exam/running/" + this.props.match.params.eid)
                                                 }}
                                         >
                                             {this.props.t("StartAnswering")}

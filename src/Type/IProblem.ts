@@ -51,13 +51,13 @@ export interface ProgramContent {
 
 export interface Choice {
     id: string              // 选项
-    content: string         // 内容
+    content?: string         // 内容
     state: ChoiceState
 }
 
 export interface ChoiceContent {
-    isLoad: boolean         // 是否已经加载
-    content: string         // 题干
+    isLoad?: boolean         // 是否已经加载
+    content?: string         // 题干
     choice: Choice[]        // 选项
 }
 
@@ -66,7 +66,7 @@ export type ProContent = ProgramContent | ChoiceContent
 
 
 export function isChoiceContent(x: any): x is ChoiceContent {
-    return (<ChoiceContent>x).content !== undefined
+    return (<ChoiceContent>x).choice !== undefined
 }
 
 export function isProgramContent(x: any): x is ProgramContent {

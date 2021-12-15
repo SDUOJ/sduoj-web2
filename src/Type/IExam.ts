@@ -56,9 +56,7 @@ export interface ExamState {
 
     TopGroupIndex: number               // 顶部题组ID
     TopProblemIndex: number             // 顶部问题ID
-
-    AnswerSheetLoad: boolean            // 是否已加载
-    answerSheetSave: GroupAnswerSheet[]
+    AnswerSheetLoad: boolean[]          // 答题卡是否已经加载
 }
 
 export interface IUserExamInfo {
@@ -78,5 +76,6 @@ export interface ProblemAnswerSheet{
     answer: string[]
     pass: string[]
     marked: boolean
+    choice: string[]
 }
 

@@ -320,9 +320,6 @@ export default {
     updateExam: async function (data: any) {
         return request.post("/manage/exam/update", data)
     },
-    getChoiceProblem: async function (params: { problemCode: string }) {
-        return request.get("/manage/exam/queryChoiceProblem", params)
-    },
     // 选择题
     getChoiceList: async function (data: any) {
         return request.post("/manage/exam/choiceProblem/listChoiceProblem", data)
@@ -335,6 +332,9 @@ export default {
     },
     getChoiceInfo: async function (data: string){
         return request.get("/manage/exam/choiceProblem/queryChoiceProblem?problemCode=" + data)
-    }
+    },
+    getChoiceProblem: async function (params: { problemCode: string }) {
+        return request.get("/manage/exam/choiceProblem/queryChoiceProblem", params)
+    },
 
 }

@@ -2,7 +2,6 @@ import React, {Component, Dispatch} from 'react';
 import {Card, Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
-import {ExamAction, UpdateChoiceTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, ChoiceState} from "../../Type/IProblem";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
@@ -22,6 +21,20 @@ class Options extends Component<any, SOptions> {
         }
         this.updateChooseUsed = this.updateChooseUsed.bind(this)
         this.updateChooseUnused = this.updateChooseUnused.bind(this)
+    }
+
+    componentDidMount() {
+        let choice = this.props.choice
+        for (let i = 0; i < choice.length; i++) {
+            if (choice[i].id == this.props.ChoiceID) {
+                if (choice[i].state != this.props.choose) {
+                    this.setState({
+                        choose: choice[i].state
+                    })
+                }
+                break;
+            }
+        }
     }
 
     // 在处理属性唯一的时候，根据 redux 的 props 更新当前的 state
@@ -97,7 +110,12 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     updateChoice: (eid: examID, ChoiceID: string, ChoiceState: ChoiceState) =>
-        dispatch(UpdateChoiceTodo(eid, ChoiceID, ChoiceState))
+        dispatch({
+            type: "updateChoice",
+            examId: eid,
+            ChoiceID: ChoiceID,
+            ChoiceState: ChoiceState
+        })
 })
 
 export default connect(

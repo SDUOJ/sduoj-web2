@@ -15,22 +15,30 @@ class ExamAnswerSheet extends Component<any, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
+        this.getAnswerSheet = this.getAnswerSheet.bind(this)
+    }
+
+    getAnswerSheet(){
+        const groupInfo: SProGroupInfo[] = this.props.ProGroupInfo
+        for(const x of groupInfo){
+            if(x.type == "SingleChoice" || x.type == "MultipleChoice"){
+                this.props.getAnswerSheet(this.props.match.params.eid, x.index)
+            }
+        }
     }
 
     componentDidMount() {
         if (this.props.ProGroupInfo == undefined)
             this.props.GetProList(this.props.match.params.eid)
+        // 开始时题目信息就已经加载，直接加载答题卡
+        if(this.props.Loading == false){
+            this.getAnswerSheet()
+        }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.Loading && !this.props.Loading) {
-            const groupInfo: SProGroupInfo[] = this.props.ProGroupInfo
-            for(const x of groupInfo){
-                if(x.type == "SingleChoice" || x.type == "MultipleChoice"){
-                    this.props.getAnswerSheet(this.props.match.params.eid, x.index)
-                }
-            }
-        }
+        // 题目信息加载完成后，加载答题卡
+        if (prevProps.Loading && !this.props.Loading) this.getAnswerSheet()
     }
 
     render() {
@@ -44,11 +52,11 @@ class ExamAnswerSheet extends Component<any, any> {
                               <>
                                   <div style={{margin: "0 auto", textAlign: "center"}}>
                                       <Space size={30}>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["d"]}
+                                          <ProTag ProIndex={0} TagState={["d"]}
                                                   exp={this.props.t("Unanswered")}/>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["f"]}
+                                          <ProTag ProIndex={0} TagState={["f"]}
                                                   exp={this.props.t("Answered")}/>
-                                          <ProTag ProIndex={0} ProURL={""} TagState={["c", "d"]}
+                                          <ProTag ProIndex={0} TagState={["c", "d"]}
                                                   exp={this.props.t("Marked")}/>
                                       </Space>
                                   </div>

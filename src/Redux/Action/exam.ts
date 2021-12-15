@@ -25,6 +25,7 @@ export type ExamAction =
 
 export interface updateChoice {
     type: "updateChoice"
+    examId: examID
     ChoiceID: string
     ChoiceState: ChoiceState
 }
@@ -37,6 +38,7 @@ export interface updateTop {
 
 export interface flipFlag {
     type: "flipFlag"
+    examId: examID
 }
 
 
@@ -69,7 +71,7 @@ function getAnswer(choice: Choice[], type: ChoiceState) {
     return res
 }
 
-function genAnswerSheet(State: ExamState) {
+export function genAnswerSheet(State: ExamState) {
     const groupInfo = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1]
     const proInfo: SProInfo[] = groupInfo.proList
     let res: any = []
@@ -83,38 +85,6 @@ function genAnswerSheet(State: ExamState) {
         })
     }
     return res
-}
-
-export function UpdateChoiceTodo(examId: examID, ChoiceID: string, ChoiceState: ChoiceState) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        const EState: ExamState = getState().ExamReducer
-        eApi.setAnswerSheet({
-            problemAnswer: genAnswerSheet(EState)
-        }, examId, EState.TopProblemIndex - 1).then((resData: any) => {
-            if (resData != null) {
-                dispatch({
-                    type: "updateChoice",
-                    ChoiceID: ChoiceID,
-                    ChoiceState: ChoiceState
-                })
-            }
-        })
-    }
-}
-
-export function FlipFlagTodo(examId: examID) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        const EState: ExamState = getState().ExamReducer
-        eApi.setAnswerSheet({
-            problemAnswer: genAnswerSheet(EState)
-        }, examId, EState.TopProblemIndex - 1).then((resData: any) => {
-            if (resData != null) {
-                dispatch({
-                    type: "flipFlag",
-                })
-            }
-        })
-    }
 }
 
 export function getExamProblemListTodo(eid: examID) {

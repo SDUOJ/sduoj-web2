@@ -233,10 +233,13 @@
 }
 
 .ProTagGroup {
-    margin-top: 30px;
+    margin-top: 10px;
     margin-bottom: 5px;
 }
 
+.ProTagGroup .ant-card-body{
+    padding-bottom: 0;
+}
 
 .Problem {
     -webkit-user-select: none;
@@ -262,7 +265,7 @@
 .Choice-title {
     margin-left: 20px;
     margin-bottom: 20px;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 
@@ -401,4 +404,12 @@
 .center {
     text-align: center;
     margin: 0 auto;
+}
+
+.nowPro{
+    position: relative;
+    bottom: 28px;
+    height: 22px;
+    width: 30px;
+    border: 2px solid red;
 }

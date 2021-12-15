@@ -1,5 +1,6 @@
-import {ExamAction} from "../Action/exam";
+import {ExamAction, genAnswerSheet} from "../Action/exam";
 import {
+    Choice,
     ChoiceContent, isProgramContent, JudgeTemplate,
     ProContent, ProgramContent,
     ProType
@@ -72,8 +73,7 @@ const initState: ExamState = {
     ProListLoad: false,
     TopProblemIndex: 0,
     TopGroupIndex: 0,
-    answerSheetSave: [],
-    AnswerSheetLoad: false
+    AnswerSheetLoad: []
 }
 
 
@@ -104,6 +104,8 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                         nowChoice[index].state = action.ChoiceState
                     }
                 })
+                // 更新当前答题卡
+                eApi.setAnswerSheet({problemAnswer: genAnswerSheet(State)}, action.examId, State.TopGroupIndex - 1)
                 break
 
             // 切换当前题目
@@ -115,16 +117,53 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             // 切换当前组件标记
             case "flipFlag":
                 nowPro.flag = !nowPro.flag
+                eApi.setAnswerSheet({problemAnswer: genAnswerSheet(State)}, action.examId, State.TopGroupIndex - 1)
                 break
             case "setProInfo":
-                ProGroupInfo[action.groupId].proList[action.proId].content = action.data
+                const group = ProGroupInfo[action.groupId]
+                const pro = group.proList[action.proId]
+                if (group.type == "Program") pro.content = action.data
+                else if (group.type == "SingleChoice" || group.type == "MultipleChoice") {
+                    if (pro.content == undefined) pro.content = action.data
+                    else {
+                        const ChCon = (action.data as ChoiceContent);
+                        const ProCon = (pro.content as ChoiceContent)
+                        ProCon.content = ChCon.content
+                        ProCon.isLoad = true
+                        for (const x of ChCon.choice) {
+                            const pos = ProCon.choice.findIndex(value => value.id == x.id)
+                            ProCon.choice[pos].content = x.content
+                        }
+                    }
+                }
                 break
 
             case "setAnswerSheet":
-                State.answerSheetSave.push({
-                    problemGroupId: action.problemGroupId,
-                    problemAnswer: action.data
-                })
+                let proList = (State.proGroupInfo as SProGroupInfo[])[action.problemGroupId].proList
+                State.AnswerSheetLoad[action.problemGroupId] = true
+                for (const x of action.data) {
+                    proList[x.index].flag = x.marked
+                    const orgPro = proList[x.index]
+                    if(orgPro.content != undefined && orgPro.content.isLoad){
+                        const choice = (orgPro.content as ChoiceContent).choice
+                        for (const y of x.choice) {
+                            const Index = choice.findIndex(value => value.id == y)
+                            choice[Index].state = x.answer.indexOf(y) != -1 ? "used" : (x.pass.indexOf(y) != -1 ? "unused" : "init")
+                        }
+                    }else{
+                        let choice: Choice[] = []
+                        for (const y of x.choice) {
+                            choice.push({
+                                id: y,
+                                state: x.answer.indexOf(y) != -1 ? "used" : (x.pass.indexOf(y) != -1 ? "unused" : "init")
+                            })
+                        }
+                        proList[x.index].content = {
+                            isLoad: false,
+                            choice: choice
+                        }
+                    }
+                }
                 break
 
             default:
@@ -137,6 +176,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.TopGroupIndex = 1;
                 State.TopProblemIndex = 1;
                 State.proGroupInfo = action.data
+                while(State.AnswerSheetLoad.length < action.data.length) State.AnswerSheetLoad.push(false);
                 break
 
             case "setExamInfo":

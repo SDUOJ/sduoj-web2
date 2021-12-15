@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import {Badge, Button, Col, Popover, Progress, Row, Space, Tag} from "antd";
-import {ClockCircleOutlined} from "@ant-design/icons";
+import {CaretUpFilled} from "@ant-design/icons";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, isProgramContent} from "../../Type/IProblem";
@@ -11,58 +11,105 @@ import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 class ProTag extends Component<any, any> {
 
-    render() {
-        let TagState = [], score: any = undefined, isProgram = false
+
+    state: any = {
+        TagState: [],
+        score: undefined,
+        isProgram: false
+    }
+
+    componentDidMount() {
+        this.updateState = this.updateState.bind(this)
+        this.updateState()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
+        if (this.props.GroupIndex != undefined) {
+            if (prevProps.AnswerSheetLoad[this.props.GroupIndex] == false &&
+                this.props.AnswerSheetLoad[this.props.GroupIndex] == true) {
+                this.updateState()
+            }
+            const ProInfo = this.props.GroupInfo[this.props.GroupIndex].proList
+            const PreProInfo = prevProps.GroupInfo[this.props.GroupIndex].proList
+            if (ProInfo !== undefined && PreProInfo !== undefined) {
+                const NowPro = (ProInfo as SProInfo[])[this.props.ProIndex - 1]
+                const PrePro = (PreProInfo as SProInfo[])[this.props.ProIndex - 1]
+                if (NowPro.content !== undefined && PrePro.content !== undefined) {
+                    if (IsAnswer(NowPro.content) != IsAnswer(PrePro.content)) {
+                        this.updateState()
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    updateState() {
+        let TagState = [], score = undefined, isProgram = false
         if (this.props.TagState !== undefined) {
             TagState = this.props.TagState
-        } else if (this.props.ProInfo !== undefined) {
-            const NowPro = (this.props.ProInfo as SProInfo[])[this.props.ProIndex - 1]
-            if (NowPro.content === undefined) {
-                TagState.push("d")
-            } else {
-                if (isProgramContent(NowPro.content)) {
-                    score = GetMaxScore(NowPro.content)
-                    isProgram = true
+        } else {
+            const ProInfo = this.props.GroupInfo[this.props.GroupIndex].proList
+            if (ProInfo !== undefined) {
+                const NowPro = (ProInfo as SProInfo[])[this.props.ProIndex - 1]
+                if (NowPro.content !== undefined) {
+                    if (isProgramContent(NowPro.content)) {
+                        score = GetMaxScore(NowPro.content)
+                        isProgram = true
+                    }
+                    if (IsAnswer(NowPro.content)) TagState.push("f")
                 }
-                if (IsAnswer(NowPro.content)) TagState.push("f")
-                else TagState.push("d")
+                if (NowPro.flag) TagState.push("c")
             }
-            if (NowPro.flag) TagState.push("c")
         }
 
+        this.setState({
+            TagState: TagState,
+            score: score,
+            isProgram: isProgram
+        })
+    }
+
+    render() {
+        const TagState = this.state.TagState, score = this.state.score, isProgram = this.state.isProgram
+
         const tagComp = (
-            <Space>
-                <a className={"ProTag"}
-                   onClick={this.props.ProIndex !== 0 ?
-                       (() => this.props.JumpToPro(this.props.GroupIndex + 1, this.props.ProIndex)) : undefined}
-                >
-                    <Badge dot={TagState.indexOf("c") !== -1}>
-                        <Tag color={
-                            this.props.ProIndex != 0
-                            && this.props.ProIndex == this.props.TopProblemIndex
-                            && this.props.GroupIndex + 1 == this.props.TopGroupIndex
-                                ?
-                                (TagState.indexOf("f") !== -1 ? "#87d068" : "#2db7f5") :
-                                (TagState.indexOf("f") !== -1 ? "green" : undefined)
-                        }>
-                            {
-                                [''].map(() => {
-                                    if (this.props.ProIndex !== 0) {
-                                        return this.props.ProIndex
-                                    } else return (<>&nbsp;&nbsp;</>)
-                                })
+            <div>
+                <Space>
+                    <a className={"ProTag"}
+                       onClick={this.props.ProIndex !== 0 ?
+                           (() => this.props.JumpToPro(this.props.GroupIndex + 1, this.props.ProIndex)) : undefined}
+                    >
+                        <Badge dot={TagState.indexOf("c") !== -1}>
+                            <Tag color={(TagState.indexOf("f") !== -1 ? "green" : undefined)}>
+                                {
+                                    [''].map(() => {
+                                        if (this.props.ProIndex !== 0) {
+                                            return this.props.ProIndex
+                                        } else return (<>&nbsp;&nbsp;</>)
+                                    })
+                                }
+                            </Tag>
+                        </Badge>
+                    </a>
+                    {
+                        [''].map(() => {
+                            if (this.props.ProIndex === 0) {
+                                return <span style={{color: "black", marginLeft: "-10px"}}>{this.props.exp}</span>
                             }
-                        </Tag>
-                    </Badge>
-                </a>
+                        })
+                    }
+
+                </Space>
                 {
-                    [''].map(() => {
-                        if (this.props.ProIndex === 0) {
-                            return <span style={{color: "black", marginLeft: "-10px"}}>{this.props.exp}</span>
-                        }
-                    })
+                    this.props.ProIndex != 0
+                    && this.props.ProIndex == this.props.TopProblemIndex
+                    && this.props.GroupIndex + 1 == this.props.TopGroupIndex && (
+                        <div className={"nowPro"}/>
+                    )
                 }
-            </Space>
+            </div>
+
         )
 
         return (
@@ -101,10 +148,10 @@ class ProTag extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    console.log(State.proGroupInfo, State.TopGroupIndex)
+
     return {
-        ProInfo: State.TopGroupIndex == 0 ? undefined :
-            (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList,
+        AnswerSheetLoad: State.AnswerSheetLoad,
+        GroupInfo: State.proGroupInfo,
         TopProblemIndex: State.TopProblemIndex,
         TopGroupIndex: State.TopGroupIndex
     }
