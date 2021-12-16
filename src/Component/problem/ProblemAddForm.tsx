@@ -343,7 +343,7 @@ const ProblemAddForm = (props: any) => {
                 editable={{
                     type: 'multiple',
                     form: form,
-                    editableKeys: sortSwitch ? [] : editableKeys,
+                    editableKeys: props.isStart || sortSwitch ? [] : editableKeys,
                     actionRender: (row: any, config: any, defDom: any) => {
                         return [
                             <Popconfirm

@@ -79,8 +79,6 @@ export function genAnswerSheet(State: ExamState) {
 
     for (const x of proInfo) {
         const content: ChoiceContent = x.content as ChoiceContent
-        console.log(x.index, content != undefined && content.isLoad ? getAnswer(content.choice, "used") : [])
-        console.log(x.index, content != undefined && content.isLoad ? getAnswer(content.choice, "unused") : [])
         res.push({
             index: x.index,
             answer: content != undefined ? getAnswer(content.choice, "used") : [],

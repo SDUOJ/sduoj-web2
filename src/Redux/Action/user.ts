@@ -30,7 +30,6 @@ export function testLoginTodo() {
 export function userLoginTodo(data: loginInfo) {
     return (dispatch: Dispatch<any>, getState: any) => {
         CApi.login(data).then((resData) => {
-            console.log("userLoginTodo", resData)
             if (resData !== null) {
                 dispatch({type: "setUserInfo", data: resData})
                 dispatch({type: "userLogin"})

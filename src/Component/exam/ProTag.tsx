@@ -77,7 +77,7 @@ class ProTag extends Component<any, any> {
         const TagState = this.state.TagState, score = this.state.score, isProgram = this.state.isProgram
 
         const tagComp = (
-            <div>
+            <div className={"tag-div"}>
                 <Space>
                     <a className={"ProTag"}
                        onClick={this.props.ProIndex !== 0 ?

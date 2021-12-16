@@ -64,7 +64,11 @@ const ExamBaseForm = (props: any) => {
                                 label="考试起止时间"
                                 rules={[{type: 'array' as const, required: true}]}
                             >
-                                <RangePicker showTime={{minuteStep: 5, secondStep: 30}} format={"YYYY-MM-DD HH:mm:ss"}/>
+                                <RangePicker
+                                    showTime={{minuteStep: 5, secondStep: 30}}
+                                    format={"YYYY-MM-DD HH:mm:ss"}
+                                    disabled={props.isStart}
+                                />
                             </Form.Item>
                         </Col>
                         <Col span={11} offset={1}>

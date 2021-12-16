@@ -227,6 +227,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
                                     updateGroup={updateGroup}
                                     type={proGroup.ProblemGroupType}
                                     isDataLoad={props.isDataLoad}
+                                    isStart={props.isStart}
                                 />
                             )
                         },
@@ -245,7 +246,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
                     }}
                     editable={{
                         type: 'multiple',
-                        editableKeys: sortSwitch ? [] : editableKeys,
+                        editableKeys: props.isStart || sortSwitch ? [] : editableKeys,
                         actionRender: (row: any, config: any, defDom: any) => {
                             return [
                                 <Popconfirm
@@ -288,34 +289,45 @@ const ExamProblemForm = (props: formSubmitType & any) => {
                             actionRef.current?.addEditRecord?.({id: Date.now()}, {newRecordType: "dataSource"});
                         }}
                         icon={<PlusOutlined/>}
+                        disabled={props.isStart}
                     >
                         新建题组
                     </Button>
 
-                    <Radio.Group defaultValue="edit" buttonStyle="solid" onChange={(evt) => {
-                        switch (evt.target.value) {
-                            case "sort":
-                                setExpandedRowKeys([])
-                                setSortSwitch(true)
-                                return
-                            case "edit":
-                                setSortSwitch(false)
-                                return
-                        }
-                    }}>
+                    <Radio.Group
+                        defaultValue="edit"
+                        buttonStyle="solid"
+                        onChange={(evt) => {
+                            switch (evt.target.value) {
+                                case "sort":
+                                    setExpandedRowKeys([])
+                                    setSortSwitch(true)
+                                    return
+                                case "edit":
+                                    setSortSwitch(false)
+                                    return
+                            }
+                        }}
+                        disabled={props.isStart}
+                    >
                         <Radio.Button value="edit">编辑</Radio.Button>
                         <Radio.Button value="sort">排序</Radio.Button>
                     </Radio.Group>
-                    <Radio.Group defaultValue="easy" buttonStyle="solid" onChange={(evt) => {
-                        switch (evt.target.value) {
-                            case "easy":
-                                setUIMode("easy")
-                                return
-                            case "all":
-                                setUIMode("all")
-                                return
-                        }
-                    }}>
+                    <Radio.Group
+                        defaultValue="easy"
+                        buttonStyle="solid"
+                        onChange={(evt) => {
+                            switch (evt.target.value) {
+                                case "easy":
+                                    setUIMode("easy")
+                                    return
+                                case "all":
+                                    setUIMode("all")
+                                    return
+                            }
+                        }}
+                        disabled={props.isStart}
+                    >
                         <Radio.Button value="easy">简单模式</Radio.Button>
                         <Radio.Button value="all" disabled>完全模式（暂不支持）</Radio.Button>
                     </Radio.Group>

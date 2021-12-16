@@ -242,6 +242,7 @@ const ExamForm = (props: formSubmitType & any) => {
                             getRef={getExamBaseFormRef}
                             initData={baseInit}
                             isDataLoad={isDataLoad}
+                            isStart={props.isStart}
                         />
                     </TabPane>
                     <TabPane tab="人员信息" key="2">
@@ -259,6 +260,7 @@ const ExamForm = (props: formSubmitType & any) => {
                             listData={proListData}
                             setListData={setProListData}
                             isDataLoad={isDataLoad}
+                            isStart={props.isStart}
                         />
                     </TabPane>
                 </Tabs>

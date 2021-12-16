@@ -188,14 +188,15 @@ class ExamList extends Component<any, any> {
                 title: '操作',
                 key: 'operator',
                 render: (text: any, record: SExamInfo) => {
-                    if (record.startTime > Date.now())
-                        return <ExamForm type={'update'} title={record.title} examID={record.id} update={this.update}/>
-                    else
-                        return (
-                            <Popover content={"已开始的考试不能修改"}>
-                                <Button type={"link"} disabled>修改</Button>
-                            </Popover>
-                        )
+                    const isStart = record.startTime < Date.now()
+                    console.log(isStart)
+                    return <ExamForm
+                        type={'update'}
+                        title={record.title}
+                        examID={record.id}
+                        update={this.update}
+                        isStart={isStart}
+                    />
                 }
             }
         ]
