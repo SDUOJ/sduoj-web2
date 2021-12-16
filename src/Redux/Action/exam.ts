@@ -75,12 +75,16 @@ export function genAnswerSheet(State: ExamState) {
     const groupInfo = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1]
     const proInfo: SProInfo[] = groupInfo.proList
     let res: any = []
+
+
     for (const x of proInfo) {
         const content: ChoiceContent = x.content as ChoiceContent
+        console.log(x.index, content != undefined && content.isLoad ? getAnswer(content.choice, "used") : [])
+        console.log(x.index, content != undefined && content.isLoad ? getAnswer(content.choice, "unused") : [])
         res.push({
             index: x.index,
-            answer: content != undefined && content.isLoad ? getAnswer(content.choice, "used") : [],
-            pass: content != undefined && content.isLoad ? getAnswer(content.choice, "unused") : [],
+            answer: content != undefined ? getAnswer(content.choice, "used") : [],
+            pass: content != undefined ? getAnswer(content.choice, "unused") : [],
             marked: x.flag
         })
     }
