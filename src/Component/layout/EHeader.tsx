@@ -29,7 +29,7 @@ class EHeader extends Component<any, any> {
                 <div style={{float: "right"}} key={"operator"}>
                     {
                         [''].map(()=>{
-                            console.log(this.props.location.pathname)
+                            console.log("交卷", this.props.location.pathname)
                             if(this.props.location.pathname.match(/\/exam\/running\//) != null){
                                 return <ExamOver key={"ExamOver"}/>
                                 // TODO 完成交卷的处理  完成考试结束的自动跳转

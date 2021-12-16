@@ -22,7 +22,9 @@ class ExamOver extends Component<any, any> {
                     type={"primary"}
                     onClick={()=>{
                         this.setState({disabled: true})
-                        eApi.ExamOver({examId: this.props.match.params.eid}).then(()=>{
+                        const urls = this.props.location.pathname.split('/')
+                        const eid = urls[urls.length - 1]
+                        eApi.ExamOver({examId: eid}).then(()=>{
                             this.props.history.push("/v2/exam/finish")
                         }).catch(()=>{
                             this.setState({disabled: false})
