@@ -23,10 +23,6 @@ function examBasicInfoChecker(data: examBasicType): boolean {
         message.error("考试描述不能为空")
         return false
     }
-    if (data.examStartEndTime[0] < moment(Date.now())) {
-        message.error("考试开始时间必须大于当前时间")
-        return false
-    }
     return true
 }
 
