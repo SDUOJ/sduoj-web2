@@ -22,7 +22,6 @@ const service = axios.create({
 service.defaults.withCredentials = true
 
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
-    console.log(service.defaults.baseURL)
     try {
         const response = await service.get(url, {
             params, ...config

@@ -122,7 +122,6 @@ export function getExamInfoTodo(examId: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
         eApi.getExamInfo(examId).then(function (resDate) {
             if (resDate != null) {
-                console.log(resDate)
                 const x: any = resDate
                 const data = {
                     id: x.examId,
@@ -130,7 +129,8 @@ export function getExamInfoTodo(examId: examID) {
                     endTime: parseInt(x.gmtEnd),
                     title: x.examTitle,
                     participantNum: x.participantNum,
-                    description: x.description.toString()
+                    description: x.description.toString(),
+                    userIsSubmit: x.userIsSubmit
                 }
                 dispatch({type: "setExamInfo", data: data})
             }

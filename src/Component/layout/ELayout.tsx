@@ -30,7 +30,6 @@ class ELayout extends Component<any, any> {
             this.props.history.push(getRouterPath(routerE, 2));
             // window.location.reload();
         }
-        console.log("ELayout")
         this.props.testLogin()
     }
 
