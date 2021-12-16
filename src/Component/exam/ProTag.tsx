@@ -38,6 +38,9 @@ class ProTag extends Component<any, any> {
                     if (IsAnswer(NowPro.content) != IsAnswer(PrePro.content)) {
                         this.updateState()
                     }
+                    if(NowPro.flag != PrePro.flag){
+                        this.updateState()
+                    }
                 }
             }
         }

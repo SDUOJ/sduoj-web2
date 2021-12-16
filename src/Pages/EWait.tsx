@@ -57,10 +57,10 @@ class EWait extends Component<any, any> {
             const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
             description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
             if (start.format("LL") == end.format("LL"))
-                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - " + end.format("h:mm") + "\n" + description
+                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("hh:mm") + " - " + end.format("hh:mm") + "\n" + description
             else
-                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - "
-                    + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("h:mm") + "\n" + description
+                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("hh:mm") + " - "
+                    + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("hh:mm") + "\n" + description
 
         }
 
