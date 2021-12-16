@@ -9,6 +9,6 @@ export default function apiAddress() {
         CLIENT_SERVER: 'https://oj.qd.sdu.edu.cn',
         MANAGE_SERVER: 'https://oj.qd.sdu.edu.cn',
         EXAM_SERVER:'https://oj.qd.sdu.edu.cn',
-        FRONT_SERVER: 'https://oj.qd.qd.sdu.edu.cn'
+        FRONT_SERVER: 'https://oj.qd.sdu.edu.cn'
     }
 }

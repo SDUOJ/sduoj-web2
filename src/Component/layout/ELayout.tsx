@@ -55,7 +55,7 @@ class ELayout extends Component<any, any> {
                                 </Suspense>
                             </div>
                         </Content>
-                        <FooterSDU/>
+                        {/*<FooterSDU/>*/}
                     </Layout>
                 </Layout>
             </>
