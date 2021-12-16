@@ -6,9 +6,9 @@ export default function apiAddress() {
         FRONT_SERVER: 'http://oj.cs.sdu.edu.cn'
     }
     return {
-        CLIENT_SERVER: '',
-        MANAGE_SERVER: '//',
-        EXAM_SERVER:'http://127.0.0.1:8000',
-        FRONT_SERVER: 'http://localhost:3000'
+        CLIENT_SERVER: 'https://oj.qd.sdu.edu.cn',
+        MANAGE_SERVER: 'https://oj.qd.sdu.edu.cn',
+        EXAM_SERVER:'https://oj.qd.sdu.edu.cn',
+        FRONT_SERVER: 'https://oj.qd.qd.sdu.edu.cn'
     }
 }

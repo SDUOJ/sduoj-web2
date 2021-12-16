@@ -19,8 +19,6 @@ import '@ant-design/pro-layout/dist/layout.css';
 import "@ant-design/pro-card/dist/card.css";
 import "@ant-design/pro-list/dist/list.css";
 import "@ant-design/pro-descriptions/dist/descriptions.css"
-import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router";
 
 
 class App extends Component<any, any> {

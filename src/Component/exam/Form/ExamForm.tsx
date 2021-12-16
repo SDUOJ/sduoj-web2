@@ -1,18 +1,17 @@
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, useState} from "react";
 import {Button, FormInstance, message, Modal, Tabs} from "antd";
-import {MenuOutlined, PlusOutlined,} from "@ant-design/icons"
-import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
+import {PlusOutlined,} from "@ant-design/icons"
 import {withTranslation} from "react-i18next";
 import moment from "moment";
 import {connect} from "react-redux";
 import {
     examBasicType,
-    examProblemGroupType, examProblemInfo,
+    examProblemGroupType,
     examProblemListType, examProblemType,
     examUserType,
-    ManageState, ProGroupTypeFtS, ProGroupTypeStF
+    ProGroupTypeFtS, ProGroupTypeStF
 } from "../../../Type/IManage";
-import {formSubmitType, setExamFormVis, SubmitExamFormTodo} from "../../../Redux/Action/manage";
+import {formSubmitType, SubmitExamFormTodo} from "../../../Redux/Action/manage";
 import ExamBaseForm from "./ExamBaseForm";
 import TabPane from "@ant-design/pro-card/lib/components/TabPane";
 import ExamMemberForm from "./ExamMemberForm";
@@ -20,8 +19,6 @@ import ExamProblemForm from "./ExamProblemForm";
 import mApi from "Utils/API/m-api"
 import {groupSelection} from "../../../Type/Igroup";
 import {examFormChecker} from "../../../Utils/Checker/examFormChecker";
-
-export type problemGroupUIMode = "easy" | "all"
 
 
 const ExamForm = (props: formSubmitType & any) => {

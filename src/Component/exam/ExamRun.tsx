@@ -32,7 +32,11 @@ class ExamRun extends Component<any, any> {
                                         <ExamPageCtrl/>
                                     </Col>
                                     <Col span={7} className={"ExamRun-ExamAnswerSheet"}>
-                                        <Timer deadline={this.props.examInfo?.endTime} inline={true}/>
+                                        <Timer
+                                            deadline={this.props.examInfo?.endTime}
+                                            inline={true}
+                                            onFinish={()=>{this.props.history.push("/v2/exam/finish")}}
+                                        />
                                         <ExamAnswerSheet/>
                                     </Col>
                                 </Row>

@@ -2,7 +2,7 @@ import React, {Component, Dispatch} from "react";
 import {Button, Card, Descriptions, Image, List, Result, Skeleton} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../Component/exam/Timer";
-import {ExamState} from "../Type/IExam";
+import {ExamState, SExamInfo} from "../Type/IExam";
 import {examID} from "../Type/types";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
@@ -47,9 +47,12 @@ class EWait extends Component<any, any> {
     render() {
 
         const examInfo = this.props.examInfo
-        let description = ""
+        let description:any = ""
+        let ExamStartText = this.props.t("StartAnswering")
         if (examInfo != undefined) {
             if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now()) this.setExamStart(true)
+            if (examInfo.endTime < Date.now()) ExamStartText = "已结束"
+            if (examInfo.userIsSubmit == 1) ExamStartText = "已交卷"
             description = examInfo.description
             const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
             description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
@@ -58,6 +61,7 @@ class EWait extends Component<any, any> {
             else
                 description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("h:mm") + " - "
                     + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("h:mm") + "\n" + description
+
         }
 
         return (
@@ -79,11 +83,11 @@ class EWait extends Component<any, any> {
                                     actions={[
                                         <Button type="primary"
                                                 disabled={!this.state.ExamStart}
-                                                onClick={()=>{
+                                                onClick={() => {
                                                     this.props.history.push("/v2/exam/running/" + this.props.match.params.eid)
                                                 }}
                                         >
-                                            {this.props.t("StartAnswering")}
+                                            {ExamStartText}
                                         </Button>
                                     ]}
                                     className={"exam-wait-card"}

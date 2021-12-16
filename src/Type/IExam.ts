@@ -9,7 +9,8 @@ export interface SExamInfo {
     endTime: number         // 结束时间
     title: string           // 考试标题
     description?: string    // 考试描述
-    participantNum?: number  // 考试人数
+    participantNum?: number // 考试人数
+    userIsSubmit?: number  // 用户已提交
 }
 
 export interface SExamManageInfo {
@@ -60,7 +61,7 @@ export interface ExamState {
 }
 
 export interface IUserExamInfo {
-    name?: string                        // 姓名
+    name?: string                       // 姓名
     AdmissionTicketNumber?: string      // 准考证号
     studentID?: string                  // 学号
     IDNumber?: string                   // 身份证号

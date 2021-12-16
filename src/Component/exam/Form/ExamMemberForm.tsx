@@ -1,22 +1,15 @@
-import React, {Dispatch, useEffect, useRef, useState} from "react";
-import {Button, Form, Select, Skeleton, Space} from "antd";
-import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
+import React, {Dispatch} from "react";
+import {Form, Skeleton} from "antd";
 import {withTranslation} from "react-i18next";
 
-import TextArea from "antd/lib/input/TextArea";
-import Search from "antd/lib/input/Search";
 import {connect} from "react-redux";
-import {examUserType, ManageState} from "../../../Type/IManage";
-import {groupSelection} from "../../../Type/Igroup";
-import mApi from "../../../Utils/API/m-api";
-import {QuestionCircleOutlined} from "@ant-design/icons"
+import {ManageState} from "../../../Type/IManage";
+
 import SelectGroup from "../../group/SelectGroup";
 
-const {Option} = Select;
 
 // 新建 与 修改
 export type problemGroupProType = "objective" | "program"
-export type problemGroupUIMode = "easy" | "all"
 
 
 const ExamMemberForm = (props: any) => {

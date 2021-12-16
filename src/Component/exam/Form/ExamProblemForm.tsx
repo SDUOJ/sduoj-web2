@@ -1,34 +1,20 @@
-import React, {Dispatch, RefObject, useEffect, useRef, useState} from "react";
-import {Button, Col, Form, List, message, Popconfirm, Row, Space, Radio, FormInstance, Modal, Skeleton} from "antd";
-import type {ProFormInstance} from '@ant-design/pro-form';
-import ProForm, {
-    ProFormTextArea,
-    ModalForm,
-    ProFormCheckbox,
-    ProFormDateTimeRangePicker,
-    ProFormText
-} from '@ant-design/pro-form';
+import React, {Dispatch, useRef, useState} from "react";
+import {Button, Popconfirm, Space, Radio, Skeleton} from "antd";
 import {InfoCircleOutlined, MenuOutlined, PlusOutlined, RightOutlined,} from "@ant-design/icons"
-import ProTable, {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
+import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
 import ProgramAddForm from "../../problem/ProblemAddForm";
 import {connect} from "react-redux";
 import {
-    examBasicType,
     examProblemGroupType,
-    examProblemInfo, examProblemListType,
-    examUserType,
+    examProblemListType,
     genNumberList,
     ManageState
 } from "../../../Type/IManage";
 import {
     formSubmitType,
-    ManageAction,
-    setBasicInfo, setExamFormVis,
-    setProblemGroup,
-    SubmitExamFormTodo
 } from "../../../Redux/Action/manage";
 
 

@@ -25,7 +25,11 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                                             <ClockCircleOutlined/>
                                             {this.props.t("Countdown")} :
                                         </Space>
-                                        <Countdown value={this.props.deadline} format="H 时 m 分 s 秒"/>
+                                        <Countdown
+                                            value={this.props.deadline}
+                                            format="H 时 m 分 s 秒"
+                                            onFinish={this.props.onFinish}
+                                        />
                                     </Space>
                                 </Card>
                             )

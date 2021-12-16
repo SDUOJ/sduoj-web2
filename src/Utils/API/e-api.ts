@@ -111,6 +111,9 @@ export default {
     },
     async getAnswerSheet(eid: examID, groupId: number){
         return request.get("/exam/" + eid + "/answerSheet/" + groupId)
+    },
+    async ExamOver(data: {examId: number}){
+        return request.get("/exam/userSubmit", data)
     }
 
 }

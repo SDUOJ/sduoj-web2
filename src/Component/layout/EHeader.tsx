@@ -13,6 +13,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
+import ExamOver from "../exam/ExamOver";
 
 const {Header} = Layout;
 
@@ -21,11 +22,20 @@ class EHeader extends Component<any, any> {
     render() {
         return (
             <Header className="site-layout-sub-header-background" style={{minWidth: 550}}>
-                <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}}>
+                <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
                     <img src={logo} style={{width: "125px", height: '30px'}}
                          alt={"SDUOJ-logo"}/>
                 </div>
-                <div style={{float: "right"}}>
+                <div style={{float: "right"}} key={"operator"}>
+                    {
+                        [''].map(()=>{
+                            console.log(this.props.location.pathname)
+                            if(this.props.location.pathname.match(/\/exam\/running\//) != null){
+                                return <ExamOver key={"ExamOver"}/>
+                                // TODO 完成交卷的处理  完成考试结束的自动跳转
+                            }
+                        })
+                    }
                     <ChangeLang/>
                     {
                         [''].map(() => {

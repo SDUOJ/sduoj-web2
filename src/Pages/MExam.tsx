@@ -1,10 +1,8 @@
 import React, {Component, Dispatch} from "react";
 import ExamForm from "../Component/exam/Form/ExamForm";
-import ExamBaseForm from "../Component/exam/Form/ExamBaseForm";
-import {Card, FormInstance} from "antd";
+import {Card} from "antd";
 import {getRouterPath, routerC, routerE} from "../Config/router";
 import {UserState} from "../Type/Iuser";
-import {testLoginTodo} from "../Redux/Action/user";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
