@@ -20,7 +20,8 @@ export type ExamAction =
     setProList |
     setExamInfo |
     setProInfo |
-    setAnswerSheet
+    setAnswerSheet |
+    cleanProInfo
 
 
 export interface updateChoice {
@@ -63,6 +64,10 @@ export interface setAnswerSheet {
     type: "setAnswerSheet",
     data: ProblemAnswerSheet[]
     problemGroupId: number
+}
+
+export interface cleanProInfo{
+    type: "cleanProInfo"
 }
 
 function getAnswer(choice: Choice[], type: ChoiceState) {

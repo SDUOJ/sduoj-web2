@@ -165,6 +165,13 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                     }
                 }
                 break
+            case "cleanProInfo":
+                State.proGroupInfo = undefined
+                State.ProListLoad = false
+                State.TopGroupIndex = 0
+                State.TopProblemIndex = 0
+                State.AnswerSheetLoad = []
+                break
 
             default:
                 break

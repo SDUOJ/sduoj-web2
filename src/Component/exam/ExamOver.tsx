@@ -6,6 +6,7 @@ import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import eApi from "Utils/API/e-api"
+import {cleanProInfo} from "../../Redux/Action/exam";
 
 class ExamOver extends Component<any, any> {
     state = {
@@ -20,13 +21,14 @@ class ExamOver extends Component<any, any> {
                     danger
                     style={{marginRight: "30px"}}
                     type={"primary"}
-                    onClick={()=>{
+                    onClick={() => {
                         this.setState({disabled: true})
                         const urls = this.props.location.pathname.split('/')
                         const eid = urls[urls.length - 1]
-                        eApi.ExamOver({examId: eid}).then(()=>{
+                        eApi.ExamOver({examId: eid}).then(() => {
                             this.props.history.push("/v2/exam/finish")
-                        }).catch(()=>{
+                            this.props.CleanProInfo()
+                        }).catch(() => {
                             this.setState({disabled: false})
                         })
                     }}
@@ -40,19 +42,12 @@ class ExamOver extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const UState: UserState = state.UserReducer
-    const realName = UState.userInfo?.realName
-    const sduId = UState.userInfo?.sduId
-    return {
-        isLogin: UState.isLogin,
-        realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
-        sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    userLogout: () => dispatch(userLogoutTodo()),
-    getProfile: () => dispatch(userGetProfileTodo()),
+    CleanProInfo: () => dispatch({
+        type: "cleanProInfo"
+    })
 })
 
 export default connect(
