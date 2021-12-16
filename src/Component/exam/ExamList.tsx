@@ -15,6 +15,8 @@ import eApi from "../../Utils/API/e-api";
 import mApi from "../../Utils/API/m-api";
 import ExamForm from "./Form/ExamForm";
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
+import ExportExcel from "../common/ExportExcel";
+import {getColMap, getData} from "../../Utils/exportExam";
 
 
 class ExamList extends Component<any, any> {
@@ -190,13 +192,22 @@ class ExamList extends Component<any, any> {
                 render: (text: any, record: SExamInfo) => {
                     const isStart = record.startTime < Date.now()
                     console.log(isStart)
-                    return <ExamForm
-                        type={'update'}
-                        title={record.title}
-                        examID={record.id}
-                        update={this.update}
-                        isStart={isStart}
-                    />
+                    return <Space>
+                        <ExamForm
+                            type={'update'}
+                            title={record.title}
+                            examID={record.id}
+                            update={this.update}
+                            isStart={isStart}
+                        />
+                        <ExportExcel
+                            ButtonText={"导出结果"}
+                            ButtonType={"link"}
+                            colMap={getColMap()}
+                            nowData={getData(record.id)}
+                            fileName={record.title + "_结果导出"}
+                        />
+                    </Space>
                 }
             }
         ]

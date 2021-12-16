@@ -1,15 +1,17 @@
 import {Component} from "react";
 import {Button} from "antd";
 import XLSX from "xlsx";
+import {ButtonType} from "antd/lib/button/button";
 
 interface IButtonText{
     ButtonText: string
+    ButtonType: ButtonType
     fileName: string
     colMap: any
     nowData: any
 }
 
-class ExportExcel extends Component<any, any> {
+class ExportExcel extends Component<IButtonText, any> {
 
     handleExportAll = (colMap: any, nowData: any, fileName: string) => {
         const json = nowData.map((item: any) => {
@@ -68,7 +70,7 @@ class ExportExcel extends Component<any, any> {
         return (
             <>
                 <Button
-                    type="primary"
+                    type={this.props.ButtonType}
                     onClick={() => {
                         this.handleExportAll(this.props.colMap, this.props.nowData, this.props.fileName)
                     }}
