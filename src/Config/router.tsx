@@ -71,12 +71,12 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../Pages/ALogin'))
     },
-    {
-        id: 3,
-        path: "/v2/c/test",
-        exact: true,
-        component: lazy(() => import('../Pages/CTest'))
-    }
+    // {
+    //     id: 3,
+    //     path: "/v2/c/test",
+    //     exact: true,
+    //     component: lazy(() => import('../Pages/CTest'))
+    // }
 ]
 
 
