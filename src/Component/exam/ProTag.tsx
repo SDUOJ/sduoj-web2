@@ -41,6 +41,10 @@ class ProTag extends Component<any, any> {
                     if(NowPro.flag != PrePro.flag){
                         this.updateState()
                     }
+                    if (isProgramContent(NowPro.content) && isProgramContent(PrePro.content)) {
+                        if(GetMaxScore(NowPro.content) != GetMaxScore(PrePro.content))
+                            this.updateState()
+                    }
                 }
             }
         }
@@ -119,17 +123,22 @@ class ProTag extends Component<any, any> {
             <div>
                 {
                     [''].map(() => {
-                        if (isProgram) {
+                       if (isProgram &&
+                            this.props.GroupInfo !== undefined &&
+                            this.props.GroupInfo[this.props.GroupIndex].proList !== undefined &&
+                            this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content !== undefined
+                        ) {
+                            const sumScore = this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content.SumScore
                             return (
                                 <Popover
                                     content={
                                         <>
                                             <Progress
-                                                percent={score}
+                                                percent={score / sumScore * 100}
                                                 steps={20}
                                                 size="small"
                                                 strokeColor="#52c41a"
-                                                format={percent => `${percent}` + this.props.t(getPoint(percent))}
+                                                format={percent => `${percent}` + "%"}
                                             />
                                         </>
                                     }
@@ -156,7 +165,7 @@ const mapStateToProps = (state: any) => {
         AnswerSheetLoad: State.AnswerSheetLoad,
         GroupInfo: State.proGroupInfo,
         TopProblemIndex: State.TopProblemIndex,
-        TopGroupIndex: State.TopGroupIndex
+        TopGroupIndex: State.TopGroupIndex,
     }
 }
 

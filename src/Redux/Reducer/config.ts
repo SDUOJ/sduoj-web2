@@ -20,7 +20,6 @@ export const ConfigReducer = (state: ConfigState = initState, action: ConfigActi
             State.lang = action.lang
             break
         case "updateTimestamp":
-            console.log(action.timestamp)
             State.timestamp = action.timestamp
             break
 

@@ -1,6 +1,7 @@
-import {TestCaseType} from "./ISubmission";
+import {RunningResultType, TestCaseType} from "./ISubmission";
 import {examID} from "./types";
 import React from "react";
+import Choice from "../Component/problem/Choice";
 
 export type ProType = "Program" | "SingleChoice" | "MultipleChoice" | "FillInTheBlank" | "Subjective" | "TrueOrFalse"
 
@@ -29,13 +30,12 @@ export interface JudgeTemplate {
 
 export interface Submission {
     sid: string
-    JudgeResult: TestCaseType
+    JudgeResult: RunningResultType
     Score: number
     Time: number
     Memory: number
     JudgeTemplate: JudgeTemplate
     SubmitTime: number
-
 }
 
 export interface ProgramContent {
@@ -45,6 +45,8 @@ export interface ProgramContent {
     testCase: TestCase[]            // 测试数据集合
     TimeLimit: number               // 时间限制
     MemoryLimit: number             // 空间限制
+    MaxSubmitNumber: number         // 最大提交次数限制
+    SumScore: number                // 题目总分数
     JudgeTemplate: JudgeTemplate[]  // 评测模板
     Submissions: Submission[]       // 提交信息
 }
@@ -66,11 +68,11 @@ export type ProContent = ProgramContent | ChoiceContent
 
 
 export function isChoiceContent(x: any): x is ChoiceContent {
-    return (<ChoiceContent>x).choice !== undefined
+    return "choice" in x
 }
 
 export function isProgramContent(x: any): x is ProgramContent {
-    return (<ProgramContent>x).markdown !== undefined
+    return "markdown" in x
 }
 
 
@@ -80,10 +82,12 @@ export interface ICreateSubmit {
     examId?: string
     judgeTemplateId: string
     problemCode: string
+    problemIndex?: number
+    groupIndex?: number
 }
 
 export interface ProblemState {
-    TopSubmissionId?: string
+
 }
 
 export interface IGetProInfo {

@@ -1,7 +1,5 @@
 import {Locale} from "antd/lib/locale-provider";
 import {Dispatch} from "react";
-import {ConfigState} from "../../Type/IConfig";
-import eApi from "../../Utils/API/e-api";
 import cApi from "../../Utils/API/c-api";
 
 export type ConfigAction =

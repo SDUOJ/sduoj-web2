@@ -159,10 +159,10 @@ const ExamForm = (props: formSubmitType & any) => {
                             const groupInfo: examProblemGroupType[] = examProGroupData
                             const proList: examProblemListType[] = proListData
 
-                            console.log("Base", base)
-                            console.log("user", user)
-                            console.log("group-info", groupInfo)
-                            console.log("group-ProList", proList)
+                            // console.log("Base", base)
+                            // console.log("user", user)
+                            // console.log("group-info", groupInfo)
+                            // console.log("group-ProList", proList)
                             if (!examFormChecker({
                                 examProblemListInfo: proList,
                                 examProblemGroupInfo: groupInfo,
@@ -213,7 +213,7 @@ const ExamForm = (props: formSubmitType & any) => {
                                 participatingGroups: user?.ParticipatingGroup,
                                 problemGroups: proGroup
                             }
-                            console.log(base.examStartEndTime[0].unix(), base.examStartEndTime[1].unix())
+                            // console.log(base.examStartEndTime[0].unix(), base.examStartEndTime[1].unix())
                             if (props.type == "create") {
                                 mApi.createExam(formData).then((resData: any) => {
                                     setExamFormVis(false)

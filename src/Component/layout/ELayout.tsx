@@ -1,21 +1,15 @@
 import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
-import logo from "../../Assert/img/logo.png";
 import Loading from "../../Utils/Loading";
-import {getRouterPath, routerE, routerLayout, routerM} from "../../Config/router";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {getRouterPath, routerE} from "../../Config/router";
+import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import EHeader from "./EHeader";
-import {ExamState, IUserExamInfo} from "../../Type/IExam";
 import {ConfigState} from "../../Type/IConfig";
-import {UserState} from "../../Type/Iuser";
-import {examID} from "../../Type/types";
-
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import {getCopyRightTodo} from "../../Redux/Action/config";
 import {testLoginTodo} from "../../Redux/Action/user";
-import FooterSDU from "./FooterSDU";
+
 
 const {Footer, Content} = Layout;
 
@@ -26,9 +20,7 @@ class ELayout extends Component<any, any> {
             this.props.location.pathname === '/v2/exam' ||
             this.props.location.pathname === '/v2/exam/'
         ) && routerE.length !== 0) {
-            // sessionStorage.setItem("returnPath", getRouterPath(routerE, 2))
             this.props.history.push(getRouterPath(routerE, 2));
-            // window.location.reload();
         }
         this.props.testLogin()
     }

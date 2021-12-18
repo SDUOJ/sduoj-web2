@@ -43,7 +43,7 @@ class Problem extends Component<any, any> {
                         </>
                     }
                     extra={
-                        this.props.flag !== undefined && this.props.flag && (
+                        this.props.proType !== "Program" && this.props.flag !== undefined && this.props.flag && (
                             <Button type="default"
                                     shape="round"
                                     icon={this.props.isFlag ? <StarFilled/> : <StarOutlined/>}

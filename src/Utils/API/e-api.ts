@@ -113,6 +113,12 @@ export default {
     },
     async ExamOver(data: {examId: number}){
         return request.get("/exam/userSubmit", data)
+    },
+    async getSubmissionList(data: {examId: examID, problemGroup: number, problemIndex: number}){
+        return request.post("/exam/getSubmissionList", data)
+    },
+    async getSubmission(examId: examID, submissionId: string){
+        return request.get("exam/" + examId + "/submission/" + submissionId)
     }
 
 }

@@ -53,7 +53,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         const response = await service.post(url, data, {
             ...config
         });
-        console.log("post", response)
+        // console.log("post", response)
         switch (response.data.code) {
             case 0:
                 message.success(response.data.message)

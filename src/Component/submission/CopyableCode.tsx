@@ -15,7 +15,7 @@ class CopyableCode extends Component<ICopyableCode & WithTranslation, any> {
         return (
             <>
                 <Paragraph style={{fontSize: "14px"}}>
-                    <pre style={{width: "100%"}}>{this.props.code}</pre>
+                    <pre style={{width: "100%", paddingRight: "25px"}}>{this.props.code}</pre>
                 </Paragraph>
                 <div style={{position: "absolute", right: "2%", top:"43px"}}>
                     <Paragraph
@@ -24,8 +24,7 @@ class CopyableCode extends Component<ICopyableCode & WithTranslation, any> {
                                 tooltips: [this.props.t("Copy"), this.props.t("Copied")],
                                 text: this.props.code
                             }}
-                    >
-                    </Paragraph>
+                    />
                 </div>
             </>
         )

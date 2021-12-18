@@ -15,7 +15,7 @@ class thirdPartyLogin extends Component<any, any> {
 
     componentDidMount() {
         const paras = getUrlParams(this.props.location.search)
-        console.log(this.props.location.search)
+        // console.log(this.props.location.search)
         this.props.thirdPartyLogin({type: paras.thirdParty, data: {ticket: paras.ticket}})
         setInterval(() => {
             CApi.getProfile().then((resData) => {

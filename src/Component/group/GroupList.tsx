@@ -168,7 +168,7 @@ class GroupList extends Component<IUserPropRoles & RouteComponentProps, IGroupLi
         let rowSelection: any = {
             selectedRowKeys,
             onChange: (selectedRowKeys: React.Key[], selectedRows: IGroup[]) => {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
                 this.setState({selectedRowKeys});
             },
             selections: [

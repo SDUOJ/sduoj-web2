@@ -38,7 +38,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genNumberList(props.groupData))              // 编辑区域构造        【ProblemGroup】
 
     const setProblemGroupData = (data: examProblemGroupType[]) => {
-        console.log("setProblemGroupData", data)
+        // console.log("setProblemGroupData", data)
         for (const x of data) {
             const index = props.groupData.findIndex((value: examProblemGroupType) => value.id == x.id)
             if (index != -1)
@@ -165,7 +165,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
             tooltip: {title: "在完成某一个题型后，才允许开始当前题型开始作答", icon: <InfoCircleOutlined/>},
             width: 170,
             valueEnum: (row) => {
-                console.log("valueEnum", row)
+                // console.log("valueEnum", row)
                 let obj: any = {}
                 const index = props.groupData.findIndex((x: examProblemGroupType) => x.id === row.id);
                 for (let i = 0; i < props.groupData.length; i++) {

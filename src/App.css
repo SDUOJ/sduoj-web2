@@ -66,15 +66,16 @@
 }
 
 .steps-content-pending {
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-left: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     overflow: hidden;
-    min-height: 200px;
 }
 
 .steps-content-compile {
+    padding: 30px;
     text-align: left;
-    min-height: 100px;
+    min-height: 600px;
 }
 
 .steps-content-compile-spin {
@@ -219,7 +220,7 @@
 
 .ExamAnswerSheet {
     width: 500px;
-    margin: 5px auto 0;
+    margin: 20px auto 0;
 }
 
 .ExamAnswerSheet .ant-card-meta-title {
@@ -237,7 +238,7 @@
     margin-bottom: 5px;
 }
 
-.ProTagGroup .ant-card-body{
+.ProTagGroup .ant-card-body {
     padding-bottom: 0;
 }
 
@@ -266,6 +267,11 @@
     margin-left: 20px;
     margin-bottom: 20px;
     font-size: 17px;
+}
+
+.Choice-pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 
@@ -406,7 +412,7 @@
     margin: 0 auto;
 }
 
-.nowPro{
+.nowPro {
     position: relative;
     bottom: 28px;
     height: 22px;
@@ -414,6 +420,48 @@
     border: 2px solid red;
 }
 
-.tag-div{
+.tag-div {
     height: 22px;
+}
+
+.Problem {
+    max-width: 1400px;
+}
+
+.ExamRun-ExamAnswerSheet .Recent-submission {
+    min-width: 500px;
+    width: 500px;
+    margin: 20px auto 0;
+}
+
+.Recent-submission{
+    width: 1200px;
+    margin-top: 30px;
+}
+
+.SyntaxHighlighter-Copy .ant-typography-expand, .ant-typography-edit, .ant-typography-copy {
+    color: white;
+}
+
+.SyntaxHighlighter-Copy{
+    position: relative;
+    float: right;
+    right: 50px;
+    top: 10px;
+    width: 50px;
+    margin: 0;
+    font-size: 18px;
+}
+
+.Badge-Tooltip-Program{
+    background-color: red;
+    color: white;
+    border-radius: 20px;
+    padding: 1px 3px;
+}
+
+.Processing-SyncJudging{
+    position: relative;
+    top: -62px;
+    left: 70px;
 }

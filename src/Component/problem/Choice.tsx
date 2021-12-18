@@ -34,7 +34,11 @@ class Choice extends Component<any, any> {
         return (
             <Skeleton active loading={this.props.Loading}>
                 <div className={"Choice"}>
-                    <div className={"Choice-title"}> <pre>{this.props.content}</pre></div>
+                    <div className={"Choice-title"}>
+                        <pre className={"Choice-pre"}>
+                            {this.props.content}
+                        </pre>
+                    </div>
                     {
                         this.props.choice != undefined && (
                             this.props.choice.map((val: any) => {

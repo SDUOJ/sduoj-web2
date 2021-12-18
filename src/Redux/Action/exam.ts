@@ -1,4 +1,12 @@
-import {Choice, ChoiceContent, ChoiceState, IGetProInfo, ProContent} from "../../Type/IProblem";
+import {
+    Choice,
+    ChoiceContent,
+    ChoiceState,
+    IGetProInfo,
+    isChoiceContent,
+    isProgramContent, JudgeTemplate,
+    ProContent, ProgramContent, Submission, TestCase
+} from "../../Type/IProblem";
 import {examID} from "../../Type/types";
 import React, {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
@@ -21,7 +29,8 @@ export type ExamAction =
     setExamInfo |
     setProInfo |
     setAnswerSheet |
-    cleanProInfo
+    cleanProInfo |
+    setProgramSubmissionList
 
 
 export interface updateChoice {
@@ -66,8 +75,13 @@ export interface setAnswerSheet {
     problemGroupId: number
 }
 
-export interface cleanProInfo{
+export interface cleanProInfo {
     type: "cleanProInfo"
+}
+
+export interface setProgramSubmissionList {
+    type: "setProgramSubmissionList",
+    data: Submission[]
 }
 
 function getAnswer(choice: Choice[], type: ChoiceState) {
@@ -80,16 +94,16 @@ export function genAnswerSheet(State: ExamState) {
     const groupInfo = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1]
     const proInfo: SProInfo[] = groupInfo.proList
     let res: any = []
-
-
     for (const x of proInfo) {
-        const content: ChoiceContent = x.content as ChoiceContent
-        res.push({
-            index: x.index,
-            answer: content != undefined ? getAnswer(content.choice, "used") : [],
-            pass: content != undefined ? getAnswer(content.choice, "unused") : [],
-            marked: x.flag
-        })
+        if (x.content != undefined && isChoiceContent(x.content)) {
+            const content: ChoiceContent = x.content
+            res.push({
+                index: x.index,
+                answer: content != undefined ? getAnswer(content.choice, "used") : [],
+                pass: content != undefined ? getAnswer(content.choice, "unused") : [],
+                marked: x.flag
+            })
+        }
     }
     return res
 }
@@ -98,15 +112,18 @@ export function getExamProblemListTodo(eid: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
         eApi.getExamGroupList(eid).then(function (resData: any) {
             if (resData != null) {
+                // console.log("getExamGroupList", resData)
                 let data: SProGroupInfo[] = []
                 for (const x of resData) {
                     const proList: SProInfo[] = []
+                    let cnt = 0
                     for (const y of x.problems) {
                         proList.push({
-                            index: y.index,
+                            index: cnt,
                             score: y.problemScore,
                             flag: false,
                         })
+                        cnt++;
                     }
                     data.push({
                         index: x.index,
@@ -155,7 +172,36 @@ export function getProblemTodo(data: IGetProInfo) {
                 const type = (State.proGroupInfo as SProGroupInfo[]) [State.TopGroupIndex - 1].type
                 let data: ProContent | undefined = undefined
                 if (type == "Program") {
-
+                    let testCase: TestCase[] = []
+                    for (const x of resData.problemCaseDTOList) {
+                        testCase.push({
+                            "inputData": x.input,
+                            "outputData": x.output
+                        })
+                    }
+                    let judgeTemplate: JudgeTemplate[] = []
+                    for (const x of resData.judgeTemplates) {
+                        judgeTemplate.push({
+                            tid: x.id,
+                            name: x.title
+                        })
+                    }
+                    let markdown = resData.problemDescriptionDTO.markdownDescription
+                    markdown = markdown.replace("$", " $ ")
+                    markdown = markdown.replace("  $", " $")
+                    markdown = markdown.replace("$  ", "$ ")
+                    data = {
+                        isLoad: true,
+                        title: resData.problemTitle,
+                        markdown: markdown,
+                        testCase: testCase,
+                        TimeLimit: resData.timeLimit,
+                        MemoryLimit: resData.memoryLimit,
+                        JudgeTemplate: judgeTemplate,
+                        Submissions: [],
+                        MaxSubmitNumber: resData.submitNum,
+                        SumScore: resData.sumScore
+                    }
                 }
                 if (type == "SingleChoice" || type == "MultipleChoice") {
                     let choice: Choice[] = []

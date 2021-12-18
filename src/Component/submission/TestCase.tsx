@@ -16,21 +16,8 @@ import {ReactComponent as Pending} from "Assert/img/pending.svg"
 import {withTranslation, WithTranslation} from "react-i18next";
 import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
+import {StateList, TestCaseStates} from "../../Type/ISubmission";
 
-export enum TestCaseStates {
-    "Pending",
-    "Running",
-    "Accepted",
-    "WrongAnswer",
-    "TimeLimitExceeded",
-    "MemoryLimitExceeded",
-    "RuntimeError",
-    "OutputLimitExceeded"
-}
-
-export const StateList =
-    ["Pending", "Running", "Accepted", "WrongAnswer", "TimeLimitExceeded",
-        "MemoryLimitExceeded", "RuntimeError", "OutputLimitExceeded"]
 
 interface ViewType {
     type?: "tag" | "text" | "tag-simple" | "index"
@@ -82,21 +69,13 @@ class TestCase extends Component<ITestCaseProp, any> {
                 type: "success",
                 tagColor: "#3ad506"
             },
-            WrongAnswer: {
-                icon: <CloseCircleOutlined/>,
-                text: "WA",
-                textAll: t("WrongAnswer"),
-                color: "error",
-                type: "danger",
-                tagColor: "#ff1500"
-            },
             TimeLimitExceeded: {
                 icon: <FieldTimeOutlined/>,
                 text: "TLE",
                 textAll: t("TimeLimitExceeded"),
                 color: "orange",
                 type: "warning",
-                tagColor: "rgb(16, 142, 233)"
+                tagColor: "#d46b08"
             },
             MemoryLimitExceeded: {
                 icon: <Icon component={Memory}/>,
@@ -106,6 +85,22 @@ class TestCase extends Component<ITestCaseProp, any> {
                 type: "warning",
                 tagColor: "#d46b08"
             },
+            OutputLimitExceeded: {
+                icon: <Icon component={OLE}/>,
+                text: "OLE",
+                textAll: t("OutputLimitExceeded"),
+                color: "orange",
+                type: "warning",
+                tagColor: "#d46b08"
+            },
+            WrongAnswer: {
+                icon: <CloseCircleOutlined/>,
+                text: "WA",
+                textAll: t("WrongAnswer"),
+                color: "error",
+                type: "danger",
+                tagColor: "#ff1500"
+            },
             RuntimeError: {
                 icon: <Icon component={RE}/>,
                 text: "RE",
@@ -114,13 +109,53 @@ class TestCase extends Component<ITestCaseProp, any> {
                 type: "danger",
                 tagColor: "#531dab"
             },
-            OutputLimitExceeded: {
-                icon: <Icon component={OLE}/>,
-                text: "OLE",
-                textAll: t("OutputLimitExceeded"),
-                color: "orange",
+            CompilationError: {
+                icon: <CloseCircleOutlined/>,
+                text: "CE",
+                textAll: "编译错误",
+                color: "error",
                 type: "warning",
-                tagColor: "#d46b08"
+                tagColor: "#c46304"
+            },
+            PresentationError: {
+                icon: <CloseCircleOutlined/>,
+                text: "PE",
+                textAll: t("WrongAnswer"),
+                color: "error",
+                type: "danger",
+                tagColor: "#ff1500"
+            },
+            SystemError: {
+                icon: <CloseCircleOutlined/>,
+                text: "SE",
+                textAll: t("WrongAnswer"),
+                color: "error",
+                type: "danger",
+                tagColor: "#ff1500"
+            },
+            Queueing: {
+                icon: <ClockCircleOutlined/>,
+                text: "Queueing",
+                textAll: t("Queueing"),
+                color: undefined
+            },
+            Compiling: {
+                icon: <SyncOutlined spin/>,
+                text: "Compiling",
+                textAll: t("Compiling"),
+                color: 'blue'
+            },
+            Judging: {
+                icon: <SyncOutlined spin/>,
+                text: "Judging",
+                textAll: t("Judging"),
+                color: 'blue'
+            },
+            End: {
+                icon: <CloseCircleOutlined/>,
+                text: "END",
+                textAll: t("End"),
+                color: undefined,
             }
         }
 
@@ -134,22 +169,37 @@ class TestCase extends Component<ITestCaseProp, any> {
 
         const content: any = visible ? (
             <>
-                <Text strong>{this.props.t("Time")}</Text> : {this.props.caseTime} ms
-
-                <br/><Text strong>{this.props.t("Memory")}</Text> : {
-                // @ts-ignore
-                Math.floor(this.props.caseMemory / 1024)
-            } MB
                 {
-                    [""].map(() => {
-                        if (this.props.caseScore !== undefined)
-                            return <><br/><Text
-                                strong>{this.props.t("Score")}</Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0} / {this.props.caseScore}</>
-                    })
+                    this.props.caseTime !== undefined && (
+                        <>
+                            <Text strong>
+                                {this.props.t("Time")}
+                            </Text> : {this.props.caseTime} ms
+                        </>
+                    )
+                }
+                {
+                    this.props.caseMemory !== undefined && (
+                        <>
+                            <br/>
+                            <Text strong>
+                                {this.props.t("Memory")}
+                            </Text> : {Math.floor(this.props.caseMemory / 1024)} MB
+                        </>
+                    )
+                }
+                {
+                    this.props.caseScore !== undefined && (
+                        <>
+                            <br/>
+                            <Text strong>
+                                {this.props.t("Score")}
+                            </Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0} / {this.props.caseScore}
+                        </>
+                    )
                 }
             </>
         ) : <></>
-
 
         return (
             <>
@@ -186,7 +236,8 @@ class TestCase extends Component<ITestCaseProp, any> {
 
                             case "text":
                                 return (
-                                    <Title level={4} type={CaseList[type].type}
+                                    <Title level={5}
+                                           type={CaseList[type].type}
                                            className={"TestCase-text"}>{CaseList[type].textAll}</Title>
                                 )
                             case "index":
@@ -208,11 +259,9 @@ class TestCase extends Component<ITestCaseProp, any> {
                         }
                     })
                 }
-
             </>
         )
     }
-
 }
 
 export default withTranslation()(TestCase)

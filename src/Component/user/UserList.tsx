@@ -203,7 +203,7 @@ class UserList extends Component<IUserPropRoles & RouteComponentProps, IUserList
         let rowSelection: any = {
             selectedRowKeys,
             onChange: (selectedRowKeys: React.Key[], selectedRows: IUser[]) => {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
                 this.setState({selectedRowKeys});
             },
             selections: [

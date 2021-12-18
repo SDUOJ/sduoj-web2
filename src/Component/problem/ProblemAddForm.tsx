@@ -110,7 +110,7 @@ const ProblemAddForm = (props: any) => {
         // 当前排序是有效的
         if (oldIndex !== newIndex) {
             // 移动数组中的元素，并设置到当前的状态
-            console.log("onSortEnd", oldIndex, newIndex)
+            // console.log("onSortEnd", oldIndex, newIndex)
             setListDataAll(arrayMoveImmutable(proListData, oldIndex, newIndex))
         }
     };
@@ -132,7 +132,6 @@ const ProblemAddForm = (props: any) => {
     };
 
     useEffect(() => {
-        console.log("1111111111")
         setTimeout(() => {
             form.validateFields()
         }, 100)

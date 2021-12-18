@@ -1,17 +1,21 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Form, FormInstance, Modal, Select, Tabs, Upload} from "antd";
+import {Button, Form, FormInstance, message, Modal, Select, Space, Tabs, Upload} from "antd";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {JudgeTemplate, ProblemState, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {
-    SubmitToGetSubmissionIDTodo
-} from "../../Redux/Action/problem";
+    setTopSubmission,
+} from "../../Redux/Action/submission";
 import {Option} from "antd/lib/mentions";
 import {UploadOutlined} from "@ant-design/icons"
 import CodeEditor from "../common/CodeEditor";
 import TextArea from "antd/lib/input/TextArea";
 import {ConfigState} from "../../Type/IConfig";
+import {withRouter} from "react-router-dom";
+import {examID} from "../../Type/types";
+import eApi from "../../Utils/API/e-api";
+import {TopSubmissionInfoType} from "../../Type/ISubmission";
 
 const {TabPane} = Tabs;
 
@@ -30,9 +34,28 @@ class Submit extends Component<any, any> {
     CodeSubmit() {
         this.formRef.current!.validateFields().then(
             () => {
-                const judgeTemplateId = this.formRef.current!.getFieldValue("JudgeTemplate")
-                const code = this.formRef.current!.getFieldValue("CodeEditor")
-                this.props.SubmitToGetSubmissionID(judgeTemplateId, code, this.props.ProblemCode)
+                this.formRef.current?.validateFields().then((value) => {
+                    const judgeTemplateId = value.JudgeTemplate
+                    const code = value.CodeEditor
+                    eApi.CreateSubmit({
+                        code: code,
+                        judgeTemplateId: judgeTemplateId,
+                        problemCode: this.props.ProblemCode,
+                        problemIndex: parseInt(this.props.ProblemCode),
+                        groupIndex: this.props.groupId,
+                        examId: this.props.match.params.eid
+                    }).then((resData) => {
+                        message.success("提交成功")
+                        this.props.setTopSubmission(resData, {
+                            title: this.props.title,
+                            TimeLimit: this.props.Time,
+                            MemoryLimit: this.props.Memory,
+                            sumScore: this.props.sumScore
+                        })
+                        this.setState({SubmitModalVis: false})
+                        this.props.setSubmissionModalVis(true)
+                    })
+                })
             }
         )
     }
@@ -40,29 +63,50 @@ class Submit extends Component<any, any> {
     render() {
         return (
             <>
-                <Button type={"primary"} onClick={this.props.OpenSubmitModal}>{this.props.t("Submit")}</Button>
+                <Button
+                    type={"primary"}
+                    onClick={() => {
+                        this.setState({SubmitModalVis: true})
+                    }}
+                    disabled={this.props.LeftSubmitCount <= 0}
+                >
+                    {this.props.t("Submit")}
+                </Button>
                 <Modal title={this.props.SubmitModalTitle}
                        visible={this.state.SubmitModalVis}
-                       onCancel={()=>{this.setState({SubmitModalVis: false})}}
+                       onCancel={() => {
+                           this.setState({SubmitModalVis: false})
+                       }}
                        width={1200}
                        footer={[
-                           <Button key="back" onClick={()=>{this.setState({SubmitModalVis: false})}}>
-                               取消
-                           </Button>,
-                           <Button key="submit" type="primary"
+                           <Space size={25}>
+                               <div style={{color: "red", fontSize: "15px", marginBottom: "10px", margin: "0px auto"}}>
+                                   剩余提交次数：{this.props.LeftSubmitCount}
+                               </div>
+                               <Button
+                                   key="submit" type="primary"
                                    loading={this.props.SubmitLoading}
-                                   onClick={this.CodeSubmit}>
-                               提交
-                           </Button>
+                                   onClick={this.CodeSubmit}
+                                   disabled={this.props.LeftSubmitCount <= 0}
+                               >
+                                   提交
+                               </Button>
+                               <Button key="back" onClick={() => {
+                                   this.setState({SubmitModalVis: false})
+                               }}>
+                                   取消
+                               </Button>
+                           </Space>
                        ]}
                 >
 
+
                     <Form ref={this.formRef} onFinish={this.CodeSubmit} layout={"vertical"}>
-                        <Form.Item name={"JudgeTemplate"} label={this.props.t("template")} required>
+                        <Form.Item name={"JudgeTemplate"} label={this.props.t("template")} rules={[{required: true}]}>
                             <Select
                                 allowClear>
                                 {
-                                    this.props.JudgeTemplate.map((val: JudgeTemplate) => {
+                                    this.props.JudgeTemplate !== undefined && this.props.JudgeTemplate.map((val: JudgeTemplate) => {
                                         return (
                                             <Option value={val.tid.toString()}>{val.name}</Option>
                                         )
@@ -72,11 +116,11 @@ class Submit extends Component<any, any> {
                         </Form.Item>
                         <Tabs defaultActiveKey="1">
                             <TabPane tab="代码提交" key="1">
-                                <Form.Item name={"CodeEditor"}>
+                                <Form.Item label={"代码"} name={"CodeEditor"} rules={[{required: true}]}>
                                     <TextArea rows={25} showCount maxLength={1024 * 10}/>
                                 </Form.Item>
                             </TabPane>
-                            <TabPane tab="文件提交" key="2">
+                            <TabPane tab="文件提交（暂不可用）" key="2" disabled={true}>
                                 <Form.Item name={"FileUpload"}>
                                     <Upload>
                                         <Button icon={<UploadOutlined/>}>上传文件</Button>
@@ -101,29 +145,31 @@ const mapStateToProps = (state: any) => {
             const NowContent = (NowPro.content as ProgramContent)
 
             return {
-                SubmitModalTitle: NowContent.title,
-                JudgeTemplate: NowContent.JudgeTemplate,
-                ProblemCode: EState.TopProblemIndex
+                SubmitModalTitle: NowContent?.title,
+                JudgeTemplate: NowContent?.JudgeTemplate,
+                ProblemCode: EState.TopProblemIndex - 1,
+                groupId: EState.TopGroupIndex - 1,
+                Time: NowContent?.TimeLimit,
+                Memory: NowContent?.MemoryLimit,
+                title: NowContent?.title,
+                sumScore: NowContent?.SumScore
             }
+
     }
     return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    SubmitToGetSubmissionID: (judgeTemplateId: string,
-                              code: string,
-                              problemCode: string) => dispatch(
-        SubmitToGetSubmissionIDTodo({
-            code: code,
-            judgeTemplateId: judgeTemplateId,
-            problemCode: problemCode
-        })
-    )
-
+    setTopSubmission: (submissionID: string, submissionInfo: TopSubmissionInfoType) => dispatch({
+        type: "setTopSubmission",
+        submissionID: submissionID,
+        submissionInfo: submissionInfo
+    }),
+    setSubmissionModalVis: (data: boolean) => dispatch({type: "setSubmissionModalVis", data: data})
 
 })
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(Submit))
+)(withTranslation()(withRouter(Submit)))

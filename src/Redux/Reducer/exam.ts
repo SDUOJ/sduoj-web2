@@ -13,60 +13,6 @@ import {store} from "../Store";
 import {ProblemAction} from "../Action/problem";
 
 
-function getProInfo(pid: string): ProContent {
-
-    if (pid.split('-')[0] == "SDUOJ") {
-        return {
-            isLoad: true,
-            title: pid + "合并数字",
-            markdown: ProgramTest,
-            testCase: [
-                {inputData: "3\n-3 -1 4", outputData: "8"},
-                {inputData: "6\n1 -2 4 -3 3 -1", outputData: "14"},
-                {
-                    inputData: "15\n-62208205 -468209857 170731921 595947512 242239468 -24833033 157706648 -351341144 355114451 -481362346 -108966996 -165688094 626521688 -109650172 741981679",
-                    outputData: "4662503214"
-                },
-            ],
-            TimeLimit: 1000,
-            MemoryLimit: 512 * 1024,
-            JudgeTemplate: [
-                {name: "C++11", tid: "10"},
-                {name: "C11", tid: "11"},
-                {name: "Java8", tid: "12"},
-                {name: "Python3", tid: "13"}
-            ],
-            Submissions: []
-        }
-    } else {
-        return {
-            isLoad: true,
-            content: pid.toString() + ". 中国共产党是中国社会主义事业的领导核心，这句话说明了（）。",
-            choice: [
-                {
-                    id: "A",
-                    content: "党的阶级性和先进性",
-                    state: "init"
-                },
-                {
-                    id: "B",
-                    content: "党的根本宗旨",
-                    state: "init"
-                },
-                {
-                    id: "C",
-                    content: "党的地位和作用",
-                    state: "init"
-                },
-                {
-                    id: "D",
-                    content: "党的性质",
-                    state: "init"
-                },
-            ]
-        }
-    }
-}
 
 const initState: ExamState = {
     ExamInfoLoad: false,
@@ -122,8 +68,9 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             case "setProInfo":
                 const group = ProGroupInfo[action.groupId]
                 const pro = group.proList[action.proId]
-                if (group.type == "Program") pro.content = action.data
-                else if (group.type == "SingleChoice" || group.type == "MultipleChoice") {
+                if (group.type == "Program") {
+                    pro.content = action.data
+                } else if (group.type == "SingleChoice" || group.type == "MultipleChoice") {
                     if (pro.content == undefined) pro.content = action.data
                     else {
                         const ChCon = (action.data as ChoiceContent);
@@ -144,13 +91,13 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 for (const x of action.data) {
                     proList[x.index].flag = x.marked
                     const orgPro = proList[x.index]
-                    if(orgPro.content != undefined && orgPro.content.isLoad){
+                    if (orgPro.content != undefined && orgPro.content.isLoad) {
                         const choice = (orgPro.content as ChoiceContent).choice
                         for (const y of x.choice) {
                             const Index = choice.findIndex(value => value.id == y)
                             choice[Index].state = x.answer.indexOf(y) != -1 ? "used" : (x.pass.indexOf(y) != -1 ? "unused" : "init")
                         }
-                    }else{
+                    } else {
                         let choice: Choice[] = []
                         for (const y of x.choice) {
                             choice.push({
@@ -173,6 +120,11 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.AnswerSheetLoad = []
                 break
 
+            case "setProgramSubmissionList":
+                const content = nowPro.content as ProgramContent
+                content.Submissions = action.data
+                break
+
             default:
                 break
         }
@@ -183,7 +135,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.TopGroupIndex = 1;
                 State.TopProblemIndex = 1;
                 State.proGroupInfo = action.data
-                while(State.AnswerSheetLoad.length < action.data.length) State.AnswerSheetLoad.push(false);
+                while (State.AnswerSheetLoad.length < action.data.length) State.AnswerSheetLoad.push(false);
                 break
 
             case "setExamInfo":
