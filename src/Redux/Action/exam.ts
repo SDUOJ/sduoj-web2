@@ -32,7 +32,8 @@ export type ExamAction =
     cleanProInfo |
     setProgramSubmissionList |
     cleanExamInfo |
-    cleanProList
+    cleanProList |
+    cleanExam
 
 
 export interface updateChoice {
@@ -92,6 +93,10 @@ export interface cleanProList{
 export interface setProgramSubmissionList {
     type: "setProgramSubmissionList",
     data: Submission[]
+}
+
+export interface cleanExam{
+    type: "cleanExam"
 }
 
 function getAnswer(choice: Choice[], type: ChoiceState) {

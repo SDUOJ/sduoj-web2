@@ -146,11 +146,19 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 State.proGroupInfo = undefined
                 break
 
+            case "cleanExam":
+                State = initState
+                break
+
             default:
                 break
         }
     } else {
         switch (action.type) {
+            case "cleanExam":
+                State = initState
+                break
+
             case "setProList":
                 State.ProListLoad = true
                 State.TopGroupIndex = 1;

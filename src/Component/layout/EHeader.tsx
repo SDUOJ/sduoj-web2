@@ -28,8 +28,8 @@ class EHeader extends Component<any, any> {
                 </div>
                 <div style={{float: "right"}} key={"operator"}>
                     {
-                        [''].map(()=>{
-                            if(this.props.location.pathname.match(/\/exam\/running\//) != null){
+                        [''].map(() => {
+                            if (this.props.location.pathname.match(/\/exam\/running\//) != null) {
                                 return <ExamOver key={"ExamOver"}/>
                             }
                         })
@@ -40,7 +40,10 @@ class EHeader extends Component<any, any> {
                             if (this.props.isLogin) {
                                 return (
                                     <Dropdown overlay={
-                                        <Menu onClick={this.props.userLogout}>
+                                        <Menu onClick={() => {
+                                            this.props.userLogout()
+                                            this.props.cleanExam()
+                                        }}>
                                             <Menu.Item key="1" icon={<LogoutOutlined/>}>
                                                 {this.props.t("Logout")}
                                             </Menu.Item>
@@ -81,6 +84,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     userLogout: () => dispatch(userLogoutTodo()),
+    cleanExam: () => dispatch({type: "cleanExam"}),
     getProfile: () => dispatch(userGetProfileTodo()),
 })
 
