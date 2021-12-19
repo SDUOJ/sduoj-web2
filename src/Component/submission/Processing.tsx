@@ -310,7 +310,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             </div>
                             <div style={{marginTop: "30px"}}>
                                 {
-                                    this.state.RunningState === "-2" && (
+                                    (this.state.RunningState === "-2" || this.state.RunningState === "-1") && (
                                         [''].map(() => {
                                             return (
                                                 <>
