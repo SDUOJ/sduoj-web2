@@ -29,7 +29,7 @@ interface SProcessing {
     RunningResult: RunningResultType    // 评测结束的状态
     TestCaseStateList: TestCaseProp[]   // 运行时测试点的状态
     submissionInfo?: submissionInfoType // 提交信息
-    webSocketOpen: number              // ws 是否开启
+    webSocketOpen: boolean              // ws 是否开启
     webSocketQueryList: string[]        // ws 请求列表
 }
 
@@ -48,7 +48,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
             RunningState: "-4",
             RunningResult: "0",
             TestCaseStateList: [],
-            webSocketOpen: -1,
+            webSocketOpen: false,
             webSocketQueryList: []
         }
     }
@@ -63,16 +63,26 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                     Memory: value[3]
                 }
             })
-            if (this.state.RunningState == "-1" && (resData.judgeLog == null || resData.judgeLog.length === 0))
+            if (
+                (this.state.RunningState == "-1" && this.state.RunningResult != "5")
+                && (resData.judgeLog == null || resData.judgeLog.length === 0)
+            )
                 resData.judgeLog = "编译成功"
             let TestCaseInit: TestCaseProp[] = []
             if (resData.judgeResult === 0) {
+                for (let i = 1; i <= resData.checkpointNum; i++) {
+                    TestCaseInit.push({
+                        caseIndex: i,
+                        caseType: TestCaseStates.Pending,
+                    })
+                }
                 this.setState({
                     submissionInfo: resData,
+                    TestCaseStateList: TestCaseInit,
                     currentStep: 1,
                     showStep: 1,
                     RunningState: "-4",
-                    webSocketOpen: Date.now(),
+                    webSocketOpen: true,
                     webSocketQueryList: [resData.submissionId]
                 })
             } else if (resData.judgeResult === 8 || resData.judgeResult === 5) {
@@ -96,7 +106,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                     currentStep: 1,
                     showStep: 1,
                     RunningState: resData.judgeResult.toString(),
-                    webSocketOpen: Date.now(),
+                    webSocketOpen: true,
                     webSocketQueryList: [resData.submissionId]
                 })
             } else {
@@ -138,6 +148,9 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
             })
             if (data[1] == -1) {
                 this.getSubmissionInfo()
+                this.setState({
+                    webSocketOpen: false
+                })
             }
         } else {
             let TestCaseStateList = this.state.TestCaseStateList
@@ -280,7 +293,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                                     default:
                                                         return (<Alert message={"评测日志"}
                                                                        description={this.state.submissionInfo.judgeLog}
-                                                                       type="warning" showIcon/>)
+                                                                       type="info" showIcon/>)
                                                 }
                                             }
                                         }
@@ -291,9 +304,9 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                 {
                                     (this.state.RunningState === "-4" || this.state.RunningState === "-3")
                                     && (
-                                        <div style={{textAlign: "center", paddingTop:"100px"}}>
-                                            <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15} />
-                                            <div style={{marginTop:"50px"}}>排队中，请稍后...</div>
+                                        <div style={{textAlign: "center", paddingTop: "100px"}}>
+                                            <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15}/>
+                                            <div style={{marginTop: "50px"}}>排队中，请稍后...</div>
                                         </div>
                                     )
                                 }
@@ -424,15 +437,13 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                     </>
                 )
             }
-
-
         }
 
         return (
             <>
                 <div className={"Processing-SyncJudging"}>
                     <SyncJudging
-                        running={this.state.webSocketOpen}
+                        open={this.state.webSocketOpen}
                         dataHandle={this.addCaseInfo}
                         queryList={this.state.webSocketQueryList}/>
                 </div>

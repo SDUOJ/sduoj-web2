@@ -30,6 +30,7 @@ export interface TestCaseProp {
     caseTime?: number
     caseMemory?: number
     casePreview?: string
+    append?: string
 }
 
 interface ITestCaseProp extends WithTranslation, TestCaseProp, ViewType {
@@ -120,7 +121,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             PresentationError: {
                 icon: <CloseCircleOutlined/>,
                 text: "PE",
-                textAll: t("WrongAnswer"),
+                textAll: "格式错误",
                 color: "error",
                 type: "danger",
                 tagColor: "#ff1500"
@@ -128,7 +129,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             SystemError: {
                 icon: <CloseCircleOutlined/>,
                 text: "SE",
-                textAll: t("WrongAnswer"),
+                textAll: "系统错误",
                 color: "error",
                 type: "danger",
                 tagColor: "#ff1500"
@@ -136,19 +137,19 @@ class TestCase extends Component<ITestCaseProp, any> {
             Queueing: {
                 icon: <ClockCircleOutlined/>,
                 text: "Queueing",
-                textAll: t("Queueing"),
+                textAll: "排队",
                 color: undefined
             },
             Compiling: {
                 icon: <SyncOutlined spin/>,
                 text: "Compiling",
-                textAll: t("Compiling"),
+                textAll: "编译中",
                 color: 'blue'
             },
             Judging: {
                 icon: <SyncOutlined spin/>,
                 text: "Judging",
-                textAll: t("Judging"),
+                textAll: "评测中",
                 color: 'blue'
             },
             End: {
@@ -236,9 +237,13 @@ class TestCase extends Component<ITestCaseProp, any> {
 
                             case "text":
                                 return (
-                                    <Title level={5}
-                                           type={CaseList[type].type}
-                                           className={"TestCase-text"}>{CaseList[type].textAll}</Title>
+                                    <Title
+                                        level={5}
+                                        type={CaseList[type].type}
+                                        className={"TestCase-text"}
+                                    >
+                                        {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
+                                    </Title>
                                 )
                             case "index":
                                 return (

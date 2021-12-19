@@ -94,6 +94,12 @@ export interface TopSubmissionInfoType {
     sumScore: number
 }
 
+export interface RunningSubmissionInfo{
+    SubmissionId: string
+    TestCaseNumber: number
+    TestCaseInfo: any[]
+}
+
 export interface SubmissionState {
     TopSubmissionId?: string
     TopSubmissionInfo?: TopSubmissionInfoType

@@ -1,12 +1,12 @@
 import {Component, Dispatch} from "react";
-import {Button, Card, message, Table} from "antd";
+import {Button, Card, message, Space, Table} from "antd";
 import {ExamState, SProGroupInfo} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {getExamInfoTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {
-    RunningResultType,
+    RunningResultType, RunningSubmissionInfo,
     StateList,
     SubmissionMap,
     SubmissionState,
@@ -17,6 +17,7 @@ import moment from "moment";
 import {setTopSubmission} from "../../Redux/Action/submission";
 import {ReloadOutlined} from "@ant-design/icons"
 import {ProgramContent, Submission} from "../../Type/IProblem";
+import {SyncJudging} from "./SyncJudging";
 
 class RecentSubmission extends Component<any, any> {
 
@@ -24,18 +25,56 @@ class RecentSubmission extends Component<any, any> {
         super(props, context);
         this.state = {
             tableData: [],
-            refreshDisable: false
+            refreshDisable: false,
+            webSocketOpen: false,
+            webSocketQueryList: []
+        }
+    }
+
+    addCaseInfo = (data: any[]) => {
+        if (data[1] < 0) {
+            let dt = this.state.tableData
+            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
+            dt[Index].result = data[1].toString()
+            if (data[1] == -1) {
+                if (data.length > 3) {
+                    dt[Index].result = data[2]
+                    dt[Index].score = data[3]
+                    dt[Index].usedTime = data[4]
+                    dt[Index].usedMemory = data[5]
+                }
+            }
+            // 检查还有没有未更新完的
+            let webSocketQueryList = []
+            for (const x of dt) if (parseInt(x.result) <= 0) webSocketQueryList.push(x.submissionId)
+            if (webSocketQueryList.length === 0) {
+                this.setState({
+                    tableData: dt,
+                    webSocketOpen: false
+                })
+            } else this.setState({tableData: dt})
+
+        } else {
+            let dt = this.state.tableData
+            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
+            if(dt[Index].RunningStep < data[1] + 1){
+                dt[Index].RunningStep = data[1] + 1
+                dt[Index].score += data[3]
+            }
+            this.setState({tableData: dt})
         }
     }
 
     updateList = (IsMessage: boolean = false) => {
-        // console.log(this.props.groupId, this.props.problemId)
         this.props.getSubmissionList(this.props.groupId, this.props.problemId).then((resData: any[]) => {
             let data: any = []
-            // console.log("resData", resData)
-            if(resData === null) resData = []
+            if (resData === null) resData = []
+            let webSocketQueryList = []
             for (const x of resData) {
+                if (x.judgeResult <= 0) webSocketQueryList.push(x.submissionId)
                 data.push({
+                    checkpointNum: x.checkpointNum,
+                    RunningStep: 0,
                     submissionId: x.submissionId,
                     result: x.judgeResult.toString(),
                     score: x.judgeScore,
@@ -46,9 +85,17 @@ class RecentSubmission extends Component<any, any> {
                 })
             }
             data.reverse()
-            this.setState({
-                tableData: data
-            })
+            if (webSocketQueryList.length !== 0) {
+                this.setState({
+                    webSocketOpen: true,
+                    webSocketQueryList: webSocketQueryList,
+                    tableData: data
+                })
+            } else {
+                this.setState({
+                    tableData: data
+                })
+            }
             if (this.props.AfterGetSubmissionList !== undefined) {
                 let Data: Submission[] = []
                 for (const x of data) {
@@ -87,8 +134,15 @@ class RecentSubmission extends Component<any, any> {
                 title: "结果",
                 dataIndex: "result",
                 key: "result",
-                render: (text: any) => {
-                    return <TestCase type={"text"} caseType={StateList.indexOf(SubmissionMap[text])}/>
+                render: (text: any, record: any) => {
+
+                    return (
+                        <TestCase
+                            type={"text"}
+                            caseType={StateList.indexOf(SubmissionMap[text])}
+                            append={text == "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                        />
+                    )
                 }
             },
             {
@@ -118,8 +172,12 @@ class RecentSubmission extends Component<any, any> {
                 title: "结果",
                 dataIndex: "result",
                 key: "result",
-                render: (text: any) => {
-                    return <TestCase type={"text"} caseType={StateList.indexOf(SubmissionMap[text])}/>
+                render: (text: any, record: any) => {
+                    return <TestCase
+                        type={"text"}
+                        caseType={StateList.indexOf(SubmissionMap[text])}
+                        append={text == "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                    />
                 }
             },
             {
@@ -163,7 +221,16 @@ class RecentSubmission extends Component<any, any> {
         return (
             this.props.show && (
                 <Card
-                    title={"提交记录"}
+                    title={
+                        <Space>
+                            提交记录
+                            <SyncJudging
+                                open={this.state.webSocketOpen}
+                                dataHandle={this.addCaseInfo}
+                                queryList={this.state.webSocketQueryList}/>
+                        </Space>
+
+                    }
                     className={"Recent-submission"}
                     extra={
                         <Button

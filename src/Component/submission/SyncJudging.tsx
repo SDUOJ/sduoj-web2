@@ -3,13 +3,15 @@ import useWebSocket, {ReadyState} from 'react-use-websocket';
 import apiAddress from "../../Utils/API/apiAddress";
 
 export interface IWebSocket{
-    running: number
     queryList: string[]
     dataHandle: any
+    open: boolean
 }
 
 export const SyncJudging = (props: IWebSocket) => {
-    const {sendMessage, lastMessage, readyState} = useWebSocket(apiAddress().SOCKET_SERVER + "/ws/submission");
+    const {sendMessage, lastMessage, readyState} = useWebSocket(
+        apiAddress().SOCKET_SERVER + "/ws/submission",{share: true}, props.open
+    );
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -25,10 +27,10 @@ export const SyncJudging = (props: IWebSocket) => {
     }, [lastMessage]);
 
     useEffect(()=>{
-        if(props.running > 0 && readyState === ReadyState.OPEN){
+        if(props.open && readyState === ReadyState.OPEN){
             sendMessage(JSON.stringify(props.queryList))
         }
-    }, [props.running, props.queryList, readyState])
+    }, [props.queryList, readyState])
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: '连接中',
