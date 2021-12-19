@@ -188,7 +188,7 @@ const mapStateToProps = (state: any) => {
                 sumScore: content.SumScore,
                 Score: GetMaxScore(content),
                 IsAnswer: IsAnswer(content),
-                LeftSubmitCount: content.MaxSubmitNumber - content.Submissions.length
+                LeftSubmitCount: content.MaxSubmitNumber as number - content.Submissions.length
             }
         }
     }

@@ -94,7 +94,7 @@ class RecentSubmission extends Component<any, any> {
                 title: "得分",
                 dataIndex: "score",
                 key: "score",
-                render: (text:number)=>{
+                render: (text: number) => {
                     return text / this.props.sumScore * 100 + "%"
                 }
             },
@@ -125,7 +125,7 @@ class RecentSubmission extends Component<any, any> {
                 title: "得分",
                 dataIndex: "score",
                 key: "score",
-                render: (text:number)=>{
+                render: (text: number) => {
                     return text / this.props.sumScore * 100 + "%"
                 }
             },
@@ -218,7 +218,7 @@ const mapStateToProps = (state: any) => {
             show = true;
         }
     }
-    let Memory = 0, Time = 0, title = "", sumScore = 100
+    let Memory: any = 0, Time: any = 0, title: any = "", sumScore: any = 100
     if (State.proGroupInfo != undefined) {
         const Pro = State.proGroupInfo[State.TopGroupIndex - 1].proList[State.TopProblemIndex - 1].content as ProgramContent
         Time = Pro?.TimeLimit

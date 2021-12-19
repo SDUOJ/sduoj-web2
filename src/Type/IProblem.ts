@@ -40,14 +40,14 @@ export interface Submission {
 
 export interface ProgramContent {
     isLoad: boolean                 // 是否已经加载
-    title: string                   // 题目标题
-    markdown: string                // 题目描述
-    testCase: TestCase[]            // 测试数据集合
-    TimeLimit: number               // 时间限制
-    MemoryLimit: number             // 空间限制
-    MaxSubmitNumber: number         // 最大提交次数限制
-    SumScore: number                // 题目总分数
-    JudgeTemplate: JudgeTemplate[]  // 评测模板
+    title?: string                   // 题目标题
+    markdown?: string                // 题目描述
+    testCase?: TestCase[]            // 测试数据集合
+    TimeLimit?: number               // 时间限制
+    MemoryLimit?: number             // 空间限制
+    MaxSubmitNumber?: number         // 最大提交次数限制
+    SumScore?: number                // 题目总分数
+    JudgeTemplate?: JudgeTemplate[]  // 评测模板
     Submissions: Submission[]       // 提交信息
 }
 

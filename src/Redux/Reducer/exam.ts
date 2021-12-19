@@ -68,7 +68,12 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 const group = ProGroupInfo[action.groupId]
                 const pro = group.proList[action.proId]
                 if (group.type == "Program") {
-                    pro.content = action.data
+                    if (pro.content == undefined) pro.content = action.data
+                    else{
+                        const submission = (pro.content as ProgramContent).Submissions
+                        pro.content = action.data;
+                        (pro.content as ProgramContent).Submissions = submission
+                    }
                 } else if (group.type == "SingleChoice" || group.type == "MultipleChoice") {
                     if (pro.content == undefined) pro.content = action.data
                     else {
@@ -120,8 +125,15 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 break
 
             case "setProgramSubmissionList":
-                const content = nowPro.content as ProgramContent
-                content.Submissions = action.data
+                let content = nowPro.content as ProgramContent
+                if(content !== undefined)
+                    content.Submissions = action.data
+                else{
+                    content = {
+                        isLoad: false,
+                        Submissions: action.data
+                    }
+                }
                 break
 
             case "cleanExamInfo":
