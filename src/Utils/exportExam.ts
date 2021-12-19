@@ -28,11 +28,14 @@ export function getExamJson(eid: examID) {
     return mApi.judgeExam(eid).then((resData: any) => {
         let data: any = []
         for (const x of resData) {
+            console.log("x", x)
             let baseUserInfo: any = {
                 "用户编号": x.userId,
                 "学号": x.username,
                 "姓名": x.nickname,
                 "总分数": x.score,
+                "使用IP数量": x.usedIP !== undefined ? x.usedIP.length() : "",
+                "IP列表": x.usedIP !== undefined ? x.usedIP.toString() : ""
             }
             let proInfo: any = []
             let groupCnt = 0
@@ -42,7 +45,7 @@ export function getExamJson(eid: examID) {
                     proInfo['题组' + groupCnt + "-类型"] = "编程题"
                     proInfo['题组' + groupCnt + "-总分数"] = y.score
                     let proCnt = 0
-                    for (const z of y.problemResult) {
+                    for (const z of y.problemResult[0]) {
                         proCnt += 1
                         proInfo[groupCnt + "-" + proCnt + "-分数"] = z.realScore
                         proInfo[groupCnt + "-" + proCnt + "-评测分数"] = z.score
@@ -52,10 +55,12 @@ export function getExamJson(eid: examID) {
                     proInfo['题组' + groupCnt + "-类型"] = "选择题"
                     proInfo['题组' + groupCnt + "-总分数"] = y.score
                     let proCnt = 0
-                    for (const z of y.problemResult) {
+                    console.log("y.problemResult[0]", y.problemResult[0])
+                    console.log("y.problemResult", y.problemResult)
+                    for (const z of y.problemResult[0]) {
                         proCnt += 1
+                        console.log("z", z)
                         proInfo[groupCnt + "-" + proCnt + "-分数"] = z.score
-                        proInfo[groupCnt + "-" + proCnt + "-学生卷中题号"] = z.problemIndex + 1
                         proInfo[groupCnt + "-" + proCnt + "-学生卷中选项"] = z.orgAnswer.toString()
                         proInfo[groupCnt + "-" + proCnt + "-学生实际选项"] = z.answer.toString()
                         proInfo[groupCnt + "-" + proCnt + "-标准答案"] = z.realAnswer.toString()
