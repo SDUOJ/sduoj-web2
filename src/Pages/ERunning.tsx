@@ -50,7 +50,7 @@ class ERunning extends Component<any, any> {
                     content={this.props.realName + " " + this.props.sduId}
                     fontColor='rgba(212, 212, 212, 0.5)'
                     fontSize={18}
-                    zIndex={2000}
+                    zIndex={500}
                 >
                     <ExamRun/>
                 </WaterMark>

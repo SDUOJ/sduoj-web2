@@ -33,6 +33,7 @@ class RecentSubmission extends Component<any, any> {
         this.props.getSubmissionList(this.props.groupId, this.props.problemId).then((resData: any[]) => {
             let data: any = []
             // console.log("resData", resData)
+            if(resData === null) resData = []
             for (const x of resData) {
                 data.push({
                     submissionId: x.submissionId,
