@@ -16,7 +16,7 @@ import mApi from "../../Utils/API/m-api";
 import ExamForm from "./Form/ExamForm";
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
-import {getColMap, getData} from "../../Utils/exportExam";
+import {getColMap, getData, getExamJson} from "../../Utils/exportExam";
 
 
 class ExamList extends Component<any, any> {
@@ -203,9 +203,8 @@ class ExamList extends Component<any, any> {
                         <ExportExcel
                             ButtonText={"导出结果"}
                             ButtonType={"link"}
-                            colMap={getColMap()}
-                            nowData={getData(record.id)}
-                            fileName={record.title + "_结果导出"}
+                            getJson={() => getExamJson(record.id)}
+                            fileName={record.title + "_" + Date.now() + "_结果导出"}
                         />
                     </Space>
                 }

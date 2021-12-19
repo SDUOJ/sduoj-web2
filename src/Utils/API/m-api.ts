@@ -307,7 +307,7 @@ export default {
     queryGroupTitle: async function (params: { title: string }) {
         return request.get('/manage/group/listByTitle', params);
     },
-    // EXAM -----------------
+    /* ************ EXAM ****************** */
     getExamList: async function (data: any) {
         return request.post("/manage/exam/getInfo", data);
     },
@@ -320,7 +320,10 @@ export default {
     updateExam: async function (data: any) {
         return request.post("/manage/exam/update", data)
     },
-    // 选择题
+    judgeExam: async function (examId: examID){
+        return request.get("/manage/exam/judge/" + examId)
+    },
+    /* ************ 选择题 ****************** */
     getChoiceList: async function (data: any) {
         return request.post("/manage/exam/choiceProblem/listChoiceProblem", data)
     },

@@ -7,8 +7,9 @@ interface IButtonText{
     ButtonText: string
     ButtonType: ButtonType
     fileName: string
-    colMap: any
-    nowData: any
+    colMap?: any
+    nowData?: any
+    getJson?: any
 }
 
 class ExportExcel extends Component<IButtonText, any> {
@@ -20,6 +21,12 @@ class ExportExcel extends Component<IButtonText, any> {
                 return newData
             }, {})
         });
+        console.log("json", json)
+        const sheet = XLSX.utils.json_to_sheet(json);
+        this.openDownloadDialog(this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
+    }
+
+    handleExportAllJson = (json: any, fileName: string) => {
         const sheet = XLSX.utils.json_to_sheet(json);
         this.openDownloadDialog(this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
     }
@@ -72,7 +79,15 @@ class ExportExcel extends Component<IButtonText, any> {
                 <Button
                     type={this.props.ButtonType}
                     onClick={() => {
-                        this.handleExportAll(this.props.colMap, this.props.nowData, this.props.fileName)
+                        if(this.props.getJson !== undefined){
+                            this.props.getJson().then((json:any)=>{
+                                this.handleExportAllJson(json, this.props.fileName)
+                            })
+                        } else{
+                            const nowData = this.props.nowData()
+                            const colMap = this.props.colMap(nowData)
+                            this.handleExportAll(colMap, nowData, this.props.fileName)
+                        }
                     }}
                 >
                     {this.props.ButtonText}
