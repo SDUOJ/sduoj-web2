@@ -31,7 +31,6 @@ class EHeader extends Component<any, any> {
                         [''].map(()=>{
                             if(this.props.location.pathname.match(/\/exam\/running\//) != null){
                                 return <ExamOver key={"ExamOver"}/>
-                                // TODO 完成交卷的处理  完成考试结束的自动跳转
                             }
                         })
                     }
