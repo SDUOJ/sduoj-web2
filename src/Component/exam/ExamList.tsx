@@ -156,6 +156,7 @@ class ExamList extends Component<any, any> {
 
                     }
                 },
+                defaultFilteredValue:['wait', 'running'],
                 filters: [
                     {
                         text: <Badge status="warning" text="等待中"/>,
