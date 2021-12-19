@@ -6,6 +6,8 @@ import {connect} from "react-redux";
 import {ChoiceContent, IGetProInfo} from "../../Type/IProblem";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
+// @ts-ignore
+import VditorPreview from 'vditor/dist/method.min'
 
 
 class Choice extends Component<any, any> {
@@ -18,6 +20,12 @@ class Choice extends Component<any, any> {
                 problemIndex: this.props.ProIndex - 1
             })
         }
+        if(!this.props.Loading){
+            VditorPreview.preview(
+                document.getElementById("Choice-title-id"),
+                this.props.content
+            )
+        }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
@@ -28,16 +36,20 @@ class Choice extends Component<any, any> {
                 problemIndex: this.props.ProIndex - 1
             })
         }
+        if(!this.props.Loading){
+            VditorPreview.preview(
+                document.getElementById("Choice-title-id"),
+                this.props.content
+            )
+        }
     }
 
     render() {
         return (
             <Skeleton active loading={this.props.Loading}>
                 <div className={"Choice"}>
-                    <div className={"Choice-title"}>
-                        <pre className={"Choice-pre"}>
-                            {this.props.content}
-                        </pre>
+                    <div className={"Choice-title"} id={"Choice-title-id"}>
+                        
                     </div>
                     {
                         this.props.choice != undefined && (
