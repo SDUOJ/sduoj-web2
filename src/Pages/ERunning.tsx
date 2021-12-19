@@ -14,6 +14,7 @@ import {ConfigState} from "../Type/IConfig";
 import cookie from "react-cookies";
 import ExamRun from "../Component/exam/ExamRun";
 import {routerE} from "../Config/router";
+import {WaterMark} from "@ant-design/pro-layout";
 
 const {Meta} = Card;
 
@@ -41,7 +42,19 @@ class ERunning extends Component<any, any> {
 
         return (
             <>
-                <ExamRun/>
+                <WaterMark
+                    rotate={-25}
+                    gapX={200}
+                    gapY={200}
+                    offsetLeft={20}
+                    content={this.props.realName + " " + this.props.sduId}
+                    fontColor='rgba(212, 212, 212, 0.5)'
+                    fontSize={18}
+                    zIndex={2000}
+                >
+                    <ExamRun/>
+                </WaterMark>
+
             </>
         )
     }
@@ -50,9 +63,12 @@ class ERunning extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
+    const realName = UState.userInfo?.realName
+    const sduId = UState.userInfo?.sduId
     return {
-        isLogin: UState.isLogin
-
+        isLogin: UState.isLogin,
+        realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
+        sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
     }
 }
 
