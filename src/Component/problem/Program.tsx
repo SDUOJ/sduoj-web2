@@ -2,7 +2,7 @@ import React, {Component, Dispatch} from 'react';
 import {ChoiceContent, IGetProInfo, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 // @ts-ignore
-import VditorPreview from 'vditor/dist/method.min'
+// import VditorPreview from 'vditor/dist/method.min'
 import Title from "antd/lib/typography/Title";
 import {withTranslation} from "react-i18next";
 import {Button, Space, Badge, DatePicker, Skeleton, Card, Modal, Tooltip} from "antd";
@@ -15,6 +15,7 @@ import {getProblemTodo} from "../../Redux/Action/exam";
 import Processing from "../submission/Processing";
 import RecentSubmission from "../submission/RecentSubmission";
 import eApi from "../../Utils/API/e-api";
+import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 
 
 class Program extends Component<any, any> {
@@ -29,10 +30,7 @@ class Program extends Component<any, any> {
     }
 
     componentDidMount() {
-        VditorPreview.preview(
-            document.getElementById("problem-content"),
-            this.props.markdown
-        )
+        MarkdownPreview("problem-content", this.props.markdown)
         if (this.props.Waiting === true) {
             this.props.getProInfo({
                 examId: this.props.match.params.eid,
@@ -50,10 +48,7 @@ class Program extends Component<any, any> {
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (this.props.markdown != prevProps.markdown) {
-            VditorPreview.preview(
-                document.getElementById("problem-content"),
-                this.props.markdown
-            )
+            MarkdownPreview("problem-content", this.props.markdown)
         }
         if (prevProps.Waiting == undefined && this.props.Waiting === true) {
             this.props.getProInfo({

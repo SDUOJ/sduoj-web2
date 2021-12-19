@@ -7,7 +7,8 @@ import {ChoiceContent, IGetProInfo} from "../../Type/IProblem";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 // @ts-ignore
-import VditorPreview from 'vditor/dist/method.min'
+// import VditorPreview from 'vditor/dist/method.min'
+import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 
 
 class Choice extends Component<any, any> {
@@ -21,10 +22,7 @@ class Choice extends Component<any, any> {
             })
         }
         if (!this.props.Loading) {
-            VditorPreview.preview(
-                document.getElementById("Choice-title-id"),
-                this.props.content
-            )
+            MarkdownPreview("Choice-title-id", this.props.content)
         }
     }
 
@@ -38,10 +36,7 @@ class Choice extends Component<any, any> {
         }
         if (!this.props.Loading) {
             if (prevProps.content != this.props.content)
-                VditorPreview.preview(
-                    document.getElementById("Choice-title-id"),
-                    this.props.content
-                )
+                MarkdownPreview("Choice-title-id", this.props.content)
         }
     }
 

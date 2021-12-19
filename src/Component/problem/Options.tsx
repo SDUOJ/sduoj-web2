@@ -8,7 +8,8 @@ import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {examID} from "../../Type/types";
 // @ts-ignore
-import VditorPreview from 'vditor/dist/method.min'
+// import VditorPreview from 'vditor/dist/method.min'
+import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 
 interface SOptions {
     choose: ChoiceState
@@ -36,10 +37,7 @@ class Options extends Component<any, SOptions> {
                 break;
             }
         }
-        VditorPreview.preview(
-            document.getElementById("Options-content-id" + this.props.ChoiceID),
-            this.props.ChoiceContent
-        )
+        MarkdownPreview("Options-content-id" + this.props.ChoiceID, this.props.ChoiceContent)
     }
 
     // 在处理属性唯一的时候，根据 redux 的 props 更新当前的 state
@@ -56,10 +54,7 @@ class Options extends Component<any, SOptions> {
             }
         }
         if (this.props.ChoiceContent != prevProps.ChoiceContent)
-            VditorPreview.preview(
-                document.getElementById("Options-content-id" + this.props.ChoiceID),
-                this.props.ChoiceContent
-            )
+            MarkdownPreview("Options-content-id" + this.props.ChoiceID, this.props.ChoiceContent)
     }
 
     updateChooseUsed() {
