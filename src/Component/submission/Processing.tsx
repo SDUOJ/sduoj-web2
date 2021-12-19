@@ -19,6 +19,7 @@ import {
 import {JudgeTemplate} from "../../Type/IProblem";
 import CodeHighlight from "../common/CodeHighlight";
 import {SyncJudging} from "./SyncJudging";
+import {ClimbingBoxLoader, ClipLoader} from "react-spinners";
 
 
 interface SProcessing {
@@ -65,7 +66,16 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
             if (this.state.RunningState == "-1" && (resData.judgeLog == null || resData.judgeLog.length === 0))
                 resData.judgeLog = "编译成功"
             let TestCaseInit: TestCaseProp[] = []
-            if (resData.judgeResult === 8 || resData.judgeResult === 5) {
+            if (resData.judgeResult === 0) {
+                this.setState({
+                    submissionInfo: resData,
+                    currentStep: 1,
+                    showStep: 1,
+                    RunningState: "-4",
+                    webSocketOpen: Date.now(),
+                    webSocketQueryList: [resData.submissionId]
+                })
+            } else if (resData.judgeResult === 8 || resData.judgeResult === 5) {
                 this.setState({
                     submissionInfo: resData,
                     currentStep: 1,
@@ -275,6 +285,17 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                             }
                                         }
                                     })
+                                }
+                            </div>
+                            <div style={{marginTop: "30px"}}>
+                                {
+                                    (this.state.RunningState === "-4" || this.state.RunningState === "-3")
+                                    && (
+                                        <div style={{textAlign: "center", paddingTop:"100px"}}>
+                                            <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15} />
+                                            <div style={{marginTop:"50px"}}>排队中，请稍后...</div>
+                                        </div>
+                                    )
                                 }
                             </div>
                             <div style={{marginTop: "30px"}}>
