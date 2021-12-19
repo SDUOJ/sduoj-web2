@@ -13,7 +13,6 @@ import {store} from "../Store";
 import {ProblemAction} from "../Action/problem";
 
 
-
 const initState: ExamState = {
     ExamInfoLoad: false,
     ProListLoad: false,
@@ -125,6 +124,16 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 content.Submissions = action.data
                 break
 
+            case "cleanExamInfo":
+                State.ExamInfoLoad = false
+                State.examInfo = undefined
+                break
+
+            case "cleanProList":
+                State.ProListLoad = false
+                State.proGroupInfo = undefined
+                break
+
             default:
                 break
         }
@@ -141,6 +150,16 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             case "setExamInfo":
                 State.ExamInfoLoad = true
                 State.examInfo = action.data
+                break
+
+            case "cleanExamInfo":
+                State.ExamInfoLoad = false
+                State.examInfo = undefined
+                break
+
+            case "cleanProList":
+                State.ProListLoad = false
+                State.proGroupInfo = undefined
                 break
         }
     }

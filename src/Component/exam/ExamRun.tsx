@@ -28,11 +28,11 @@ class ExamRun extends Component<any, any> {
 
     componentDidMount() {
         if (this.props.examInfo == undefined) {
-            this.props.getExamInfo(this.props.match.params.eid)
             this.setState({
                 ProcessingVis: this.props.submissionModalVis
             })
         }
+        this.props.getExamInfo(this.props.match.params.eid)
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {

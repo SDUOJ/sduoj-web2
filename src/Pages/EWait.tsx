@@ -51,6 +51,7 @@ class EWait extends Component<any, any> {
         let ExamStartText = this.props.t("StartAnswering")
         if (examInfo != undefined) {
             if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit != 1) this.setExamStart(true)
+            else this.setExamStart(false)
             if (examInfo.endTime < Date.now()) ExamStartText = "已结束"
             if (examInfo.userIsSubmit == 1) ExamStartText = "已交卷"
             description = examInfo.description

@@ -30,7 +30,9 @@ export type ExamAction =
     setProInfo |
     setAnswerSheet |
     cleanProInfo |
-    setProgramSubmissionList
+    setProgramSubmissionList |
+    cleanExamInfo |
+    cleanProList
 
 
 export interface updateChoice {
@@ -77,6 +79,14 @@ export interface setAnswerSheet {
 
 export interface cleanProInfo {
     type: "cleanProInfo"
+}
+
+export interface cleanExamInfo{
+    type: "cleanExamInfo"
+}
+
+export interface cleanProList{
+    type: "cleanProList"
 }
 
 export interface setProgramSubmissionList {
@@ -138,6 +148,8 @@ export function getExamProblemListTodo(eid: examID) {
                 // 更新当前目录
                 dispatch({type: "setProList", data: data})
             }
+        }).catch(()=>{
+            dispatch({type:"cleanProList"})
         })
     }
 }
@@ -158,6 +170,8 @@ export function getExamInfoTodo(examId: examID) {
                 }
                 dispatch({type: "setExamInfo", data: data})
             }
+        }).catch(()=>{
+            dispatch({type: "setExamInfo"})
         })
     }
 }
