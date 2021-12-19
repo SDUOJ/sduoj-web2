@@ -37,7 +37,7 @@ class Options extends Component<any, SOptions> {
             }
         }
         VditorPreview.preview(
-            document.getElementById("Options-content-id"+this.props.ChoiceID),
+            document.getElementById("Options-content-id" + this.props.ChoiceID),
             this.props.ChoiceContent
         )
     }
@@ -55,10 +55,11 @@ class Options extends Component<any, SOptions> {
                 break;
             }
         }
-        VditorPreview.preview(
-            document.getElementById("Options-content-id"+this.props.ChoiceID),
-            this.props.ChoiceContent
-        )
+        if (this.props.ChoiceContent != prevProps.ChoiceContent)
+            VditorPreview.preview(
+                document.getElementById("Options-content-id" + this.props.ChoiceID),
+                this.props.ChoiceContent
+            )
     }
 
     updateChooseUsed() {
@@ -100,7 +101,7 @@ class Options extends Component<any, SOptions> {
                         {this.props.ChoiceID}.
                     </Col>
                     <Col className={"Options-content"} span={22}>
-                        <div id={"Options-content-id"+this.props.ChoiceID}>
+                        <div id={"Options-content-id" + this.props.ChoiceID}>
 
                         </div>
                     </Col>

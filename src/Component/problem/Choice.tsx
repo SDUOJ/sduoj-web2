@@ -20,7 +20,7 @@ class Choice extends Component<any, any> {
                 problemIndex: this.props.ProIndex - 1
             })
         }
-        if(!this.props.Loading){
+        if (!this.props.Loading) {
             VditorPreview.preview(
                 document.getElementById("Choice-title-id"),
                 this.props.content
@@ -36,11 +36,12 @@ class Choice extends Component<any, any> {
                 problemIndex: this.props.ProIndex - 1
             })
         }
-        if(!this.props.Loading){
-            VditorPreview.preview(
-                document.getElementById("Choice-title-id"),
-                this.props.content
-            )
+        if (!this.props.Loading) {
+            if (prevProps.content != this.props.content)
+                VditorPreview.preview(
+                    document.getElementById("Choice-title-id"),
+                    this.props.content
+                )
         }
     }
 
@@ -49,7 +50,7 @@ class Choice extends Component<any, any> {
             <Skeleton active loading={this.props.Loading}>
                 <div className={"Choice"}>
                     <div className={"Choice-title"} id={"Choice-title-id"}>
-                        
+
                     </div>
                     {
                         this.props.choice != undefined && (

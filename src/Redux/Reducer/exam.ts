@@ -129,7 +129,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 if(content !== undefined)
                     content.Submissions = action.data
                 else{
-                    content = {
+                    nowPro.content = {
                         isLoad: false,
                         Submissions: action.data
                     }
