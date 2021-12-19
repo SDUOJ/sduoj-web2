@@ -191,7 +191,7 @@ class ExamList extends Component<any, any> {
                 key: 'operator',
                 render: (text: any, record: SExamInfo) => {
                     const isStart = record.startTime < Date.now()
-                    console.log(isStart)
+                    // console.log(isStart)
                     return <Space>
                         <ExamForm
                             type={'update'}
