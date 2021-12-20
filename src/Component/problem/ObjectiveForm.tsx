@@ -7,10 +7,9 @@ import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-import {genAnswerList, genEditableList, genNumberList} from "../../Type/IManage";
+import {genAnswerList, genEditableList} from "../../Type/IManage";
 import mApi from "Utils/API/m-api"
 import SelectGroup from "../group/SelectGroup";
-import {groupInfo} from "../../Type/types";
 import {groupSelection} from "../../Type/Igroup";
 
 // 可拖拽的排序手柄

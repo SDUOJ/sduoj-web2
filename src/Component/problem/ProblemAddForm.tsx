@@ -45,7 +45,7 @@ const ProblemAddForm = (props: any) => {
     const [problemInfo, setProblemInfo] = useState<examProblemInfo[]>(getListData("problemInfo"))       // 记录题面选项信息
     const [checkedProblemCode, setCheckedProblemCode] = useState<string[]>(getListData("checkedProblemCode"))
 
-    const [descriptionLoading, setDescriptionLoading] = useState<boolean>(false)
+    const [descriptionLoading, setDescriptionLoading] = useState<string[]>([])
 
 
     const setListDataAll = (listData: examProblemType[]) => {
@@ -78,8 +78,9 @@ const ProblemAddForm = (props: any) => {
         for (const x of problemInfo) {
             if (x.problemCode == problemCode) return x.problemDescription
         }
-        if (strMatch(problemCode) != null && !descriptionLoading) {
-            setDescriptionLoading(true)
+        if (strMatch(problemCode) != null && descriptionLoading.indexOf(problemCode) != -1) {
+            descriptionLoading.push(problemCode)
+            setDescriptionLoading(descriptionLoading)
             return mApi.getProblemDescriptionList({problemCode: problemCode}).then(
                 (resData) => {
                     if (resData != null) {
@@ -93,7 +94,6 @@ const ProblemAddForm = (props: any) => {
                         setProblemInfoAll(problemInfo)
                         setEditableRowKeys([])
                         setEditableRowKeys(genNumberList(getListData()))
-                        setDescriptionLoading(false)
                     }
                 })
         }
