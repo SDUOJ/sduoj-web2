@@ -5,6 +5,7 @@ export type TestCaseType =
 
 export type RunningStateType = "-4" | "-3" | "-2" | "-1"
 export type RunningResultType = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+export const RunningResultList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 export const SubmissionMap: any = {
     "-4": "Queueing",
@@ -94,7 +95,7 @@ export interface TopSubmissionInfoType {
     sumScore: number
 }
 
-export interface RunningSubmissionInfo{
+export interface RunningSubmissionInfo {
     SubmissionId: string
     TestCaseNumber: number
     TestCaseInfo: any[]

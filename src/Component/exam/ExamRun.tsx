@@ -15,32 +15,17 @@ import {SubmissionState} from "../../Type/ISubmission";
 import {setSubmissionModalVis} from "../../Redux/Action/submission";
 import eApi from "Utils/API/e-api"
 import {Submission} from "../../Type/IProblem";
+import SubmissionModal from "../submission/SubmissionModal";
 
 class ExamRun extends Component<any, any> {
 
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.state = {
-            ProcessingVis: false
-        }
     }
 
     componentDidMount() {
-        if (this.props.examInfo == undefined) {
-            this.setState({
-                ProcessingVis: this.props.submissionModalVis
-            })
-        }
         this.props.getExamInfo(this.props.match.params.eid)
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.submissionModalVis != this.props.submissionModalVis) {
-            this.setState({
-                ProcessingVis: this.props.submissionModalVis
-            })
-        }
     }
 
     getSubmissionList = (problemGroup: number, problemIndex: number) => {
@@ -65,21 +50,7 @@ class ExamRun extends Component<any, any> {
             <>
                 <Skeleton active loading={this.props.examInfo == undefined}>
                     <div className={"ExamRun"}>
-                        <Modal
-                            title={"提交详情"}
-                            visible={this.state.ProcessingVis}
-                            onCancel={() => this.props.setSubmissionModalVis(false)}
-                            width={1200}
-                            footer={[
-                                <Button key="back" onClick={() => {
-                                    this.props.setSubmissionModalVis(false)
-                                }}>
-                                    关闭
-                                </Button>
-                            ]}
-                        >
-                            <Processing QuerySubmission={this.getSubmission}/>
-                        </Modal>
+                        <SubmissionModal getSubmission={this.getSubmission}/>
                         <Row>
                             <Col span={22} offset={1}>
                                 <Row>
@@ -115,18 +86,13 @@ class ExamRun extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const EState: ExamState = state.ExamReducer
-    const SubState: SubmissionState = state.SubmissionReducer
     return {
-        submissionModalVis: SubState.SubmissionModalVis,
         examInfo: EState.examInfo,
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     getExamInfo: (eid: examID) => dispatch(getExamInfoTodo(eid)),
-    setSubmissionModalVis: (data: boolean) => dispatch({
-        type: "setSubmissionModalVis", data: data
-    }),
     setProgramSubmissionList: (data: Submission[]) => dispatch({
         type: "setProgramSubmissionList",
         data: data

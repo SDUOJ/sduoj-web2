@@ -35,6 +35,7 @@ class RecentSubmission extends Component<any, any> {
         if (data[1] < 0) {
             let dt = this.state.tableData
             const Index = dt.findIndex((value: any) => value.submissionId == data[0])
+            if(Index == -1) return
             dt[Index].result = data[1].toString()
             if (data[1] == -1) {
                 if (data.length > 3) {
@@ -57,6 +58,7 @@ class RecentSubmission extends Component<any, any> {
         } else {
             let dt = this.state.tableData
             const Index = dt.findIndex((value: any) => value.submissionId == data[0])
+            if(Index == -1) return
             if(dt[Index].RunningStep < data[1] + 1){
                 dt[Index].RunningStep = data[1] + 1
                 dt[Index].score += data[3]

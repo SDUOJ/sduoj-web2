@@ -70,6 +70,16 @@ export interface examProblemDescription {
     voteNum: number
 }
 
+export interface SubmissionQueryType {
+    username?: string,
+    judgeResult?: string,
+    pageNow: number,
+    pageSize: number,
+    sortBy?: string,
+    ascending?: string,
+    problemCode?: string
+}
+
 export const genNumberList = (data: any) => {
     let res = []
     for (const x of data) res.push(x.id)

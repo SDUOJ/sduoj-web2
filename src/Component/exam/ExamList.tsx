@@ -17,6 +17,8 @@ import ExamForm from "./Form/ExamForm";
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
 import {getColMap, getData, getExamJson} from "../../Utils/exportExam";
+import SubmissionList from "../submission/SubmissionList";
+import SubmissionModal from "../submission/SubmissionModal";
 
 
 class ExamList extends Component<any, any> {
@@ -27,9 +29,20 @@ class ExamList extends Component<any, any> {
         this.state = {
             ExamListInfo: [],
             ExamManageListInfo: [],
-            total: 0
+            total: 0,
+            nowExamId: ""
         }
         this.getList = this.getList.bind(this)
+    }
+
+    getSubmission = (submissionId: string) => {
+        return eApi.getSubmission(this.state.nowExamId, submissionId)
+    }
+
+    setNowExamId = (examId: string)=>{
+        this.setState({
+            nowExamId: examId
+        })
     }
 
     update = () => {
@@ -207,6 +220,7 @@ class ExamList extends Component<any, any> {
                             getJson={() => getExamJson(record.id)}
                             fileName={record.title + "_" + Date.now() + "_结果导出"}
                         />
+                        <SubmissionList examId={record.id} setNowExamId={this.setNowExamId}/>
                     </Space>
                 }
             }
@@ -218,23 +232,25 @@ class ExamList extends Component<any, any> {
         }
 
         return (
-            <Table
-                pagination={{
-                    showQuickJumper: true,
-                    defaultCurrent: 1,
-                    defaultPageSize: 20,
-                    total: this.state.total,
-                    onChange: this.getList,
-                    showSizeChanger: true
-                }}
-                columns={columns}
-                dataSource={
-                    this.props.type == "manage" ?
-                        this.state.ExamManageListInfo :
-                        this.state.ExamListInfo
-                }
-            />
-
+            <>
+                <SubmissionModal getSubmission={this.getSubmission}/>
+                <Table
+                    pagination={{
+                        showQuickJumper: true,
+                        defaultCurrent: 1,
+                        defaultPageSize: 20,
+                        total: this.state.total,
+                        onChange: this.getList,
+                        showSizeChanger: true
+                    }}
+                    columns={columns}
+                    dataSource={
+                        this.props.type == "manage" ?
+                            this.state.ExamManageListInfo :
+                            this.state.ExamListInfo
+                    }
+                />
+            </>
         )
     }
 }

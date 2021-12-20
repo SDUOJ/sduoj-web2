@@ -142,6 +142,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
     }
 
     addCaseInfo = (data: any[]) => {
+        if(data[0] != this.props.submissionId) return
         if (data[1] < 0) {
             this.setState({
                 RunningState: data[1].toString()

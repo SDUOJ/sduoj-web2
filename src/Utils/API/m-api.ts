@@ -23,6 +23,7 @@ import {
 import apiAddress from "./apiAddress";
 import {store} from "../../Redux/Store";
 import {message} from "antd";
+import {SubmissionQueryType} from "../../Type/IManage";
 
 const baseUrl = apiAddress().MANAGE_SERVER + '/api'
 
@@ -322,6 +323,9 @@ export default {
     },
     judgeExam: async function (examId: examID){
         return request.get("/manage/exam/judge/" + examId)
+    },
+    getExamSubmission: async function (data: SubmissionQueryType & {examId: examID}){
+        return request.post("/manage/exam/querySubmissionList", data)
     },
     /* ************ 选择题 ****************** */
     getChoiceList: async function (data: any) {

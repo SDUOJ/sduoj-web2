@@ -8,17 +8,9 @@ import {
     ProContent, ProgramContent, Submission, TestCase
 } from "../../Type/IProblem";
 import {examID} from "../../Type/types";
-import React, {Dispatch} from "react";
+import {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
 import {ExamState, ProblemAnswerSheet, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
-import {ConfigState} from "../../Type/IConfig";
-import {UserState} from "../../Type/Iuser";
-import cookie from "react-cookies";
-import {testLoginTodo, userGetProfileTodo} from "./user";
-import {message} from "antd";
-import CApi from "../../Utils/API/c-api";
-import moment from "moment";
-import {groupSelection} from "../../Type/Igroup";
 
 
 export type ExamAction =

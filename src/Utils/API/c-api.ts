@@ -114,5 +114,8 @@ export default {
     },
     async getProfile() {
         return request.get("/user/getProfile")
+    },
+    async rejudge(data: string[]){
+        return request.post("/submit/rejudge", data)
     }
 }
