@@ -130,6 +130,12 @@ const ProblemAddForm = (props: any) => {
         return <SortableItem index={index} {...restProps} />
     };
 
+    useEffect(() => {
+        setTimeout(()=>{
+            form.validateFields()
+        }, 100)
+    }, [props.isDataLoad])
+
     const sortColumns: ProColumns<examProblemType>[] = [
         {
             title:
