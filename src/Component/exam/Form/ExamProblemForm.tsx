@@ -5,7 +5,7 @@ import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-import ProgramAddForm from "../../problem/ProblemAddForm";
+import ProblemAddForm from "../../problem/ProblemAddForm";
 import {connect} from "react-redux";
 import {
     examProblemGroupType,
@@ -220,7 +220,7 @@ const ExamProblemForm = (props: formSubmitType & any) => {
                         expandedRowRender: (record: examProblemGroupType, index: number, indent: number, expanded: boolean) => {
                             const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
                             return (
-                                <ProgramAddForm
+                                <ProblemAddForm
                                     groupId={record.id}
                                     listData={props.listData}
                                     setListData={props.setListData}

@@ -98,10 +98,12 @@ const ExamForm = (props: formSubmitType & any) => {
                                     for (const x of resData.problemGroups) {
                                         let score = 0
                                         let proInfo: examProblemType[] = []
+                                        let cnt = 0
                                         for (const y of x.problems) {
+                                            cnt += 1
                                             score += y.problemScore
                                             proInfo.push({
-                                                id: y.index,
+                                                id: cnt,
                                                 ProblemCode: y.problemCode,
                                                 ProblemAlias: y.problemTitle,
                                                 ProblemDescription: y.problemDescriptionId,

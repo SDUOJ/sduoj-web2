@@ -44,7 +44,6 @@ const ProblemAddForm = (props: any) => {
     const [proListData, setProListData] = useState<examProblemType[]>(getListData())
     const [problemInfo, setProblemInfo] = useState<examProblemInfo[]>(getListData("problemInfo"))       // 记录题面选项信息
     const [checkedProblemCode, setCheckedProblemCode] = useState<string[]>(getListData("checkedProblemCode"))
-
     const [descriptionLoading, setDescriptionLoading] = useState<string[]>([])
 
 
@@ -78,7 +77,7 @@ const ProblemAddForm = (props: any) => {
         for (const x of problemInfo) {
             if (x.problemCode == problemCode) return x.problemDescription
         }
-        if (strMatch(problemCode) != null && descriptionLoading.indexOf(problemCode) != -1) {
+        if (strMatch(problemCode) != null && descriptionLoading.indexOf(problemCode) == -1) {
             descriptionLoading.push(problemCode)
             setDescriptionLoading(descriptionLoading)
             return mApi.getProblemDescriptionList({problemCode: problemCode}).then(
@@ -131,18 +130,16 @@ const ProblemAddForm = (props: any) => {
         return <SortableItem index={index} {...restProps} />
     };
 
-    useEffect(() => {
-        setTimeout(() => {
-            form.validateFields()
-        }, 100)
-    }, [props.isDataLoad])
-
     const sortColumns: ProColumns<examProblemType>[] = [
         {
             title:
-                <Button type="text" key="operator" onClick={() => {
-                    setSortSwitch(!sortSwitch)
-                }} icon={sortSwitch ? <EditOutlined/> : <SortAscendingOutlined/>}
+                <Button type="text"
+                        key="operator"
+                        onClick={() => {
+                            setSortSwitch(!sortSwitch)
+                        }}
+                        icon={sortSwitch ? <EditOutlined/> : <SortAscendingOutlined/>}
+                        disabled={props.isStart}
                 />
             ,
             dataIndex: 'sort',
@@ -172,7 +169,7 @@ const ProblemAddForm = (props: any) => {
                     setTimeout(() => {
                         form.validateFields()
                     }, 100)
-            }} icon={<PlusOutlined/>} disabled={sortSwitch}
+            }} icon={<PlusOutlined/>} disabled={sortSwitch || props.isStart}
             />,
             dataIndex: 'id',
             valueType: "index",
@@ -335,6 +332,7 @@ const ProblemAddForm = (props: any) => {
         <>
             <EditableProTable<examProblemType>
                 value={proListData}
+                onChange={setProListData}
                 columns={columns}
                 rowKey={"id"}
                 recordCreatorProps={false}
