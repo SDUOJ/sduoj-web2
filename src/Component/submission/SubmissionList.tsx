@@ -387,7 +387,7 @@ class SubmissionList extends Component<any, any> {
                             size={"small"}
                             columns={columnsAll}
                             pagination={{
-                                pageSize: 15,
+                                pageSize: this.state.pageSize,
                                 hideOnSinglePage: true,
                                 showQuickJumper: true,
                                 pageSizeOptions: ["15", "20", "30", "50", "80"],
