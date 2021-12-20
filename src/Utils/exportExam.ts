@@ -34,8 +34,8 @@ export function getExamJson(eid: examID) {
                 "学号": x.username,
                 "姓名": x.nickname,
                 "总分数": x.score,
-                "使用IP数量": x.usedIP !== undefined ? x.usedIP.length() : "",
-                "IP列表": x.usedIP !== undefined ? x.usedIP.toString() : ""
+                "使用IP数量": x.ip !== undefined ? x.ip.length : "",
+                "IP列表": x.ip !== undefined ? x.ip.toString() : ""
             }
             let proInfo: any = []
             let groupCnt = 0
