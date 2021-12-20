@@ -28,11 +28,11 @@ class EHeader extends Component<any, any> {
                 </div>
                 <div style={{float: "right"}} key={"operator"}>
                     {
-                        [''].map(() => {
-                            if (this.props.location.pathname.match(/\/exam\/running\//) != null) {
-                                return <ExamOver key={"ExamOver"}/>
-                            }
-                        })
+                        this.props.location.pathname.match(/\/exam\/running\//) != null &&
+                        this.props.ExamInfoLoad &&
+                        (
+                                <ExamOver key={"ExamOver"}/>
+                        )
                     }
                     <ChangeLang/>
                     {
@@ -73,12 +73,14 @@ class EHeader extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
+    const State :ExamState = state.ExamReducer
     const realName = UState.userInfo?.realName
     const sduId = UState.userInfo?.sduId
     return {
         isLogin: UState.isLogin,
         realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
         sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
+        ExamInfoLoad: State.ExamInfoLoad,
     }
 }
 

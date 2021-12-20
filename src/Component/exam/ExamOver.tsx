@@ -26,7 +26,7 @@ class ExamOver extends Component<any, any> {
                         const eid = urls[urls.length - 1]
                         eApi.ExamOver({examId: eid}).then(() => {
                             this.props.history.push("/v2/exam/finish")
-                            this.props.CleanProInfo()
+                            this.props.cleanExam()
                         }).catch(() => {
                             this.setState({disabled: false})
                         })
@@ -55,6 +55,9 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     CleanProInfo: () => dispatch({
         type: "cleanProInfo"
+    }),
+    cleanExam: ()=> dispatch({
+        type: "cleanExam"
     })
 })
 

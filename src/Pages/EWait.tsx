@@ -41,6 +41,9 @@ class EWait extends Component<any, any> {
         if (!this.props.isLogin) {
             this.props.history.push(routerE[0].path)
         }
+        if(!this.props.ExamInfoLoad || this.props.match.params.eid !== this.props.examInfo.id){
+            this.props.getExamInfo(this.props.match.params.eid)
+        }
     }
 
 

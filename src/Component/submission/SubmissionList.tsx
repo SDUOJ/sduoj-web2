@@ -121,7 +121,6 @@ class SubmissionList extends Component<any, any> {
                     usedTime: x.usedTime,
                 })
             }
-            data.reverse()
             if (webSocketQueryList.length !== 0) {
                 this.setState({
                     webSocketOpen: true,

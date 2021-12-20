@@ -20,6 +20,7 @@ export interface SExamManageInfo {
     title: string           // 考试标题
     manageGroup: string
     owner: string
+    userIsSubmit?: number
 }
 
 export interface SProInfo {
