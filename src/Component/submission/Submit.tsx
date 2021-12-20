@@ -26,7 +26,8 @@ class Submit extends Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            SubmitModalVis: false
+            SubmitModalVis: false,
+            SubmitDisable: false
         }
         this.CodeSubmit = this.CodeSubmit.bind(this)
     }
@@ -35,6 +36,7 @@ class Submit extends Component<any, any> {
         this.formRef.current!.validateFields().then(
             () => {
                 this.formRef.current?.validateFields().then((value) => {
+                    this.setState({SubmitDisable: true})
                     const judgeTemplateId = value.JudgeTemplate
                     const code = value.CodeEditor
                     eApi.CreateSubmit({
@@ -54,6 +56,7 @@ class Submit extends Component<any, any> {
                         })
                         this.setState({SubmitModalVis: false})
                         this.props.setSubmissionModalVis(true)
+                        this.setState({SubmitDisable: false})
                     })
                 })
             }
@@ -68,7 +71,7 @@ class Submit extends Component<any, any> {
                     onClick={() => {
                         this.setState({SubmitModalVis: true})
                     }}
-                    disabled={this.props.LeftSubmitCount <= 0}
+                    disabled={this.props.LeftSubmitCount <= 0 || this.state.SubmitDisable}
                 >
                     {this.props.t("Submit")}
                 </Button>
