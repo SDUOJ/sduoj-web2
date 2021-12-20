@@ -21,7 +21,7 @@ class ExportExcel extends Component<IButtonText, any> {
                 return newData
             }, {})
         });
-        console.log("json", json)
+        // console.log("json", json)
         const sheet = XLSX.utils.json_to_sheet(json);
         this.openDownloadDialog(this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
     }

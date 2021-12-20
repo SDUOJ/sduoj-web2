@@ -28,7 +28,6 @@ export function getExamJson(eid: examID) {
     return mApi.judgeExam(eid).then((resData: any) => {
         let data: any = []
         for (const x of resData) {
-            console.log("x", x)
             let baseUserInfo: any = {
                 "用户编号": x.userId,
                 "学号": x.username,
@@ -55,11 +54,8 @@ export function getExamJson(eid: examID) {
                     proInfo['题组' + groupCnt + "-类型"] = "选择题"
                     proInfo['题组' + groupCnt + "-总分数"] = y.score
                     let proCnt = 0
-                    console.log("y.problemResult[0]", y.problemResult[0])
-                    console.log("y.problemResult", y.problemResult)
                     for (const z of y.problemResult[0]) {
                         proCnt += 1
-                        console.log("z", z)
                         proInfo[groupCnt + "-" + proCnt + "-分数"] = z.score
                         proInfo[groupCnt + "-" + proCnt + "-学生卷中选项"] = z.orgAnswer.toString()
                         proInfo[groupCnt + "-" + proCnt + "-学生实际选项"] = z.answer.toString()

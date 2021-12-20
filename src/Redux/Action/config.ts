@@ -26,7 +26,7 @@ export function getCopyRightTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
 
         cApi.getCopyright().then(function (resData) {
-            console.log("copy", resData)
+            // console.log("copy", resData)
             dispatch({type: "setCopyRight", data: resData})
         })
 
