@@ -45,6 +45,7 @@ const ProblemAddForm = (props: any) => {
     const [problemInfo, setProblemInfo] = useState<examProblemInfo[]>(getListData("problemInfo"))       // 记录题面选项信息
     const [checkedProblemCode, setCheckedProblemCode] = useState<string[]>(getListData("checkedProblemCode"))
     const [descriptionLoading, setDescriptionLoading] = useState<string[]>([])
+    const [isStart, setIsStart] = useState<boolean>(props.isStart)
 
 
     const setListDataAll = (listData: examProblemType[]) => {
@@ -131,10 +132,16 @@ const ProblemAddForm = (props: any) => {
     };
 
     useEffect(() => {
-        setTimeout(()=>{
-            form.validateFields()
+        setTimeout(() => {
+            if(props.type != "program"){
+                const x = isStart
+                setIsStart(false)
+                form.validateFields().then(() => {
+                    setIsStart(x)
+                })
+            }
         }, 100)
-    }, [props.isDataLoad])
+    }, [props.isDataLoad, form])
 
     const sortColumns: ProColumns<examProblemType>[] = [
         {
@@ -145,7 +152,7 @@ const ProblemAddForm = (props: any) => {
                             setSortSwitch(!sortSwitch)
                         }}
                         icon={sortSwitch ? <EditOutlined/> : <SortAscendingOutlined/>}
-                        disabled={props.isStart}
+                        disabled={isStart}
                 />
             ,
             dataIndex: 'sort',
@@ -175,7 +182,7 @@ const ProblemAddForm = (props: any) => {
                     setTimeout(() => {
                         form.validateFields()
                     }, 100)
-            }} icon={<PlusOutlined/>} disabled={sortSwitch || props.isStart}
+            }} icon={<PlusOutlined/>} disabled={sortSwitch || isStart}
             />,
             dataIndex: 'id',
             valueType: "index",
@@ -346,7 +353,7 @@ const ProblemAddForm = (props: any) => {
                 editable={{
                     type: 'multiple',
                     form: form,
-                    editableKeys: props.isStart || sortSwitch ? [] : editableKeys,
+                    editableKeys: isStart || sortSwitch ? [] : editableKeys,
                     actionRender: (row: any, config: any, defDom: any) => {
                         return [
                             <Popconfirm
