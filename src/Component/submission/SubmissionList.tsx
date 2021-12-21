@@ -115,6 +115,7 @@ class SubmissionList extends Component<any, any> {
                     submissionId: x.submissionId,
                     result: x.judgeResult.toString(),
                     score: x.judgeScore,
+                    sumScore: x.sumScore == undefined ? 100 : x.sumScore,
                     submitTime: parseInt(x.gmtCreate),
                     judgeTemplateTitle: x.judgeTemplateTitle,
                     usedMemory: x.usedMemory,
@@ -154,7 +155,6 @@ class SubmissionList extends Component<any, any> {
     componentDidMount() {
         if (this.state.ModalVis)
             this.updateList()
-        this.props.setNowExamId(this.props.examId)
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
@@ -169,9 +169,6 @@ class SubmissionList extends Component<any, any> {
             prevState.ModalVis !== this.state.ModalVis
         ) {
             this.updateList()
-        }
-        if(this.props.examId !== prevProps.examId){
-            this.props.setNowExamId(this.props.examId)
         }
     }
 
@@ -202,6 +199,7 @@ class SubmissionList extends Component<any, any> {
                 key: "submissionId",
                 render: (text: any, record: any) => {
                     return <a onClick={() => {
+                        this.props.setNowExamId(this.props.examId)
                         mApi.getProblem({problemCode: record.problemCode}).then((resData: any) => {
                             let score = 0
                             for(const x of resData.checkpoints) score += x.checkpointScore
@@ -249,8 +247,8 @@ class SubmissionList extends Component<any, any> {
                 title: "得分",
                 dataIndex: "score",
                 key: "score",
-                render: (text: number) => {
-                    return text / this.props.sumScore * 100 + "%"
+                render: (text: number, record:any) => {
+                    return text / record.sumScore * 100 + "%"
                 }
             },
             {
@@ -420,22 +418,9 @@ class SubmissionList extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
     const SubState: SubmissionState = state.SubmissionReducer
-    let Memory: any = 0, Time: any = 0, title: any = "", sumScore: any = 100
-    if (State.proGroupInfo != undefined) {
-        const Pro = State.proGroupInfo[State.TopGroupIndex - 1].proList[State.TopProblemIndex - 1].content as ProgramContent
-        Time = Pro?.TimeLimit
-        Memory = Pro?.MemoryLimit
-        title = Pro?.title
-        sumScore = Pro?.SumScore
-    }
     return {
         topSubmission: SubState.TopSubmissionId,
-        Time: Time,
-        Memory: Memory,
-        title: title,
-        sumScore: sumScore,
     }
 }
 
