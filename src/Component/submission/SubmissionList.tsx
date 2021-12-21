@@ -154,6 +154,7 @@ class SubmissionList extends Component<any, any> {
     componentDidMount() {
         if (this.state.ModalVis)
             this.updateList()
+        this.props.setNowExamId(this.props.examId)
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
@@ -168,6 +169,9 @@ class SubmissionList extends Component<any, any> {
             prevState.ModalVis !== this.state.ModalVis
         ) {
             this.updateList()
+        }
+        if(this.props.examId !== prevProps.examId){
+            this.props.setNowExamId(this.props.examId)
         }
     }
 
@@ -207,7 +211,6 @@ class SubmissionList extends Component<any, any> {
                                 MemoryLimit: resData.memoryLimit,
                                 sumScore: score
                             })
-                            this.props.setNowExamId(this.props.examId)
                             this.props.setSubmissionModalVis(true)
                         })
                     }}>
@@ -390,6 +393,7 @@ class SubmissionList extends Component<any, any> {
                                 pageSize: this.state.pageSize,
                                 hideOnSinglePage: true,
                                 showQuickJumper: true,
+                                showSizeChanger: true,
                                 pageSizeOptions: ["15", "20", "30", "50", "80"],
                                 onChange: (page, pageSize) => {
                                     this.setState({

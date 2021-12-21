@@ -42,6 +42,7 @@ class SubmissionModal extends Component<any, any> {
                     visible={this.state.ProcessingVis}
                     onCancel={() => this.props.setSubmissionModalVis(false)}
                     width={1200}
+                    zIndex={2000}
                     footer={[
                         <Button key="back" onClick={() => {
                             this.props.setSubmissionModalVis(false)
