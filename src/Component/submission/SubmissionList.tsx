@@ -1,11 +1,9 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Form, FormInstance, Input, message, Modal, Select, Space, Table} from "antd";
-import {ExamState} from "../../Type/IExam";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {
     RunningResultList,
-    RunningResultType,
     StateList,
     SubmissionMap,
     SubmissionState,
@@ -15,12 +13,10 @@ import TestCase from "./TestCase";
 import moment from "moment";
 import {setTopSubmission} from "../../Redux/Action/submission";
 import {ReloadOutlined} from "@ant-design/icons"
-import {ProgramContent, Submission} from "../../Type/IProblem";
+import {Submission} from "../../Type/IProblem";
 import {SyncJudging} from "./SyncJudging";
 import mApi from "Utils/API/m-api"
 import cApi from "Utils/API/c-api"
-import SubmissionModal from "./SubmissionModal";
-import eApi from "../../Utils/API/e-api";
 
 class SubmissionList extends Component<any, any> {
 
