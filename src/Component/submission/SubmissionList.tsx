@@ -112,6 +112,8 @@ class SubmissionList extends Component<any, any> {
                     result: x.judgeResult.toString(),
                     score: x.judgeScore,
                     sumScore: x.sumScore == undefined ? 100 : x.sumScore,
+                    timeLimit: x.timeLimit,
+                    memoryLimit: x.memoryLimit,
                     submitTime: parseInt(x.gmtCreate),
                     judgeTemplateTitle: x.judgeTemplateTitle,
                     usedMemory: x.usedMemory,
@@ -196,17 +198,13 @@ class SubmissionList extends Component<any, any> {
                 render: (text: any, record: any) => {
                     return <a onClick={() => {
                         this.props.setNowExamId(this.props.examId)
-                        mApi.getProblem({problemCode: record.problemCode}).then((resData: any) => {
-                            let score = 0
-                            for(const x of resData.checkpoints) score += x.checkpointScore
-                            this.props.setTopSubmission(record.submissionId, {
-                                title: resData.problemTitle,
-                                TimeLimit: resData.timeLimit,
-                                MemoryLimit: resData.memoryLimit,
-                                sumScore: score
-                            })
-                            this.props.setSubmissionModalVis(true)
+                        this.props.setTopSubmission(record.submissionId, {
+                            title: "",
+                            TimeLimit: record.timeLimit,
+                            MemoryLimit: record.memoryLimit,
+                            sumScore: record.sumScore
                         })
+                        this.props.setSubmissionModalVis(true)
                     }}>
                         {text}
                     </a>
