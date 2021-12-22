@@ -167,7 +167,6 @@ class TestCase extends Component<ITestCaseProp, any> {
                 this.props.caseMemory === undefined &&
                 this.props.caseScore === undefined)
 
-
         const content: any = visible ? (
             <>
                 {
@@ -219,7 +218,8 @@ class TestCase extends Component<ITestCaseProp, any> {
                                         }}
                                         className={"test-case-e"}
                                     >
-                                        <Popover content={content} visible={visible && this.state.MouseIn}>
+                                        <Popover content={content} visible={visible && this.state.MouseIn}
+                                                 zIndex={2001}>
                                             <Tag icon={CaseList[type].icon} color={CaseList[type].color}>
                                                #{this.props.caseIndex} {CaseList[type].text}
                                             </Tag>
@@ -256,7 +256,8 @@ class TestCase extends Component<ITestCaseProp, any> {
                                         }}
                                         className={"test-case"}
                                     >
-                                        <Popover content={content} visible={visible && this.state.MouseIn}>
+                                        <Popover content={content} visible={visible && this.state.MouseIn}
+                                                 zIndex={2001}>
                                              <Tag color={CaseList[type].color}> #{this.props.caseIndex} </Tag>
                                         </Popover>
                                     </span>
