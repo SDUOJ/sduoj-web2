@@ -211,8 +211,10 @@ const ExamForm = (props: formSubmitType & any) => {
                                 gmtStart: base.examStartEndTime[0].unix() * 1000,
                                 gmtEnd: base.examStartEndTime[1].unix() * 1000,
                                 description: base.examDescription,
-                                isScoreVisible: base.isScoreVisible,
-                                isSubmissionScoreVisible: base.isSubmissionScoreVisible,
+                                features:{
+                                    isScoreVisible: base.isScoreVisible,
+                                    isSubmissionScoreVisible: base.isSubmissionScoreVisible,
+                                },
                                 groupId: user?.ManageGroup,
                                 participatingGroups: user?.ParticipatingGroup,
                                 problemGroups: proGroup
