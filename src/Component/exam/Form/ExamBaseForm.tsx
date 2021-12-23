@@ -1,5 +1,5 @@
 import React, {Dispatch, useEffect, useState} from "react";
-import {Col, Form, List, Row, Input, DatePicker, FormInstance, Select, Skeleton} from "antd";
+import {Col, Form, List, Row, Input, DatePicker, FormInstance, Radio, Skeleton} from "antd";
 import {InfoCircleOutlined} from "@ant-design/icons"
 import {withTranslation} from "react-i18next";
 import Meta from "antd/lib/card/Meta";
@@ -21,7 +21,7 @@ const ExamBaseForm = (props: any) => {
     const [examDescription, setExamDescription] = useState<string[]>([]);
     const [examTime, setExamTime] = useState<moment.Moment[]>();
 
-    useEffect(()=>{
+    useEffect(() => {
         if (props.initData != undefined) {
             if (props.initData.examDescription != undefined)
                 setExamDescription(
@@ -56,6 +56,34 @@ const ExamBaseForm = (props: any) => {
                         rules={[{required: true}]}
                     >
                         <Input placeholder="请输入考试标题"/>
+                    </Form.Item>
+                    <Form.Item
+                        name="isScoreVisible"
+                        label="小题分数显示"
+                        rules={[{required: true}]}
+                    >
+                        <Radio.Group
+                            optionType="button"
+                            buttonStyle="solid"
+                            options={[
+                                {label: '显示', value: true},
+                                {label: '不显示', value: false},
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="isSubmissionScoreVisible"
+                        label="编程题分数显示"
+                        rules={[{required: true}]}
+                    >
+                        <Radio.Group
+                            optionType="button"
+                            buttonStyle="solid"
+                            options={[
+                                {label: '显示', value: true},
+                                {label: '不显示', value: false},
+                            ]}
+                        />
                     </Form.Item>
                     <Row>
                         <Col span={11}>

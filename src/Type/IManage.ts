@@ -40,7 +40,9 @@ export interface examUserType {
 export interface examBasicType {
     examTitle: string,
     examStartEndTime: moment.Moment[],
-    examDescription: string
+    examDescription: string,
+    isScoreVisible?: boolean,
+    isSubmissionScoreVisible?: boolean
 }
 
 export interface examDataType {

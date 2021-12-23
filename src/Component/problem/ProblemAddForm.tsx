@@ -251,7 +251,7 @@ const ProblemAddForm = (props: any) => {
                 };
             },
             editable: () => {
-                return true
+                return !isStart
             }
         }]
     const ObjectiveColumns: ProColumns<examProblemType>[] = [
@@ -353,7 +353,7 @@ const ProblemAddForm = (props: any) => {
                 editable={{
                     type: 'multiple',
                     form: form,
-                    editableKeys: isStart || sortSwitch ? [] : editableKeys,
+                    editableKeys: sortSwitch ? [] : editableKeys,
                     actionRender: (row: any, config: any, defDom: any) => {
                         return [
                             <Popconfirm
