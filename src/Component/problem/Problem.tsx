@@ -35,7 +35,7 @@ class Problem extends Component<any, any> {
                             }
                             {
                                 [''].map(() => {
-                                    if (this.props.score !== undefined) {
+                                    if (this.props.score !== undefined && this.props.isScoreVisible === true) {
                                         return <>（{this.props.score}{this.props.t(this.props.score == 1 ? "point" : "points")}）</>
                                     }
                                 })
@@ -93,7 +93,8 @@ const mapStateToProps = (state: any) => {
             proType: NowGroup.type,
             score: NowPro.score,
             index: NowPro.index,
-            isFlag: NowPro.flag
+            isFlag: NowPro.flag,
+            isScoreVisible: State.examInfo?.isScoreVisible
         }
     }
 }

@@ -52,7 +52,8 @@ class Submit extends Component<any, any> {
                             title: this.props.title,
                             TimeLimit: this.props.Time,
                             MemoryLimit: this.props.Memory,
-                            sumScore: this.props.sumScore
+                            sumScore: this.props.sumScore,
+                            showScore: this.props.isSubmissionScoreVisible
                         })
                         this.setState({SubmitModalVis: false})
                         this.props.setSubmissionModalVis(true)
@@ -155,7 +156,8 @@ const mapStateToProps = (state: any) => {
                 Time: NowContent?.TimeLimit,
                 Memory: NowContent?.MemoryLimit,
                 title: NowContent?.title,
-                sumScore: NowContent?.SumScore
+                sumScore: NowContent?.SumScore,
+                isSubmissionScoreVisible: EState.examInfo?.isSubmissionScoreVisible
             }
 
     }

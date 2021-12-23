@@ -11,6 +11,8 @@ export interface SExamInfo {
     description?: string    // 考试描述
     participantNum?: number // 考试人数
     userIsSubmit?: number  // 用户已提交
+    isScoreVisible?: boolean
+    isSubmissionScoreVisible?: boolean
 }
 
 export interface SExamManageInfo {
@@ -68,12 +70,12 @@ export interface IUserExamInfo {
     IDNumber?: string                   // 身份证号
 }
 
-export interface GroupAnswerSheet{
+export interface GroupAnswerSheet {
     problemGroupId: number
     problemAnswer: ProblemAnswerSheet[]
 }
 
-export interface ProblemAnswerSheet{
+export interface ProblemAnswerSheet {
     index: number
     answer: string[]
     pass: string[]

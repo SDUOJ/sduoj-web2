@@ -12,14 +12,16 @@ import {withRouter} from "react-router";
 import {
     langMap,
     RunningResultType,
-    RunningStateType, StateList,
-    submissionInfoType, SubmissionMap,
-    SubmissionState, TestCaseStates
+    RunningStateType,
+    StateList,
+    submissionInfoType,
+    SubmissionMap,
+    SubmissionState,
+    TestCaseStates
 } from "../../Type/ISubmission";
-import {JudgeTemplate} from "../../Type/IProblem";
 import CodeHighlight from "../common/CodeHighlight";
 import {SyncJudging} from "./SyncJudging";
-import {ClimbingBoxLoader, ClipLoader} from "react-spinners";
+import {ClimbingBoxLoader} from "react-spinners";
 
 
 interface SProcessing {
@@ -142,7 +144,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
     }
 
     addCaseInfo = (data: any[]) => {
-        if(data[0] != this.props.submissionId) return
+        if (data[0] != this.props.submissionId) return
         if (data[1] < 0) {
             this.setState({
                 RunningState: data[1].toString()
@@ -314,7 +316,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             </div>
                             <div style={{marginTop: "30px"}}>
                                 {
-                                    this.state.RunningState === "-2" && (
+                                    this.state.RunningState === "-2" && this.props.showScore == true && (
                                         <>
                                             <Title level={4}> {this.props.t("CurrentScore")} </Title>
                                             <Title level={5}> {info.AC} </Title>
@@ -324,8 +326,36 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             </div>
                             <div style={{marginTop: "30px"}}>
                                 {
+                                    this.state.RunningResult !== "8" &&
+                                    this.state.RunningResult !== "5" &&
+                                    this.props.showScore === false && (
+                                        [''].map(() => {
+                                            let JudgedNum = 0
+                                            for (const x of this.state.TestCaseStateList) {
+                                                if (x.caseType != TestCaseStates.Pending) JudgedNum += 1
+                                            }
+                                            return (
+                                                <>
+                                                    <Title level={4}> 测试进度 </Title>
+                                                    <div style={{textAlign: "center"}}>
+                                                        <Progress
+                                                            percent={JudgedNum / this.state.TestCaseStateList.length * 100}
+                                                            type="dashboard" status="normal"
+                                                            format={() => `${JudgedNum} / ${this.state.TestCaseStateList.length}`}
+                                                        />
+                                                    </div>
+                                                </>
+                                            )
+                                        })
+                                    )
+                                }
+                            </div>
+                            <div style={{marginTop: "30px"}}>
+                                {
                                     (this.state.RunningState === "-2" || this.state.RunningState === "-1") &&
-                                    (this.state.RunningResult !== "8" && this.state.RunningResult !== "5") && (
+                                    this.state.RunningResult !== "8" &&
+                                    this.state.RunningResult !== "5" &&
+                                    this.props.showScore === true && (
                                         [''].map(() => {
                                             return (
                                                 <>
@@ -361,12 +391,44 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                     return (
                                         <Row>
                                             <Col className={"Progress-set"} span={6}>
-                                                <Progress
-                                                    success={{percent: info.AC / info.SumAll * 100}}
-                                                    type="dashboard"
-                                                    format={() => `${info.AC} / ${info.SumAll}`}
-                                                />
-                                                <span>{this.props.t("TotalScore")}</span>
+                                                {
+                                                    this.props.showScore == true && (
+                                                        <>
+                                                            <Progress
+                                                                success={{percent: info.AC / info.SumAll * 100}}
+                                                                type="dashboard"
+                                                                format={() => `${info.AC} / ${info.SumAll}`}
+                                                            />
+                                                            <span>{this.props.t("TotalScore")}</span>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    this.props.showScore == false && (
+                                                        <>
+                                                            <div style={{marginTop: "50px", marginBottom: "40px"}}>
+                                                                {
+                                                                    info.AC === info.SumAll && (
+                                                                        <Title level={5}
+                                                                               style={{color: "green"}}>全部通过</Title>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    info.AC !== info.SumAll && info.AC !== 0 && (
+                                                                        <Title level={5} style={{color: "orange"}}>部分通过</Title>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    info.AC === 0 && (
+                                                                        <Title level={5} style={{color: "red"}}>未通过</Title>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            <span>评测结果</span>
+
+                                                        </>
+                                                    )
+                                                }
                                             </Col>
                                             <Col className={"Progress-set"} span={6}>
                                                 {
@@ -433,8 +495,15 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                 })
                             }
                         </Card>
-                        <Title level={4}> {this.props.t("JudgeResult")}</Title>
-                        <JudgeResult data={this.state.TestCaseStateList} sumScore={this.props.SumScore}/>
+                        {
+                            this.props.showScore == true && (
+                                <>
+                                    <Title level={4}> {this.props.t("JudgeResult")}</Title>
+                                    <JudgeResult data={this.state.TestCaseStateList} sumScore={this.props.SumScore}/>
+                                </>
+                            )
+                        }
+
                     </>
                 )
             }
@@ -484,7 +553,8 @@ const mapStateToProps = (state: any) => {
         submissionId: SubState.TopSubmissionId,
         TimeLimit: SubState.TopSubmissionInfo?.TimeLimit,
         MemoryLimit: SubState.TopSubmissionInfo?.MemoryLimit,
-        SumScore: SubState.TopSubmissionInfo?.sumScore
+        SumScore: SubState.TopSubmissionInfo?.sumScore,
+        showScore: SubState.TopSubmissionInfo?.showScore
     }
 }
 

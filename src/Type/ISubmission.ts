@@ -93,6 +93,7 @@ export interface TopSubmissionInfoType {
     TimeLimit: number
     MemoryLimit: number
     sumScore: number
+    showScore: boolean
 }
 
 export interface RunningSubmissionInfo {

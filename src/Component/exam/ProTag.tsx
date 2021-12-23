@@ -38,11 +38,11 @@ class ProTag extends Component<any, any> {
                     if (IsAnswer(NowPro.content) != IsAnswer(PrePro.content)) {
                         this.updateState()
                     }
-                    if(NowPro.flag != PrePro.flag){
+                    if (NowPro.flag != PrePro.flag) {
                         this.updateState()
                     }
                     if (isProgramContent(NowPro.content) && isProgramContent(PrePro.content)) {
-                        if(GetMaxScore(NowPro.content) != GetMaxScore(PrePro.content))
+                        if (GetMaxScore(NowPro.content) != GetMaxScore(PrePro.content))
                             this.updateState()
                     }
                 }
@@ -123,10 +123,11 @@ class ProTag extends Component<any, any> {
             <div>
                 {
                     [''].map(() => {
-                       if (isProgram &&
+                        if (isProgram &&
                             this.props.GroupInfo !== undefined &&
                             this.props.GroupInfo[this.props.GroupIndex].proList !== undefined &&
-                            this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content !== undefined
+                            this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content !== undefined &&
+                            this.props.isSubmissionScoreVisible == true
                         ) {
                             const sumScore = this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content.SumScore
                             return (
@@ -166,6 +167,7 @@ const mapStateToProps = (state: any) => {
         GroupInfo: State.proGroupInfo,
         TopProblemIndex: State.TopProblemIndex,
         TopGroupIndex: State.TopGroupIndex,
+        isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible
     }
 }
 

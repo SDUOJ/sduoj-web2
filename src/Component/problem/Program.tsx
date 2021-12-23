@@ -122,23 +122,51 @@ class Program extends Component<any, any> {
                 {
                     [''].map(() => {
                         {
-                            if (this.props.IsAnswer) {
-                                return (
-                                    <Badge.Ribbon text={
-                                        <>
-                                            <span>当前得分：{this.props.Score / this.props.sumScore * 100 + "%"}</span>
-                                        </>
-                                    }
-                                                  color={
-                                                      [''].map(()=>{
-                                                          if(this.props.Score === 0) return "red"
-                                                          if(this.props.Score == this.props.sumScore) return "green"
-                                                          return "orange"
-                                                      })[0]
-                                                  }>
-                                        {ProgramHeader}
-                                    </Badge.Ribbon>
+                            if (this.props.IsAnswer &&
+                                (
+                                    this.props.isSubmissionScoreVisible === true
+                                    || (this.props.isSubmissionScoreVisible === false && this.props.Score !== 0)
                                 )
+                            ) {
+                                if (this.props.isSubmissionScoreVisible === true) {
+                                    return (
+                                        <Badge.Ribbon text={
+                                            <>
+                                                <span>当前得分：{this.props.Score / this.props.sumScore * 100 + "%"}</span>
+                                            </>
+                                        }
+                                                      color={
+                                                          [''].map(() => {
+                                                              if (this.props.Score === 0) return "red"
+                                                              if (this.props.Score == this.props.sumScore) return "green"
+                                                              return "orange"
+                                                          })[0]
+                                                      }>
+                                            {ProgramHeader}
+                                        </Badge.Ribbon>
+                                    )
+                                } else if (this.props.isSubmissionScoreVisible === false && this.props.Score !== 0) {
+                                    return (
+                                        <Badge.Ribbon text={
+                                            <>
+                                                <span>
+                                                    {this.props.Score != this.props.sumScore && ("部分通过")}
+                                                    {this.props.Score == this.props.sumScore && ("全部通过")}
+                                                </span>
+                                            </>
+                                        }
+                                                      color={
+                                                          [''].map(() => {
+                                                              if (this.props.Score === 0) return "red"
+                                                              if (this.props.Score == this.props.sumScore) return "green"
+                                                              return "orange"
+                                                          })[0]
+                                                      }>
+                                            {ProgramHeader}
+                                        </Badge.Ribbon>
+                                    )
+                                }
+
                             } else return ProgramHeader
                         }
                     })
@@ -183,7 +211,8 @@ const mapStateToProps = (state: any) => {
                 sumScore: content.SumScore,
                 Score: GetMaxScore(content),
                 IsAnswer: IsAnswer(content),
-                LeftSubmitCount: content.MaxSubmitNumber as number - content.Submissions.length
+                LeftSubmitCount: content.MaxSubmitNumber as number - content.Submissions.length,
+                isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible
             }
         }
     }

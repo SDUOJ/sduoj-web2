@@ -152,7 +152,14 @@ class RecentSubmission extends Component<any, any> {
                 dataIndex: "score",
                 key: "score",
                 render: (text: number) => {
-                    return text / this.props.sumScore * 100 + "%"
+                    if(this.props.isSubmissionScoreVisible == true)
+                        return text / this.props.sumScore * 100 + "%"
+                    if(this.props.isSubmissionScoreVisible == false){
+                        if(text == this.props.sumScore) return "全部通过"
+                        if(text == 0) return "未通过"
+                        return "部分通过"
+                    }
+
                 }
             },
             {
@@ -187,7 +194,14 @@ class RecentSubmission extends Component<any, any> {
                 dataIndex: "score",
                 key: "score",
                 render: (text: number) => {
-                    return text / this.props.sumScore * 100 + "%"
+                    if(this.props.isSubmissionScoreVisible == true)
+                        return text / this.props.sumScore * 100 + "%"
+                    if(this.props.isSubmissionScoreVisible == false){
+                        if(text == this.props.sumScore) return "全部通过"
+                        if(text == 0) return "未通过"
+                        return "部分通过"
+                    }
+
                 }
             },
             {
@@ -266,7 +280,8 @@ class RecentSubmission extends Component<any, any> {
                                         title: this.props.title,
                                         TimeLimit: this.props.Time,
                                         MemoryLimit: this.props.Memory,
-                                        sumScore: this.props.sumScore
+                                        sumScore: this.props.sumScore,
+                                        showScore: this.props.isSubmissionScoreVisible
                                     })
                                     this.props.setSubmissionModalVis(true)
                                 }
@@ -305,7 +320,8 @@ const mapStateToProps = (state: any) => {
         Time: Time,
         Memory: Memory,
         title: title,
-        sumScore: sumScore
+        sumScore: sumScore,
+        isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible
     }
 }
 

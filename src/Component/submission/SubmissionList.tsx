@@ -202,7 +202,8 @@ class SubmissionList extends Component<any, any> {
                             title: "",
                             TimeLimit: record.timeLimit,
                             MemoryLimit: record.memoryLimit,
-                            sumScore: record.sumScore
+                            sumScore: record.sumScore,
+                            showScore: true
                         })
                         this.props.setSubmissionModalVis(true)
                     }}>
