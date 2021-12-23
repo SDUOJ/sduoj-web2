@@ -164,8 +164,8 @@ export function getExamInfoTodo(examId: examID) {
                     participantNum: x.participantNum,
                     description: x.description.toString(),
                     userIsSubmit: x.userIsSubmit,
-                    isScoreVisible: x.features.isScoreVisible == undefined ? false : x.isScoreVisible,
-                    isSubmissionScoreVisible: x.features.isSubmissionScoreVisible == undefined ? false : x.isSubmissionScoreVisible
+                    isScoreVisible: x.features == null ? false : x.isScoreVisible,
+                    isSubmissionScoreVisible: x.features == null ? false : x.isSubmissionScoreVisible
                 }
                 dispatch({type: "setExamInfo", data: data})
             }

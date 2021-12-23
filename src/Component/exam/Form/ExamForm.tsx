@@ -75,8 +75,8 @@ const ExamForm = (props: formSubmitType & any) => {
                                         examTitle: resData.examTitle,
                                         examStartEndTime: [moment(parseInt(resData.gmtStart)), moment(parseInt(resData.gmtEnd))],
                                         examDescription: resData.description,
-                                        isScoreVisible: resData.features.isScoreVisible,
-                                        isSubmissionScoreVisible: resData.features.isSubmissionScoreVisible
+                                        isScoreVisible: resData.features == null ? false : resData.isScoreVisible,
+                                        isSubmissionScoreVisible: resData.features == null ? false : resData.isSubmissionScoreVisible
                                     })
                                     let PL = [], GI = [], ManageGroup = null
                                     if (resData.participatingGroupDTOList != null)
