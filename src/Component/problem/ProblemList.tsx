@@ -73,6 +73,7 @@ const ProblemList = (props: any) => {
     return (
         <>
             <Table
+                size={"small"}
                 pagination={{
                     showQuickJumper: true,
                     defaultCurrent: 1,
