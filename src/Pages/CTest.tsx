@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import {SyncJudging} from "../Component/submission/SyncJudging";
 import CodeHighlight from "../Component/common/CodeHighlight";
 import Processing from "../Component/submission/Processing";
+import AutoImportObjective from "../Component/problem/AutoImportObjective";
 
 const str =
     `import java.util.ArrayList;
@@ -32,13 +33,7 @@ class CTest extends Component<any, any> {
     render() {
         return (
             <>
-                <div style={{width: "900px"}}>
-                    <CodeHighlight code={str} lang={"java"}/>
-                </div>
-                <Processing
-
-                />
-
+                <AutoImportObjective/>
             </>
         );
     }

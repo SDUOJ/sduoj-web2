@@ -5,8 +5,9 @@ import {UserState} from "../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {Card} from "antd";
+import {Card, Space} from "antd";
 import ProblemList from "../Component/problem/ProblemList";
+import AutoImportObjective from "../Component/problem/AutoImportObjective";
 
 class MObjective extends Component<any, any> {
     render() {
@@ -14,7 +15,12 @@ class MObjective extends Component<any, any> {
             <>
                 <Card
                     title={"客观题列表"}
-                    extra={<ObjectiveForm isDataLoad={true} type={"create"}/>}
+                    extra={
+                        <Space>
+                            <ObjectiveForm isDataLoad={true} type={"create"}/>
+                            <AutoImportObjective/>
+                        </Space>
+                    }
                 >
                     <ProblemList type="objective"/>
                 </Card>
