@@ -58,13 +58,15 @@ export interface UserInfo{
     username: string
     nickname: string
     realName?: string
-    email: string
+    email?: string | null
     studentId: string
     roles: Role[]
-    sduId: string
+    sduId?: string | null
     groups?: string[]
     ipv4?: string
     userAgent?: string
+    features?: any
+    gender?:any
 }
 
 export interface UserState{

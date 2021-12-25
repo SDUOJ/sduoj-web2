@@ -7,21 +7,19 @@ import {
 } from "../../Type/Iuser";
 import {loginInfo} from "../../Type/types";
 import {Dispatch} from "react";
-import cookie from "react-cookies";
 
 export type UserAction =
     setUserInfo |
     userLogin |
-    userLogout |
-    getProfile
+    userLogout
 
 
 export function testLoginTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
         CApi.getProfile().then((resData) => {
-            dispatch({type: "setUserInfo", data: resData})
+            dispatch({type: "setUserInfo", data: resData as unknown as UserInfo})
             dispatch({type: "userLogin"})
-        }).catch(err =>{
+        }).catch(err => {
             dispatch({type: "userLogout"})
         })
     }
@@ -97,8 +95,4 @@ export interface userLogout {
     type: "userLogout"
 }
 
-export interface getProfile {
-    type: "getProfile"
-    data: UserInfo
-}
 

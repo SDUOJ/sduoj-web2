@@ -1,7 +1,5 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Popconfirm} from "antd";
-import {UserState} from "../../Type/Iuser";
-import {userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
 import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
