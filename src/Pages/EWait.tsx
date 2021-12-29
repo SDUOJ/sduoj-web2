@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Card, Descriptions, Image, List, Result, Skeleton} from "antd";
+import {Button, Card, Descriptions, Image, List, message, Result, Skeleton} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../Component/exam/Timer";
 import {ExamState, SExamInfo} from "../Type/IExam";
@@ -26,8 +26,13 @@ class EWait extends Component<any, any> {
     }
 
     setExamStart = (data: boolean) => {
-        if (data != this.state.ExamStart)
-            this.setState({ExamStart: data})
+        if (data != this.state.ExamStart){
+            message.info("正在排队发卷，请勿刷新，并耐心等待几秒")
+            setTimeout(()=>{
+                this.setState({ExamStart: data})
+                this.props.history.push("/v2/exam/running/" + this.props.match.params.eid)
+            }, Math.random()*5000)
+        }
     }
 
     componentDidMount() {
@@ -53,8 +58,11 @@ class EWait extends Component<any, any> {
         let description:any = ""
         let ExamStartText = this.props.t("StartAnswering")
         if (examInfo != undefined) {
-            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit != 1) this.setExamStart(true)
-            else this.setExamStart(false)
+            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit != 1) {
+                if(!this.state.ExamStart) this.setState({ExamStart: true})
+            } else {
+                if(this.state.ExamStart) this.setState({ExamStart: false})
+            }
             if (examInfo.endTime < Date.now()) ExamStartText = "已结束"
             if (examInfo.userIsSubmit == 1) ExamStartText = "已交卷"
             description = examInfo.description
