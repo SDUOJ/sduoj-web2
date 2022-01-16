@@ -52,7 +52,7 @@ const AutoImportObjective = () => {
                             content: data[i].content,
                             choice: choice
                         },
-                        answer: data[i].answer.replace(" ", "").split(','),
+                        answer: data[i].answer.replaceAll(" ", "").split(','),
                         managerGroups: data[i].managerGroups == undefined ? [] : data[i].managerGroups
                     })
                     show.push({

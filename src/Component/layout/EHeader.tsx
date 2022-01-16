@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import UserAvatarBack from "../user/UserAvatarBack";
-import {Avatar, Button, Divider, Dropdown, Layout, Menu, Space} from "antd";
+import {Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {Link} from "react-router-dom";
 import {DownOutlined, LogoutOutlined} from "@ant-design/icons";
@@ -43,6 +43,7 @@ class EHeader extends Component<any, any> {
                                         <Menu onClick={() => {
                                             this.props.userLogout()
                                             this.props.cleanExam()
+                                            message.info("已退出登录")
                                         }}>
                                             <Menu.Item key="1" icon={<LogoutOutlined/>}>
                                                 {this.props.t("Logout")}

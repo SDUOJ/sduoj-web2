@@ -1,83 +1,9 @@
-import axios, {AxiosResponse, AxiosRequestConfig} from "axios";
-import {Get, Post, GetError, ProblemID, examID} from '../../Type/types'
-import apiAddress from "./apiAddress";
+import {examID} from '../../Type/types'
 import {ICreateSubmit, IGetProInfo} from "../../Type/IProblem";
-import {store} from "../../Redux/Store";
-import {message} from "antd";
+
 import React from "react";
 
-const baseUrl = apiAddress().EXAM_SERVER + '/api'
-
-const service = axios.create({
-    baseURL: baseUrl,
-    timeout: 5000,
-})
-service.defaults.withCredentials = true
-
-const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.get(url, {
-            params, ...config
-        });
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            case 429:
-                //        TODO
-                break;
-            default:
-                //        TODO
-                break;
-        }
-
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
-}
-
-const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.post(url, data, {
-            ...config
-        });
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            case 429:
-                //        TODO
-                break;
-            default:
-                //        TODO
-                break;
-        }
-
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
-}
-
-const request = {
-    get,
-    post
-};
+import request from "./request";
 
 export default {
 

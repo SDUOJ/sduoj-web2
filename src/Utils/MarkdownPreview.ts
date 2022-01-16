@@ -3,6 +3,10 @@ import VditorPreview from 'vditor/dist/method.min'
 import apiAddress from "./API/apiAddress";
 
 export function MarkdownPreview(id: string, code: string) {
+    if(code == null) code = ""
+    code = code.replaceAll("$", " $ ")
+    code = code.replaceAll("  $", " $")
+    code = code.replaceAll("$  ", "$ ")
     VditorPreview.preview(
         document.getElementById(id),
         code,

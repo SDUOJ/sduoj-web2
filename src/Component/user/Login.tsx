@@ -1,5 +1,5 @@
 import React, {Component, CSSProperties, Dispatch, useRef, useState} from "react";
-import {Card, FormInstance, message, Space, Tabs} from "antd";
+import {Button, Card, FormInstance, message, Space, Tabs} from "antd";
 import {LoginForm, ProFormCheckbox, ProFormInstance, ProFormText} from "@ant-design/pro-form";
 import {
     UserOutlined,
@@ -18,8 +18,10 @@ import {withRouter} from "react-router";
 import {userLoginTodo} from "../../Redux/Action/user";
 import {loginInfo} from "../../Type/types";
 import Logo from "Assert/img/sduoj.png"
+import Register from "./Form/Register";
+import ForgetPass from "./Form/ForgetPass";
 
-type LoginType = 'phone' | 'account';
+type LoginType = 'SDUCAS' | 'account';
 
 const iconStyles: CSSProperties = {
     marginLeft: '16px',
@@ -45,8 +47,7 @@ const Login = (props: any) => {
                 subTitle="山东大学在线评测系统"
                 actions={
                     <Space>
-                        其他方式
-                        <ThirdPartyLoginSDUCAS title={"SDUCAS"}/>
+                        {/*其他方式*/}
                         {/*<QqOutlined style={iconStyles}/>*/}
                         {/*<WeiboOutlined style={iconStyles}/>*/}
                         {/*<WechatOutlined style={iconStyles}/>*/}
@@ -58,6 +59,10 @@ const Login = (props: any) => {
                     searchConfig: {
                         submitText: props.t("Login")
                     },
+                    render: (prop, def) => {
+                        if (loginType !== 'SDUCAS') return def
+                        return <ThirdPartyLoginSDUCAS/>
+                    },
                     onSubmit: () => {
                         formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
                             props.login(value)
@@ -67,7 +72,7 @@ const Login = (props: any) => {
             >
                 <Tabs activeKey={loginType} onChange={(activeKey) => setLoginType(activeKey as LoginType)}>
                     <Tabs.TabPane key={'account'} tab={'账号密码登录'}/>
-                    <Tabs.TabPane key={'phone'} tab={'手机验证码登录'}/>
+                    <Tabs.TabPane key={'SDUCAS'} tab={'统一身份认证登录'}/>
                 </Tabs>
                 {loginType === 'account' && (
                     <>
@@ -101,23 +106,18 @@ const Login = (props: any) => {
                         />
                     </>
                 )}
-                {loginType === 'phone' && (
-                    <>
-                        暂不可用
-                    </>
-                )}
-                <div
-                    style={{
-                        marginBottom: 24,
-                    }}
-                >
-                    <Space style={{
-                        float: 'right',
-                    }}>
-                        <a>注册</a>
-                        <a>忘记密码</a>
-                    </Space>
-                </div>
+                {
+                    loginType === 'account' && (
+                        <div>
+                            <Space style={{
+                                float: 'right',
+                            }}>
+                                <Register button={<Button type={"link"} size={"small"}>注册</Button>}/>
+                                <ForgetPass button={<Button type={"link"} size={"small"}>忘记密码</Button>}/>
+                            </Space>
+                        </div>
+                    )
+                }
             </LoginForm>
         </Card>
     )

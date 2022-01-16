@@ -58,11 +58,6 @@ class ELayout extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const CState: ConfigState = state.ConfigReducer
-    // console.log("ELayout", CState.copyRight)
-    return {
-        copyRight: CState.copyRight
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

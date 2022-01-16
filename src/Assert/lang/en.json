@@ -143,5 +143,17 @@
   "ProblemContent": "Problem Content",
   "Reset": "Reset",
   "Login": "login",
-  "SDUCAS": "SDU Unified identity authentication"
+  "SDUCAS": "SDU Unified identity authentication",
+  "Home": "Home",
+  "Problem": "Problem",
+  "Submission": "Submission",
+  "Contest": "Contest",
+  "Group": "Group",
+  "Announcement": "Announcements",
+  "Exam System": "Exam System",
+  "Profile": "Profile",
+  "Verify": "Verify",
+  "emailCode": "Email Code",
+  "captcha": "Captcha",
+  "usernameOrEmail": "Username Or Email"
 }

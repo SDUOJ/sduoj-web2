@@ -3,22 +3,16 @@ import React, {Component, Dispatch, Suspense} from 'react';
 import './App.css';
 import 'antd/dist/antd.css';
 import './Config/i18n'
-import {Card, ConfigProvider, Space, Tooltip} from "antd";
+import { ConfigProvider} from "antd";
 import "vditor/src/assets/scss/index.scss";
-import {Role, Sex, thirdPartyLoginAction} from "./Type/Iuser";
+import {thirdPartyLoginAction} from "./Type/Iuser";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
-import {routerLayout, routerM} from "./Config/router";
-import cookie from "react-cookies";
+import {routerLayout} from "./Config/router";
 import {testLoginTodo, thirdPartyLoginTodo} from "./Redux/Action/user";
-import '@ant-design/pro-form/dist/form.css';
-import '@ant-design/pro-table/dist/table.css';
-import '@ant-design/pro-layout/dist/layout.css';
-import "@ant-design/pro-card/dist/card.css";
-import "@ant-design/pro-list/dist/list.css";
-import "@ant-design/pro-descriptions/dist/descriptions.css"
+
 
 
 class App extends Component<any, any> {
@@ -68,35 +62,6 @@ class App extends Component<any, any> {
         );
     }
 
-}
-
-{/*<EExaming/>*/
-}
-{/*<EWait examStartTime={Date.now() + 1000 * 10} userInfo={{"name":"尹浩飞", "studentID":"201805130160", "IDNumber":"370902200006070918"}}/>*/
-}
-{/*<ExamAnswerSheet/>*/
-}
-{/*<Problem proType={"SingleChoice"} score={10} index={3} flag={true} isFlag={false}*/
-}
-{/*         markdown={"## A 合并数字\n"}*/
-}
-{/*/>*/
-}
-{/*<Editor/>*/
-}
-{/*<MLayout id={0} roles={[0]} changeLang={this.changeLang}/>*/
-}
-{/*<ChangeLang changeLang={this.changeLang}/>*/
-}
-{/*<Card title="评测信息" style={{width: 900}}>*/
-}
-{/*    <Processing TestCaseNumber={12} TimeLimit={2000} MemoryLimit={128 * 1024} TestCaseScore={[0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]}/>*/
-}
-{/*</Card>*/
-}
-{/*<MultipleChoice/>*/
-}
-{/*<DataBaseAnswerSheet/>*/
 }
 
 const mapStateToProps = (state: any) => {

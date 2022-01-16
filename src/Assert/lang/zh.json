@@ -143,5 +143,17 @@
   "ProblemContent": "题干",
   "Reset": "重置",
   "Login": "登录",
-  "SDUCAS": "SDU 统一身份认证"
+  "SDUCAS": "SDU 统一身份认证",
+  "Home": "主页",
+  "Problem": "题目",
+  "Submission": "提交",
+  "Contest": "比赛",
+  "Group": "用户组",
+  "Announcement": "公告",
+  "Exam System": "考试系统",
+  "Profile": "用户信息",
+  "Verify": "验证",
+  "emailCode": "邮箱验证码",
+  "captcha": "验证码",
+  "usernameOrEmail": "用户名或邮箱"
 }

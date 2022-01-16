@@ -6,6 +6,7 @@ import {withRouter} from "react-router";
 import {UserState} from "../Type/Iuser";
 import {testLoginTodo} from "../Redux/Action/user";
 import Login from "../Component/user/Login";
+import getUrlParams from "../Utils/getUrlParams";
 
 
 class ALogin extends Component<any, any> {
@@ -14,16 +15,20 @@ class ALogin extends Component<any, any> {
         super(props, context);
     }
 
-    componentDidMount() {
+    testLogin = ()=>{
         if (this.props.isLogin) {
-            this.props.history.goBack()
+            let to = getUrlParams(this.props.location.search).to
+            if (to === undefined) this.props.history.push("/v2/home")
+            else this.props.history.push(to)
         }
     }
 
+    componentDidMount() {
+        this.testLogin()
+    }
+
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (this.props.isLogin) {
-            this.props.history.goBack()
-        }
+        this.testLogin()
     }
 
     render() {

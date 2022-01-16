@@ -55,6 +55,54 @@ export const routerLayout: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../Component/layout/CLayout'))
     },
+    {
+        id: 5,
+        path: "/v2/resetpass",
+        exact: true,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 6,
+        path: "/v2/home",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 7,
+        path: "/v2/problem",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 8,
+        path: "/v2/contest",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 9,
+        path: "/v2/submission",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 10,
+        path: "/v2/user",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 11,
+        path: "/v2/group",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
+    {
+        id: 12,
+        path: "/v2/login",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
 ]
 
 
@@ -67,18 +115,103 @@ export const routerC: IBaseRouter[] = [
     },
     {
         id: 2,
-        path: "/v2/c/login",
+        path: "/v2/login",
         exact: true,
         component: lazy(() => import('../Pages/ALogin'))
     },
-    // {
-    //     id: 3,
-    //     path: "/v2/c/test",
-    //     exact: true,
-    //     component: lazy(() => import('../Pages/CTest'))
-    // }
+    {
+        id: 3,
+        path: "/v2/c/test",
+        exact: true,
+        component: lazy(() => import('../Pages/CTest'))
+    },
+    {
+        id: 4,
+        path: "/v2/home",
+        exact: true,
+        component: lazy(() => import('../Pages/CHome'))
+    },
+    {
+        id: 5,
+        path: "/v2/problem",
+        exact: true,
+        component: lazy(() => import('../Pages/CProblem'))
+    },
+    {
+        id: 6,
+        path: "/v2/submission",
+        exact: true,
+        component: lazy(() => import('../Pages/CSubmissions'))
+    },
+    {
+        id: 7,
+        path: "/v2/contest",
+        exact: true,
+        component: lazy(() => import('../Pages/CContest'))
+    },
+    {
+        id: 8,
+        path: "/v2/group",
+        exact: true,
+        component: lazy(() => import('../Pages/CGroup'))
+    },
+    {
+        id: 9,
+        path: "/v2/user",
+        exact: true,
+        component: lazy(() => import('../Pages/CGroup'))
+    },
+    {
+        id: 10,
+        path: "/v2/resetpass",
+        exact: true,
+        component: lazy(() => import('../Pages/AResetPass'))
+    },
 ]
-
+export const routerC_M: IRouter[] = [
+    {
+        id: 1,
+        title_i18n: "Home",
+        path: "/v2/home",
+        exact: true,
+        component: lazy(() => import('../Pages/CHome'))
+    },
+    {
+        id: 2,
+        title_i18n: "Problem",
+        path: "/v2/problem",
+        exact: true,
+        component: lazy(() => import('../Pages/CProblem'))
+    },
+    {
+        id: 3,
+        path: "/v2/submission",
+        title_i18n: "Submission",
+        exact: true,
+        component: lazy(() => import('../Pages/CSubmissions'))
+    },
+    {
+        id: 4,
+        path: "/v2/contest",
+        title_i18n: "Contest",
+        exact: true,
+        component: lazy(() => import('../Pages/CContest'))
+    },
+    {
+        id: 5,
+        path: "/v2/group",
+        title_i18n: "Group",
+        exact: true,
+        component: lazy(() => import('../Pages/CGroup'))
+    },
+    {
+        id: 6,
+        path: "/v2/exam/list",
+        title_i18n: "Exam System",
+        exact: true,
+        component: <></>
+    },
+]
 
 export const routerE: IBaseRouter[] = [
     {
@@ -174,8 +307,8 @@ export const routerM: IRouter[] = [
 ]
 
 export function getRouterPath(router: any[], id: number) {
-    for (const x of router){
-        if(x.id === id) return x.path
+    for (const x of router) {
+        if (x.id === id) return x.path
     }
     return ''
 }

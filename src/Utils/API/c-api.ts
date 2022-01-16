@@ -1,85 +1,7 @@
-import axios, {
-    AxiosResponse, AxiosRequestConfig
-} from "axios";
-
-import {
-    Get,
-    Post,
-    GetError, thirdPartyLogin
-} from '../../Type/types'
-import apiAddress from "./apiAddress";
+import {thirdPartyLogin} from '../../Type/types'
 import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
-import {message} from "antd";
-import {store} from "../../Redux/Store";
+import request from "./request";
 
-
-const baseUrl = apiAddress().CLIENT_SERVER + '/api'
-
-const service = axios.create({
-    baseURL: baseUrl,
-    timeout: 5000,
-})
-service.defaults.withCredentials = true
-
-const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.get(url, {
-            params, ...config
-        });
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            default:
-                message.error(response.data.message);
-                return null
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-        // TODO: Update Time
-    }
-}
-
-const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.post(url, data, {
-            ...config
-        });
-        // console.log("post", response)
-        switch (response.data.code) {
-            case 0:
-                message.success(response.data.message)
-                return response.data.data
-            default:
-                message.error(response.data.message);
-                return null
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
-}
-
-const request = {
-    get,
-    post
-};
 
 export default {
     // Config
@@ -115,7 +37,10 @@ export default {
     async getProfile() {
         return request.get("/user/getProfile")
     },
-    async rejudge(data: string[]){
+    async rejudge(data: string[]) {
         return request.post("/submit/rejudge", data)
+    },
+    async getCaptcha() {
+        return request.get("/user/getCaptcha")
     }
 }

@@ -200,9 +200,6 @@ export function getProblemTodo(data: IGetProInfo) {
                         })
                     }
                     let markdown = resData.problemDescriptionDTO.markdownDescription
-                    markdown = markdown.replace("$", " $ ")
-                    markdown = markdown.replace("  $", " $")
-                    markdown = markdown.replace("$  ", "$ ")
                     data = {
                         isLoad: true,
                         title: resData.problemTitle,

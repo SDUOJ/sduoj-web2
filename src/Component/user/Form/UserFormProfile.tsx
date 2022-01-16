@@ -4,6 +4,8 @@ import {IUserPropRoles, Role, Sex} from '../../../Type/Iuser'
 import {Form, FormInstance, Input, Radio, Select} from "antd";
 import {withTranslation} from "react-i18next";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
+import ItemUsername from "./ItemUsername";
+import ItemEmail from "./ItemEmail";
 
 interface IUserFormInfo extends IUserPropRoles{
     userForm: React.Ref<FormInstance<any>> | undefined
@@ -30,11 +32,7 @@ class UserFormProfile extends Component<IUserFormInfo, any> {
                     initialValues={this.props.initData}
                     scrollToFirstError>
 
-                    <Form.Item name="username" label={this.props.t("username")}
-                               rules={[{required: this.props.showUsername, message: this.props.t("usernameEmpty")}]}
-                               hasFeedback>
-                        <Input disabled={!this.props.showUsername}/>
-                    </Form.Item>
+                    <ItemUsername showUsername={this.props.showUsername}/>
 
                     <Form.Item name="nickname" label={this.props.t("nickname")}>
                         <Input/>
@@ -57,11 +55,7 @@ class UserFormProfile extends Component<IUserFormInfo, any> {
                         <Input/>
                     </Form.Item>
 
-                    <Form.Item name="email" label={this.props.t("email")}
-                               rules={[{type: 'email', message: this.props.t('emailError'),}]}
-                               hasFeedback>
-                        <Input/>
-                    </Form.Item>
+                    <ItemEmail needVerify={false}/>
 
                     <Form.Item name="roles" label={this.props.t("roles")}
                                rules={[{required: true, message: 'Please select gender!'}]}

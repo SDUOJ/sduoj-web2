@@ -1,18 +1,11 @@
-import axios, {
-    AxiosResponse, AxiosRequestConfig, CustomSuccessData
-} from "axios";
-
 import {
     checkPointData, examID,
-    Get,
-    GetError,
     groupInfo,
     groupListQuery,
     judgeTemplate,
     loginInfo,
     modifyProblemsCheckPoint,
     multiCheckpointFileUpload,
-    Post,
     problemBasic,
     problemDescription,
     problemListQuery,
@@ -20,81 +13,9 @@ import {
     studentBasic, updateUserStates,
     userListQuery
 } from '../../Type/types'
-import apiAddress from "./apiAddress";
-import {store} from "../../Redux/Store";
-import {message} from "antd";
 import {SubmissionQueryType} from "../../Type/IManage";
 
-const baseUrl = apiAddress().MANAGE_SERVER + '/api'
-
-const service = axios.create({
-    baseURL: baseUrl,
-    timeout: 5000,
-})
-service.defaults.withCredentials = true
-
-const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.get(url, {
-            params, ...config
-        });
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            case 429:
-                //        TODO
-                break;
-            default:
-                //        TODO
-                break;
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
-}
-
-const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.post(url, data, {
-            ...config
-        });
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            case 429:
-                //        TODO
-                break;
-            default:
-                //        TODO
-                break;
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response == undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
-        }
-        switch (response.data.code) {
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
-}
-
-const request = {
-    get,
-    post
-};
+import request from "./request";
 
 export default {
     // 配置相关
@@ -321,10 +242,10 @@ export default {
     updateExam: async function (data: any) {
         return request.post("/manage/exam/update", data)
     },
-    judgeExam: async function (examId: examID){
+    judgeExam: async function (examId: examID) {
         return request.get("/manage/exam/judge/" + examId)
     },
-    getExamSubmission: async function (data: SubmissionQueryType & {examId: examID}){
+    getExamSubmission: async function (data: SubmissionQueryType & { examId: examID }) {
         return request.post("/manage/exam/querySubmissionList", data)
     },
     /* ************ 选择题 ****************** */
@@ -334,10 +255,10 @@ export default {
     createChoiceProblem: async function (data: any) {
         return request.post("/manage/exam/choiceProblem/createChoiceProblem", data)
     },
-    updateChoiceProblem: async function (data: any){
+    updateChoiceProblem: async function (data: any) {
         return request.post("/manage/exam/choiceProblem/updateChoiceProblem", data)
     },
-    getChoiceInfo: async function (data: string){
+    getChoiceInfo: async function (data: string) {
         return request.get("/manage/exam/choiceProblem/queryChoiceProblem?problemCode=" + data)
     },
     getChoiceProblem: async function (params: { problemCode: string }) {

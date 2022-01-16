@@ -21,7 +21,7 @@ export const UserReducer = (state: UserState = StateInit, action: UserAction) =>
         case "userLogout":
             State.isLogin = false
             State.userInfo = undefined
-            message.info("已退出登录")
+            // message.info("已退出登录")
             break
 
         default:

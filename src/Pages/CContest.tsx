@@ -2,15 +2,15 @@ import {Component} from "react";
 import {withRouter} from "react-router-dom";
 
 
-class CTest extends Component<any, any> {
+class CContest extends Component<any, any> {
 
     render() {
         return (
             <>
-
+                比赛页面
             </>
         );
     }
 }
 
-export default withRouter(CTest)
+export default withRouter(CContest)
