@@ -1,12 +1,12 @@
+import {message} from "antd";
+import moment from "moment";
 import {
     examBasicType,
     examDataType,
     examProblemGroupType,
     examProblemListType,
     examProblemType, problemGroupProType
-} from "../../Type/IManage";
-import {message} from "antd";
-import moment from "moment";
+} from "../../Type/IExam";
 
 function examBasicInfoChecker(data: examBasicType): boolean {
     if (data.examTitle === undefined ||

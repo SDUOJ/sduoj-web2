@@ -5,10 +5,11 @@ import {withTranslation} from "react-i18next";
 import Meta from "antd/lib/card/Meta";
 import TextArea from "antd/lib/input/TextArea";
 import {connect} from "react-redux";
-import {examBasicType, ManageState} from "../../../Type/IManage";
+import {ManageState} from "../../../Type/IManage";
 import {withRouter} from "react-router";
 import moment from "moment";
 import {TimeDiff} from "../../../Utils/Time";
+import {examBasicType} from "../../../Type/IExam";
 
 const {RangePicker} = DatePicker;
 
@@ -153,10 +154,7 @@ const ExamBaseForm = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ManageState = state.ManageReducer
-    return {
-        examBasicInfo: State.examData.examBasicInfo
-    }
+
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

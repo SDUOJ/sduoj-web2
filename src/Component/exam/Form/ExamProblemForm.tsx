@@ -8,14 +8,11 @@ import {withTranslation} from "react-i18next";
 import ProblemAddForm from "../../problem/ProblemAddForm";
 import {connect} from "react-redux";
 import {
-    examProblemGroupType,
-    examProblemListType,
     genNumberList,
     ManageState
 } from "../../../Type/IManage";
-import {
-    formSubmitType,
-} from "../../../Redux/Action/manage";
+import {examProblemGroupType, examProblemListType} from "../../../Type/IExam";
+
 
 
 // 可拖拽的排序手柄
@@ -27,7 +24,7 @@ const XSortableContainer = SortableContainer((props: any) => <tbody {...props} /
 export type problemGroupUIMode = "easy" | "all"
 
 
-const ExamProblemForm = (props: formSubmitType & any) => {
+const ExamProblemForm = (props: any) => {
     // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
 

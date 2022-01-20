@@ -4,14 +4,6 @@ import {PlusOutlined,} from "@ant-design/icons"
 import {withTranslation} from "react-i18next";
 import moment from "moment";
 import {connect} from "react-redux";
-import {
-    examBasicType,
-    examProblemGroupType,
-    examProblemListType, examProblemType,
-    examUserType,
-    ProGroupTypeFtS, ProGroupTypeStF
-} from "../../../Type/IManage";
-import {formSubmitType, SubmitExamFormTodo} from "../../../Redux/Action/manage";
 import ExamBaseForm from "./ExamBaseForm";
 import TabPane from "@ant-design/pro-card/lib/components/TabPane";
 import ExamMemberForm from "./ExamMemberForm";
@@ -19,9 +11,16 @@ import ExamProblemForm from "./ExamProblemForm";
 import mApi from "Utils/API/m-api"
 import {groupSelection} from "../../../Type/Igroup";
 import {examFormChecker} from "../../../Utils/Checker/examFormChecker";
+import {
+    examBasicType,
+    examProblemGroupType,
+    examProblemListType,
+    examProblemType,
+    examUserType, ProGroupTypeFtS, ProGroupTypeStF
+} from "../../../Type/IExam";
 
 
-const ExamForm = (props: formSubmitType & any) => {
+const ExamForm = (props: any) => {
 
     const ExamBaseFormRef = React.createRef<FormInstance>()
     const ExamUserFormRef = React.createRef<FormInstance>()
@@ -282,7 +281,6 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    SubmitExamForm: (type: formSubmitType) => dispatch(SubmitExamFormTodo)
 })
 
 export default connect(
