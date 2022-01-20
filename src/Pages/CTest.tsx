@@ -7,7 +7,7 @@ class CTest extends Component<any, any> {
 
     render() {
         return (
-            <div style={{width: "1000px"}}>
+            <div style={{width: "1250px"}}>
                 <Editor/>
             </div>
         );

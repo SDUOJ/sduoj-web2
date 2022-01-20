@@ -15,7 +15,7 @@ import "Assert/css/vditor.css"
 
 export interface EditorProps {
     value: string
-    minHeight: number
+    height?: number
     save: any
 }
 
@@ -44,12 +44,11 @@ const CopiedButton = (props: any) => {
 
 const Editor = (props: EditorProps & any) => {
     const [vditor, setVditor] = useState<any>()
-    const [value, setValue] = useState<string>(props.value)
+    const [value, setValue] = useState<string>(props.value === undefined ? "" : props.value)
 
     useEffect(() => {
         const vditor0 = new Vditor("vditor", {
-            height: "auto",
-            minHeight: props.minHeight,
+            height: props.height === undefined ? 800 : props.height,
             mode: "ir", //及时渲染模式
             placeholder: "支持 Markdown，支持 KaTex 公式\n表格插入一行：Ctrl+'+' \n表格插入一列：Ctrl+Shift+'+'",
             lang: props.langCode,
