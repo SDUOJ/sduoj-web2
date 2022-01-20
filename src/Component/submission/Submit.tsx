@@ -1,7 +1,7 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Form, FormInstance, message, Modal, Select, Space, Tabs, Upload} from "antd";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
-import {JudgeTemplate, ProblemState, ProgramContent} from "../../Type/IProblem";
+import {JudgeTemplate, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {
@@ -13,7 +13,6 @@ import CodeEditor from "../common/CodeEditor";
 import TextArea from "antd/lib/input/TextArea";
 import {ConfigState} from "../../Type/IConfig";
 import {withRouter} from "react-router-dom";
-import {examID} from "../../Type/types";
 import eApi from "../../Utils/API/e-api";
 import {TopSubmissionInfoType} from "../../Type/ISubmission";
 

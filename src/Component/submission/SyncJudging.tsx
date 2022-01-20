@@ -10,7 +10,7 @@ export interface IWebSocket{
 
 export const SyncJudging = (props: IWebSocket) => {
     const {sendMessage, lastMessage, readyState} = useWebSocket(
-        apiAddress().SOCKET_SERVER + "/ws/submission",{share: true}, props.open
+        apiAddress().SOCKET_SERVER + "/ws/submission",{share: false}, props.open
     );
 
     useEffect(() => {

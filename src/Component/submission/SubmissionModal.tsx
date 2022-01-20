@@ -39,6 +39,7 @@ class SubmissionModal extends Component<any, any> {
             <>
                 <Modal
                     title={"提交详情"}
+                    destroyOnClose={true}
                     visible={this.state.ProcessingVis}
                     onCancel={() => this.props.setSubmissionModalVis(false)}
                     width={1200}
