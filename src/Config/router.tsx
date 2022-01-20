@@ -248,46 +248,46 @@ export const routerE: IBaseRouter[] = [
 
 
 export const routerM: IRouter[] = [
-    // {
-    //     id: 0,
-    //     path: "/manage/user",
-    //     title_i18n: "user",
-    //     exact: false,
-    //     icon: <UserOutlined/>,
-    //     component: lazy(() => import('../Pages/MUser'))
-    // },
-    // {
-    //     id: 1,
-    //     path: "/manage/problem",
-    //     title_i18n: "problem",
-    //     exact: false,
-    //     icon: <FolderOutlined/>,
-    //     component: lazy(() => import('../Pages/MProblem'))
-    // },
-    // {
-    //     id: 2,
-    //     path: "/manage/contest",
-    //     title_i18n: "contest",
-    //     exact: false,
-    //     icon: <AppstoreOutlined/>,
-    //     component: lazy(() => import('../Pages/MContest'))
-    // },
-    // {
-    //     id: 3,
-    //     path: "/manage/template",
-    //     title_i18n: "template",
-    //     exact: false,
-    //     icon: <FileOutlined/>,
-    //     component: lazy(() => import('../Pages/MJudgeTemplate'))
-    // },
-    // {
-    //     id: 4,
-    //     path: "/manage/group",
-    //     title_i18n: "group",
-    //     exact: false,
-    //     icon: <UsergroupAddOutlined/>,
-    //     component: lazy(() => import('../Pages/MGroup'))
-    // },
+    {
+        id: 0,
+        path: "/v2/manage/user",
+        title_i18n: "user",
+        exact: false,
+        icon: <UserOutlined/>,
+        component: lazy(() => import('../Pages/MUser'))
+    },
+    {
+        id: 1,
+        path: "/v2/manage/problem",
+        title_i18n: "problem",
+        exact: false,
+        icon: <FolderOutlined/>,
+        component: lazy(() => import('../Pages/MProblem'))
+    },
+    {
+        id: 2,
+        path: "/v2/manage/contest",
+        title_i18n: "contest",
+        exact: false,
+        icon: <AppstoreOutlined/>,
+        component: lazy(() => import('../Pages/MContest'))
+    },
+    {
+        id: 3,
+        path: "/v2/manage/template",
+        title_i18n: "template",
+        exact: false,
+        icon: <FileOutlined/>,
+        component: lazy(() => import('../Pages/MJudgeTemplate'))
+    },
+    {
+        id: 4,
+        path: "/v2/manage/group",
+        title_i18n: "group",
+        exact: false,
+        icon: <UsergroupAddOutlined/>,
+        component: lazy(() => import('../Pages/MGroup'))
+    },
     {
         id: 5,
         path: "/v2/manage/exam",

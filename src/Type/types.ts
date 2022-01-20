@@ -88,7 +88,7 @@ export interface modifyProblemsCheckPoint {
 }
 
 export type problemListQuery = query & {
-    ascending: boolean,
+    ascending?: boolean,
     remoteOj?: any
 }
 

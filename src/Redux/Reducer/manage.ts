@@ -1,19 +1,16 @@
 import {deepClone} from "@ant-design/charts/es/util";
-import {examProblemGroupType, examProblemListType, ManageState} from "../../Type/IManage";
+import {ManageState} from "../../Type/IManage";
 import {ManageAction} from "../Action/manage";
 import {update} from "js-md5";
+import {examProblemGroupType, examProblemListType} from "../../Type/IExam";
 
 
 const initState: ManageState = {
-    examData: {
-        examBasicInfo:{
-            examTitle: "",
-            examStartEndTime: [],
-            examDescription: ""
-        },
-        examProblemListInfo: [],
-        examProblemGroupInfo: [],
-    },
+    userData: {},
+    tableData:{
+        selectedRowKeys: [],
+        tableVersion: {}
+    }
 }
 
 
@@ -21,6 +18,16 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
     // 此处不做深拷贝，redux无法检测到更新
     let State: ManageState = state
     switch (action.type) {
+
+        case "setSelectedRowKeys":
+            State.tableData.selectedRowKeys = action.data
+            break
+
+        case "addTableVersion":
+            let value = State.tableData.tableVersion[action.data]
+            if(value == undefined) State.tableData.tableVersion[action.data] = 1
+            else value += 1
+            break
 
         default:
             break

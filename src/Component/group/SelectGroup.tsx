@@ -6,10 +6,11 @@ import {withTranslation} from "react-i18next";
 import TextArea from "antd/lib/input/TextArea";
 import Search from "antd/lib/input/Search";
 import {connect} from "react-redux";
-import {examUserType, ManageState} from "Type/IManage";
+import {ManageState} from "Type/IManage";
 import {groupSelection} from "Type/Igroup";
 import mApi from "Utils/API/m-api";
 import {QuestionCircleOutlined} from "@ant-design/icons"
+import {examUserType} from "../../Type/IExam";
 
 const {Option} = Select;
 

@@ -155,5 +155,9 @@
   "Verify": "验证",
   "emailCode": "邮箱验证码",
   "captcha": "验证码",
-  "usernameOrEmail": "用户名或邮箱"
+  "usernameOrEmail": "用户名或邮箱",
+  "AnnouncementDetails": "公告详情",
+  "Like": "赞",
+  "Dislike": "踩",
+  "toManage": "跳转到管理端"
 }

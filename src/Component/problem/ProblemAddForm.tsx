@@ -5,9 +5,10 @@ import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-import {examProblemDescription, examProblemInfo, examProblemType, genNumberList} from "../../Type/IManage";
+import {genNumberList} from "../../Type/IManage";
 import mApi from "Utils/API/m-api"
 import Paragraph from "antd/lib/typography/Paragraph";
+import {examProblemDescription, examProblemInfo, examProblemType} from "../../Type/IExam";
 
 
 const ProblemAddForm = (props: any) => {

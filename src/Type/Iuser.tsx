@@ -1,16 +1,11 @@
 import {WithTranslation} from "react-i18next";
 
 export enum Sex {
-    Unknown = 0,
+    Unknown = 2,
     Male = 1,
-    Female = 2
+    Female = 0
 }
 
-// export enum Role {
-//     SuperAdmin = 0,
-//     Admin = 1,
-//     User = 2
-// }
 
 export type Role = "superadmin" | "admin" | "user"
 

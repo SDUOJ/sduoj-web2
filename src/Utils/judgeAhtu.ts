@@ -6,7 +6,8 @@ import {Role} from "../Type/Iuser";
  * @param roles 用户权限
  * @param minRole 最小限制权限
  */
-export default function judgeAuth(roles: Role[], minRole: Role[]): boolean {
+export default function judgeAuth(roles: Role[] | undefined, minRole: Role[]): boolean {
+    if (roles === undefined) return false
     let ok = false;
     roles.map(v => {
         if (minRole.includes(v)) ok = true;

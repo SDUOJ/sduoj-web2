@@ -1,15 +1,11 @@
 import {Component} from "react";
 import {withRouter} from "react-router-dom";
-import Announcement from "../Component/common/Announcement";
+import Announcement from "../Component/announcement/Announcement";
 import {Button, Card, Carousel, Col, Image, Row} from "antd";
 import BK1 from "Assert/img/ban1news.jpg"
 import SearchProblem from "../Component/problem/SearchProblem";
 
 class CHome extends Component<any, any> {
-
-    onClick = ()=>{
-
-    }
 
     render() {
         return (
@@ -27,7 +23,6 @@ class CHome extends Component<any, any> {
                         </Row>
                     </div>
                 </div>
-
             </>
         );
     }

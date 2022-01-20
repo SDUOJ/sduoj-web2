@@ -155,5 +155,9 @@
   "Verify": "Verify",
   "emailCode": "Email Code",
   "captcha": "Captcha",
-  "usernameOrEmail": "Username Or Email"
+  "usernameOrEmail": "Username Or Email",
+  "AnnouncementDetails": "Announcement Details",
+  "Like": "Like",
+  "Dislike": "Dislike",
+  "toManage": "To Manage"
 }

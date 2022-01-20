@@ -4,9 +4,10 @@ import UserList from "../Component/user/UserList";
 import UserListOperHeader from "../Component/user/UserListOperHeader";
 import {IUserPropRoles, Role, Sex} from "../Type/Iuser";
 import {RouteComponentProps} from "react-router-dom";
-import MTable, {colType, extraFunction} from "../Component/layout/MTable";
-import {Tooltip} from "antd";
+import MTable from "../Component/common/TableWithSelection";
+import {Button, Space, Tag, Tooltip} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
+import {withTranslation} from "react-i18next";
 
 
 interface MUserState {
@@ -14,10 +15,10 @@ interface MUserState {
     ids: number[]
 }
 
-class MUser extends Component<IUserPropRoles & RouteComponentProps, MUserState> {
+class MUser extends Component<any, MUserState> {
 
 
-    constructor(props: IUserPropRoles & RouteComponentProps, context: any) {
+    constructor(props: any, context: any) {
         super(props, context);
         this.state = {
             UserListObj: null,
@@ -34,43 +35,28 @@ class MUser extends Component<IUserPropRoles & RouteComponentProps, MUserState> 
 
     render() {
 
-        const colData: colType[] = [
+        let colData: any[] = [
             {
-                title: "#",
-                dataIndex: "id",
-                render: null,
+                title: "ID",
+                dataIndex: "userId",
                 width: 50,
                 responsive: ["lg", "sm", "xs"]
             },
             {
-                title: "username",
+                title: this.props.t("username"),
                 dataIndex: "username",
                 width: "auto",
                 responsive: ["lg", "sm", "xs"],
-                render: (str: string) => {
-                    return (
-                        <Tooltip placement="topLeft" title={str}>
-                            {str}
-                        </Tooltip>
-                    )
-                }
             },
             {
-                title: "nickname",
+                title: this.props.t("nickname"),
                 dataIndex: "nickname",
-                width: 100,
+                width: "auto",
                 responsive: ["lg", "sm"],
-                render: (str: string) => {
-                    return (
-                        <Tooltip placement="topLeft" title={str}>
-                            {str}
-                        </Tooltip>
-                    )
-                }
             },
             {
-                title: "sex",
-                dataIndex: "sex",
+                title: this.props.t("sex"),
+                dataIndex: "gender",
                 width: 50,
                 responsive: ["lg"],
                 render: (sex: Sex) => {
@@ -85,69 +71,62 @@ class MUser extends Component<IUserPropRoles & RouteComponentProps, MUserState> 
                 }
             },
             {
-                title: "student_id",
-                dataIndex: "student_id",
+                title: this.props.t("student_id"),
+                dataIndex: "studentId",
                 width: "auto",
                 responsive: ["lg"],
-                render: (str: string) => {
-                    return (
-                        <Tooltip placement="topLeft" title={str}>
-                            {str}
-                        </Tooltip>
-                    )
-                }
             },
             {
-                title: "sdu_id",
-                dataIndex: "sdu_id",
+                title: this.props.t("sdu_id"),
+                dataIndex: "sduId",
                 width: "auto",
                 responsive: ["lg"],
-                render: (str: string) => {
-                    return (
-                        <Tooltip placement="topLeft" title={str}>
-                            {str}
-                        </Tooltip>
-                    )
-                }
             },
             {
-                title: "email",
+                title: this.props.t("email"),
                 dataIndex: "email",
                 width: "auto",
                 responsive: ["lg", "sm"],
-                render: (str: string) => {
-                    return (
-                        <Tooltip placement="topLeft" title={str}>
-                            {str}
-                        </Tooltip>
-                    )
-                }
-            }
-        ]
-        const func: extraFunction[] = [
-            {
-                name: "Add",
-                showRoles: ["admin", "superadmin"],
-                extraFunc: (id: number) => alert(111)
             },
             {
-                name: "Delete",
-                showRoles: ["superadmin"],
-                extraFunc: (id: number) => alert(222)
+                title: this.props.t("roles"),
+                width: "200px",
+                render: (text: any, rows: any) => {
+                    return (
+                        <Space size={3}>
+                            {
+                                rows.roles !== null && rows.roles.map((value: Role)=>{
+                                    switch (value) {
+                                        case "user":
+                                            return <Tag>{this.props.t("user")}</Tag>
+                                        case "admin":
+                                            return <Tag color={"gold"}>{this.props.t("admin")}</Tag>
+                                        case "superadmin":
+                                            return <Tag color={"red"}>{this.props.t("superadmin")}</Tag>
+                                    }
+                                })
+                            }
+                        </Space>
+                    )
+                }
+            },
+            {
+                title: this.props.t("operator"),
+                width: "150px",
+                render: (text: any, rows: any) => {
+                    return <Button type={"link"}>{this.props.t("Edit")}</Button>
+                }
             }
         ]
 
         return (
             <>
                 <div style={{marginTop: -20, overflow: "hidden"}}>
-                    <MTable id={1} roles={["superadmin"]} colData={colData} func={func}/>
-
-                    {/*<UserListOperHeader id={this.props.id} roles={this.props.roles} data={this.state.ids} obj={this.state.UserListObj}/>*/}
-                    {/*<UserList id={this.props.id} roles={this.props.roles} obj={this.Ref}/>*/}
+                    <MTable colData={colData}/>
                 </div>
             </>
         )
     }
 }
 
-export default withRouter(MUser)
+export default withTranslation()(withRouter(MUser))

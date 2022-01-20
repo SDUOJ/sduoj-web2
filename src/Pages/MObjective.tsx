@@ -1,5 +1,4 @@
 import React, {Component, Dispatch} from "react";
-import {SortableTable} from "../Component/common/sortableTable";
 import ObjectiveForm from "../Component/problem/ObjectiveForm";
 import {UserState} from "../Type/Iuser";
 import {connect} from "react-redux";

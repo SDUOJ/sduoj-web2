@@ -47,7 +47,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         // console.log("post", response)
         switch (response.data.code) {
             case 0:
-                message.success(response.data.message)
+                // message.success(response.data.message)
                 return response.data.data
             default:
                 message.error(response.data.message);

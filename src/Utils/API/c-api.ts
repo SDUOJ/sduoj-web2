@@ -1,4 +1,4 @@
-import {thirdPartyLogin} from '../../Type/types'
+import {problemListQuery, thirdPartyLogin} from '../../Type/types'
 import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
 import request from "./request";
 
@@ -42,5 +42,9 @@ export default {
     },
     async getCaptcha() {
         return request.get("/user/getCaptcha")
-    }
+    },
+    async getProblemList(data: problemListQuery){
+        return request.get("/problem/list", data)
+    },
+    // async
 }

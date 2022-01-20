@@ -1,20 +1,17 @@
 import React, {Component, Dispatch} from "react";
-import UserAvatarBack from "../user/UserAvatarBack";
-import {Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
+import { Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
-import {Link, RouteComponentProps} from "react-router-dom";
-import {AppstoreOutlined, DownOutlined, LogoutOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import md5 from "js-md5";
+import {Link} from "react-router-dom";
+import {DownOutlined, LogoutOutlined, RightOutlined, UserOutlined} from "@ant-design/icons";
 import logo from "../../Assert/img/logo.png";
-import {ExamState, IUserExamInfo} from "../../Type/IExam";
-import {IUserPropRoles, UserState} from "../../Type/Iuser";
-import {examID} from "../../Type/types";
+import { UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {testLoginTodo, userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
-import ExamOver from "../exam/ExamOver";
-import {routerC_M, routerM} from "../../Config/router";
+import {testLoginTodo, userLogoutTodo} from "../../Redux/Action/user";
+import {routerC_M} from "../../Config/router";
+import UserAvatar from "../user/Avatar";
+import judgeAuth from "../../Utils/judgeAhtu";
 
 const {Header} = Layout;
 
@@ -56,7 +53,7 @@ class CHeader extends Component<any, any> {
                     <img src={logo} style={{width: "125px", height: '30px'}}
                          alt={"SDUOJ-logo"}/>
                 </div>
-                <div style={{float: "left", width: "500px"}}>
+                <div style={{float: "left", width: "600px"}}>
                     <Menu
                         mode="horizontal"
                         theme={"light"}
@@ -83,6 +80,21 @@ class CHeader extends Component<any, any> {
                                     return (
                                         <Dropdown overlay={
                                             <Menu>
+                                                {
+                                                    this.props.roles !== undefined &&
+                                                    judgeAuth(this.props.roles, ["admin", "superadmin"]) &&
+                                                    (
+                                                        <Menu.Item
+                                                            key="0"
+                                                            icon={<RightOutlined />}
+                                                            onClick={() => {
+                                                                this.props.history.push("/v2/manage")
+                                                            }}
+                                                        >
+                                                            {this.props.t("toManage")}
+                                                        </Menu.Item>
+                                                    )
+                                                }
                                                 <Menu.Item
                                                     key="1"
                                                     icon={<UserOutlined/>}
@@ -107,9 +119,9 @@ class CHeader extends Component<any, any> {
                                             <Button type="text" size={"large"}>
                                                 <Space>
                                                     <div style={{marginTop: -10}}>
-                                                        {this.props.realName}
+                                                        <UserAvatar email={this.props.email}/>
                                                         <Divider type="vertical"/>
-                                                        {this.props.sduId}
+                                                        {this.props.username}
                                                     </div>
                                                     <DownOutlined style={{fontSize: 10, marginBottom: 20}}/>
                                                 </Space>
@@ -139,14 +151,12 @@ class CHeader extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
-    const State: ExamState = state.ExamReducer
-    const realName = UState.userInfo?.realName
-    const sduId = UState.userInfo?.sduId
+
     return {
         isLogin: UState.isLogin,
-        realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
-        sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
-        ExamInfoLoad: State.ExamInfoLoad,
+        username: UState.userInfo?.username,
+        email: UState.userInfo?.email,
+        roles: UState.userInfo?.roles
     }
 }
 

@@ -1,14 +1,37 @@
 import {Component} from "react";
-import {Card, Space, Table} from "antd";
+import {Card, Modal, Space, Table} from "antd";
 import {withTranslation} from "react-i18next";
 import {InfoCircleOutlined} from "@ant-design/icons"
+import ANCContent from "./Content";
 
 class Announcement extends Component<any, any> {
+
+
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            show: false,
+            showId: 0
+        }
+    }
 
     render() {
         return (
             <>
-
+                <Modal
+                    title={this.props.t("AnnouncementDetails")}
+                    visible={this.state.show}
+                    onCancel={() => {
+                        this.setState({show: false})
+                    }}
+                    onOk={() => {
+                        this.setState({show: true})
+                    }}
+                    footer={null}
+                    width={1100}
+                >
+                    <ANCContent id={this.state.showId}/>
+                </Modal>
                 <Card
                     title={
                         <>
@@ -34,8 +57,13 @@ class Announcement extends Component<any, any> {
                                 title: "标题",
                                 dataIndex: "title",
                                 key: "title",
-                                render: (text: string) =>{
-                                    return <a href={"/#"}>{text}</a>
+                                render: (text: string) => {
+                                    return <a onClick={() => {
+                                        this.setState({
+                                            show: true,
+                                            showId: parseInt(text)
+                                        })
+                                    }}>{text}</a>
                                 }
                             },
                             {

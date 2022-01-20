@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {RightOutlined, UserOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
 import md5 from "js-md5";
+import UserAvatar from "./Avatar";
 
 
 class UserAvatarBack extends Component<any, any> {
@@ -20,10 +21,7 @@ class UserAvatarBack extends Component<any, any> {
                                     {
                                         this.props.email != null && (
                                             <>
-                                                <Avatar icon={<UserOutlined/>}
-                                                        src={"https://gravatar.inwao.com/avatar/" + md5(this.props.email)}
-                                                        alt={"头像"}
-                                                />
+                                                <UserAvatar email={this.props.email}/>
                                                 <Divider type="vertical"/>
                                             </>
                                         )

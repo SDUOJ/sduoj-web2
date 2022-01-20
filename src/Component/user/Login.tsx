@@ -23,14 +23,6 @@ import ForgetPass from "./Form/ForgetPass";
 
 type LoginType = 'SDUCAS' | 'account';
 
-const iconStyles: CSSProperties = {
-    marginLeft: '16px',
-    color: 'rgba(0, 0, 0, 0.2)',
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-};
-
 
 const Login = (props: any) => {
 
@@ -46,12 +38,7 @@ const Login = (props: any) => {
                 title="用户登录"
                 subTitle="山东大学在线评测系统"
                 actions={
-                    <Space>
-                        {/*其他方式*/}
-                        {/*<QqOutlined style={iconStyles}/>*/}
-                        {/*<WeiboOutlined style={iconStyles}/>*/}
-                        {/*<WechatOutlined style={iconStyles}/>*/}
-                    </Space>
+                    <></>
                 }
                 submitter={{
                     resetButtonProps: false,

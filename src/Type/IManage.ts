@@ -1,76 +1,20 @@
-import moment from "moment";
 import React from "react";
-import {SExamInfo, SExamManageInfo} from "./IExam";
 
 
-export type problemGroupProType = "single" | "multi" | "program"
-export const ProGroupTypeStF: any = {"Program": "program", "MultipleChoice": "multi", "SingleChoice": "single"}
-export const ProGroupTypeFtS: any = {"program": "Program", "multi": "MultipleChoice", "single": "SingleChoice"}
-
-export interface examProblemType {
-    id: React.Key
-    ProblemCode?: string
-    ProblemScore?: number
-    ProblemAlias?: string
-    ProblemDescription?: string
-    ProblemSubmitNumber?: number
+interface TableType{
+    selectedRowKeys: React.Key[]
+    tableVersion: any
 }
 
-export interface examProblemListType {
-    groupId: React.Key
-    proList: examProblemType[]
-    problemInfo: examProblemInfo[]
-    checkedProblemCode: string[]
-}
+export interface userDataType {
 
-export interface examProblemGroupType {
-    id: React.Key
-    ProblemGroupName?: string                   // 题组名
-    ProblemGroupType?: problemGroupProType      // 题组题型        【select】
-    ProblemGroupStartEndTime?: moment.Moment[]  // 题组开始时间     【Date】
-    ProblemGroupPremise?: React.Key             // 题组开始先决条件  【select】
-    ProblemGroupSumScore?: number               // 题组总分数
-}
-
-export interface examUserType {
-    ManageGroup?: React.Key
-    ParticipatingGroup?: React.Key[]
-}
-
-export interface examBasicType {
-    examTitle: string,
-    examStartEndTime: moment.Moment[],
-    examDescription: string,
-    isScoreVisible?: boolean,
-    isSubmissionScoreVisible?: boolean
-}
-
-export interface examDataType {
-    examProblemListInfo: examProblemListType[]
-    examProblemGroupInfo: examProblemGroupType[]
-    examBasicInfo: examBasicType
 }
 
 export interface ManageState {
-    examData: examDataType
+    userData: userDataType
+    tableData: TableType
 }
 
-export interface examProblemInfo {
-    problemCode: string
-    problemDescription?: any
-}
-
-
-export interface examProblemDescription {
-    id: string
-    isPublic: number
-    problemCode: string
-    problemId: string
-    title: string
-    userId: string
-    username: string
-    voteNum: number
-}
 
 export interface SubmissionQueryType {
     username?: string,
