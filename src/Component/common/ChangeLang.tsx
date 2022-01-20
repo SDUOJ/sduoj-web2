@@ -26,7 +26,10 @@ class ChangeLang extends Component<any, any> {
 
     changeLang(value: string) {
         i18n.changeLanguage(value)
-        this.props.ChangeLanguage(languageMap[value])
+        const id = language.findIndex((item)=>{
+            return item.id == value
+        })
+        this.props.ChangeLanguage(languageMap[value], language[id].code)
     }
 
     render() {
@@ -58,9 +61,10 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
-    ChangeLanguage: (lang:Locale) => dispatch({
+    ChangeLanguage: (lang:Locale, langCode: string) => dispatch({
         type: "updateLanguage",
-        lang: lang
+        lang: lang,
+        langCode: langCode
     }),
 })
 

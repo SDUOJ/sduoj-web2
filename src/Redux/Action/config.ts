@@ -10,6 +10,7 @@ export type ConfigAction =
 export interface updateLanguage {
     type: "updateLanguage"
     lang: Locale
+    langCode: string
 }
 
 export interface updateTimestamp {

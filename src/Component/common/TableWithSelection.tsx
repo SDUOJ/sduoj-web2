@@ -11,22 +11,9 @@ import TableWithPagination from "./TableWithPagination";
 
 class TableWithSelection extends Component<any, any> {
 
-
-    delete = (ids: number[]) => {
-        this.setState((state: any) => {
-            return {
-                list: state.list.filter((item: any) => !ids.includes(item.id)),
-                total: state.total - ids.length,
-            }
-        })
-        this.props.selectedRowKeys.filter((id: number) => !ids.includes(id))
-
-    }
-
     componentDidMount() {
 
     }
-
 
     render() {
         const selectedRowKeys = this.props.selectedRowKeys
@@ -40,9 +27,9 @@ class TableWithSelection extends Component<any, any> {
                 {
                     key: 'all',
                     text: this.props.t("selectedAll"),
-                    onSelect: (changeableRowKeys: number[]) => {
+                    onSelect: (changeableRowKeys: React.Key[]) => {
                         let newSelectedRowKeys = changeableRowKeys
-                        newSelectedRowKeys = newSelectedRowKeys.concat(selectedRowKeys.filter((key: number) => {
+                        newSelectedRowKeys = newSelectedRowKeys.concat(selectedRowKeys.filter((key: React.Key) => {
                             return !changeableRowKeys.includes(key);
                         }))
                         this.props.setSelectedRowKeys(newSelectedRowKeys)
@@ -51,8 +38,8 @@ class TableWithSelection extends Component<any, any> {
                 {
                     key: 'clear',
                     text: this.props.t("clear"),
-                    onSelect: (changeableRowKeys: number[]) => {
-                        let newSelectedRowKeys = selectedRowKeys.filter((key: number) => {
+                    onSelect: (changeableRowKeys: React.Key[]) => {
+                        let newSelectedRowKeys = selectedRowKeys.filter((key: React.Key) => {
                             return !changeableRowKeys.includes(key);
                         })
                         this.props.setSelectedRowKeys(newSelectedRowKeys)
@@ -61,11 +48,11 @@ class TableWithSelection extends Component<any, any> {
                 {
                     key: 'invert',
                     text: this.props.t("invert"),
-                    onSelect: (changeableRowKeys: number[]) => {
-                        let newSelectedRowKeys = changeableRowKeys.filter((key) => {
+                    onSelect: (changeableRowKeys: React.Key[]) => {
+                        let newSelectedRowKeys = changeableRowKeys.filter((key:React.Key) => {
                             return !selectedRowKeys.includes(key);
                         });
-                        newSelectedRowKeys = newSelectedRowKeys.concat(selectedRowKeys.filter((key: number) => {
+                        newSelectedRowKeys = newSelectedRowKeys.concat(selectedRowKeys.filter((key: React.Key) => {
                             return !changeableRowKeys.includes(key);
                         }))
                         this.props.setSelectedRowKeys(newSelectedRowKeys)
@@ -80,11 +67,10 @@ class TableWithSelection extends Component<any, any> {
         return (
             <>
                 <TableWithPagination
-                    API={MApi.getUserList}
-                    rowKey={"id"}
-                    size={"small"}
+                    size={this.props.size}
+                    API={this.props.API}
+                    rowKey={this.props.rowKey}
                     columns={this.props.colData}
-                    // 行多选
                     rowSelection={rowSelection}
                 />
 
@@ -105,7 +91,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setSelectedRowKeys: (data: React.Key[]) =>
-        dispatch({type: "setSelectedRowKeys", value: data})
+        dispatch({type: "setSelectedRowKeys", data: data})
 })
 
 export default connect(

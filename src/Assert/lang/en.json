@@ -159,5 +159,13 @@
   "AnnouncementDetails": "Announcement Details",
   "Like": "Like",
   "Dislike": "Dislike",
-  "toManage": "To Manage"
+  "toManage": "To Manage",
+  "create": "Create",
+  "title": "Title",
+  "StartTime": "Start Time",
+  "Mode": "Mode",
+  "Participants": "Participants",
+  "ManageGroup": "Manage Group",
+  "Owner": "Owner"
+
 }

@@ -32,6 +32,7 @@ class MExam extends Component<any, any> {
         return (
             <>
                 <Card
+                    bordered={false}
                     title={"考试列表"}
                     extra={[
                         <ExamForm type={"create"}/>

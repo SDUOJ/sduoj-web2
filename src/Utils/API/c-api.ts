@@ -46,5 +46,13 @@ export default {
     async getProblemList(data: problemListQuery){
         return request.get("/problem/list", data)
     },
-    // async
+    // 文件相关
+    async uploadFile(data: any){
+        return request.post('/filesys/uploadFiles', data, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+    },
+    async getFileByMD5(data: {md5: string}){
+        return request.get("/filesys/queryByMd5", data)
+    }
 }

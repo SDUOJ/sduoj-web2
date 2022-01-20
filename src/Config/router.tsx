@@ -6,7 +6,8 @@ import {
     FolderOutlined,
     UsergroupAddOutlined,
     UserOutlined,
-    ReadOutlined
+    ReadOutlined,
+    NotificationOutlined
 } from "@ant-design/icons"
 
 
@@ -103,6 +104,12 @@ export const routerLayout: IBaseRouter[] = [
         exact: false,
         component: lazy(() => import('../Component/layout/CLayout'))
     },
+    {
+        id: 13,
+        path: "/v2/test",
+        exact: false,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
 ]
 
 
@@ -121,7 +128,7 @@ export const routerC: IBaseRouter[] = [
     },
     {
         id: 3,
-        path: "/v2/c/test",
+        path: "/v2/test",
         exact: true,
         component: lazy(() => import('../Pages/CTest'))
     },
@@ -303,6 +310,14 @@ export const routerM: IRouter[] = [
         exact: true,
         icon: <CheckCircleOutlined/>,
         component: lazy(() => import('../Pages/MObjective'))
+    },
+    {
+        id: 7,
+        path: "/v2/manage/announcement",
+        title_i18n: "announcement",
+        exact: true,
+        icon: <NotificationOutlined />,
+        component: lazy(() => import('../Pages/MAnnouncement'))
     }
 ]
 

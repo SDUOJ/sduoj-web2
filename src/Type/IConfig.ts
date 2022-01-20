@@ -7,6 +7,7 @@ export type ModeType = "default" | "contest" | "exam"
 
 export interface ConfigState {
     lang: Locale
+    langCode: string
     mode: ModeType
     timestamp: number
     copyRight: string

@@ -1,14 +1,16 @@
 import React, {Component} from "react";
+import {withRouter} from "react-router";
 import {Role, Sex} from "../Type/Iuser";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
-import {Button, Card, Space, Tag} from "antd";
 import TableWithSelection from "../Component/common/TableWithSelection";
-import MApi from "../Utils/API/m-api";
+import {Button, Card, Space, Tag} from "antd";
+import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router-dom";
+import MApi from "../Utils/API/m-api";
 
 
-class MJudgeTemplate extends Component<any, any> {
+class MAnnouncement extends Component<any, any> {
+
+
     render() {
 
         let colData: any[] = [
@@ -118,4 +120,4 @@ class MJudgeTemplate extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(MJudgeTemplate))
+export default withTranslation()(withRouter(MAnnouncement))

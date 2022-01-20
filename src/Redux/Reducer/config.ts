@@ -5,6 +5,7 @@ import {languageMap} from "../../Config/i18n";
 
 const initState: ConfigState = {
     lang: languageMap['zh'],
+    langCode: "",
     mode: "exam",
     timestamp: Date.now(),
     copyRight: ""
@@ -18,6 +19,7 @@ export const ConfigReducer = (state: ConfigState = initState, action: ConfigActi
     switch (action.type) {
         case "updateLanguage":
             State.lang = action.lang
+            State.langCode = action.langCode
             break
         case "updateTimestamp":
             State.timestamp = action.timestamp

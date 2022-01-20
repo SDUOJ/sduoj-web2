@@ -159,5 +159,14 @@
   "AnnouncementDetails": "公告详情",
   "Like": "赞",
   "Dislike": "踩",
-  "toManage": "跳转到管理端"
+  "toManage": "跳转到管理端",
+  "create": "新建",
+  "title": "标题",
+  "StartTime": "开始时间",
+  "Mode": "模式",
+  "Participants": "参赛人数",
+  "ManageGroup": "管理组",
+  "Owner": "作者"
+
+
 }

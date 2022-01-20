@@ -1,36 +1,14 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router";
-import UserList from "../Component/user/UserList";
-import UserListOperHeader from "../Component/user/UserListOperHeader";
-import {IUserPropRoles, Role, Sex} from "../Type/Iuser";
-import {RouteComponentProps} from "react-router-dom";
-import MTable from "../Component/common/TableWithSelection";
-import {Button, Space, Tag, Tooltip} from "antd";
+import {Role, Sex} from "../Type/Iuser";
+import TableWithSelection from "../Component/common/TableWithSelection";
+import {Button, Card, Space, Tag} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
+import MApi from "../Utils/API/m-api";
 
 
-interface MUserState {
-    UserListObj: any
-    ids: number[]
-}
-
-class MUser extends Component<any, MUserState> {
-
-
-    constructor(props: any, context: any) {
-        super(props, context);
-        this.state = {
-            UserListObj: null,
-            ids: []
-        }
-    }
-
-    Ref = (ref: any, ids: number[]) => {
-        this.setState((state) => {
-            return {UserListObj: ref, ids: ids}
-        })
-    }
+class MUser extends Component<any, any> {
 
 
     render() {
@@ -95,7 +73,7 @@ class MUser extends Component<any, MUserState> {
                     return (
                         <Space size={3}>
                             {
-                                rows.roles !== null && rows.roles.map((value: Role)=>{
+                                rows.roles !== null && rows.roles.map((value: Role) => {
                                     switch (value) {
                                         case "user":
                                             return <Tag>{this.props.t("user")}</Tag>
@@ -120,11 +98,24 @@ class MUser extends Component<any, MUserState> {
         ]
 
         return (
-            <>
-                <div style={{marginTop: -20, overflow: "hidden"}}>
-                    <MTable colData={colData}/>
-                </div>
-            </>
+            <div style={{marginTop: -20, overflow: "hidden"}}>
+                <Card
+                    bordered={false}
+                    title={this.props.t("userList")}
+                    extra={
+                        <>
+                            <Button>a</Button>
+                        </>
+                    }
+                >
+                    <TableWithSelection
+                        colData={colData}
+                        API={MApi.getUserList}
+                        size={"small"}
+                        rowKey={"userId"}
+                    />
+                </Card>
+            </div>
         )
     }
 }

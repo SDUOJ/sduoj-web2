@@ -12,16 +12,19 @@ moment.locale('zh-cn');
 interface ILanguage {
     id: string
     name: string
+    code: string
 }
 
 export const language: ILanguage[] = [
     {
         id: "en",
-        name: "English"
+        name: "English",
+        code: "en_US"
     },
     {
         id: "zh",
-        name: "简体中文"
+        name: "简体中文",
+        code: "zh_CN"
     }
 ]
 
