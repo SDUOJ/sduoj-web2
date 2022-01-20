@@ -142,7 +142,7 @@ const ExamForm = (props: any) => {
                         if (props.type == "create") return <PlusOutlined/>
                     })
                 }
-                {props.type == "create" ? "新建" : "修改"}
+                {props.type == "create" ? props.t("create") : props.t("Edit")}
             </Button>
             <Modal
                 title={props.type == "create" ? "新建考试" : props.title}
@@ -156,6 +156,7 @@ const ExamForm = (props: any) => {
                     [<Button
                         type="primary"
                         key="submit"
+                        disabled={!isDataLoad}
                         onClick={() => {
                             const base = ExamBaseFormRef.current?.getFieldsValue()
                             const user = ExamUserFormRef.current?.getFieldsValue()
