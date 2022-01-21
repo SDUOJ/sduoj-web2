@@ -35,6 +35,7 @@ class Announcement extends Component<any, any> {
                     }}
                     footer={null}
                     width={1100}
+                    destroyOnClose={true}
                 >
                     <ANCContent id={this.state.showId}/>
                 </Modal>
@@ -72,7 +73,7 @@ class Announcement extends Component<any, any> {
                                                     showTitle: row.title
                                                 })
                                             }}>{text}</a>
-                                            {row.top === 1 && (<Tag color={"#ff1500"}>{this.props.t("Top")}</Tag>)}
+                                            {row.top === 1 && (<Tag color={"#e10000"}>{this.props.t("Top")}</Tag>)}
                                         </Space>
 
                                     )
