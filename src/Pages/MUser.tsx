@@ -100,6 +100,7 @@ class MUser extends Component<any, any> {
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
+                    size={"small"}
                     bordered={false}
                     title={this.props.t("userList")}
                     extra={
@@ -109,6 +110,7 @@ class MUser extends Component<any, any> {
                     }
                 >
                     <TableWithSelection
+                        search={true}
                         colData={colData}
                         API={MApi.getUserList}
                         size={"small"}

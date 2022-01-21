@@ -62,12 +62,18 @@ const ANCContent = (props: any) => {
     const [email, setEmail] = useState<string>();
     const [time, setTime] = useState<number>(Date.now());
 
-    useEffect(()=>{
-        if(props.id !== 0){
-            CApi.getAnnouncement({id: props.id}).then((data:any)=>{
+    useEffect(() => {
+        if (props.id !== 0) {
+            CApi.getAnnouncement({id: props.id}).then((data: any) => {
                 setEmail(data.email);
                 setUsername(data.username)
-                MarkdownPreview("markdownPreview", data.text)
+                setTime(parseInt(data.gmtCreate))
+                MarkdownPreview("markdownPreview", "```cpp\n加载中\n```")
+                // 直接加载文本，会导致代码块无法高亮，先加载一个包含代码块的字段，
+                // 第二次打开，代码段就会正常高亮
+                setTimeout(() => {
+                    MarkdownPreview("markdownPreview", data.text)
+                }, 200)
             })
         }
     }, [props.id])

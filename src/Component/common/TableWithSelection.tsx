@@ -67,6 +67,7 @@ class TableWithSelection extends Component<any, any> {
         return (
             <>
                 <TableWithPagination
+                    search={this.props.search}
                     size={this.props.size}
                     API={this.props.API}
                     rowKey={this.props.rowKey}

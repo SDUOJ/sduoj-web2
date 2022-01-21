@@ -4,7 +4,7 @@ import {
     ChoiceState,
     IGetProInfo,
     isChoiceContent,
-    isProgramContent, JudgeTemplate,
+    isProgramContent, JudgeTemplate, JudgeTemplateAllType,
     ProContent, ProgramContent, Submission, TestCase
 } from "../../Type/IProblem";
 import {examID} from "../../Type/types";
@@ -192,13 +192,6 @@ export function getProblemTodo(data: IGetProInfo) {
                             "outputData": x.output
                         })
                     }
-                    let judgeTemplate: JudgeTemplate[] = []
-                    for (const x of resData.judgeTemplates) {
-                        judgeTemplate.push({
-                            tid: x.id,
-                            name: x.title
-                        })
-                    }
                     let markdown = resData.problemDescriptionDTO.markdownDescription
                     data = {
                         isLoad: true,
@@ -207,7 +200,7 @@ export function getProblemTodo(data: IGetProInfo) {
                         testCase: testCase,
                         TimeLimit: resData.timeLimit,
                         MemoryLimit: resData.memoryLimit,
-                        JudgeTemplate: judgeTemplate,
+                        JudgeTemplate: resData.judgeTemplates,
                         Submissions: [],
                         MaxSubmitNumber: resData.submitNum,
                         SumScore: resData.sumScore

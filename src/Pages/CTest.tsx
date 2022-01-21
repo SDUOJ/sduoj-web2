@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import Editor from "../Component/common/Editor";
 import AnnouncementForm from "../Component/announcement/AnnouncementForm";
 import {Button} from "antd";
+import CodeEditor from "../Component/common/CodeEditor";
 
 
 class CTest extends Component<any, any> {
@@ -10,7 +11,7 @@ class CTest extends Component<any, any> {
     render() {
         return (
             <div style={{width: "1250px"}}>
-                <AnnouncementForm button={<Button>1</Button>}/>
+                <CodeEditor code={`#include <iostream>\n int main(){\n`} lang={"cpp"}/>
             </div>
         );
     }

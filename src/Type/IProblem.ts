@@ -28,6 +28,14 @@ export interface JudgeTemplate {
     tid: string             // 模板ID
 }
 
+export interface JudgeTemplateAllType{
+    id: string,
+    title: string,
+    type: number,
+    comment: string
+    acceptFileExtensions: string[]
+}
+
 export interface Submission {
     sid: string
     JudgeResult: RunningResultType
@@ -47,7 +55,7 @@ export interface ProgramContent {
     MemoryLimit?: number             // 空间限制
     MaxSubmitNumber?: number         // 最大提交次数限制
     SumScore?: number                // 题目总分数
-    JudgeTemplate?: JudgeTemplate[]  // 评测模板
+    JudgeTemplate?: JudgeTemplateAllType[]  // 评测模板
     Submissions: Submission[]       // 提交信息
 }
 

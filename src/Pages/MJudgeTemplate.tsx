@@ -98,6 +98,7 @@ class MJudgeTemplate extends Component<any, any> {
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
+                    size={"small"}
                     bordered={false}
                     title={this.props.t("userList")}
                     extra={

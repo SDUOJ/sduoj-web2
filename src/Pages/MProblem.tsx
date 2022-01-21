@@ -70,7 +70,8 @@ class MProblem extends Component<any, any> {
             },
             {
                 title: this.props.t("operator"),
-                width: "300px",
+                width: "auto",
+                responsive: ["lg", "sm"],
                 render: (text: any, rows: any) => {
                     return (
                         <Space size={3}>
@@ -87,6 +88,7 @@ class MProblem extends Component<any, any> {
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
+                    size={"small"}
                     bordered={false}
                     title={"题目列表"}
                     extra={

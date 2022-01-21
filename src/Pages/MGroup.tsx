@@ -104,6 +104,7 @@ class MGroup extends Component<any, any> {
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
+                    size={"small"}
                     bordered={false}
                     title={"题目列表"}
                     extra={

@@ -1,4 +1,5 @@
 @import "~antd/dist/antd.css";
+@import "~vditor/dist/index.css";
 @import "~@ant-design/pro-form/dist/form.css";
 @import '~@ant-design/pro-table/dist/table.css';
 @import '~@ant-design/pro-layout/dist/layout.css';
@@ -471,4 +472,8 @@
     position: relative;
     top: -62px;
     left: 70px;
+}
+
+.CodeMirror{
+    min-height: 500px;
 }
