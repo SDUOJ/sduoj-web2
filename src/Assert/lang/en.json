@@ -166,6 +166,14 @@
   "Mode": "Mode",
   "Participants": "Participants",
   "ManageGroup": "Manage Group",
-  "Owner": "Owner"
+  "Owner": "Owner",
+  "Fork": "Fork",
+  "Checkpoint": "Checkpoint",
+  "ModifiedTime": "Modified Time",
+  "Top": "Top",
+  "IsTop": "Is Top",
+  "UnTop": "UnTop",
+  "CreateTime": "Create Time"
+
 
 }

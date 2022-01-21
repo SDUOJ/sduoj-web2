@@ -235,6 +235,7 @@ class ExamList extends Component<any, any> {
             <>
                 <SubmissionModal getSubmission={this.getSubmission}/>
                 <Table
+                    size={"small"}
                     pagination={{
                         showQuickJumper: true,
                         defaultCurrent: 1,

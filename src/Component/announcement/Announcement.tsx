@@ -1,8 +1,12 @@
 import {Component} from "react";
-import {Card, Modal, Space, Table} from "antd";
+import {Card, Modal, Space, Table, Tag} from "antd";
 import {withTranslation} from "react-i18next";
 import {InfoCircleOutlined} from "@ant-design/icons"
 import ANCContent from "./Content";
+import TableWithPagination from "../common/TableWithPagination";
+import CApi from "Utils/API/c-api"
+import {unix2Time} from "../../Utils/Time";
+
 
 class Announcement extends Component<any, any> {
 
@@ -11,15 +15,17 @@ class Announcement extends Component<any, any> {
         super(props, context);
         this.state = {
             show: false,
-            showId: 0
+            showId: 0,
+            showTitle: ""
         }
     }
+
 
     render() {
         return (
             <>
                 <Modal
-                    title={this.props.t("AnnouncementDetails")}
+                    title={this.props.t("AnnouncementDetails") +" (" +  this.state.showTitle + ")"}
                     visible={this.state.show}
                     onCancel={() => {
                         this.setState({show: false})
@@ -44,48 +50,47 @@ class Announcement extends Component<any, any> {
                         </>
                     }
                 >
-                    <Table
-                        // showHeader={false}
+                    <TableWithPagination
                         size={"small"}
                         columns={[
                             {
                                 title: "ID",
-                                dataIndex: "ID",
+                                dataIndex: "noticeId",
                                 key: "ID"
                             },
                             {
                                 title: "标题",
                                 dataIndex: "title",
                                 key: "title",
-                                render: (text: string) => {
-                                    return <a onClick={() => {
-                                        this.setState({
-                                            show: true,
-                                            showId: parseInt(text)
-                                        })
-                                    }}>{text}</a>
+                                render: (text: string, row:any) => {
+                                    return (
+                                        <Space size={5}>
+                                            <a onClick={() => {
+                                                this.setState({
+                                                    show: true,
+                                                    showId: parseInt(row.noticeId),
+                                                    showTitle: row.title
+                                                })
+                                            }}>{text}</a>
+                                            {row.top === 1 && (<Tag color={"#ff1500"}>{this.props.t("Top")}</Tag>)}
+                                        </Space>
+
+                                    )
+
                                 }
                             },
                             {
                                 title: "发布日期",
-                                dataIndex: "date",
-                                key: "date"
+                                dataIndex: "gmtCreate",
+                                key: "date",
+                                render: (text: any) => {
+                                    return unix2Time(parseInt(text))
+                                }
                             }
                         ]}
-                        dataSource={[
-                            {
-                                ID: 2,
-                                title: "新版前端正式发布",
-                                date: "2022年1月16日"
-                            },
-                            {
-                                ID: 1,
-                                title: "SDUOJ 成功承接计算导论期末考试",
-                                date: "2022年1月15日"
-                            }
-                        ]}
-                    >
-                    </Table>
+                        API={CApi.getAnnouncementList}
+                    />
+
                 </Card>
             </>
         )

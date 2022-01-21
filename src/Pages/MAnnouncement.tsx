@@ -1,11 +1,17 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 import {withRouter} from "react-router";
 import {Role, Sex} from "../Type/Iuser";
 import TableWithSelection from "../Component/common/TableWithSelection";
 import {Button, Card, Space, Tag} from "antd";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
+import {ManOutlined, PlusOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../Utils/API/m-api";
+import {unix2Time} from "../Utils/Time";
+import TableWithPagination from "../Component/common/TableWithPagination";
+import AnnouncementForm from "../Component/announcement/AnnouncementForm";
+import {ManageState} from "../Type/IManage";
+import {connect} from "react-redux";
+import TableRowDeleteButton from "../Component/common/TableRowDeleteButton";
 
 
 class MAnnouncement extends Component<any, any> {
@@ -16,83 +22,68 @@ class MAnnouncement extends Component<any, any> {
         let colData: any[] = [
             {
                 title: "ID",
-                dataIndex: "userId",
+                dataIndex: "noticeId",
                 width: 50,
                 responsive: ["lg", "sm", "xs"]
             },
             {
-                title: this.props.t("username"),
-                dataIndex: "username",
+                title: this.props.t("title"),
+                dataIndex: "title",
                 width: "auto",
                 responsive: ["lg", "sm", "xs"],
-            },
-            {
-                title: this.props.t("nickname"),
-                dataIndex: "nickname",
-                width: "auto",
-                responsive: ["lg", "sm"],
-            },
-            {
-                title: this.props.t("sex"),
-                dataIndex: "gender",
-                width: 50,
-                responsive: ["lg"],
-                render: (sex: Sex) => {
-                    switch (sex) {
-                        case Sex.Male:
-                            return <ManOutlined/>
-                        case Sex.Female:
-                            return <WomanOutlined/>
-                        case Sex.Unknown:
-                            return <QuestionOutlined/>
-                    }
+                render: (text: any, row: any) => {
+                    return (
+                        <Space size={5}>
+                            {text}
+                            {row.top === 1 && (<Tag color={"red"}>{this.props.t("Top")}</Tag>)}
+                        </Space>
+                    )
                 }
             },
             {
-                title: this.props.t("student_id"),
-                dataIndex: "studentId",
-                width: "auto",
-                responsive: ["lg"],
-            },
-            {
-                title: this.props.t("sdu_id"),
-                dataIndex: "sduId",
-                width: "auto",
-                responsive: ["lg"],
-            },
-            {
-                title: this.props.t("email"),
-                dataIndex: "email",
+                title: this.props.t("CreateTime"),
+                dataIndex: "gmtCreate",
                 width: "auto",
                 responsive: ["lg", "sm"],
+                render: (text: string) => {
+                    return unix2Time(parseInt(text))
+                }
             },
             {
-                title: this.props.t("roles"),
-                width: "200px",
-                render: (text: any, rows: any) => {
-                    return (
-                        <Space size={3}>
-                            {
-                                rows.roles !== null && rows.roles.map((value: Role) => {
-                                    switch (value) {
-                                        case "user":
-                                            return <Tag>{this.props.t("user")}</Tag>
-                                        case "admin":
-                                            return <Tag color={"gold"}>{this.props.t("admin")}</Tag>
-                                        case "superadmin":
-                                            return <Tag color={"red"}>{this.props.t("superadmin")}</Tag>
-                                    }
-                                })
-                            }
-                        </Space>
-                    )
+                title: this.props.t("ModifiedTime"),
+                dataIndex: "gmtModified",
+                width: "auto",
+                responsive: ["lg", "sm"],
+                render: (text: string) => {
+                    return unix2Time(parseInt(text))
+                }
+            },
+            {
+                title: this.props.t("Owner"),
+                width: "auto",
+                responsive: ["lg"],
+                render: (text: any, row: any) => {
+                    return row.username
                 }
             },
             {
                 title: this.props.t("operator"),
                 width: "150px",
                 render: (text: any, rows: any) => {
-                    return <Button type={"link"}>{this.props.t("Edit")}</Button>
+                    return (
+                        <Space size={3}>
+                            <AnnouncementForm button={<Button type={"link"} size={"small"}>{this.props.t("Edit")}</Button>}
+                                              title={"修改(" + rows.title + ")"}
+                                              row={rows}
+                            />
+                            <TableRowDeleteButton
+                                type={"inline"}
+                                API={MApi.deleteAnnouncement}
+                                data={{id: rows.noticeId}}
+                                name={"Announcement"}/>
+                        </Space>
+                    )
+
                 }
             }
         ]
@@ -101,18 +92,22 @@ class MAnnouncement extends Component<any, any> {
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
                     bordered={false}
-                    title={this.props.t("userList")}
+                    title={"公告列表"}
                     extra={
                         <>
-                            <Button>a</Button>
+                            <AnnouncementForm
+                                type={"create"}
+                                button={<Button icon={<PlusOutlined/>} type={"primary"}> 新建 </Button>}
+                                title={"新建"}/>
+
                         </>
                     }
                 >
-                    <TableWithSelection
-                        colData={colData}
-                        API={MApi.getUserList}
+                    <TableWithPagination
+                        name={"Announcement"}
+                        columns={colData}
+                        API={MApi.getAnnouncementList}
                         size={"small"}
-                        rowKey={"userId"}
                     />
                 </Card>
             </div>
@@ -120,4 +115,8 @@ class MAnnouncement extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(MAnnouncement))
+export default
+    withTranslation()(
+        withRouter(MAnnouncement)
+    )
+

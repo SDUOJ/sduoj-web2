@@ -264,5 +264,19 @@ export default {
     getChoiceProblem: async function (params: { problemCode: string }) {
         return request.get("/manage/exam/choiceProblem/queryChoiceProblem", params)
     },
+    /* ************ 公告 ****************** */
+    createAnnouncement: async function (data: any){
+        return request.post("/manage/notice/create", data)
+    },
+    updateAnnouncement: async function (data: any){
+        return request.post("/manage/notice/update", data)
+    },
+    async getAnnouncementList(data: any) {
+        data['filter'] = "default"
+        return request.get("/manage/notice/list", data)
+    },
+    deleteAnnouncement: async function (data: any){
+        return request.post("/manage/notice/delete", data)
+    },
 
 }

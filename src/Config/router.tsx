@@ -314,7 +314,7 @@ export const routerM: IRouter[] = [
     {
         id: 7,
         path: "/v2/manage/announcement",
-        title_i18n: "announcement",
+        title_i18n: "Announcement",
         exact: true,
         icon: <NotificationOutlined />,
         component: lazy(() => import('../Pages/MAnnouncement'))

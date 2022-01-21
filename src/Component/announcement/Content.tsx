@@ -5,6 +5,7 @@ import {DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled} from '@ant-des
 import {withTranslation} from "react-i18next";
 import UserAvatar from "../user/Avatar";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
+import CApi from "Utils/API/c-api"
 
 const ANCContent = (props: any) => {
 
@@ -63,9 +64,11 @@ const ANCContent = (props: any) => {
 
     useEffect(()=>{
         if(props.id !== 0){
-            setEmail("735961159@qq.com");
-            setUsername("yhf2000")
-            MarkdownPreview("markdownPreview", "## 标题\n\n123123\n\n$\\sum_{i=1}^{n}i$")
+            CApi.getAnnouncement({id: props.id}).then((data:any)=>{
+                setEmail(data.email);
+                setUsername(data.username)
+                MarkdownPreview("markdownPreview", data.text)
+            })
         }
     }, [props.id])
 

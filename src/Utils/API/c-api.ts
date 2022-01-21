@@ -54,5 +54,13 @@ export default {
     },
     async getFileByMD5(data: {md5: string}){
         return request.get("/filesys/queryByMd5", data)
+    },
+    // 公告相关
+    async getAnnouncementList(data: any){
+        data['filter'] = "default"
+        return request.get("/notice/list", data)
+    },
+    async getAnnouncement(data: any){
+        return request.get("notice/query", data)
     }
 }

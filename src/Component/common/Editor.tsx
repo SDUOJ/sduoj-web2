@@ -43,8 +43,8 @@ const CopiedButton = (props: any) => {
 }
 
 const Editor = (props: EditorProps & any) => {
-    const [vditor, setVditor] = useState<any>()
     const [value, setValue] = useState<string>(props.value === undefined ? "" : props.value)
+
 
     useEffect(() => {
         const vditor0 = new Vditor("vditor", {
@@ -56,7 +56,7 @@ const Editor = (props: EditorProps & any) => {
                 "http://oj.cs.sdu.edu.cn:3000/vditor" :
                 "https://oj.qd.sdu.edu.cn/vditor",
             outline: {
-                enable: true,
+                enable: false,
                 position: 'left',
             },
             hint: {
@@ -82,11 +82,11 @@ const Editor = (props: EditorProps & any) => {
                 "quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
                 "upload", "table", "|",
                 "undo", "redo", "|",
-                "fullscreen", "edit-mode",
+                "outline", "fullscreen", "edit-mode",
                 {
                     name: "more",
                     toolbar: [
-                        "code-theme", "content-theme", "export", "outline", "help"
+                        "code-theme", "content-theme", "export", "help"
                     ]
                 },
                 "|",
@@ -98,8 +98,7 @@ const Editor = (props: EditorProps & any) => {
                     className: "right",
                     icon: `<img style="height: 16px" src='https://img.58cdn.com.cn/escstatic/docs/imgUpload/idocs/save.svg' alt="save"/>`,
                     click() {
-                        setValue(vditor0.getValue())
-                        save()
+                        props.save && props.save((vditor0.getValue()))
                     }
                 }
             ],
@@ -107,7 +106,7 @@ const Editor = (props: EditorProps & any) => {
                 vditor0.setValue(value);
             },
             blur() {
-                setValue(vditor0.getValue())
+                props.save && props.save((vditor0.getValue()))
             },
             upload: {
                 accept: "*/*",
@@ -149,26 +148,19 @@ const Editor = (props: EditorProps & any) => {
                             type: "success",
                         });
                     }
-
                     fileUpload(files, callback);
                 }
             }
         });
-        setVditor(vditor0)
     }, [props.langCode])
 
-
-
     const save = () => {
-        props.save && props.save((vditor.getValue()))
-        console.log(vditor.getValue())
-    }
 
+    }
 
     return (
         <>
             <div id="vditor"/>
-            <Button onClick={save}>a</Button>
         </>
     )
 

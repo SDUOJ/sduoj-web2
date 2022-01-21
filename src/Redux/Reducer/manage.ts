@@ -16,7 +16,7 @@ const initState: ManageState = {
 
 export const ManageReducer = (state: ManageState = initState, action: ManageAction) => {
     // 此处不做深拷贝，redux无法检测到更新
-    let State: ManageState = state
+    let State: ManageState = deepClone(state)
     switch (action.type) {
 
         case "setSelectedRowKeys":
@@ -26,7 +26,7 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
         case "addTableVersion":
             let value = State.tableData.tableVersion[action.data]
             if(value == undefined) State.tableData.tableVersion[action.data] = 1
-            else value += 1
+            else State.tableData.tableVersion[action.data] += 1
             break
 
         default:

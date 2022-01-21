@@ -166,7 +166,13 @@
   "Mode": "模式",
   "Participants": "参赛人数",
   "ManageGroup": "管理组",
-  "Owner": "作者"
-
+  "Owner": "作者",
+  "Fork": "克隆",
+  "Checkpoint": "测试点",
+  "ModifiedTime": "修改时间",
+  "Top": "置顶",
+  "IsTop": "是否置顶",
+  "UnTop": "非置顶",
+  "CreateTime": "创建时间"
 
 }

@@ -40,13 +40,14 @@ const TableWithPagination = (props: any) => {
     }, [])
 
     useEffect(() => {
-        if (props.TableName !== undefined &&
-            props.tableVersion[props.TableName] !== undefined &&
-            tableVersion !== props.tableVersion[props.TableName]){
-            setTableVersion(props.tableVersion[props.TableName])
+        if (props.name !== undefined &&
+            props.tableVersion[props.name] !== undefined &&
+            tableVersion !== props.tableVersion[props.name]){
+            setTableVersion(props.tableVersion[props.name])
             getInfo(pageNow, defaultPageSize)
         }
-    }, [props.tableVersion[props.TableName], tableVersion])
+        console.log("change Table")
+    }, [props.tableVersion, tableVersion])
 
     return (
         <Table
