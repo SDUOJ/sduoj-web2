@@ -68,6 +68,11 @@ const Login = (props: any) => {
                             fieldProps={{
                                 size: 'large',
                                 prefix: <UserOutlined className={'prefixIcon'}/>,
+                                onPressEnter: ()=>{
+                                    formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
+                                        props.login(value)
+                                    })
+                                }
                             }}
                             placeholder={'请输入用户名'}
                             rules={[
@@ -76,12 +81,18 @@ const Login = (props: any) => {
                                     message: '请输入用户名!',
                                 },
                             ]}
+
                         />
                         <ProFormText.Password
                             name="password"
                             fieldProps={{
                                 size: 'large',
                                 prefix: <LockOutlined className={'prefixIcon'}/>,
+                                onPressEnter: ()=>{
+                                    formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
+                                        props.login(value)
+                                    })
+                                }
                             }}
                             placeholder={'请输入密码'}
                             rules={[
