@@ -86,15 +86,27 @@ class Program extends Component<any, any> {
                 </div>
                 <div style={{marginTop: "10px"}}>
                     <Space size={25}>
-                        <Badge count={
-                            <Tooltip placement="topLeft" title={"剩余提交次数"}>
-                                <span className={"Badge-Tooltip-Program"}>
-                                    {this.props.LeftSubmitCount}
-                                </span>
-                            </Tooltip>
-                        }>
-                            <Submit LeftSubmitCount={this.props.LeftSubmitCount}/>
-                        </Badge>
+
+                        <Submit
+                            API={eApi.CreateSubmit}
+                            data={{
+                                problemCode: this.props.ProblemCode,
+                                problemIndex: parseInt(this.props.ProblemCode),
+                                groupIndex: this.props.groupId,
+                                examId: this.props.match.params.eid
+                            }}
+                            title={this.props.title}
+                            LeftSubmitCount={this.props.LeftSubmitCount}
+                            TopSubmissionInfo={{
+                                title: this.props.title,
+                                TimeLimit: this.props.TimeLimit,
+                                MemoryLimit: this.props.MemoryLimit,
+                                sumScore: this.props.sumScore,
+                                showScore: this.props.isSubmissionScoreVisible
+                            }}
+                            JudgeTemplates={this.props.JudgeTemplates}
+                        />
+
                         <Button
                             type={"default"}
                             onClick={() => {
@@ -203,16 +215,23 @@ const mapStateToProps = (state: any) => {
         } else {
             const content = (NowPro.content as ProgramContent)
             return {
+                ProblemCode: State.TopProblemIndex - 1,
+                groupId: State.TopGroupIndex - 1,
+                JudgeTemplates: content.JudgeTemplate,
+
                 markdown: content.markdown,
                 title: content.title,
+
                 TimeLimit: content.TimeLimit,
                 MemoryLimit: content.MemoryLimit,
-                testCase: content.testCase,
                 sumScore: content.SumScore,
+                isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible,
+
+                testCase: content.testCase,
                 Score: GetMaxScore(content),
                 IsAnswer: IsAnswer(content),
                 LeftSubmitCount: content.MaxSubmitNumber as number - content.Submissions.length,
-                isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible
+
             }
         }
     }

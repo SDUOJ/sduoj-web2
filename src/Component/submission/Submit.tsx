@@ -1,7 +1,7 @@
-import React, {Component, Dispatch} from "react";
-import {Button, Form, FormInstance, message, Modal, Select, Space, Tabs, Upload} from "antd";
+import React, {Component, Dispatch, useRef, useState} from "react";
+import {Badge, Button, Form, FormInstance, message, Modal, Select, Space, Tabs, Tooltip, Upload} from "antd";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
-import {JudgeTemplate, ProgramContent} from "../../Type/IProblem";
+import {JudgeTemplate, JudgeTemplateAllType, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {
@@ -10,156 +10,222 @@ import {
 import {Option} from "antd/lib/mentions";
 import {UploadOutlined} from "@ant-design/icons"
 import CodeEditor from "../common/CodeEditor";
-import TextArea from "antd/lib/input/TextArea";
-import {ConfigState} from "../../Type/IConfig";
 import {withRouter} from "react-router-dom";
-import eApi from "../../Utils/API/e-api";
 import {TopSubmissionInfoType} from "../../Type/ISubmission";
-
-const {TabPane} = Tabs;
-
-class Submit extends Component<any, any> {
-    formRef = React.createRef<FormInstance>();
+import {JudgeTemplate2lang} from "../../Utils/JudgeTemplate2lang";
+import {fileUpload} from "../../Utils/fileUpload";
 
 
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            SubmitModalVis: false,
-            SubmitDisable: false
-        }
-        this.CodeSubmit = this.CodeSubmit.bind(this)
-    }
+export interface SubmitPropsType {
+    data: any       // 除了 code 和 templateId 之外的其他参数
+    API: any        // API 接口函数
+    title: string   // 对话框的标题
+    TopSubmissionInfo: TopSubmissionInfoType    // 当前提交的题目信息
+    LeftSubmitCount?: number                    // 剩余提交次数
+    JudgeTemplates: JudgeTemplateAllType[]      // 评测模板
+}
 
-    CodeSubmit() {
-        this.formRef.current!.validateFields().then(
-            () => {
-                this.formRef.current?.validateFields().then((value) => {
-                    this.setState({SubmitDisable: true})
-                    const judgeTemplateId = value.JudgeTemplate
-                    const code = value.CodeEditor
-                    eApi.CreateSubmit({
-                        code: code,
-                        judgeTemplateId: judgeTemplateId,
-                        problemCode: this.props.ProblemCode,
-                        problemIndex: parseInt(this.props.ProblemCode),
-                        groupIndex: this.props.groupId,
-                        examId: this.props.match.params.eid
-                    }).then((resData) => {
-                        message.success("提交成功")
-                        this.props.setTopSubmission(resData, {
-                            title: this.props.title,
-                            TimeLimit: this.props.Time,
-                            MemoryLimit: this.props.Memory,
-                            sumScore: this.props.sumScore,
-                            showScore: this.props.isSubmissionScoreVisible
-                        })
-                        this.setState({SubmitModalVis: false})
-                        this.props.setSubmissionModalVis(true)
-                        this.setState({SubmitDisable: false})
-                    })
-                })
+const Submit = (props: SubmitPropsType & any) => {
+
+    const [form] = Form.useForm();
+
+    const [SubmitModalVis, setSubmitModalVis] = useState<boolean>(false)
+    const [SubmitDisable, setSubmitDisable] = useState<boolean>(false)
+    const [judgeTemplateId, setJudgeTemplateId] = useState<number | undefined>()
+    const [code, setCode] = useState<string | undefined>()
+    const [CodeMirror, setCodeMirror] = useState<string | undefined>()
+    const [zipFileId, setZipFileId] = useState<string | undefined>()
+
+
+    const CodeSubmit = () => {
+        form.validateFields().then((value) => {
+            setSubmitDisable(true)
+            let codex = CodeMirror
+            if ((codex === undefined || codex === null || codex.length === 0) && zipFileId === undefined) {
+                message.error("代码不能为空")
+                return
             }
-        )
+            let newData = props.data
+            newData['judgeTemplateId'] = value.JudgeTemplate
+            if (zipFileId !== undefined) {
+                newData['zipFileId'] = zipFileId
+            } else {
+                newData['code'] = codex
+            }
+            props.API(newData).then((data: any) => {
+                props.setTopSubmission(data, props.TopSubmissionInfo)
+                setSubmitModalVis(false)
+                setSubmitDisable(false)
+                props.setSubmissionModalVis(true)
+            })
+        })
     }
 
-    render() {
-        return (
-            <>
+
+    return (
+        <>
+            <Badge count={
+                <Tooltip placement="topLeft" title={"剩余提交次数"}>
+                    <span className={"Badge-Tooltip-Program"}>
+                        {props.LeftSubmitCount}
+                    </span>
+                </Tooltip>
+            }>
                 <Button
                     type={"primary"}
                     onClick={() => {
-                        this.setState({SubmitModalVis: true})
+                        setSubmitModalVis(true)
                     }}
-                    disabled={this.props.LeftSubmitCount <= 0 || this.state.SubmitDisable}
+                    disabled={
+                        (props.LeftSubmitCount !== undefined && props.LeftSubmitCount <= 0)
+                        || SubmitDisable
+                    }
                 >
-                    {this.props.t("Submit")}
+                    {props.t("Submit")}
                 </Button>
-                <Modal title={this.props.SubmitModalTitle}
-                       visible={this.state.SubmitModalVis}
-                       onCancel={() => {
-                           this.setState({SubmitModalVis: false})
-                       }}
-                       width={1200}
-                       footer={[
-                           <Space size={25}>
-                               <div style={{color: "red", fontSize: "15px", marginBottom: "10px", margin: "0px auto"}}>
-                                   剩余提交次数：{this.props.LeftSubmitCount}
-                               </div>
-                               <Button
-                                   key="submit" type="primary"
-                                   loading={this.props.SubmitLoading}
-                                   onClick={this.CodeSubmit}
-                                   disabled={this.props.LeftSubmitCount <= 0}
-                               >
-                                   提交
-                               </Button>
-                               <Button key="back" onClick={() => {
-                                   this.setState({SubmitModalVis: false})
-                               }}>
-                                   取消
-                               </Button>
-                           </Space>
-                       ]}
+            </Badge>
+            <Modal title={props.title}
+                   visible={SubmitModalVis}
+                   onCancel={() => {
+                       setSubmitModalVis(false)
+                   }}
+                   width={1200}
+                   footer={[
+                       <Space size={25}>
+                           {
+                               props.LeftSubmitCount !== undefined && (
+                                   <div style={{
+                                       color: "red",
+                                       fontSize: "15px",
+                                       marginBottom: "10px",
+                                       margin: "0px auto"
+                                   }}>
+                                       剩余提交次数：{props.LeftSubmitCount}
+                                   </div>
+                               )
+                           }
+                           <Button
+                               key="submit" type="primary"
+                               onClick={CodeSubmit}
+                               disabled={
+                                   (props.LeftSubmitCount !== undefined && props.LeftSubmitCount <= 0)
+                                   || SubmitDisable
+                               }
+                           >
+                               提交
+                           </Button>
+                           <Button key="back" onClick={() => {
+                               setSubmitModalVis(false)
+                           }}>
+                               取消
+                           </Button>
+                       </Space>
+                   ]}
+            >
+                <Form
+                    form={form}
+                    onFinish={async () => {
+                        CodeSubmit()
+                    }}
+                    layout={"vertical"}
+
                 >
-
-
-                    <Form ref={this.formRef} onFinish={this.CodeSubmit} layout={"vertical"}>
-                        <Form.Item name={"JudgeTemplate"} label={this.props.t("template")} rules={[{required: true}]}>
-                            <Select
-                                allowClear>
-                                {
-                                    this.props.JudgeTemplate !== undefined && this.props.JudgeTemplate.map((val: JudgeTemplate) => {
-                                        return (
-                                            <Option value={val.tid.toString()}>{val.name}</Option>
-                                        )
-                                    })
+                    <Form.Item name={"JudgeTemplate"} label={props.t("template")} rules={[{required: true}]}>
+                        <Select
+                            allowClear
+                            onChange={(value, option) => {
+                                const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
+                                setJudgeTemplateId(id >= 0 ? id : undefined)
+                            }}
+                        >
+                            {
+                                props.JudgeTemplates !== undefined && props.JudgeTemplates.map((val: JudgeTemplateAllType) => {
+                                    return (
+                                        <Option value={val.id}>{val.title}</Option>
+                                    )
+                                })
+                            }
+                        </Select>
+                    </Form.Item>
+                    {
+                        [''].map(() => {
+                            const jtId = judgeTemplateId
+                            if (jtId !== undefined) {
+                                let accept = "", num = 0
+                                for (const x of props.JudgeTemplates[jtId].acceptFileExtensions) {
+                                    if (num !== 0) accept += ','
+                                    if (x[0] === '.') accept += x
+                                    else accept += '.' + x
+                                    num += 1
                                 }
-                            </Select>
-                        </Form.Item>
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab="代码提交" key="1">
-                                <Form.Item label={"代码"} name={"CodeEditor"} rules={[{required: true}]}>
-                                    <TextArea rows={25} showCount maxLength={1024 * 10}/>
-                                </Form.Item>
-                            </TabPane>
-                            <TabPane tab="文件提交（暂不可用）" key="2" disabled={true}>
-                                <Form.Item name={"FileUpload"}>
-                                    <Upload>
-                                        <Button icon={<UploadOutlined/>}>上传文件</Button>
-                                    </Upload>
-                                </Form.Item>
-                            </TabPane>
-                        </Tabs>
-                    </Form>
-                </Modal>
-            </>
-        )
-    }
+                                if (props.JudgeTemplates[jtId].acceptFileExtensions.findIndex((value: string) => value === "zip" || value === ".zip") === -1) {
+                                    // 正常的代码提交形式
+                                    return (
+                                        <>
+                                            <Form.Item label={"文件"}>
+                                                <Upload
+                                                    multiple={false}
+                                                    accept={accept}
+                                                    customRequest={(obj: any) => {
+                                                        obj.onSuccess((body: any) => {
+                                                        })
+                                                    }}
+                                                    listType={"text"}
+                                                    beforeUpload={(file: any) => {
+                                                        const fileReader = new FileReader();
+                                                        fileReader.readAsText(file);
+                                                        fileReader.onload = (event) => {
+                                                            try {
+                                                                setCode(event.target?.result as string)
+                                                            } catch (e) {
+                                                                message.error('文件解析失败！');
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    <Button icon={<UploadOutlined/>}>上传</Button>
+                                                </Upload>
+                                            </Form.Item>
+
+                                            <Form.Item label={"代码"}>
+                                                <CodeEditor
+                                                    lang={JudgeTemplate2lang(jtId)}
+                                                    code={code} save={setCodeMirror}/>
+                                            </Form.Item>
+                                        </>
+                                    )
+                                } else {
+                                    return (
+                                        <Form.Item label={"文件"}>
+                                            <Upload
+                                                multiple={false}
+                                                accept={accept}
+                                                customRequest={(obj: any) => {
+                                                    obj.onSuccess((body: any) => {
+                                                    })
+                                                }}
+                                                listType={"text"}
+                                                beforeUpload={(file) => {
+                                                    fileUpload([file], (value: any) => {
+                                                        setZipFileId(value.id)
+                                                    })
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    )
+
+                                }
+                            }
+                        })
+                    }
+                </Form>
+            </Modal>
+        </>
+    )
+
 }
 
 const mapStateToProps = (state: any) => {
-    const CState: ConfigState = state.ConfigReducer
-    switch (CState.mode) {
-        case "exam":
-            const EState: ExamState = state.ExamReducer
-            const NowGroup = (EState.proGroupInfo as SProGroupInfo[])[EState.TopGroupIndex - 1];
-            const NowPro = (NowGroup.proList as SProInfo[])[EState.TopProblemIndex - 1]
-            const NowContent = (NowPro.content as ProgramContent)
-
-            return {
-                SubmitModalTitle: NowContent?.title,
-                JudgeTemplate: NowContent?.JudgeTemplate,
-                ProblemCode: EState.TopProblemIndex - 1,
-                groupId: EState.TopGroupIndex - 1,
-                Time: NowContent?.TimeLimit,
-                Memory: NowContent?.MemoryLimit,
-                title: NowContent?.title,
-                sumScore: NowContent?.SumScore,
-                isSubmissionScoreVisible: EState.examInfo?.isSubmissionScoreVisible
-            }
-
-    }
     return {}
 }
 
@@ -176,4 +242,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(withRouter(Submit)))
+)(withTranslation()(
+    withRouter(Submit)
+))

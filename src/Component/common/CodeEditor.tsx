@@ -1,32 +1,50 @@
-import {Component} from "react";
+import {Component, useEffect, useState} from "react";
 import {UnControlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/idea.css';
-
+import 'codemirror/theme/solarized.css';
 
 interface ICodeEditor {
-    mode: string
-    initValue: string
+    lang: "c" | "cpp" | "java" | "sql" | "python"
+    code?: string
     className?: string
+    save?: any
 }
 
-export default class CodeEditor extends Component<ICodeEditor, any> {
+require('codemirror/mode/sql/sql')
+require('codemirror/mode/clike/clike')
+require('codemirror/mode/python/python')
 
-    render() {
-        return (
-            <>
-                <CodeMirror
-                    className={this.props.className}
-                    value={this.props.initValue}
-                    options={{
-                        mode: this.props.mode,
-                        theme: 'idea',
-                        lineNumbers: true
-                    }}
-                    onChange={(editor, data, value) => {
-                    }}
-                />
-            </>
-        )
-    }
+
+const langMap = {
+    cpp: "text/x-c++src",
+    c: "text/x-csrc",
+    java: "text/x-java",
+    sql: "sql",
+    python: "python"
 }
+
+const CodeEditor = (props: ICodeEditor) => {
+
+    return (
+        <>
+            <CodeMirror
+                className={"CodeMirror"}
+                value={props.code}
+                options={{
+                    mode: langMap[props.lang],
+                    theme: 'solarized',
+                    indentUnit: 4,
+                    tabSize: 4,
+                    lineNumbers: true,
+                    lineWrapping: true,
+                }}
+                onChange={(editor, data, value) => {
+                    props.save && props.save(value)
+                }}
+            />
+        </>
+    )
+
+}
+
+export default CodeEditor

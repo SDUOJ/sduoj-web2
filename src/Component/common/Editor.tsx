@@ -2,16 +2,12 @@ import {Component, Dispatch, useEffect, useState} from "react";
 import Vditor from "vditor";
 import {fileUpload} from "../../Utils/fileUpload";
 import {Button, message, notification, Space} from "antd";
-import * as path from "path";
-import {save} from "react-cookies";
-import CopyableCode from "../submission/CopyableCode";
 import ClipboardJS from "clipboard";
-import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {ConfigState} from "../../Type/IConfig";
-import "Assert/css/vditor.css"
+import apiAddress from "../../Utils/API/apiAddress";
 
 export interface EditorProps {
     value: string
@@ -65,6 +61,7 @@ const Editor = (props: EditorProps & any) => {
                     "https://oj.qd.sdu.edu.cn/vditor/dist/images/emoji"
             },
             preview: {
+                delay: 500,
                 markdown: {
                     toc: true,
                     mark: true,
@@ -118,7 +115,8 @@ const Editor = (props: EditorProps & any) => {
                         .replaceAll("/\\s/g", "");
                 },
                 handler(files: File[]): any {
-                    function callback(path: any) {
+                    function callback(value: any) {
+                        const path = apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + value.name
                         let name = files[0] && files[0].name;
                         name = name
                             .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, "")

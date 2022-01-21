@@ -14,12 +14,11 @@ export const fileUpload = (files: File[], callback: any) => {
                 pros.push(
                     CApi.getFileByMD5({md5: code}).then((value: any) => {
                         if (value !== null) {
-                            callback(apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + value.name)
+                            callback(value)
                             return Promise.resolve()
                         } else {
                             formData.append("files", file);
                             num += 1;
-                            console.log("upload - md5", num)
                             return Promise.resolve()
                         }
                     })
@@ -31,11 +30,10 @@ export const fileUpload = (files: File[], callback: any) => {
 
     Promise.all(md5Set).then(() => {
         Promise.all(pros).then(()=>{
-            console.log("upload", num)
             if (num != 0) {
                 CApi.uploadFile(formData).then((data: any) => {
                     data.map((value: any) => {
-                        callback(apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + value.name)
+                        callback(value)
                     })
                 })
             }
