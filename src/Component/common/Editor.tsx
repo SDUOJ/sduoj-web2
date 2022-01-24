@@ -62,6 +62,9 @@ const Editor = (props: EditorProps & any) => {
             },
             preview: {
                 delay: 500,
+                hljs: {
+                    lineNumber: false
+                },
                 markdown: {
                     toc: true,
                     mark: true,
