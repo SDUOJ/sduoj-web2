@@ -1,7 +1,7 @@
-import {Component} from "react";
+import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
 import Announcement from "../Component/announcement/Announcement";
-import {Button, Card, Carousel, Col, Image, Row} from "antd";
+import {Col, Image, Row} from "antd";
 import BK1 from "Assert/img/ban1news.jpg"
 import SearchProblem from "../Component/problem/SearchProblem";
 

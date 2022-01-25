@@ -37,14 +37,14 @@ class EWait extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            this.props.history.push(routerE[0].path)
+            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
         }
         this.props.getExamInfo(this.props.match.params.eid)
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            this.props.history.push(routerE[0].path)
+            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
         }
         if(!this.props.ExamInfoLoad || this.props.match.params.eid !== this.props.examInfo.id){
             this.props.getExamInfo(this.props.match.params.eid)

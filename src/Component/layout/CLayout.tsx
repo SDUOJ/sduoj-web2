@@ -9,6 +9,7 @@ import {withRouter} from "react-router";
 import FooterSDU from "./FooterSDU";
 import CHeader from "./CHeader";
 import {testLoginTodo} from "../../Redux/Action/user";
+import QueueAnim from 'rc-queue-anim';
 
 const {Footer, Sider, Content} = Layout;
 
@@ -29,10 +30,10 @@ class MLayout extends Component<any, any> {
     render() {
         return (
             <>
-                <Layout style={{height: "max-content", minHeight: "100%", minWidth:"1000px"}}>
+                <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1000px"}}>
                     <Layout style={{minWidth: 500}}>
                         <CHeader/>
-                        <Content style={{paddingTop:"64px", margin: '20px 16px 0', display: "table", height: "auto"}}>
+                        <Content style={{paddingTop: "64px", margin: '20px 16px 0', display: "table", height: "auto"}}>
                             <div style={{padding: 24}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
@@ -56,9 +57,7 @@ class MLayout extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    return {
-
-    }
+    return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

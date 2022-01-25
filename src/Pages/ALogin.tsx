@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from "react";
-import {Card} from "antd";
+import {Card, message} from "antd";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -19,7 +19,10 @@ class ALogin extends Component<any, any> {
         if (this.props.isLogin) {
             let to = getUrlParams(this.props.location.search).to
             if (to === undefined) this.props.history.push("/v2/home")
-            else this.props.history.push(to)
+            else {
+                this.props.history.replace(to)
+                message.success("登录成功")
+            }
         }
     }
 

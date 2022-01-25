@@ -133,7 +133,7 @@ class CHeader extends Component<any, any> {
                                         <>
                                             <Space>
                                                 <Button type={"text"} onClick={()=>{
-                                                    this.props.history.push("/v2/login")
+                                                    this.props.history.push("/v2/login?to=" + this.props.location.pathname)
                                                 }}>登录 / 注册</Button>
                                             </Space>
                                         </>
