@@ -49,10 +49,10 @@ class SubmissionList extends Component<any, any> {
     addCaseInfo = (data: any[]) => {
         if (data[1] < 0) {
             let dt = this.state.tableData
-            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
-            if (Index == -1) return
+            const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+            if (Index === -1) return
             dt[Index].result = data[1].toString()
-            if (data[1] == -1) {
+            if (data[1] === -1) {
                 if (data.length > 3) {
                     dt[Index].result = data[2]
                     dt[Index].score = data[3]
@@ -72,8 +72,8 @@ class SubmissionList extends Component<any, any> {
 
         } else {
             let dt = this.state.tableData
-            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
-            if (Index == -1) return
+            const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+            if (Index === -1) return
             if (dt[Index].RunningStep < data[1] + 1) {
                 dt[Index].RunningStep = data[1] + 1
                 dt[Index].score += data[3]
@@ -111,7 +111,7 @@ class SubmissionList extends Component<any, any> {
                     submissionId: x.submissionId,
                     result: x.judgeResult.toString(),
                     score: x.judgeScore,
-                    sumScore: x.sumScore == undefined ? 100 : x.sumScore,
+                    sumScore: x.sumScore === undefined ? 100 : x.sumScore,
                     timeLimit: x.timeLimit,
                     memoryLimit: x.memoryLimit,
                     submitTime: parseInt(x.gmtCreate),
@@ -234,7 +234,7 @@ class SubmissionList extends Component<any, any> {
                     return <TestCase
                         type={"text"}
                         caseType={StateList.indexOf(SubmissionMap[text])}
-                        append={text == "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                        append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
                     />
                 }
             },

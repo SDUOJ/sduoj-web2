@@ -37,10 +37,10 @@ const ExamProblemForm = (props: any) => {
     const setProblemGroupData = (data: examProblemGroupType[]) => {
         // console.log("setProblemGroupData", data)
         for (const x of data) {
-            const index = props.groupData.findIndex((value: examProblemGroupType) => value.id == x.id)
-            if (index != -1)
-                if (x.ProblemGroupType != props.groupData[index].ProblemGroupType) {
-                    props.setListData(props.listData.filter((value: examProblemListType) => value.groupId != x.id))
+            const index = props.groupData.findIndex((value: examProblemGroupType) => value.id === x.id)
+            if (index !== -1)
+                if (x.ProblemGroupType !== props.groupData[index].ProblemGroupType) {
+                    props.setListData(props.listData.filter((value: examProblemListType) => value.groupId !== x.id))
                 }
         }
         props.setGroupData(data)
@@ -170,7 +170,7 @@ const ExamProblemForm = (props: any) => {
                     if (i < index) {
                         obj[props.groupData[i].id] =
                             {
-                                text: props.groupData[i].ProblemGroupName == undefined ?
+                                text: props.groupData[i].ProblemGroupName === undefined ?
                                     "ID:" + (i + 1).toString() : props.groupData[i].ProblemGroupName
                             }
                     }
@@ -199,7 +199,7 @@ const ExamProblemForm = (props: any) => {
     let problemGroupColumn: ProColumns<examProblemGroupType>[] = []
     if (sortSwitch) problemGroupColumn = problemGroupColumn.concat(sortColumns)                     // 排序列
     problemGroupColumn = problemGroupColumn.concat(problemGroupInfoColumns)                         // 主要信息列
-    if (UIMode == "all") problemGroupColumn = problemGroupColumn.concat(problemGroupExtColumns)     // 附加信息列
+    if (UIMode === "all") problemGroupColumn = problemGroupColumn.concat(problemGroupExtColumns)     // 附加信息列
     if (!sortSwitch) problemGroupColumn = problemGroupColumn.concat(operatorColumns)                // 操作列
 
 
@@ -215,7 +215,7 @@ const ExamProblemForm = (props: any) => {
                     actionRef={actionRef}
                     expandable={{
                         expandedRowRender: (record: examProblemGroupType, index: number, indent: number, expanded: boolean) => {
-                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
+                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id === record.id))[0]
                             return (
                                 <ProblemAddForm
                                     groupId={record.id}
@@ -229,15 +229,15 @@ const ExamProblemForm = (props: any) => {
                             )
                         },
                         rowExpandable: (record: examProblemGroupType) => {
-                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id == record.id))[0]
-                            return proGroup.ProblemGroupType != undefined && !sortSwitch
+                            const proGroup = props.groupData.filter(((value: examProblemGroupType) => value.id === record.id))[0]
+                            return proGroup.ProblemGroupType !== undefined && !sortSwitch
                         },
                         expandRowByClick: false,
                         expandedRowKeys: expandedRowKeys,
                         onExpand: (expanded: boolean, record: examProblemGroupType) => {
                             let NewExpandedRowKeys = expandedRowKeys
                             if (expanded) NewExpandedRowKeys.push(parseInt(record.id.toString()))
-                            else NewExpandedRowKeys = NewExpandedRowKeys.filter((x: number) => x != parseInt(record.id.toString()))
+                            else NewExpandedRowKeys = NewExpandedRowKeys.filter((x: number) => x !== parseInt(record.id.toString()))
                             setExpandedRowKeys(NewExpandedRowKeys)
                         }
                     }}
@@ -250,7 +250,7 @@ const ExamProblemForm = (props: any) => {
                                     title={props.t("deleteConfirm")}
                                     onConfirm={() => {
                                         setProblemGroupData(
-                                            props.groupData.filter((value: examProblemGroupType) => value.id != row.id)
+                                            props.groupData.filter((value: examProblemGroupType) => value.id !== row.id)
                                         )
                                     }}
                                     okText={props.t("yes")}
@@ -263,7 +263,7 @@ const ExamProblemForm = (props: any) => {
                         onValuesChange: (record: examProblemGroupType, recordList: examProblemGroupType[]) => {
                             let NewDate = []
                             for (let i = 0; i < recordList.length; i++) {
-                                if (recordList[i].id != undefined)
+                                if (recordList[i].id !== undefined)
                                     NewDate.push(recordList[i])
                             }
                             setProblemGroupData(NewDate)

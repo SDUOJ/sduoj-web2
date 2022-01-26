@@ -19,7 +19,7 @@ class UserAvatarBack extends Component<any, any> {
                             <Space>
                                 <div style={{marginTop: -10}}>
                                     {
-                                        this.props.email != null && (
+                                        this.props.email !== null && (
                                             <>
                                                 <UserAvatar email={this.props.email}/>
                                                 <Divider type="vertical"/>

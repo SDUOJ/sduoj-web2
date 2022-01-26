@@ -27,8 +27,8 @@ function examBasicInfoChecker(data: examBasicType): boolean {
 }
 
 function examProblemGroupInfoChecker(data: examProblemGroupType): boolean {
-    if (data.ProblemGroupName == undefined ||
-        data.ProblemGroupType == undefined) {
+    if (data.ProblemGroupName === undefined ||
+        data.ProblemGroupType === undefined) {
         message.error("考试题组信息不完整")
         return false
     }
@@ -36,30 +36,30 @@ function examProblemGroupInfoChecker(data: examProblemGroupType): boolean {
 }
 
 function examProblemChecker(data: examProblemType, type: problemGroupProType) {
-    if (data.ProblemCode == undefined ||
-        data.ProblemScore == undefined) {
+    if (data.ProblemCode === undefined ||
+        data.ProblemScore === undefined) {
         message.error("题目编号与分数不完整")
         return false
     }
-    if (type == "program") {
-        if (data.ProblemCode.match(/SDUOJ-[0-9]{4}/) == null) {
+    if (type === "program") {
+        if (data.ProblemCode.match(/SDUOJ-[0-9]{4}/) === null) {
             message.error("题目题号不合法")
             return false
         }
-        if (data.ProblemSubmitNumber == undefined) {
+        if (data.ProblemSubmitNumber === undefined) {
             message.error("题目提交次数限制不完整")
             return false
         }
-        if (data.ProblemAlias == undefined || data.ProblemAlias.length == 0) {
+        if (data.ProblemAlias === undefined || data.ProblemAlias.length === 0) {
             message.error("题目别名不能为空")
             return false
         }
-        if (data.ProblemDescription == undefined || data.ProblemDescription.length == 0) {
+        if (data.ProblemDescription === undefined || data.ProblemDescription.length === 0) {
             message.error("题目描述不能为空")
             return false
         }
     } else {
-        if (data.ProblemCode.match(/SDUOJ-C-[0-9]{4}/) == null) {
+        if (data.ProblemCode.match(/SDUOJ-C-[0-9]{4}/) === null) {
             message.error("题目题号不合法")
             return false
         }
@@ -69,9 +69,9 @@ function examProblemChecker(data: examProblemType, type: problemGroupProType) {
 
 function examProblemListInfoChecker(data: examProblemListType, group: examProblemGroupType[]): boolean {
     const groupIndex = group.findIndex((value) => {
-        return value.id == data.groupId
+        return value.id === data.groupId
     })
-    if (groupIndex != -1) {
+    if (groupIndex !== -1) {
         const type = group[groupIndex].ProblemGroupType as problemGroupProType
         for (const x of data.proList) if (!examProblemChecker(x, type)) return false;
     }

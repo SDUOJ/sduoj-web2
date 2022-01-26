@@ -2,7 +2,7 @@ import {Button, Card, Form} from "antd";
 import ItemPassword from "../../Component/user/Form/ItemPassword";
 import ItemCaptcha from "../../Component/user/Form/ItemCaptcha";
 import {useState} from "react";
-import getUrlParams from "../../Utils/getUrlParams";
+import {getUrlParams} from "../../Utils/getUrlParams";
 import {withRouter} from "react-router-dom";
 
 const ResetPass = (props: any) => {

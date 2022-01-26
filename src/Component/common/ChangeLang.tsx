@@ -27,7 +27,7 @@ class ChangeLang extends Component<any, any> {
     changeLang(value: string) {
         i18n.changeLanguage(value)
         const id = language.findIndex((item)=>{
-            return item.id == value
+            return item.id === value
         })
         this.props.ChangeLanguage(languageMap[value], language[id].code)
     }

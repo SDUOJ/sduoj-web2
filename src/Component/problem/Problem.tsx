@@ -36,7 +36,7 @@ class Problem extends Component<any, any> {
                             {
                                 [''].map(() => {
                                     if (this.props.score !== undefined && this.props.isScoreVisible === true) {
-                                        return <>（{this.props.score}{this.props.t(this.props.score == 1 ? "point" : "points")}）</>
+                                        return <>（{this.props.score}{this.props.t(this.props.score === 1 ? "point" : "points")}）</>
                                     }
                                 })
                             }

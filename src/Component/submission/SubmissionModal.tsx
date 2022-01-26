@@ -27,7 +27,7 @@ class SubmissionModal extends Component<any, any> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.submissionModalVis != this.props.submissionModalVis) {
+        if (prevProps.submissionModalVis !== this.props.submissionModalVis) {
             this.setState({
                 ProcessingVis: this.props.submissionModalVis
             })

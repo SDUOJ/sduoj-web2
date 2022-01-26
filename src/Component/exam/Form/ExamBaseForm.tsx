@@ -23,12 +23,12 @@ const ExamBaseForm = (props: any) => {
     const [examTime, setExamTime] = useState<moment.Moment[]>();
 
     useEffect(() => {
-        if (props.initData != undefined) {
-            if (props.initData.examDescription != undefined)
+        if (props.initData !== undefined) {
+            if (props.initData.examDescription !== undefined)
                 setExamDescription(
-                    props.initData.examDescription.split('\n').filter((value: string) => value != "")
+                    props.initData.examDescription.split('\n').filter((value: string) => value !== "")
                 )
-            if (props.initData.examStartEndTime != undefined)
+            if (props.initData.examStartEndTime !== undefined)
                 setExamTime(props.initData.examStartEndTime)
         }
     }, [props.initData])
@@ -43,7 +43,7 @@ const ExamBaseForm = (props: any) => {
                     onValuesChange={(changedValues: any, values: examBasicType) => {
                         if (changedValues.examDescription !== undefined) {
                             setExamDescription(
-                                changedValues.examDescription.split('\n').filter((value: string) => value != "")
+                                changedValues.examDescription.split('\n').filter((value: string) => value !== "")
                             )
                         }
                         if (changedValues.examStartEndTime !== undefined) {
@@ -103,7 +103,7 @@ const ExamBaseForm = (props: any) => {
                         <Col span={11} offset={1}>
                             <Meta title={"考试时长"} description={
                                 [''].map(() => {
-                                    if (examTime?.length == 2) {
+                                    if (examTime?.length === 2) {
                                         return TimeDiff(examTime[0].unix() * 1000, examTime[1].unix() * 1000)
                                     }
                                 })
@@ -126,7 +126,7 @@ const ExamBaseForm = (props: any) => {
                         <Col span={11} offset={1}>
                             {
                                 [''].map(() => {
-                                    if (!(examDescription.length == 0 || (examDescription.length == 1 && examDescription[0].length == 0))) {
+                                    if (!(examDescription.length === 0 || (examDescription.length === 1 && examDescription[0].length === 0))) {
                                         return (
                                             <Meta title={"预览"} description={
                                                 <List

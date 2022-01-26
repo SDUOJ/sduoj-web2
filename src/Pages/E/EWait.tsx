@@ -26,7 +26,7 @@ class EWait extends Component<any, any> {
     }
 
     setExamStart = (data: boolean) => {
-        if (data != this.state.ExamStart){
+        if (data !== this.state.ExamStart){
             message.info("正在排队发卷，请勿刷新，并耐心等待几秒")
             setTimeout(()=>{
                 this.setState({ExamStart: data})
@@ -57,18 +57,18 @@ class EWait extends Component<any, any> {
         const examInfo = this.props.examInfo
         let description:any = ""
         let ExamStartText = this.props.t("StartAnswering")
-        if (examInfo != undefined) {
-            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit != 1) {
+        if (examInfo !== undefined) {
+            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1) {
                 if(!this.state.ExamStart) this.setState({ExamStart: true})
             } else {
                 if(this.state.ExamStart) this.setState({ExamStart: false})
             }
             if (examInfo.endTime < Date.now()) ExamStartText = "已结束"
-            if (examInfo.userIsSubmit == 1) ExamStartText = "已交卷"
+            if (examInfo.userIsSubmit === 1) ExamStartText = "已交卷"
             description = examInfo.description
             const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
             description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
-            if (start.format("LL") == end.format("LL"))
+            if (start.format("LL") === end.format("LL"))
                 description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("HH:mm") + " - " + end.format("HH:mm") + "\n" + description
             else
                 description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("HH:mm") + " - "
@@ -107,7 +107,7 @@ class EWait extends Component<any, any> {
                                     <Meta title={this.props.t("ExamDescription")} description={
                                         <List
                                             size="small"
-                                            dataSource={description.split('\n').filter((value: string) => value != "")}
+                                            dataSource={description.split('\n').filter((value: string) => value !== "")}
                                             renderItem={
                                                 (item: string, index) => {
                                                     return (

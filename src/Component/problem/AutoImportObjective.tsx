@@ -39,9 +39,9 @@ const AutoImportObjective = () => {
                     let cp: string = ""
                     for (let j = 0; j < 26; j++) {
                         const lt = String.fromCharCode('A'.charCodeAt(0) + j)
-                        if (data[i]["choice-" + lt] == undefined) break
+                        if (data[i]["choice-" + lt] === undefined) break
                         choice[lt] = data[i]["choice-" + lt]
-                        if (cp.length != 0) cp += "\n"
+                        if (cp.length !== 0) cp += "\n"
                         cp += lt + ". " + data[i]["choice-" + lt]
                     }
                     pd.push({
@@ -53,14 +53,14 @@ const AutoImportObjective = () => {
                             choice: choice
                         },
                         answer: data[i].answer.replaceAll(" ", "").split(','),
-                        managerGroups: data[i].managerGroups == undefined ? [] : data[i].managerGroups
+                        managerGroups: data[i].managerGroups === undefined ? [] : data[i].managerGroups
                     })
                     show.push({
                         problemTitle: data[i].problemTitle,
-                        isMulti: data[i].isMulti == 0 ? "单选题" : "多选题",
+                        isMulti: data[i].isMulti === 0 ? "单选题" : "多选题",
                         description: data[i].content + "\n" + cp,
                         answer: data[i].answer,
-                        managerGroups: data[i].managerGroups == undefined ? [] : data[i].managerGroups
+                        managerGroups: data[i].managerGroups === undefined ? [] : data[i].managerGroups
                     })
                     us.push(0)
                 }
@@ -105,7 +105,7 @@ const AutoImportObjective = () => {
                                     message.error("未加载题目信息")
                                     return
                                 }
-                                for (let i = 0; i < uploadState.length; i++) if (uploadState[i] == 0) uploadState[i] = 1
+                                for (let i = 0; i < uploadState.length; i++) if (uploadState[i] === 0) uploadState[i] = 1
                                 setUploadState(deepClone(uploadState))
                                 setCanSubmitAll(false)
 
@@ -121,7 +121,7 @@ const AutoImportObjective = () => {
                                     let i = -1
                                     for (const x of submitProData) {
                                         i += 1
-                                        if (uploadState[i] == 2) continue
+                                        if (uploadState[i] === 2) continue
                                         await mApi.createChoiceProblem(x).then((resData) => {
                                             uploadState[i] = 2
                                             setUploadState(deepClone(uploadState))
@@ -194,7 +194,7 @@ const AutoImportObjective = () => {
                             title: "上传",
                             key: "isUpload",
                             render: (text, record, index) => {
-                                if (uploadState[index] == 0)
+                                if (uploadState[index] === 0)
                                     return (
                                         <Button type={"link"} onClick={() => {
                                             uploadState[index] = 1
@@ -212,9 +212,9 @@ const AutoImportObjective = () => {
                                             提交
                                         </Button>
                                     )
-                                if (uploadState[index] == 1)
+                                if (uploadState[index] === 1)
                                     return <><SyncOutlined spin/> 提交中 </>
-                                if (uploadState[index] == 2)
+                                if (uploadState[index] === 2)
                                     return <span style={{color: "green"}}> 已创建 </span>
                             }
                         }

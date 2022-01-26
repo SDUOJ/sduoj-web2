@@ -18,12 +18,12 @@ const {Option} = Select;
 const SelectGroup = (props: any) => {
 
     const [GroupInfo, setGroupInfo] = useState<groupSelection[]>(
-        props.groupInfo != undefined ? props.groupInfo : []
+        props.groupInfo !== undefined ? props.groupInfo : []
     )
 
     function onSearch(val: any) {
         mApi.queryGroupTitle({title: val}).then((resData: any) => {
-            if (resData != null) {
+            if (resData !== null) {
                 const data = resData as unknown as groupSelection[]
                 setGroupInfo(data)
             }

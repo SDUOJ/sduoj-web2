@@ -1,18 +1,12 @@
 import {ManageState} from "../../../Type/IManage";
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, useState} from "react";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {Button, FormInstance, message, Modal, Tabs} from "antd";
+import {Button, message, Modal, Tabs} from "antd";
 import {ButtonType} from "antd/lib/button/button";
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
-import {examProblemGroupType, examProblemListType, ProGroupTypeFtS} from "../../../Type/IExam";
-import {examFormChecker} from "../../../Utils/Checker/examFormChecker";
-import mApi from "../../../Utils/API/m-api";
 import TabPane from "@ant-design/pro-card/lib/components/TabPane";
-import ExamBaseForm from "../../exam/Form/ExamBaseForm";
-import ExamMemberForm from "../../exam/Form/ExamMemberForm";
-import ExamProblemForm from "../../exam/Form/ExamProblemForm";
 import {ck} from "../../../Utils/empty";
 
 interface subFormType{
@@ -75,14 +69,14 @@ const ModalForm = (props: ModalFormProps & any) => {
 
     const submitData = () => {
        props.dataChecker(formData).then(()=>{
-           if (props.type == "create") {
+           if (props.type === "create") {
                props.dataSubmitter(formData).then((res: any) => {
                    setFormVis(false)
                    if(props.TableName !== undefined)
                        props.addTableVersion(props.TableName)
                    message.success("成功")
                })
-           } else if (props.type == "update") {
+           } else if (props.type === "update") {
                Object.assign(formData, props.updateAppendProps)
                props.dataUpdater(formData).then((res: any) => {
                    setFormVis(false)
@@ -105,8 +99,8 @@ const ModalForm = (props: ModalFormProps & any) => {
             >
                 {
                     [''].map(() => {
-                        if (props.type == "create") return <PlusOutlined/>
-                        if (props.type == "batchUpdate") return <EditOutlined/>
+                        if (props.type === "create") return <PlusOutlined/>
+                        if (props.type === "batchUpdate") return <EditOutlined/>
                     })
                 }
                 {

@@ -16,13 +16,13 @@ export function getDiffSecond(start: number, end: number) {
 export function TimeDiff(start: number, end: number, d: string = "天", h: string = "时", m: string = "分", s: string = "秒") {
     const diffSecond: number = getDiffSecond(start, end)
     let res = ""
-    if (Math.floor(diffSecond / 3600 / 24) != 0)
+    if (Math.floor(diffSecond / 3600 / 24) !== 0)
         res += Math.floor(diffSecond / 3600 / 24).toString() + d
-    if (Math.floor((diffSecond % (3600 * 24)) / 3600) != 0)
+    if (Math.floor((diffSecond % (3600 * 24)) / 3600) !== 0)
         res += Math.floor((diffSecond % (3600 * 24)) / 3600).toString() + h
-    if (Math.floor((diffSecond % 3600) / 60) != 0)
+    if (Math.floor((diffSecond % 3600) / 60) !== 0)
         res += Math.floor((diffSecond % 3600) / 60).toString() + m
-    if (diffSecond % 60 != 0)
+    if (diffSecond % 60 !== 0)
         res += (diffSecond % 60).toString() + s
     return res
 }

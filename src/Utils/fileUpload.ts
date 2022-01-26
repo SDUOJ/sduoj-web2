@@ -1,5 +1,4 @@
 import CApi from "Utils/API/c-api"
-import apiAddress from "./API/apiAddress";
 import md5 from "js-md5";
 
 export const fileUpload = (files: File[], callback: any) => {
@@ -30,10 +29,11 @@ export const fileUpload = (files: File[], callback: any) => {
 
     Promise.all(md5Set).then(() => {
         Promise.all(pros).then(()=>{
-            if (num != 0) {
+            if (num !== 0) {
                 CApi.uploadFile(formData).then((data: any) => {
                     data.map((value: any) => {
                         callback(value)
+                        return undefined
                     })
                 })
             }

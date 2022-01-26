@@ -3,7 +3,7 @@ import VditorPreview from 'vditor/dist/method.min'
 
 
 export function MarkdownPreview(id: string, code: string) {
-    if (code == null) code = ""
+    if (code === null) code = ""
     code = code.replace(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
 
     const config = {

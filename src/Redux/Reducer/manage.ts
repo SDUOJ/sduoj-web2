@@ -26,7 +26,7 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
 
         case "addTableVersion":
             let value = State.tableData.tableVersion[action.data]
-            if(value == undefined) State.tableData.tableVersion[action.data] = 1
+            if(value === undefined) State.tableData.tableVersion[action.data] = 1
             else State.tableData.tableVersion[action.data] += 1
             break
 

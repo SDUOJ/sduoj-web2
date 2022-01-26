@@ -11,6 +11,7 @@ export default function judgeAuth(roles: Role[] | undefined, minRole: Role[]): b
     let ok = false;
     roles.map(v => {
         if (minRole.includes(v)) ok = true;
+        return undefined
     })
     return ok;
 }

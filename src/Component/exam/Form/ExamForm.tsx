@@ -46,9 +46,9 @@ const ExamForm = (props: any) => {
         let examPGD = examProGroupData
         for (const x of data) {
             let score = 0
-            for (const y of x.proList) score += y.ProblemScore == undefined ? 0 : y.ProblemScore
-            const index = examPGD.findIndex((value) => value.id == x.groupId)
-            if (index != -1) examPGD[index].ProblemGroupSumScore = score
+            for (const y of x.proList) score += y.ProblemScore === undefined ? 0 : y.ProblemScore
+            const index = examPGD.findIndex((value) => value.id === x.groupId)
+            if (index !== -1) examPGD[index].ProblemGroupSumScore = score
         }
         setExamProGroupData(examPGD)
         setProListDataA(data)
@@ -64,26 +64,26 @@ const ExamForm = (props: any) => {
 
     return (
         <>
-            <Button type={props.type == "create" ? "primary" : "link"}
+            <Button type={props.type === "create" ? "primary" : "link"}
                     onClick={() => {
                         setExamFormVis(true)
-                        if (props.type == "update") {
+                        if (props.type === "update") {
                             mApi.getExamInfo(props.examID).then((resData: any) => {
-                                if (resData != null) {
+                                if (resData !== null) {
                                     setBaseInit({
                                         examTitle: resData.examTitle,
                                         examStartEndTime: [moment(parseInt(resData.gmtStart)), moment(parseInt(resData.gmtEnd))],
                                         examDescription: resData.description,
-                                        isScoreVisible: resData.features == null ? false : resData.features.isScoreVisible,
-                                        isSubmissionScoreVisible: resData.features == null ? false : resData.features.isSubmissionScoreVisible
+                                        isScoreVisible: resData.features === null ? false : resData.features.isScoreVisible,
+                                        isSubmissionScoreVisible: resData.features === null ? false : resData.features.isSubmissionScoreVisible
                                     })
                                     let PL = [], GI = [], ManageGroup = null
-                                    if (resData.participatingGroupDTOList != null)
+                                    if (resData.participatingGroupDTOList !== null)
                                         for (const x of resData.participatingGroupDTOList) {
                                             PL.push(x.groupId)
                                             GI.push(x)
                                         }
-                                    if (resData.managerGroupDTO != null) {
+                                    if (resData.managerGroupDTO !== null) {
                                         GI.push(resData.managerGroupDTO)
                                         ManageGroup = resData.managerGroupDTO.groupId
                                     }
@@ -139,13 +139,13 @@ const ExamForm = (props: any) => {
                     }}>
                 {
                     [''].map(() => {
-                        if (props.type == "create") return <PlusOutlined/>
+                        if (props.type === "create") return <PlusOutlined/>
                     })
                 }
-                {props.type == "create" ? props.t("create") : props.t("Edit")}
+                {props.type === "create" ? props.t("create") : props.t("Edit")}
             </Button>
             <Modal
-                title={props.type == "create" ? "新建考试" : props.title}
+                title={props.type === "create" ? "新建考试" : props.title}
                 className={"exam-form"}
                 visible={examFormVis}
                 maskClosable={false}
@@ -177,9 +177,9 @@ const ExamForm = (props: any) => {
                                 let proListX: any = []
 
                                 const proIndex = proList.findIndex((value) => {
-                                    return value.groupId == x.id
+                                    return value.groupId === x.id
                                 })
-                                if (proIndex != -1) {
+                                if (proIndex !== -1) {
                                     for (const y of proList[proIndex].proList) {
                                         proListX.push({
                                             problemCode: y.ProblemCode,
@@ -187,7 +187,7 @@ const ExamForm = (props: any) => {
                                             problemTitle: y.ProblemAlias,
                                             submitNum: y.ProblemSubmitNumber,
                                             problemDescriptionId:
-                                                x.ProblemGroupType == "program" ? y.ProblemDescription : undefined
+                                                x.ProblemGroupType === "program" ? y.ProblemDescription : undefined
                                         })
                                     }
                                 }
@@ -197,13 +197,13 @@ const ExamForm = (props: any) => {
                                     title: x.ProblemGroupName,
                                     type: ProGroupTypeFtS[x.ProblemGroupType as string],
                                     problems: proListX,
-                                    groupStart: x.ProblemGroupStartEndTime == undefined
+                                    groupStart: x.ProblemGroupStartEndTime === undefined
                                         ? base.examStartEndTime[0].unix() * 1000
                                         : x.ProblemGroupStartEndTime[0].unix() * 1000,
-                                    groupEnd: x.ProblemGroupStartEndTime == undefined
+                                    groupEnd: x.ProblemGroupStartEndTime === undefined
                                         ? base.examStartEndTime[1].unix() * 1000
                                         : x.ProblemGroupStartEndTime[1].unix() * 1000,
-                                    previous: x.ProblemGroupPremise == undefined
+                                    previous: x.ProblemGroupPremise === undefined
                                         ? 0 : x.ProblemGroupPremise,
                                 })
                             }
@@ -222,7 +222,7 @@ const ExamForm = (props: any) => {
                                 problemGroups: proGroup
                             }
                             // console.log(base.examStartEndTime[0].unix(), base.examStartEndTime[1].unix())
-                            if (props.type == "create") {
+                            if (props.type === "create") {
                                 mApi.createExam(formData).then((resData: any) => {
                                     setExamFormVis(false)
                                     message.success("成功")
@@ -230,7 +230,7 @@ const ExamForm = (props: any) => {
                                         window.location.reload()
                                     }, 1000)
                                 })
-                            } else if (props.type == "update") {
+                            } else if (props.type === "update") {
                                 formData['examId'] = props.examID
                                 mApi.updateExam(formData).then((resData: any) => {
                                     setExamFormVis(false)

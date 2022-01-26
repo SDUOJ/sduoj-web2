@@ -34,10 +34,10 @@ class RecentSubmission extends Component<any, any> {
     addCaseInfo = (data: any[]) => {
         if (data[1] < 0) {
             let dt = this.state.tableData
-            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
-            if(Index == -1) return
+            const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+            if(Index === -1) return
             dt[Index].result = data[1].toString()
-            if (data[1] == -1) {
+            if (data[1] === -1) {
                 if (data.length > 3) {
                     dt[Index].result = data[2]
                     dt[Index].score = data[3]
@@ -57,8 +57,8 @@ class RecentSubmission extends Component<any, any> {
 
         } else {
             let dt = this.state.tableData
-            const Index = dt.findIndex((value: any) => value.submissionId == data[0])
-            if(Index == -1) return
+            const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+            if(Index === -1) return
             if(dt[Index].RunningStep < data[1] + 1){
                 dt[Index].RunningStep = data[1] + 1
                 dt[Index].score += data[3]
@@ -122,9 +122,9 @@ class RecentSubmission extends Component<any, any> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.problemId != this.props.problemId
-            || prevProps.groupId != this.props.groupId
-            || prevProps.topSubmission != this.props.topSubmission
+        if (prevProps.problemId !== this.props.problemId
+            || prevProps.groupId !== this.props.groupId
+            || prevProps.topSubmission !== this.props.topSubmission
         ) {
             if (this.props.show) this.updateList()
         }
@@ -142,7 +142,7 @@ class RecentSubmission extends Component<any, any> {
                         <TestCase
                             type={"text"}
                             caseType={StateList.indexOf(SubmissionMap[text])}
-                            append={text == "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                            append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
                         />
                     )
                 }
@@ -152,11 +152,11 @@ class RecentSubmission extends Component<any, any> {
                 dataIndex: "score",
                 key: "score",
                 render: (text: number) => {
-                    if(this.props.isSubmissionScoreVisible == true)
+                    if(this.props.isSubmissionScoreVisible === true)
                         return text / this.props.sumScore * 100 + "%"
-                    if(this.props.isSubmissionScoreVisible == false){
-                        if(text == this.props.sumScore) return "全部通过"
-                        if(text == 0) return "未通过"
+                    if(this.props.isSubmissionScoreVisible === false){
+                        if(text === this.props.sumScore) return "全部通过"
+                        if(text === 0) return "未通过"
                         return "部分通过"
                     }
 
@@ -185,7 +185,7 @@ class RecentSubmission extends Component<any, any> {
                     return <TestCase
                         type={"text"}
                         caseType={StateList.indexOf(SubmissionMap[text])}
-                        append={text == "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                        append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
                     />
                 }
             },
@@ -194,11 +194,11 @@ class RecentSubmission extends Component<any, any> {
                 dataIndex: "score",
                 key: "score",
                 render: (text: number) => {
-                    if(this.props.isSubmissionScoreVisible == true)
+                    if(this.props.isSubmissionScoreVisible === true)
                         return text / this.props.sumScore * 100 + "%"
-                    if(this.props.isSubmissionScoreVisible == false){
-                        if(text == this.props.sumScore) return "全部通过"
-                        if(text == 0) return "未通过"
+                    if(this.props.isSubmissionScoreVisible === false){
+                        if(text === this.props.sumScore) return "全部通过"
+                        if(text === 0) return "未通过"
                         return "部分通过"
                     }
 
@@ -299,12 +299,12 @@ const mapStateToProps = (state: any) => {
     const SubState: SubmissionState = state.SubmissionReducer
     let show = false
     if (State.ProListLoad) {
-        if ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].type == "Program") {
+        if ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].type === "Program") {
             show = true;
         }
     }
     let Memory: any = 0, Time: any = 0, title: any = "", sumScore: any = 100
-    if (State.proGroupInfo != undefined) {
+    if (State.proGroupInfo !== undefined) {
         const Pro = State.proGroupInfo[State.TopGroupIndex - 1].proList[State.TopProblemIndex - 1].content as ProgramContent
         Time = Pro?.TimeLimit
         Memory = Pro?.MemoryLimit

@@ -4,7 +4,7 @@ import {ExamState} from "../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import getUrlParams from "../Utils/getUrlParams";
+import {getUrlParams} from "../Utils/getUrlParams";
 import {thirdPartyLoginTodo} from "../Redux/Action/user";
 import {thirdPartyLoginAction} from "../Type/Iuser";
 import CApi from "../Utils/API/c-api";

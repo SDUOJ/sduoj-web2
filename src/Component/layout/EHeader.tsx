@@ -28,7 +28,7 @@ class EHeader extends Component<any, any> {
                 </div>
                 <div style={{float: "right"}} key={"operator"}>
                     {
-                        this.props.location.pathname.match(/\/exam\/running\//) != null &&
+                        this.props.location.pathname.match(/\/exam\/running\//) !== null &&
                         this.props.ExamInfoLoad &&
                         (
                                 <ExamOver key={"ExamOver"}/>

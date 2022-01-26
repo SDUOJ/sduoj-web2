@@ -82,9 +82,9 @@ const ObjectiveForm = (props: any) => {
     const setFormValue = (choice?: DataSourceType[]) => {
         let data = formRef.current?.getFieldsValue()
         const Data = formRef.current?.getFieldsValue()
-        if (data != undefined) {
-            if (choice != undefined) data.choice = choice
-            if (Data.choice != undefined && Data.choice.length != data.choice.length) {
+        if (data !== undefined) {
+            if (choice !== undefined) data.choice = choice
+            if (Data.choice !== undefined && Data.choice.length !== data.choice.length) {
                 setAnswerList(genAnswerList(data.choice))
                 setEditableRowKeys(genEditableList(data.choice))
                 data.answer = []
@@ -147,23 +147,23 @@ const ObjectiveForm = (props: any) => {
     let columns: ProColumns<DataSourceType>[] = []
     if (sortSwitch) columns = columns.concat(sortColumns)
     columns = columns.concat(choiceColumns)
-    if (!sortSwitch && (getForm()?.choice?.length == undefined || getForm()?.choice?.length > 2)) columns = columns.concat(operatorColumns)
+    if (!sortSwitch && (getForm()?.choice?.length === undefined || getForm()?.choice?.length > 2)) columns = columns.concat(operatorColumns)
 
     return (
         <>
             <ModalForm
                 visible={modalVis}
                 onVisibleChange={setModalVis}
-                title={props.type == "create" ? "新建" : props.title}
+                title={props.type === "create" ? "新建" : props.title}
                 formRef={formRef}
                 initialValues={initData}
                 trigger={
-                    <Button type={props.type == "create" ? "primary" : "link"}
+                    <Button type={props.type === "create" ? "primary" : "link"}
                             onClick={() => {
                                 setModalVis(true)
-                                if (props.type == "update") {
+                                if (props.type === "update") {
                                     mApi.getChoiceInfo(props.problemCode).then((resData: any) => {
-                                        if (resData != null) {
+                                        if (resData !== null) {
                                             // console.log(resData)
                                             const choice = resData.description.choice
                                             setAnswerList(genAnswerList(Object.keys(choice)))
@@ -198,10 +198,10 @@ const ObjectiveForm = (props: any) => {
                             }}>
                         {
                             [''].map(() => {
-                                if (props.type == "create") return <PlusOutlined/>
+                                if (props.type === "create") return <PlusOutlined/>
                             })
                         }
-                        {props.type == "create" ? "新建" : "修改"}
+                        {props.type === "create" ? "新建" : "修改"}
                     </Button>
                 }
                 submitter={{
@@ -220,16 +220,16 @@ const ObjectiveForm = (props: any) => {
                                 onClick={() => {
                                     formRef.current?.validateFields().then(value => {
                                         for (let i = 0; i < value.choice.length; i++) {
-                                            if (value.choice[i].content.length == 0) {
+                                            if (value.choice[i].content.length === 0) {
                                                 message.error("选项不能为空")
                                                 return
                                             }
                                         }
-                                        if (value.isMulti == "1" && value.answer.length == 1) {
+                                        if (value.isMulti === "1" && value.answer.length === 1) {
                                             message.error("多选题应该有两个及以上答案")
                                             return;
                                         }
-                                        if (value.isMulti == "0" && value.answer.length != 1) {
+                                        if (value.isMulti === "0" && value.answer.length !== 1) {
                                             message.error("单选题只能有一个答案")
                                             return;
                                         }
@@ -246,9 +246,9 @@ const ObjectiveForm = (props: any) => {
                                                 choice: choice
                                             },
                                             answer: value.answer,
-                                            managerGroups: value.managerGroups == undefined ? [] : value.managerGroups
+                                            managerGroups: value.managerGroups === undefined ? [] : value.managerGroups
                                         }
-                                        if (props.type == "create") {
+                                        if (props.type === "create") {
                                             mApi.createChoiceProblem(data).then((resData) => {
                                                 message.success("成功")
                                                 setModalVis(false)
@@ -256,7 +256,7 @@ const ObjectiveForm = (props: any) => {
                                                     window.location.reload()
                                                 }, 1000)
                                             })
-                                        } else if (props.type == "update") {
+                                        } else if (props.type === "update") {
                                             data['problemCode'] = props.problemCode
                                             mApi.updateChoiceProblem(data).then((resData) => {
                                                 message.success("成功")
@@ -277,7 +277,7 @@ const ObjectiveForm = (props: any) => {
             >
                 <Skeleton active loading={!isDataLoad}>
                     <Form.Item label={"类型"} name={"isMulti"} rules={[{required: true}]}>
-                        <Radio.Group buttonStyle="solid" disabled={props.type == "update"}>
+                        <Radio.Group buttonStyle="solid" disabled={props.type === "update"}>
                             <Radio.Button value="0">单选题</Radio.Button>
                             <Radio.Button value="1">多选题</Radio.Button>
                         </Radio.Group>
@@ -302,7 +302,7 @@ const ObjectiveForm = (props: any) => {
                                         title={props.t("deleteConfirm")}
                                         onConfirm={() => {
                                             let choice = formRef.current?.getFieldValue("choice")
-                                            choice = choice.filter((value: DataSourceType) => value.id != row.id)
+                                            choice = choice.filter((value: DataSourceType) => value.id !== row.id)
                                             setFormValue(choice)
                                         }}
                                         okText={props.t("yes")}
@@ -337,7 +337,7 @@ const ObjectiveForm = (props: any) => {
                                 }, {newRecordType: "dataSource", recordKey: Date.now()});
                             }}
                             icon={<PlusOutlined/>}
-                            disabled={getForm()?.choice != undefined && getForm()?.choice.length >= 26}
+                            disabled={getForm()?.choice !== undefined && getForm()?.choice.length >= 26}
                         >
                             {props.t("NewOption")}
                         </Button>

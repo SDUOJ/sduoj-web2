@@ -124,24 +124,24 @@ const EditableTableWithDrag = (props: any) => {
     const ProblemType = props.problemType
     const strMatch = (value?: string) => {
         if (value === undefined) return null
-        if (ProblemType === "single" || ProblemType == "multi")
+        if (ProblemType === "single" || ProblemType === "multi")
             return value.match(/SDUOJ-C-[0-9]{4}$/)
-        if (ProblemType == "program")
+        if (ProblemType === "program")
             return value.match(/SDUOJ-[0-9]{4}$/)
     }
 
     // 获取题目描述信息
     const getProblemDescriptionInfo = async (problemCode?: string) => {
-        if (problemCode == undefined) return {}
+        if (problemCode === undefined) return {}
         if (problemDescriptionCache[problemCode] !== undefined) {
             return Promise.resolve()
         }
-        if (strMatch(problemCode) != null) {
+        if (strMatch(problemCode) !== null) {
             if (problemDescriptionLoading.indexOf(problemCode) === -1) {
                 problemDescriptionLoading.push(problemCode)
                 setProblemDescriptionLoading(problemDescriptionLoading)
                 return mApi.getProblemDescriptionList({problemCode: problemCode}).then((resData: any) => {
-                        if (resData != null) {
+                        if (resData !== null) {
                             let res: any = {}
                             for (const x of resData) res[x.id] = ({text: x.title})
                             problemDescriptionCache[problemCode] = {"DescriptionInfo": res}
@@ -178,7 +178,7 @@ const EditableTableWithDrag = (props: any) => {
                 switch (ProblemType) {
                     case "program":
                         return mApi.getProblem({problemCode: problemCode}).then((resData: any) => {
-                            if (resData == null) return Promise.reject("题目不存在")
+                            if (resData === null) return Promise.reject("题目不存在")
                             else {
                                 problemInfoCache[problemCode] = {
                                     ProblemAlias: resData.problemTitle,
@@ -193,13 +193,13 @@ const EditableTableWithDrag = (props: any) => {
                     case "single":
                     case "multi":
                         return mApi.getChoiceProblem({problemCode: problemCode}).then((resData: any) => {
-                            if (resData == null) return Promise.reject("题目不存在")
+                            if (resData === null) return Promise.reject("题目不存在")
                             else {
-                                if (resData.isMulti == 1 && ProblemType == "single") return Promise.reject("单选题组不能录入多选题")
-                                if (resData.isMulti == 0 && ProblemType == "multi") return Promise.reject("多选题组不能录入单选题")
+                                if (resData.isMulti === 1 && ProblemType === "single") return Promise.reject("单选题组不能录入多选题")
+                                if (resData.isMulti === 0 && ProblemType === "multi") return Promise.reject("多选题组不能录入单选题")
 
                                 let str = ""
-                                const pro = typeof resData.description == "string" ? JSON.parse(resData.description) : resData.description
+                                const pro = typeof resData.description === "string" ? JSON.parse(resData.description) : resData.description
                                 str += pro.content + '\n'
                                 let len = Object.keys(pro.choice).length
                                 for (const x of Object.keys(pro.choice)) {
@@ -380,8 +380,8 @@ const EditableTableWithDrag = (props: any) => {
 
     if (props.type === "problem") {
         columns = columns.concat(ProblemCodeColumnItem)
-        if (ProblemType == "single" || ProblemType == "multi") columns = columns.concat(ObjectiveProblemPreviewColumnItem)
-        if (ProblemType == "program") {
+        if (ProblemType === "single" || ProblemType === "multi") columns = columns.concat(ObjectiveProblemPreviewColumnItem)
+        if (ProblemType === "program") {
             columns = columns.concat(ProgramingProblemInfoColumnItem)
             columns = columns.concat(ProblemSubmitLimitColumnItem)
         }
@@ -409,7 +409,7 @@ const EditableTableWithDrag = (props: any) => {
                             <Popconfirm
                                 title={props.t("deleteConfirm")}
                                 onConfirm={() => {
-                                    const data = TableData.filter((value: any) => value.id != row.id)
+                                    const data = TableData.filter((value: any) => value.id !== row.id)
                                     setTableData(data)
                                     setEditableRowKeys(genNumberList(data))
                                 }}
@@ -423,7 +423,7 @@ const EditableTableWithDrag = (props: any) => {
                     onValuesChange: (record, recordList) => {
                         let NewDate = []
                         for (let i = 0; i < recordList.length; i++) {
-                            if (recordList[i].id != undefined)
+                            if (recordList[i].id !== undefined)
                                 NewDate.push(recordList[i])
                         }
                         setTableData(NewDate)

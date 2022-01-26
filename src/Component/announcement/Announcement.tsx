@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Card, Modal, Space, Table, Tag} from "antd";
+import {Button, Card, Modal, Space, Tag} from "antd";
 import {withTranslation} from "react-i18next";
 import {InfoCircleOutlined} from "@ant-design/icons"
 import ANCContent from "./Content";
@@ -66,13 +66,13 @@ class Announcement extends Component<any, any> {
                                 render: (text: string, row:any) => {
                                     return (
                                         <Space size={5}>
-                                            <a onClick={() => {
+                                            <Button type={"link"} onClick={() => {
                                                 this.setState({
                                                     show: true,
                                                     showId: parseInt(row.noticeId),
                                                     showTitle: row.title
                                                 })
-                                            }}>{text}</a>
+                                            }}>{text}</Button>
                                             {row.top === 1 && (<Tag color={"#e10000"}>{this.props.t("Top")}</Tag>)}
                                         </Space>
 

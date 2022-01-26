@@ -6,7 +6,7 @@ import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
 import {testLoginTodo} from "../../Redux/Action/user";
 import Login from "../../Component/user/Login";
-import getUrlParams from "../../Utils/getUrlParams";
+import {getUrlParams} from "../../Utils/getUrlParams";
 
 
 class CLogin extends Component<any, any> {

@@ -13,7 +13,7 @@ class ExamPageCtrl extends Component<any, any> {
             <div className={"ExamPageCtrl"}>
                 <Space>
                     <Button shape="round" type={"primary"}
-                            disabled={this.props.TopProblemIndex == 1 || this.props.Loading}
+                            disabled={this.props.TopProblemIndex === 1 || this.props.Loading}
                             onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex - 1)}
                     >
                         <LeftOutlined/> {this.props.t("PreviousProblem")}
@@ -26,7 +26,7 @@ class ExamPageCtrl extends Component<any, any> {
                         </div>
                     </Spin>
                     <Button shape="round" type={"primary"}
-                            disabled={this.props.TopProblemIndex == this.props.ProNumber || this.props.Loading}
+                            disabled={this.props.TopProblemIndex === this.props.ProNumber || this.props.Loading}
                             onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex + 1)}
                     >
                         {this.props.t("NextProblem")} <RightOutlined/>
@@ -45,7 +45,7 @@ const mapStateToProps = (state: any) => {
         TopGroupIndex: State.TopGroupIndex,
         TopProblemIndex: State.TopProblemIndex,
         // 当前题组的题目数量
-        ProNumber: State.TopGroupIndex == 0 ? undefined :
+        ProNumber: State.TopGroupIndex === 0 ? undefined :
             ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[]).length
     }
 }

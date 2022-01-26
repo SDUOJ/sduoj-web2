@@ -24,9 +24,9 @@ class ProTag extends Component<any, any> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (this.props.GroupIndex != undefined) {
-            if (prevProps.AnswerSheetLoad[this.props.GroupIndex] == false &&
-                this.props.AnswerSheetLoad[this.props.GroupIndex] == true) {
+        if (this.props.GroupIndex !== undefined) {
+            if (prevProps.AnswerSheetLoad[this.props.GroupIndex] === false &&
+                this.props.AnswerSheetLoad[this.props.GroupIndex] === true) {
                 this.updateState()
             }
             const ProInfo = this.props.GroupInfo[this.props.GroupIndex].proList
@@ -35,14 +35,14 @@ class ProTag extends Component<any, any> {
                 const NowPro = (ProInfo as SProInfo[])[this.props.ProIndex - 1]
                 const PrePro = (PreProInfo as SProInfo[])[this.props.ProIndex - 1]
                 if (NowPro.content !== undefined && PrePro.content !== undefined) {
-                    if (IsAnswer(NowPro.content) != IsAnswer(PrePro.content)) {
+                    if (IsAnswer(NowPro.content) !== IsAnswer(PrePro.content)) {
                         this.updateState()
                     }
-                    if (NowPro.flag != PrePro.flag) {
+                    if (NowPro.flag !== PrePro.flag) {
                         this.updateState()
                     }
                     if (isProgramContent(NowPro.content) && isProgramContent(PrePro.content)) {
-                        if (GetMaxScore(NowPro.content) != GetMaxScore(PrePro.content))
+                        if (GetMaxScore(NowPro.content) !== GetMaxScore(PrePro.content))
                             this.updateState()
                     }
                 }
@@ -109,9 +109,9 @@ class ProTag extends Component<any, any> {
 
                 </Space>
                 {
-                    this.props.ProIndex != 0
-                    && this.props.ProIndex == this.props.TopProblemIndex
-                    && this.props.GroupIndex + 1 == this.props.TopGroupIndex && (
+                    this.props.ProIndex !== 0
+                    && this.props.ProIndex === this.props.TopProblemIndex
+                    && this.props.GroupIndex + 1 === this.props.TopGroupIndex && (
                         <div className={"nowPro"}/>
                     )
                 }
@@ -127,7 +127,7 @@ class ProTag extends Component<any, any> {
                             this.props.GroupInfo !== undefined &&
                             this.props.GroupInfo[this.props.GroupIndex].proList !== undefined &&
                             this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content !== undefined &&
-                            this.props.isSubmissionScoreVisible == true
+                            this.props.isSubmissionScoreVisible === true
                         ) {
                             const sumScore = this.props.GroupInfo[this.props.GroupIndex].proList[this.props.ProIndex - 1].content.SumScore
                             return (

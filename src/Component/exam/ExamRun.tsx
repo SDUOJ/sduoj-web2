@@ -48,7 +48,7 @@ class ExamRun extends Component<any, any> {
     render() {
         return (
             <>
-                <Skeleton active loading={this.props.examInfo == undefined}>
+                <Skeleton active loading={this.props.examInfo === undefined}>
                     <div className={"ExamRun"}>
                         <SubmissionModal getSubmission={this.getSubmission}/>
                         <Row>

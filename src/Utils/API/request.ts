@@ -25,7 +25,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         }
     } catch (e: any) {
         const response = e.response
-        if (response == undefined) {
+        if (response === undefined) {
             message.error("后端不可达")
             return Promise.reject("后端不可达")
         }
@@ -55,7 +55,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         }
     } catch (e: any) {
         const response = e.response
-        if (response == undefined) {
+        if (response === undefined) {
             message.error("后端不可达")
             return Promise.reject("后端不可达")
         }

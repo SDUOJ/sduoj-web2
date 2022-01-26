@@ -93,7 +93,7 @@ export interface cleanExam{
 
 function getAnswer(choice: Choice[], type: ChoiceState) {
     const res = []
-    for (const x of choice) if (x.state == type) res.push(x.id)
+    for (const x of choice) if (x.state === type) res.push(x.id)
     return res
 }
 
@@ -102,12 +102,12 @@ export function genAnswerSheet(State: ExamState) {
     const proInfo: SProInfo[] = groupInfo.proList
     let res: any = []
     for (const x of proInfo) {
-        if (x.content != undefined && isChoiceContent(x.content)) {
+        if (x.content !== undefined && isChoiceContent(x.content)) {
             const content: ChoiceContent = x.content
             res.push({
                 index: x.index,
-                answer: content != undefined ? getAnswer(content.choice, "used") : [],
-                pass: content != undefined ? getAnswer(content.choice, "unused") : [],
+                answer: content !== undefined ? getAnswer(content.choice, "used") : [],
+                pass: content !== undefined ? getAnswer(content.choice, "unused") : [],
                 marked: x.flag
             })
         }
@@ -118,7 +118,7 @@ export function genAnswerSheet(State: ExamState) {
 export function getExamProblemListTodo(eid: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
         eApi.getExamGroupList(eid).then(function (resData: any) {
-            if (resData != null) {
+            if (resData !== null) {
                 // console.log("getExamGroupList", resData)
                 let data: SProGroupInfo[] = []
                 for (const x of resData) {
@@ -154,7 +154,7 @@ export function getExamProblemListTodo(eid: examID) {
 export function getExamInfoTodo(examId: examID) {
     return (dispatch: Dispatch<any>, getState: any) => {
         eApi.getExamInfo(examId).then(function (resDate) {
-            if (resDate != null) {
+            if (resDate !== null) {
                 const x: any = resDate
                 const data = {
                     id: x.examId,
@@ -164,8 +164,8 @@ export function getExamInfoTodo(examId: examID) {
                     participantNum: x.participantNum,
                     description: x.description.toString(),
                     userIsSubmit: x.userIsSubmit,
-                    isScoreVisible: x.features == null ? false : x.features.isScoreVisible,
-                    isSubmissionScoreVisible: x.features == null ? false : x.features.isSubmissionScoreVisible
+                    isScoreVisible: x.features === null ? false : x.features.isScoreVisible,
+                    isSubmissionScoreVisible: x.features === null ? false : x.features.isSubmissionScoreVisible
                 }
                 dispatch({type: "setExamInfo", data: data})
             }
@@ -181,10 +181,10 @@ export function getProblemTodo(data: IGetProInfo) {
         const groupId = data.groupIndex
         const proId = data.problemIndex
         eApi.getProInfo(data).then((resData: any) => {
-            if (resData != null) {
+            if (resData !== null) {
                 const type = (State.proGroupInfo as SProGroupInfo[]) [State.TopGroupIndex - 1].type
                 let data: ProContent | undefined = undefined
-                if (type == "Program") {
+                if (type === "Program") {
                     let testCase: TestCase[] = []
                     for (const x of resData.problemCaseDTOList) {
                         testCase.push({
@@ -206,7 +206,7 @@ export function getProblemTodo(data: IGetProInfo) {
                         SumScore: resData.sumScore
                     }
                 }
-                if (type == "SingleChoice" || type == "MultipleChoice") {
+                if (type === "SingleChoice" || type === "MultipleChoice") {
                     let choice: Choice[] = []
                     for (const x of Object.keys(resData.description.choice)) {
                         choice.push({
@@ -235,7 +235,7 @@ export function getProblemTodo(data: IGetProInfo) {
 export function getAnswerSheetTodo(eid: examID, groupId: number) {
     return (dispatch: Dispatch<any>, getState: any) => {
         eApi.getAnswerSheet(eid, groupId).then((resData: any) => {
-            if (resData != null) {
+            if (resData !== null) {
                 dispatch({
                     type: "setAnswerSheet",
                     data: resData.problemAnswer,

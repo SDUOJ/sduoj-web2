@@ -7,7 +7,6 @@ import MApi from "Utils/API/m-api"
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {ManageState} from "../../Type/IManage";
-import {addTableVersion} from "../../Redux/Action/manage";
 
 const AnnouncementForm = (props: any) => {
     const [editValue, setEditValue] = useState<string>(props.text)
@@ -25,7 +24,7 @@ const AnnouncementForm = (props: any) => {
                 okText: "提交"
             }}
             onFinish={async (v) => {
-                const ret = await formRef.current?.validateFields().then((values: any) => {
+                await formRef.current?.validateFields().then((values: any) => {
                     const data = {
                         title: values.title,
                         top: values.top ? 1 : 0,

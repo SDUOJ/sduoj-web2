@@ -1,7 +1,7 @@
 import {isChoiceContent, isProgramContent, ProContent, ProgramContent} from "../Type/IProblem";
 
 export function getPoint(point: number | undefined) {
-    if (point === 0 || point == undefined) return "point"
+    if (point === 0 || point === undefined) return "point"
     else return "points"
 }
 

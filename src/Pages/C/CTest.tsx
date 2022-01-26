@@ -19,7 +19,7 @@ class CTest extends Component<any, any> {
                     problemType={"program"}
                     initNewLine={(data: any[]) => {
                         const length = data.length
-                        const last = length == 0 ? undefined : data[data.length - 1]
+                        const last = length === 0 ? undefined : data[data.length - 1]
                         const code = isValueEmpty(last?.ProblemCode) ? undefined : last?.ProblemCode
                         const score = last?.ProblemScore
                         const submitNumber = last?.ProblemSubmitNumber

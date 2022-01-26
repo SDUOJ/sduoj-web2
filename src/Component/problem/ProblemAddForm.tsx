@@ -17,10 +17,10 @@ const ProblemAddForm = (props: any) => {
     const [form] = Form.useForm();
     const getListData = (type?: string) => {
         for (const x of props.listData) {
-            if (x.groupId == props.groupId) {
-                if (type == undefined) return x.proList
-                if (type == "problemInfo") return x.problemInfo
-                if (type == "checkedProblemCode") return x.checkedProblemCode
+            if (x.groupId === props.groupId) {
+                if (type === undefined) return x.proList
+                if (type === "problemInfo") return x.problemInfo
+                if (type === "checkedProblemCode") return x.checkedProblemCode
             }
         }
         props.listData.push({
@@ -33,9 +33,9 @@ const ProblemAddForm = (props: any) => {
         return []
     }
     const strMatch = (value: string) => {
-        if (props.type == "single" || props.type == "multi")
+        if (props.type === "single" || props.type === "multi")
             return value.match(/SDUOJ-C-[0-9]{4}/)
-        if (props.type == "program")
+        if (props.type === "program")
             return value.match(/SDUOJ-[0-9]{4}/)
     }
 
@@ -51,7 +51,7 @@ const ProblemAddForm = (props: any) => {
 
     const setListDataAll = (listData: examProblemType[]) => {
         for (let x of props.listData) {
-            if (x.groupId == props.groupId) x.proList = listData
+            if (x.groupId === props.groupId) x.proList = listData
         }
         props.setListData(props.listData)
         setProListData(listData)
@@ -62,29 +62,29 @@ const ProblemAddForm = (props: any) => {
     }
     const setProblemInfoAll = (data: examProblemInfo[]) => {
         for (let x of props.listData) {
-            if (x.groupId == props.groupId) x.problemInfo = data
+            if (x.groupId === props.groupId) x.problemInfo = data
         }
         props.setListData(props.listData)
         setProblemInfo(data)
     }
     const setCheckedProblemCodeAll = (data: string[]) => {
         for (let x of props.listData) {
-            if (x.groupId == props.groupId) x.checkedProblemCode = data
+            if (x.groupId === props.groupId) x.checkedProblemCode = data
         }
         props.setListData(props.listData)
         setCheckedProblemCode(data)
     }
     const getValueEnum = (problemCode?: string) => {
-        if (problemCode == undefined) return {}
+        if (problemCode === undefined) return {}
         for (const x of problemInfo) {
-            if (x.problemCode == problemCode) return x.problemDescription
+            if (x.problemCode === problemCode) return x.problemDescription
         }
-        if (strMatch(problemCode) != null && descriptionLoading.indexOf(problemCode) == -1) {
+        if (strMatch(problemCode) !== null && descriptionLoading.indexOf(problemCode) === -1) {
             descriptionLoading.push(problemCode)
             setDescriptionLoading(descriptionLoading)
             return mApi.getProblemDescriptionList({problemCode: problemCode}).then(
                 (resData) => {
-                    if (resData != null) {
+                    if (resData !== null) {
                         let res: any = {}
                         const data: examProblemDescription[] = resData as unknown as examProblemDescription[]
                         for (const x of data) res[x.id] = ({text: x.title})
@@ -134,7 +134,7 @@ const ProblemAddForm = (props: any) => {
 
     useEffect(() => {
         setTimeout(() => {
-            if(props.type != "program"){
+            if(props.type !== "program"){
                 const x = isStart
                 setIsStart(false)
                 form.validateFields().then(() => {
@@ -168,18 +168,18 @@ const ProblemAddForm = (props: any) => {
     const baseAColumns: ProColumns<examProblemType>[] = [
         {
             title: <Button type="text" onClick={() => {
-                const code = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemCode
-                const score = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemScore
-                const submitNumber = proListData.length == 0 ? undefined : proListData[proListData.length - 1].ProblemSubmitNumber
-                const number = code == undefined ? 0 : parseInt(code.substr(-4))
-                const NewCode = code == undefined ? undefined : code.substr(0, code.length - 4) + (number + 1).toString()
+                const code = proListData.length === 0 ? undefined : proListData[proListData.length - 1].ProblemCode
+                const score = proListData.length === 0 ? undefined : proListData[proListData.length - 1].ProblemScore
+                const submitNumber = proListData.length === 0 ? undefined : proListData[proListData.length - 1].ProblemSubmitNumber
+                const number = code === undefined ? 0 : parseInt(code.substr(-4))
+                const NewCode = code === undefined ? undefined : code.substr(0, code.length - 4) + (number + 1).toString()
                 actionRef.current?.addEditRecord?.({
                     id: Date.now(),
                     ProblemCode: NewCode,
                     ProblemScore: score,
                     ProblemSubmitNumber: submitNumber,
                 }, {newRecordType: "dataSource", recordKey: Date.now()});
-                if (NewCode != undefined)
+                if (NewCode !== undefined)
                     setTimeout(() => {
                         form.validateFields()
                     }, 100)
@@ -204,13 +204,13 @@ const ProblemAddForm = (props: any) => {
                     rules: [
                         ({getFieldValue}) => ({
                             validator(_, value) {
-                                if (strMatch(value) != null) {
-                                    if (checkedProblemCode.indexOf(value) == -1) {
+                                if (strMatch(value) !== null) {
+                                    if (checkedProblemCode.indexOf(value) === -1) {
                                         checkedProblemCode.push(value)
                                         setCheckedProblemCodeAll(checkedProblemCode)
-                                        if (props.type == "program") {
+                                        if (props.type === "program") {
                                             return mApi.getProblem({problemCode: value}).then((resData: any) => {
-                                                if (resData == null) return Promise.reject()
+                                                if (resData === null) return Promise.reject()
                                                 else {
                                                     proListData[rowIndex].ProblemAlias = resData.problemTitle;
                                                     proListData[rowIndex].ProblemDescription = resData.defaultDescriptionId;
@@ -220,16 +220,16 @@ const ProblemAddForm = (props: any) => {
                                             })
                                         } else {
                                             return mApi.getChoiceProblem({problemCode: value}).then((resData: any) => {
-                                                if (resData == null) return Promise.reject()
+                                                if (resData === null) return Promise.reject()
                                                 else {
-                                                    if (resData.isMulti == 1 && props.type == "single") {
+                                                    if (resData.isMulti === 1 && props.type === "single") {
                                                         return Promise.reject("单选题组不能录入多选题")
                                                     }
-                                                    if (resData.isMulti == 0 && props.type == "multi") {
+                                                    if (resData.isMulti === 0 && props.type === "multi") {
                                                         return Promise.reject("多选题组不能录入单选题")
                                                     }
                                                     let str = ""
-                                                    const pro = typeof resData.description == "string" ? JSON.parse(resData.description) : resData.description
+                                                    const pro = typeof resData.description === "string" ? JSON.parse(resData.description) : resData.description
                                                     str += pro.content + '\n'
                                                     let len = Object.keys(pro.choice).length
                                                     for (const x of Object.keys(pro.choice)) {
@@ -337,8 +337,8 @@ const ProblemAddForm = (props: any) => {
     let columns: ProColumns<examProblemType>[] = []
     columns = columns.concat(sortColumns)
     columns = columns.concat(baseAColumns)
-    if (props.type == "single" || props.type == "multi") columns = columns.concat(ObjectiveColumns)
-    if (props.type == "program") columns = columns.concat(programColumns)
+    if (props.type === "single" || props.type === "multi") columns = columns.concat(ObjectiveColumns)
+    if (props.type === "program") columns = columns.concat(programColumns)
     columns = columns.concat(baseBColumns)
     if (!sortSwitch) columns = columns.concat(operatorColumns)
 
@@ -360,7 +360,7 @@ const ProblemAddForm = (props: any) => {
                             <Popconfirm
                                 title={props.t("deleteConfirm")}
                                 onConfirm={() => {
-                                    const data = proListData.filter((value: examProblemType) => value.id != row.id)
+                                    const data = proListData.filter((value: examProblemType) => value.id !== row.id)
                                     setListDataAll(data)
                                     setEditableRowKeys(genNumberList(data))
                                 }}
@@ -374,7 +374,7 @@ const ProblemAddForm = (props: any) => {
                     onValuesChange: (record, recordList) => {
                         let NewDate = []
                         for (let i = 0; i < recordList.length; i++) {
-                            if (recordList[i].id != undefined)
+                            if (recordList[i].id !== undefined)
                                 NewDate.push(recordList[i])
                         }
                         setListDataAll(NewDate)

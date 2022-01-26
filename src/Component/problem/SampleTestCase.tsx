@@ -13,7 +13,7 @@ class SampleTestCase extends Component<any, any> {
 
     render() {
         return (
-            <Skeleton active loading={this.props.content == undefined}>
+            <Skeleton active loading={this.props.content === undefined}>
                 {
                     this.props.content !== undefined && (
                         this.props.content.testCase.map((value: TestCase, index: number) => {

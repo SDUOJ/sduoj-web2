@@ -50,12 +50,12 @@ class ExamList extends Component<any, any> {
     }
 
     getList = (pageNow: number, pageSize: number | undefined) => {
-        if (this.props.type == "manage") {
+        if (this.props.type === "manage") {
             mApi.getExamList({
                 pageNow: pageNow,
-                pageSize: pageSize == undefined ? 20 : pageSize
+                pageSize: pageSize === undefined ? 20 : pageSize
             }).then((resData: any) => {
-                if (resData != null) {
+                if (resData !== null) {
                     let data: SExamManageInfo[] = []
                     this.setState({total: resData.totalNum})
                     for (const x of resData.rows) {
@@ -64,7 +64,7 @@ class ExamList extends Component<any, any> {
                             startTime: parseInt(x.gmtStart),
                             endTime: parseInt(x.gmtEnd),
                             title: x.examTitle,
-                            manageGroup: x.managerGroupDTO == undefined ?
+                            manageGroup: x.managerGroupDTO === undefined ?
                                 "" : x.managerGroupDTO.groupId + " (" + x.managerGroupDTO.title + ")",
                             owner: x.username
                         })
@@ -75,9 +75,9 @@ class ExamList extends Component<any, any> {
         } else {
             eApi.getExamList({
                 pageNow: pageNow,
-                pageSize: pageSize == undefined ? 20 : pageSize
+                pageSize: pageSize === undefined ? 20 : pageSize
             }).then((resData: any) => {
-                if (resData != null) {
+                if (resData !== null) {
                     let data: SExamInfo[] = []
                     this.setState({total: resData.totalNum})
                     for (const x of resData.rows) {
@@ -113,7 +113,7 @@ class ExamList extends Component<any, any> {
                 dataIndex: 'title',
                 key: 'title',
                 render: (text: string, record: SExamInfo) => {
-                    if (this.props.type != "manage")
+                    if (this.props.type !== "manage")
                         return (
                             <a
                                 onClick={() => {
@@ -185,7 +185,7 @@ class ExamList extends Component<any, any> {
                     }
                 ],
                 onFilter: (value: any, record: SExamInfo) => {
-                    return TimeRangeState(record.startTime, record.endTime) == value
+                    return TimeRangeState(record.startTime, record.endTime) === value
                 }
             }
         ]
@@ -225,7 +225,7 @@ class ExamList extends Component<any, any> {
                 }
             }
         ]
-        if (this.props.type != "manage") {
+        if (this.props.type !== "manage") {
             columns = columns.concat(columns2)
         } else {
             columns = columns.concat(columns3)
@@ -246,7 +246,7 @@ class ExamList extends Component<any, any> {
                     }}
                     columns={columns}
                     dataSource={
-                        this.props.type == "manage" ?
+                        this.props.type === "manage" ?
                             this.state.ExamManageListInfo :
                             this.state.ExamListInfo
                     }

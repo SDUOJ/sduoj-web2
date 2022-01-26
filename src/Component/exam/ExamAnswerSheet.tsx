@@ -21,17 +21,17 @@ class ExamAnswerSheet extends Component<any, any> {
     getAnswerSheet(){
         const groupInfo: SProGroupInfo[] = this.props.ProGroupInfo
         for(const x of groupInfo){
-            if(x.type == "SingleChoice" || x.type == "MultipleChoice"){
+            if(x.type === "SingleChoice" || x.type === "MultipleChoice"){
                 this.props.getAnswerSheet(this.props.match.params.eid, x.index)
             }
         }
     }
 
     componentDidMount() {
-        if (this.props.ProGroupInfo == undefined)
+        if (this.props.ProGroupInfo === undefined)
             this.props.GetProList(this.props.match.params.eid)
         // 开始时题目信息就已经加载，直接加载答题卡
-        if(this.props.Loading == false){
+        if(this.props.Loading === false){
             this.getAnswerSheet()
         }
     }
@@ -65,7 +65,7 @@ class ExamAnswerSheet extends Component<any, any> {
                                   <Skeleton active loading={this.props.Loading}>
                                       {
 
-                                          this.props.ProGroupInfo != undefined && (
+                                          this.props.ProGroupInfo !== undefined && (
                                               this.props.ProGroupInfo.map((Value: SProGroupInfo) => {
                                                   return (
                                                       <ProTagGroup groupInfo={Value}/>

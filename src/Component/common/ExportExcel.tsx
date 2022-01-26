@@ -33,7 +33,7 @@ class ExportExcel extends Component<IButtonText, any> {
     }
 
     openDownloadDialog = (url: any, saveName: any) => {
-        if (typeof url == 'object' && url instanceof Blob) {
+        if (typeof url === 'object' && url instanceof Blob) {
             url = URL.createObjectURL(url); // 创建blob地址
         }
         var aLink = document.createElement('a');
@@ -67,7 +67,7 @@ class ExportExcel extends Component<IButtonText, any> {
         function s2ab(s: any) {
             let buf = new ArrayBuffer(s.length);
             let view = new Uint8Array(buf);
-            for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
             return buf;
         }
 

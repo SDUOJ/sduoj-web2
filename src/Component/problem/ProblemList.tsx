@@ -19,9 +19,9 @@ const ProblemList = (props: any) => {
     const getList = (pageNow: number, pageSize: number | undefined) => {
         mApi.getChoiceList({
             pageNow: pageNow,
-            pageSize: pageSize == undefined ? 20 : pageSize
+            pageSize: pageSize === undefined ? 20 : pageSize
         }).then((resData: any) => {
-            if (resData != null) {
+            if (resData !== null) {
                 setTotal(resData.totalNum)
                 setObjectiveProList(resData.rows)
             }
@@ -64,7 +64,7 @@ const ProblemList = (props: any) => {
             title: '操作',
             key: 'operator',
             render: (value: number, record: any) => {
-                if (props.type == "objective")
+                if (props.type === "objective")
                     return <ObjectiveForm type={'update'} title={record.problemTitle} problemCode={record.problemCode} update={update}/>
             }
         }
@@ -82,9 +82,9 @@ const ProblemList = (props: any) => {
                     onChange: getList,
                     showSizeChanger: true
                 }}
-                columns={props.type == "objective" ? columnsObjective : undefined}
+                columns={props.type === "objective" ? columnsObjective : undefined}
                 dataSource={
-                    props.type == "objective" ?
+                    props.type === "objective" ?
                         objectiveProList :
                         undefined
                 }

@@ -27,7 +27,7 @@ class Choice extends Component<any, any> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.Waiting == undefined && this.props.Waiting === true) {
+        if (prevProps.Waiting === undefined && this.props.Waiting === true) {
             this.props.getProInfo({
                 examId: this.props.match.params.eid,
                 groupIndex: this.props.GroupIndex - 1,
@@ -35,7 +35,7 @@ class Choice extends Component<any, any> {
             })
         }
         if (!this.props.Loading) {
-            if (prevProps.content != this.props.content)
+            if (prevProps.content !== this.props.content)
                 MarkdownPreview("Choice-title-id", this.props.content)
         }
     }
@@ -48,7 +48,7 @@ class Choice extends Component<any, any> {
 
                     </div>
                     {
-                        this.props.choice != undefined && (
+                        this.props.choice !== undefined && (
                             this.props.choice.map((val: any) => {
                                 return (
                                     <Options
@@ -72,7 +72,7 @@ const mapStateToProps = (state: any) => {
         return {Loading: !State.ProListLoad}
     } else {
         const NowPro = ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[])[State.TopProblemIndex - 1]
-        if (NowPro.content == undefined || !NowPro.content.isLoad) {
+        if (NowPro.content === undefined || !NowPro.content.isLoad) {
             return {
                 Loading: true,
                 Waiting: true

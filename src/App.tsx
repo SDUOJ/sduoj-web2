@@ -17,12 +17,6 @@ import {testLoginTodo, thirdPartyLoginTodo} from "./Redux/Action/user";
 
 class App extends Component<any, any> {
 
-
-    constructor(props: any) {
-        super(props);
-    }
-
-
     componentDidMount() {
 
     }

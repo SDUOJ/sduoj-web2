@@ -28,8 +28,8 @@ class Options extends Component<any, SOptions> {
     componentDidMount() {
         let choice = this.props.choice
         for (let i = 0; i < choice.length; i++) {
-            if (choice[i].id == this.props.ChoiceID) {
-                if (choice[i].state != this.props.choose) {
+            if (choice[i].id === this.props.ChoiceID) {
+                if (choice[i].state !== this.props.choose) {
                     this.setState({
                         choose: choice[i].state
                     })
@@ -44,8 +44,8 @@ class Options extends Component<any, SOptions> {
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<SOptions>, snapshot?: any) {
         let choice = this.props.choice
         for (let i = 0; i < choice.length; i++) {
-            if (choice[i].id == prevProps.ChoiceID) {
-                if (choice[i].state != prevState.choose) {
+            if (choice[i].id === prevProps.ChoiceID) {
+                if (choice[i].state !== prevState.choose) {
                     this.setState({
                         choose: choice[i].state
                     })
@@ -53,7 +53,7 @@ class Options extends Component<any, SOptions> {
                 break;
             }
         }
-        if (this.props.ChoiceContent != prevProps.ChoiceContent)
+        if (this.props.ChoiceContent !== prevProps.ChoiceContent)
             MarkdownPreview("Options-content-id" + this.props.ChoiceID, this.props.ChoiceContent)
     }
 

@@ -66,8 +66,8 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                 }
             })
             if (
-                (this.state.RunningState == "-1" && this.state.RunningResult != "5")
-                && (resData.judgeLog == null || resData.judgeLog.length === 0)
+                (this.state.RunningState === "-1" && this.state.RunningResult !== "5")
+                && (resData.judgeLog === null || resData.judgeLog.length === 0)
             )
                 resData.judgeLog = "编译成功"
             let TestCaseInit: TestCaseProp[] = []
@@ -134,22 +134,22 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<SProcessing>, snapshot?: any) {
-        if (this.props.submissionId != prevProps.submissionId) {
+        if (this.props.submissionId !== prevProps.submissionId) {
             this.getSubmissionInfo()
         }
     }
 
     componentDidMount() {
-        if (this.props.submissionId != undefined) this.getSubmissionInfo()
+        if (this.props.submissionId !== undefined) this.getSubmissionInfo()
     }
 
     addCaseInfo = (data: any[]) => {
-        if (data[0] != this.props.submissionId) return
+        if (data[0] !== this.props.submissionId) return
         if (data[1] < 0) {
             this.setState({
                 RunningState: data[1].toString()
             })
-            if (data[1] == -1) {
+            if (data[1] === -1) {
                 this.getSubmissionInfo()
                 this.setState({
                     webSocketOpen: false
@@ -231,11 +231,11 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
             return undefined
         }
         const getRunningState = (w: RunningStateType) => {
-            if (this.state.RunningState === "-1" && this.state.RunningResult == "8") {
+            if (this.state.RunningState === "-1" && this.state.RunningResult === "8") {
                 if (w === "-4") return "finish"
                 if (w === "-3") return "error"
                 if (w === "-2") return "wait"
-            } else if (this.state.RunningState === "-1" && this.state.RunningResult == "5") {
+            } else if (this.state.RunningState === "-1" && this.state.RunningResult === "5") {
                 if (w === "-4") return "finish"
                 if (w === "-3") return "finish"
                 if (w === "-2") return "error"
@@ -256,7 +256,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                 disabled: getDisabled("code"),
                 cssClass: "steps-content-pending",
                 content: (
-                    sf != undefined && (
+                    sf !== undefined && (
                         <>
                             <CodeHighlight code={sf.code} lang={langMap[sf.judgeTemplateTitle]}/>
                         </>
@@ -281,8 +281,8 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             <div style={{marginTop: "30px"}}>
                                 {
                                     [""].map(() => {
-                                        if (this.state.submissionInfo != undefined) {
-                                            if (this.state.submissionInfo.judgeLog != null &&
+                                        if (this.state.submissionInfo !== undefined) {
+                                            if (this.state.submissionInfo.judgeLog !== null &&
                                                 this.state.submissionInfo.judgeLog.length !== 0) {
                                                 switch (this.state.RunningResult) {
                                                     case "8":
@@ -316,7 +316,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             </div>
                             <div style={{marginTop: "30px"}}>
                                 {
-                                    this.state.RunningState === "-2" && this.props.showScore == true && (
+                                    this.state.RunningState === "-2" && this.props.showScore === true && (
                                         <>
                                             <Title level={4}> {this.props.t("CurrentScore")} </Title>
                                             <Title level={5}> {info.AC} </Title>
@@ -332,7 +332,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                         [''].map(() => {
                                             let JudgedNum = 0
                                             for (const x of this.state.TestCaseStateList) {
-                                                if (x.caseType != TestCaseStates.Pending) JudgedNum += 1
+                                                if (x.caseType !== TestCaseStates.Pending) JudgedNum += 1
                                             }
                                             return (
                                                 <>
@@ -392,7 +392,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                         <Row>
                                             <Col className={"Progress-set"} span={6}>
                                                 {
-                                                    this.props.showScore == true && (
+                                                    this.props.showScore === true && (
                                                         <>
                                                             <Progress
                                                                 success={{percent: info.AC / info.SumAll * 100}}
@@ -404,7 +404,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                                                     )
                                                 }
                                                 {
-                                                    this.props.showScore == false && (
+                                                    this.props.showScore === false && (
                                                         <>
                                                             <div style={{marginTop: "50px", marginBottom: "40px"}}>
                                                                 {
@@ -496,7 +496,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                             }
                         </Card>
                         {
-                            this.props.showScore == true && (
+                            this.props.showScore === true && (
                                 <>
                                     <Title level={4}> {this.props.t("JudgeResult")}</Title>
                                     <JudgeResult data={this.state.TestCaseStateList} sumScore={this.props.SumScore}/>
@@ -518,7 +518,7 @@ class Processing extends Component<IProcessingProp & any, SProcessing> {
                         queryList={this.state.webSocketQueryList}/>
                 </div>
 
-                <Skeleton active loading={this.props.submissionId == undefined || sf == undefined}>
+                <Skeleton active loading={this.props.submissionId === undefined || sf === undefined}>
                     {
                         this.props.submissionId !== undefined && sf !== undefined && (
                             <>

@@ -67,22 +67,22 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             case "setProInfo":
                 const group = ProGroupInfo[action.groupId]
                 const pro = group.proList[action.proId]
-                if (group.type == "Program") {
-                    if (pro.content == undefined) pro.content = action.data
+                if (group.type === "Program") {
+                    if (pro.content === undefined) pro.content = action.data
                     else{
                         const submission = (pro.content as ProgramContent).Submissions
                         pro.content = action.data;
                         (pro.content as ProgramContent).Submissions = submission
                     }
-                } else if (group.type == "SingleChoice" || group.type == "MultipleChoice") {
-                    if (pro.content == undefined) pro.content = action.data
+                } else if (group.type === "SingleChoice" || group.type === "MultipleChoice") {
+                    if (pro.content === undefined) pro.content = action.data
                     else {
                         const ChCon = (action.data as ChoiceContent);
                         const ProCon = (pro.content as ChoiceContent)
                         ProCon.content = ChCon.content
                         ProCon.isLoad = true
                         for (const x of ChCon.choice) {
-                            const pos = ProCon.choice.findIndex(value => value.id == x.id)
+                            const pos = ProCon.choice.findIndex(value => value.id === x.id)
                             ProCon.choice[pos].content = x.content
                         }
                     }
@@ -95,18 +95,18 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 for (const x of action.data) {
                     proList[x.index].flag = x.marked
                     const orgPro = proList[x.index]
-                    if (orgPro.content != undefined && orgPro.content.isLoad) {
+                    if (orgPro.content !== undefined && orgPro.content.isLoad) {
                         const choice = (orgPro.content as ChoiceContent).choice
                         for (const y of x.choice) {
-                            const Index = choice.findIndex(value => value.id == y)
-                            choice[Index].state = x.answer.indexOf(y) != -1 ? "used" : (x.pass.indexOf(y) != -1 ? "unused" : "init")
+                            const Index = choice.findIndex(value => value.id === y)
+                            choice[Index].state = x.answer.indexOf(y) !== -1 ? "used" : (x.pass.indexOf(y) !== -1 ? "unused" : "init")
                         }
                     } else {
                         let choice: Choice[] = []
                         for (const y of x.choice) {
                             choice.push({
                                 id: y,
-                                state: x.answer.indexOf(y) != -1 ? "used" : (x.pass.indexOf(y) != -1 ? "unused" : "init")
+                                state: x.answer.indexOf(y) !== -1 ? "used" : (x.pass.indexOf(y) !== -1 ? "unused" : "init")
                             })
                         }
                         proList[x.index].content = {

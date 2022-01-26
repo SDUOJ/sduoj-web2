@@ -41,16 +41,16 @@ class Program extends Component<any, any> {
     }
 
     componentWillUpdate(nextProps: Readonly<any>, nextState: Readonly<any>, nextContext: any) {
-        if (this.props.markdown != nextProps.markdown) {
+        if (this.props.markdown !== nextProps.markdown) {
             (document.getElementById("problem-content") as HTMLElement).innerHTML = "<Skeleton active/>"
         }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (this.props.markdown != prevProps.markdown) {
+        if (this.props.markdown !== prevProps.markdown) {
             MarkdownPreview("problem-content", this.props.markdown)
         }
-        if (prevProps.Waiting == undefined && this.props.Waiting === true) {
+        if (prevProps.Waiting === undefined && this.props.Waiting === true) {
             this.props.getProInfo({
                 examId: this.props.match.params.eid,
                 groupIndex: this.props.GroupIndex - 1,
@@ -150,7 +150,7 @@ class Program extends Component<any, any> {
                                                       color={
                                                           [''].map(() => {
                                                               if (this.props.Score === 0) return "red"
-                                                              if (this.props.Score == this.props.sumScore) return "green"
+                                                              if (this.props.Score === this.props.sumScore) return "green"
                                                               return "orange"
                                                           })[0]
                                                       }>
@@ -162,15 +162,15 @@ class Program extends Component<any, any> {
                                         <Badge.Ribbon text={
                                             <>
                                                 <span>
-                                                    {this.props.Score != this.props.sumScore && ("部分通过")}
-                                                    {this.props.Score == this.props.sumScore && ("全部通过")}
+                                                    {this.props.Score !== this.props.sumScore && ("部分通过")}
+                                                    {this.props.Score === this.props.sumScore && ("全部通过")}
                                                 </span>
                                             </>
                                         }
                                                       color={
                                                           [''].map(() => {
                                                               if (this.props.Score === 0) return "red"
-                                                              if (this.props.Score == this.props.sumScore) return "green"
+                                                              if (this.props.Score === this.props.sumScore) return "green"
                                                               return "orange"
                                                           })[0]
                                                       }>
@@ -207,7 +207,7 @@ const mapStateToProps = (state: any) => {
         return {Loading: !State.ProListLoad}
     } else {
         const NowPro = ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[])[State.TopProblemIndex - 1]
-        if (NowPro.content == undefined || !NowPro.content.isLoad) {
+        if (NowPro.content === undefined || !NowPro.content.isLoad) {
             return {
                 Loading: true,
                 Waiting: true
