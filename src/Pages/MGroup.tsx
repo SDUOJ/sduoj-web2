@@ -6,7 +6,7 @@ import GroupListOperHead from "../Component/group/GroupListOperHead";
 import GroupList from "../Component/group/GroupList";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {Button, Card, Space, Tag} from "antd";
-import TableWithSelection from "../Component/common/TableWithSelection";
+import TableWithSelection from "../Component/common/Table/TableWithSelection";
 import MApi from "../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 

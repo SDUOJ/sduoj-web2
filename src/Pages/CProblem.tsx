@@ -2,7 +2,7 @@ import {Component} from "react";
 import {withRouter} from "react-router-dom";
 import {Card} from "antd";
 import CApi from "Utils/API/c-api"
-import TableWithPagination from "../Component/common/TableWithPagination";
+import TableWithPagination from "../Component/common/Table/TableWithPagination";
 
 class CProblem extends Component<any, any> {
 

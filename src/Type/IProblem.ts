@@ -103,3 +103,14 @@ export interface IGetProInfo {
     groupIndex: React.Key
     problemIndex: React.Key
 }
+
+export interface ProblemDescription {
+    id: string
+    isPublic: number
+    problemCode: string
+    problemId: string
+    title: string
+    userId: string
+    username: string
+    voteNum: number
+}

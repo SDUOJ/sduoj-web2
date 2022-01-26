@@ -3,7 +3,8 @@ import React from "react";
 
 export type ManageAction =
     setSelectedRowKeys |
-    addTableVersion
+    addTableVersion |
+    setDataSource
 
 
 
@@ -15,4 +16,9 @@ export interface setSelectedRowKeys{
 export interface addTableVersion{
     type: "addTableVersion"
     data: string
+}
+
+export interface setDataSource{
+    type: "setDataSource"
+    data: any
 }

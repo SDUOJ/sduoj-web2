@@ -4,7 +4,7 @@ import Editor from "../Component/common/Editor";
 import AnnouncementForm from "../Component/announcement/AnnouncementForm";
 import {Button} from "antd";
 import CodeEditor from "../Component/common/CodeEditor";
-import EditableTableWithDrag from "../Component/common/EditableTableWithDrag";
+import EditableTableWithDrag from "../Component/common/Table/EditableTableWithDrag";
 import {ck, isValueEmpty} from "../Utils/empty";
 
 

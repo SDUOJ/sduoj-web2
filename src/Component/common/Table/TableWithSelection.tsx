@@ -1,10 +1,10 @@
 import React, {Component, Dispatch} from "react";
-import {UserState} from "../../Type/Iuser";
+import {UserState} from "../../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import judgeAuth from "../../Utils/judgeAhtu";
+import judgeAuth from "../../../Utils/judgeAhtu";
 import {connect} from "react-redux";
-import {ManageState} from "../../Type/IManage";
+import {ManageState} from "../../../Type/IManage";
 import MApi from "Utils/API/m-api"
 import TableWithPagination from "./TableWithPagination";
 
@@ -67,12 +67,14 @@ class TableWithSelection extends Component<any, any> {
         return (
             <>
                 <TableWithPagination
+                    name={this.props.name}
                     search={this.props.search}
                     size={this.props.size}
                     API={this.props.API}
                     rowKey={this.props.rowKey}
                     columns={this.props.colData}
                     rowSelection={rowSelection}
+                    setDataSource={this.props.setDataSource}
                 />
 
             </>
@@ -92,7 +94,9 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setSelectedRowKeys: (data: React.Key[]) =>
-        dispatch({type: "setSelectedRowKeys", data: data})
+        dispatch({type: "setSelectedRowKeys", data: data}),
+    setDataSource: (data: any) =>
+        dispatch({type: "setDataSource", data: data})
 })
 
 export default connect(

@@ -282,6 +282,11 @@
     word-wrap: break-word;
 }
 
+.preAutoLine {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 
 .ExamPageCtrl {
     margin-top: 20px;
@@ -474,6 +479,6 @@
     left: 70px;
 }
 
-.CodeMirror{
+.CodeMirror {
     min-height: 500px;
 }

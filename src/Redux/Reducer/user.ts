@@ -1,4 +1,4 @@
-import {deepClone} from "@ant-design/charts/es/util";
+import deepClone from "Utils/deepClone";
 import {UserState} from "../../Type/Iuser";
 import {UserAction} from "../Action/user";
 import cookie from "react-cookies";

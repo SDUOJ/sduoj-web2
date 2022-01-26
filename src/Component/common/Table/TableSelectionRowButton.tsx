@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, message, Popconfirm, Popover} from "antd";
-import {IUserPropCbk} from "../../Type/Iuser";
+import {IUserPropCbk} from "../../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {SizeType} from "antd/lib/config-provider/SizeContext";
 

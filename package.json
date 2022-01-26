@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/charts": "^1.2.14",
     "@ant-design/pro-card": "^1.18.25",
     "@ant-design/pro-descriptions": "^1.10.35",
     "@ant-design/pro-form": "^1.49.6",
@@ -35,6 +34,7 @@
     "i18next-browser-languagedetector": "^6.1.2",
     "js-md5": "^0.7.3",
     "node-sass": "^6.0.1",
+    "rc-queue-anim": "^2.0.0",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",
     "react-cookies": "^0.1.1",

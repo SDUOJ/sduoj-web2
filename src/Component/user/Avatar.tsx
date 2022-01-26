@@ -12,7 +12,7 @@ const UserAvatar = (props: IUserAvatar) => {
     if (props.email !== undefined && props.email !== null) {
         return (
             <Avatar
-                src={"https://gravatar.inwao.com/avatar/" + md5(props.email)}
+                src={"https://sdn.geekzu.org/avatar/" + md5(props.email)}
                 alt={"头像"}
             />
         )

@@ -130,7 +130,7 @@ const Editor = (props: EditorProps & any) => {
                             description: (
                                 <>
                                     <span>文件名：{name}</span><br/>
-                                    <span>文件地址：{path}</span><br/>
+                                    {/*<span>文件地址：{path}</span><br/>*/}
                                     <Space>
                                         点击复制：
                                         <CopiedButton text={path} btnText={"纯路径"}/>

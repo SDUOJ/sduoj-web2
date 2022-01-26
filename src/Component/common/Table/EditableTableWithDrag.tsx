@@ -1,18 +1,16 @@
-import React, {RefObject, useEffect, useRef, useState} from "react";
-import {Button, Form, FormInstance, Popconfirm, Skeleton, Space} from "antd";
-import {MenuOutlined, PlusOutlined, SortAscendingOutlined, EditOutlined} from "@ant-design/icons"
+import React, {useEffect, useRef, useState} from "react";
+import {Button, Form, Popconfirm} from "antd";
+import {EditOutlined, MenuOutlined, PlusOutlined, SortAscendingOutlined} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-import {genNumberList} from "../../Type/IManage";
+import {genNumberList} from "../../../Type/IManage";
 import mApi from "Utils/API/m-api"
 import Paragraph from "antd/lib/typography/Paragraph";
-import {examProblemDescription, examProblemInfo, examProblemType} from "../../Type/IExam";
-import {ProblemDescription} from "../../Type/IProblem";
-import {ck, eck, get, isValueEmpty} from "../../Utils/empty";
-import {sleep} from "../../Utils/Sleep";
-import {deepClone} from "@ant-design/charts/es/util";
+import {examProblemType} from "../../../Type/IExam";
+import {ck, get} from "../../../Utils/empty";
+import deepClone from "Utils/deepClone";
 
 
 const EditableTableWithDrag = (props: any) => {
@@ -45,7 +43,11 @@ const EditableTableWithDrag = (props: any) => {
     }
 
     const [problemDescriptionLoading, setProblemDescriptionLoading] = useState<string[]>([])   // 题目描述是否正在加载
-    const [problemDescriptionCache, setProblemDescriptionCacheX] = useState<any>({})  // 根据题号请求得到的题目描述的缓存
+    const [problemDescriptionCache, setProblemDescriptionCacheX] = useState<{
+        [key: string]: {
+            DescriptionInfo: any
+        }
+    }>({})  // 根据题号请求得到的题目描述的缓存
     const setProblemDescriptionCache = (data: any) => {
         setProblemDescriptionCacheX(deepClone(data))
     }
@@ -55,39 +57,40 @@ const EditableTableWithDrag = (props: any) => {
         let newTableData: any[] = [], use = false, useHis = false
         TableData.map((value) => {
             if (strMatch(value.ProblemCode) !== null) {
+
+                let obj: any = {}, updateNum = 0, forceUpdate = false
+
                 if (TableDataHis[value.id] !== value.ProblemCode) {
                     TableDataHis[value.id] = value.ProblemCode
+                    forceUpdate = true
+                    useHis = true
+                }
+
+                const check = (nameA: string, arr: any) => {
+                    if (forceUpdate || (value[nameA] === undefined && get(arr[value.ProblemCode], nameA) !== undefined)) {
+                        obj[nameA] = get(arr[value.ProblemCode], nameA)
+                        updateNum += 1
+                    }
+                }
+
+                check("ProblemAlias", problemInfoCache)
+                check("defaultDescriptionId", problemInfoCache)
+                check("ProblemPreview", problemInfoCache)
+                check("DescriptionInfo", problemDescriptionCache)
+
+                for(const x in value){
+                    if(!(x in obj)) obj[x] = value[x]
+                }
+
+                if (updateNum !== 0) {
                     newTableData.push({
                         id: value.id,
                         ProblemCode: value.ProblemCode,
-                        DescriptionInfo: problemDescriptionCache[value.ProblemCode],
-                        ProblemAlias: problemInfoCache[value.ProblemCode]?.ProblemAlias,
-                        ProblemDescription: problemInfoCache[value.ProblemCode]?.defaultDescriptionId,
-                        ProblemPreview: problemInfoCache[value.ProblemCode]?.ProblemPreview,
+                        ...obj
                     })
                     use = true
-                    useHis = true
-                } else {
-                    let obj: any = {}, updateNum = 0
-                    const check = (nameA: string, nameB?: string, arr?: any) => {
-                        if (value[nameA] === undefined && get(arr[value.ProblemCode], nameB) !== undefined){
-                            obj[nameA] = get(arr[value.ProblemCode], nameB)
-                            updateNum += 1
-                        } else obj[nameA] = value[nameA]
-                    }
-                    check("ProblemAlias", "ProblemAlias", problemInfoCache)
-                    check("ProblemDescription", "defaultDescriptionId", problemInfoCache)
-                    check("DescriptionInfo", undefined, problemDescriptionCache)
-                    check("ProblemPreview", "ProblemPreview", problemInfoCache)
-                    if (updateNum !== 0) {
-                        newTableData.push({
-                            id: value.id,
-                            ProblemCode: value.ProblemCode,
-                            ...obj
-                        })
-                        use = true
-                    } else newTableData.push(value)
-                }
+                } else newTableData.push(value)
+
             } else newTableData.push(value)
         })
         if (use) setTableDataX(newTableData)
@@ -138,18 +141,20 @@ const EditableTableWithDrag = (props: any) => {
                 problemDescriptionLoading.push(problemCode)
                 setProblemDescriptionLoading(problemDescriptionLoading)
                 return mApi.getProblemDescriptionList({problemCode: problemCode}).then((resData: any) => {
-                    if (resData != null) {
-                        let res: any = {}
-                        for (const x of resData) res[x.id] = ({text: x.title})
-                        problemDescriptionCache[problemCode] = res
-                        setProblemDescriptionCache(problemDescriptionCache)
-                        return Promise.resolve()
+                        if (resData != null) {
+                            let res: any = {}
+                            for (const x of resData) res[x.id] = ({text: x.title})
+                            problemDescriptionCache[problemCode] = {"DescriptionInfo": res}
+                            setProblemDescriptionCache(problemDescriptionCache)
+                            return Promise.resolve()
+                        }
                     }
-                }).catch((e) => {
+                ).catch((e) => {
                     setProblemDescriptionLoading(problemDescriptionLoading.filter((val) => val !== problemCode))
                     return Promise.reject(e)
                 })
-            } else return Promise.resolve()
+            } else
+                return Promise.resolve()
 
         } else return Promise.reject("题号格式错误")
     }
@@ -319,7 +324,7 @@ const EditableTableWithDrag = (props: any) => {
         },
         {
             title: "题目描述",
-            dataIndex: 'ProblemDescription',
+            dataIndex: 'defaultDescriptionId',
             valueType: "select",
             valueEnum: (row) => row.DescriptionInfo,
             formItemProps: (form, {rowIndex}) => {

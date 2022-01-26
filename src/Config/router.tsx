@@ -222,12 +222,6 @@ export const routerC_M: IRouter[] = [
 
 export const routerE: IBaseRouter[] = [
     {
-        id: 1,
-        path: "/v2/exam/login",
-        exact: true,
-        component: lazy(() => import('../Pages/ALogin'))
-    },
-    {
         id: 2,
         path: "/v2/exam/list",
         exact: true,

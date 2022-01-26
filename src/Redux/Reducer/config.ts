@@ -1,4 +1,4 @@
-import {deepClone} from "@ant-design/charts/es/util";
+import deepClone from "Utils/deepClone";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../Action/config";
 import {languageMap} from "../../Config/i18n";

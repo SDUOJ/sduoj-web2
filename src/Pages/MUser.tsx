@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router";
 import {Role, Sex} from "../Type/Iuser";
-import TableWithSelection from "../Component/common/TableWithSelection";
+import TableWithSelection from "../Component/common/Table/TableWithSelection";
 import {Button, Card, Space, Tag} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../Utils/API/m-api";
+import ButtonWithSelection from "../Component/common/Table/ButtonWithSelection";
 
 
 class MUser extends Component<any, any> {
@@ -104,12 +105,25 @@ class MUser extends Component<any, any> {
                     bordered={false}
                     title={this.props.t("userList")}
                     extra={
-                        <>
-                            <Button>a</Button>
-                        </>
+                        <Space>
+                            <ButtonWithSelection
+                                type={"export"}
+                                ButtonText={"批量导出"}
+                                fileName={"用户列表导出_"+Date.now()}
+                                rowKey={"userId"}
+                            />
+                            <ButtonWithSelection
+                                type={"delete"}
+                                ButtonText={"批量删除"}
+                                rowKey={"userId"}
+                                deleteKey={"username"}
+                                tableName={"UserList"}
+                            />
+                        </Space>
                     }
                 >
                     <TableWithSelection
+                        name={"UserList"}
                         search={true}
                         colData={colData}
                         API={MApi.getUserList}

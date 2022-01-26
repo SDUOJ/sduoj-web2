@@ -68,12 +68,7 @@ const ANCContent = (props: any) => {
                 setEmail(data.email);
                 setUsername(data.username)
                 setTime(parseInt(data.gmtCreate))
-                MarkdownPreview("markdownPreview", "```cpp\n加载中\n```")
-                // 直接加载文本，会导致代码块无法高亮，先加载一个包含代码块的字段，
-                // 第二次打开，代码段就会正常高亮
-                setTimeout(() => {
-                    MarkdownPreview("markdownPreview", data.text)
-                }, 200)
+                MarkdownPreview("markdownPreview", data.text)
             })
         }
     }, [props.id])

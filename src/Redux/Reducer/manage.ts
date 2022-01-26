@@ -1,4 +1,4 @@
-import {deepClone} from "@ant-design/charts/es/util";
+import deepClone from "Utils/deepClone";
 import {ManageState} from "../../Type/IManage";
 import {ManageAction} from "../Action/manage";
 import {update} from "js-md5";
@@ -9,6 +9,7 @@ const initState: ManageState = {
     userData: {},
     tableData:{
         selectedRowKeys: [],
+        dataSource: [],
         tableVersion: {}
     }
 }
@@ -27,6 +28,10 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
             let value = State.tableData.tableVersion[action.data]
             if(value == undefined) State.tableData.tableVersion[action.data] = 1
             else State.tableData.tableVersion[action.data] += 1
+            break
+
+        case "setDataSource":
+            State.tableData.dataSource = action.data
             break
 
         default:

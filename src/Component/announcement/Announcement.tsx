@@ -3,7 +3,7 @@ import {Card, Modal, Space, Table, Tag} from "antd";
 import {withTranslation} from "react-i18next";
 import {InfoCircleOutlined} from "@ant-design/icons"
 import ANCContent from "./Content";
-import TableWithPagination from "../common/TableWithPagination";
+import TableWithPagination from "../common/Table/TableWithPagination";
 import CApi from "Utils/API/c-api"
 import {unix2Time} from "../../Utils/Time";
 

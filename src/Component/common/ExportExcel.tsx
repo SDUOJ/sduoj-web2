@@ -1,11 +1,12 @@
 import {Component} from "react";
-import {Button} from "antd";
+import {Button, message} from "antd";
 import XLSX from "xlsx";
 import {ButtonType} from "antd/lib/button/button";
 
-interface IButtonText{
-    ButtonText: string
+interface IButtonText {
+    ButtonText: any
     ButtonType: ButtonType
+    ButtonProps?: any
     fileName: string
     colMap?: any
     nowData?: any
@@ -75,24 +76,26 @@ class ExportExcel extends Component<IButtonText, any> {
 
     render() {
         return (
-            <>
-                <Button
-                    type={this.props.ButtonType}
-                    onClick={() => {
-                        if(this.props.getJson !== undefined){
-                            this.props.getJson().then((json:any)=>{
-                                this.handleExportAllJson(json, this.props.fileName)
-                            })
-                        } else{
-                            const nowData = this.props.nowData()
-                            const colMap = this.props.colMap(nowData)
-                            this.handleExportAll(colMap, nowData, this.props.fileName)
-                        }
-                    }}
-                >
-                    {this.props.ButtonText}
-                </Button>
-            </>
+            <Button
+                type={this.props.ButtonType}
+                {...this.props.ButtonProps}
+                onClick={() => {
+                    if (this.props.getJson !== undefined) {
+                        this.props.getJson().then((json: any) => {
+                            this.handleExportAllJson(json, this.props.fileName)
+                        }).catch((e: any) => {
+                            console.log(e)
+                            message.error(e)
+                        })
+                    } else {
+                        const nowData = this.props.nowData()
+                        const colMap = this.props.colMap(nowData)
+                        this.handleExportAll(colMap, nowData, this.props.fileName)
+                    }
+                }}
+            >
+                {this.props.ButtonText}
+            </Button>
         )
     }
 }

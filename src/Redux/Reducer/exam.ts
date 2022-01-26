@@ -6,11 +6,11 @@ import {
     ProType
 } from "../../Type/IProblem";
 import eApi from "Utils/API/e-api"
-import {deepClone} from "@ant-design/charts/es/util";
 import {ProgramTest} from "../../Utils/Problem";
 import {ExamState, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import {store} from "../Store";
 import {ProblemAction} from "../Action/problem";
+import deepClone from "Utils/deepClone";
 
 
 const initState: ExamState = {

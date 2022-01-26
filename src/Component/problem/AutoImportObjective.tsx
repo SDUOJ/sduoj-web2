@@ -4,7 +4,7 @@ import {PlusOutlined, InboxOutlined, SmileOutlined, SyncOutlined} from "@ant-des
 import Dragger from "antd/lib/upload/Dragger";
 import XLSX from "xlsx";
 import mApi from "../../Utils/API/m-api";
-import {deepClone} from "@ant-design/charts/lib/util";
+import deepClone from "Utils/deepClone";
 
 
 const AutoImportObjective = () => {

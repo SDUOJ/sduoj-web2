@@ -3,6 +3,7 @@ import React from "react";
 
 interface TableType{
     selectedRowKeys: React.Key[]
+    dataSource: any[]
     tableVersion: any
 }
 

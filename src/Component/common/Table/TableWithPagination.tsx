@@ -1,8 +1,8 @@
 import {Card, Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
-import {defaultPageSize} from "../../Config/constValue";
-import {UserState} from "../../Type/Iuser";
-import {ManageState} from "../../Type/IManage";
+import {defaultPageSize} from "../../../Config/constValue";
+import {UserState} from "../../../Type/Iuser";
+import {ManageState} from "../../../Type/IManage";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -12,12 +12,17 @@ import Search from "antd/es/input/Search";
 const TableWithPagination = (props: any) => {
 
     const [total, setTotal] = useState<number>(0)
-    const [tableData, setTableData] = useState()
+    const [tableData, setTableDataX] = useState()
     const [loading, setLoading] = useState(true)
     const [PageNow, setPageNow] = useState<number>(1)
     const [PageSize, setPageSize] = useState<number>(defaultPageSize)
     const [searchText, setSearchText] = useState<string|undefined>()
     const [tableVersion, setTableVersion] = useState<number>(0)
+
+    const setTableData = (data: any)=>{
+        setTableDataX(data)
+        if(props.setDataSource !== undefined) props.setDataSource(data)
+    }
 
     const getInfo = (pageNow: number, pageSize?: number, searchKey? :string) => {
         let ps = pageSize === undefined ? PageSize : pageSize

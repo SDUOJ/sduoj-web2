@@ -23,20 +23,6 @@ class App extends Component<any, any> {
     }
 
 
-    /*
-    * TODO  用户
-    *  1. 把 List 与 头部 抽象出去
-    *  2. 把 Form 单独存放
-    *  3. 实现 上传
-    *  4. 实现 添加
-    *  5. 处理 编辑内修密码与信息的逻辑
-    * */
-
-    /*
-    * TODO  题目
-    *  1.
-    * */
-
     componentDidMount() {
 
     }

@@ -1,13 +1,9 @@
 import {withTranslation} from "react-i18next";
 import {Form, message} from "antd";
-import ItemUsername from "../user/Form/ItemUsername";
-import ItemPassword from "../user/Form/ItemPassword";
-import ItemEmail from "../user/Form/ItemEmail";
 import {ModalForm, ProFormInstance, ProFormSwitch, ProFormText} from "@ant-design/pro-form";
 import Editor from "../common/Editor";
 import {Dispatch, useRef, useState} from "react";
 import MApi from "Utils/API/m-api"
-import {ConfigState} from "../../Type/IConfig";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {ManageState} from "../../Type/IManage";
