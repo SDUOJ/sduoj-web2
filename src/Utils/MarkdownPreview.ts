@@ -1,10 +1,11 @@
 // @ts-ignore
 import VditorPreview from 'vditor/dist/method.min'
+import {isValueEmpty} from "./empty";
 
 
-export function MarkdownPreview(id: string, code: string) {
-    if (code === null) code = ""
-    code = code.replace(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
+export function MarkdownPreview(id: string, code?: string | null) {
+    if (isValueEmpty(code)) code = ""
+    code = code?.replace(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
 
     const config = {
         mode: "light",
