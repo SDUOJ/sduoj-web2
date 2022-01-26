@@ -1,11 +1,11 @@
 import {Component} from "react";
 import {withRouter} from "react-router-dom";
-import Editor from "../Component/common/Editor";
-import AnnouncementForm from "../Component/announcement/AnnouncementForm";
+import Editor from "../../Component/common/Editor";
+import AnnouncementForm from "../../Component/announcement/AnnouncementForm";
 import {Button} from "antd";
-import CodeEditor from "../Component/common/CodeEditor";
-import EditableTableWithDrag from "../Component/common/Table/EditableTableWithDrag";
-import {ck, isValueEmpty} from "../Utils/empty";
+import CodeEditor from "../../Component/common/CodeEditor";
+import EditableTableWithDrag from "../../Component/common/Table/EditableTableWithDrag";
+import {ck, isValueEmpty} from "../../Utils/empty";
 
 
 class CTest extends Component<any, any> {

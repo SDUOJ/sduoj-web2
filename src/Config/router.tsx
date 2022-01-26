@@ -118,61 +118,61 @@ export const routerC: IBaseRouter[] = [
         id: 1,
         path: "/v2/c/build",
         exact: true,
-        component: lazy(() => import('../Pages/CBuild'))
+        component: lazy(() => import('../Pages/C/CBuild'))
     },
     {
         id: 2,
         path: "/v2/login",
         exact: true,
-        component: lazy(() => import('../Pages/ALogin'))
+        component: lazy(() => import('../Pages/C/CLogin'))
     },
     {
         id: 3,
         path: "/v2/test",
         exact: true,
-        component: lazy(() => import('../Pages/CTest'))
+        component: lazy(() => import('../Pages/C/CTest'))
     },
     {
         id: 4,
         path: "/v2/home",
         exact: true,
-        component: lazy(() => import('../Pages/CHome'))
+        component: lazy(() => import('../Pages/C/CHome'))
     },
     {
         id: 5,
         path: "/v2/problem",
         exact: true,
-        component: lazy(() => import('../Pages/CProblem'))
+        component: lazy(() => import('../Pages/C/CProblem'))
     },
     {
         id: 6,
         path: "/v2/submission",
         exact: true,
-        component: lazy(() => import('../Pages/CSubmissions'))
+        component: lazy(() => import('../Pages/C/CSubmissions'))
     },
     {
         id: 7,
         path: "/v2/contest",
         exact: true,
-        component: lazy(() => import('../Pages/CContest'))
+        component: lazy(() => import('../Pages/C/CContest'))
     },
     {
         id: 8,
         path: "/v2/group",
         exact: true,
-        component: lazy(() => import('../Pages/CGroup'))
+        component: lazy(() => import('../Pages/C/CGroup'))
     },
     {
         id: 9,
         path: "/v2/user",
         exact: true,
-        component: lazy(() => import('../Pages/CGroup'))
+        component: lazy(() => import('../Pages/C/CGroup'))
     },
     {
         id: 10,
         path: "/v2/resetpass",
         exact: true,
-        component: lazy(() => import('../Pages/AResetPass'))
+        component: lazy(() => import('../Pages/C/CResetPass'))
     },
 ]
 export const routerC_M: IRouter[] = [
@@ -181,35 +181,35 @@ export const routerC_M: IRouter[] = [
         title_i18n: "Home",
         path: "/v2/home",
         exact: true,
-        component: lazy(() => import('../Pages/CHome'))
+        component: lazy(() => import('../Pages/C/CHome'))
     },
     {
         id: 2,
         title_i18n: "Problem",
         path: "/v2/problem",
         exact: true,
-        component: lazy(() => import('../Pages/CProblem'))
+        component: lazy(() => import('../Pages/C/CProblem'))
     },
     {
         id: 3,
         path: "/v2/submission",
         title_i18n: "Submission",
         exact: true,
-        component: lazy(() => import('../Pages/CSubmissions'))
+        component: lazy(() => import('../Pages/C/CSubmissions'))
     },
     {
         id: 4,
         path: "/v2/contest",
         title_i18n: "Contest",
         exact: true,
-        component: lazy(() => import('../Pages/CContest'))
+        component: lazy(() => import('../Pages/C/CContest'))
     },
     {
         id: 5,
         path: "/v2/group",
         title_i18n: "Group",
         exact: true,
-        component: lazy(() => import('../Pages/CGroup'))
+        component: lazy(() => import('../Pages/C/CGroup'))
     },
     {
         id: 6,
@@ -225,25 +225,25 @@ export const routerE: IBaseRouter[] = [
         id: 2,
         path: "/v2/exam/list",
         exact: true,
-        component: lazy(() => import('../Pages/EList'))
+        component: lazy(() => import('../Pages/E/EList'))
     },
     {
         id: 3,
         path: "/v2/exam/wait/:eid",
         exact: true,
-        component: lazy(() => import('../Pages/EWait'))
+        component: lazy(() => import('../Pages/E/EWait'))
     },
     {
         id: 4,
         path: "/v2/exam/running/:eid",
         exact: true,
-        component: lazy(() => import('../Pages/ERunning'))
+        component: lazy(() => import('../Pages/E/ERunning'))
     },
     {
         id: 5,
         path: "/v2/exam/finish",
         exact: true,
-        component: lazy(() => import('../Pages/EFinish'))
+        component: lazy(() => import('../Pages/E/EFinish'))
     }
 ]
 
@@ -255,7 +255,7 @@ export const routerM: IRouter[] = [
         title_i18n: "user",
         exact: false,
         icon: <UserOutlined/>,
-        component: lazy(() => import('../Pages/MUser'))
+        component: lazy(() => import('../Pages/M/MUser'))
     },
     {
         id: 1,
@@ -263,7 +263,7 @@ export const routerM: IRouter[] = [
         title_i18n: "problem",
         exact: false,
         icon: <FolderOutlined/>,
-        component: lazy(() => import('../Pages/MProblem'))
+        component: lazy(() => import('../Pages/M/MProblem'))
     },
     {
         id: 2,
@@ -271,7 +271,7 @@ export const routerM: IRouter[] = [
         title_i18n: "contest",
         exact: false,
         icon: <AppstoreOutlined/>,
-        component: lazy(() => import('../Pages/MContest'))
+        component: lazy(() => import('../Pages/M/MContest'))
     },
     {
         id: 3,
@@ -279,7 +279,7 @@ export const routerM: IRouter[] = [
         title_i18n: "template",
         exact: false,
         icon: <FileOutlined/>,
-        component: lazy(() => import('../Pages/MJudgeTemplate'))
+        component: lazy(() => import('../Pages/M/MJudgeTemplate'))
     },
     {
         id: 4,
@@ -287,7 +287,7 @@ export const routerM: IRouter[] = [
         title_i18n: "group",
         exact: false,
         icon: <UsergroupAddOutlined/>,
-        component: lazy(() => import('../Pages/MGroup'))
+        component: lazy(() => import('../Pages/M/MGroup'))
     },
     {
         id: 5,
@@ -295,7 +295,7 @@ export const routerM: IRouter[] = [
         title_i18n: "exam",
         exact: true,
         icon: <ReadOutlined/>,
-        component: lazy(() => import('../Pages/MExam'))
+        component: lazy(() => import('../Pages/M/MExam'))
     },
     {
         id: 6,
@@ -303,7 +303,7 @@ export const routerM: IRouter[] = [
         title_i18n: "objective",
         exact: true,
         icon: <CheckCircleOutlined/>,
-        component: lazy(() => import('../Pages/MObjective'))
+        component: lazy(() => import('../Pages/M/MObjective'))
     },
     {
         id: 7,
@@ -311,7 +311,7 @@ export const routerM: IRouter[] = [
         title_i18n: "Announcement",
         exact: true,
         icon: <NotificationOutlined />,
-        component: lazy(() => import('../Pages/MAnnouncement'))
+        component: lazy(() => import('../Pages/M/MAnnouncement'))
     }
 ]
 

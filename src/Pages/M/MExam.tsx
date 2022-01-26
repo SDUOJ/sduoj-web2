@@ -1,12 +1,12 @@
 import React, {Component, Dispatch} from "react";
-import ExamForm from "../Component/exam/Form/ExamForm";
+import ExamForm from "../../Component/exam/Form/ExamForm";
 import {Card} from "antd";
-import {getRouterPath, routerC, routerE} from "../Config/router";
-import {UserState} from "../Type/Iuser";
+import {getRouterPath, routerC, routerE} from "../../Config/router";
+import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import ExamList from "../Component/exam/ExamList";
+import ExamList from "../../Component/exam/ExamList";
 
 class MExam extends Component<any, any> {
 

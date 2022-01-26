@@ -3,13 +3,13 @@ import {Card, message} from "antd";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {UserState} from "../Type/Iuser";
-import {testLoginTodo} from "../Redux/Action/user";
-import Login from "../Component/user/Login";
-import getUrlParams from "../Utils/getUrlParams";
+import {UserState} from "../../Type/Iuser";
+import {testLoginTodo} from "../../Redux/Action/user";
+import Login from "../../Component/user/Login";
+import getUrlParams from "../../Utils/getUrlParams";
 
 
-class ALogin extends Component<any, any> {
+class CLogin extends Component<any, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -60,5 +60,5 @@ export default connect(
     mapDispatchToProps
 )(
     withTranslation()(
-        withRouter(ALogin)
+        withRouter(CLogin)
     ))

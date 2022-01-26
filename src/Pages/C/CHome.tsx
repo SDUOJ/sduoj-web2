@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
-import Announcement from "../Component/announcement/Announcement";
+import Announcement from "../../Component/announcement/Announcement";
 import {Col, Image, Row} from "antd";
 import BK1 from "Assert/img/ban1news.jpg"
-import SearchProblem from "../Component/problem/SearchProblem";
+import SearchProblem from "../../Component/problem/SearchProblem";
 
 class CHome extends Component<any, any> {
 

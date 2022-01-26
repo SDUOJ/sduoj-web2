@@ -1,13 +1,13 @@
 import React, {Component} from "react";
-import {Role, Sex} from "../Type/Iuser";
+import {Role, Sex} from "../../Type/Iuser";
 import {LockOutlined, ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {Button, Card, Space, Tag} from "antd";
-import TableWithSelection from "../Component/common/Table/TableWithSelection";
-import MApi from "../Utils/API/m-api";
+import TableWithSelection from "../../Component/common/Table/TableWithSelection";
+import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import TableWithPagination from "../Component/common/Table/TableWithPagination";
-import {getDiffSecond, TimeDiff, unix2Time} from "../Utils/Time";
+import TableWithPagination from "../../Component/common/Table/TableWithPagination";
+import {getDiffSecond, TimeDiff, unix2Time} from "../../Utils/Time";
 
 class MContest extends Component<any, any> {
     render() {

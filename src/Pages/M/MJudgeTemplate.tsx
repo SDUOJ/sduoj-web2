@@ -1,20 +1,14 @@
 import React, {Component} from "react";
-import {withRouter} from "react-router";
-import {RouteComponentProps} from "react-router-dom";
-import {IUserPropRoles, Role, Sex} from "../Type/Iuser";
-import GroupListOperHead from "../Component/group/GroupListOperHead";
-import GroupList from "../Component/group/GroupList";
+import {Role, Sex} from "../../Type/Iuser";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {Button, Card, Space, Tag} from "antd";
-import TableWithSelection from "../Component/common/Table/TableWithSelection";
-import MApi from "../Utils/API/m-api";
+import TableWithSelection from "../../Component/common/Table/TableWithSelection";
+import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
+import {withRouter} from "react-router-dom";
 
 
-
-class MGroup extends Component<any, any> {
-
-
+class MJudgeTemplate extends Component<any, any> {
     render() {
 
         let colData: any[] = [
@@ -106,7 +100,7 @@ class MGroup extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={false}
-                    title={"题目列表"}
+                    title={this.props.t("userList")}
                     extra={
                         <>
                             <Button>a</Button>
@@ -115,7 +109,7 @@ class MGroup extends Component<any, any> {
                 >
                     <TableWithSelection
                         colData={colData}
-                        API={MApi.getProblemList}
+                        API={MApi.getUserList}
                         size={"small"}
                         rowKey={"userId"}
                     />
@@ -125,4 +119,4 @@ class MGroup extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(MGroup))
+export default withTranslation()(withRouter(MJudgeTemplate))

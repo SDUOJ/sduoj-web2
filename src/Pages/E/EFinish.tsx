@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Result} from "antd";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {getRouterPath, routerE} from "../Config/router";
+import {getRouterPath, routerE} from "../../Config/router";
 
 
 class EFinish extends Component<any, any> {

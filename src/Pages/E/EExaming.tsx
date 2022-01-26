@@ -3,10 +3,10 @@ import {Button, Result, Image, Card, Avatar, Descriptions, PageHeader} from "ant
 import {SmileOutlined} from "@ant-design/icons";
 import Countdown from "antd/lib/statistic/Countdown";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
-import Timer from "../Component/exam/Timer";
+import Timer from "../../Component/exam/Timer";
 import {Footer} from "antd/lib/layout/layout";
-import ExamRun from "../Component/exam/ExamRun";
-import ChangeLang from "../Component/common/ChangeLang";
+import ExamRun from "../../Component/exam/ExamRun";
+import ChangeLang from "../../Component/common/ChangeLang";
 
 interface IUserInfo {
     name: string                        // 姓名
