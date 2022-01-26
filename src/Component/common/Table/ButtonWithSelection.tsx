@@ -2,8 +2,8 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {ManageState} from "../../../Type/IManage";
-import React, {Dispatch, useEffect, useState} from "react";
-import {Badge, Button, message, Popconfirm, Popover, Space} from "antd";
+import React, {Dispatch, useState} from "react";
+import {Button, message, Popover} from "antd";
 import ExportExcel from "../ExportExcel";
 import MApi from "Utils/API/m-api"
 import DeleteConfirm from "../DeleteConfirm";

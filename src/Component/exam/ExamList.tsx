@@ -1,12 +1,7 @@
 import React, {Component, Dispatch} from 'react';
 
-import ProList from '@ant-design/pro-list';
-
-import {Table, Tag, Space, Card, Badge, Button, Popover} from 'antd';
-import {ExamState, IUserExamInfo, SExamInfo, SExamManageInfo} from "../../Type/IExam";
-import {ConfigState} from "../../Type/IConfig";
-import {UserState} from "../../Type/Iuser";
-import {testLoginTodo} from "../../Redux/Action/user";
+import {Badge, Space, Table} from 'antd';
+import {SExamInfo, SExamManageInfo} from "../../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -16,7 +11,7 @@ import mApi from "../../Utils/API/m-api";
 import ExamForm from "./Form/ExamForm";
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
-import {getColMap, getData, getExamJson} from "../../Utils/exportExam";
+import {getExamJson} from "../../Utils/exportExam";
 import SubmissionList from "../submission/SubmissionList";
 import SubmissionModal from "../submission/SubmissionModal";
 

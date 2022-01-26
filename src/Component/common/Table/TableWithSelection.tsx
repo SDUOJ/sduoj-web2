@@ -5,7 +5,6 @@ import {withRouter} from "react-router";
 import judgeAuth from "../../../Utils/judgeAhtu";
 import {connect} from "react-redux";
 import {ManageState} from "../../../Type/IManage";
-import MApi from "Utils/API/m-api"
 import TableWithPagination from "./TableWithPagination";
 
 

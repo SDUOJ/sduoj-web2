@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Card, Space, Table} from "antd";
+import {Card, Space} from "antd";
 import {withTranslation} from "react-i18next";
 import Search from "antd/es/input/Search";
 import {SearchOutlined} from "@ant-design/icons"

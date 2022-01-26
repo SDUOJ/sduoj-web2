@@ -1,6 +1,6 @@
-import React, {RefObject, useEffect, useRef, useState} from "react";
-import {Button, Form, FormInstance, Popconfirm, Skeleton, Space} from "antd";
-import {MenuOutlined, PlusOutlined, SortAscendingOutlined, EditOutlined} from "@ant-design/icons"
+import React, {useEffect, useRef, useState} from "react";
+import {Button, Form, Popconfirm} from "antd";
+import {EditOutlined, MenuOutlined, PlusOutlined, SortAscendingOutlined} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';

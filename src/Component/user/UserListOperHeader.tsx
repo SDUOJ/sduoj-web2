@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, PageHeader} from "antd";
-import {IUserPropRoles, Role} from "../../Type/Iuser";
+import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import BatchOperationUser from "./BatchOperationUser";

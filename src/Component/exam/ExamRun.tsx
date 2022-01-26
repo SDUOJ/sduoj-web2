@@ -1,7 +1,7 @@
 import React, {Component, Dispatch} from 'react';
 import {connect} from "react-redux";
-import {ExamAction, getExamInfoTodo, setProgramSubmissionList} from "../../Redux/Action/exam";
-import {Button, Col, Modal, Row, Skeleton} from "antd";
+import {getExamInfoTodo, setProgramSubmissionList} from "../../Redux/Action/exam";
+import {Col, Row, Skeleton} from "antd";
 import Problem from "../problem/Problem";
 import ExamPageCtrl from "./ExamPageCtrl";
 import ExamAnswerSheet from "./ExamAnswerSheet";
@@ -10,9 +10,6 @@ import {ExamState} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {withRouter} from "react-router-dom";
 import RecentSubmission from "../submission/RecentSubmission";
-import Processing from "../submission/Processing";
-import {SubmissionState} from "../../Type/ISubmission";
-import {setSubmissionModalVis} from "../../Redux/Action/submission";
 import eApi from "Utils/API/e-api"
 import {Submission} from "../../Type/IProblem";
 import SubmissionModal from "../submission/SubmissionModal";

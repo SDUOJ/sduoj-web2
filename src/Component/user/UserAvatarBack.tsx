@@ -1,9 +1,8 @@
 import React, {Component} from "react";
-import {Avatar, Button, Divider, Popover, Space} from "antd";
+import {Button, Divider, Popover, Space} from "antd";
 import {withRouter} from "react-router-dom";
-import {RightOutlined, UserOutlined} from '@ant-design/icons';
+import {RightOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
-import md5 from "js-md5";
 import UserAvatar from "./Avatar";
 
 

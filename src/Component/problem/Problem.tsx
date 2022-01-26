@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Skeleton} from "antd";
-import {StarOutlined, StarFilled} from '@ant-design/icons';
+import {StarFilled, StarOutlined} from '@ant-design/icons';
 import Choice from "./Choice";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";

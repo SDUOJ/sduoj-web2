@@ -1,8 +1,5 @@
 import React, {Component} from "react";
-import {Role, Sex} from "../../Type/Iuser";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
-import {Button, Card, Space, Tag} from "antd";
-import TableWithSelection from "../../Component/common/Table/TableWithSelection";
+import {Button, Card, Space} from "antd";
 import MApi from "../../Utils/API/m-api";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {withTranslation} from "react-i18next";

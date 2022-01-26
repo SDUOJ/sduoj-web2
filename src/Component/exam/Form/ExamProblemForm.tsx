@@ -1,18 +1,14 @@
 import React, {Dispatch, useRef, useState} from "react";
-import {Button, Popconfirm, Space, Radio, Skeleton} from "antd";
-import {InfoCircleOutlined, MenuOutlined, PlusOutlined, RightOutlined,} from "@ant-design/icons"
+import {Button, Popconfirm, Radio, Skeleton, Space} from "antd";
+import {InfoCircleOutlined, MenuOutlined, PlusOutlined,} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
 import ProblemAddForm from "../../problem/ProblemAddForm";
 import {connect} from "react-redux";
-import {
-    genNumberList,
-    ManageState
-} from "../../../Type/IManage";
+import {genNumberList, ManageState} from "../../../Type/IManage";
 import {examProblemGroupType, examProblemListType} from "../../../Type/IExam";
-
 
 
 // 可拖拽的排序手柄

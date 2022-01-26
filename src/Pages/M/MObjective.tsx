@@ -7,7 +7,6 @@ import {withRouter} from "react-router";
 import {Card, Space} from "antd";
 import ProblemList from "../../Component/problem/ProblemList";
 import AutoImportObjective from "../../Component/problem/AutoImportObjective";
-import {getRouterPath, routerC} from "../../Config/router";
 
 class MObjective extends Component<any, any> {
 

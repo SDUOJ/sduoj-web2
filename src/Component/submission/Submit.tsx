@@ -1,12 +1,9 @@
-import React, {Component, Dispatch, useRef, useState} from "react";
-import {Badge, Button, Form, FormInstance, message, Modal, Select, Space, Tabs, Tooltip, Upload} from "antd";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
-import {JudgeTemplate, JudgeTemplateAllType, ProgramContent} from "../../Type/IProblem";
+import React, {Dispatch, useState} from "react";
+import {Badge, Button, Form, message, Modal, Select, Space, Tooltip, Upload} from "antd";
+import {JudgeTemplate, JudgeTemplateAllType} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {
-    setTopSubmission,
-} from "../../Redux/Action/submission";
+import {setTopSubmission,} from "../../Redux/Action/submission";
 import {Option} from "antd/lib/mentions";
 import {UploadOutlined} from "@ant-design/icons"
 import CodeEditor from "../common/CodeEditor";

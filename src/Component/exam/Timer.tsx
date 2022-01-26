@@ -1,4 +1,4 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component} from "react";
 import Countdown from "antd/lib/statistic/Countdown";
 import {Card, Space} from "antd";
 import {ClockCircleOutlined} from "@ant-design/icons"

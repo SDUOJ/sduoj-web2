@@ -2,14 +2,13 @@ import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
 import Loading from "../../Utils/Loading";
 import {routerC} from "../../Config/router";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import FooterSDU from "./FooterSDU";
 import CHeader from "./CHeader";
 import {testLoginTodo} from "../../Redux/Action/user";
-import QueueAnim from 'rc-queue-anim';
 
 const {Footer, Sider, Content} = Layout;
 

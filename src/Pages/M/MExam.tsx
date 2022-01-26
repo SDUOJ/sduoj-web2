@@ -1,7 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import ExamForm from "../../Component/exam/Form/ExamForm";
 import {Card} from "antd";
-import {getRouterPath, routerC, routerE} from "../../Config/router";
 import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";

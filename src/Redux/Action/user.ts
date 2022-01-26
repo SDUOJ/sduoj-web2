@@ -1,10 +1,5 @@
 import CApi from "Utils/API/c-api"
-import {
-    thirdPartyLoginAction,
-    thirdPartyLoginDataSDUCAS,
-    thirdPartyLoginResponse,
-    UserInfo
-} from "../../Type/Iuser";
+import {thirdPartyLoginAction, thirdPartyLoginDataSDUCAS, thirdPartyLoginResponse, UserInfo} from "../../Type/Iuser";
 import {loginInfo} from "../../Type/types";
 import {Dispatch} from "react";
 

@@ -1,9 +1,5 @@
-import ProForm, {ModalForm, ProFormDateRangePicker, ProFormSelect, ProFormText} from "@ant-design/pro-form";
-import {Button, Form, Input, message} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
-import ItemUsername from "./ItemUsername";
-import ItemPassword from "./ItemPassword";
-import ItemEmail from "./ItemEmail";
+import {ModalForm} from "@ant-design/pro-form";
+import {Form, Input, message} from "antd";
 import ItemCaptcha from "./ItemCaptcha";
 import React, {useState} from "react";
 import {withTranslation} from "react-i18next";

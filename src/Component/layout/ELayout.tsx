@@ -5,7 +5,6 @@ import {getRouterPath, routerE} from "../../Config/router";
 import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import EHeader from "./EHeader";
-import {ConfigState} from "../../Type/IConfig";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";

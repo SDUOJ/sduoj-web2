@@ -1,12 +1,11 @@
 import {Component} from "react";
-import {Popover, Tag, Space, Tooltip} from "antd";
-import Icon from '@ant-design/icons';
-import {
+import {Popover, Tag, Tooltip} from "antd";
+import Icon, {
     CheckCircleOutlined,
-    SyncOutlined,
+    ClockCircleOutlined,
     CloseCircleOutlined,
     FieldTimeOutlined,
-    ClockCircleOutlined
+    SyncOutlined
 } from '@ant-design/icons';
 
 import {ReactComponent as Memory} from "Assert/img/memory.svg"

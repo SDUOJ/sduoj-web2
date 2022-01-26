@@ -1,4 +1,4 @@
-import {Button, Col, Form, Image, Input, Row, Space} from "antd";
+import {Button, Col, Form, Image, Input, Row} from "antd";
 import React, {useEffect, useState} from "react";
 import {withTranslation} from "react-i18next";
 import CApi from "Utils/API/c-api"

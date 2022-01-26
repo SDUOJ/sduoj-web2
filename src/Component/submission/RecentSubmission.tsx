@@ -1,17 +1,9 @@
 import {Component, Dispatch} from "react";
 import {Button, Card, message, Space, Table} from "antd";
 import {ExamState, SProGroupInfo} from "../../Type/IExam";
-import {examID} from "../../Type/types";
-import {getExamInfoTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {
-    RunningResultType, RunningSubmissionInfo,
-    StateList,
-    SubmissionMap,
-    SubmissionState,
-    TopSubmissionInfoType
-} from "../../Type/ISubmission";
+import {StateList, SubmissionMap, SubmissionState, TopSubmissionInfoType} from "../../Type/ISubmission";
 import TestCase from "./TestCase";
 import moment from "moment";
 import {setTopSubmission} from "../../Redux/Action/submission";

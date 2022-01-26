@@ -1,6 +1,6 @@
 import {Component} from "react";
 import {WithTranslation, withTranslation} from "react-i18next";
-import {Button, List, Skeleton, Avatar} from "antd";
+import {Avatar, Button, List, Skeleton} from "antd";
 
 
 interface CodeHistoryProp extends WithTranslation{

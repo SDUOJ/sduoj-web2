@@ -1,4 +1,3 @@
-import {Component, useEffect, useState} from "react";
 import {UnControlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/solarized.css';

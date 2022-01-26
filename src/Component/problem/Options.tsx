@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from 'react';
-import {Card, Col, Row} from "antd";
+import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {connect} from "react-redux";

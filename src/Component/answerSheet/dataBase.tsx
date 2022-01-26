@@ -1,16 +1,10 @@
 import {Component} from "react";
 import {WithTranslation, withTranslation} from "react-i18next";
-import {Row, Col, Card, Tree, Table, Tabs, Space, Button, Badge, Collapse} from 'antd';
+import {Badge, Button, Card, Col, Collapse, Row, Space, Table, Tabs, Tree} from 'antd';
 
 import Problem from "../problem/Problem";
 
-import Icon, {
-    DownOutlined,
-    FrownOutlined,
-    SmileOutlined,
-    MehOutlined,
-    FrownFilled,
-} from '@ant-design/icons';
+import Icon, {DownOutlined,} from '@ant-design/icons';
 import {ReactComponent as DataBaseIcon} from "Assert/img/database.svg"
 import {ReactComponent as TableIcon} from "Assert/img/Table.svg"
 import {ReactComponent as ViewIcon} from "Assert/img/View.svg"

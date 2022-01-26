@@ -1,8 +1,6 @@
 import deepClone from "Utils/deepClone";
 import {UserState} from "../../Type/Iuser";
 import {UserAction} from "../Action/user";
-import cookie from "react-cookies";
-import {message} from "antd";
 
 const StateInit: UserState = {
     isLogin: false

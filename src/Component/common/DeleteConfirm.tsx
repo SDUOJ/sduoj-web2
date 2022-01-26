@@ -1,5 +1,4 @@
-import {genNumberList} from "../../Type/IManage";
-import {Button, Popconfirm} from "antd";
+import {Popconfirm} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 

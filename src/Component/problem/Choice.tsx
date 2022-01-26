@@ -1,7 +1,7 @@
 import React, {Component, Dispatch} from 'react';
 import {Skeleton} from "antd";
 import Options from "./Options";
-import {ExamAction, getProblemTodo} from "../../Redux/Action/exam";
+import {getProblemTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {ChoiceContent, IGetProInfo} from "../../Type/IProblem";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";

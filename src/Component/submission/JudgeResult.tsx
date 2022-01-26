@@ -1,8 +1,8 @@
 import {Component} from "react";
-import {Card, Col, Row, Space, Tabs, Progress} from "antd";
+import {Card, Col, Progress, Row, Space, Tabs} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
 import TestCase, {TestCaseProp} from "./TestCase";
-import {StateList, TestCaseStates} from "../../Type/ISubmission";
+import {StateList} from "../../Type/ISubmission";
 
 
 interface IJudgeResult extends WithTranslation {

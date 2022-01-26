@@ -1,5 +1,3 @@
-import {ExamState} from "../../Type/IExam";
-import {ExamAction} from "../Action/exam";
 import deepClone from "Utils/deepClone";
 import {SubmissionState} from "../../Type/ISubmission";
 import {SubmissionAction} from "../Action/submission";

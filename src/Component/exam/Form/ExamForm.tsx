@@ -16,7 +16,9 @@ import {
     examProblemGroupType,
     examProblemListType,
     examProblemType,
-    examUserType, ProGroupTypeFtS, ProGroupTypeStF
+    examUserType,
+    ProGroupTypeFtS,
+    ProGroupTypeStF
 } from "../../../Type/IExam";
 
 

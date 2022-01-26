@@ -1,15 +1,7 @@
 import {ExamAction, genAnswerSheet} from "../Action/exam";
-import {
-    Choice,
-    ChoiceContent, isProgramContent, JudgeTemplate,
-    ProContent, ProgramContent,
-    ProType
-} from "../../Type/IProblem";
+import {Choice, ChoiceContent, ProgramContent} from "../../Type/IProblem";
 import eApi from "Utils/API/e-api"
-import {ProgramTest} from "../../Utils/Problem";
-import {ExamState, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
-import {store} from "../Store";
-import {ProblemAction} from "../Action/problem";
+import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import deepClone from "Utils/deepClone";
 
 

@@ -1,7 +1,6 @@
 import React, {Component} from "react";
-import {Checkbox, Form, FormInstance, Input} from "antd";
+import {Checkbox, Form, FormInstance} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
-import i18n from "i18next";
 
 interface IUserFormAdditional extends WithTranslation {
     userForm: React.Ref<FormInstance<any>> | undefined

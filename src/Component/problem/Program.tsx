@@ -1,18 +1,17 @@
 import React, {Component, Dispatch} from 'react';
-import {ChoiceContent, IGetProInfo, ProgramContent} from "../../Type/IProblem";
+import {IGetProInfo, ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 // @ts-ignore
 // import VditorPreview from 'vditor/dist/method.min'
 import Title from "antd/lib/typography/Title";
 import {withTranslation} from "react-i18next";
-import {Button, Space, Badge, DatePicker, Skeleton, Card, Modal, Tooltip} from "antd";
-import {GetMaxScore, getPoint, IsAnswer} from "../../Utils/Problem";
+import {Badge, Button, Card, Modal, Skeleton, Space} from "antd";
+import {GetMaxScore, IsAnswer} from "../../Utils/Problem";
 import SampleTestCase from "./SampleTestCase";
 import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 import Submit from "../submission/Submit";
 import {withRouter} from "react-router-dom";
 import {getProblemTodo} from "../../Redux/Action/exam";
-import Processing from "../submission/Processing";
 import RecentSubmission from "../submission/RecentSubmission";
 import eApi from "../../Utils/API/e-api";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";

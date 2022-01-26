@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 
-import {IUserPropRoles, Role, Sex} from '../../../Type/Iuser'
+import {IUserPropRoles, Sex} from '../../../Type/Iuser'
 import {Form, FormInstance, Input, Radio, Select} from "antd";
 import {withTranslation} from "react-i18next";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";

@@ -1,4 +1,4 @@
-import {Component, Dispatch, useEffect, useState} from "react";
+import {Dispatch, useEffect, useState} from "react";
 import Vditor from "vditor";
 import {fileUpload} from "../../Utils/fileUpload";
 import {Button, message, notification, Space} from "antd";

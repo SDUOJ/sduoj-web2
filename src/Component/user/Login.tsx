@@ -1,18 +1,10 @@
-import React, {Component, CSSProperties, Dispatch, useRef, useState} from "react";
-import {Button, Card, FormInstance, message, Space, Tabs} from "antd";
-import {LoginForm, ProFormCheckbox, ProFormInstance, ProFormText} from "@ant-design/pro-form";
-import {
-    UserOutlined,
-    MobileOutlined,
-    LockOutlined,
-    QqOutlined,
-    WeiboOutlined,
-    WechatOutlined,
-} from '@ant-design/icons';
+import React, {Dispatch, useRef, useState} from "react";
+import {Button, Card, Space, Tabs} from "antd";
+import {LoginForm, ProFormInstance, ProFormText} from "@ant-design/pro-form";
+import {LockOutlined, UserOutlined,} from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from "./ThirdPartyLoginSDUCAS";
 import {withTranslation} from "react-i18next";
 import {ConfigState} from "../../Type/IConfig";
-import {getCopyRightTodo} from "../../Redux/Action/config";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {userLoginTodo} from "../../Redux/Action/user";

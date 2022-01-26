@@ -1,8 +1,6 @@
 import deepClone from "Utils/deepClone";
 import {ManageState} from "../../Type/IManage";
 import {ManageAction} from "../Action/manage";
-import {update} from "js-md5";
-import {examProblemGroupType, examProblemListType} from "../../Type/IExam";
 
 
 const initState: ManageState = {

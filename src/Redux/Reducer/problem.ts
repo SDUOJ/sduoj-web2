@@ -1,4 +1,3 @@
-import Problem from "../../Component/problem/Problem";
 import {ProblemState} from "../../Type/IProblem";
 import {ProblemAction} from "../Action/problem";
 import deepClone from "Utils/deepClone";

@@ -5,13 +5,11 @@ import MMenu from "./MMenu";
 import MHeader from "./MHeader";
 import Loading from "../../Utils/Loading";
 import {routerM} from "../../Config/router";
-import {BrowserRouter as Router, Route} from "react-router-dom";
-import {IUserPropRoles} from "../../Type/Iuser";
+import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {ManageState} from "../../Type/IManage";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import FooterSDU from "./FooterSDU";
 import {testLoginTodo} from "../../Redux/Action/user";
 
 const {Sider, Content} = Layout;

@@ -1,6 +1,5 @@
-import ProForm, {ModalForm, ProFormDateRangePicker, ProFormSelect, ProFormText} from "@ant-design/pro-form";
-import {Button, message} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
+import {ModalForm} from "@ant-design/pro-form";
+import {message} from "antd";
 import ItemUsername from "./ItemUsername";
 import ItemPassword from "./ItemPassword";
 import ItemEmail from "./ItemEmail";

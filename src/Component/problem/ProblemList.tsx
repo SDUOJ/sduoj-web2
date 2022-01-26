@@ -3,11 +3,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Table} from "antd";
-import {SExamInfo} from "../../Type/IExam";
-import moment from "moment";
-import {getDiffSecond, TimeDiff} from "../../Utils/Time";
 import mApi from "../../Utils/API/m-api";
-import ExamForm from "../exam/Form/ExamForm";
 import ObjectiveForm from "./ObjectiveForm";
 
 

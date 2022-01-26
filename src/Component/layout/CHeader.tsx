@@ -1,10 +1,10 @@
 import React, {Component, Dispatch} from "react";
-import { Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
+import {Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {Link} from "react-router-dom";
 import {DownOutlined, LogoutOutlined, RightOutlined, UserOutlined} from "@ant-design/icons";
 import logo from "../../Assert/img/logo.png";
-import { UserState} from "../../Type/Iuser";
+import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

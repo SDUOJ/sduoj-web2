@@ -1,11 +1,7 @@
 import React, {Component, Dispatch} from "react";
-
-import Meta from "antd/lib/card/Meta";
 import ProTag from "./ProTag";
 import {Card, Col, Row} from "antd";
 import {ExamState, SProInfo} from "../../Type/IExam";
-import {examID} from "../../Type/types";
-import {getExamProblemListTodo} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

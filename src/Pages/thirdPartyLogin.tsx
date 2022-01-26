@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Image, Result, Spin} from "antd";
+import {Button, Image, Spin} from "antd";
 import {ExamState} from "../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";

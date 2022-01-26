@@ -1,7 +1,7 @@
 import React, {createElement, useEffect, useState} from 'react';
-import {Comment, Tooltip, Avatar} from 'antd';
+import {Comment, Tooltip} from 'antd';
 import moment from 'moment';
-import {DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled} from '@ant-design/icons';
+import {DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
 import UserAvatar from "../user/Avatar";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";

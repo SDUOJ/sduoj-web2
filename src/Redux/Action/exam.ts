@@ -4,8 +4,9 @@ import {
     ChoiceState,
     IGetProInfo,
     isChoiceContent,
-    isProgramContent, JudgeTemplate, JudgeTemplateAllType,
-    ProContent, ProgramContent, Submission, TestCase
+    ProContent,
+    Submission,
+    TestCase
 } from "../../Type/IProblem";
 import {examID} from "../../Type/types";
 import {Dispatch} from "react";

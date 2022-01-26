@@ -1,8 +1,6 @@
 import React, {Component, Dispatch} from 'react';
-import {ProgramContent} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {WithTranslation, withTranslation} from "react-i18next";
-import {Space} from "antd";
 import Paragraph from "antd/lib/typography/Paragraph";
 
 interface ICopyableCode {

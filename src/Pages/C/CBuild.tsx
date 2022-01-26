@@ -1,6 +1,5 @@
 import {Component} from "react";
 import {Button, Image, Result, Space} from "antd";
-import Icon, {SmileOutlined} from "@ant-design/icons";
 import I404 from "Assert/img/404.png"
 import {withRouter} from "react-router-dom";
 

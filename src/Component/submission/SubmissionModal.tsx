@@ -1,11 +1,7 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Modal} from "antd";
 import Processing from "./Processing";
-import {ExamState} from "../../Type/IExam";
 import {SubmissionState} from "../../Type/ISubmission";
-import {examID} from "../../Type/types";
-import {getExamInfoTodo} from "../../Redux/Action/exam";
-import {Submission} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 

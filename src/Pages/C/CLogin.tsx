@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from "react";
-import {Card, message} from "antd";
+import {message} from "antd";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

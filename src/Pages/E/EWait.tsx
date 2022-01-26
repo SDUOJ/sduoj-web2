@@ -1,15 +1,14 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Card, Descriptions, Image, List, message, Result, Skeleton} from "antd";
+import {Button, Card, Image, List, message, Result, Skeleton} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../../Component/exam/Timer";
-import {ExamState, SExamInfo} from "../../Type/IExam";
+import {ExamState} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
 import {getExamInfoTodo} from "../../Redux/Action/exam";
-import {routerE} from "../../Config/router";
 import moment from "moment";
 import {TimeDiff} from "../../Utils/Time";
 

@@ -1,14 +1,10 @@
 import React, {Component, Dispatch} from "react";
-import UserAvatarBack from "../user/UserAvatarBack";
-import {Avatar, Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
+import {Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
-import {Link} from "react-router-dom";
 import {DownOutlined, LogoutOutlined} from "@ant-design/icons";
-import md5 from "js-md5";
 import logo from "../../Assert/img/logo.png";
-import {ExamState, IUserExamInfo} from "../../Type/IExam";
+import {ExamState} from "../../Type/IExam";
 import {UserState} from "../../Type/Iuser";
-import {examID} from "../../Type/types";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

@@ -1,16 +1,12 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component} from "react";
 import {withRouter} from "react-router";
-import {Role, Sex} from "../../Type/Iuser";
-import TableWithSelection from "../../Component/common/Table/TableWithSelection";
 import {Button, Card, Space, Tag} from "antd";
-import {ManOutlined, PlusOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
+import {PlusOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
 import {unix2Time} from "../../Utils/Time";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import AnnouncementForm from "../../Component/announcement/AnnouncementForm";
-import {ManageState} from "../../Type/IManage";
-import {connect} from "react-redux";
 import TableRowDeleteButton from "../../Component/common/Table/TableRowDeleteButton";
 
 

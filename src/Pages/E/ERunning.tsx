@@ -1,19 +1,10 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Result, Image, Card, Avatar, Descriptions, Skeleton, List} from "antd";
-import SDU_Logo from "Assert/img/sdu-logo.jpg"
-import Timer from "../../Component/exam/Timer";
-import {ExamState, IUserExamInfo} from "../../Type/IExam";
-import {examID} from "../../Type/types";
+import {Card} from "antd";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {UserInfo, UserState} from "../../Type/Iuser";
-import {userGetProfileTodo} from "../../Redux/Action/user";
-import {getExamInfoTodo} from "../../Redux/Action/exam";
-import {ConfigState} from "../../Type/IConfig";
-import cookie from "react-cookies";
+import {UserState} from "../../Type/Iuser";
 import ExamRun from "../../Component/exam/ExamRun";
-import {routerE} from "../../Config/router";
 import {WaterMark} from "@ant-design/pro-layout";
 
 const {Meta} = Card;
