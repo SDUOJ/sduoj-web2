@@ -11,18 +11,23 @@ const ItemUsername = (props: any) => {
             initialValue={props.value}
             rules={
                 [
-                    {required: props.editable, message: props.t("usernameEmpty")},
-                    ({ getFieldValue }) => ({
+                    {
+                        required:
+                            props.editable !== false && props.notRequired !== true,
+                        message: props.t("usernameEmpty")
+                    },
+                    ({getFieldValue}) => ({
                         validator(_, value) {
-                            if(props.needExist === true){
-                                return CApi.isExist({username: value}).then((data: any)=>{
-                                    if(data === false) return Promise.resolve()
-                                    else if(data === true) return Promise.reject("用户名已存在")
+                            if (props.ExistCheck === true) {
+                                return CApi.isExist({username: value}).then((data: any) => {
+                                    if (data === false) return Promise.resolve()
+                                    else if (data === true) return Promise.reject("用户名已存在")
                                     return Promise.reject("检验失败")
-                                }).catch((e: any)=>{
+                                }).catch((e: any) => {
                                     return Promise.reject(e)
                                 })
-                            } return Promise.resolve()
+                            }
+                            return Promise.resolve()
                         },
                     }),
                 ]

@@ -4,7 +4,13 @@ import {withTranslation} from "react-i18next";
 import CApi from "Utils/API/c-api"
 import ItemCaptcha from "./ItemCaptcha";
 
-const ItemEmail = (props: any) => {
+export interface ItemEmailProps{
+    needVerify: boolean
+    editable: boolean
+    getEmail: any
+}
+
+const ItemEmail = (props: ItemEmailProps & any) => {
     const [canSend, setCanSend] = useState<number>(0);
     const [modalVis, setModalVis] = useState<boolean>(false);
     const [imgId, setImgId] = useState<string>("")
@@ -26,11 +32,14 @@ const ItemEmail = (props: any) => {
         <>
             {props.needVerify === false && (
                 <Form.Item name="email" label={props.t("email")}
-                           rules={[{type: 'email', message: props.t('emailError'),}]}
+                           rules={props.notCheck !== true ? [
+                               {type: 'email', message: props.t('emailError')},
+                               {required: props.editable !== false}
+                           ] : undefined}
                            hasFeedback>
                     <Input
                         disabled={props.editable === false}
-                        bordered={props.editable}
+                        bordered={props.editable !== false}
                     />
                 </Form.Item>
             )}
@@ -79,7 +88,7 @@ const ItemEmail = (props: any) => {
                                ]}>
                         <Input
                             disabled={props.editable === false || canSend > 0}
-                            bordered={props.editable}
+                            bordered={props.editable !== false}
                             addonAfter={
                                 <Button
                                     type={"text"}

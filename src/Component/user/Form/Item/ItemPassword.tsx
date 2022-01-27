@@ -17,19 +17,23 @@ const ItemPassword = (props: any) => {
             </Form.Item>
             {
                 props.oldpass === undefined && props.noConfirm !== true && (
-                    <Form.Item name="confirm" label={props.t("confirmNewPassword")}
-                               dependencies={[firstPassProps.name]}
-                               hasFeedback
-                               rules={[
-                                   {required: true, message: props.t("passwordEmptyConfirm")},
-                                   ({getFieldValue}) => ({
-                                       validator(_, value) {
-                                           if (!value || getFieldValue(firstPassProps.name) === value)
-                                               return Promise.resolve();
-                                           return Promise.reject(new Error(props.t("passwordDifferent")));
-                                       },
-                                   }),
-                               ]}>
+                    <Form.Item
+                        name="confirm"
+                        label={
+                            props.t("confirm" + (props.newpass ? "New" : "") + "Password")
+                        }
+                        dependencies={[firstPassProps.name]}
+                        hasFeedback
+                        rules={[
+                            {required: true, message: props.t("passwordEmptyConfirm")},
+                            ({getFieldValue}) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue(firstPassProps.name) === value)
+                                        return Promise.resolve();
+                                    return Promise.reject(props.t("passwordDifferent"));
+                                },
+                            }),
+                        ]}>
                         <Input.Password/>
                     </Form.Item>
                 )

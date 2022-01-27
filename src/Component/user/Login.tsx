@@ -98,10 +98,10 @@ const Login = (props: any) => {
                 )}
                 {
                     loginType === 'account' && (
-                        <div>
-                            <Space style={{
-                                float: 'right',
-                            }}>
+                        <div style={{
+                            textAlign: "right", marginBottom: 10
+                        }}>
+                            <Space size={3}>
                                 <Register button={<Button type={"link"} size={"small"}>注册</Button>}/>
                                 <ForgetPass button={<Button type={"link"} size={"small"}>忘记密码</Button>}/>
                             </Space>

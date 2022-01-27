@@ -1,17 +1,17 @@
-import {Card, Form} from "antd";
+import {Button, Card, Form, message} from "antd";
 import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
 import ItemCaptcha from "../../Component/user/Form/Item/ItemCaptcha";
 import {useState} from "react";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import {withRouter} from "react-router-dom";
+import {useForm} from "antd/es/form/Form";
+import CApi from "Utils/API/c-api"
+
 
 const ResetPass = (props: any) => {
 
-    const [imgId, setImgId] = useState<string>()
-    const [token, setToken] = useState(getUrlParams(props.location.search).token)
-
-    console.log(token)
-
+    const token = getUrlParams(props.location.search).token
+    const [form] = useForm()
     return (
         <>
             <div style={{width: "500px", textAlign: "center", margin: "0 auto"}}>
@@ -19,11 +19,29 @@ const ResetPass = (props: any) => {
                     <Card
                         title={"重置密码"}
                     >
-                        <Form layout={"vertical"}>
+                        <Form
+                            layout={"vertical"}
+                            form={form}
+                        >
                             <ItemPassword/>
-                            <ItemCaptcha setImgId={setImgId}/>
                         </Form>
-
+                        <Button
+                            type={"primary"}
+                            block={true}
+                            onClick={() => {
+                                form.validateFields().then((value) => {
+                                    CApi.resetPassword({
+                                        ...value,
+                                        token: token
+                                    }).then(()=>{
+                                        props.history.push("/v2/login")
+                                        message.success("密码重置成功，请重新登录")
+                                    })
+                                })
+                            }}
+                        >
+                            提交
+                        </Button>
                     </Card>
                 </div>
             </div>
