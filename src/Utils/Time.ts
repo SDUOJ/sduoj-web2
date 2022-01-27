@@ -24,6 +24,7 @@ export function TimeDiff(start: number, end: number, d: string = "天", h: strin
         res += Math.floor((diffSecond % 3600) / 60).toString() + m
     if (diffSecond % 60 !== 0)
         res += (diffSecond % 60).toString() + s
+    if(res === "") res = "0" + s
     return res
 }
 

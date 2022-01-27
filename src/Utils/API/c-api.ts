@@ -5,6 +5,9 @@ import request from "./request";
 
 export default {
     // Config
+    async getTime(){
+        return request.getTime('/site/getCopyright')
+    },
     async getCopyright() {
         return request.get<string>('/site/getCopyright');
     },

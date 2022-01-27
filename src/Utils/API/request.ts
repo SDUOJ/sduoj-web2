@@ -11,11 +11,41 @@ const service = axios.create({
 })
 service.defaults.withCredentials = true
 
+const getTime: Get | GetError = async (url: string) => {
+    try {
+        const response = await service.get(url);
+        switch (response.data.code) {
+            case 0:
+                return response.data.timestamp
+            default:
+                message.error(response.data.message);
+                return null
+        }
+    } catch (e: any) {
+        const response = e.response
+        if (response === undefined) {
+            message.error("服务器不可达")
+            return Promise.reject("服务器不可达")
+        }
+        switch (response.data.code) {
+            default:
+                if (url !== "/user/getProfile")
+                    message.error(response.data.message);
+                return Promise.reject(response.data.message)
+        }
+    }
+}
+
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.get(url, {
             params, ...config
         });
+        if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
+            window.location.replace("/v2/error/time")
+            message.error("本地时间异常")
+            return Promise.reject("本地时间异常")
+        }
         switch (response.data.code) {
             case 0:
                 return response.data.data
@@ -26,16 +56,15 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
     } catch (e: any) {
         const response = e.response
         if (response === undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
+            message.error("服务器不可达")
+            return Promise.reject("服务器不可达")
         }
         switch (response.data.code) {
             default:
-                if(url !== "/user/getProfile")
+                if (url !== "/user/getProfile")
                     message.error(response.data.message);
                 return Promise.reject(response.data.message)
         }
-        // TODO: Update Time
     }
 }
 
@@ -44,10 +73,13 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         const response = await service.post(url, data, {
             ...config
         });
-        // console.log("post", response)
+        if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
+            window.location.replace("/v2/error/time")
+            message.error("本地时间异常")
+            return Promise.reject("本地时间异常")
+        }
         switch (response.data.code) {
             case 0:
-                // message.success(response.data.message)
                 return response.data.data
             default:
                 message.error(response.data.message);
@@ -56,8 +88,8 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
     } catch (e: any) {
         const response = e.response
         if (response === undefined) {
-            message.error("后端不可达")
-            return Promise.reject("后端不可达")
+            message.error("服务器不可达")
+            return Promise.reject("服务器不可达")
         }
         switch (response.data.code) {
             default:
@@ -69,5 +101,6 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
 
 export default {
     get,
-    post
+    post,
+    getTime
 };
