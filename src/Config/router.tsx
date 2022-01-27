@@ -172,7 +172,7 @@ export const routerC: IBaseRouter[] = [
         id: 9,
         path: "/v2/user",
         exact: true,
-        component: lazy(() => import('../Pages/Client/CGroup'))
+        component: lazy(() => import('../Pages/Client/CUser'))
     },
     {
         id: 10,

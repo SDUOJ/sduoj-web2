@@ -1,7 +1,7 @@
 import {
     AxiosResponse, AxiosRequestConfig, CustomSuccessData
 } from "axios";
-import {sex} from "./Iuser";
+import {Sex, sex} from "./Iuser";
 
 export interface Get {
     <T>(url: string, params?: object, config?: AxiosRequestConfig): Promise<CustomSuccessData<T>>;
@@ -154,17 +154,17 @@ export type forgetInfo = {
 export type profileInfo = {
     nickname: string,
     phone: string,
-    gender: sex,
+    gender: Sex,
     studentId: number
 }
 
 export type verificationEmail = {
-    mail: string,
+    email: string,
     captcha: string,
     captchaId: string
 }
 
-export type resetPassWord = {
+export type updatePassWord = {
     password: string,
     newPassword: string
 }

@@ -99,7 +99,7 @@ class CHeader extends Component<any, any> {
                                                     key="1"
                                                     icon={<UserOutlined/>}
                                                     onClick={() => {
-
+                                                        this.props.history.push("/v2/user")
                                                     }}
                                                 >
                                                     {this.props.t("Profile")}

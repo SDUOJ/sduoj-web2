@@ -1,6 +1,6 @@
 import {Card, Form} from "antd";
-import ItemPassword from "../../Component/user/Form/ItemPassword";
-import ItemCaptcha from "../../Component/user/Form/ItemCaptcha";
+import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
+import ItemCaptcha from "../../Component/user/Form/Item/ItemCaptcha";
 import {useState} from "react";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import {withRouter} from "react-router-dom";

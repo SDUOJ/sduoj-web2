@@ -1,8 +1,8 @@
 import {ModalForm} from "@ant-design/pro-form";
 import {message} from "antd";
-import ItemUsername from "./ItemUsername";
-import ItemPassword from "./ItemPassword";
-import ItemEmail from "./ItemEmail";
+import ItemUsername from "./Item/ItemUsername";
+import ItemPassword from "./Item/ItemPassword";
+import ItemEmail from "./Item/ItemEmail";
 
 
 const Register = (prop: any) => {

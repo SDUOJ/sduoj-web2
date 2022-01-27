@@ -173,6 +173,8 @@
   "Top": "置顶",
   "IsTop": "是否置顶",
   "UnTop": "非置顶",
-  "CreateTime": "创建时间"
-
+  "CreateTime": "创建时间",
+  "NewPassword": "新密码",
+  "confirmNewPassword": "确认新密码",
+  "OldPassword": "旧密码"
 }

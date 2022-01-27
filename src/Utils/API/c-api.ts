@@ -1,11 +1,11 @@
-import {problemListQuery, thirdPartyLogin} from '../../Type/types'
-import {forgetInfo, loginInfo, profileInfo, registerInfo, resetPassWord, verificationEmail} from "../../Type/types";
+import {problemListQuery, thirdPartyLogin, updatePassWord} from '../../Type/types'
+import {forgetInfo, loginInfo, profileInfo, registerInfo, verificationEmail} from "../../Type/types";
 import request from "./request";
 
 
 export default {
     // Config
-    async getTime(){
+    async getTime() {
         return request.getTime('/site/getCopyright')
     },
     async getCopyright() {
@@ -25,13 +25,13 @@ export default {
     async forgetPassword(data: forgetInfo) {
         return request.post('/user/forgetPassword', data)
     },
-    async updateProfile(data: profileInfo) {
+    async updateProfile(data: profileInfo | updatePassWord) {
         return request.post('/user/updateProfile', data)
     },
     async sendVerificationEmail(data: verificationEmail) {
         return request.post('/user/sendVerificationEmail', data)
     },
-    async resetPassword(data: resetPassWord) {
+    async resetPassword(data: any) {
         return request.post('/user/resetPassword', data)
     },
     async thirdPartyLogin(data: thirdPartyLogin) {
@@ -46,24 +46,33 @@ export default {
     async getCaptcha() {
         return request.get("/user/getCaptcha")
     },
-    async getProblemList(data: problemListQuery){
+    async getProblemList(data: problemListQuery) {
         return request.get("/problem/list", data)
     },
+    async updateEmail(data: any) {
+        return request.post("/user/updateEmail", data)
+    },
+    async isExist(data: any) {
+        return request.get("/user/isExist", data)
+    },
+    async thirdPartyUnbinding(data: { thirdParty: string }) {
+        return request.get("/user/thirdPartyUnbinding", data)
+    },
     // 文件相关
-    async uploadFile(data: any){
+    async uploadFile(data: any) {
         return request.post('/filesys/uploadFiles', data, {
-            headers: { "Content-Type": "multipart/form-data" }
+            headers: {"Content-Type": "multipart/form-data"}
         });
     },
-    async getFileByMD5(data: {md5: string}){
+    async getFileByMD5(data: { md5: string }) {
         return request.get("/filesys/queryByMd5", data)
     },
     // 公告相关
-    async getAnnouncementList(data: any){
+    async getAnnouncementList(data: any) {
         data['filter'] = "default"
         return request.get("/notice/list", data)
     },
-    async getAnnouncement(data: any){
+    async getAnnouncement(data: any) {
         return request.get("notice/query", data)
     }
 }

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Form, FormInstance} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
-import ItemPassword from "./ItemPassword";
+import ItemPassword from "./Item/ItemPassword";
 
 interface IUserFormPass extends WithTranslation {
     userForm: React.Ref<FormInstance> | undefined

@@ -19,7 +19,7 @@ const getTime: Get | GetError = async (url: string) => {
                 return response.data.timestamp
             default:
                 message.error(response.data.message);
-                return null
+                return Promise.reject(response.data.message)
         }
     } catch (e: any) {
         const response = e.response
@@ -51,7 +51,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
                 return response.data.data
             default:
                 message.error(response.data.message);
-                return null
+                return Promise.reject(response.data.message)
         }
     } catch (e: any) {
         const response = e.response
@@ -83,7 +83,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
                 return response.data.data
             default:
                 message.error(response.data.message);
-                return null
+                return Promise.reject(response.data.message)
         }
     } catch (e: any) {
         const response = e.response

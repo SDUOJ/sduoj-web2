@@ -173,7 +173,9 @@
   "Top": "Top",
   "IsTop": "Is Top",
   "UnTop": "UnTop",
-  "CreateTime": "Create Time"
-
+  "CreateTime": "Create Time",
+  "NewPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "OldPassword": "Old Password"
 
 }

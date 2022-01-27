@@ -3,13 +3,18 @@ import {withRouter} from "react-router-dom";
 import EditableTableWithDrag from "../../Component/common/Table/EditableTableWithDrag";
 import {isValueEmpty} from "../../Utils/empty";
 import TimeError from "../Error/TimeError";
+import Reconfirm from "../../Component/common/Reconfirm";
 
 
 class CTest extends Component<any, any> {
 
     render() {
         return (
-            <TimeError/>
+            <Reconfirm
+                btnText={"AK比赛"}
+                todo={"AK这场比赛"}
+                confirm={"我真是太强了"}
+            />
         );
     }
 
