@@ -6,6 +6,7 @@ import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {unix2Time} from "../../Utils/Time";
+import {isValueEmpty} from "../../Utils/empty";
 
 class MContest extends Component<any, any> {
     render() {
@@ -62,7 +63,8 @@ class MContest extends Component<any, any> {
                 width: "auto",
                 responsive: ["lg"],
                 render: (text: string, row: any)=>{
-                    return <span>{row.managerGroupDTO.groupId} ({row.managerGroupDTO.title})</span>
+                    if(isValueEmpty(row.managerGroupDTO)) return <></>
+                    else return <span>{row.managerGroupDTO.groupId} ({row.managerGroupDTO.title})</span>
                 }
             },
             {
