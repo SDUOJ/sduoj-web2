@@ -13,6 +13,7 @@ export default {
         return request.get<string>('/site/getCopyright');
     },
 
+
     // User
     async login(data: loginInfo) {
         return request.post('/user/login', data)
@@ -26,8 +27,14 @@ export default {
     async forgetPassword(data: forgetInfo) {
         return request.post('/user/forgetPassword', data)
     },
+    async getProfile() {
+        return request.get("/user/getProfile")
+    },
     async updateProfile(data: profileInfo | updatePassWord) {
         return request.post('/user/updateProfile', data)
+    },
+    async updateEmail(data: any) {
+        return request.post("/user/updateEmail", data)
     },
     async sendVerificationEmail(data: verificationEmail) {
         return request.post('/user/sendVerificationEmail', data)
@@ -35,18 +42,17 @@ export default {
     async resetPassword(data: any) {
         return request.post('/user/resetPassword', data)
     },
-    async getProfile() {
-        return request.get("/user/getProfile")
-    },
     async getCaptcha() {
         return request.get("/user/getCaptcha")
-    },
-    async updateEmail(data: any) {
-        return request.post("/user/updateEmail", data)
     },
     async isExist(data: any) {
         return request.get("/user/isExist", data)
     },
+    async queryParticipateContest() {
+        return request.get("/user/queryParticipateContest")
+    },
+
+
     // 第三方登录相关
     async thirdPartyLogin(data: thirdPartyLogin) {
         // await sleep(2000)
@@ -70,6 +76,8 @@ export default {
     async thirdPartyBinding(data: any) {
         return request.post("/user/thirdPartyBinding", data)
     },
+
+
     // 文件相关
     async uploadFile(data: any) {
         return request.post('/filesys/uploadFiles', data, {
@@ -79,6 +87,72 @@ export default {
     async getFileByMD5(data: { md5: string }) {
         return request.get("/filesys/queryByMd5", data)
     },
+
+
+    // 比赛相关
+    async getContestList(data: any) {
+        return request.get("/contest/list", data)
+    },
+    async invalidateContestSubmission(data: { submissionId: string, contestId: string }) {
+        return request.get("/contest/invalidateSubmission", data)
+    },
+    async getUpcomingContest(data: { groupId: string }) {
+        return request.get("/contest/queryUpcomingContest", data)
+    },
+    async getContestProblem(data: { contestId: string, ProblemCode: string }) {
+        return request.get("/contest/queryProblem", data)
+    },
+    async getContestAcProblem(data: { contestId: string }) {
+        return request.get("/contest/queryACProblem", data)
+    },
+    async participateContest(data: { contestId: string, password: string }) {
+        return request.post("/contest/participate", data)
+    },
+    async submitContestProblem(data: { contestId: string } & any) {
+        return request.post("/contest/createSubmission", data)
+    },
+    async getContestInfo(data: { contestId: string }) {
+        return request.get("/contest/query")
+    },
+    async getContestSubmissionList(data: any) {
+        return request.get("/contest/listSubmission", data)
+    },
+    async rejudgeInContest(data: { contestId: string, submissionIds: string[] }) {
+        return request.post("/contest/rejudge", data)
+    },
+    async getContestSubmissionInfo(data: { contestId: string, submissionId: string }) {
+        return request.get("/contest/querySubmission", data)
+    },
+    async getRank(data: { contestId: string }) {
+        return request.get("/contest/rank", data)
+    },
+    async submitInContest(data: { contestId: string } & any) {
+        return request.post("/contest/createSubmission", data)
+    },
+
+
+    // 比赛问答
+    async createQuestion(data: {contestId: string, title: string, message: string}){
+        return request.post("/contest/createQuestion", data)
+    },
+    async replyQuestion(data: {contestId: string, message: string, rootId: string, parentId: string}){
+        return request.post("/contest/reply", data)
+    },
+    async deleteQuestion(data: {clarificationId: string}){
+        return request.get("/contest/delete", data)
+    },
+    async getQuestionList(data: {contestId: string}){
+        return request.get("/contest/listQuestion", data)
+    },
+    async getQuestionDetail(data: {clarificationId:string}){
+        return request.get("/contest/questionDetail", data)
+    },
+    async publicQuestion(data: {clarificationId:string}){
+        //// TODO 此处正确性未知
+        return request.post("/contest/publicQuestion", data)
+    },
+
+
     // 公告相关
     async getAnnouncementList(data: any) {
         data['filter'] = "default"
@@ -87,12 +161,53 @@ export default {
     async getAnnouncement(data: any) {
         return request.get("notice/query", data)
     },
+
+
     // 提交相关
     async rejudge(data: string[]) {
         return request.post("/submit/rejudge", data)
     },
+    async getSubmissionInfo(data: { submissionId: string }) {
+        return request.get("/submit/query", data)
+    },
+    async getSubmissionList(data: any) {
+        return request.post("/submit/list", data)
+    },
+    async getACProblem() {
+        return request.get("/submit/queryACProblem")
+    },
+    async invalidateSubmission(data: { submissionId: string }) {
+        return request.get("/submit/invalidateSubmission", data)
+    },
+    async submit(data: any) {
+        return request.post("/submit/create", data)
+    },
+
+
     // 题目相关
     async getProblemList(data: problemListQuery) {
         return request.get("/problem/list", data)
     },
+    async getProblemInfo(data: { problemCode: string, descriptionId: string }) {
+        return request.get("/problem/query")
+    },
+
+
+    // 用户组相关
+    async getGroupInfo(data: { groupId: string }) {
+        return request.get("/group/query", data)
+    },
+    async getMyGroup() {
+        return request.get("/group/my")
+    },
+    async getGroupList(data: any) {
+        return request.get("/group/page", data)
+    },
+    async joinGroupApply(data: { groupId: string }) {
+        return request.get("/group/apply", data)
+    },
+    async quitGroup(data: { groupId: string }) {
+        return request.get("/group/quit", data)
+    }
+
 }
