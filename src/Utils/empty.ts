@@ -11,7 +11,12 @@ export const eck = (v1: any, v2: any) => {
 export const isValueEmpty = (value: any)=>{
     if(value === undefined) return true
     if(value === null) return true
-    return value.toString().length === 0;
+    try{
+        return value.toString().length === 0;
+    }catch (e){
+        return false
+    }
+
 }
 
 export const get = (x:any, y?:string)=>{

@@ -14,6 +14,7 @@ import ExportExcel from "../common/ExportExcel";
 import {getExamJson} from "../../Utils/exportExam";
 import SubmissionList from "../submission/SubmissionList";
 import SubmissionModal from "../submission/SubmissionModal";
+import {isValueEmpty} from "../../Utils/empty";
 
 
 class ExamList extends Component<any, any> {
@@ -59,7 +60,7 @@ class ExamList extends Component<any, any> {
                             startTime: parseInt(x.gmtStart),
                             endTime: parseInt(x.gmtEnd),
                             title: x.examTitle,
-                            manageGroup: x.managerGroupDTO === undefined ?
+                            manageGroup: isValueEmpty(x.managerGroupDTO) ?
                                 "" : x.managerGroupDTO.groupId + " (" + x.managerGroupDTO.title + ")",
                             owner: x.username
                         })
