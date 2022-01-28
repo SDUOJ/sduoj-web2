@@ -6,7 +6,7 @@ import ANCContent from "./Content";
 import TableWithPagination from "../common/Table/TableWithPagination";
 import CApi from "Utils/API/c-api"
 import {unix2Time} from "../../Utils/Time";
-
+import "Assert/css/Announcement.css"
 
 class Announcement extends Component<any, any> {
 
@@ -25,7 +25,7 @@ class Announcement extends Component<any, any> {
         return (
             <>
                 <Modal
-                    title={this.props.t("AnnouncementDetails") +" (" +  this.state.showTitle + ")"}
+                    title={this.props.t("AnnouncementDetails") + " (" + this.state.showTitle + ")"}
                     visible={this.state.show}
                     onCancel={() => {
                         this.setState({show: false})
@@ -41,15 +41,12 @@ class Announcement extends Component<any, any> {
                 </Modal>
                 <Card
                     title={
-                        <>
-                            <Space>
-                                <InfoCircleOutlined/>
-                                {
-                                    this.props.t("Announcement")
-                                }
-                            </Space>
-                        </>
+                        <Space>
+                            <InfoCircleOutlined/>
+                            {this.props.t("Announcement")}
+                        </Space>
                     }
+                    className={"Announcement-Card"}
                 >
                     <TableWithPagination
                         size={"small"}
@@ -63,7 +60,7 @@ class Announcement extends Component<any, any> {
                                 title: "标题",
                                 dataIndex: "title",
                                 key: "title",
-                                render: (text: string, row:any) => {
+                                render: (text: string, row: any) => {
                                     return (
                                         <Space size={5}>
                                             <Button type={"link"} onClick={() => {

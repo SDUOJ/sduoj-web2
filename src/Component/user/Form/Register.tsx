@@ -6,15 +6,14 @@ import ItemEmail from "./Item/ItemEmail";
 import React from "react";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
+import {withRouter} from "react-router-dom";
 
-const Register = (prop: any) => {
+const Register = (props: any) => {
     const [form] = useForm()
     return (
         <ModalForm<any>
-            title="用户注册"
-            trigger={
-                prop.button
-            }
+            title={props.token !== undefined ? "注册并绑定" : "用户注册"}
+            trigger={props.button}
             autoFocusFirstInput
             modalProps={{
                 maskClosable: false,
@@ -24,10 +23,24 @@ const Register = (prop: any) => {
             }}
             form={form}
             onFinish={async (values) => {
-                return CApi.register(values).then((res:any)=>{
-                    message.success('注册成功');
-                    return true;
-                })
+                if(props.token !== undefined){
+                    Object.assign(values, {token: props.token})
+                    return CApi.thirdPartyRegister(values).then((res:any)=>{
+                        CApi.login(values).then(()=>{
+                            props.history.push("/v2/home")
+                        })
+                        message.success('注册成功');
+                        return true;
+                    })
+                }else{
+                    return CApi.register(values).then((res:any)=>{
+                        CApi.login(values).then(()=>{
+                            props.history.push("/v2/home")
+                        })
+                        message.success('注册成功');
+                        return true;
+                    })
+                }
             }}
         >
             <ItemUsername ExistCheck={true}/>
@@ -41,4 +54,4 @@ const Register = (prop: any) => {
     )
 }
 
-export default Register
+export default withRouter(Register)

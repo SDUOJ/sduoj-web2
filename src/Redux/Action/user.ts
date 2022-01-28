@@ -39,33 +39,6 @@ export function userLogoutTodo() {
     }
 }
 
-export function thirdPartyLoginTodo(data: thirdPartyLoginAction) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        switch (data.type) {
-            case "SDUCAS":
-                CApi.thirdPartyLogin({
-                    thirdParty: data.type,
-                    ticket: (data.data as thirdPartyLoginDataSDUCAS).ticket
-                }).then((resData: any) => {
-                    if (resData !== null) {
-                        let Data = resData as unknown as thirdPartyLoginResponse
-                        let userInfo = Data.user
-                        Object.assign(userInfo,
-                            {
-                                realName: Data.sduRealName,
-                                sduId: Data.sduId
-                            }
-                        )
-                        dispatch({type: "setUserInfo", data: userInfo})
-                        dispatch({type: "userLogin"})
-                    }
-                })
-                break
-            default:
-                break
-        }
-    }
-}
 
 export function userGetProfileTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {

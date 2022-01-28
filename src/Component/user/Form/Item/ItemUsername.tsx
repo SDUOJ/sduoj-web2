@@ -8,7 +8,6 @@ const ItemUsername = (props: any) => {
         <Form.Item
             name="username"
             label={props.t("username")}
-            initialValue={props.value}
             rules={
                 [
                     {

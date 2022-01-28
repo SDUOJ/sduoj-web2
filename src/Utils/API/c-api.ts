@@ -1,6 +1,7 @@
 import {problemListQuery, thirdPartyLogin, updatePassWord} from '../../Type/types'
 import {forgetInfo, loginInfo, profileInfo, registerInfo, verificationEmail} from "../../Type/types";
 import request from "./request";
+import {sleep} from "../Sleep";
 
 
 export default {
@@ -34,20 +35,11 @@ export default {
     async resetPassword(data: any) {
         return request.post('/user/resetPassword', data)
     },
-    async thirdPartyLogin(data: thirdPartyLogin) {
-        return request.get('/user/thirdPartyLogin', data)
-    },
     async getProfile() {
         return request.get("/user/getProfile")
     },
-    async rejudge(data: string[]) {
-        return request.post("/submit/rejudge", data)
-    },
     async getCaptcha() {
         return request.get("/user/getCaptcha")
-    },
-    async getProblemList(data: problemListQuery) {
-        return request.get("/problem/list", data)
     },
     async updateEmail(data: any) {
         return request.post("/user/updateEmail", data)
@@ -55,8 +47,28 @@ export default {
     async isExist(data: any) {
         return request.get("/user/isExist", data)
     },
+    // 第三方登录相关
+    async thirdPartyLogin(data: thirdPartyLogin) {
+        // await sleep(2000)
+        // return Promise.resolve({
+        //     thirdParty: "SDUCAS",
+        //     sduRealName: "XXX",
+        //     sduId: "2018XXXXXXXX",
+        //     user: null,
+        //     token: "1111111"
+        // })
+        return request.get('/user/thirdPartyLogin', data)
+    },
     async thirdPartyUnbinding(data: { thirdParty: string }) {
         return request.get("/user/thirdPartyUnbinding", data)
+    },
+    //// 注册新账号并绑定已有账号
+    async thirdPartyRegister(data: any) {
+        return request.post("/user/thirdPartyRegister", data)
+    },
+    //// 绑定已有账号
+    async thirdPartyBinding(data: any) {
+        return request.post("/user/thirdPartyBinding", data)
     },
     // 文件相关
     async uploadFile(data: any) {
@@ -74,5 +86,13 @@ export default {
     },
     async getAnnouncement(data: any) {
         return request.get("notice/query", data)
-    }
+    },
+    // 提交相关
+    async rejudge(data: string[]) {
+        return request.post("/submit/rejudge", data)
+    },
+    // 题目相关
+    async getProblemList(data: problemListQuery) {
+        return request.get("/problem/list", data)
+    },
 }

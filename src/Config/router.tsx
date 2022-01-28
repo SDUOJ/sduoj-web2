@@ -39,18 +39,6 @@ export const routerLayout: IBaseRouter[] = [
         component: lazy(() => import('../Component/layout/ELayout'))
     },
     {
-        id: 2,
-        path: "/v2/thirdPartyLogin",
-        exact: false,
-        component: lazy(() => import('../Pages/thirdPartyLogin'))
-    },
-    {
-        id: 3,
-        path: "/v2/c",
-        exact: false,
-        component: lazy(() => import('../Component/layout/CLayout'))
-    },
-    {
         id: 4,
         path: "/v2",
         exact: true,
@@ -116,6 +104,12 @@ export const routerLayout: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../Pages/Error/TimeError'))
     },
+    {
+        id: 15,
+        path: "/v2/thirdPartyLogin",
+        exact: true,
+        component: lazy(() => import('../Component/layout/CLayout'))
+    },
 ]
 
 
@@ -180,7 +174,14 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../Pages/Client/CResetPass'))
     },
+    {
+        id: 11,
+        path: "/v2/thirdPartyLogin",
+        exact: true,
+        component: lazy(() => import('../Pages/Client/CThirdPartyLogin'))
+    },
 ]
+
 export const routerC_M: IRouter[] = [
     {
         id: 1,

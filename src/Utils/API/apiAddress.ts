@@ -3,7 +3,7 @@ export default function apiAddress() {
         CLIENT_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
         MANAGE_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
         EXAM_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
-        FRONT_SERVER: 'http://oj.cs.sdu.edu.cn',
+        FRONT_SERVER: 'http://oj.cs.sdu.edu.cn:3000',
         SOCKET_SERVER: "ws://api.oj.cs.sdu.edu.cn:8080"
     }
     return {
