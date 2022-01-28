@@ -3,19 +3,19 @@ import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {connect} from "react-redux";
-import {ChoiceContent, ChoiceState} from "../../Type/IProblem";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {ChoiceContent, ChoiceState} from "../../../Type/IProblem";
+import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
-import {examID} from "../../Type/types";
+import {examID} from "../../../Type/types";
 // @ts-ignore
 // import VditorPreview from 'vditor/dist/method.min'
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
+import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 
 interface SOptions {
     choose: ChoiceState
 }
 
-class Options extends Component<any, SOptions> {
+class ExamOptions extends Component<any, SOptions> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -128,4 +128,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withRouter(Options))
+)(withRouter(ExamOptions))

@@ -4,13 +4,13 @@ import logo from "../../Assert/img/logo.png";
 import MMenu from "./MMenu";
 import MHeader from "./MHeader";
 import Loading from "../../Utils/Loading";
-import {routerM} from "../../Config/router";
 import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {ManageState} from "../../Type/IManage";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";
+import {routerM} from "../../Config/router/routerM";
 
 const {Sider, Content} = Layout;
 

@@ -2,7 +2,7 @@ import React, {Component, Dispatch} from 'react';
 import {connect} from "react-redux";
 import {getExamInfoTodo, setProgramSubmissionList} from "../../Redux/Action/exam";
 import {Col, Row, Skeleton} from "antd";
-import Problem from "../problem/Problem";
+import Problem from "../problem/Exam/ExamProblem";
 import ExamPageCtrl from "./ExamPageCtrl";
 import ExamAnswerSheet from "./ExamAnswerSheet";
 import Timer from "./Timer";

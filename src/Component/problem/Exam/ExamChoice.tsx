@@ -1,17 +1,15 @@
 import React, {Component, Dispatch} from 'react';
 import {Skeleton} from "antd";
-import Options from "./Options";
-import {getProblemTodo} from "../../Redux/Action/exam";
+import Options from "./ExamOptions";
+import {getProblemTodo} from "../../../Redux/Action/exam";
 import {connect} from "react-redux";
-import {ChoiceContent, IGetProInfo} from "../../Type/IProblem";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {ChoiceContent, IGetProInfo} from "../../../Type/IProblem";
+import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
-// @ts-ignore
-// import VditorPreview from 'vditor/dist/method.min'
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
+import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 
 
-class Choice extends Component<any, any> {
+class ExamChoice extends Component<any, any> {
 
     componentDidMount() {
         if (this.props.Waiting === true) {
@@ -94,4 +92,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withRouter(Choice))
+)(withRouter(ExamChoice))

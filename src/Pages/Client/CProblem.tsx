@@ -1,10 +1,28 @@
 import {Component} from "react";
 import {withRouter} from "react-router-dom";
-import {Card} from "antd";
+import {Button, Card, Space, Tag} from "antd";
 import CApi from "Utils/API/c-api"
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
+import {CheckOutlined} from "@ant-design/icons";
 
 class CProblem extends Component<any, any> {
+
+
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            ACList: []
+        }
+    }
+
+    componentDidMount() {
+        CApi.getACProblem().then((res: any) => {
+            this.setState({
+                ACList: res
+            })
+        })
+    }
+
 
     render() {
         return (
@@ -29,7 +47,26 @@ class CProblem extends Component<any, any> {
                                     {
                                         title: "标题",
                                         dataIndex: "problemTitle",
-                                        key: "problemTitle"
+                                        key: "problemTitle",
+                                        render: (text: string, row: any) => {
+                                            return <>
+                                                <Space size={3}>
+                                                    <Button size={"small"} type={"text"} onClick={()=>{
+                                                        this.props.history.push("/v2/problem/" + row.problemCode)
+                                                    }}>{text}</Button>
+                                                    {[""].map(() => {
+                                                        if (this.state.ACList.indexOf(row.problemCode) !== -1) {
+                                                            return <CheckOutlined style={{color: "green"}}/>
+                                                        }
+                                                    })}
+                                                    {[""].map(() => {
+                                                        if (row.isPublic === 0) {
+                                                            return <Tag color={"orange"}>私有</Tag>
+                                                        }
+                                                    })}
+                                                </Space>
+                                            </>
+                                        }
                                     },
                                     {
                                         title: "来源",

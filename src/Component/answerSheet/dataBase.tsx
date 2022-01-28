@@ -2,7 +2,7 @@ import {Component} from "react";
 import {WithTranslation, withTranslation} from "react-i18next";
 import {Badge, Button, Card, Col, Collapse, Row, Space, Table, Tabs, Tree} from 'antd';
 
-import Problem from "../problem/Problem";
+import Problem from "../problem/Exam/ExamProblem";
 
 import Icon, {DownOutlined,} from '@ant-design/icons';
 import {ReactComponent as DataBaseIcon} from "Assert/img/database.svg"

@@ -1,7 +1,6 @@
 import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
 import Loading from "../../Utils/Loading";
-import {routerC} from "../../Config/router";
 import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
@@ -9,18 +8,14 @@ import {withRouter} from "react-router";
 import FooterSDU from "./FooterSDU";
 import CHeader from "./CHeader";
 import {testLoginTodo} from "../../Redux/Action/user";
+import {routerC} from "../../Config/router/routerC";
 
-const {Footer, Sider, Content} = Layout;
+const {Content} = Layout;
 
 class MLayout extends Component<any, any> {
 
     componentDidMount() {
-        if ((
-            this.props.location.pathname === '/v2'
-            || this.props.location.pathname === '/v2/'
-            || this.props.location.pathname === '/v2/c'
-            || this.props.location.pathname === '/v2/c/'
-        ) && routerC.length !== 0) {
+        if (this.props.location.pathname === '/v2' || this.props.location.pathname === '/v2/') {
             this.props.history.push("/v2/home");
         }
         this.props.testLogin()
@@ -33,7 +28,7 @@ class MLayout extends Component<any, any> {
                     <Layout style={{minWidth: 500}}>
                         <CHeader/>
                         <Content style={{paddingTop: "64px", margin: '20px 16px 0', display: "table", height: "auto"}}>
-                            <div style={{padding: 24}}>
+                            <div style={{padding: 18}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
                                     {

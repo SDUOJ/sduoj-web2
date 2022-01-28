@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import {Menu} from 'antd';
-import {routerM} from "../../Config/router";
 import {Link, RouteComponentProps, withRouter} from "react-router-dom";
 import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
+import {routerM} from "../../Config/router/routerM";
 
 interface IMenuState {
     selectedKey: string

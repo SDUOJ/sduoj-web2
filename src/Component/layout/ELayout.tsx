@@ -1,13 +1,14 @@
 import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
 import Loading from "../../Utils/Loading";
-import {getRouterPath, routerE} from "../../Config/router";
+import {getRouterPath} from "../../Config/router/router";
 import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import EHeader from "./EHeader";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";
+import {routerE} from "../../Config/router/routerE";
 
 
 const {Footer, Content} = Layout;

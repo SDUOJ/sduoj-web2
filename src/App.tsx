@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
-import {routerLayout} from "./Config/router";
+import {routerLayout} from "./Config/router/router";
 import {testLoginTodo} from "./Redux/Action/user";
 
 

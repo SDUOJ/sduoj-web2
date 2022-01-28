@@ -1,15 +1,15 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Skeleton} from "antd";
 import {StarFilled, StarOutlined} from '@ant-design/icons';
-import Choice from "./Choice";
+import Choice from "./ExamChoice";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import Program from "./Program";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import Program from "./ExamProgram";
+import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
-import {examID} from "../../Type/types";
+import {examID} from "../../../Type/types";
 
-class Problem extends Component<any, any> {
+class ExamProblem extends Component<any, any> {
 
     componentDidMount() {
         document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
@@ -109,4 +109,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(withRouter(Problem)))
+)(withTranslation()(withRouter(ExamProblem)))

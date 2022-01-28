@@ -9,13 +9,12 @@ import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 
 class SampleTestCase extends Component<any, any> {
-
     render() {
         return (
-            <Skeleton active loading={this.props.content === undefined}>
+            <Skeleton active loading={this.props.testCase === undefined}>
                 {
-                    this.props.content !== undefined && (
-                        this.props.content.testCase.map((value: TestCase, index: number) => {
+                    this.props.testCase !== undefined && (
+                        this.props.testCase.map((value: TestCase, index: number) => {
                             return (
                                 <>
                                     <Title level={4}> {this.props.t("Sample") + " " + (index + 1)} </Title>
@@ -40,13 +39,6 @@ class SampleTestCase extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
-    const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
-    const content = (NowPro.content as ProgramContent)
-    return {
-        content: content
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

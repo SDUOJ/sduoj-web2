@@ -9,9 +9,9 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {testLoginTodo, userLogoutTodo} from "../../Redux/Action/user";
-import {routerC_M} from "../../Config/router";
 import UserAvatar from "../user/Avatar";
 import judgeAuth from "../../Utils/judgeAhtu";
+import {routerC_M} from "../../Config/router/routerC";
 
 const {Header} = Layout;
 
@@ -21,7 +21,7 @@ class CHeader extends Component<any, any> {
         this.state = {selectedKey: '0'}
     }
 
-    componentDidMount() {
+    syncSelect = ()=>{
         for (let i = 0; i < routerC_M.length; i++) {
             if (this.props.location.pathname === routerC_M[i].path) {
                 if (this.state.selectedKey !== routerC_M[i].id.toString()) {
@@ -33,16 +33,12 @@ class CHeader extends Component<any, any> {
         }
     }
 
+    componentDidMount() {
+        this.syncSelect()
+    }
+
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        for (let i = 0; i < routerC_M.length; i++) {
-            if (this.props.location.pathname === routerC_M[i].path) {
-                if (this.state.selectedKey !== routerC_M[i].id.toString()) {
-                    this.setState({
-                        selectedKey: routerC_M[i].id.toString()
-                    })
-                }
-            }
-        }
+        this.syncSelect()
     }
 
     render() {
