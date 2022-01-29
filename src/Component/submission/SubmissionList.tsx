@@ -17,6 +17,7 @@ import {Submission} from "../../Type/IProblem";
 import {SyncJudging} from "./SyncJudging";
 import mApi from "Utils/API/m-api"
 import cApi from "Utils/API/c-api"
+import RJudge from "./ReJudge";
 
 class SubmissionList extends Component<any, any> {
 
@@ -242,8 +243,8 @@ class SubmissionList extends Component<any, any> {
                 title: "得分",
                 dataIndex: "score",
                 key: "score",
-                render: (text: number, record:any) => {
-                    return text / record.sumScore * 100 + "%"
+                render: (text: number, record: any) => {
+                    return Math.floor(text / record.sumScore * 100) + "%"
                 }
             },
             {
@@ -303,22 +304,14 @@ class SubmissionList extends Component<any, any> {
                         className={"Recent-submission"}
                         extra={
                             <Space>
-                                <Button
-                                    icon={<ReloadOutlined/>}
-                                    onClick={() => {
-                                        if (this.state.selectedRowsIndex.length === 0) {
-                                            message.error("未选择任何项")
-                                        } else {
-                                            cApi.rejudge(this.state.selectedRowsIndex).then((resData) => {
-                                                message.success("正在重测" + this.state.selectedRowsIndex.length + "个提交")
-                                                this.setState({selectedRowsIndex: []})
-                                                this.updateList()
-                                            })
-                                        }
+                                <RJudge
+                                    API={cApi.rejudge}
+                                    data={this.state.selectedRowsIndex}
+                                    afterSuccess={() => {
+                                        this.setState({selectedRowsIndex: []})
+                                        this.updateList()
                                     }}
-                                >
-                                    重测
-                                </Button>
+                                />
                                 <Button
                                     icon={<ReloadOutlined/>}
                                     onClick={() => {
