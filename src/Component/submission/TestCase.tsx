@@ -16,6 +16,7 @@ import {withTranslation, WithTranslation} from "react-i18next";
 import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
 import {StateList, TestCaseStates} from "../../Type/ISubmission";
+import {ck} from "../../Utils/empty";
 
 
 interface ViewType {
@@ -30,6 +31,7 @@ export interface TestCaseProp {
     caseMemory?: number
     casePreview?: string
     append?: string
+    textLevel?: number
 }
 
 interface ITestCaseProp extends WithTranslation, TestCaseProp, ViewType {
@@ -156,6 +158,12 @@ class TestCase extends Component<ITestCaseProp, any> {
                 text: "END",
                 textAll: t("End"),
                 color: undefined,
+            },
+            Cancelled: {
+                icon: <CloseCircleOutlined/>,
+                text: "Cancelled",
+                textAll: "已取消",
+                color: "black"
             }
         }
 
@@ -237,7 +245,7 @@ class TestCase extends Component<ITestCaseProp, any> {
                             case "text":
                                 return (
                                     <Title
-                                        level={5}
+                                        level={ck(this.props.textLevel, 5)}
                                         type={CaseList[type].type}
                                         className={"TestCase-text"}
                                     >

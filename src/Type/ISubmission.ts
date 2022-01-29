@@ -4,8 +4,8 @@ export type TestCaseType =
     "RuntimeError" | "OutputLimitExceeded"
 
 export type RunningStateType = "-4" | "-3" | "-2" | "-1"
-export type RunningResultType = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-export const RunningResultList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+export type RunningResultType = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "99"
+export const RunningResultList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "99"]
 
 export const SubmissionMap: any = {
     "-4": "Queueing",
@@ -22,6 +22,7 @@ export const SubmissionMap: any = {
     "7": "PresentationError",
     "8": "CompilationError",
     "9": "OutputLimitExceeded",
+    "99": "Cancelled"
 }
 
 export enum TestCaseStates {
@@ -39,14 +40,15 @@ export enum TestCaseStates {
     "Queueing",
     "Compiling",
     "Judging",
-    "End"
+    "End",
+    "Cancelled"
 }
 
 
 export const StateList =
     ["Pending", "Running", "Accepted", "WrongAnswer", "TimeLimitExceeded",
         "MemoryLimitExceeded", "RuntimeError", "OutputLimitExceeded", "CompilationError",
-        "PresentationError", "SystemError", "Queueing", "Compiling", "Judging", "End"]
+        "PresentationError", "SystemError", "Queueing", "Compiling", "Judging", "End", "Cancelled"]
 
 
 export const langMap: any = {
@@ -69,6 +71,8 @@ export interface submissionInfoType {
     checkpointResults: checkPointType[]
     code: string
     codeLength: number
+    gmtCreate?: string
+    gmtModified?: string
     isPublic: number
     judgeLog: string
     judgeResult: number
@@ -92,7 +96,7 @@ export interface TopSubmissionInfoType {
     title: string
     TimeLimit: number
     MemoryLimit: number
-    sumScore: number
+    sumScore?: number
     showScore: boolean
 }
 

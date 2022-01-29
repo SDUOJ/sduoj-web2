@@ -1,0 +1,148 @@
+import {withTranslation} from "react-i18next";
+import {Alert, Progress, Steps} from "antd";
+import {ClimbingBoxLoader} from "react-spinners";
+import Title from "antd/es/typography/Title";
+import {RunningStateType, TestCaseStates} from "../../../Type/ISubmission";
+import TestCase from "../TestCase";
+import {LoadingOutlined} from "@ant-design/icons";
+import {isValueEmpty} from "../../../Utils/empty";
+
+const Running = (props: any) => {
+    const {Step} = Steps
+    const {RunningState, RunningResult, submissionInfo, sumScore, showScore, TestCaseStateList} = props
+    const getRunningIcon = (w: RunningStateType) => {
+        if (w === RunningState) return <LoadingOutlined/>
+        return undefined
+    }
+    const getRunningState = (w: RunningStateType) => {
+        if (RunningState === "-1" && RunningResult === "8") {
+            if (w === "-4") return "finish"
+            if (w === "-3") return "error"
+            if (w === "-2") return "wait"
+        } else if (RunningState === "-1" && RunningResult === "5") {
+            if (w === "-4") return "finish"
+            if (w === "-3") return "finish"
+            if (w === "-2") return "error"
+        } else {
+            if (w === RunningState) return "process"
+            if (parseInt(w) < parseInt(RunningState)) return "finish"
+            return "wait"
+        }
+    }
+    const getACScore = () => {
+        let scoreAC = 0
+        const Tcl = TestCaseStateList
+        for (let i = 0; i < Tcl.length; i++) {
+            const add: number = Tcl[i].caseScore === undefined ? 0 : Tcl[i].caseScore
+            if (Tcl[i].caseType === TestCaseStates.Accepted) scoreAC += add
+        }
+        return scoreAC
+    }
+    return (
+        <>
+            <Steps>
+                <Step status={getRunningState("-4")} title="Queueing" icon={getRunningIcon("-4")}/>
+                <Step status={getRunningState("-3")} title="Compiling" icon={getRunningIcon("-3")}/>
+                <Step status={getRunningState("-2")} title="Judging" icon={getRunningIcon("-2")}/>
+            </Steps>
+            <div style={{marginTop: "30px"}}>
+                {
+                    [""].map(() => {
+                        if (submissionInfo !== undefined) {
+                            if (!isValueEmpty(submissionInfo.judgeLog)) {
+                                let obj: {
+                                    message: string,
+                                    type: "error" | "info" | "success" | "warning" | undefined
+                                }
+                                if(RunningResult === "8") obj = {message: props.t("CompileFailed"), type: "error"}
+                                else if (RunningResult === "5") obj = {message: props.t("SystemError"), type: "error"}
+                                else obj = {message: "评测日志", type: "info"}
+                                return (
+                                    <Alert
+                                        description={
+                                            <pre className="preAutoLine">
+                                                {submissionInfo.judgeLog}
+                                            </pre>
+                                        }
+                                        showIcon={true}
+                                        {...obj}
+                                    />
+                                )
+                            }
+                        }
+                    })
+                }
+            </div>
+            <div style={{marginTop: "30px"}}>
+                {
+                    (RunningState === "-4" || RunningState === "-3")
+                    && (
+                        <div style={{textAlign: "center", paddingTop: "100px"}}>
+                            <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15}/>
+                            <div style={{marginTop: "50px"}}>排队中，请稍后...</div>
+                        </div>
+                    )
+                }
+            </div>
+            <div style={{marginTop: "30px"}}>
+                {
+                    RunningState === "-2" && showScore === true && (
+                        <>
+                            <Title level={4}> {props.t("CurrentScore")} </Title>
+                            <Title level={5}> {getACScore()} </Title>
+                        </>
+                    )
+                }
+            </div>
+            <div style={{marginTop: "30px"}}>
+                {
+                    RunningResult !== "8" &&
+                    RunningResult !== "5" &&
+                    showScore === false && (
+                        [''].map(() => {
+                            let JudgedNum = 0
+                            for (const x of TestCaseStateList) {
+                                if (x.caseType !== TestCaseStates.Pending) JudgedNum += 1
+                            }
+                            return (
+                                <>
+                                    <Title level={4}> 测试进度 </Title>
+                                    <div style={{textAlign: "center"}}>
+                                        <Progress
+                                            percent={JudgedNum / TestCaseStateList.length * 100}
+                                            type="dashboard" status="normal"
+                                            format={() => `${JudgedNum} / ${TestCaseStateList.length}`}
+                                        />
+                                    </div>
+                                </>
+                            )
+                        })
+                    )
+                }
+            </div>
+            <div style={{marginTop: "30px"}}>
+                {
+                    (RunningState === "-2" || RunningState === "-1") &&
+                    RunningResult !== "8" &&
+                    RunningResult !== "5" &&
+                    props.showScore === true && (
+                        [''].map(() => {
+                            return (
+                                <>
+                                    <Title level={4}> {props.t("TestCaseInfo")} </Title>
+                                    {
+                                        TestCaseStateList.map((value: any) => {
+                                            return <TestCase {...value} />
+                                        })
+                                    }
+                                </>
+                            )
+                        })
+                    )
+                }
+            </div>
+        </>
+    )
+}
+
+export default withTranslation()(Running)

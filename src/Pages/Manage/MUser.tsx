@@ -111,6 +111,7 @@ class MUser extends Component<any, any> {
                                 ButtonText={"批量导出"}
                                 fileName={"用户列表导出_"+Date.now()}
                                 rowKey={"userId"}
+                                tableName={"UserList"}
                             />
                             <ButtonWithSelection
                                 type={"delete"}

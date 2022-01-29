@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Modal} from "antd";
-import Processing from "./Processing";
+import Processing from "./Processing/Processing";
 import {SubmissionState} from "../../Type/ISubmission";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";

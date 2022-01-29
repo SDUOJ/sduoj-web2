@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import Search from "antd/es/input/Search";
+import {TableState} from "../../../Type/ITable";
 
 
 const TableWithPagination = (props: any) => {
@@ -16,15 +17,16 @@ const TableWithPagination = (props: any) => {
     const [loading, setLoading] = useState(true)
     const [PageNow, setPageNow] = useState<number>(1)
     const [PageSize, setPageSize] = useState<number>(defaultPageSize)
-    const [searchText, setSearchText] = useState<string|undefined>()
+    const [searchText, setSearchText] = useState<string | undefined>()
     const [tableVersion, setTableVersion] = useState<number>(0)
 
-    const setTableData = (data: any)=>{
+    const setTableData = (data: any) => {
         setTableDataX(data)
-        if(props.setDataSource !== undefined) props.setDataSource(data)
+        if (props.setDataSource !== undefined && props.name !== undefined)
+            props.setDataSource(data, props.name)
     }
 
-    const getInfo = (pageNow: number, pageSize?: number, searchKey? :string) => {
+    const getInfo = (pageNow: number, pageSize?: number, searchKey?: string) => {
         let ps = pageSize === undefined ? PageSize : pageSize
         setPageNow(pageNow)
         setPageSize(ps)
@@ -50,14 +52,13 @@ const TableWithPagination = (props: any) => {
     }, [])
 
     useEffect(() => {
-        if (props.name !== undefined &&
-            props.tableVersion[props.name] !== undefined &&
-            tableVersion !== props.tableVersion[props.name]){
-            setTableVersion(props.tableVersion[props.name])
+        const propsTableVersion = props.tableData[props.name]?.tableVersion
+        if (propsTableVersion !== undefined && tableVersion !== propsTableVersion) {
+            console.log(tableVersion, propsTableVersion)
+            setTableVersion(propsTableVersion)
             getInfo(PageNow, PageSize)
         }
-        console.log("change Table")
-    }, [props.tableVersion, tableVersion])
+    }, [props.tableData, tableVersion])
 
     return (
         <Card
@@ -67,7 +68,7 @@ const TableWithPagination = (props: any) => {
                 <Search
                     key={"search"}
                     placeholder={props.t("searchUser")}
-                    onSearch={(text)=>{
+                    onSearch={(text) => {
                         setSearchText(text)
                         setPageNow(1)
                         getInfo(1, PageSize, text)
@@ -89,8 +90,11 @@ const TableWithPagination = (props: any) => {
                     current: PageNow,
                     defaultPageSize: defaultPageSize,
                     total: total,
+                    hideOnSinglePage: true,
                     showQuickJumper: true,
                     showLessItems: true,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["5", "15", "20", "50", "80", "110"],
                 }}
             />
         </Card>
@@ -100,18 +104,15 @@ const TableWithPagination = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
-    const MState: ManageState = state.ManageReducer
+    const TState: TableState = state.TableReduce
     return {
         roles: UState.userInfo?.roles,
-        tableVersion: MState.tableData.tableVersion
+        tableData: {...TState.tableData}
     }
 
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    setSelectedRowKeys: (data: React.Key[]) =>
-        dispatch({type: "setSelectedRowKeys", value: data})
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

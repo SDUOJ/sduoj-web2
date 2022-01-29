@@ -159,6 +159,15 @@
 .TestCase-text {
     text-align: left;
 }
+h3.TestCase-text {
+    margin-bottom: 0;
+}
+h4.TestCase-text {
+    margin-bottom: 0;
+}
+h5.TestCase-text {
+    margin-bottom: 0;
+}
 
 .JudgeResult-tab .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab {
     padding: 0 8px;

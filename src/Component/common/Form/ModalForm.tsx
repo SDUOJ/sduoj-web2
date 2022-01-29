@@ -8,8 +8,9 @@ import {ButtonType} from "antd/lib/button/button";
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
 import TabPane from "@ant-design/pro-card/lib/components/TabPane";
 import {ck} from "../../../Utils/empty";
+import {TableState} from "../../../Type/ITable";
 
-interface subFormType{
+interface subFormType {
 
 }
 
@@ -41,7 +42,7 @@ const ModalForm = (props: ModalFormProps & any) => {
         batchUpdate: "primary"
     }
 
-    const setFormData0 = (key: string, data: any)=>{
+    const setFormData0 = (key: string, data: any) => {
         formData[key] = data
         setFormData(formData)
     }
@@ -68,26 +69,26 @@ const ModalForm = (props: ModalFormProps & any) => {
     }
 
     const submitData = () => {
-       props.dataChecker(formData).then(()=>{
-           if (props.type === "create") {
-               props.dataSubmitter(formData).then((res: any) => {
-                   setFormVis(false)
-                   if(props.TableName !== undefined)
-                       props.addTableVersion(props.TableName)
-                   message.success("成功")
-               })
-           } else if (props.type === "update") {
-               Object.assign(formData, props.updateAppendProps)
-               props.dataUpdater(formData).then((res: any) => {
-                   setFormVis(false)
-                   if(props.TableName !== undefined)
-                       props.addTableVersion(props.TableName)
-                   message.success("成功")
-               })
-           }
-       }).catch((e:any)=>{
-           message.error(e)
-       })
+        props.dataChecker(formData).then(() => {
+            if (props.type === "create") {
+                props.dataSubmitter(formData).then((res: any) => {
+                    setFormVis(false)
+                    if (props.TableName !== undefined)
+                        props.addTableVersion(props.TableName)
+                    message.success("成功")
+                })
+            } else if (props.type === "update") {
+                Object.assign(formData, props.updateAppendProps)
+                props.dataUpdater(formData).then((res: any) => {
+                    setFormVis(false)
+                    if (props.TableName !== undefined)
+                        props.addTableVersion(props.TableName)
+                    message.success("成功")
+                })
+            }
+        }).catch((e: any) => {
+            message.error(e)
+        })
     }
 
 
@@ -154,18 +155,10 @@ const ModalForm = (props: ModalFormProps & any) => {
     )
 }
 
-const mapStateToProps = (state: any) => {
-    const MState: ManageState = state.ManageReducer
-    return {
-        selectedRowKeys: MState.tableData.selectedRowKeys,
-        dataSource: MState.tableData.dataSource
-    }
-}
+const mapStateToProps = (state: any) => {}
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    addTableVersion: (name: string) => dispatch({type: "addTableVersion", data: name}),
-    setSelectedRowKeys: (data: React.Key[]) =>
-        dispatch({type: "setSelectedRowKeys", data: data}),
+    addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
 })
 
 export default connect(

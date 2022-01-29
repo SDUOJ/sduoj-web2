@@ -7,6 +7,8 @@ import {Button, message, Popover} from "antd";
 import ExportExcel from "../ExportExcel";
 import MApi from "Utils/API/m-api"
 import DeleteConfirm from "../DeleteConfirm";
+import {TableState} from "../../../Type/ITable";
+import {ck} from "../../../Utils/empty";
 
 const ButtonWithSelection = (props: any) => {
 
@@ -25,8 +27,11 @@ const ButtonWithSelection = (props: any) => {
         }
     }
 
+    const selectedRowKeys = ck(props.tableData[props.tableName]?.selectedRowKeys, [])
+    const dataSource = ck(props.tableData[props.tableName]?.dataSource, [])
+
     const isSelected = () => {
-        return props.selectedRowKeys.length !== 0
+        return selectedRowKeys.length !== 0
     }
 
     const [MouseIn, setMouseIn] = useState<boolean>(false)
@@ -42,8 +47,8 @@ const ButtonWithSelection = (props: any) => {
                     onMouseEnter={() => {
                         setMouseIn(true)
                         // disable 的属性的属性，无法执行 onMouseLeave 的回调
-                        if(props.type === "export"){
-                            setTimeout(()=>{
+                        if (props.type === "export") {
+                            setTimeout(() => {
                                 setMouseIn(false)
                             }, 3000)
                         }
@@ -62,14 +67,14 @@ const ButtonWithSelection = (props: any) => {
                                 getJson={async () => {
                                     if (!isSelected()) return Promise.reject("未选中")
                                     let data: any = []
-                                    for (const x of props.selectedRowKeys) {
-                                        const eleId = props.dataSource.findIndex((item: any) => item[props.rowKey] === x)
+                                    for (const x of selectedRowKeys) {
+                                        const eleId = dataSource.findIndex((item: any) => item[props.rowKey] === x)
                                         if (eleId !== -1) {
                                             let obj: any = {}
-                                            for (const x in props.dataSource[eleId]) {
-                                                obj[x] = String(props.dataSource[eleId][x]) === "[object Object]" ?
-                                                    JSON.stringify(props.dataSource[eleId][x]) :
-                                                    String(props.dataSource[eleId][x])
+                                            for (const x in dataSource[eleId]) {
+                                                obj[x] = String(dataSource[eleId][x]) === "[object Object]" ?
+                                                    JSON.stringify(dataSource[eleId][x]) :
+                                                    String(dataSource[eleId][x])
                                             }
                                             data.push(obj)
                                         }
@@ -88,15 +93,15 @@ const ButtonWithSelection = (props: any) => {
                                         return
                                     }
                                     let data: any = []
-                                    for (const x of props.selectedRowKeys) {
-                                        const eleId = props.dataSource.findIndex((item: any) => item[props.rowKey] === x)
+                                    for (const x of selectedRowKeys) {
+                                        const eleId = dataSource.findIndex((item: any) => item[props.rowKey] === x)
                                         if (eleId !== -1) {
-                                            data.push(props.dataSource[eleId][props.deleteKey])
+                                            data.push(dataSource[eleId][props.deleteKey])
                                         }
                                     }
                                     MApi.deleteUsers(data).then((res) => {
                                         props.addTableVersion(props.tableName)
-                                        props.setSelectedRowKeys([])
+                                        props.setSelectedRowKeys([], props.tableName)
                                         message.success("删除成功")
                                     })
                                 }}
@@ -117,17 +122,16 @@ const ButtonWithSelection = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const MState: ManageState = state.ManageReducer
+    const TState: TableState = state.TableReduce
     return {
-        selectedRowKeys: MState.tableData.selectedRowKeys,
-        dataSource: MState.tableData.dataSource
+        tableData: TState.tableData
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    addTableVersion: (name: string) => dispatch({type: "addTableVersion", data: name}),
-    setSelectedRowKeys: (data: React.Key[]) =>
-        dispatch({type: "setSelectedRowKeys", data: data}),
+    addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
+    setSelectedRowKeys: (data: React.Key[], name: string) =>
+        dispatch({type: "setSelectedRowKeys", data: data, name: name}),
 })
 
 export default connect(

@@ -1,11 +1,4 @@
-import React from "react";
 
-
-interface TableType{
-    selectedRowKeys: React.Key[]
-    dataSource: any[]
-    tableVersion: any
-}
 
 export interface userDataType {
 
@@ -13,7 +6,6 @@ export interface userDataType {
 
 export interface ManageState {
     userData: userDataType
-    tableData: TableType
 }
 
 

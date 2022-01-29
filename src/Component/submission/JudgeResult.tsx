@@ -31,65 +31,54 @@ class JudgeResult extends Component<IJudgeResult, any> {
         const info = getInfo()
 
         return (
-            <>
-                <Card
-                    size="small"
-                    title={"评测数据集"}
-                    className={"card"}
-                >
-                    <Row>
-                        <Col span={18}>
-                            <Tabs defaultActiveKey="0" tabPosition={"left"} className={"JudgeResult-tab"}>
-                                {
-                                    info.numList.map((value, index) => {
-                                        if (value.length !== 0) {
-                                            return (
-                                                <Tabs.TabPane
-                                                    tab={(
-                                                        <Space>
-                                                            <TestCase type={"tag-simple"} caseType={index}/>
-                                                            <span> x {value.length}</span>
-                                                        </Space>
-                                                    )}
-                                                    key={index}
-                                                >
-                                                    {
-                                                        [''].map(() => {
-                                                            if (value.length !== 0) {
-                                                                return (
-                                                                    <Card size={"small"} title={<TestCase type={"text"}
-                                                                                                          caseType={index}/>}>
-                                                                        {
-                                                                            value.map((val: any) => {
-                                                                                return (
-                                                                                    <TestCase type={"index"}
-                                                                                              {...val}/>
-                                                                                )
-                                                                            })
-                                                                        }
-                                                                    </Card>
-                                                                )
-                                                            }
-                                                        })
-                                                    }
-                                                </Tabs.TabPane>
-                                            )
-                                        }
-                                    })
+            <Card
+                size="small"
+                title={<span style={{fontWeight: "bold"}}>评测数据集</span>}
+                className={"card"}
+            >
+                <Row>
+                    <Col span={18}>
+                        <Tabs defaultActiveKey="0" tabPosition={"left"} className={"JudgeResult-tab"}>
+                            {info.numList.map((value, index) => {
+                                if (value.length !== 0) {
+                                    return (
+                                        <Tabs.TabPane
+                                            tab={(
+                                                <Space>
+                                                    <TestCase type={"tag-simple"} caseType={index}/>
+                                                    <span> x {value.length}</span>
+                                                </Space>
+                                            )}
+                                            key={index}
+                                        >
+                                            {
+                                                value.length !== 0 && (
+                                                    <Card
+                                                        size={"small"}
+                                                        title={<TestCase type={"text"} caseType={index}/>}
+                                                    >
+                                                        {value.map((val: any) => {
+                                                            return <TestCase type={"index"} {...val}/>
+                                                        })}
+                                                    </Card>
+                                                )
+                                            }
+                                        </Tabs.TabPane>
+                                    )
                                 }
-                            </Tabs>
-                        </Col>
-                        <Col span={6} className={"Progress-set"}>
-                            <Progress
-                                success={{percent: info.AC / info.SumAll * 100}}
-                                type="dashboard"
-                                format={() => `${info.AC} / ${info.SumAll}`}
-                            />
-                            <span>{this.props.t("Score")}</span>
-                        </Col>
-                    </Row>
-                </Card>
-            </>
+                            })}
+                        </Tabs>
+                    </Col>
+                    <Col span={6} className={"Progress-set"}>
+                        <Progress
+                            success={{percent: info.AC / info.SumAll * 100}}
+                            type="dashboard"
+                            format={() => `${info.AC} / ${info.SumAll}`}
+                        />
+                        <span>{this.props.t("Score")}</span>
+                    </Col>
+                </Row>
+            </Card>
         )
     }
 }

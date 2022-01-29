@@ -28,6 +28,7 @@ export function TimeDiff(start: number, end: number, d: string = "天", h: strin
     return res
 }
 
-export function unix2Time(time: number) {
+export function unix2Time(time: number | string) {
+    if (typeof time ==="string") time = parseInt(time)
     return moment(time).format('YYYY-MM-DD HH:mm:ss')
 }

@@ -81,7 +81,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    addTableVersion: () => dispatch({type: "addTableVersion", data: "Announcement"})
+    addTableVersion: () => dispatch({type: "addTableVersion", name: "Announcement"})
 })
 
 export default connect(
