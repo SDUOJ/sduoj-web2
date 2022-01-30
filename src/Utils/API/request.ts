@@ -29,12 +29,15 @@ const getTime: Get | GetError = async (url: string) => {
         }
         switch (response.data.code) {
             default:
-                if (url !== "/user/getProfile")
-                    message.error(response.data.message);
                 return Promise.reject(response.data.message)
         }
     }
 }
+
+const messageDisabledList = [
+    "/user/getProfile",
+    "/submit/queryACProblem"
+]
 
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     try {
@@ -61,7 +64,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
         }
         switch (response.data.code) {
             default:
-                if (url !== "/user/getProfile")
+                if (messageDisabledList.indexOf(url) === -1)
                     message.error(response.data.message);
                 return Promise.reject(response.data.message)
         }
@@ -93,7 +96,8 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
         }
         switch (response.data.code) {
             default:
-                message.error(response.data.message);
+                if (messageDisabledList.indexOf(url) === -1)
+                    message.error(response.data.message);
                 return Promise.reject(response.data.message)
         }
     }
