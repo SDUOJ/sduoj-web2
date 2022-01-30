@@ -9,16 +9,18 @@ import {isValueEmpty} from "../../../Utils/empty";
 
 const Running = (props: any) => {
     const {Step} = Steps
-    const {RunningState, RunningResult, submissionInfo, sumScore, showScore, TestCaseStateList} = props
+    const {RunningState, RunningResult, submissionInfo, TestCaseStateList, scoreMod, testcaseMod} = props
     const getRunningIcon = (w: RunningStateType) => {
         if (w === RunningState) return <LoadingOutlined/>
         return undefined
     }
     const getRunningState = (w: RunningStateType) => {
+        // 处理编译错误
         if (RunningState === "-1" && RunningResult === "8") {
             if (w === "-4") return "finish"
             if (w === "-3") return "error"
             if (w === "-2") return "wait"
+            // 处理系统错误
         } else if (RunningState === "-1" && RunningResult === "5") {
             if (w === "-4") return "finish"
             if (w === "-3") return "finish"
@@ -45,48 +47,54 @@ const Running = (props: any) => {
                 <Step status={getRunningState("-3")} title="Compiling" icon={getRunningIcon("-3")}/>
                 <Step status={getRunningState("-2")} title="Judging" icon={getRunningIcon("-2")}/>
             </Steps>
+
+            {/*
+                显示评测 log
+            */}
             <div style={{marginTop: "30px"}}>
-                {
-                    [""].map(() => {
-                        if (submissionInfo !== undefined) {
-                            if (!isValueEmpty(submissionInfo.judgeLog)) {
-                                let obj: {
-                                    message: string,
-                                    type: "error" | "info" | "success" | "warning" | undefined
-                                }
-                                if(RunningResult === "8") obj = {message: props.t("CompileFailed"), type: "error"}
-                                else if (RunningResult === "5") obj = {message: props.t("SystemError"), type: "error"}
-                                else obj = {message: "评测日志", type: "info"}
-                                return (
-                                    <Alert
-                                        description={
-                                            <pre className="preAutoLine">
-                                                {submissionInfo.judgeLog}
-                                            </pre>
-                                        }
-                                        showIcon={true}
-                                        {...obj}
-                                    />
-                                )
+                {[""].map(() => {
+                    if (submissionInfo !== undefined) {
+                        if (!isValueEmpty(submissionInfo.judgeLog)) {
+                            let obj: {
+                                message: string,
+                                type: "error" | "info" | "success" | "warning" | undefined
                             }
+                            if (RunningResult === "8") obj = {message: props.t("CompileFailed"), type: "error"}
+                            else if (RunningResult === "5") obj = {message: props.t("SystemError"), type: "error"}
+                            else obj = {message: "评测日志", type: "info"}
+                            return (
+                                <Alert
+                                    description={<pre className="preAutoLine">{submissionInfo.judgeLog}</pre>}
+                                    showIcon={true}
+                                    {...obj}
+                                />
+                            )
                         }
-                    })
-                }
+                    }
+                })}
             </div>
+
+            {/*
+                排队中的提示
+            */}
             <div style={{marginTop: "30px"}}>
-                {
-                    (RunningState === "-4" || RunningState === "-3")
-                    && (
-                        <div style={{textAlign: "center", paddingTop: "100px"}}>
-                            <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15}/>
-                            <div style={{marginTop: "50px"}}>排队中，请稍后...</div>
+                {(RunningState === "-4" || RunningState === "-3") && (
+                    <div style={{textAlign: "center", paddingTop: "100px"}}>
+                        <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15}/>
+                        <div style={{marginTop: "50px"}}>
+                            {RunningState === "-4" && (<>排队中，请稍后...</>)}
+                            {RunningState === "-3" && (<>编译中，请稍后...</>)}
                         </div>
-                    )
-                }
+                    </div>
+                )}
             </div>
+
+            {/*
+                当前获得的分数
+            */}
             <div style={{marginTop: "30px"}}>
                 {
-                    RunningState === "-2" && showScore === true && (
+                    RunningState === "-2" && scoreMod === "show" && (
                         <>
                             <Title level={4}> {props.t("CurrentScore")} </Title>
                             <Title level={5}> {getACScore()} </Title>
@@ -94,11 +102,15 @@ const Running = (props: any) => {
                     )
                 }
             </div>
+
+            {/*
+                显示评测进度
+            */}
             <div style={{marginTop: "30px"}}>
                 {
                     RunningResult !== "8" &&
                     RunningResult !== "5" &&
-                    showScore === false && (
+                    testcaseMod !== "show" && (
                         [''].map(() => {
                             let JudgedNum = 0
                             for (const x of TestCaseStateList) {
@@ -111,7 +123,13 @@ const Running = (props: any) => {
                                         <Progress
                                             percent={JudgedNum / TestCaseStateList.length * 100}
                                             type="dashboard" status="normal"
-                                            format={() => `${JudgedNum} / ${TestCaseStateList.length}`}
+                                            format={() => {
+                                                return (
+                                                    <span style={{fontSize: 18}}>
+                                                        {Math.floor(JudgedNum / TestCaseStateList.length * 100)} / 100%
+                                                    </span>
+                                                )
+                                            }}
                                         />
                                     </div>
                                 </>
@@ -120,19 +138,22 @@ const Running = (props: any) => {
                     )
                 }
             </div>
+
+            {/*
+                显示测试点详细信息
+            */}
             <div style={{marginTop: "30px"}}>
                 {
-                    (RunningState === "-2" || RunningState === "-1") &&
-                    RunningResult !== "8" &&
-                    RunningResult !== "5" &&
-                    props.showScore === true && (
+                    (RunningState === "-2" || RunningState === "-1") &&     // 已经到达了测试点阶段
+                    RunningResult !== "8" && RunningResult !== "5" &&       // 不是编译错误或系统错误
+                    testcaseMod === "show" && (                             // 测试点设置为可显示
                         [''].map(() => {
                             return (
                                 <>
                                     <Title level={4}> {props.t("TestCaseInfo")} </Title>
                                     {
                                         TestCaseStateList.map((value: any) => {
-                                            return <TestCase {...value} />
+                                            return <TestCase {...value} scoreMod={scoreMod}/>
                                         })
                                     }
                                 </>

@@ -15,7 +15,7 @@ import {ReactComponent as Pending} from "Assert/img/pending.svg"
 import {withTranslation, WithTranslation} from "react-i18next";
 import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
-import {StateList, TestCaseStates} from "../../Type/ISubmission";
+import {displayType, StateList, TestCaseStates} from "../../Type/ISubmission";
 import {ck} from "../../Utils/empty";
 
 
@@ -32,6 +32,7 @@ export interface TestCaseProp {
     casePreview?: string
     append?: string
     textLevel?: number
+    scoreMod?: displayType
 }
 
 interface ITestCaseProp extends WithTranslation, TestCaseProp, ViewType {
@@ -196,12 +197,12 @@ class TestCase extends Component<ITestCaseProp, any> {
                     )
                 }
                 {
-                    this.props.caseScore !== undefined && (
+                    this.props.caseScore !== undefined && this.props.scoreMod === "show" &&  (
                         <>
                             <br/>
                             <Text strong>
                                 {this.props.t("Score")}
-                            </Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0} / {this.props.caseScore}
+                            </Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0}
                         </>
                     )
                 }
@@ -209,70 +210,67 @@ class TestCase extends Component<ITestCaseProp, any> {
         ) : <></>
 
         return (
-            <>
-                {
-                    [''].map(() => {
-                        switch (this.props.type) {
-                            case undefined:
-                            case "tag":
-                                return (
-                                    <span
-                                        onMouseEnter={() => {
-                                            this.setState({MouseIn: true})
-                                        }}
-                                        onMouseLeave={() => {
-                                            this.setState({MouseIn: false})
-                                        }}
-                                        className={"test-case-e"}
-                                    >
-                                        <Popover content={content} visible={visible && this.state.MouseIn}
-                                                 zIndex={2001}>
-                                            <Tag icon={CaseList[type].icon} color={CaseList[type].color}>
-                                               #{this.props.caseIndex} {CaseList[type].text}
-                                            </Tag>
-                                        </Popover>
-                                    </span>
-                                )
-                            case "tag-simple":
-                                return (
-                                    <Tooltip title={CaseList[type].textAll}>
-                                        <Tag color={CaseList[type].tagColor} className={"tag-simple"}>
-                                            {CaseList[type].text}
-                                        </Tag>
-                                    </Tooltip>
-                                )
+            [''].map(() => {
+                switch (this.props.type) {
+                    case undefined:
+                    case "tag":
+                        return (
+                            <span
+                                onMouseEnter={() => {
+                                    this.setState({MouseIn: true})
+                                }}
+                                onMouseLeave={() => {
+                                    this.setState({MouseIn: false})
+                                }}
+                                className={"test-case-e"}
+                            >
+                                <Popover content={content} visible={visible && this.state.MouseIn}
+                                         zIndex={2001}>
+                                    <Tag icon={CaseList[type].icon} color={CaseList[type].color}>
+                                        #{this.props.caseIndex} {CaseList[type].text}
+                                    </Tag>
+                                </Popover>
+                            </span>
+                        )
+                    case "tag-simple":
+                        return (
+                            <Tooltip title={CaseList[type].textAll}>
+                                <Tag color={CaseList[type].tagColor} className={"tag-simple"}>
+                                    {CaseList[type].text}
+                                </Tag>
+                            </Tooltip>
+                        )
 
-                            case "text":
-                                return (
-                                    <Title
-                                        level={ck(this.props.textLevel, 5)}
-                                        type={CaseList[type].type}
-                                        className={"TestCase-text"}
-                                    >
-                                        {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
-                                    </Title>
-                                )
-                            case "index":
-                                return (
-                                    <span
-                                        onMouseEnter={() => {
-                                            this.setState({MouseIn: true})
-                                        }}
-                                        onMouseLeave={() => {
-                                            this.setState({MouseIn: false})
-                                        }}
-                                        className={"test-case"}
-                                    >
+                    case "text":
+                        return (
+                            <Title
+                                level={ck(this.props.textLevel, 5)}
+                                type={CaseList[type].type}
+                                className={"TestCase-text"}
+                            >
+                                {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
+                            </Title>
+                        )
+                    case "index":
+                        return (
+                            <span
+                                onMouseEnter={() => {
+                                    this.setState({MouseIn: true})
+                                }}
+                                onMouseLeave={() => {
+                                    this.setState({MouseIn: false})
+                                }}
+                                className={"test-case"}
+                            >
                                         <Popover content={content} visible={visible && this.state.MouseIn}
                                                  zIndex={2001}>
                                              <Tag color={CaseList[type].color}> #{this.props.caseIndex} </Tag>
                                         </Popover>
                                     </span>
-                                )
-                        }
-                    })
+                        )
                 }
-            </>
+            })
+
         )
     }
 }

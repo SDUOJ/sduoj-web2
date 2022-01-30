@@ -14,10 +14,13 @@ const Summary = (props: any) => {
     const {TestCaseStateList, submissionInfo} = props
     const getCaseInfo = () => {
         let scoreAC = 0, scoreSum = 0, scoreAll = 0, mxTime: number = 0, mxMem: number = 0
-        let SumTime = 0, SumMem = 0
+        let SumTime = 0, SumMem = 0, firstUnACCaseNumber = undefined
         const Tcl = TestCaseStateList
         for (let i = 0; i < Tcl.length; i++) {
             const add: number = Tcl[i].caseScore === undefined ? 0 : Tcl[i].caseScore
+            // 找到第一个没有 AC 的测试点
+            if (firstUnACCaseNumber === undefined && Tcl[i].caseType !== TestCaseStates.Accepted)
+                firstUnACCaseNumber = i + 1
             if (Tcl[i].caseType === TestCaseStates.Accepted) {
                 scoreAC += add
                 scoreSum += add
@@ -34,7 +37,8 @@ const Summary = (props: any) => {
         }
         return {
             AC: scoreAC, SumRunning: scoreSum, SumAll: props.sumScore,
-            mxTime: mxTime, mxMem: mxMem, SumTime: SumTime, AvgMem: SumMem / Tcl.length
+            mxTime: mxTime, mxMem: mxMem, SumTime: SumTime, AvgMem: SumMem / Tcl.length,
+            firstUnACCaseNumber: firstUnACCaseNumber
         }
     }
     const info = getCaseInfo()
@@ -50,10 +54,21 @@ const Summary = (props: any) => {
                             dataSource={[
                                 {
                                     key: "结论",
-                                    value: (<TestCase
-                                        type={"text"}
-                                        caseType={StateList.indexOf(SubmissionMap[submissionInfo.judgeResult])}
-                                    />)
+                                    value: (
+                                        <Space>
+                                            <TestCase
+                                                type={"text"}
+                                                caseType={StateList.indexOf(SubmissionMap[submissionInfo.judgeResult])}
+                                            />
+                                            {props.testcaseMod !== "disable" &&
+                                            info.firstUnACCaseNumber !== undefined &&
+                                            submissionInfo.judgeResult !== 99 && (
+                                                <span style={{fontWeight: "bold"}}>
+                                                    ({props.t("OnTestCase")}{info.firstUnACCaseNumber})
+                                                </span>
+                                            )}
+                                        </Space>
+                                    )
                                 },
                                 {key: "编号", value: submissionInfo.submissionId},
                                 {key: "提交时间", value: unix2Time(submissionInfo.gmtCreate)},
@@ -104,11 +119,16 @@ const Summary = (props: any) => {
                                 data={{submissionId: submissionInfo.submissionId}}
                                 afterSuccess={props.refresh}
                             />
-                            {
+                            {/*此处需要传入：
+                            1. 获取测试单信息的异步函数
+                            2. 当前的测试点信息
 
-                            }
+                            实现：
+                            1. 下载第一个错误测试点的数据
+                            2. 打包下载全部测试点（弹窗确认）
+                            3. 选择测试点进行下载（弹窗，可以多选，可以单点下载）
+                            */}
                             <DownloadTestCase
-
                             />
 
                         </Space>
@@ -122,34 +142,36 @@ const Summary = (props: any) => {
                     className={"card"}
                 >
                     <Row>
-                        <Col className={"Progress-set"} span={6}>
-                            {props.showScore === true && (
-                                <>
-                                    <Progress
-                                        success={{percent: info.AC / info.SumAll * 100}}
-                                        type="dashboard"
-                                        format={() => `${info.AC} / ${info.SumAll}`}
-                                    />
-                                    <span>{props.t("TotalScore")}</span>
-                                </>
-                            )}
-                            {props.showScore === false && (
-                                <>
-                                    <div style={{marginTop: "50px", marginBottom: "40px"}}>
-                                        {info.AC === info.SumAll && (
-                                            <Title level={5} style={{color: "green"}}>全部通过</Title>
-                                        )}
-                                        {info.AC !== info.SumAll && info.AC !== 0 && (
-                                            <Title level={5} style={{color: "orange"}}>部分通过</Title>
-                                        )}
-                                        {info.AC === 0 && (
-                                            <Title level={5} style={{color: "red"}}>未通过</Title>
-                                        )}
-                                    </div>
-                                    <span>评测结果</span>
-                                </>
-                            )}
-                        </Col>
+                        {props.scoreMod !== "disable" && (
+                            <Col className={"Progress-set"} span={6}>
+                                {props.scoreMod === "show" && (
+                                    <>
+                                        <Progress
+                                            success={{percent: info.AC / info.SumAll * 100}}
+                                            type="dashboard"
+                                            format={() => `${info.AC} / ${info.SumAll}`}
+                                        />
+                                        <span>{props.t("TotalScore")}</span>
+                                    </>
+                                )}
+                                {props.scoreMod === "partial" && (
+                                    <>
+                                        <div style={{marginTop: "50px", marginBottom: "40px"}}>
+                                            {info.AC === info.SumAll && (
+                                                <Title level={5} style={{color: "green"}}>全部通过</Title>
+                                            )}
+                                            {info.AC !== info.SumAll && info.AC !== 0 && (
+                                                <Title level={5} style={{color: "orange"}}>部分通过</Title>
+                                            )}
+                                            {info.AC === 0 && (
+                                                <Title level={5} style={{color: "red"}}>未通过</Title>
+                                            )}
+                                        </div>
+                                        <span>评测结果</span>
+                                    </>
+                                )}
+                            </Col>
+                        )}
                         <Col className={"Progress-set"} span={6}>
                             {
                                 [''].map(() => {
@@ -190,22 +212,44 @@ const Summary = (props: any) => {
                             }
                             <span>{props.t("MaximumMemory")}</span>
                         </Col>
-                        <Col className={"Progress-set-Statistic"} span={6}>
-                            <Statistic title={props.t("TotalRunningTime")}
-                                       value={info.SumTime}
-                                       suffix="ms"/>
-                            <Statistic className={"Progress-set-Statistic-cell"}
-                                       title={props.t("AvgMemory")}
-                                       value={Math.floor(info.AvgMem / 1024)}
-                                       suffix="MB"/>
-                        </Col>
+                        {props.scoreMod !== "disable" && (
+                            <Col className={"Progress-set-Statistic"} span={6}>
+                                <Statistic title={props.t("TotalRunningTime")}
+                                           value={info.SumTime}
+                                           suffix="ms"/>
+                                <Statistic className={"Progress-set-Statistic-cell"}
+                                           title={props.t("AvgMemory")}
+                                           value={Math.floor(info.AvgMem / 1024)}
+                                           suffix="MB"/>
+                            </Col>
+                        )}
+                        {props.scoreMod === "disable" && (
+                            <>
+                                <Col span={6} style={{margin: "auto"}}>
+                                    <Statistic title={props.t("TotalRunningTime")}
+                                               value={info.SumTime}
+                                               suffix="ms"/>
+                                </Col>
+                                <Col span={6} style={{margin: "auto"}}>
+                                    <Statistic className={"Progress-set-Statistic-cell"}
+                                               title={props.t("AvgMemory")}
+                                               value={Math.floor(info.AvgMem / 1024)}
+                                               suffix="MB"/>
+                                </Col>
+                            </>
+                        )}
+
                     </Row>
                 </Card>
             )}
-            {props.showScore === true && props.submissionInfo.judgeResult !== 99 && (
+            {props.testcaseMod === "show" && props.submissionInfo.judgeResult !== 99 && (
                 <>
                     <Title level={4}> {props.t("JudgeResult")}</Title>
-                    <JudgeResult data={TestCaseStateList} sumScore={props.sumScore}/>
+                    <JudgeResult
+                        data={TestCaseStateList}
+                        scoreMod={props.scoreMod}
+                        sumScore={props.sumScore}
+                    />
                 </>
             )}
         </>

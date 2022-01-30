@@ -176,6 +176,7 @@
   "CreateTime": "Create Time",
   "NewPassword": "New Password",
   "confirmNewPassword": "Confirm New Password",
-  "OldPassword": "Old Password"
+  "OldPassword": "Old Password",
+  "OnTestCase": "On Testcase "
 
 }

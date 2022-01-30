@@ -92,12 +92,24 @@ export interface submissionInfoType {
     zipFileId: string | null
 }
 
+// 对于分数：
+//          完全显示
+//          显示【未通过，部分通过，通过】对应【0分，部分分，满分】
+//          不显示
+// 对于测试点：
+//          完全显示
+//          显示【总测试点数量】与【第一个错误的测试点编号】
+//          不显示
+export type displayType = "show" | "partial" | "disable"
+
 export interface TopSubmissionInfoType {
     title: string
     TimeLimit: number
     MemoryLimit: number
-    sumScore?: number
-    showScore: boolean
+    scoreMod: displayType
+    sumScore?: number   // 在 scoreMod 不是 disable 时，需要提供题目的总分
+    testcaseMod: displayType
+    downloadAPI: any
 }
 
 export interface RunningSubmissionInfo {

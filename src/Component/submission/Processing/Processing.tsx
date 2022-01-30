@@ -1,11 +1,8 @@
-import {Component, Dispatch, useEffect, useState} from "react";
-import {Alert, Card, Col, Progress, Row, Skeleton, Statistic, Steps} from 'antd';
+import {Dispatch, useEffect, useState} from "react";
+import {Skeleton, Steps} from 'antd';
 import {withTranslation} from "react-i18next";
 import {LoadingOutlined} from '@ant-design/icons';
-import TestCase, {TestCaseProp} from "../TestCase";
-import Title from "antd/es/typography/Title";
-import JudgeResult from "../JudgeResult";
-import {examID} from "../../../Type/types";
+import {TestCaseProp} from "../TestCase";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {
@@ -20,7 +17,6 @@ import {
 } from "../../../Type/ISubmission";
 import CodeHighlight from "../../common/CodeHighlight";
 import {SyncJudging} from "../SyncJudging";
-import {ClimbingBoxLoader} from "react-spinners";
 import {isValueEmpty} from "../../../Utils/empty";
 import Running from "./Running";
 import Summary from "./Summary";
@@ -196,7 +192,8 @@ const Processing = (props: IProcessingProp & any) => {
             content: (
                 <Running
                     TestCaseStateList={TestCaseStateList}
-                    showScore={props.showScore}
+                    scoreMod={props.scoreMod}
+                    testcaseMod={props.testcaseMod}
                     sumScore={props.sumScore}
                     RunningState={RunningState}
                     RunningResult={RunningResult}
@@ -213,7 +210,8 @@ const Processing = (props: IProcessingProp & any) => {
             content: (
                 <Summary
                     TestCaseStateList={TestCaseStateList}
-                    showScore={props.showScore}
+                    scoreMod={props.scoreMod}
+                    testcaseMod={props.testcaseMod}
                     sumScore={props.sumScore}
                     TimeLimit={props.TimeLimit}
                     MemoryLimit={props.MemoryLimit}
@@ -263,7 +261,8 @@ const mapStateToProps = (state: any) => {
         TimeLimit: SubState.TopSubmissionInfo?.TimeLimit,
         MemoryLimit: SubState.TopSubmissionInfo?.MemoryLimit,
         sumScore: SubState.TopSubmissionInfo?.sumScore,
-        showScore: SubState.TopSubmissionInfo?.showScore
+        scoreMod: SubState.TopSubmissionInfo?.scoreMod,
+        testcaseMod: SubState.TopSubmissionInfo?.testcaseMod
     }
 }
 
