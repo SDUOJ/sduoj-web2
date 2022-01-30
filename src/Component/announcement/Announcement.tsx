@@ -63,7 +63,7 @@ class Announcement extends Component<any, any> {
                                 render: (text: string, row: any) => {
                                     return (
                                         <Space size={5}>
-                                            <Button type={"link"} onClick={() => {
+                                            <Button size={"small"} type={"link"} onClick={() => {
                                                 this.setState({
                                                     show: true,
                                                     showId: parseInt(row.noticeId),
