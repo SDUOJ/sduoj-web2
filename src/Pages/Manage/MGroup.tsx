@@ -110,7 +110,7 @@ class MGroup extends Component<any, any> {
                     }
                 >
                     <TableWithSelection
-                        colData={colData}
+                        columns={colData}
                         API={MApi.getProblemList}
                         size={"small"}
                         rowKey={"userId"}

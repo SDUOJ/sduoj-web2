@@ -17,7 +17,7 @@ import {
 } from "../../../Type/ISubmission";
 import CodeHighlight from "../../common/CodeHighlight";
 import {SyncJudging} from "../SyncJudging";
-import {isValueEmpty} from "../../../Utils/empty";
+import {ck, isValueEmpty} from "../../../Utils/empty";
 import Running from "./Running";
 import Summary from "./Summary";
 
@@ -52,17 +52,19 @@ const Processing = (props: IProcessingProp & any) => {
 
 
     const getSubmissionInfo = () => {
-        props.QuerySubmission(props.submissionId).then((resData: any) => {
+        props.QuerySubmissionAPI(props.submissionId).then((resData: any) => {
             // 格式化当前测试点信息
-            resData.checkpointResults = resData.checkpointResults.map((value: any) => {
-                return {
-                    RunningResult: value[0].toString(),
-                    Score: value[1],
-                    Time: value[2],
-                    Memory: value[3]
-                }
-            })
-
+            if (resData.checkpointResults === null) resData.checkpointResults = []
+            else {
+                resData.checkpointResults = resData.checkpointResults.map((value: any) => {
+                    return {
+                        RunningResult: value[0].toString(),
+                        Score: value[1],
+                        Time: value[2],
+                        Memory: value[3]
+                    }
+                })
+            }
             // 根据当前的结果，初始化测试点信息，且调整当前布局
             // 分 3 类分别处理： 1. 未评测完   2. 已评测完，但结果是编译错误或系统错误   3. 已评测完
             let TestCaseInit: TestCaseProp[] = []
@@ -73,7 +75,7 @@ const Processing = (props: IProcessingProp & any) => {
                 setShowStep(1)
                 setRunningState("-1")
                 setRunningResult(resData.judgeResult.toString())
-            } else if (resData.judgeResult === 0 || resData.checkpointResults.length === 0) {
+            } else if (resData.judgeResult <= 0) { // resData.checkpointResults.length === 0
                 // 当前还在等待状态
                 for (let i = 1; i <= resData.checkpointNum; i++) {
                     TestCaseInit.push({
@@ -165,7 +167,6 @@ const Processing = (props: IProcessingProp & any) => {
             <LoadingOutlined/> : undefined
     }
 
-
     const sf = submissionInfo
 
     let steps: { [key: string]: any } = {
@@ -176,11 +177,14 @@ const Processing = (props: IProcessingProp & any) => {
             disabled: getDisabled("code"),
             cssClass: "steps-content-pending",
             content: (
-                sf !== undefined && (
-                    <>
-                        <CodeHighlight code={sf.code} lang={langMap[sf.judgeTemplateTitle]}/>
-                    </>
-                )
+                <>
+                    {!isValueEmpty(sf?.code) && sf?.judgeTemplateTitle !== undefined && (
+                        <CodeHighlight code={sf?.code} lang={langMap[sf.judgeTemplateTitle]}/>
+                    )}
+                    {isValueEmpty(sf?.code) && (
+                        "代码未公开"
+                    )}
+                </>
             )
         },
         running: {
@@ -213,8 +217,8 @@ const Processing = (props: IProcessingProp & any) => {
                     scoreMod={props.scoreMod}
                     testcaseMod={props.testcaseMod}
                     sumScore={props.sumScore}
-                    TimeLimit={props.TimeLimit}
-                    MemoryLimit={props.MemoryLimit}
+                    TimeLimit={ck(props.TimeLimit, sf?.timeLimit)}
+                    MemoryLimit={ck(props.MemoryLimit, sf?.memoryLimit)}
                     submissionInfo={submissionInfo}
                     refresh={getSubmissionInfo}
                 />
@@ -260,9 +264,13 @@ const mapStateToProps = (state: any) => {
         submissionId: SubState.TopSubmissionId,
         TimeLimit: SubState.TopSubmissionInfo?.TimeLimit,
         MemoryLimit: SubState.TopSubmissionInfo?.MemoryLimit,
-        sumScore: SubState.TopSubmissionInfo?.sumScore,
+
         scoreMod: SubState.TopSubmissionInfo?.scoreMod,
-        testcaseMod: SubState.TopSubmissionInfo?.testcaseMod
+        sumScore: SubState.TopSubmissionInfo?.sumScore,
+
+        testcaseMod: SubState.TopSubmissionInfo?.testcaseMod,
+
+        QuerySubmissionAPI: SubState.TopSubmissionInfo?.QuerySubmissionAPI
     }
 }
 

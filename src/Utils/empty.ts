@@ -1,3 +1,4 @@
+// 当 v1 为 undefined 时，使用 v2 替换
 export const ck = (v1: any, v2: any) => {
     if (v1 !== undefined) return v1
     return v2

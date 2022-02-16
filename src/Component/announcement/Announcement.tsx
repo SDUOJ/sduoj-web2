@@ -50,6 +50,7 @@ class Announcement extends Component<any, any> {
                 >
                     <TableWithPagination
                         size={"small"}
+                        defaultPageSize={5}
                         columns={[
                             {
                                 title: "ID",

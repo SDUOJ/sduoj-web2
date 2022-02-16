@@ -1,16 +1,12 @@
 import React, {Component, Dispatch} from 'react';
-import {IGetProInfo, ProgramContent} from "../../../Type/IProblem";
+import {Choice, IGetProInfo, ProblemState, ProContent, ProgramContent, TestCase} from "../../../Type/IProblem";
 import {connect} from "react-redux";
 import Title from "antd/lib/typography/Title";
 import {withTranslation} from "react-i18next";
 import {Badge, Button, Card, Modal, Skeleton, Space} from "antd";
-import {GetMaxScore, IsAnswer} from "../../../Utils/Problem";
 import SampleTestCase from "../SampleTestCase";
-import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
 import Submit from "../../submission/Submit";
 import {withRouter} from "react-router-dom";
-import {getProblemTodo} from "../../../Redux/Action/exam";
-import RecentSubmission from "../../submission/RecentSubmission";
 import eApi from "../../../Utils/API/e-api";
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 
@@ -22,32 +18,62 @@ class ExamProgram extends Component<any, any> {
         super(props, context);
         this.state = {
             ProcessingVis: false,
-            recentSubmissionVis: false
+            recentSubmissionVis: false,
+            proInfo: this.props.proInfo[this.props.proName]
         }
     }
+
+    getProInfo = () => {
+        this.props.getProInfo.then((res: any) => {
+            let testCase: TestCase[] = []
+            for (const x of res.problemCaseDTOList) {
+                testCase.push({
+                    "inputData": x.input,
+                    "outputData": x.output
+                })
+            }
+            let markdown = res.problemDescriptionDTO.markdownDescription
+            const data = {
+                title: res.problemTitle,
+                markdown: markdown,
+                testCase: testCase,
+                TimeLimit: res.timeLimit,
+                MemoryLimit: res.memoryLimit,
+                JudgeTemplate: res.judgeTemplates,
+                MaxSubmitNumber: res.submitNum,
+                SumScore: res.sumScore
+            }
+            this.setState({proInfo: data})
+            this.props.setProblemInfo(this.props.proName, data)
+
+            // if (type === "SingleChoice" || type === "MultipleChoice") {
+            //     let choice: Choice[] = []
+            //     for (const x of Object.keys(resData.description.choice)) {
+            //         choice.push({
+            //             id: x,
+            //             content: resData.description.choice[x],
+            //             state: "init"
+            //         })
+            //     }
+            //     data = {
+            //         isLoad: true,
+            //         content: resData.description.content,
+            //         choice: choice
+            //     }
+            // }
+        })
+    }
+
 
     componentDidMount() {
-        MarkdownPreview("problem-content", this.props.markdown)
-        if (this.props.Waiting === true) {
-            this.props.getProInfo({
-                examId: this.props.match.params.eid,
-                groupIndex: this.props.GroupIndex - 1,
-                problemIndex: this.props.ProIndex - 1
-            })
-        }
+        if (this.state.proInfo === undefined) this.getProInfo()
+        else MarkdownPreview("problem-content", this.state.proInfo.markdown)
     }
 
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (this.props.markdown !== prevProps.markdown) {
-            MarkdownPreview("problem-content", this.props.markdown)
-        }
-        if (prevProps.Waiting === undefined && this.props.Waiting === true) {
-            this.props.getProInfo({
-                examId: this.props.match.params.eid,
-                groupIndex: this.props.GroupIndex - 1,
-                problemIndex: this.props.ProIndex - 1
-            })
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot ?: any) {
+        if (this.state.proInfo !== undefined && this.state.proInfo !== prevState.proInfo) {
+            MarkdownPreview("problem-content", this.state.proInfo.markdown)
         }
     }
 
@@ -85,6 +111,23 @@ class ExamProgram extends Component<any, any> {
                         </div>
                     </Space>
                 </div>
+                <div>
+                    <Space style={{fontSize: "16px"}} size={30}>
+                        <div>
+                            <span style={{fontWeight: "bold"}}>
+                                评测模板
+                            </span>
+                            : C++11, C11, Java, Python
+                        </div>
+                        <div>
+                            <span style={{fontWeight: "bold"}}>
+                                来源
+                            </span>
+                            : 我是题目的来源 这个来源还是比较长的
+                        </div>
+                    </Space>
+                </div>
+
                 <div style={{marginTop: "10px"}}>
                     <Space size={25}>
                         <Submit
@@ -123,7 +166,7 @@ class ExamProgram extends Component<any, any> {
                                 this.setState({recentSubmissionVis: false})
                             }}
                         >
-                            <RecentSubmission pageSize={20} getSubmissionList={this.getSubmissionList}/>
+                            {/*<RecentSubmission getSubmissionList={this.props.getSubmissionList}/>*/}
                         </Modal>
                     </Space>
                 </div>
@@ -167,54 +210,27 @@ class ExamProgram extends Component<any, any> {
                     </div>
                 </Card>
                 {/*测试用例*/}
-                {
-                    testCase !== undefined && testCase.length !== 0 && (
-                        <Card bordered={false} title={this.props.t("SampleTestCase")} style={{marginTop: "20px"}}>
-                            <SampleTestCase testCase={testCase}/>
-                        </Card>
-                    )
-                }
+                {testCase !== undefined && testCase.length !== 0 && (
+                    <Card bordered={false} title={this.props.t("SampleTestCase")} style={{marginTop: "20px"}}>
+                        <SampleTestCase testCase={testCase}/>
+                    </Card>
+                )}
             </div>
         )
     }
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    if (State.ProListLoad) {
-        const NowPro = ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[])[State.TopProblemIndex - 1]
-        if (NowPro.content === undefined || !NowPro.content.isLoad) {
-            return {
-                Loading: true,
-                Waiting: true
-            }
-        } else {
-            const content = (NowPro.content as ProgramContent)
-            return {
-                ProblemCode: State.TopProblemIndex - 1,
-                groupId: State.TopGroupIndex - 1,
-                JudgeTemplates: content.JudgeTemplate,
-
-                markdown: content.markdown,
-                title: content.title,
-
-                TimeLimit: content.TimeLimit,
-                MemoryLimit: content.MemoryLimit,
-                sumScore: content.SumScore,
-                isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible,
-
-                testCase: content.testCase,
-                Score: GetMaxScore(content),
-                IsAnswer: IsAnswer(content),
-                LeftSubmitCount: content.MaxSubmitNumber as number - content.Submissions.length,
-
-            }
-        }
+    const State: ProblemState = state.ProblemReducer
+    return {
+        proInfo: State.ProblemInfo
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    getProInfo: (data: IGetProInfo) => dispatch(getProblemTodo(data)),
+    setProblemInfo: (key: string, data: ProContent) => dispatch({
+        type: "setProblemInfo", key: key, data: data
+    }),
 })
 
 export default connect(

@@ -11,7 +11,6 @@ class ProTagGroup extends Component<any, any> {
     render() {
         return (
             <>
-
                 <Card
                     bordered={false}
                     title={this.props.groupInfo.title}

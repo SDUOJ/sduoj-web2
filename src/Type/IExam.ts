@@ -2,19 +2,6 @@ import {ProContent, ProType} from "./IProblem";
 import React from "react";
 import moment from "moment";
 
-// 考试基本信息
-export interface SExamInfo {
-    id: string
-    startTime: number       // 开始时间
-    endTime: number         // 结束时间
-    title: string           // 考试标题
-    description?: string    // 考试描述
-    participantNum?: number // 考试人数
-    userIsSubmit?: number  // 用户已提交
-    isScoreVisible?: boolean
-    isSubmissionScoreVisible?: boolean
-}
-
 // 用于 M端 考试信息
 export interface SExamManageInfo {
     id: string
@@ -34,17 +21,6 @@ export interface SProInfo {
     content?: ProContent                // 题目内容
 }
 
-// 题组信息
-export interface SProGroupInfo {
-    index: number
-    title: string
-    previous: number
-    type: ProType                       // 题目类型
-    groupStart: number
-    groupEnd: number
-    proList: SProInfo[]
-}
-
 // C端考试信息
 export interface ExamListType {
     examId: string
@@ -55,41 +31,51 @@ export interface ExamListType {
 }
 
 
-export interface ExamState {
-    ExamInfoLoad: boolean               // 考试信息是否已加载
-    examInfo?: SExamInfo                // 考试信息
+// ================================  Redux =====================================
 
-    ProListLoad: boolean                // 题目信息是否已加载
-    proGroupInfo?: SProGroupInfo[]      // 题组信息
-
-    TopGroupIndex: number               // 顶部题组ID
-    TopProblemIndex: number             // 顶部问题ID
-    AnswerSheetLoad: boolean[]          // 答题卡是否已经加载
+// 考试基本信息
+export interface SExamInfo {
+    id: string
+    startTime: number       // 开始时间
+    endTime: number         // 结束时间
+    title: string           // 考试标题
+    description?: string    // 考试描述
+    participantNum?: number // 考试人数
+    userIsSubmit?: number  // 用户已提交
+    isScoreVisible?: boolean
+    isSubmissionScoreVisible?: boolean
 }
 
-
-// 考生数据类型
-export interface IUserExamInfo {
-    name?: string                       // 姓名
-    AdmissionTicketNumber?: string      // 准考证号
-    studentID?: string                  // 学号
-    IDNumber?: string                   // 身份证号
+export interface SProList {
+    index: number       // 题目编号
+    score: number       // 题目分数
 }
 
-// 单个题组答题卡数据
-export interface GroupAnswerSheet {
-    problemGroupId: number
-    problemAnswer: ProblemAnswerSheet[]
+export interface SExamProListInfo {
+    index: number           // 题组编号
+    title: string           // 题组标题
+    previous: number        // 前一个先行题组
+    type: ProType           // 题组类型
+    groupStart: number      // 题组开始时间
+    groupEnd: number        // 题组结束时间
+    proList: SProList[]
 }
 
-// 单个问题答题卡数据
-export interface ProblemAnswerSheet {
-    index: number
+export interface SExamAnswerSheet {
+    index: React.Key
     answer: string[]
     pass: string[]
     marked: boolean
-    choice: string[]
 }
+
+export interface ExamState {
+    examInfo: { [key: string]: SExamInfo }                          // 考试信息     [key: "examId"]
+    examProListInfo: { [key: string]: SExamProListInfo }            // 题组信息      [key: "examId_groupId"]
+    examAnswerSheetInfo: { [key: string]: SExamAnswerSheet[] }      // 答题卡信息    [key: "examId_groupId"]
+}
+
+// ===========================================================================================
+
 
 export type problemGroupProType = "single" | "multi" | "program"
 export const ProGroupTypeStF: any = {"Program": "program", "MultipleChoice": "multi", "SingleChoice": "single"}

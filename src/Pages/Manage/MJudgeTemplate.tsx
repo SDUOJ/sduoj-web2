@@ -108,7 +108,7 @@ class MJudgeTemplate extends Component<any, any> {
                     }
                 >
                     <TableWithSelection
-                        colData={colData}
+                        columns={colData}
                         API={MApi.getUserList}
                         size={"small"}
                         rowKey={"userId"}

@@ -1,8 +1,8 @@
 import {Component} from "react";
 import {Card, Col, Progress, Row, Space, Tabs} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
-import TestCase, {TestCaseProp} from "./TestCase";
-import {displayType, StateList} from "../../Type/ISubmission";
+import TestCase, {TestCaseProp} from "../TestCase";
+import {displayType, StateList, TestCaseStates} from "../../../Type/ISubmission";
 
 
 interface IJudgeResult extends WithTranslation {
@@ -26,7 +26,7 @@ class JudgeResult extends Component<IJudgeResult, any> {
                 const add: number = data[i].caseScore === undefined ? 0 : data[i].caseScore
                 numList[data[i].caseType].push(data[i])
                 scoreAC += add
-                ACNumber += 1
+                ACNumber += (data[i].caseType === TestCaseStates.Accepted) ? 1 : 0
             }
             return {
                 numList: numList, AC: scoreAC, SumAll: this.props.sumScore,

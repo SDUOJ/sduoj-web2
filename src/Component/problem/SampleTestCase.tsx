@@ -5,7 +5,6 @@ import {withTranslation} from "react-i18next";
 import {Col, Row, Skeleton} from "antd";
 import CopyableCode from "../submission/CopyableCode";
 import Title from "antd/lib/typography/Title";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
 
 
 class SampleTestCase extends Component<any, any> {

@@ -5,10 +5,9 @@ import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {ExamState, SProGroupInfo} from "../../Type/IExam";
+import {ExamState} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {withRouter} from "react-router";
-import {getAnswerSheetTodo, getExamProblemListTodo} from "../../Redux/Action/exam";
 
 
 class ExamAnswerSheet extends Component<any, any> {
@@ -19,7 +18,7 @@ class ExamAnswerSheet extends Component<any, any> {
     }
 
     getAnswerSheet(){
-        const groupInfo: SProGroupInfo[] = this.props.ProGroupInfo
+        const groupInfo = this.props.ProGroupInfo
         for(const x of groupInfo){
             if(x.type === "SingleChoice" || x.type === "MultipleChoice"){
                 this.props.getAnswerSheet(this.props.match.params.eid, x.index)
@@ -66,7 +65,7 @@ class ExamAnswerSheet extends Component<any, any> {
                                       {
 
                                           this.props.ProGroupInfo !== undefined && (
-                                              this.props.ProGroupInfo.map((Value: SProGroupInfo) => {
+                                              this.props.ProGroupInfo.map((Value:any) => {
                                                   return (
                                                       <ProTagGroup groupInfo={Value}/>
                                                   )
@@ -87,14 +86,11 @@ class ExamAnswerSheet extends Component<any, any> {
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
     return {
-        Loading: !State.ProListLoad,
-        ProGroupInfo: State.proGroupInfo
+
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    GetProList: (eid: examID) => dispatch(getExamProblemListTodo(eid)),
-    getAnswerSheet: (eid: examID, groupId: number) => dispatch(getAnswerSheetTodo(eid, groupId)),
 
 })
 

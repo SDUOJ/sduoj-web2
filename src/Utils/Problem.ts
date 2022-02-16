@@ -5,26 +5,8 @@ export function getPoint(point: number | undefined) {
     else return "points"
 }
 
-export function GetMaxScore(Program: ProgramContent): number {
-    let maxValue: number = 0
-    Program.Submissions.map(value => {
-        if (maxValue < value.Score) maxValue = value.Score
-    })
-    return maxValue
-}
 
-export function IsAnswer(obj: ProContent): boolean {
-    if (isChoiceContent(obj)) {
-        let usedNum = 0;
-        obj.choice.map(value => {
-            if (value.state === "used") usedNum += 1;
-        })
-        return usedNum !== 0
-    } else if (isProgramContent(obj)) {
-        return obj.Submissions.length !== 0
-    }
-    return false
-}
+
 
 export const ProgramTest =
     "给定一个长度为 $n$ 的序列 $A$，其元素记为 $A_1, A_2, \\dots, A_n$。\n" +

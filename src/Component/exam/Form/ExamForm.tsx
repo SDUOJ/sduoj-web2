@@ -237,7 +237,7 @@ const ExamForm = (props: any) => {
                                 mApi.updateExam(formData).then((resData: any) => {
                                     setExamFormVis(false)
                                     message.success("成功")
-                                    props.update()
+                                    // props.update() TODO 换做addVersion
                                 })
                             }
                         }}

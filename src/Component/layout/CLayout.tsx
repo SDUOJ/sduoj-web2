@@ -27,7 +27,7 @@ class MLayout extends Component<any, any> {
                 <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1000px"}}>
                     <Layout style={{minWidth: 500}}>
                         <CHeader/>
-                        <Content style={{paddingTop: "64px", margin: '20px 16px 0', display: "table", height: "auto"}}>
+                        <Content style={{backgroundColor: "#f0f2f5", paddingTop: 64, margin: '20px 16px 0', display: "table", height: "auto"}}>
                             <div style={{padding: 18}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}

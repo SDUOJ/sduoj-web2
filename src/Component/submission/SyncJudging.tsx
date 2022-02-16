@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import apiAddress from "../../Utils/API/apiAddress";
 
-export interface IWebSocket{
+export interface IWebSocket {
     queryList: string[]
     dataHandle: any
     open: boolean
@@ -10,24 +10,24 @@ export interface IWebSocket{
 
 export const SyncJudging = (props: IWebSocket) => {
     const {sendMessage, lastMessage, readyState} = useWebSocket(
-        apiAddress().SOCKET_SERVER + "/ws/submission",{share: false}, props.open
+        apiAddress().SOCKET_SERVER + "/ws/submission", {share: false}, props.open
     );
 
     useEffect(() => {
         if (lastMessage !== null) {
-            if(lastMessage.data.length > 2){
+            if (lastMessage.data.length > 2) {
                 const data = JSON.parse(lastMessage.data)
-                if(data instanceof Array && data[0] instanceof Array){
-                    for(const x of data) props.dataHandle(x)
-                }else{
+                if (data instanceof Array && data[0] instanceof Array) {
+                    for (const x of data) props.dataHandle(x)
+                } else {
                     props.dataHandle(JSON.parse(data))
                 }
             }
         }
     }, [lastMessage]);
 
-    useEffect(()=>{
-        if(props.open && readyState === ReadyState.OPEN){
+    useEffect(() => {
+        if (props.open && readyState === ReadyState.OPEN) {
             sendMessage(JSON.stringify(props.queryList))
         }
     }, [props.queryList, readyState])
@@ -41,6 +41,8 @@ export const SyncJudging = (props: IWebSocket) => {
     }[readyState];
 
     return (
-        <span>(连接状态：{connectionStatus})</span>
+        <>
+            {/*<span>(连接状态：{connectionStatus})</span>*/}
+        </>
     );
 };

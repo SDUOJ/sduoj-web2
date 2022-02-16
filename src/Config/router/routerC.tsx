@@ -45,6 +45,12 @@ export const routerC: IBaseRouter[] = [
         component: lazy(() => import('../../Pages/Client/CContest'))
     },
     {
+        id: 71,
+        path: "/v2/contest/:contestId",
+        exact: false,
+        component: lazy(() => import('../../Pages/Client/CContestInfo'))
+    },
+    {
         id: 8,
         path: "/v2/group",
         exact: true,
@@ -68,6 +74,37 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Client/CThirdPartyLogin'))
     },
+]
+
+export const routerC_Contest_M: IRouter[] = [
+    {
+        id: 1,
+        title_i18n: "Overview",
+        path: "/v2/contest/:contestId/overview",
+        exact: true,
+        component: lazy(() => import("../../Component/contest/Overview"))
+    },
+    {
+        id: 2,
+        title_i18n: "Problem",
+        path: "/v2/contest/:contestId/problem/:problemCode",
+        exact: true,
+        component: lazy(() => import("../../Component/contest/Problem"))
+    },
+    {
+        id: 3,
+        title_i18n: "Status",
+        path: "/v2/contest/:contestId/submission",
+        exact: true,
+        component: lazy(() => import("../../Component/contest/Status"))
+    },
+    {
+        id: 4,
+        title_i18n: "Rank",
+        path: "/v2/contest/:contestId/rank",
+        exact: true,
+        component: lazy(() => import("../../Component/contest/Rank"))
+    }
 ]
 
 // C 端目录

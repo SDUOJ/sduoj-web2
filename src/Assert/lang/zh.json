@@ -177,5 +177,7 @@
   "NewPassword": "新密码",
   "confirmNewPassword": "确认新密码",
   "OldPassword": "旧密码",
-  "OnTestCase": "在测试点"
+  "OnTestCase": "在测试点",
+  "Status": "状态",
+  "Rank": "排行"
 }

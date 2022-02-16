@@ -1,248 +1,173 @@
-import {
-    Choice,
-    ChoiceContent,
-    ChoiceState,
-    IGetProInfo,
-    isChoiceContent,
-    ProContent,
-    Submission,
-    TestCase
-} from "../../Type/IProblem";
 import {examID} from "../../Type/types";
 import {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
-import {ExamState, ProblemAnswerSheet, SExamInfo, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {ExamState, SExamAnswerSheet, SExamInfo, SExamProListInfo} from "../../Type/IExam";
 
 
 export type ExamAction =
-    updateChoice |
-    updateTop |
-    flipFlag |
-    setProList |
+    setProLists |
     setExamInfo |
-    setProInfo |
-    setAnswerSheet |
-    cleanProInfo |
-    setProgramSubmissionList |
-    cleanExamInfo |
-    cleanProList |
-    cleanExam
+    setAnswerSheet
 
 
-export interface updateChoice {
-    type: "updateChoice"
-    examId: examID
-    ChoiceID: string
-    ChoiceState: ChoiceState
-}
-
-export interface updateTop {
-    type: "updateTop"
-    topProIndex: number
-    topGroupIndex: number
-}
-
-export interface flipFlag {
-    type: "flipFlag"
-    examId: examID
-}
-
-
-export interface setProList {
-    type: "setProList"
-    data: SProGroupInfo[]
+export interface setProLists {
+    type: "setProLists"
+    data: { [key: string]: SExamProListInfo }
 }
 
 export interface setExamInfo {
     type: "setExamInfo"
     data: SExamInfo
-}
-
-export interface setProInfo {
-    type: "setProInfo",
-    groupId: number
-    proId: number
-    data: ProContent | undefined
+    key: string
 }
 
 export interface setAnswerSheet {
     type: "setAnswerSheet",
-    data: ProblemAnswerSheet[]
-    problemGroupId: number
+    data: SExamAnswerSheet[]
+    key: string
 }
 
-export interface cleanProInfo {
-    type: "cleanProInfo"
-}
-
-export interface cleanExamInfo{
-    type: "cleanExamInfo"
-}
-
-export interface cleanProList{
-    type: "cleanProList"
-}
-
-export interface setProgramSubmissionList {
-    type: "setProgramSubmissionList",
-    data: Submission[]
-}
-
-export interface cleanExam{
-    type: "cleanExam"
-}
-
-function getAnswer(choice: Choice[], type: ChoiceState) {
-    const res = []
-    for (const x of choice) if (x.state === type) res.push(x.id)
-    return res
-}
-
-export function genAnswerSheet(State: ExamState) {
-    const groupInfo = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1]
-    const proInfo: SProInfo[] = groupInfo.proList
-    let res: any = []
-    for (const x of proInfo) {
-        if (x.content !== undefined && isChoiceContent(x.content)) {
-            const content: ChoiceContent = x.content
-            res.push({
-                index: x.index,
-                answer: content !== undefined ? getAnswer(content.choice, "used") : [],
-                pass: content !== undefined ? getAnswer(content.choice, "unused") : [],
-                marked: x.flag
-            })
+export function updateChoiceTodo(groupKey: string, proIndex: number, choice: string, action: "yes" | "no" | "init") {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        const EState: ExamState = getState().ExamReducer
+        // 获取当前的数据
+        const answerSheets = [...EState.examAnswerSheetInfo[groupKey]]
+        const answerSheet = answerSheets[proIndex]
+        const proListType = EState.examProListInfo[groupKey].type
+        // 根据用户操作，更新当前答题卡数据
+        if (action === "yes") {
+            if (proListType === "SingleChoice") answerSheet.answer = []
+            answerSheet.answer.push(choice)
+            answerSheet.pass = answerSheet.pass.filter(value => value !== choice)
+        } else if (action === "no") {
+            answerSheet.pass.push(choice)
+            answerSheet.answer = answerSheet.answer.filter(value => value !== choice)
+        } else {
+            answerSheet.pass = answerSheet.pass.filter(value => value !== choice)
+            answerSheet.answer = answerSheet.answer.filter(value => value !== choice)
         }
+        // 更新当前答题卡
+        dispatch(setAnswerSheetTodo(answerSheets, groupKey))
     }
-    return res
 }
 
-export function getExamProblemListTodo(eid: examID) {
+export function updateFlagTodo(groupKey: string, proIndex: number, marked: boolean) {
     return (dispatch: Dispatch<any>, getState: any) => {
-        eApi.getExamGroupList(eid).then(function (resData: any) {
-            if (resData !== null) {
-                // console.log("getExamGroupList", resData)
-                let data: SProGroupInfo[] = []
-                for (const x of resData) {
-                    const proList: SProInfo[] = []
-                    let cnt = 0
-                    for (const y of x.problems) {
-                        proList.push({
-                            index: cnt,
-                            score: y.problemScore,
-                            flag: false,
-                        })
-                        cnt++;
-                    }
-                    data.push({
-                        index: x.index,
-                        title: x.title,
-                        previous: x.previous,
-                        type: x.type,
-                        groupStart: parseInt(x.groupStart),
-                        groupEnd: parseInt(x.groupEnd),
-                        proList: proList
-                    })
-                }
-                // 更新当前目录
-                dispatch({type: "setProList", data: data})
-            }
-        }).catch(()=>{
-            dispatch({type:"cleanProList"})
+        const EState: ExamState = getState().ExamReducer
+        // 获取当前的数据
+        const answerSheets = [...EState.examAnswerSheetInfo[groupKey]]
+        const answerSheet = answerSheets[proIndex]
+        answerSheet.marked = marked
+        // 更新当前答题卡
+        dispatch(setAnswerSheetTodo(answerSheets, groupKey))
+    }
+}
+
+
+export function setAnswerSheetTodo(answerSheets: SExamAnswerSheet[], groupKey: string) {
+    return (dispatch: Dispatch<any>, getState: any) => {
+        const examId = groupKey.split("_")[0]
+        const groupId = groupKey.split("_")[1]
+        eApi.setAnswerSheet({problemAnswer: answerSheets}, examId, groupId).then(() => {
+            dispatch({
+                type: "setAnswerSheet",
+                data: answerSheets,
+                key: groupKey
+            })
         })
     }
 }
 
-export function getExamInfoTodo(examId: examID) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        eApi.getExamInfo(examId).then(function (resDate) {
-            if (resDate !== null) {
-                const x: any = resDate
-                const data = {
-                    id: x.examId,
-                    startTime: parseInt(x.gmtStart),
-                    endTime: parseInt(x.gmtEnd),
-                    title: x.examTitle,
-                    participantNum: x.participantNum,
-                    description: x.description.toString(),
-                    userIsSubmit: x.userIsSubmit,
-                    isScoreVisible: x.features === null ? false : x.features.isScoreVisible,
-                    isSubmissionScoreVisible: x.features === null ? false : x.features.isSubmissionScoreVisible
-                }
-                dispatch({type: "setExamInfo", data: data})
-            }
-        }).catch(()=>{
-            dispatch({type: "setExamInfo"})
-        })
-    }
-}
+// export function getExamProblemListTodo(eid: examID) {
+//     return (dispatch: Dispatch<any>, getState: any) => {
+//         eApi.getExamGroupList(eid).then(function (resData: any) {
+//             if (resData !== null) {
+//                 // console.log("getExamGroupList", resData)
+//                 let data: SProGroupInfo[] = []
+//                 for (const x of resData) {
+//                     const proList: SProInfo[] = []
+//                     let cnt = 0
+//                     for (const y of x.problems) {
+//                         proList.push({
+//                             index: cnt,
+//                             score: y.problemScore,
+//                             flag: false,
+//                         })
+//                         cnt++;
+//                     }
+//                     data.push({
+//                         index: x.index,
+//                         title: x.title,
+//                         previous: x.previous,
+//                         type: x.type,
+//                         groupStart: parseInt(x.groupStart),
+//                         groupEnd: parseInt(x.groupEnd),
+//                         proList: proList
+//                     })
+//                 }
+//                 // 更新当前目录
+//                 dispatch({type: "setProList", data: data})
+//             }
+//         }).catch(() => {
+//             dispatch({type: "cleanProList"})
+//         })
+//     }
+// }
 
-export function getProblemTodo(data: IGetProInfo) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        const State: ExamState = getState().ExamReducer
-        const groupId = data.groupIndex
-        const proId = data.problemIndex
-        eApi.getProInfo(data).then((resData: any) => {
-            if (resData !== null) {
-                const type = (State.proGroupInfo as SProGroupInfo[]) [State.TopGroupIndex - 1].type
-                let data: ProContent | undefined = undefined
-                if (type === "Program") {
-                    let testCase: TestCase[] = []
-                    for (const x of resData.problemCaseDTOList) {
-                        testCase.push({
-                            "inputData": x.input,
-                            "outputData": x.output
-                        })
-                    }
-                    let markdown = resData.problemDescriptionDTO.markdownDescription
-                    data = {
-                        isLoad: true,
-                        title: resData.problemTitle,
-                        markdown: markdown,
-                        testCase: testCase,
-                        TimeLimit: resData.timeLimit,
-                        MemoryLimit: resData.memoryLimit,
-                        JudgeTemplate: resData.judgeTemplates,
-                        Submissions: [],
-                        MaxSubmitNumber: resData.submitNum,
-                        SumScore: resData.sumScore
-                    }
-                }
-                if (type === "SingleChoice" || type === "MultipleChoice") {
-                    let choice: Choice[] = []
-                    for (const x of Object.keys(resData.description.choice)) {
-                        choice.push({
-                            id: x,
-                            content: resData.description.choice[x],
-                            state: "init"
-                        })
-                    }
-                    data = {
-                        isLoad: true,
-                        content: resData.description.content,
-                        choice: choice
-                    }
-                }
-                dispatch({
-                    type: "setProInfo",
-                    groupId: groupId,
-                    proId: proId,
-                    data: data
-                })
-            }
-        })
-    }
-}
 
-export function getAnswerSheetTodo(eid: examID, groupId: number) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        eApi.getAnswerSheet(eid, groupId).then((resData: any) => {
-            if (resData !== null) {
-                dispatch({
-                    type: "setAnswerSheet",
-                    data: resData.problemAnswer,
-                    problemGroupId: groupId
-                })
-            }
-        })
-    }
-}
+// export function getProblemTodo(data: IGetProInfo) {
+//     return (dispatch: Dispatch<any>, getState: any) => {
+//         const State: ExamState = getState().ExamReducer
+//         const groupId = data.groupIndex
+//         const proId = data.problemIndex
+//         eApi.getProInfo(data).then((resData: any) => {
+//             if (resData !== null) {
+//                 const type = (State.proGroupInfo as SProGroupInfo[]) [State.TopGroupIndex - 1].type
+//                 let data: ProContent | undefined = undefined
+//                 if (type === "Program") {
+//                     let testCase: TestCase[] = []
+//                     for (const x of resData.problemCaseDTOList) {
+//                         testCase.push({
+//                             "inputData": x.input,
+//                             "outputData": x.output
+//                         })
+//                     }
+//                     let markdown = resData.problemDescriptionDTO.markdownDescription
+//                     data = {
+//                         isLoad: true,
+//                         title: resData.problemTitle,
+//                         markdown: markdown,
+//                         testCase: testCase,
+//                         TimeLimit: resData.timeLimit,
+//                         MemoryLimit: resData.memoryLimit,
+//                         JudgeTemplate: resData.judgeTemplates,
+//                         Submissions: [],
+//                         MaxSubmitNumber: resData.submitNum,
+//                         SumScore: resData.sumScore
+//                     }
+//                 }
+//                 if (type === "SingleChoice" || type === "MultipleChoice") {
+//                     let choice: Choice[] = []
+//                     for (const x of Object.keys(resData.description.choice)) {
+//                         choice.push({
+//                             id: x,
+//                             content: resData.description.choice[x],
+//                             state: "init"
+//                         })
+//                     }
+//                     data = {
+//                         isLoad: true,
+//                         content: resData.description.content,
+//                         choice: choice
+//                     }
+//                 }
+//                 dispatch({
+//                     type: "setProInfo",
+//                     groupId: groupId,
+//                     proId: proId,
+//                     data: data
+//                 })
+//             }
+//         })
+//     }
+// }

@@ -7,46 +7,6 @@
 @import "~@ant-design/pro-list/dist/list.css";
 @import "~@ant-design/pro-descriptions/dist/descriptions.css";
 
-
-.App {
-    text-align: center;
-}
-
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
-
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .logo {
     height: 32px;
     margin: 16px 16px 16px 35px;
@@ -205,8 +165,17 @@ h5.TestCase-text {
     font-size: 17px;
 }
 
+.contestTimer .ant-statistic-content{
+    font-size: 16px;
+}
+
+.contestHeaderTimer .ant-statistic-content{
+    font-size: 14px;
+    color: blue;
+}
+
 .Timer .ant-card {
-    max-width: 350px;
+    /*max-width: 350px;*/
     margin: 0 auto;
     text-align: center;
 }
@@ -236,7 +205,7 @@ h5.TestCase-text {
 }
 
 .ExamAnswerSheet {
-    width: 500px;
+    width: 100%;
     margin: 20px auto 0;
 }
 
@@ -314,16 +283,13 @@ h5.TestCase-text {
 }
 
 .ExamRun-ExamAnswerSheet .Timer .Timer-inline-card {
-    min-width: 500px;
+    width: 100%;
 }
 
 .ExamRun-ExamAnswerSheet {
     margin-left: 30px;
 }
 
-.Timer .ant-card {
-    min-width: 400px;
-}
 
 .Timer-inline-card .ant-card-body {
     padding: 5px;
@@ -485,9 +451,81 @@ h5.TestCase-text {
 .Processing-SyncJudging {
     position: relative;
     top: -62px;
-    left: 70px;
+    left: 85%;
 }
 
 .CodeMirror {
     min-height: 500px;
+}
+
+.ant-message{
+    z-index: 3000;
+}
+
+.ant-card-small > .ant-card-head > .ant-card-head-wrapper > .ant-card-extra{
+    padding: 0;
+}
+
+.ant-card-extra{
+    padding: 0;
+}
+
+.problemBody .ant-card-body{
+    padding-top: 0;
+}
+
+.smallBodyPaddingTop .ant-card-body{
+    padding-top: 1px;
+    padding-bottom: 10px;
+}
+
+.smallBodyPadding .ant-card-body{
+    padding: 5px;
+}
+
+.zeroBodyPadding .ant-card-body{
+    padding: 0;
+}
+.zeroBodyPaddingLeft .ant-card-body{
+    padding: 5px 15px 30px 0;
+}
+
+.ListPage .ant-list-item{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.ListPage .ant-form-item{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.ListPage .ant-list-item-meta-title{
+    font-size: 17px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    margin-left: 15px;
+}
+
+.ListPage .ant-list-item-meta-description{
+    font-size: 15px;
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+.ListPage .ant-list-item-meta{
+    margin-bottom: 8px;
+}
+
+.bodyCenter .ant-card-body{
+    text-align: center;
+}
+
+.circle{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    display: inline-block;
+    vertical-align: middle;
 }

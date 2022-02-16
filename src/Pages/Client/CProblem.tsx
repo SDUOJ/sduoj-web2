@@ -79,7 +79,7 @@ class CProblem extends Component<any, any> {
                                         key: "acceptNum"
                                     },
                                 ]}
-                                size={"middle"}
+                                size={"small"}
                             />
                         </Card>
                     </div>

@@ -77,7 +77,6 @@ const mapStateToProps = (state: any) => {
         isLogin: UState.isLogin,
         realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
         sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
-        ExamInfoLoad: State.ExamInfoLoad,
     }
 }
 

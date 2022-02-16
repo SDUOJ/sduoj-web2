@@ -11,10 +11,11 @@ import {withRouter} from "react-router-dom";
 import {TopSubmissionInfoType} from "../../Type/ISubmission";
 import {JudgeTemplate2lang} from "../../Utils/JudgeTemplate2lang";
 import {fileUpload} from "../../Utils/fileUpload";
+import {MaxCodeLength} from "../../Config/constValue";
+import {UserState} from "../../Type/Iuser";
 
 
 export interface SubmitPropsType {
-    data: any       // 除了 code 和 templateId 之外的其他参数
     API: any        // API 接口函数
     title: string   // 对话框的标题
     TopSubmissionInfo: TopSubmissionInfoType    // 当前提交的题目信息
@@ -42,49 +43,55 @@ const Submit = (props: SubmitPropsType & any) => {
                 message.error("代码不能为空")
                 return
             }
-            let newData = props.data
-            newData['judgeTemplateId'] = value.JudgeTemplate
-            if (zipFileId !== undefined) {
-                newData['zipFileId'] = zipFileId
-            } else {
-                newData['code'] = codex
-            }
-            props.API(newData).then((data: any) => {
+            props.API(value.JudgeTemplate, codex, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
                 setSubmitDisable(false)
                 props.setSubmissionModalVis(true)
+                props.SubmissionListName !== undefined && props.addTableVersion(props.SubmissionListName)
             })
         })
     }
 
+    const SubmitButton = (
+        <Button
+            type={"primary"}
+            onClick={() => {
+                if (!props.isLogin) message.error("请登录")
+                else setSubmitModalVis(true)
+            }}
+            disabled={
+                (props.LeftSubmitCount !== undefined && props.LeftSubmitCount <= 0)
+            }
+        >
+            {props.t("Submit")}
+        </Button>
+    )
 
     return (
         <>
-            <Badge count={
-                <Tooltip placement="topLeft" title={"剩余提交次数"}>
+            {props.LeftSubmitCount !== undefined && (
+                <Badge count={
+                    <Tooltip placement="topLeft" title={"剩余提交次数"}>
                     <span className={"Badge-Tooltip-Program"}>
                         {props.LeftSubmitCount}
                     </span>
-                </Tooltip>
-            }>
-                <Button
-                    type={"primary"}
-                    onClick={() => {
-                        setSubmitModalVis(true)
-                    }}
-                    disabled={
-                        (props.LeftSubmitCount !== undefined && props.LeftSubmitCount <= 0)
-                        || SubmitDisable
-                    }
-                >
-                    {props.t("Submit")}
-                </Button>
-            </Badge>
+                    </Tooltip>
+                }>
+                    {SubmitButton}
+                </Badge>
+            )}
+            {props.LeftSubmitCount === undefined && (
+                SubmitButton
+            )}
+
             <Modal title={props.title}
                    visible={SubmitModalVis}
+                   destroyOnClose={true}
                    onCancel={() => {
                        setSubmitModalVis(false)
+                       setCode("")
+                       setCodeMirror("")
                    }}
                    width={1200}
                    footer={[
@@ -147,7 +154,7 @@ const Submit = (props: SubmitPropsType & any) => {
                     {
                         [''].map(() => {
                             const jtId = judgeTemplateId
-                            if (jtId !== undefined) {
+                            if (jtId !== undefined && props.JudgeTemplates !== undefined) {
                                 let accept = "", num = 0
                                 for (const x of props.JudgeTemplates[jtId].acceptFileExtensions) {
                                     if (num !== 0) accept += ','
@@ -173,7 +180,10 @@ const Submit = (props: SubmitPropsType & any) => {
                                                         fileReader.readAsText(file);
                                                         fileReader.onload = (event) => {
                                                             try {
-                                                                setCode(event.target?.result as string)
+                                                                const str = event.target?.result as string
+                                                                if (str.length > MaxCodeLength)
+                                                                    message.error("上传文件字符数超过" + MaxCodeLength)
+                                                                setCode(str.substr(0, MaxCodeLength))
                                                             } catch (e) {
                                                                 message.error('文件解析失败！');
                                                             }
@@ -223,17 +233,20 @@ const Submit = (props: SubmitPropsType & any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    return {}
+    const State: UserState = state.UserReducer
+    return {
+        isLogin: State.isLogin
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
     setTopSubmission: (submissionID: string, submissionInfo: TopSubmissionInfoType) => dispatch({
         type: "setTopSubmission",
         submissionID: submissionID,
         submissionInfo: submissionInfo
     }),
     setSubmissionModalVis: (data: boolean) => dispatch({type: "setSubmissionModalVis", data: data})
-
 })
 
 export default connect(

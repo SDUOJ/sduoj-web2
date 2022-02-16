@@ -21,4 +21,5 @@ export interface setDataSource {
     type: "setDataSource"
     name: string
     data: any
+    add: boolean
 }

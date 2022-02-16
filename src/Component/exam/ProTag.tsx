@@ -4,7 +4,6 @@ import {ExamAction} from "../../Redux/Action/exam";
 import {connect} from "react-redux";
 import {isProgramContent} from "../../Type/IProblem";
 import {withTranslation} from "react-i18next";
-import {GetMaxScore, IsAnswer} from "../../Utils/Problem";
 import {ExamState, SProInfo} from "../../Type/IExam";
 
 
@@ -34,16 +33,16 @@ class ProTag extends Component<any, any> {
                 const NowPro = (ProInfo as SProInfo[])[this.props.ProIndex - 1]
                 const PrePro = (PreProInfo as SProInfo[])[this.props.ProIndex - 1]
                 if (NowPro.content !== undefined && PrePro.content !== undefined) {
-                    if (IsAnswer(NowPro.content) !== IsAnswer(PrePro.content)) {
-                        this.updateState()
-                    }
+                    // if (IsAnswer(NowPro.content) !== IsAnswer(PrePro.content)) {
+                    //     this.updateState()
+                    // }
                     if (NowPro.flag !== PrePro.flag) {
                         this.updateState()
                     }
-                    if (isProgramContent(NowPro.content) && isProgramContent(PrePro.content)) {
-                        if (GetMaxScore(NowPro.content) !== GetMaxScore(PrePro.content))
-                            this.updateState()
-                    }
+                    // if (isProgramContent(NowPro.content) && isProgramContent(PrePro.content)) {
+                    //     if (GetMaxScore(NowPro.content) !== GetMaxScore(PrePro.content))
+                    //         this.updateState()
+                    // }
                 }
             }
         }
@@ -59,11 +58,11 @@ class ProTag extends Component<any, any> {
             if (ProInfo !== undefined) {
                 const NowPro = (ProInfo as SProInfo[])[this.props.ProIndex - 1]
                 if (NowPro.content !== undefined) {
-                    if (isProgramContent(NowPro.content)) {
-                        score = GetMaxScore(NowPro.content)
-                        isProgram = true
-                    }
-                    if (IsAnswer(NowPro.content)) TagState.push("f")
+                    // if (isProgramContent(NowPro.content)) {
+                    //     score = GetMaxScore(NowPro.content)
+                    //     isProgram = true
+                    // }
+                    // if (IsAnswer(NowPro.content)) TagState.push("f")
                 }
                 if (NowPro.flag) TagState.push("c")
             }
@@ -162,20 +161,11 @@ const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
 
     return {
-        AnswerSheetLoad: State.AnswerSheetLoad,
-        GroupInfo: State.proGroupInfo,
-        TopProblemIndex: State.TopProblemIndex,
-        TopGroupIndex: State.TopGroupIndex,
-        isSubmissionScoreVisible: State.examInfo?.isSubmissionScoreVisible
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    JumpToPro: (GroupIndex: number, ProIndex: number) => dispatch({
-        type: "updateTop",
-        topProIndex: ProIndex,
-        topGroupIndex: GroupIndex
-    }),
+
 })
 
 export default connect(

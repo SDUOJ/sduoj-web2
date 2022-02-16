@@ -4,7 +4,7 @@ import {LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {connect} from "react-redux";
 import {ExamAction} from "../../Redux/Action/exam";
 import {withTranslation} from "react-i18next";
-import {ExamState, SProGroupInfo, SProInfo} from "../../Type/IExam";
+import {ExamState, SProInfo} from "../../Type/IExam";
 
 
 class ExamPageCtrl extends Component<any, any> {
@@ -40,22 +40,10 @@ class ExamPageCtrl extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    return {
-        Loading: !State.ProListLoad,
-        TopGroupIndex: State.TopGroupIndex,
-        TopProblemIndex: State.TopProblemIndex,
-        // 当前题组的题目数量
-        ProNumber: State.TopGroupIndex === 0 ? undefined :
-            ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[]).length
-    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-    JumpToPro: (GroupIndex: number, ProIndex: number) => dispatch({
-        type: "updateTop",
-        topGroupIndex: GroupIndex,
-        topProIndex: ProIndex
-    }),
+
 })
 
 export default connect(

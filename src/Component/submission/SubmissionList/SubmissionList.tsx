@@ -1,223 +1,346 @@
-export {}
-// import {withTranslation} from "react-i18next";
-// import {Button, Card, Form, Input, Select, Space, Table} from "antd";
-// import {SyncJudging} from "../SyncJudging";
-// import RJudge from "../ReJudge";
-// import cApi from "../../../Utils/API/c-api";
-// import {ReloadOutlined} from "@ant-design/icons";
-// import {RunningResultList, StateList, SubmissionMap} from "../../../Type/ISubmission";
-// import TestCase from "../TestCase";
-// import React from "react";
-// import moment from "moment";
-// import TableWithPagination from "../../common/Table/TableWithPagination";
-// import TableWithSelection from "../../common/Table/TableWithSelection";
-//
-// const SubmissionList = (props: any) => {
-//
-//     const onFinish = () => {
-//         const values = this.formRef.current?.getFieldsValue()
-//         this.setState({
-//             judgeResult: values.judgeResult,
-//             problemCode: values.problemCode,
-//             username: values.username
-//         })
-//     };
-//
-//     const onReset = () => {
-//         this.formRef.current!.resetFields();
-//         this.setState({
-//             judgeResult: undefined,
-//             problemCode: undefined,
-//             username: undefined
-//         })
-//     };
-//
-//     const columnsAll = [
-//         {
-//             title: "ID",
-//             dataIndex: "submissionId",
-//             key: "submissionId",
-//             render: (text: any, record: any) => {
-//                 return <a onClick={() => {
-//                     this.props.setNowExamId(this.props.examId)
-//                     this.props.setTopSubmission(record.submissionId, {
-//                         title: "",
-//                         TimeLimit: record.timeLimit,
-//                         MemoryLimit: record.memoryLimit,
-//                         sumScore: record.sumScore,
-//                         showScore: true
-//                     })
-//                     this.props.setSubmissionModalVis(true)
-//                 }}>
-//                     {text}
-//                 </a>
-//             }
-//         },
-//         {
-//             title: "用户名",
-//             dataIndex: "username",
-//             key: "username"
-//         },
-//         {
-//             title: "题目编号",
-//             dataIndex: "problemCode",
-//             key: "problemCode"
-//         },
-//         {
-//             title: "题目名",
-//             dataIndex: "problemTitle",
-//             key: "problemTitle"
-//         },
-//         {
-//             title: "结果",
-//             dataIndex: "result",
-//             key: "result",
-//             render: (text: any, record: any) => {
-//                 return <TestCase
-//                     type={"text"}
-//                     caseType={StateList.indexOf(SubmissionMap[text])}
-//                     append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
-//                 />
-//             }
-//         },
-//         {
-//             title: "得分",
-//             dataIndex: "score",
-//             key: "score",
-//             render: (text: number, record: any) => {
-//                 return Math.floor(text / record.sumScore * 100) + "%"
-//             }
-//         },
-//         {
-//             title: "评测模板",
-//             dataIndex: "judgeTemplateTitle",
-//             key: "judgeTemplateTitle"
-//         },
-//         {
-//             title: "内存使用",
-//             dataIndex: "usedMemory",
-//             key: "usedMemory",
-//             render: (text: any) => {
-//                 return text + " KB"
-//             }
-//         },
-//         {
-//             title: "时间使用",
-//             dataIndex: "usedTime",
-//             key: "usedTime",
-//             render: (text: any) => {
-//                 return text + " ms"
-//             }
-//         },
-//         {
-//             title: "提交时间",
-//             dataIndex: "submitTime",
-//             key: "submitTime",
-//             render: (text: any) => {
-//                 return moment(text).fromNow();
-//             }
-//         }
-//     ]
-//
-//     return (
-//         <>
-//             <Card
-//                 title={
-//                     <Space>
-//                         提交记录
-//                         <SyncJudging
-//                             open={this.state.webSocketOpen}
-//                             dataHandle={this.addCaseInfo}
-//                             queryList={this.state.webSocketQueryList}/>
-//                     </Space>
-//
-//                 }
-//                 className={"Recent-submission"}
-//                 extra={
-//                     <Space>
-//                         <RJudge
-//                             API={cApi.rejudge}
-//                             data={this.state.selectedRowsIndex}
-//                             afterSuccess={() => {
-//                                 this.setState({selectedRowsIndex: []})
-//                                 this.updateList()
-//                             }}
-//                         />
-//                         <Button
-//                             icon={<ReloadOutlined/>}
-//                             onClick={() => {
-//                                 this.setState({refreshDisable: true})
-//                                 this.updateList(true)
-//                                 setTimeout(() => {
-//                                     this.setState({refreshDisable: false})
-//                                 }, 3000)
-//                             }}
-//                             disabled={this.state.refreshDisable}
-//                         >
-//                             刷新
-//                         </Button>
-//                     </Space>
-//
-//                 }
-//             >
-//                 <Form
-//                     ref={this.formRef}
-//                 >
-//                     <Space size={30}>
-//                         <Form.Item label={"用户名"} name={"username"}>
-//                             <Input
-//                                 onPressEnter={(e: any) => {
-//                                     this.onFinish()
-//                                 }}
-//                                 allowClear
-//                             />
-//                         </Form.Item>
-//                         <Form.Item label={"题目编号"} name={"problemCode"}>
-//                             <Input
-//                                 onPressEnter={(e: any) => {
-//                                     this.onFinish()
-//                                 }}
-//                                 allowClear
-//                             />
-//                         </Form.Item>
-//                         <Form.Item label={"评测结果"} name={"judgeResult"}>
-//                             <Select onChange={this.onFinish} allowClear style={{width: 200}}>
-//                                 {
-//                                     RunningResultList.map((value) => {
-//                                         return <Select.Option value={parseInt(value)}>
-//                                             <TestCase type={"text"}
-//                                                       caseType={StateList.indexOf(SubmissionMap[value])}/>
-//                                         </Select.Option>
-//                                     })
-//                                 }
-//                             </Select>
-//                         </Form.Item>
-//                     </Space>
-//                     <Space style={{float: "right"}} size={20}>
-//                         <Button type="primary" onClick={this.onFinish}>
-//                             筛选
-//                         </Button>
-//                         <Button htmlType="button" onClick={this.onReset}>
-//                             重置
-//                         </Button>
-//                     </Space>
-//                 </Form>
-//
-//                 <TableWithSelection
-//                     size={"small"}
-//                     columns={columnsAll}
-//                     dataSource={this.state.tableData}
-//                     rowKey={"submissionId"}
-//                     rowSelection={{
-//                         onChange: (selectedRowKeys, selectedRows) => {
-//                             this.setState({selectedRowsIndex: selectedRowKeys})
-//                         },
-//                         selectedRowKeys: this.state.selectedRowsIndex
-//                     }}
-//                 />
-//             </Card>
-//         </>
-//     )
-// }
-//
-// export default withTranslation()(SubmissionList)
+import {withTranslation} from "react-i18next";
+import {Button, Card, Form, Input, message, Select, Space, Table} from "antd";
+import {SyncJudging} from "../SyncJudging";
+import cApi from "../../../Utils/API/c-api";
+import {ReloadOutlined} from "@ant-design/icons";
+import {RunningResultList, StateList, SubmissionMap, TopSubmissionInfoType} from "../../../Type/ISubmission";
+import TestCase from "../TestCase";
+import React, {Dispatch, useEffect, useState} from "react";
+import moment from "moment";
+import TableWithSelection from "../../common/Table/TableWithSelection";
+import ReJudge from "../Func/ReJudge";
+import {connect} from "react-redux";
+import {withRouter} from "react-router";
+import {TableState} from "../../../Type/ITable";
+import {ck} from "../../../Utils/empty";
+import {UserState} from "../../../Type/Iuser";
+import judgeAuth from "../../../Utils/judgeAhtu";
+
+const SubmissionList = (props: any) => {
+
+    // 为了动态显示评测点信息，使用 ws 与后端进行链接
+    // ws 是否打开
+    const [webSocketOpen, setWebSocketOpen] = useState<boolean>(false)
+    // ws 发送的信息（在打开时，当前数据的变更将同步发送至 ws）
+    const [webSocketQueryList, setWebSocketQueryList] = useState<string[]>([])
+    const [refreshDisable, setRefreshDisable] = useState<boolean>(false)
+
+    const selectedRowKeys = ck(props.tableData[props.name]?.selectedRowKeys, [])
+    const dataSource = ck(props.tableData[props.name]?.dataSource, [])
+
+    const addCaseInfo = (data: any[]) => {
+        let dt = dataSource
+        const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+        if (Index === -1) return
+        if (data[1] < 0) {
+            dt[Index].result = data[1].toString()
+            if (data[1] === -1) {
+                if (data.length > 3) {
+                    dt[Index].result = data[2]
+                    dt[Index].score = data[3]
+                    dt[Index].usedTime = data[4]
+                    dt[Index].usedMemory = data[5]
+                }
+            }
+            // 检查还有没有未更新完的
+            let runningNumber = 0
+            for (const x of dt) if (parseInt(x.result) <= 0) runningNumber += 1
+            if (runningNumber === 0) setWebSocketOpen(false)
+        } else {
+            if (dt[Index].RunningStep < data[1] + 1) {
+                dt[Index].RunningStep = data[1] + 1
+                dt[Index].score += data[3]
+            }
+        }
+        props.setDataSource(dt, props.name)
+    }
+    const columns = [
+        {
+            title: "结果",
+            dataIndex: "result",
+            key: "result",
+            render: (text: any, record: any) => {
+                return (
+                    <div onClick={() => {
+                        props.setTopSubmission(record.submissionId, {
+                            title: record.problemTitle,
+                            TimeLimit: record.timeLimit,
+                            MemoryLimit: record.memoryLimit,
+                            scoreMod: record.sumScore === undefined ? "disable" : "show",
+                            sumScore: record.sumScore,
+                            testcaseMod: "show",
+                            QuerySubmissionAPI: props.QuerySubmissionAPI
+                        })
+                        props.setSubmissionModalVis(true)
+                    }}>
+                        <TestCase
+                            type={"text"}
+                            caseType={StateList.indexOf(SubmissionMap[text])}
+                            append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                        />
+                    </div>
+
+                )
+            }
+        },
+        {
+            title: "得分",
+            dataIndex: "score",
+            key: "score",
+            render: (text: number, record: any) => {
+                if (record.sumScore === undefined)
+                    return text
+                return Math.floor(text / record.sumScore * 100) + "%"
+            }
+        },
+        {
+            title: "提交时间",
+            dataIndex: "submitTime",
+            key: "submitTime",
+            render: (text: any) => {
+                return moment(text).fromNow();
+            }
+        }
+    ]
+
+    const columnsAll = [
+        {
+            title: "ID",
+            dataIndex: "submissionId",
+            key: "submissionId",
+            render: (text: any, record: any) => {
+                return <Button type={"link"} size={"small"} onClick={() => {
+                    props.setTopSubmission(record.submissionId, {
+                        title: record.problemTitle,
+                        TimeLimit: record.timeLimit,
+                        MemoryLimit: record.memoryLimit,
+                        scoreMod: record.sumScore === undefined ? "disable" : "show",
+                        sumScore: record.sumScore,
+                        testcaseMod: "show",
+                        QuerySubmissionAPI: props.QuerySubmissionAPI
+                    })
+                    props.setSubmissionModalVis(true)
+                }}>
+                    {text}
+                </Button>
+            }
+        },
+        {
+            title: "用户名",
+            dataIndex: "username",
+            key: "username"
+        },
+        {
+            title: "题目编号",
+            dataIndex: "problemCode",
+            key: "problemCode",
+            render: props.problemCodeRender
+        },
+        {
+            title: "题目名",
+            dataIndex: "problemTitle",
+            key: "problemTitle"
+        },
+        {
+            title: "结果",
+            dataIndex: "result",
+            key: "result",
+            width: 170,
+            render: (text: any, record: any) => {
+                return <TestCase
+                    type={"text"}
+                    caseType={StateList.indexOf(SubmissionMap[text])}
+                    append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                />
+            }
+        },
+        {
+            title: "得分",
+            dataIndex: "score",
+            key: "score",
+            render: (text: number, record: any) => {
+                if (record.sumScore === undefined)
+                    return text
+                return Math.floor(text / record.sumScore * 100) + "%"
+            }
+        },
+        {
+            title: "评测模板",
+            dataIndex: "judgeTemplateTitle",
+            key: "judgeTemplateTitle"
+        },
+        {
+            title: "内存使用",
+            dataIndex: "usedMemory",
+            key: "usedMemory",
+            render: (text: any) => {
+                return text + " KB"
+            }
+        },
+        {
+            title: "时间使用",
+            dataIndex: "usedTime",
+            key: "usedTime",
+            render: (text: any) => {
+                return text + " ms"
+            }
+        },
+        {
+            title: "提交时间",
+            dataIndex: "submitTime",
+            key: "submitTime",
+            render: (text: any) => {
+                return moment(text).fromNow();
+            }
+        }
+    ]
+
+    const getForm = (onFinish: any) => {
+        return (
+            <Space size={30}>
+                <Form.Item label={"用户名"} name={"username"}>
+                    <Input
+                        onPressEnter={(e: any) => {
+                            onFinish()
+                        }}
+                        allowClear
+                    />
+                </Form.Item>
+                <Form.Item label={"题目编号"} name={"problemCode"}>
+                    <Input
+                        onPressEnter={(e: any) => {
+                            onFinish()
+                        }}
+                        allowClear
+                    />
+                </Form.Item>
+                <Form.Item label={"评测结果"} name={"judgeResult"}>
+                    <Select onChange={onFinish} allowClear style={{width: 200}}>
+                        {
+                            RunningResultList.map((value) => {
+                                return <Select.Option value={parseInt(value)}>
+                                    <TestCase type={"text"}
+                                              caseType={StateList.indexOf(SubmissionMap[value])}/>
+                                </Select.Option>
+                            })
+                        }
+                    </Select>
+                </Form.Item>
+            </Space>
+        )
+    }
+
+    return (
+        <>
+            <Card
+                title={
+                    <Space>
+                        {props.title !== undefined ? props.title : "提交记录"}
+                        <SyncJudging
+                            open={webSocketOpen}
+                            dataHandle={addCaseInfo}
+                            queryList={webSocketQueryList}/>
+                    </Space>
+                }
+                style={props.lessInfo ? {} : {minWidth: 1200}}
+                className={props.lessInfo ? "smallBodyPadding" : ""}
+                extra={
+                    <Space>
+                        {props.lessInfo != true && judgeAuth(props.roles, ["admin", "superadmin"]) && (
+                            <ReJudge
+                                API={cApi.rejudge}
+                                data={selectedRowKeys}
+                                afterSuccess={() => {
+                                    props.addTableVersion(props.name)
+                                    props.setSelectedRowKeys([], props.name)
+                                }}
+                            />
+                        )}
+                        <Button
+                            icon={<ReloadOutlined/>}
+                            onClick={() => {
+                                setRefreshDisable(true)
+                                props.addTableVersion(props.name)
+                                message.success("刷新成功")
+                                setTimeout(() => {
+                                    setRefreshDisable(false)
+                                }, 3000)
+                            }}
+                            disabled={refreshDisable}
+                        >
+                            刷新
+                        </Button>
+                    </Space>
+                }
+            >
+                <TableWithSelection
+                    disableSelection={props.lessInfo || !judgeAuth(props.roles, ["admin", "superadmin"])}
+                    defaultPageSize={props.lessInfo ? 5 : undefined}
+                    showSizeChanger={props.lessInfo ? false : undefined}
+                    columns={props.lessInfo ? columns : columnsAll}
+                    getForm={props.useForm === true ? getForm : undefined}
+                    name={props.name}
+                    size={"small"}
+                    rowKey={"submissionId"}
+                    API={props.API}
+                    APIRowsTransForm={(value: any) => {
+                        if (value === null) value = []
+                        let webSocketQueryList = []
+                        let data: any = []
+                        for (const x of value) {
+                            if (x.judgeResult <= 0) webSocketQueryList.push(x.submissionId)
+                            data.push({
+                                ...x,
+                                score: x.judgeScore,
+                                RunningStep: 0,
+                                result: x.judgeResult.toString(),
+                                // sumScore: ck(x.sumScore, 100),
+                                sumScore: x.sumScore,
+                                submitTime: parseInt(x.gmtCreate),
+                            })
+                        }
+                        if (webSocketQueryList.length !== 0) {
+                            setWebSocketOpen(true)
+                            setWebSocketQueryList(webSocketQueryList)
+                        }
+                        return data
+                    }}
+                />
+            </Card>
+        </>
+    )
+}
+
+
+const mapStateToProps = (state: any) => {
+    const TState: TableState = state.TableReduce
+    const UState: UserState = state.UserReducer
+    return {
+        tableData: TState.tableData,
+        roles: UState.userInfo?.roles
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    addTableVersion: (name: string) => dispatch({
+        type: "addTableVersion",
+        name: name,
+    }),
+    setSelectedRowKeys: (data: React.Key[], name: string) =>
+        dispatch({type: "setSelectedRowKeys", data: data, name: name}),
+    setDataSource: (data: any, name: string) =>
+        dispatch({type: "setDataSource", data: data, name: name, add: true}),
+    setTopSubmission: (submissionID: string, submissionInfo: TopSubmissionInfoType) => dispatch({
+        type: "setTopSubmission",
+        submissionID: submissionID,
+        submissionInfo: submissionInfo
+    }),
+    setSubmissionModalVis: (data: boolean) => dispatch({type: "setSubmissionModalVis", data: data})
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withTranslation()(
+    withRouter(SubmissionList)
+))

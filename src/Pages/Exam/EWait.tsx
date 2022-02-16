@@ -1,152 +1,107 @@
-import React, {Component, Dispatch} from "react";
-import {Button, Card, Image, List, message, Result, Skeleton} from "antd";
+import React, {Dispatch, useState} from "react";
+import {Button, Card, Image, List, message, Result} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../../Component/exam/Timer";
-import {ExamState} from "../../Type/IExam";
-import {examID} from "../../Type/types";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {UserState} from "../../Type/Iuser";
-import {getExamInfoTodo} from "../../Redux/Action/exam";
 import moment from "moment";
 import {TimeDiff} from "../../Utils/Time";
+import LoginCheck from "../../Component/common/LoginCheck";
+import useExamInfo from "../../Component/exam/API/getExamInfo";
 
 const {Meta} = Card;
 
-class EWait extends Component<any, any> {
+const EWait = (props: any) => {
+    const [ExamStart, setExamStartX] = useState<boolean>(false)
 
-    constructor(props: any, context: any) {
-        super(props, context);
-        this.state = {
-            ExamStart: false
-        }
-        this.setExamStart = this.setExamStart.bind(this)
-    }
-
-    setExamStart = (data: boolean) => {
-        if (data !== this.state.ExamStart){
+    const setExamStart = (data: boolean) => {
+        if (data !== ExamStart) {
             message.info("正在排队发卷，请勿刷新，并耐心等待几秒")
-            setTimeout(()=>{
-                this.setState({ExamStart: data})
-                this.props.history.push("/v2/exam/running/" + this.props.match.params.eid)
-            }, Math.random()*5000)
+            setTimeout(() => {
+                setExamStartX(data)
+                props.history.push("/v2/exam/running/" + props.match.params.eid + "/0/0")
+            }, Math.random() * 5000)
         }
     }
 
-    componentDidMount() {
-        if (!this.props.isLogin) {
-            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
-        }
-        this.props.getExamInfo(this.props.match.params.eid)
+    const examInfo = useExamInfo(props.match.params.eid)
+
+    const getExamStartText = () => {
+        if (examInfo === undefined) return ""
+        if (examInfo.userIsSubmit === 1) return "已交卷"
+        if (examInfo.endTime < Date.now()) return "已结束"
+        return props.t("StartAnswering")
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (!this.props.isLogin) {
-            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
-        }
-        if(!this.props.ExamInfoLoad || this.props.match.params.eid !== this.props.examInfo.id){
-            this.props.getExamInfo(this.props.match.params.eid)
-        }
+    const getDescription = () => {
+        if (examInfo === undefined) return ""
+        let description: string = ""
+        const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
+        description += "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n"
+        description += "考试时间："
+            + start.format("LL") + "(" + start.format("dddd") + ") "
+            + start.format("HH:mm") + " - "
+            + (start.format("LL") === end.format("LL") ? "" : (
+                end.format("LL") + "(" + end.format("dddd") + ") "
+            )) + end.format("HH:mm") + "\n"
+        description += examInfo.description
+        return description
+    }
+    if (examInfo !== undefined) {
+        const examStart = examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1
+        if (ExamStart !== examStart) setExamStartX(examStart)
     }
 
-
-    render() {
-
-        const examInfo = this.props.examInfo
-        let description:any = ""
-        let ExamStartText = this.props.t("StartAnswering")
-        if (examInfo !== undefined) {
-            if (examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1) {
-                if(!this.state.ExamStart) this.setState({ExamStart: true})
-            } else {
-                if(this.state.ExamStart) this.setState({ExamStart: false})
-            }
-            if (examInfo.endTime < Date.now()) ExamStartText = "已结束"
-            if (examInfo.userIsSubmit === 1) ExamStartText = "已交卷"
-            description = examInfo.description
-            const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
-            description = "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n" + description
-            if (start.format("LL") === end.format("LL"))
-                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("HH:mm") + " - " + end.format("HH:mm") + "\n" + description
-            else
-                description = "考试时间：" + start.format("LL") + "(" + start.format("dddd") + ") " + start.format("HH:mm") + " - "
-                    + end.format("LL") + "(" + end.format("dddd") + ") " + end.format("HH:mm") + "\n" + description
-
-        }
-
-        return (
-            <>
-                <Skeleton active loading={!this.props.ExamInfoLoad}>
-                    <Result
-                        className={"Ewait"}
-                        icon={<Image width={200} src={SDU_Logo} preview={false}/>}
-                        title={examInfo?.title}
-                        extra={
-                            <div className={"Ewait-content"}>
-                                <Card
-                                    cover={
-                                        <Timer name={this.props.t("Countdown")}
-                                               deadline={examInfo?.startTime}
-                                               onFinish={() => this.setExamStart(true)}
-                                        />
-                                    }
-                                    actions={[
-                                        <Button type="primary"
-                                                disabled={!this.state.ExamStart}
-                                                onClick={() => {
-                                                    this.props.history.push("/v2/exam/running/" + this.props.match.params.eid)
-                                                }}
-                                        >
-                                            {ExamStartText}
-                                        </Button>
-                                    ]}
-                                    className={"exam-wait-card"}
+    return (
+        <>
+            <LoginCheck/>
+            <Result
+                className={"Ewait"}
+                icon={<Image width={200} src={SDU_Logo} preview={false}/>}
+                title={examInfo?.title}
+                extra={
+                    <div className={"Ewait-content"}>
+                        <Card
+                            cover={
+                                <Timer name={props.t("Countdown")}
+                                       deadline={examInfo?.startTime}
+                                       onFinish={() => setExamStart(true)}
+                                />
+                            }
+                            actions={[
+                                <Button
+                                    type="primary" disabled={!ExamStart}
+                                    onClick={() => {
+                                        props.history.push("/v2/exam/running/" + props.match.params.eid + "/0/0")
+                                    }}
                                 >
-                                    <Meta title={this.props.t("ExamDescription")} description={
-                                        <List
-                                            size="small"
-                                            dataSource={description.split('\n').filter((value: string) => value !== "")}
-                                            renderItem={
-                                                (item: string, index) => {
-                                                    return (
-                                                        <List.Item>{index + 1}. <span>{item}</span></List.Item>
-                                                    )
-                                                }
-                                            }
-                                        />
-
-                                    } className={"exam-wait-tip"}/>
-                                </Card>
-                            </div>
-                        }
-                    />
-                </Skeleton>
-
-            </>
-        )
-    }
+                                    {getExamStartText()}
+                                </Button>
+                            ]}
+                            className={"exam-wait-card"}
+                        >
+                            <Meta title={props.t("ExamDescription")} description={
+                                <List
+                                    size="small"
+                                    dataSource={getDescription().split('\n').filter((value: string) => value !== "")}
+                                    renderItem={
+                                        (item: string, index) => {
+                                            return (
+                                                <List.Item>{index + 1}. <span>{item}</span></List.Item>
+                                            )
+                                        }
+                                    }
+                                />
+                            } className={"exam-wait-tip"}/>
+                        </Card>
+                    </div>
+                }
+            />
+        </>
+    )
 }
 
-
-const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    const UState: UserState = state.UserReducer
-    return {
-        isLogin: UState.isLogin,
-        examInfo: State.examInfo,
-        ExamInfoLoad: State.ExamInfoLoad,
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    getExamInfo: (eid: examID) => dispatch(getExamInfoTodo(eid))
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(EWait)
-    ))
+export default withTranslation()(
+    withRouter(EWait)
+)

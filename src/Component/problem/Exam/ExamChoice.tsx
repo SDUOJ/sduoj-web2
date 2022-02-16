@@ -1,10 +1,9 @@
 import React, {Component, Dispatch} from 'react';
 import {Skeleton} from "antd";
 import Options from "./ExamOptions";
-import {getProblemTodo} from "../../../Redux/Action/exam";
 import {connect} from "react-redux";
-import {ChoiceContent, IGetProInfo} from "../../../Type/IProblem";
-import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
+import {ChoiceContent, IGetProInfo, ProblemState, ProContent} from "../../../Type/IProblem";
+import {ExamState, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 
@@ -15,8 +14,8 @@ class ExamChoice extends Component<any, any> {
         if (this.props.Waiting === true) {
             this.props.getProInfo({
                 examId: this.props.match.params.eid,
-                groupIndex: this.props.GroupIndex - 1,
-                problemIndex: this.props.ProIndex - 1
+                groupIndex: this.props.match.params.gid,
+                problemIndex: this.props.match.params.pid
             })
         }
         if (!this.props.Loading) {
@@ -28,8 +27,8 @@ class ExamChoice extends Component<any, any> {
         if (prevProps.Waiting === undefined && this.props.Waiting === true) {
             this.props.getProInfo({
                 examId: this.props.match.params.eid,
-                groupIndex: this.props.GroupIndex - 1,
-                problemIndex: this.props.ProIndex - 1
+                groupIndex: this.props.match.params.gid,
+                problemIndex: this.props.match.params.pid
             })
         }
         if (!this.props.Loading) {
@@ -65,28 +64,16 @@ class ExamChoice extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    if (!State.ProListLoad) {
-        return {Loading: !State.ProListLoad}
-    } else {
-        const NowPro = ((State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1].proList as SProInfo[])[State.TopProblemIndex - 1]
-        if (NowPro.content === undefined || !NowPro.content.isLoad) {
-            return {
-                Loading: true,
-                Waiting: true
-            }
-        } else {
-            return {
-                Loading: !State.ProListLoad,
-                content: (NowPro.content as ChoiceContent).content,
-                choice: (NowPro.content as ChoiceContent).choice
-            }
-        }
+    const State: ProblemState = state.ProblemReducer
+    return {
+        proInfo: State.ProblemInfo
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    getProInfo: (data: IGetProInfo) => dispatch(getProblemTodo(data))
+    setProblemInfo: (key: string, data: ProContent) => dispatch({
+        type: "setProblemInfo", key: key, data: data
+    }),
 })
 
 export default connect(

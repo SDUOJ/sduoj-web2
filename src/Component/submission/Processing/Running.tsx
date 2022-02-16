@@ -146,7 +146,7 @@ const Running = (props: any) => {
                 {
                     (RunningState === "-2" || RunningState === "-1") &&     // 已经到达了测试点阶段
                     RunningResult !== "8" && RunningResult !== "5" &&       // 不是编译错误或系统错误
-                    testcaseMod === "show" && (                             // 测试点设置为可显示
+                    testcaseMod === "show" && TestCaseStateList.length !== 0 &&(                             // 测试点设置为可显示
                         [''].map(() => {
                             return (
                                 <>

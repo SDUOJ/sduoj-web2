@@ -16,7 +16,7 @@ export const routerE: IBaseRouter[] = [
     },
     {
         id: 4,
-        path: "/v2/exam/running/:eid",
+        path: "/v2/exam/running/:eid/:gid/:pid",
         exact: true,
         component: lazy(() => import('../../Pages/Exam/ERunning'))
     },

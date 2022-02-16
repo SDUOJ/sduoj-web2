@@ -8,10 +8,11 @@ import "vditor/src/assets/scss/index.scss";
 import {thirdPartyLoginAction} from "./Type/Iuser";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router, Route, withRouter} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
 import {testLoginTodo} from "./Redux/Action/user";
+import SubmissionModal from "./Component/submission/Processing/ModalProcessing";
 
 
 class App extends Component<any, any> {
@@ -26,6 +27,8 @@ class App extends Component<any, any> {
             <ConfigProvider locale={this.props.local}>
                 {/*顶级路由*/}
                 <Router>
+                    {/*提交详情窗体*/}
+                    <SubmissionModal/>
                     <Suspense fallback={<Loading/>}>
                         {
                             routerLayout.map((r) => {

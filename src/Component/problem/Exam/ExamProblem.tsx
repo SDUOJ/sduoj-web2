@@ -1,13 +1,14 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Skeleton} from "antd";
 import {StarFilled, StarOutlined} from '@ant-design/icons';
-import Choice from "./ExamChoice";
+import ExamChoice from "./ExamChoice";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import Program from "./ExamProgram";
-import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
+import ExamProgram from "./ExamProgram";
 import {withRouter} from "react-router-dom";
 import {examID} from "../../../Type/types";
+import eApi from "../../../Utils/API/e-api";
+
 
 class ExamProblem extends Component<any, any> {
 
@@ -19,6 +20,9 @@ class ExamProblem extends Component<any, any> {
     }
 
     render() {
+        const eid = this.props.match.params.eid
+        const gid = this.props.match.params.gid
+        const pid = this.props.match.params.pid
         return (
             <Skeleton active loading={this.props.Loading}>
                 <Card
@@ -43,12 +47,12 @@ class ExamProblem extends Component<any, any> {
                         </>
                     }
                     extra={
-                        this.props.proType !== "Program" && this.props.flag !== undefined && this.props.flag && (
+                        this.props.proType !== "Program" && this.props.flag === true && (
                             <Button type="default"
                                     shape="round"
                                     icon={this.props.isFlag ? <StarFilled/> : <StarOutlined/>}
                                     danger={this.props.isFlag}
-                                    onClick={()=>this.props.flipFlag(this.props.match.params.eid)}
+                                    onClick={() => this.props.flipFlag(this.props.match.params.eid)}
                             >
                                 {this.props.t("Mark")}
                             </Button>
@@ -60,14 +64,28 @@ class ExamProblem extends Component<any, any> {
                             switch (this.props.proType) {
                                 case "Program":
                                     return (
-                                        <Program GroupIndex={this.props.TopGroupIndex}
-                                                 ProIndex={this.props.TopProblemIndex}/>
+                                        <ExamProgram
+                                            getProInfo={async () => {
+                                                return eApi.getProInfo({
+                                                    examId: eid,
+                                                    groupIndex: gid,
+                                                    problemIndex: pid
+                                                })
+                                            }}
+                                            getSubmissionList={async ()=>{
+                                                return eApi.getSubmissionList({
+                                                    examId: eid,
+                                                    problemGroup: gid,
+                                                    problemIndex: pid
+                                                })
+                                            }}
+                                            proName={`EXAM_${eid}_${gid}_${pid}`}
+                                        />
                                     )
                                 case "SingleChoice":
                                 case "MultipleChoice":
                                     return (
-                                        <Choice GroupIndex={this.props.TopGroupIndex}
-                                                ProIndex={this.props.TopProblemIndex}/>
+                                        <ExamChoice/>
                                     )
                             }
                         })
@@ -80,27 +98,11 @@ class ExamProblem extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-    if (!State.ProListLoad) {
-        return {Loading: !State.ProListLoad,}
-    } else {
-        const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
-        const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
-        return {
-            Loading: !State.ProListLoad,
-            TopProblemIndex: State.TopProblemIndex,
-            TopGroupIndex: State.TopGroupIndex,
-            proType: NowGroup.type,
-            score: NowPro.score,
-            index: NowPro.index,
-            isFlag: NowPro.flag,
-            isScoreVisible: State.examInfo?.isScoreVisible
-        }
-    }
+
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    flipFlag: (examId: examID) =>  dispatch({
+    flipFlag: (examId: examID) => dispatch({
         type: "flipFlag",
         examId: examId
     }),

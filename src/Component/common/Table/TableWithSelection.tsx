@@ -64,21 +64,11 @@ class TableWithSelection extends Component<any, any> {
             ]
         };
 
-        // if (!judgeAuth(this.props.roles, ["superadmin"])) {
-        //     rowSelection = undefined
-        // }
-
         return (
             <>
                 <TableWithPagination
-                    name={this.props.name}
-                    search={this.props.search}
-                    size={this.props.size}
-                    API={this.props.API}
-                    rowKey={this.props.rowKey}
-                    columns={this.props.colData}
-                    rowSelection={rowSelection}
-                    setDataSource={this.props.setDataSource}
+                    {... this.props}
+                    rowSelection={this.props.disableSelection ? undefined : rowSelection}
                 />
 
             </>
@@ -100,7 +90,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setSelectedRowKeys: (data: React.Key[], name: string) =>
         dispatch({type: "setSelectedRowKeys", data: data, name: name}),
     setDataSource: (data: any, name: string) =>
-        dispatch({type: "setDataSource", data: data, name: name})
+        dispatch({type: "setDataSource", data: data, name: name, add: false})
 })
 
 export default connect(

@@ -4,7 +4,6 @@ import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import eApi from "Utils/API/e-api"
-import {cleanProInfo} from "../../Redux/Action/exam";
 
 class ExamOver extends Component<any, any> {
     state = {
@@ -51,12 +50,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    CleanProInfo: () => dispatch({
-        type: "cleanProInfo"
-    }),
-    cleanExam: ()=> dispatch({
-        type: "cleanExam"
-    })
+
 })
 
 export default connect(

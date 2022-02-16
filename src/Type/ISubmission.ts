@@ -67,9 +67,12 @@ export interface checkPointType {
 }
 
 export interface submissionInfoType {
+    timeLimit?: number
+    memoryLimit?: number
+    sumScore?: number
     checkpointNum: number
     checkpointResults: checkPointType[]
-    code: string
+    code: string | null
     codeLength: number
     gmtCreate?: string
     gmtModified?: string
@@ -104,12 +107,17 @@ export type displayType = "show" | "partial" | "disable"
 
 export interface TopSubmissionInfoType {
     title: string
-    TimeLimit: number
-    MemoryLimit: number
+    TimeLimit?: number
+    MemoryLimit?: number
+    // 对分数的显示模式
     scoreMod: displayType
     sumScore?: number   // 在 scoreMod 不是 disable 时，需要提供题目的总分
+    // 对测试点数据的显示模式
     testcaseMod: displayType
+    // 下载 testcase 的API
     downloadAPI: any
+    // 请求 Submission 信息的 API
+    QuerySubmissionAPI: any
 }
 
 export interface RunningSubmissionInfo {
@@ -122,4 +130,5 @@ export interface SubmissionState {
     TopSubmissionId?: string
     TopSubmissionInfo?: TopSubmissionInfoType
     SubmissionModalVis: boolean
+    submissionListInfo: {[key: string]: any}
 }

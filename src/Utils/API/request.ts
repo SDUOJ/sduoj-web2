@@ -36,7 +36,8 @@ const getTime: Get | GetError = async (url: string) => {
 
 const messageDisabledList = [
     "/user/getProfile",
-    "/submit/queryACProblem"
+    "/submit/queryACProblem",
+    "/group/my"
 ]
 
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {

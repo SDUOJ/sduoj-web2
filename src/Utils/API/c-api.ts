@@ -96,10 +96,10 @@ export default {
     async invalidateContestSubmission(data: { submissionId: string, contestId: string }) {
         return request.get("/contest/invalidateSubmission", data)
     },
-    async getUpcomingContest(data: { groupId: string }) {
+    async getUpcomingContest(data: any) {
         return request.get("/contest/queryUpcomingContest", data)
     },
-    async getContestProblem(data: { contestId: string, ProblemCode: string }) {
+    async getContestProblem(data: { contestId: string, problemCode: string }) {
         return request.get("/contest/queryProblem", data)
     },
     async getContestAcProblem(data: { contestId: string }) {
@@ -112,7 +112,7 @@ export default {
         return request.post("/contest/createSubmission", data)
     },
     async getContestInfo(data: { contestId: string }) {
-        return request.get("/contest/query")
+        return request.get("/contest/query", data)
     },
     async getContestSubmissionList(data: any) {
         return request.get("/contest/listSubmission", data)
@@ -171,7 +171,7 @@ export default {
         return request.get("/submit/query", data)
     },
     async getSubmissionList(data: any) {
-        return request.post("/submit/list", data)
+        return request.get("/submit/list", data)
     },
     async getACProblem() {
         return request.get("/submit/queryACProblem")
@@ -179,7 +179,12 @@ export default {
     async invalidateSubmission(data: { submissionId: string }) {
         return request.get("/submit/invalidateSubmission", data)
     },
-    async submit(data: any) {
+    async submit(data: {
+        problemCode: string,
+        judgeTemplateId: string,
+        code?: string
+        zipFileId?: string
+    }) {
         return request.post("/submit/create", data)
     },
 
@@ -188,8 +193,8 @@ export default {
     async getProblemList(data: problemListQuery) {
         return request.get("/problem/list", data)
     },
-    async getProblemInfo(data: { problemCode: string, descriptionId: string }) {
-        return request.get("/problem/query")
+    async getProblemInfo(data: { problemCode: string, descriptionId?: string }) {
+        return request.get("/problem/query", data)
     },
 
 

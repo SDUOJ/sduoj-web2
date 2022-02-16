@@ -4,7 +4,7 @@ import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {connect} from "react-redux";
 import {ChoiceContent, ChoiceState} from "../../../Type/IProblem";
-import {ExamState, SProGroupInfo, SProInfo} from "../../../Type/IExam";
+import {ExamState, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {examID} from "../../../Type/types";
 // @ts-ignore
@@ -108,11 +108,7 @@ class ExamOptions extends Component<any, SOptions> {
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    const NowGroup = (State.proGroupInfo as SProGroupInfo[])[State.TopGroupIndex - 1];
-    const NowPro = (NowGroup.proList as SProInfo[])[State.TopProblemIndex - 1]
-    return {
-        choice: (NowPro.content as ChoiceContent).choice
-    }
+
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

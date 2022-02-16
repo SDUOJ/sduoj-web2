@@ -1,160 +1,100 @@
 import React, {Component, Dispatch} from 'react';
 
-import {Badge, Space, Table} from 'antd';
-import {SExamInfo, SExamManageInfo} from "../../Type/IExam";
+import {Badge, Button, Space} from 'antd';
+import {SExamInfo} from "../../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import moment from "moment";
 import eApi from "../../Utils/API/e-api";
 import mApi from "../../Utils/API/m-api";
 import ExamForm from "./Form/ExamForm";
-import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
+import {getDiffSecond, TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
 import {getExamJson} from "../../Utils/exportExam";
-import SubmissionList from "../submission/SubmissionList";
-import SubmissionModal from "../submission/SubmissionModal";
+import SubmissionModal from "../submission/Processing/ModalProcessing";
 import {isValueEmpty} from "../../Utils/empty";
+import TableWithPagination from "../common/Table/TableWithPagination";
 
 
 class ExamList extends Component<any, any> {
-
-
     constructor(props: any, context: any) {
         super(props, context);
         this.state = {
-            ExamListInfo: [],
-            ExamManageListInfo: [],
-            total: 0,
             nowExamId: ""
         }
-        this.getList = this.getList.bind(this)
     }
 
     getSubmission = (submissionId: string) => {
         return eApi.getSubmission(this.state.nowExamId, submissionId)
     }
 
-    setNowExamId = (examId: string)=>{
+    setNowExamId = (examId: string) => {
         this.setState({
             nowExamId: examId
         })
     }
 
-    update = () => {
-        this.getList(1, 20)
-    }
-
-    getList = (pageNow: number, pageSize: number | undefined) => {
-        if (this.props.type === "manage") {
-            mApi.getExamList({
-                pageNow: pageNow,
-                pageSize: pageSize === undefined ? 20 : pageSize
-            }).then((resData: any) => {
-                if (resData !== null) {
-                    let data: SExamManageInfo[] = []
-                    this.setState({total: resData.totalNum})
-                    for (const x of resData.rows) {
-                        data.push({
-                            id: x.examId,
-                            startTime: parseInt(x.gmtStart),
-                            endTime: parseInt(x.gmtEnd),
-                            title: x.examTitle,
-                            manageGroup: isValueEmpty(x.managerGroupDTO) ?
-                                "" : x.managerGroupDTO.groupId + " (" + x.managerGroupDTO.title + ")",
-                            owner: x.username
-                        })
-                    }
-                    this.setState({ExamManageListInfo: data})
-                }
-            })
-        } else {
-            eApi.getExamList({
-                pageNow: pageNow,
-                pageSize: pageSize === undefined ? 20 : pageSize
-            }).then((resData: any) => {
-                if (resData !== null) {
-                    let data: SExamInfo[] = []
-                    this.setState({total: resData.totalNum})
-                    for (const x of resData.rows) {
-                        data.push({
-                            id: x.examId,
-                            startTime: parseInt(x.gmtStart),
-                            endTime: parseInt(x.gmtEnd),
-                            title: x.examTitle
-                        })
-                    }
-                    this.setState({ExamListInfo: data})
-                }
-            })
-        }
-    }
-
-    componentDidMount() {
-        this.getList(1, 20)
-    }
-
-
     render() {
-
         let columns: any[] = [
             {
                 title: 'ID',
-                dataIndex: 'id',
+                dataIndex: 'examId',
                 key: 'id',
-                sorter: (a: SExamInfo, b: SExamInfo) => parseInt(a.id) - parseInt(b.id)
+                sorter: (a: any, b: any) => parseInt(a.examId) - parseInt(b.examId)
             },
             {
                 title: '考试名',
-                dataIndex: 'title',
+                dataIndex: 'examTitle',
                 key: 'title',
-                render: (text: string, record: SExamInfo) => {
+                render: (text: string, record: any) => {
                     if (this.props.type !== "manage")
                         return (
-                            <a
+                            <Button
+                                size={"small"}
+                                type={"link"}
                                 onClick={() => {
-                                    this.props.history.push('/v2/exam/wait/' + record.id.toString())
+                                    this.props.history.push('/v2/exam/wait/' + record.examId.toString())
                                 }}
-                            >{text}</a>
+                            >{text}</Button>
                         )
                     else return text
                 }
             },
             {
                 title: '开始时间',
-                dataIndex: "startTime",
+                dataIndex: "gmtStart",
                 key: 'startTime',
-                render: (value: number) => {
-                    return moment(value).format('YYYY-MM-DD HH:mm:ss')
+                render: (value: string) => {
+                    return unix2Time(value)
                 },
-                sorter: (a: SExamInfo, b: SExamInfo) => a.startTime - b.startTime
+                sorter: (a: any, b: any) => parseInt(a.gmtStart) - parseInt(b.gmtStart)
             },
             {
                 title: '结束时间',
-                dataIndex: 'endTime',
+                dataIndex: 'gmtEnd',
                 key: 'endTime',
-                render: (value: number) => {
-                    return moment(value).format('YYYY-MM-DD HH:mm:ss')
+                render: (value: string) => {
+                    return unix2Time(value)
                 },
-                sorter: (a: SExamInfo, b: SExamInfo) => a.endTime - b.endTime
+                sorter: (a: any, b: any) => parseInt(a.gmtEnd) - parseInt(b.gmtEnd)
             },
             {
                 title: '考试时长',
                 key: 'examLength',
-                render: (value: number, record: SExamInfo) => {
-                    return TimeDiff(record.startTime, record.endTime)
+                render: (value: number, record: any) => {
+                    return TimeDiff(record.gmtStart, record.gmtEnd)
                 },
-                sorter: (a: SExamInfo, b: SExamInfo) => {
-                    return getDiffSecond(a.startTime, a.endTime) - getDiffSecond(b.startTime, b.endTime)
+                sorter: (a: any, b: any) => {
+                    return getDiffSecond(a.gmtStart, a.gmtEnd) - getDiffSecond(b.gmtStart, b.gmtEnd)
                 }
             }
         ]
         let columns2: any[] = [
             {
                 title: '状态',
-                key: 'id',
-                render: (text: any, record: SExamInfo) => {
-                    const state = TimeRangeState(record.startTime, record.endTime)
+                key: 'state',
+                render: (text: any, record: any) => {
+                    const state = TimeRangeState(record.gmtStart, record.gmtEnd)
                     switch (state) {
                         case "wait":
                             return <Badge status="warning" text="等待中"/>
@@ -165,7 +105,7 @@ class ExamList extends Component<any, any> {
 
                     }
                 },
-                defaultFilteredValue:['wait', 'running'],
+                defaultFilteredValue: ['wait', 'running'],
                 filters: [
                     {
                         text: <Badge status="warning" text="等待中"/>,
@@ -180,47 +120,49 @@ class ExamList extends Component<any, any> {
                         value: 'running',
                     }
                 ],
-                onFilter: (value: any, record: SExamInfo) => {
-                    return TimeRangeState(record.startTime, record.endTime) === value
+                onFilter: (value: any, record: any) => {
+                    return TimeRangeState(record.gmtStart, record.gmtEnd) === value
                 }
             }
         ]
         let columns3: any[] = [
             {
                 title: '管理组',
-                dataIndex: 'manageGroup',
                 key: 'manageGroup',
+                render: (text: any, record: any) => {
+                    return isValueEmpty(record.managerGroupDTO) ?
+                        "" : record.managerGroupDTO.groupId + " (" + record.managerGroupDTO.title + ")"
+                }
             },
             {
                 title: '创建者',
-                dataIndex: 'owner',
+                dataIndex: 'username',
                 key: 'owner',
             },
             {
                 title: '操作',
                 key: 'operator',
-                render: (text: any, record: SExamInfo) => {
-                    const isStart = record.startTime < Date.now()
-                    // console.log(isStart)
+                render: (text: any, record: any) => {
+                    const isStart = record.gmtStart < Date.now()
                     return <Space>
                         <ExamForm
                             type={'update'}
-                            title={record.title}
-                            examID={record.id}
-                            update={this.update}
+                            title={record.examTitle}
+                            examID={record.examId}
                             isStart={isStart}
                         />
                         <ExportExcel
                             ButtonText={"导出结果"}
                             ButtonType={"link"}
-                            getJson={() => getExamJson(record.id)}
-                            fileName={record.title + "_" + Date.now() + "_结果导出"}
+                            getJson={() => getExamJson(record.examId)}
+                            fileName={record.examTitle + "_" + Date.now() + "_结果导出"}
                         />
-                        <SubmissionList examId={record.id} setNowExamId={this.setNowExamId}/>
+                        {/*<SubmissionList/>*/}
                     </Space>
                 }
             }
         ]
+
         if (this.props.type !== "manage") {
             columns = columns.concat(columns2)
         } else {
@@ -229,23 +171,11 @@ class ExamList extends Component<any, any> {
 
         return (
             <>
-                <SubmissionModal getSubmission={this.getSubmission}/>
-                <Table
+                <TableWithPagination
                     size={"small"}
-                    pagination={{
-                        showQuickJumper: true,
-                        defaultCurrent: 1,
-                        defaultPageSize: 20,
-                        total: this.state.total,
-                        onChange: this.getList,
-                        showSizeChanger: true
-                    }}
                     columns={columns}
-                    dataSource={
-                        this.props.type === "manage" ?
-                            this.state.ExamManageListInfo :
-                            this.state.ExamListInfo
-                    }
+                    API={this.props.type === "manage" ? mApi.getExamList : eApi.getExamList}
+                    name={"ExamList"}
                 />
             </>
         )

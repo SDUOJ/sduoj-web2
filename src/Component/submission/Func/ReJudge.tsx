@@ -2,7 +2,7 @@ import {withTranslation} from "react-i18next";
 import {ReloadOutlined} from "@ant-design/icons";
 import {Button, message} from "antd";
 import React from "react";
-import {ck} from "../../Utils/empty";
+import {ck} from "../../../Utils/empty";
 
 const ReJudge = (props: any) => {
     return (

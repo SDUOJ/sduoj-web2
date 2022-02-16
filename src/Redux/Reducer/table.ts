@@ -29,12 +29,17 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
 
         case "addTableVersion":
             initTableData(action.name)
-            State.tableData[action.name].tableVersion += 1
+            const nv = State.tableData[action.name].tableVersion
+            State.tableData[action.name].tableVersion = Math.abs(nv) + 1
             break
 
         case "setDataSource":
             initTableData(action.name)
             State.tableData[action.name].dataSource = action.data
+            if(action.add) {
+                const nv = State.tableData[action.name].tableVersion
+                State.tableData[action.name].tableVersion = -(Math.abs(nv) + 1)
+            }
             break
 
         default:

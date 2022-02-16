@@ -2,7 +2,8 @@ import {TopSubmissionInfoType} from "../../Type/ISubmission";
 
 export type SubmissionAction =
     setTopSubmission |
-    setSubmissionModalVis
+    setSubmissionModalVis |
+    setSubmissionListInfo
 
 
 export interface setTopSubmission {
@@ -14,4 +15,10 @@ export interface setTopSubmission {
 export interface setSubmissionModalVis {
     type: "setSubmissionModalVis"
     data: boolean
+}
+
+export interface setSubmissionListInfo{
+    type: "setSubmissionListInfo",
+    key: string
+    data: any
 }

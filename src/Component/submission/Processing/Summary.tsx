@@ -1,14 +1,19 @@
 import {withTranslation} from "react-i18next";
 import Title from "antd/es/typography/Title";
 import {Button, Card, Col, List, Progress, Row, Space, Statistic, Table} from "antd";
-import JudgeResult from "../JudgeResult";
+import JudgeResult from "./JudgeResult";
 import {StateList, SubmissionMap, TestCaseStates} from "../../../Type/ISubmission";
 import {unix2Time} from "../../../Utils/Time";
 import TestCase from "../TestCase";
 import cApi from "../../../Utils/API/c-api";
-import ReJudge from "../ReJudge";
-import Invalidate from "../Invalidate";
-import DownloadTestCase from "../DownloadTestCase";
+import ReJudge from "../Func/ReJudge";
+import Invalidate from "../Func/Invalidate";
+import DownloadTestCase from "../Func/DownloadTestCase";
+import {connect} from "react-redux";
+import {UserState} from "../../../Type/Iuser";
+import {TableState} from "../../../Type/ITable";
+import {Dispatch} from "react";
+import judgeAuth from "../../../Utils/judgeAhtu";
 
 const Summary = (props: any) => {
     const {TestCaseStateList, submissionInfo} = props
@@ -63,7 +68,7 @@ const Summary = (props: any) => {
                                             {props.testcaseMod !== "disable" &&
                                             info.firstUnACCaseNumber !== undefined &&
                                             submissionInfo.judgeResult !== 99 && (
-                                                <span style={{fontWeight: "bold"}}>
+                                                <span>
                                                     ({props.t("OnTestCase")}{info.firstUnACCaseNumber})
                                                 </span>
                                             )}
@@ -102,24 +107,24 @@ const Summary = (props: any) => {
                             ]}
                         />
                     </Card>
-                    <Card
-                        size={"small"}
-                        title={<span style={{fontWeight: "bold"}}>操作</span>}
-                        style={{marginTop: 20}}
-                    >
-
-                        <Space direction={"horizontal"}>
-                            <ReJudge
-                                API={cApi.rejudge}
-                                data={[submissionInfo.submissionId]}
-                                afterSuccess={props.refresh}
-                            />
-                            <Invalidate
-                                API={cApi.invalidateSubmission}
-                                data={{submissionId: submissionInfo.submissionId}}
-                                afterSuccess={props.refresh}
-                            />
-                            {/*此处需要传入：
+                    {judgeAuth(props.roles, ["admin", "superadmin"]) && (
+                        <Card
+                            size={"small"}
+                            title={<span style={{fontWeight: "bold"}}>操作</span>}
+                            style={{marginTop: 20}}
+                        >
+                            <Space direction={"horizontal"}>
+                                <ReJudge
+                                    API={cApi.rejudge}
+                                    data={[submissionInfo.submissionId]}
+                                    afterSuccess={props.refresh}
+                                />
+                                <Invalidate
+                                    API={cApi.invalidateSubmission}
+                                    data={{submissionId: submissionInfo.submissionId}}
+                                    afterSuccess={props.refresh}
+                                />
+                                {/*此处需要传入：
                             1. 获取测试单信息的异步函数
                             2. 当前的测试点信息
 
@@ -128,21 +133,22 @@ const Summary = (props: any) => {
                             2. 打包下载全部测试点（弹窗确认）
                             3. 选择测试点进行下载（弹窗，可以多选，可以单点下载）
                             */}
-                            <DownloadTestCase
-                            />
+                                <DownloadTestCase
+                                />
 
-                        </Space>
-                    </Card>
+                            </Space>
+                        </Card>
+                    )}
                 </Col>
             </Row>
-            {props.submissionInfo.judgeResult !== 99 && (
+            {props.submissionInfo.judgeResult !== 99 && TestCaseStateList.length !== 0 && (
                 <Card
                     size="small"
                     title={<span style={{fontWeight: "bold"}}>{props.t("Statistics")}</span>}
                     className={"card"}
                 >
                     <Row>
-                        {props.scoreMod !== "disable" && (
+                        {props.scoreMod !== "disable" && props.sumScore !== undefined && (
                             <Col className={"Progress-set"} span={6}>
                                 {props.scoreMod === "show" && (
                                     <>
@@ -172,47 +178,65 @@ const Summary = (props: any) => {
                                 )}
                             </Col>
                         )}
-                        <Col className={"Progress-set"} span={6}>
-                            {
-                                [''].map(() => {
-                                    let obj: any = {
-                                        percent: 100,
-                                        status: "exception"
-                                    }
-                                    if (info.mxTime <= props.TimeLimit)
-                                        obj = {success: {percent: info.mxTime / props.TimeLimit * 100}}
-                                    return (
-                                        <Progress
-                                            {...obj}
-                                            type="dashboard"
-                                            format={() => `${info.mxTime} / ${props.TimeLimit} ms`}
-                                        />
-                                    )
-                                })
-                            }
-                            <span>{props.t("MaximumTime")}</span>
-                        </Col>
-                        <Col className={"Progress-set"} span={6}>
-                            {
-                                [''].map(() => {
-                                    let obj: any = {
-                                        percent: 100,
-                                        status: "exception"
-                                    }
-                                    if (info.mxMem <= props.MemoryLimit)
-                                        obj = {success: {percent: info.mxMem / props.MemoryLimit * 100}}
-                                    return (
-                                        <Progress
-                                            {...obj}
-                                            type="dashboard"
-                                            format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(props.MemoryLimit / 1024)} MB`}
-                                        />
-                                    )
-                                })
-                            }
-                            <span>{props.t("MaximumMemory")}</span>
-                        </Col>
-                        {props.scoreMod !== "disable" && (
+                        {props.TimeLimit === undefined && (
+                            <Col span={6} style={{margin: "auto"}}>
+                                <Statistic title={props.t("MaximumTime")}
+                                           value={info.mxTime}
+                                           suffix="ms"/>
+                            </Col>
+                        )}
+                        {props.TimeLimit !== undefined && (
+                            <Col className={"Progress-set"} span={6}>
+                                {
+                                    [''].map(() => {
+                                        let obj: any = {
+                                            percent: 100,
+                                            status: "exception"
+                                        }
+                                        if (info.mxTime <= props.TimeLimit)
+                                            obj = {success: {percent: info.mxTime / props.TimeLimit * 100}}
+                                        return (
+                                            <Progress
+                                                {...obj}
+                                                type="dashboard"
+                                                format={() => `${info.mxTime} / ${props.TimeLimit} ms`}
+                                            />
+                                        )
+                                    })
+                                }
+                                <span>{props.t("MaximumTime")}</span>
+                            </Col>
+                        )}
+                        {props.MemoryLimit === undefined && (
+                            <Col span={6} style={{margin: "auto"}}>
+                                <Statistic title={props.t("MaximumMemory")}
+                                           value={Math.floor(info.mxMem / 1024)}
+                                           suffix="MB"/>
+                            </Col>
+                        )}
+                        {props.MemoryLimit !== undefined && (
+                            <Col className={"Progress-set"} span={6}>
+                                {
+                                    [''].map(() => {
+                                        let obj: any = {
+                                            percent: 100,
+                                            status: "exception"
+                                        }
+                                        if (info.mxMem <= props.MemoryLimit)
+                                            obj = {success: {percent: info.mxMem / props.MemoryLimit * 100}}
+                                        return (
+                                            <Progress
+                                                {...obj}
+                                                type="dashboard"
+                                                format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(props.MemoryLimit / 1024)} MB`}
+                                            />
+                                        )
+                                    })
+                                }
+                                <span>{props.t("MaximumMemory")}</span>
+                            </Col>
+                        )}
+                        {props.scoreMod !== "disable" && props.sumScore !== undefined && (
                             <Col className={"Progress-set-Statistic"} span={6}>
                                 <Statistic title={props.t("TotalRunningTime")}
                                            value={info.SumTime}
@@ -223,7 +247,7 @@ const Summary = (props: any) => {
                                            suffix="MB"/>
                             </Col>
                         )}
-                        {props.scoreMod === "disable" && (
+                        {(props.scoreMod === "disable" ||  props.sumScore === undefined) && (
                             <>
                                 <Col span={6} style={{margin: "auto"}}>
                                     <Statistic title={props.t("TotalRunningTime")}
@@ -242,12 +266,14 @@ const Summary = (props: any) => {
                     </Row>
                 </Card>
             )}
-            {props.testcaseMod === "show" && props.submissionInfo.judgeResult !== 99 && (
+            {props.testcaseMod === "show" &&
+            props.submissionInfo.judgeResult !== 99 &&
+            TestCaseStateList.length !== 0 && (
                 <>
                     <Title level={4}> {props.t("JudgeResult")}</Title>
                     <JudgeResult
                         data={TestCaseStateList}
-                        scoreMod={props.scoreMod}
+                        scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
                         sumScore={props.sumScore}
                     />
                 </>
@@ -256,4 +282,16 @@ const Summary = (props: any) => {
     )
 }
 
-export default withTranslation()(Summary)
+const mapStateToProps = (state: any) => {
+    const UState: UserState = state.UserReducer
+    return {
+        roles: UState.userInfo?.roles
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withTranslation()(Summary))

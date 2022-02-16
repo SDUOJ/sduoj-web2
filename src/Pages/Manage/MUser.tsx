@@ -126,7 +126,7 @@ class MUser extends Component<any, any> {
                     <TableWithSelection
                         name={"UserList"}
                         search={true}
-                        colData={colData}
+                        columns={colData}
                         API={MApi.getUserList}
                         size={"small"}
                         rowKey={"userId"}
