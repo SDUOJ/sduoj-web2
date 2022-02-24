@@ -56,6 +56,7 @@ const TableWithPagination = (props: any) => {
             searchKey: searchKey === undefined ? searchText : searchKey,
             ...moreProps
         }).then((data: any) => {
+            if(data.rows === null) data.rows = []
             if (props.APIRowsTransForm !== undefined) {
                 setTableData(props.APIRowsTransForm(data.rows))
             } else setTableData(data.rows)

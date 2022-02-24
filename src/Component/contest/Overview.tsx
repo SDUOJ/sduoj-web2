@@ -22,6 +22,7 @@ const Overview = (props: any) => {
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "1200px", margin: "0 auto"}}>
                     <Table
+                        className={"overview-table"}
                         size={"middle"}
                         dataSource={contestInfo?.problems}
                         pagination={false}

@@ -1,0 +1,20 @@
+.rowBase {
+    height: 60px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.rowBase .ant-table-cell {
+    padding: 2px;
+}
+
+.RankTable .ant-table-cell{
+    text-align: center;
+    margin: 0 auto;
+    padding: 2px;
+}
+
+.ProHeader .ant-table-cell{
+    padding-top: 0;
+    padding-bottom: 0;
+}

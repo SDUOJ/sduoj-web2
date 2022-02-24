@@ -529,3 +529,12 @@ h5.TestCase-text {
     display: inline-block;
     vertical-align: middle;
 }
+
+.overview-table .ant-table-cell{
+    text-align: center;
+    margin: 0 auto;
+}
+
+.overview-table .TestCase-text{
+    text-align: center;
+}

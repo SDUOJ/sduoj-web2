@@ -8,10 +8,10 @@ import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
 import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import Timer from "../../Component/exam/Timer";
 import Countdown from "antd/lib/statistic/Countdown";
+import {isValueEmpty} from "../../Utils/empty";
 
 
 class CContest extends Component<any, any> {
-
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -24,6 +24,10 @@ class CContest extends Component<any, any> {
                 myGroup: res
             })
         })
+        this.getUpComing()
+    }
+
+    getUpComing = () => {
         cApi.getUpcomingContest({groupId: undefined}).then((res: any) => {
             this.setState({
                 upComing: res
@@ -159,13 +163,13 @@ class CContest extends Component<any, any> {
                                 </div>
                             </Col>
                             <Col span={7}>
-                                {this.state.upComing !== undefined && (
+                                {!isValueEmpty(this.state.upComing) && (
                                     <Card
                                         title={"即将到来"}
                                         className={"smallBodyPadding bodyCenter"}
                                     >
                                         <div>
-                                            <Button type={"link"} size={"large"} onClick={()=>{
+                                            <Button type={"link"} size={"large"} onClick={() => {
                                                 this.props.history.push("/v2/contest/" + this.state.upComing.contestId)
                                             }}>
                                                 {this.state.upComing.contestTitle}
@@ -178,6 +182,7 @@ class CContest extends Component<any, any> {
                                                     className={"contestTimer"}
                                                     value={parseInt(this.state.upComing.gmtStart)}
                                                     format="H 时 m 分 s 秒"
+                                                    onFinish={this.getUpComing}
                                                 />
                                             </Space>
                                         </div>

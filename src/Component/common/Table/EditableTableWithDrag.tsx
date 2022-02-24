@@ -10,7 +10,6 @@ import mApi from "Utils/API/m-api"
 import Paragraph from "antd/lib/typography/Paragraph";
 import {examProblemType} from "../../../Type/IExam";
 import {ck, get} from "../../../Utils/empty";
-import deepClone from "Utils/deepClone";
 
 
 const EditableTableWithDrag = (props: any) => {
@@ -26,8 +25,8 @@ const EditableTableWithDrag = (props: any) => {
     const [TableData, setTableDataX] = useState<any[]>(ck(props.initData, []))
     const [TableDataHis, setTableDataHis] = useState<any>({})
     const setTableData = (data: any) => {
-        // console.log("setTableData", data)
-        setTableDataX(deepClone(data))
+        console.log("setTableData", data)
+        setTableDataX([...data])
     }
 
     const [problemInfoLoading, setProblemInfoLoading] = useState<string[]>([])   // 题目信息是否正在加载
@@ -39,7 +38,7 @@ const EditableTableWithDrag = (props: any) => {
         }
     }>({})  // 根据题号请求得到的题目信息的缓存
     const setProblemInfoCache = (data: any) => {
-        setProblemInfoCacheX(deepClone(data))
+        setProblemInfoCacheX({...data})
     }
 
     const [problemDescriptionLoading, setProblemDescriptionLoading] = useState<string[]>([])   // 题目描述是否正在加载
@@ -49,17 +48,17 @@ const EditableTableWithDrag = (props: any) => {
         }
     }>({})  // 根据题号请求得到的题目描述的缓存
     const setProblemDescriptionCache = (data: any) => {
-        setProblemDescriptionCacheX(deepClone(data))
+        setProblemDescriptionCacheX({...data})
     }
 
     useEffect(() => {
-        console.log("update", TableData, TableDataHis, problemInfoCache, problemDescriptionCache)
+        // console.log("update", TableData, TableDataHis, problemInfoCache, problemDescriptionCache)
         let newTableData: any[] = [], use = false, useHis = false
         TableData.map((value) => {
             if (strMatch(value.ProblemCode) !== null) {
 
                 let obj: any = {}, updateNum = 0, forceUpdate = false
-
+                // 根据是否已经加载过数据，判断是否更新当前区域
                 if (TableDataHis[value.id] !== value.ProblemCode) {
                     TableDataHis[value.id] = value.ProblemCode
                     forceUpdate = true
@@ -90,10 +89,10 @@ const EditableTableWithDrag = (props: any) => {
                     })
                     use = true
                 } else newTableData.push(value)
-
             } else newTableData.push(value)
         })
-        if (use) setTableDataX(newTableData)
+        // console.log("use", use, "useHis", useHis)
+        if (use) setTableData(newTableData)
         if (useHis) setTableDataHis(TableDataHis)
     }, [TableData, TableDataHis, problemInfoCache, problemDescriptionCache])
 

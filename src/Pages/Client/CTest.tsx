@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, useState} from "react";
 import {withRouter} from "react-router-dom";
 import EditableTableWithDrag from "../../Component/common/Table/EditableTableWithDrag";
 import {isValueEmpty} from "../../Utils/empty";
@@ -15,47 +15,42 @@ import {ClockCircleOutlined, LockOutlined, TeamOutlined} from "@ant-design/icons
 import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import {RunningResultList, StateList, SubmissionMap} from "../../Type/ISubmission";
 import TestCase from "../../Component/submission/TestCase";
+import ProblemAddForm from "../../Component/problem/ProblemAddForm";
 
-class CTest extends Component<any, any> {
+const CTest = (props: any) => {
 
-
-    constructor(props: any, context: any) {
-        super(props, context);
-
-    }
+    const [data, setData] = useState()
 
 
-    render() {
-        return (
-           <>
+    return (
+        <>
+            <div style={{width: "1250px"}}>
+                <EditableTableWithDrag
+                    type={"problem"}
+                    editable={true}
+                    problemType={"program"}
+                    initNewLine={(data: any[]) => {
+                        const length = data.length
+                        const last = length === 0 ? undefined : data[data.length - 1]
+                        const code = isValueEmpty(last?.ProblemCode) ? undefined : last?.ProblemCode
+                        const score = last?.ProblemScore
+                        const submitNumber = last?.ProblemSubmitNumber
+                        const number = code === undefined ? 0 : parseInt(code.substr(-4))
+                        const NewCode = code === undefined ? undefined : code.substr(0, code.length - 4) + (number + 1).toString()
+                        return {
+                            id: Date.now(),
+                            ProblemCode: NewCode,
+                            ProblemScore: score,
+                            ProblemSubmitNumber: submitNumber,
+                        }
+                    }}
+                />
+            </div>
+        </>
+    );
 
-           </>
-        );
-    }
 
 
-    // <div style={{width: "1250px"}}>
-    //     <EditableTableWithDrag
-    //         type={"problem"}
-    //         editable={true}
-    //         problemType={"program"}
-    //         initNewLine={(data: any[]) => {
-    //             const length = data.length
-    //             const last = length === 0 ? undefined : data[data.length - 1]
-    //             const code = isValueEmpty(last?.ProblemCode) ? undefined : last?.ProblemCode
-    //             const score = last?.ProblemScore
-    //             const submitNumber = last?.ProblemSubmitNumber
-    //             const number = code === undefined ? 0 : parseInt(code.substr(-4))
-    //             const NewCode = code === undefined ? undefined : code.substr(0, code.length - 4) + (number + 1).toString()
-    //             return {
-    //                 id: Date.now(),
-    //                 ProblemCode: NewCode,
-    //                 ProblemScore: score,
-    //                 ProblemSubmitNumber: submitNumber,
-    //             }
-    //         }}
-    //     />
-    // </div>
 }
 
 export default withRouter(CTest)

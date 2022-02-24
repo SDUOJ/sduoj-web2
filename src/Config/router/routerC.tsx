@@ -104,6 +104,13 @@ export const routerC_Contest_M: IRouter[] = [
         path: "/v2/contest/:contestId/rank",
         exact: true,
         component: lazy(() => import("../../Component/contest/Rank"))
+    },
+    {
+        id: 5,
+        title_i18n: "Register",
+        path: "/v2/contest/:contestId/register",
+        exact: true,
+        component: lazy(()=> import("../../Component/contest/Register"))
     }
 ]
 
