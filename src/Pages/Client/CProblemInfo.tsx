@@ -38,8 +38,8 @@ const CProblemInfo = (props: any) => {
 
     // 在已经拿到更新的值之后才进行传递，确保不会闪烁
     const [problemInfoX, setProblemInfoX] = useState()
-    useEffect(()=>{
-        if(problemInfo !== undefined){
+    useEffect(() => {
+        if (problemInfo !== undefined) {
             setProblemInfoX(problemInfo)
         }
     }, [problemInfo])
@@ -82,13 +82,15 @@ const CProblemInfo = (props: any) => {
                                     problemInfo={problemInfoX}
                                 />
                             </div>
-                            <div style={{marginTop: 30}}>
-                                <RecentSubmissionList
-                                    name={"Pro-SubmissionList-" + problemCode}
-                                    API={SubmissionListAPI}
-                                    QuerySubmissionAPI={QuerySubmissionAPI}
-                                />
-                            </div>
+                            {props.username !== undefined && (
+                                <div style={{marginTop: 30}}>
+                                    <RecentSubmissionList
+                                        name={"Pro-SubmissionList-" + problemCode}
+                                        API={SubmissionListAPI}
+                                        QuerySubmissionAPI={QuerySubmissionAPI}
+                                    />
+                                </div>
+                            )}
                         </Col>
                     </Row>
 
