@@ -17,19 +17,22 @@ const Rank = (props: any) => {
 
 
     useEffect(() => {
+        console.log(timeState)
         cApi.getRank({contestId: contestId}).then((res: any) => {
-            if(timeState === "running")
-            setData(res.map((value: any, index: number) => {
-                return {
-                    ...value,
-                    rank: index + 1
-                }
-            }))
+            console.log(timeState, res)
+            if (timeState === "end")
+                setData(res.map((value: any, index: number) => {
+                    return {
+                        ...value,
+                        rank: index + 1
+                    }
+                }))
         })
-    }, [rankInfo, setRankInfo, setData])
+    }, [rankInfo, setRankInfo, setData, contestId, timeState])
 
     const problemColumns = []
     let tableWidth = 330
+    const problemWidth = 90
 
     if (contestInfo !== undefined) {
         for (const x of contestInfo.problems) {
@@ -46,15 +49,15 @@ const Rank = (props: any) => {
                         </div>
                     </div>
                 ),
-                width: 80,
+                width: problemWidth,
                 render: (text: any, row: any) => {
                     const SData = row.submissions.find((value: any) => {
                         return value[0] === x.problemCode
                     })
                     if (SData === undefined) return <></>
                     let color = "orange"
-                    if(SData[3] === 1) color = "green"
-                    if(SData[2] === 0) color = "res"
+                    if (SData[3] === 1) color = "green"
+                    if (SData[2] === 0) color = "res"
                     return (
                         <div>
                             {contestInfo.features.mode === "ioi" && (
@@ -72,7 +75,7 @@ const Rank = (props: any) => {
                     )
                 }
             })
-            tableWidth += 80
+            tableWidth += problemWidth
         }
     }
 

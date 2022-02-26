@@ -21,7 +21,7 @@ const ContestHeader = (props: any) => {
     const url = props.location.pathname
     const contestInfo = getContestInfo(contestId)
 
-    console.log(contestInfo)
+    // console.log(contestInfo)
 
     const menuData = [
         {name: "Register", link: "/v2/contest/" + contestId + "/register", re: /\/v2\/contest\/.*\/register/g},
