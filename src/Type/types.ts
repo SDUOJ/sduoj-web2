@@ -43,7 +43,7 @@ export interface studentBasic {
 
 export interface functionTemplate {
     judgeTemplateId: number,
-    isShowFunctionTemplate: boolean,
+    isShowFunctionTemplate: number,
     functionTemplate?: string,
     initialTemplate?: string
 }

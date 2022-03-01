@@ -13,6 +13,7 @@ import {JudgeTemplate2lang} from "../../Utils/JudgeTemplate2lang";
 import {fileUpload} from "../../Utils/fileUpload";
 import {MaxCodeLength} from "../../Config/constValue";
 import {UserState} from "../../Type/Iuser";
+import {functionTemplate} from "../../Type/types";
 
 
 export interface SubmitPropsType {
@@ -21,6 +22,7 @@ export interface SubmitPropsType {
     TopSubmissionInfo: TopSubmissionInfoType    // 当前提交的题目信息
     LeftSubmitCount?: number                    // 剩余提交次数
     JudgeTemplates: JudgeTemplateAllType[]      // 评测模板
+    FuncTemplates: any
 }
 
 const Submit = (props: SubmitPropsType & any) => {
@@ -43,6 +45,18 @@ const Submit = (props: SubmitPropsType & any) => {
                 message.error("代码不能为空")
                 return
             }
+
+            if (props.FuncTemplates !== undefined) {
+                let fid = props.FuncTemplates.findIndex((v: any) => {
+                    return v.judgeTemplateId === value.JudgeTemplate
+                })
+                if (fid !== -1) {
+                    const funcTemplate: functionTemplate = props.FuncTemplates[fid]
+                    if (funcTemplate.functionTemplate !== undefined)
+                        codex = funcTemplate.functionTemplate + codex
+                }
+            }
+
             props.API(value.JudgeTemplate, codex, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
@@ -164,44 +178,75 @@ const Submit = (props: SubmitPropsType & any) => {
                                 }
                                 if (props.JudgeTemplates[jtId].acceptFileExtensions.findIndex((value: string) => value === "zip" || value === ".zip") === -1) {
                                     // 正常的代码提交形式
-                                    return (
-                                        <>
-                                            <Form.Item label={"文件"}>
-                                                <Upload
-                                                    multiple={false}
-                                                    accept={accept}
-                                                    customRequest={(obj: any) => {
-                                                        obj.onSuccess((body: any) => {
-                                                        })
-                                                    }}
-                                                    listType={"text"}
-                                                    beforeUpload={(file: any) => {
-                                                        const fileReader = new FileReader();
-                                                        fileReader.readAsText(file);
-                                                        fileReader.onload = (event) => {
-                                                            try {
-                                                                const str = event.target?.result as string
-                                                                if (str.length > MaxCodeLength)
-                                                                    message.error("上传文件字符数超过" + MaxCodeLength)
-                                                                setCode(str.substr(0, MaxCodeLength))
-                                                            } catch (e) {
-                                                                message.error('文件解析失败！');
+                                    const tid = props.JudgeTemplates[jtId].id
+                                    console.log("tid", tid)
+                                    let fid
+                                    if (props.FuncTemplates !== undefined &&
+                                        (fid = props.FuncTemplates.findIndex((value: any) => {
+                                            return value.judgeTemplateId === tid
+                                        })) !== -1) {
+                                        console.log("fid", fid)
+                                        const funcTemplate: functionTemplate = props.FuncTemplates[fid]
+                                        if (CodeMirror !== funcTemplate.initialTemplate) setCodeMirror(funcTemplate.initialTemplate)
+                                        if (code !== funcTemplate.initialTemplate) setCode(funcTemplate.initialTemplate)
+                                        return (
+                                            <>
+                                                {funcTemplate.isShowFunctionTemplate === 1 && (
+                                                    <Form.Item label={"起始代码"}>
+                                                        <pre>起始代码为只读模式，将在编译前被插入到答案代码的上方</pre>
+                                                        <CodeEditor
+                                                            lang={JudgeTemplate2lang(jtId)}
+                                                            code={funcTemplate.functionTemplate} readOnly={true}/>
+                                                    </Form.Item>
+                                                )}
+                                                <Form.Item label={"答案代码"}>
+                                                    <CodeEditor
+                                                        lang={JudgeTemplate2lang(jtId)}
+                                                        code={code} save={setCodeMirror}/>
+                                                </Form.Item>
+                                            </>
+                                        )
+                                    } else {
+                                        return (
+                                            <>
+                                                <Form.Item label={"文件"}>
+                                                    <Upload
+                                                        multiple={false}
+                                                        accept={accept}
+                                                        customRequest={(obj: any) => {
+                                                            obj.onSuccess((body: any) => {
+                                                            })
+                                                        }}
+                                                        listType={"text"}
+                                                        beforeUpload={(file: any) => {
+                                                            const fileReader = new FileReader();
+                                                            fileReader.readAsText(file);
+                                                            fileReader.onload = (event) => {
+                                                                try {
+                                                                    const str = event.target?.result as string
+                                                                    if (str.length > MaxCodeLength)
+                                                                        message.error("上传文件字符数超过" + MaxCodeLength)
+                                                                    setCode(str.substr(0, MaxCodeLength))
+                                                                } catch (e) {
+                                                                    message.error('文件解析失败！');
+                                                                }
                                                             }
-                                                        }
-                                                    }}
-                                                >
-                                                    <Button icon={<UploadOutlined/>}>上传</Button>
-                                                </Upload>
-                                            </Form.Item>
+                                                        }}
+                                                    >
+                                                        <Button icon={<UploadOutlined/>}>上传</Button>
+                                                    </Upload>
+                                                </Form.Item>
 
-                                            <Form.Item label={"代码"}>
-                                                <CodeEditor
-                                                    lang={JudgeTemplate2lang(jtId)}
-                                                    code={code} save={setCodeMirror}/>
-                                            </Form.Item>
-                                        </>
-                                    )
+                                                <Form.Item label={"代码"}>
+                                                    <CodeEditor
+                                                        lang={JudgeTemplate2lang(jtId)}
+                                                        code={code} save={setCodeMirror}/>
+                                                </Form.Item>
+                                            </>
+                                        )
+                                    }
                                 } else {
+                                    // 自定义 JudgeTemplate 的提交
                                     return (
                                         <Form.Item label={"文件"}>
                                             <Upload
@@ -223,6 +268,7 @@ const Submit = (props: SubmitPropsType & any) => {
 
                                 }
                             }
+                            return undefined
                         })
                     }
                 </Form>

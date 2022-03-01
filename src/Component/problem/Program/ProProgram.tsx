@@ -130,6 +130,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                             QuerySubmissionAPI: props.QuerySubmissionAPI
                         }}
                         JudgeTemplates={problemInfo?.judgeTemplates}
+                        FuncTemplates={problemInfo?.functionTemplates}
                     />
                     <ModalSubmissionList
                         btnProps={{type: "default", disabled: !props.isLogin}}
@@ -185,7 +186,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             </Card>
             {/*测试用例*/}
             {testCase !== undefined && testCase.length !== 0 && (
-                <Card bordered={false} title={props.t("SampleTestCase")} style={{marginTop: "20px"}}>
+                <Card bordered={false} title={props.t("SampleTestCase")} style={{marginTop: "5px"}}>
                     <SampleTestCase testCase={testCase}/>
                 </Card>
             )}

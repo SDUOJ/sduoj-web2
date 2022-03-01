@@ -1,12 +1,15 @@
 import {UnControlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/solarized.css';
+import {ck} from "../../Utils/empty";
 
 interface ICodeEditor {
     lang: "c" | "cpp" | "java" | "sql" | "python"
     code?: string
     className?: string
     save?: any
+    readOnly?: boolean
+
 }
 
 require('codemirror/mode/sql/sql')
@@ -30,6 +33,7 @@ const CodeEditor = (props: ICodeEditor) => {
                 className={"CodeMirror"}
                 value={props.code}
                 options={{
+                    readOnly: ck(props.readOnly, false),
                     mode: langMap[props.lang],
                     theme: 'solarized',
                     indentUnit: 4,
