@@ -5,7 +5,9 @@ import {isValueEmpty} from "./empty";
 
 export function MarkdownPreview(id: string, code?: string | null) {
     if (isValueEmpty(code)) code = ""
-    code = code?.replace(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
+    code = code?.replaceAll(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
+    // 针对原本 $ 换行的公式，加以修正
+    code = code?.replaceAll(/\$\n(.*)\n\$/g, "$ $1 $")
 
     const config = {
         mode: "light",
