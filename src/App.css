@@ -538,3 +538,7 @@ h5.TestCase-text {
 .overview-table .TestCase-text{
     text-align: center;
 }
+
+.Problem-Program .ant-typography-copy{
+    color: black;
+}

@@ -28,8 +28,8 @@ class ExamProgram extends Component<any, any> {
             let testCase: TestCase[] = []
             for (const x of res.problemCaseDTOList) {
                 testCase.push({
-                    "inputData": x.input,
-                    "outputData": x.output
+                    "input": x.input,
+                    "output": x.output
                 })
             }
             let markdown = res.problemDescriptionDTO.markdownDescription

@@ -19,8 +19,8 @@ export const ProNameMap: { [key: string]: string } = {
 export type ChoiceState = "used" | "unused" | "init"
 
 export interface TestCase {
-    inputData: string       // 输入数据
-    outputData: string      // 输出数据
+    input: string       // 输入数据
+    output: string      // 输出数据
 }
 
 export interface JudgeTemplate {

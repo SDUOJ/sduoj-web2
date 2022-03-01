@@ -20,11 +20,11 @@ class SampleTestCase extends Component<any, any> {
                                     <Row align={"top"} style={{fontSize: "16px"}}>
                                         <Col span={11}>
                                             {this.props.t("Input")}:
-                                            <CopyableCode code={value.inputData}/>
+                                            <CopyableCode code={value.input}/>
                                         </Col>
                                         <Col span={11} offset={1}>
                                             {this.props.t("Output")}:
-                                            <CopyableCode code={value.outputData}/>
+                                            <CopyableCode code={value.output}/>
                                         </Col>
                                     </Row>
                                 </>

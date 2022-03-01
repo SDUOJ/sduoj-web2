@@ -142,7 +142,10 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             </div>
         </div>
     )
-    const testCase = problemInfo?.testCase
+
+    console.log(problemInfo)
+
+    const testCase = problemInfo?.problemCaseDTOList
     return (
         <div className={"Problem-Program"}>
             {/*{[''].map(() => {*/}
