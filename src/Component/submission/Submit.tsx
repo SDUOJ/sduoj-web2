@@ -179,13 +179,11 @@ const Submit = (props: SubmitPropsType & any) => {
                                 if (props.JudgeTemplates[jtId].acceptFileExtensions.findIndex((value: string) => value === "zip" || value === ".zip") === -1) {
                                     // 正常的代码提交形式
                                     const tid = props.JudgeTemplates[jtId].id
-                                    console.log("tid", tid)
                                     let fid
                                     if (props.FuncTemplates !== undefined &&
                                         (fid = props.FuncTemplates.findIndex((value: any) => {
                                             return value.judgeTemplateId === tid
                                         })) !== -1) {
-                                        console.log("fid", fid)
                                         const funcTemplate: functionTemplate = props.FuncTemplates[fid]
                                         if (CodeMirror !== funcTemplate.initialTemplate) setCodeMirror(funcTemplate.initialTemplate)
                                         if (code !== funcTemplate.initialTemplate) setCode(funcTemplate.initialTemplate)

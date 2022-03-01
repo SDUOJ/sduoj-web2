@@ -144,7 +144,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
         </div>
     )
 
-    console.log(problemInfo)
+    // console.log(problemInfo)
 
     const testCase = problemInfo?.problemCaseDTOList
     return (
