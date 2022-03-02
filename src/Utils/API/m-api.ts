@@ -276,7 +276,7 @@ export default {
         return request.get("/manage/notice/list", data)
     },
     deleteAnnouncement: async function (data: any){
-        return request.post("/manage/notice/delete", data)
+        return request.get("/manage/notice/delete", data)
     },
 
 }
