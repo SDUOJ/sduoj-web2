@@ -56,6 +56,11 @@ const ModalForm = (props: ModalFormProps & any) => {
                     content: "加载中",
                     duration: 0,
                 })
+                if(props.dataLoader === undefined) {
+                    hied()
+                    message.error("未定义数据加载器")
+                    return
+                }
                 props.dataLoader && props.dataLoader().then((data: any) => {
                     setFormData(data)
                     hied()

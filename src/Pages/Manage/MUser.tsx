@@ -1,12 +1,16 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 import {withRouter} from "react-router";
-import {Role, Sex} from "../../Type/Iuser";
+import {Role, Sex, UserState} from "../../Type/Iuser";
 import TableWithSelection from "../../Component/common/Table/TableWithSelection";
 import {Button, Card, Space, Tag} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
 import ButtonWithSelection from "../../Component/common/Table/ButtonWithSelection";
+import {connect} from "react-redux";
+import {TableState} from "../../Type/ITable";
+import judgeAuth from "../../Utils/judgeAhtu";
+import ModalForm from "../../Component/common/Form/ModalForm";
 
 
 class MUser extends Component<any, any> {
@@ -93,7 +97,16 @@ class MUser extends Component<any, any> {
                 title: this.props.t("operator"),
                 width: "150px",
                 render: (text: any, rows: any) => {
-                    return <Button type={"link"}>{this.props.t("Edit")}</Button>
+                    return (
+                        <ModalForm
+                            type={"update"}
+                            subForm={[
+                                {},
+                                {},
+                                {},
+                            ]}
+                        />
+                    )
                 }
             }
         ]
@@ -109,17 +122,19 @@ class MUser extends Component<any, any> {
                             <ButtonWithSelection
                                 type={"export"}
                                 ButtonText={"批量导出"}
-                                fileName={"用户列表导出_"+Date.now()}
+                                fileName={"用户列表导出_" + Date.now()}
                                 rowKey={"userId"}
                                 tableName={"UserList"}
                             />
-                            <ButtonWithSelection
-                                type={"delete"}
-                                ButtonText={"批量删除"}
-                                rowKey={"userId"}
-                                deleteKey={"username"}
-                                tableName={"UserList"}
-                            />
+                            {judgeAuth(this.props.roles, ['superadmin']) && (
+                                <ButtonWithSelection
+                                    type={"delete"}
+                                    ButtonText={"批量删除"}
+                                    rowKey={"userId"}
+                                    deleteKey={"username"}
+                                    tableName={"UserList"}
+                                />
+                            )}
                         </Space>
                     }
                 >
@@ -137,4 +152,18 @@ class MUser extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(MUser))
+const mapStateToProps = (state: any) => {
+    const UState: UserState = state.UserReducer
+    return {
+        roles: UState.userInfo?.roles
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(
+    withTranslation()(withRouter(MUser))
+)
