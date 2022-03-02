@@ -115,27 +115,25 @@ class UserInfo extends Component<UserInfoProp, UserInfoState> {
                     </Button>,
                 ]}
             >
-                {
-                    [''].map(() => {
-                        if (showTab.length === 1) {
-                            return contentList[showTab[0]]
-                        } else {
-                            return (
-                                <Tabs key="tabs" defaultActiveKey={showTab[0]}>
-                                    {
-                                        showTab.map((v) => {
-                                            return (
-                                                <Tabs.TabPane tab={tabList[v]} key={v}>
-                                                    {contentList[v]}
-                                                </Tabs.TabPane>
-                                            )
-                                        })
-                                    }
-                                </Tabs>
-                            )
-                        }
-                    })
-                }
+                {[''].map(() => {
+                    if (showTab.length === 1) {
+                        return contentList[showTab[0]]
+                    } else {
+                        return (
+                            <Tabs key="tabs" defaultActiveKey={showTab[0]}>
+                                {
+                                    showTab.map((v) => {
+                                        return (
+                                            <Tabs.TabPane tab={tabList[v]} key={v}>
+                                                {contentList[v]}
+                                            </Tabs.TabPane>
+                                        )
+                                    })
+                                }
+                            </Tabs>
+                        )
+                    }
+                })}
             </Modal>
         )
     }
