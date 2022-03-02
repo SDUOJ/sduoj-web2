@@ -30,16 +30,22 @@ class MLayout extends Component<any, any> {
         return (
             <>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
-                    <Sider theme="dark" breakpoint="lg" collapsedWidth="0">
+                    <Sider theme="dark" style={{position: 'fixed', zIndex: 50, height: '100vh', overflow: "auto"}}>
                         <div className="logo">
                             <img src={logo} style={{width: "125px", height: '30px'}}
                                  alt={"SDUOJ-logo"}/>
                         </div>
                         <MMenu id={1} roles={["superadmin"]}/>
                     </Sider>
-                    <Layout style={{minWidth: 500}}>
+                    <Layout style={{minWidth: 500, marginLeft: 200}}>
                         <MHeader/>
-                        <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
+                        <Content style={{
+                            backgroundColor: "#f0f2f5",
+                            paddingTop: 64,
+                            margin: '20px 16px 0',
+                            display: "table",
+                            height: "auto"
+                        }}>
                             <div className="site-layout-background" style={{padding: 24}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
@@ -64,9 +70,7 @@ class MLayout extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const State: ManageState = state.ManageReducer
-    return {
-
-    }
+    return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
