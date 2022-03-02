@@ -8,6 +8,10 @@
     padding: 2px;
 }
 
+.RankTable{
+    position: absolute;
+}
+
 .RankTable .ant-table-cell{
     text-align: center;
     margin: 0 auto;

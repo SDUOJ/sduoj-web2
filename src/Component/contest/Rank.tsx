@@ -20,13 +20,17 @@ const Rank = (props: any) => {
         console.log(timeState)
         cApi.getRank({contestId: contestId}).then((res: any) => {
             console.log(timeState, res)
-            if (timeState === "end")
+            if (timeState === "running"){
                 setData(res.map((value: any, index: number) => {
                     return {
                         ...value,
                         rank: index + 1
                     }
                 }))
+            }
+            if(timeState === "running"){
+
+            }
         })
     }, [rankInfo, setRankInfo, setData, contestId, timeState])
 
@@ -121,7 +125,9 @@ const Rank = (props: any) => {
                         width: 80,
                         render: (text, row) => {
                             let sumScore = 0
+                            let proSet = 
                             row.submissions.map((value: any) => {
+
                                 sumScore += value[2]
                             })
                             return (
