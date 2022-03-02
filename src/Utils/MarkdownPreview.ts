@@ -2,6 +2,8 @@
 import VditorPreview from 'vditor/dist/method.min'
 import {isValueEmpty} from "./empty";
 
+const runHost = "https://oj.qd.sdu.edu.cn"
+// const runHost = "http://exam.yhf2000.cn"
 
 export function MarkdownPreview(id: string, code?: string | null) {
     if (isValueEmpty(code)) code = ""
@@ -13,14 +15,14 @@ export function MarkdownPreview(id: string, code?: string | null) {
         mode: "light",
         cdn: process.env.NODE_ENV === 'development' ?
             "http://oj.cs.sdu.edu.cn:3000/vditor" :
-            "https://oj.qd.sdu.edu.cn/vditor",
+            runHost + "/vditor",
         emojiPath: process.env.NODE_ENV === 'development' ?
             "http://oj.cs.sdu.edu.cn:3000/vditor/dist/images/emoji" :
-            "https://oj.qd.sdu.edu.cn/vditor/dist/images/emoji",
+            runHost + "/vditor/dist/images/emoji",
         theme: {
             path: process.env.NODE_ENV === 'development' ?
                 "http://oj.cs.sdu.edu.cn:3000/vditor/dist/css/content-theme" :
-                "https://oj.qd.sdu.edu.cn/vditor/dist/css/content-theme"
+                runHost + "/vditor/dist/css/content-theme"
         },
         hljs: {
             lineNumber: false
