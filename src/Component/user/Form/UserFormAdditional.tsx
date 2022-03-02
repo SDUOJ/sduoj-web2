@@ -1,30 +1,33 @@
 import React, {Component} from "react";
-import {Checkbox, Form, FormInstance} from "antd";
-import {WithTranslation, withTranslation} from "react-i18next";
+import {Checkbox, Form, Switch} from "antd";
+import {withTranslation} from "react-i18next";
+import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 
-interface IUserFormAdditional extends WithTranslation {
-    userForm: React.Ref<FormInstance<any>> | undefined
-    initData? : any
-}
 
-class UserFormAdditional extends Component<IUserFormAdditional, any> {
+class UserFormAdditional extends Component<any, any> {
     render() {
         return (
             <>
-                <Form
-                    name="userAdditional"
-                    layout={"vertical"}
-                    ref={this.props.userForm}
-                    initialValues={this.props.initData}
-                    scrollToFirstError
+                <Form.Item
+                    name={["features", "banThirdParty"]}
+                    label={this.props.t("Dis3pLogin")}
+                    valuePropName="checked"
                 >
-                    <Form.Item name="Dis3pLogin">
-                        <Checkbox>{this.props.t("Dis3pLogin")}</Checkbox>
-                    </Form.Item>
-                    <Form.Item name="DisEmailUpd">
-                        <Checkbox>{this.props.t("DisEmailUpd")}</Checkbox>
-                    </Form.Item>
-                </Form>
+                    <Switch
+                        checkedChildren={<CheckOutlined/>}
+                        unCheckedChildren={<CloseOutlined/>}
+                    />
+                </Form.Item>
+                <Form.Item
+                    name={["features", "banEmailUpdate"]}
+                    label={this.props.t("DisEmailUpd")}
+                    valuePropName="checked"
+                >
+                    <Switch
+                        checkedChildren={<CheckOutlined/>}
+                        unCheckedChildren={<CloseOutlined/>}
+                    />
+                </Form.Item>
             </>
         )
     }

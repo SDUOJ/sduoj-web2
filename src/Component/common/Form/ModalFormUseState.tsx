@@ -11,7 +11,9 @@ import {ck} from "../../../Utils/empty";
 import {TableState} from "../../../Type/ITable";
 
 interface subFormType {
-
+    component: any
+    label: string
+    key: string
 }
 
 interface ModalFormProps {
@@ -31,7 +33,7 @@ interface ModalFormProps {
     subForm: subFormType[]  // 子表单信息
 }
 
-const ModalForm = (props: ModalFormProps & any) => {
+const ModalFormUseState = (props: ModalFormProps & any) => {
 
     const [formData, setFormData] = useState<{ [key: string]: {} }>(ck(props.initData, {}))
     const [formVis, setFormVis] = useState<boolean>(false)
@@ -171,5 +173,5 @@ export default connect(
     mapDispatchToProps
 )(
     withTranslation()(
-        withRouter(ModalForm)
+        withRouter(ModalFormUseState)
     ))

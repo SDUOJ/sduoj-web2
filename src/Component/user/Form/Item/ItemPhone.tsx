@@ -8,6 +8,9 @@ const ItemPhone = (props: any) => {
             name="phone"
             label={props.t("phone")}
             initialValue={props.value}
+            rules={[{
+                required: props.required
+            }]}
         >
             <Input/>
         </Form.Item>
