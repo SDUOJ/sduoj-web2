@@ -77,16 +77,19 @@ const ModalForm = (props: ModalFormProps & any) => {
 
     useEffect(() => {
         setTimeout(()=>{
-            console.log(formMapRef.current[0]?.current)
             formMapRef.current.forEach((formInstanceRef) => {
-                console.log("ok 1")
                 formInstanceRef.current?.setFieldsValue(saveInitData);
             });
         }, 100)
     }, [formVis])
 
     useEffect(()=>{
-        if(!formVis) setCurrent(0)
+        if(!formVis) {
+            setCurrent(0)
+            formMapRef.current.forEach((formInstanceRef) => {
+                formInstanceRef.current?.resetFields()
+            });
+        }
     }, [formVis])
 
     const submitData = () => {
@@ -137,6 +140,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             </Button>
             {props.subForm.length === 1 && (
                 <Modal
+                    width={props.width}
                     destroyOnClose={true}
                     title={props.title}
                     className={props.className}
@@ -158,6 +162,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                         layout={"vertical"}
                         initialValues={props.initData}
                         scrollToFirstError
+                        preserve={false}
                     >
                         {props.subForm.map((item: any) => item.component)}
                     </Form>
@@ -187,7 +192,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                                 className={props.className}
                                 visible={formVis}
                                 maskClosable={false}
-                                width={1200}
+                                width={props.width ?? 1200}
                                 onCancel={() => {
                                     setFormVis(false)
                                 }}

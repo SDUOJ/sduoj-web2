@@ -2,20 +2,17 @@ import React, {Component, Dispatch} from "react";
 import {withRouter} from "react-router";
 import {Role, Sex, UserState} from "../../Type/Iuser";
 import TableWithSelection from "../../Component/common/Table/TableWithSelection";
-import {Button, Card, Space, Tag} from "antd";
+import {Card, Space, Tag} from "antd";
 import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
 import ButtonWithSelection from "../../Component/common/Table/ButtonWithSelection";
 import {connect} from "react-redux";
-import {TableState} from "../../Type/ITable";
 import judgeAuth from "../../Utils/judgeAhtu";
-import ModalForm from "../../Component/common/Form/ModalFormUseState";
 import UserFormProfile from "../../Component/user/Form/UserFormProfile";
 import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
 import UserFormAdditional from "../../Component/user/Form/UserFormAdditional";
 import mApi from "Utils/API/m-api"
-import deepClone from "../../Utils/deepClone";
 import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
 
 class MUser extends Component<any, any> {
@@ -106,6 +103,7 @@ class MUser extends Component<any, any> {
                         <Space>
                             <ModalFormUseForm
                                 TableName={"UserList"}
+                                width={600}
                                 title={rows.username}
                                 type={"update"}
                                 subForm={[
@@ -167,6 +165,7 @@ class MUser extends Component<any, any> {
                             )}
                             <ModalFormUseForm
                                 TableName={"UserList"}
+                                width={600}
                                 title={"新建用户"}
                                 type={"create"}
                                 subForm={[

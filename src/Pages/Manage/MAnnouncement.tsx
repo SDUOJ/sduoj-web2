@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router";
-import {Button, Card, Space, Tag} from "antd";
+import {Button, Card, Form, Input, Space, Switch, Tag} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
@@ -8,12 +8,24 @@ import {unix2Time} from "../../Utils/Time";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import AnnouncementForm from "../../Component/announcement/AnnouncementForm";
 import TableRowDeleteButton from "../../Component/common/Table/TableRowDeleteButton";
+import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
+import ItemTop from "../../Component/announcement/Form/Item/ItemTop";
+import ItemEditor from "../../Component/common/Form/Item/ItemEditor";
+import ItemTitle from "../../Component/common/Form/Item/ItemTitle";
 
 
 class MAnnouncement extends Component<any, any> {
 
 
     render() {
+
+        const Form = (
+            <>
+                <ItemTop/>
+                <ItemTitle/>
+                <ItemEditor label={"公告内容"} name={"text"}/>
+            </>
+        )
 
         let colData: any[] = [
             {
@@ -68,9 +80,18 @@ class MAnnouncement extends Component<any, any> {
                 render: (text: any, rows: any) => {
                     return (
                         <Space size={3}>
-                            <AnnouncementForm button={<Button type={"link"} size={"small"}>{this.props.t("Edit")}</Button>}
-                                              title={"修改(" + rows.title + ")"}
-                                              row={rows}
+                            <ModalFormUseForm
+                                TableName={"Announcement"}
+                                title={"编辑 - " + rows.title}
+                                type={"update"}
+                                width={1100}
+                                subForm={[{component: Form}]}
+                                initData={rows}
+                                updateAppendProps={{noticeId: rows.noticeId, userId: rows.userId}}
+                                dataSubmitter={(value: any) => {
+                                    value.top = (value.top ? 1 : 0)
+                                    return MApi.updateAnnouncement(value)
+                                }}
                             />
                             <TableRowDeleteButton
                                 type={"inline"}
@@ -92,11 +113,17 @@ class MAnnouncement extends Component<any, any> {
                     title={"公告列表"}
                     extra={
                         <>
-                            <AnnouncementForm
+                            <ModalFormUseForm
+                                TableName={"Announcement"}
+                                title={"新建"}
                                 type={"create"}
-                                button={<Button icon={<PlusOutlined/>} type={"primary"}> 新建 </Button>}
-                                title={"新建"}/>
-
+                                width={1100}
+                                subForm={[{component: Form}]}
+                                dataSubmitter={(value: any) => {
+                                    value.top = (value.top ? 1 : 0)
+                                    return MApi.createAnnouncement(value)
+                                }}
+                            />
                         </>
                     }
                 >
@@ -112,8 +139,7 @@ class MAnnouncement extends Component<any, any> {
     }
 }
 
-export default
-    withTranslation()(
-        withRouter(MAnnouncement)
-    )
+export default withTranslation()(
+    withRouter(MAnnouncement)
+)
 

@@ -39,9 +39,6 @@ const CopiedButton = (props: any) => {
 }
 
 const Editor = (props: EditorProps & any) => {
-    const [value, setValue] = useState<string>(props.value === undefined ? "" : props.value)
-
-
     useEffect(() => {
         const vditor0 = new Vditor("vditor", {
             height: props.height === undefined ? 800 : props.height,
@@ -98,15 +95,15 @@ const Editor = (props: EditorProps & any) => {
                     className: "right",
                     icon: `<img style="height: 16px" src='https://img.58cdn.com.cn/escstatic/docs/imgUpload/idocs/save.svg' alt="save"/>`,
                     click() {
-                        props.save && props.save((vditor0.getValue()))
+                        props.onChange && props.onChange(vditor0.getValue())
                     }
                 }
             ],
             after() {
-                vditor0.setValue(value);
+                vditor0.setValue(props.value === undefined ? "" : props.value);
             },
             blur() {
-                props.save && props.save((vditor0.getValue()))
+                props.onChange && props.onChange(vditor0.getValue())
             },
             upload: {
                 accept: "*/*",
@@ -154,10 +151,6 @@ const Editor = (props: EditorProps & any) => {
             }
         });
     }, [props.langCode])
-
-    const save = () => {
-
-    }
 
     return (
         <>

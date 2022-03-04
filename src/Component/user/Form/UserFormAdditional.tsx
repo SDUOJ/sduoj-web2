@@ -12,6 +12,7 @@ class UserFormAdditional extends Component<any, any> {
                     name={["features", "banThirdParty"]}
                     label={this.props.t("Dis3pLogin")}
                     valuePropName="checked"
+                    rules={[{required: true}]}
                 >
                     <Switch
                         checkedChildren={<CheckOutlined/>}
