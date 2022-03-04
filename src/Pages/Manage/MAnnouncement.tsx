@@ -6,7 +6,6 @@ import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
 import {unix2Time} from "../../Utils/Time";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
-import AnnouncementForm from "../../Component/announcement/AnnouncementForm";
 import TableRowDeleteButton from "../../Component/common/Table/TableRowDeleteButton";
 import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
 import ItemTop from "../../Component/announcement/Form/Item/ItemTop";

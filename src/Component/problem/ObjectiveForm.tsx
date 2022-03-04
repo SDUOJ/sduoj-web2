@@ -9,7 +9,7 @@ import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable
 import {withTranslation} from "react-i18next";
 import {genAnswerList, genEditableList} from "../../Type/IManage";
 import mApi from "Utils/API/m-api"
-import SelectGroup from "../group/SelectGroup";
+import SelectGroup from "../group/Form/Item/ItemSelectGroup";
 import {groupSelection} from "../../Type/Igroup";
 
 // 可拖拽的排序手柄

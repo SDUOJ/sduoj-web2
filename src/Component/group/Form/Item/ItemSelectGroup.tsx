@@ -9,7 +9,7 @@ import mApi from "Utils/API/m-api";
 const {Option} = Select;
 
 
-const SelectGroup = (props: any) => {
+const ItemSelectGroup = (props: any) => {
 
     const [GroupInfo, setGroupInfo] = useState<groupSelection[]>(
         props.groupInfo !== undefined ? props.groupInfo : []
@@ -25,23 +25,20 @@ const SelectGroup = (props: any) => {
     }
 
     return (
-        <>
-            <Form.Item label={props.label} name={props.name}>
-                <Select
-                    mode={props.mode} // "multiple"
-                    showSearch
-                    placeholder="请查询并选择组"
-                    onSearch={(value) => onSearch(value)}
-                >
-                    {
-                        GroupInfo.map((value: groupSelection) => {
-                            return <Option value={value.groupId}>{value.groupId + ": " + value.title}</Option>
-                        })
-                    }
-                </Select>
-            </Form.Item>
-
-        </>
+        <Form.Item label={props.label} name={props.name}>
+            <Select
+                mode={props.mode} // "multiple"
+                showSearch
+                placeholder="请查询并选择组"
+                onSearch={(value) => onSearch(value)}
+            >
+                {
+                    GroupInfo.map((value: groupSelection) => {
+                        return <Option value={value.groupId}>{value.groupId + ": " + value.title}</Option>
+                    })
+                }
+            </Select>
+        </Form.Item>
     );
 }
 
@@ -55,4 +52,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(SelectGroup))
+)(withTranslation()(ItemSelectGroup))

@@ -2,12 +2,15 @@ import {UnControlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/solarized.css';
 import {ck} from "../../Utils/empty";
+import 'codemirror/addon/display/autorefresh'
 
 interface ICodeEditor {
-    lang: "c" | "cpp" | "java" | "sql" | "python"
+    lang: "c" | "cpp" | "java" | "sql" | "python" | "text"
     code?: string
+    value?: string
     className?: string
     save?: any
+    onChange?: any
     readOnly?: boolean
 
 }
@@ -22,7 +25,8 @@ const langMap = {
     c: "text/x-csrc",
     java: "text/x-java",
     sql: "sql",
-    python: "python"
+    python: "python",
+    text: ""
 }
 
 const CodeEditor = (props: ICodeEditor) => {
@@ -31,7 +35,7 @@ const CodeEditor = (props: ICodeEditor) => {
         <>
             <CodeMirror
                 className={"CodeMirror"}
-                value={props.code}
+                value={props.code ?? props.value}
                 options={{
                     readOnly: ck(props.readOnly, false),
                     mode: langMap[props.lang],
@@ -40,8 +44,10 @@ const CodeEditor = (props: ICodeEditor) => {
                     tabSize: 4,
                     lineNumbers: true,
                     lineWrapping: true,
+                    autoRefresh: true
                 }}
                 onChange={(editor, data, value) => {
+                    props.onChange && props.onChange(value)
                     props.save && props.save(value)
                 }}
             />

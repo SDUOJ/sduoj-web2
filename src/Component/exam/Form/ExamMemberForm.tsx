@@ -5,7 +5,7 @@ import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import {ManageState} from "../../../Type/IManage";
 
-import SelectGroup from "../../group/SelectGroup";
+import SelectGroup from "../../group/Form/Item/ItemSelectGroup";
 
 
 // 新建 与 修改

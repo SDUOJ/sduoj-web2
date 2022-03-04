@@ -1,11 +1,14 @@
-import React, {Component} from "react";
+import React, {Component, Dispatch} from "react";
 import {withRouter} from "react-router";
-import {Role, Sex} from "../../Type/Iuser";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
-import {Button, Card, Space, Tag} from "antd";
+import {UserState} from "../../Type/Iuser";
+import {Button, Card} from "antd";
 import TableWithSelection from "../../Component/common/Table/TableWithSelection";
 import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
+import {connect} from "react-redux";
+import {unix2Time} from "../../Utils/Time";
+import JudgeType from "../../Component/problem/From/FormJudgeType";
+import FormJudgeType from "../../Component/problem/From/FormJudgeType";
 
 
 class MGroup extends Component<any, any> {
@@ -16,83 +19,70 @@ class MGroup extends Component<any, any> {
         let colData: any[] = [
             {
                 title: "ID",
-                dataIndex: "userId",
+                dataIndex: "groupId",
                 width: 50,
                 responsive: ["lg", "sm", "xs"]
             },
             {
-                title: this.props.t("username"),
-                dataIndex: "username",
+                title: this.props.t("title"),
+                dataIndex: "title",
                 width: "auto",
                 responsive: ["lg", "sm", "xs"],
             },
             {
-                title: this.props.t("nickname"),
-                dataIndex: "nickname",
+                title: "描述",
+                dataIndex: "description",
                 width: "auto",
                 responsive: ["lg", "sm"],
             },
             {
-                title: this.props.t("sex"),
-                dataIndex: "gender",
-                width: 50,
+                title: "创建时间",
+                dataIndex: "gmtCreate",
+                width: "170px",
                 responsive: ["lg"],
-                render: (sex: Sex) => {
-                    switch (sex) {
-                        case Sex.Male:
-                            return <ManOutlined/>
-                        case Sex.Female:
-                            return <WomanOutlined/>
-                        case Sex.Unknown:
-                            return <QuestionOutlined/>
+                render: (text: any) => {
+                    return unix2Time(text)
+                }
+            },
+            {
+                title: "组长",
+                width: "auto",
+                responsive: ["lg"],
+                render: (text: any, row: any) => {
+                    return row.owner.username + "(" + row.owner.nickname + ")"
+                }
+            },
+            {
+                title: "开放性",
+                dataIndex:"openness",
+                width: "auto",
+                responsive: ["lg"],
+                render: (text: any) => {
+                    switch (text) {
+                        case 0:
+                            return "公开"
+                        case 1:
+                            return "申请"
+                        case 2:
+                            return "私有"
                     }
                 }
             },
             {
-                title: this.props.t("student_id"),
-                dataIndex: "studentId",
+                title: "成员数量",
                 width: "auto",
-                responsive: ["lg"],
-            },
-            {
-                title: this.props.t("sdu_id"),
-                dataIndex: "sduId",
-                width: "auto",
-                responsive: ["lg"],
-            },
-            {
-                title: this.props.t("email"),
-                dataIndex: "email",
-                width: "auto",
-                responsive: ["lg", "sm"],
-            },
-            {
-                title: this.props.t("roles"),
-                width: "200px",
-                render: (text: any, rows: any) => {
-                    return (
-                        <Space size={3}>
-                            {
-                                rows.roles !== null && rows.roles.map((value: Role) => {
-                                    switch (value) {
-                                        case "user":
-                                            return <Tag>{this.props.t("user")}</Tag>
-                                        case "admin":
-                                            return <Tag color={"gold"}>{this.props.t("admin")}</Tag>
-                                        case "superadmin":
-                                            return <Tag color={"red"}>{this.props.t("superadmin")}</Tag>
-                                    }
-                                })
-                            }
-                        </Space>
-                    )
-                }
+                dataIndex: "memberNum",
+                responsive: ["lg"]
             },
             {
                 title: this.props.t("operator"),
                 width: "150px",
-                render: (text: any, rows: any) => {
-                    return <Button type={"link"}>{this.props.t("Edit")}</Button>
+                render: () => {
+                    return (
+                        <>
+                            <Button type={"link"}>{this.props.t("Edit")}</Button>
+                        </>
+                    )
                 }
             }
         ]
@@ -102,18 +92,20 @@ class MGroup extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={false}
-                    title={"题目列表"}
+                    title={"用户组列表"}
                     extra={
                         <>
-                            <Button>a</Button>
+
                         </>
                     }
                 >
                     <TableWithSelection
+                        name={"GroupList"}
                         columns={colData}
-                        API={MApi.getProblemList}
+                        disableSelection={true}
+                        API={MApi.getGroupList}
                         size={"small"}
-                        rowKey={"userId"}
+                        rowKey={"groupId"}
                     />
                 </Card>
             </div>
@@ -121,4 +113,18 @@ class MGroup extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(MGroup))
+const mapStateToProps = (state: any) => {
+    const UState: UserState = state.UserReducer
+    return {
+        roles: UState.userInfo?.roles
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(
+    withTranslation()(withRouter(MGroup))
+)

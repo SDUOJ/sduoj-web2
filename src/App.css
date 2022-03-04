@@ -1,11 +1,12 @@
 @import "~antd/dist/antd.css";
 @import "~vditor/dist/index.css";
-@import "~@ant-design/pro-form/dist/form.css";
-@import '~@ant-design/pro-table/dist/table.css';
-@import '~@ant-design/pro-layout/dist/layout.css';
-@import "~@ant-design/pro-card/dist/card.css";
-@import "~@ant-design/pro-list/dist/list.css";
-@import "~@ant-design/pro-descriptions/dist/descriptions.css";
+@import "~@ant-design/pro-form/dist/form.min.css";
+@import '~@ant-design/pro-table/dist/table.min.css';
+@import '~@ant-design/pro-layout/dist/layout.min.css';
+@import "~@ant-design/pro-card/dist/card.min.css";
+@import "~@ant-design/pro-list/dist/list.min.css";
+@import "~@ant-design/pro-descriptions/dist/descriptions.min.css";
+
 
 .logo {
     height: 32px;
@@ -119,12 +120,15 @@
 .TestCase-text {
     text-align: left;
 }
+
 h3.TestCase-text {
     margin-bottom: 0;
 }
+
 h4.TestCase-text {
     margin-bottom: 0;
 }
+
 h5.TestCase-text {
     margin-bottom: 0;
 }
@@ -165,11 +169,11 @@ h5.TestCase-text {
     font-size: 17px;
 }
 
-.contestTimer .ant-statistic-content{
+.contestTimer .ant-statistic-content {
     font-size: 16px;
 }
 
-.contestHeaderTimer .ant-statistic-content{
+.contestHeaderTimer .ant-statistic-content {
     font-size: 14px;
     color: blue;
 }
@@ -458,70 +462,75 @@ h5.TestCase-text {
     min-height: 500px;
 }
 
-.ant-message{
+.ProblemAddChecker .CodeMirror {
+    min-height: 200px;
+}
+
+.ant-message {
     z-index: 3000;
 }
 
-.ant-card-small > .ant-card-head > .ant-card-head-wrapper > .ant-card-extra{
+.ant-card-small > .ant-card-head > .ant-card-head-wrapper > .ant-card-extra {
     padding: 0;
 }
 
-.ant-card-extra{
+.ant-card-extra {
     padding: 0;
 }
 
-.problemBody .ant-card-body{
+.problemBody .ant-card-body {
     padding-top: 0;
 }
 
-.smallBodyPaddingTop .ant-card-body{
+.smallBodyPaddingTop .ant-card-body {
     padding-top: 1px;
     padding-bottom: 10px;
 }
 
-.smallBodyPadding .ant-card-body{
+.smallBodyPadding .ant-card-body {
     padding: 5px;
 }
 
-.zeroBodyPadding .ant-card-body{
+.zeroBodyPadding .ant-card-body {
     padding: 0;
 }
-.zeroBodyPaddingLeft .ant-card-body{
+
+.zeroBodyPaddingLeft .ant-card-body {
     padding: 5px 15px 30px 0;
 }
 
-.ListPage .ant-list-item{
+.ListPage .ant-list-item {
     padding-top: 0;
     padding-bottom: 0;
 }
 
-.ListPage .ant-form-item{
+.ListPage .ant-form-item {
     margin-top: 5px;
     margin-bottom: 10px;
 }
 
-.ListPage .ant-list-item-meta-title{
+.ListPage .ant-list-item-meta-title {
     font-size: 17px;
     margin-top: 10px;
     margin-bottom: 0;
     margin-left: 15px;
 }
 
-.ListPage .ant-list-item-meta-description{
+.ListPage .ant-list-item-meta-description {
     font-size: 15px;
     margin-top: 10px;
     margin-left: 15px;
 }
 
-.ListPage .ant-list-item-meta{
+.ListPage .ant-list-item-meta {
     margin-bottom: 8px;
 }
 
-.bodyCenter .ant-card-body{
+.bodyCenter .ant-card-body {
     text-align: center;
 }
 
-.circle{
+.circle {
     width: 14px;
     height: 14px;
     border-radius: 50%;
@@ -530,35 +539,38 @@ h5.TestCase-text {
     vertical-align: middle;
 }
 
-.overview-table .ant-table-cell{
+.overview-table .ant-table-cell {
     text-align: center;
     margin: 0 auto;
 }
 
-.overview-table .TestCase-text{
+.overview-table .TestCase-text {
     text-align: center;
 }
 
-.Problem-Program .ant-typography-copy{
+.Problem-Program .ant-typography-copy {
     color: black;
 }
 
 /*滚动条高宽度*/
-::-webkit-scrollbar{
+::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
+
 /*滚动条滑块*/
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
     border-radius: 3px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     background: #c7c4c4;
 }
+
 /*滚动条里面轨道*/
 ::-webkit-scrollbar-track {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2) inset;
 
 }
+
 /*滚动条的小边角*/
 ::-webkit-scrollbar-corner {
     background: transparent;
