@@ -1,6 +1,6 @@
 export default function apiAddress() {
     // const port = "9005"
-    const port = "9000"
+    const port = "9005"
     // if (process.env.NODE_ENV === 'development') return {
     //     CLIENT_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
     //     MANAGE_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',

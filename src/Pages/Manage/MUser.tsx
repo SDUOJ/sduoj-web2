@@ -100,10 +100,10 @@ class MUser extends Component<any, any> {
             },
             {
                 title: this.props.t("operator"),
-                width: "180px",
+                width: "200px",
                 render: (text: any, rows: any) => {
                     return (
-                        <>
+                        <Space>
                             <ModalFormUseForm
                                 TableName={"UserList"}
                                 title={rows.username}
@@ -135,7 +135,7 @@ class MUser extends Component<any, any> {
                                     }}
                                 />
                             )}
-                        </>
+                        </Space>
                     )
                 }
             }
