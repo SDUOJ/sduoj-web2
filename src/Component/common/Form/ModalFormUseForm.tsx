@@ -40,12 +40,13 @@ const ModalForm = (props: ModalFormProps & any) => {
     const BtnTypeMap: { [key: string]: ButtonType } = {
         create: "primary",
         update: "link",
+        fork: "link",
         batchUpdate: "primary"
     }
 
 
     const loadData = () => {
-        if (props.type === "update") {
+        if (props.type === "update" || props.type === "fork") {
             if (props.initData === undefined) {
                 const hied = message.loading({
                     content: "加载中",
@@ -76,15 +77,12 @@ const ModalForm = (props: ModalFormProps & any) => {
     }
 
     useEffect(() => {
-        setTimeout(()=>{
+        setTimeout(() => {
             formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.setFieldsValue(saveInitData);
             });
         }, 100)
-    }, [formVis])
-
-    useEffect(()=>{
-        if(!formVis) {
+        if (!formVis) {
             setCurrent(0)
             formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.resetFields()
@@ -92,8 +90,12 @@ const ModalForm = (props: ModalFormProps & any) => {
         }
     }, [formVis])
 
-    const submitData = () => {
-        form.validateFields().then((value) => {
+    useEffect(() => {
+        props.formName && props.addManageInitData(props.formName, saveInitData)
+    }, [saveInitData])
+
+    const submitData = (values: any) => {
+        const submit = (value: any)=>{
             console.log("inner", value)
             props.updateAppendProps && Object.assign(value, props.updateAppendProps)
             props.dataSubmitter(value).then((res: any) => {
@@ -102,9 +104,15 @@ const ModalForm = (props: ModalFormProps & any) => {
                     props.addTableVersion(props.TableName)
                 message.success("成功")
             })
-        }).catch((e: any) => {
-            message.error('表单不完整')
-        })
+        }
+
+        if(props.subForm.length === 1){
+            form.validateFields().then((value) => {
+               submit(value)
+            }).catch((e: any) => {
+                message.error('表单不完整')
+            })
+        }else submit(values)
     }
 
     return (
@@ -113,7 +121,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 type={ck(props.btnType, BtnTypeMap[props.type])}
                 onClick={loadData}
                 style={
-                    (props.type === "update" || props.btnType === "link") ? {
+                    (props.type === "fork" || props.type === "update" || props.btnType === "link") ? {
                         paddingLeft: 5,
                         paddingRight: 5
                     } : undefined
@@ -133,6 +141,8 @@ const ModalForm = (props: ModalFormProps & any) => {
                             return props.t("create")
                         case "update":
                             return props.t("Edit")
+                        case "fork":
+                            return "克隆"
                         default:
                             return "批量修改"
                     }
@@ -164,25 +174,21 @@ const ModalForm = (props: ModalFormProps & any) => {
                         scrollToFirstError
                         preserve={false}
                     >
-                        {props.subForm.map((item: any) => item.component)}
+                        {props.subForm.map((item: any) => {
+                            return item.component
+                        })}
                     </Form>
                 </Modal>
             )}
             {props.subForm.length !== 1 && (
                 <StepsForm
                     current={current}
-                    onCurrentChange={(currentPage: number)=>{
+                    onCurrentChange={(currentPage: number) => {
                         setCurrent(currentPage)
                     }}
                     formMapRef={formMapRef}
                     onFinish={async (values) => {
-                        props.updateAppendProps && Object.assign(values, props.updateAppendProps)
-                        props.dataSubmitter(values).then((res: any) => {
-                            setFormVis(false)
-                            if (props.TableName !== undefined)
-                                props.addTableVersion(props.TableName)
-                            message.success("成功")
-                        })
+                        submitData(values)
                     }}
                     stepsFormRender={(dom, submitter) => {
                         return (
@@ -224,10 +230,12 @@ const ModalForm = (props: ModalFormProps & any) => {
 }
 
 const mapStateToProps = (state: any) => {
+
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
+    addManageInitData: (key: string, data: any) => dispatch({type: "addManageInitData", key: key, data: data})
 })
 
 export default connect(

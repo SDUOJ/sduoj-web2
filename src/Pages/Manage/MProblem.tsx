@@ -15,6 +15,31 @@ import FormJudgeType from "../../Component/problem/From/FormJudgeType";
 class MProblem extends Component<any, any> {
     render() {
 
+        const beforeSubmit = (value: any) => {
+            value.isPublic = (value.isPublic ? 1 : 0)
+            if (value.functionTemplates === undefined) value.functionTemplates = {}
+            const functionTemplates = []
+            for (const x in value.functionTemplates) {
+                functionTemplates.push({
+                    ...value.functionTemplates[x],
+                    isShowFunctionTemplate: value.functionTemplates[x].isShowFunctionTemplate ? 1 : 0
+                })
+            }
+            value.functionTemplates = functionTemplates
+
+            return value
+        }
+        const beforeUse = (value: any) => {
+            if (value.managerGroups === null) value.managerGroups = []
+            if (value.judgeTemplates === null) value.judgeTemplates = []
+            if (value.functionTemplates !== undefined) {
+                const functionTemplates: any = {}
+                for (const x of value.functionTemplates) functionTemplates[x.judgeTemplateId] = {...x}
+                value.functionTemplates = functionTemplates
+            }
+            return value
+        }
+
         let colData: any[] = [
             {
                 title: "ID",
@@ -79,9 +104,43 @@ class MProblem extends Component<any, any> {
                 render: (text: any, rows: any) => {
                     return (
                         <Space size={3}>
-
-                            <Button type={"link"} size={"small"}>{this.props.t("Edit")}</Button>
-                            <Button type={"link"} size={"small"}>{this.props.t("Fork")}</Button>
+                            <ModalFormUseForm
+                                TableName={"ProblemList"}
+                                width={600}
+                                title={rows.problemCode}
+                                type={"update"}
+                                formName={"ProblemInfo"}
+                                subForm={ProblemForm}
+                                updateAppendProps={{problemCode: rows.problemCode}}
+                                dataSubmitter={(value: any) => {
+                                    value = beforeSubmit(value)
+                                    return mApi.updateProblemInfo(value)
+                                }}
+                                dataLoader={async () => {
+                                    return mApi.getProblem({problemCode: rows.problemCode}).then((value: any) => {
+                                        value = beforeUse(value)
+                                        return Promise.resolve(value)
+                                    })
+                                }}
+                            />
+                            <ModalFormUseForm
+                                TableName={"ProblemList"}
+                                width={600}
+                                title={"新建题目(克隆自" + rows.problemCode + ")"}
+                                type={"fork"}
+                                formName={"ProblemInfo"}
+                                subForm={ProblemForm}
+                                dataSubmitter={(value: any) => {
+                                    value = beforeSubmit(value)
+                                    return mApi.createProblem(value)
+                                }}
+                                dataLoader={async () => {
+                                    return mApi.getProblem({problemCode: rows.problemCode}).then((value: any) => {
+                                        value = beforeUse(value)
+                                        return Promise.resolve(value)
+                                    })
+                                }}
+                            />
                             <Button type={"link"} size={"small"}>{this.props.t("Description")}</Button>
                             <Button type={"link"} size={"small"}>{this.props.t("Checkpoint")}</Button>
                         </Space>
@@ -117,11 +176,7 @@ class MProblem extends Component<any, any> {
                 label: "评测限制"
             },
             {
-                component: (
-                    <>
-                        <FormJudgeType/>
-                    </>
-                ),
+                component: <FormJudgeType/>,
                 label: "评测方式"
             },
         ]
@@ -138,16 +193,7 @@ class MProblem extends Component<any, any> {
                             type={"create"}
                             subForm={ProblemForm}
                             dataSubmitter={(value: any) => {
-                                value.isPublic = (value.isPublic ? 1 : 0)
-                                const functionTemplates = []
-                                if (value.functionTemplates !== undefined) {
-                                    for (const x in value.functionTemplates) {
-                                        functionTemplates.push({
-                                            ...value.functionTemplates[x],
-                                            isShowFunctionTemplate: value.functionTemplates[x].isShowFunctionTemplate ? 1 : 0
-                                        })
-                                    }
-                                }
+                                value = beforeSubmit(value)
                                 return mApi.createProblem(value)
                             }}
                         />

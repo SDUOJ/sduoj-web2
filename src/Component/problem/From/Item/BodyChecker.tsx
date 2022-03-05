@@ -1,8 +1,13 @@
 import {withTranslation} from "react-i18next";
 import {Button, Form, Select, Switch} from "antd";
 import {PREDEFINED_CHECKERS, SPJ_Code, SPJ_Config} from "../../../../Config/constValue";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import CodeEditor from "../../../common/CodeEditor";
+import {ManageState} from "../../../../Type/IManage";
+import {connect} from "react-redux";
+import {withRouter} from "react-router";
+import {isValueEmpty} from "../../../../Utils/empty";
+import mApi from "../../../../Utils/API/m-api";
 
 const BodyChecker = (props: any) => {
     const [selectValue, setSelectValue] = useState<string>("lcmp.cpp")
@@ -25,6 +30,17 @@ const BodyChecker = (props: any) => {
             })
         }
     }, [source, spj, selectValue])
+
+    useEffect(() => {
+        if (props.initData !== undefined && props.initData["ProblemInfo"] !== undefined) {
+            const initData = props.initData["ProblemInfo"]
+            if(!isValueEmpty(initData.checkerConfig?.spj)){
+                setSelectValue("@")
+                setSource(initData.checkerConfig.source)
+                setSpj(initData.checkerConfig.spj)
+            }
+        }
+    }, [props.initData])
 
     return (
         <>
@@ -55,5 +71,18 @@ const BodyChecker = (props: any) => {
         </>
     )
 }
+const mapStateToProps = (state: any) => {
+    const MState: ManageState = state.ManageReducer
+    return {
+        initData: MState.manageInitData
+    }
+}
 
-export default withTranslation()(BodyChecker)
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(
+    withTranslation()(withRouter(BodyChecker))
+)

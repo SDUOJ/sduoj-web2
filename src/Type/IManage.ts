@@ -1,11 +1,9 @@
-
-
 export interface userDataType {
 
 }
 
 export interface ManageState {
-    userData: userDataType
+    manageInitData: { [key: string]: any }
 }
 
 
