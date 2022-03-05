@@ -1,98 +1,63 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component, Dispatch, useEffect} from "react";
 import {Card, Skeleton, Space} from "antd";
 import Meta from "antd/lib/card/Meta";
 import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {ExamState} from "../../Type/IExam";
 import {examID} from "../../Type/types";
 import {withRouter} from "react-router";
 
 
-class ExamAnswerSheet extends Component<any, any> {
-
-    constructor(props: any, context: any) {
-        super(props, context);
-        this.getAnswerSheet = this.getAnswerSheet.bind(this)
-    }
-
-    getAnswerSheet(){
-        const groupInfo = this.props.ProGroupInfo
-        for(const x of groupInfo){
-            if(x.type === "SingleChoice" || x.type === "MultipleChoice"){
-                this.props.getAnswerSheet(this.props.match.params.eid, x.index)
-            }
-        }
-    }
-
-    componentDidMount() {
-        if (this.props.ProGroupInfo === undefined)
-            this.props.GetProList(this.props.match.params.eid)
-        // 开始时题目信息就已经加载，直接加载答题卡
-        if(this.props.Loading === false){
-            this.getAnswerSheet()
-        }
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        // 题目信息加载完成后，加载答题卡
-        if (prevProps.Loading && !this.props.Loading) this.getAnswerSheet()
-    }
-
-    render() {
-
-        return (
-            <div className={"ExamAnswerSheet"}>
-                <Card>
-                    <Meta className={"ExamAnswerSheetMeta"}
-                          title={this.props.t("AnswerSheet")}
-                          description={
-                              <>
-                                  <div style={{margin: "0 auto", textAlign: "center"}}>
-                                      <Space size={30}>
-                                          <ProTag ProIndex={0} TagState={["d"]}
-                                                  exp={this.props.t("Unanswered")}/>
-                                          <ProTag ProIndex={0} TagState={["f"]}
-                                                  exp={this.props.t("Answered")}/>
-                                          <ProTag ProIndex={0} TagState={["c", "d"]}
-                                                  exp={this.props.t("Marked")}/>
-                                      </Space>
-                                  </div>
+const ExamAnswerSheet = (props: any) => {
 
 
-                                  <Skeleton active loading={this.props.Loading}>
-                                      {
+    const eid = props.match.params.eid
+    const gid = props.match.params.gid
+    const pid = props.match.params.pid
 
-                                          this.props.ProGroupInfo !== undefined && (
-                                              this.props.ProGroupInfo.map((Value:any) => {
-                                                  return (
-                                                      <ProTagGroup groupInfo={Value}/>
-                                                  )
-                                              })
-                                          )
-                                      }
-                                  </Skeleton>
-                              </>
-                          }
-                    />
-                </Card>
-            </div>
-        )
-    }
+
+    const problemList = useSelector((state: any) => {
+        return state.ExamReducer.examProListInfo[eid]
+    })
+
+    return (
+        <div className={"ExamAnswerSheet"}>
+            <Card>
+                <Meta className={"ExamAnswerSheetMeta"}
+                      title={props.t("AnswerSheet")}
+                      description={
+                          <>
+                              <div style={{margin: "0 auto", textAlign: "center"}}>
+                                  <Space size={30}>
+                                      <ProTag empty={true} exp={props.t("Unanswered")}/>
+                                      <ProTag empty={true} color={"green"} exp={props.t("Answered")}/>
+                                      <ProTag empty={true} useDot={true} exp={props.t("Marked")}/>
+                                  </Space>
+                              </div>
+                              {problemList !== undefined && (
+                                  Object.keys(problemList).map((v: any) => {
+                                      return (
+                                          <ProTagGroup gid={problemList[v].index}/>
+                                      )
+                                  })
+                              )}
+                          </>
+                      }
+                />
+            </Card>
+        </div>
+    )
 
 }
 
 const mapStateToProps = (state: any) => {
     const State: ExamState = state.ExamReducer
-    return {
-
-    }
+    return {}
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

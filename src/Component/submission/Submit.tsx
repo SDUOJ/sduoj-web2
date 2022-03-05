@@ -32,20 +32,12 @@ const Submit = (props: SubmitPropsType & any) => {
     const [SubmitModalVis, setSubmitModalVis] = useState<boolean>(false)
     const [SubmitDisable, setSubmitDisable] = useState<boolean>(false)
     const [judgeTemplateId, setJudgeTemplateId] = useState<number | undefined>()
-    const [code, setCode] = useState<string | undefined>()
-    const [CodeMirror, setCodeMirror] = useState<string | undefined>()
     const [zipFileId, setZipFileId] = useState<string | undefined>()
 
 
     const CodeSubmit = () => {
         form.validateFields().then((value) => {
             setSubmitDisable(true)
-            let codex = CodeMirror
-            if ((codex === undefined || codex === null || codex.length === 0) && zipFileId === undefined) {
-                message.error("代码不能为空")
-                return
-            }
-
             if (props.FuncTemplates !== undefined) {
                 let fid = props.FuncTemplates.findIndex((v: any) => {
                     return v.judgeTemplateId === value.JudgeTemplate
@@ -53,11 +45,11 @@ const Submit = (props: SubmitPropsType & any) => {
                 if (fid !== -1) {
                     const funcTemplate: functionTemplate = props.FuncTemplates[fid]
                     if (funcTemplate.functionTemplate !== undefined)
-                        codex = funcTemplate.functionTemplate + codex
+                        value.code = funcTemplate.functionTemplate + value.code
                 }
             }
 
-            props.API(value.JudgeTemplate, codex, zipFileId).then((data: any) => {
+            props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
                 setSubmitDisable(false)
@@ -104,8 +96,6 @@ const Submit = (props: SubmitPropsType & any) => {
                    destroyOnClose={true}
                    onCancel={() => {
                        setSubmitModalVis(false)
-                       setCode("")
-                       setCodeMirror("")
                    }}
                    width={1200}
                    footer={[
@@ -146,7 +136,7 @@ const Submit = (props: SubmitPropsType & any) => {
                         CodeSubmit()
                     }}
                     layout={"vertical"}
-
+                    preserve={false}
                 >
                     <Form.Item name={"JudgeTemplate"} label={props.t("template")} rules={[{required: true}]}>
                         <Select
@@ -185,8 +175,10 @@ const Submit = (props: SubmitPropsType & any) => {
                                             return value.judgeTemplateId === tid
                                         })) !== -1) {
                                         const funcTemplate: functionTemplate = props.FuncTemplates[fid]
-                                        if (CodeMirror !== funcTemplate.initialTemplate) setCodeMirror(funcTemplate.initialTemplate)
-                                        if (code !== funcTemplate.initialTemplate) setCode(funcTemplate.initialTemplate)
+                                        form.setFieldsValue({
+                                            ...form.getFieldsValue(),
+                                            code: funcTemplate.initialTemplate
+                                        })
                                         return (
                                             <>
                                                 {funcTemplate.isShowFunctionTemplate === 1 && (
@@ -197,10 +189,8 @@ const Submit = (props: SubmitPropsType & any) => {
                                                             code={funcTemplate.functionTemplate} readOnly={true}/>
                                                     </Form.Item>
                                                 )}
-                                                <Form.Item label={"答案代码"}>
-                                                    <CodeEditor
-                                                        lang={JudgeTemplate2lang(jtId)}
-                                                        code={code} save={setCodeMirror}/>
+                                                <Form.Item label={"答案代码"} name={"code"}>
+                                                    <CodeEditor lang={JudgeTemplate2lang(jtId)}/>
                                                 </Form.Item>
                                             </>
                                         )
@@ -224,7 +214,10 @@ const Submit = (props: SubmitPropsType & any) => {
                                                                     const str = event.target?.result as string
                                                                     if (str.length > MaxCodeLength)
                                                                         message.error("上传文件字符数超过" + MaxCodeLength)
-                                                                    setCode(str.substr(0, MaxCodeLength))
+                                                                    form.setFieldsValue({
+                                                                        ...form.getFieldsValue(),
+                                                                        code: str.substr(0, MaxCodeLength)
+                                                                    })
                                                                 } catch (e) {
                                                                     message.error('文件解析失败！');
                                                                 }
@@ -235,10 +228,8 @@ const Submit = (props: SubmitPropsType & any) => {
                                                     </Upload>
                                                 </Form.Item>
 
-                                                <Form.Item label={"代码"}>
-                                                    <CodeEditor
-                                                        lang={JudgeTemplate2lang(jtId)}
-                                                        code={code} save={setCodeMirror}/>
+                                                <Form.Item label={"代码"} name={"code"}>
+                                                    <CodeEditor lang={JudgeTemplate2lang(jtId)}/>
                                                 </Form.Item>
                                             </>
                                         )

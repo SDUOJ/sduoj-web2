@@ -1,52 +1,52 @@
-import React, {Component, Dispatch} from "react";
+import React from "react";
 import {Button, Space, Spin} from "antd";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons"
-import {connect} from "react-redux";
-import {ExamAction} from "../../Redux/Action/exam";
+import {useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {withRouter} from "react-router-dom";
 
 
-class ExamPageCtrl extends Component<any, any> {
-    render() {
-        return (
-            <div className={"ExamPageCtrl"}>
-                <Space>
-                    <Button shape="round" type={"primary"}
-                            disabled={this.props.TopProblemIndex === 1 || this.props.Loading}
-                            onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex - 1)}
-                    >
-                        <LeftOutlined/> {this.props.t("PreviousProblem")}
-                    </Button>
-                    <Spin spinning={this.props.Loading}>
-                        <div className={"ExamPageCtrl-Number"}>
-                            <span> {this.props.TopProblemIndex} </span>
-                            /
-                            <span> {this.props.ProNumber} </span>
-                        </div>
-                    </Spin>
-                    <Button shape="round" type={"primary"}
-                            disabled={this.props.TopProblemIndex === this.props.ProNumber || this.props.Loading}
-                            onClick={() => this.props.JumpToPro(this.props.TopGroupIndex, this.props.TopProblemIndex + 1)}
-                    >
-                        {this.props.t("NextProblem")} <RightOutlined/>
-                    </Button>
-                </Space>
-            </div>
-        )
+const ExamPageCtrl = (props: any) => {
+    const eid = parseInt(props.match.params.eid)
+    const gid = parseInt(props.match.params.gid)
+    const pid = parseInt(props.match.params.pid)
+
+    const problemList = useSelector((state: any) => {
+        return state.ExamReducer.examProListInfo[`${eid}_${gid}`]
+    })
+
+    const ProNumber = problemList?.proList?.length
+    const Loading = (ProNumber === undefined)
+
+    const jump = (PID: number) => {
+        props.history.push(`/v2/exam/running/${eid}/${gid}/${PID}`)
     }
 
+    return (
+        <div className={"ExamPageCtrl"}>
+            <Space>
+                <Button shape="round" type={"primary"}
+                        disabled={pid === 0 || Loading}
+                        onClick={() => jump(pid - 1)}
+                >
+                    <LeftOutlined/> {props.t("PreviousProblem")}
+                </Button>
+                <Spin spinning={Loading}>
+                    <div className={"ExamPageCtrl-Number"}>
+                        <span> {pid + 1} </span>
+                        /
+                        <span> {ProNumber} </span>
+                    </div>
+                </Spin>
+                <Button shape="round" type={"primary"}
+                        disabled={pid + 1 === ProNumber || Loading}
+                        onClick={() => jump(pid + 1)}
+                >
+                    {props.t("NextProblem")} <RightOutlined/>
+                </Button>
+            </Space>
+        </div>
+    )
 }
 
-const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<ExamAction>) => ({
-
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(ExamPageCtrl))
+export default withTranslation()(withRouter(ExamPageCtrl))

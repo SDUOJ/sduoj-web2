@@ -82,13 +82,15 @@ export function isProgramContent(x: any): x is ProgramContent {
 
 
 export interface ICreateSubmit {
-    code: string
+    code?: string
     contestId?: string
     examId?: string
     judgeTemplateId: string
-    problemCode: string
+    problemCode?: string
     problemIndex?: number
     groupIndex?: number
+    zipFileId?: string
+
 }
 
 export interface ProblemState {

@@ -12,7 +12,7 @@ import ReJudge from "../Func/ReJudge";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {TableState} from "../../../Type/ITable";
-import {ck} from "../../../Utils/empty";
+import {ck, isValueEmpty} from "../../../Utils/empty";
 import {UserState} from "../../../Type/Iuser";
 import judgeAuth from "../../../Utils/judgeAhtu";
 
@@ -246,7 +246,7 @@ const SubmissionList = (props: any) => {
                 className={props.lessInfo ? "smallBodyPadding" : ""}
                 extra={
                     <Space>
-                        {props.lessInfo != true && judgeAuth(props.roles, ["admin", "superadmin"]) && (
+                        {props.lessInfo !== true && judgeAuth(props.roles, ["admin", "superadmin"]) && (
                             <ReJudge
                                 API={cApi.rejudge}
                                 data={selectedRowKeys}
@@ -284,7 +284,7 @@ const SubmissionList = (props: any) => {
                     rowKey={"submissionId"}
                     API={props.API}
                     APIRowsTransForm={(value: any) => {
-                        if (value === null) value = []
+                        if (isValueEmpty(value)) value = []
                         let webSocketQueryList = []
                         let data: any = []
                         for (const x of value) {

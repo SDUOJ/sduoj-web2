@@ -1,99 +1,121 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component, Dispatch, useEffect} from "react";
 import {Button, Card, Skeleton} from "antd";
 import {StarFilled, StarOutlined} from '@ant-design/icons';
 import ExamChoice from "./ExamChoice";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
-import ExamProgram from "./ExamProgram";
 import {withRouter} from "react-router-dom";
 import {examID} from "../../../Type/types";
 import eApi from "../../../Utils/API/e-api";
+import ProProgram from "../Program/ProProgram";
+import useProblemInfo from "../API/getProblemInfo";
 
 
-class ExamProblem extends Component<any, any> {
+const ExamProblem = (props: any) => {
 
-    componentDidMount() {
+    useEffect(() => {
         document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
             e = e || window.event;
             return false;
         };
+    })
+
+    const eid = props.match.params.eid
+    const gid = props.match.params.gid
+    const pid = props.match.params.pid
+
+    const GetProblemInfoAPI = () => {
+        return eApi.getProInfo({
+            examId: eid,
+            groupIndex: gid,
+            problemIndex: pid
+        })
     }
 
-    render() {
-        const eid = this.props.match.params.eid
-        const gid = this.props.match.params.gid
-        const pid = this.props.match.params.pid
-        return (
-            <Skeleton active loading={this.props.Loading}>
-                <Card
-                    className={"Problem"}
-                    title={
-                        <>
-                            【{this.props.t(this.props.proType)}】
-                            {
-                                [''].map(() => {
-                                    if (this.props.index !== undefined) {
-                                        return <>{this.props.index + 1}.</>
-                                    }
-                                })
-                            }
-                            {
-                                [''].map(() => {
-                                    if (this.props.score !== undefined && this.props.isScoreVisible === true) {
-                                        return <>（{this.props.score}{this.props.t(this.props.score === 1 ? "point" : "points")}）</>
-                                    }
-                                })
-                            }
-                        </>
-                    }
-                    extra={
-                        this.props.proType !== "Program" && this.props.flag === true && (
-                            <Button type="default"
-                                    shape="round"
-                                    icon={this.props.isFlag ? <StarFilled/> : <StarOutlined/>}
-                                    danger={this.props.isFlag}
-                                    onClick={() => this.props.flipFlag(this.props.match.params.eid)}
-                            >
-                                {this.props.t("Mark")}
-                            </Button>
+    const problemInfo = useProblemInfo(GetProblemInfoAPI, `EXAM_${eid}_${gid}_${pid}`)
+    console.log("problemInfo", problemInfo)
+
+    const problemList = useSelector((state: any) => {
+        return state.ExamReducer.examProListInfo[eid + "_" + gid]
+    })
+    console.log("@@@@@", problemList)
+
+    const baseInfo = problemList?.proList[pid] ?? {index: undefined, score: undefined}
+    const proType = problemList?.type
+
+    return (
+
+        <Card
+            className={"Problem"}
+            title={
+                <>
+                    【{props.t(proType)}】
+                    {baseInfo.index !== undefined && (
+                        <>{baseInfo.index + 1}.</>
+                    )}
+                    {baseInfo.score !== undefined && (
+                        <>（{baseInfo.score}{props.t(baseInfo.score === 1 ? "point" : "points")}）</>
+                    )}
+                </>
+            }
+            extra={
+                proType !== "Program" && (
+                    <Button type="default"
+                            shape="round"
+                            icon={props.isFlag ? <StarFilled/> : <StarOutlined/>}
+                            danger={props.isFlag}
+                            onClick={() => props.flipFlag(eid, gid, pid)}
+                    >
+                        {props.t("Mark")}
+                    </Button>
+                )
+            }>
+
+            {(() => {
+                switch (proType) {
+                    case "Program":
+                        return (
+                            <ProProgram
+                                nameWithD={`EXAM_${eid}_${gid}_${pid}`}
+                                name={`EXAM_${eid}_${gid}_${pid}`}
+                                GetProblemInfoAPI={GetProblemInfoAPI}
+                                SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
+                                    return eApi.CreateSubmit({
+                                        judgeTemplateId: judgeTemplate,
+                                        code: code,
+                                        zipFileId: zipId,
+                                        problemIndex: pid,
+                                        groupIndex: gid,
+                                        examId: eid,
+                                        problemCode: pid
+                                    })
+                                }}
+                                SubmissionListAPI={async (data: any) => {
+                                    return eApi.getSubmissionList({
+                                        ...data,
+                                        examId: eid,
+                                        problemGroup: gid,
+                                        problemIndex: pid
+                                    })
+                                }}
+                                QuerySubmissionAPI={async (submissionId: string) => {
+                                    return eApi.getSubmission(eid, submissionId)
+                                }}
+                                scoreMod={"show"}
+                                testcaseMod={"show"}
+                                showInfo={true}
+                            />
                         )
-                    }>
+                    case "SingleChoice":
+                    case "MultipleChoice":
+                        return (
+                            <ExamChoice/>
+                        )
+                }
+            })()}
+        </Card>
+    )
 
-                    {
-                        [''].map(() => {
-                            switch (this.props.proType) {
-                                case "Program":
-                                    return (
-                                        <ExamProgram
-                                            getProInfo={async () => {
-                                                return eApi.getProInfo({
-                                                    examId: eid,
-                                                    groupIndex: gid,
-                                                    problemIndex: pid
-                                                })
-                                            }}
-                                            getSubmissionList={async ()=>{
-                                                return eApi.getSubmissionList({
-                                                    examId: eid,
-                                                    problemGroup: gid,
-                                                    problemIndex: pid
-                                                })
-                                            }}
-                                            proName={`EXAM_${eid}_${gid}_${pid}`}
-                                        />
-                                    )
-                                case "SingleChoice":
-                                case "MultipleChoice":
-                                    return (
-                                        <ExamChoice/>
-                                    )
-                            }
-                        })
-                    }
-                </Card>
-            </Skeleton>
-        )
-    }
 }
 
 

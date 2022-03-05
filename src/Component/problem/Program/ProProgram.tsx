@@ -1,7 +1,7 @@
 import {TranslationProps, WithTranslation, withTranslation} from "react-i18next";
 import {Badge, Button, Card, Modal, Space} from "antd";
 import Submit from "../../submission/Submit";
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useReducer, useState} from "react";
 import {JudgeTemplateAllType, ProblemState, TestCase} from "../../../Type/IProblem";
 import SampleTestCase from "../SampleTestCase";
 import {displayType} from "../../../Type/ISubmission";
@@ -31,6 +31,7 @@ interface ProProgramProps {
 
     scoreMod: displayType
     testcaseMod: displayType
+
     isLogin: boolean
     showInfo: boolean   // 是否展示题目详情
 
@@ -59,7 +60,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
     }, [problemInfo])
 
     let ps = ["", ""]
-    if (problemInfo !== undefined)
+    if (problemInfo !== undefined && !isValueEmpty(problemInfo?.problemCode))
         ps = problemInfo?.problemCode.split("-")
 
     const ProgramHeader = (
@@ -72,11 +73,12 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                                 <span style={{fontWeight: "bold"}}>{ps[0]}</span>-<span>{ps[1]} : </span>
                             </>
                         )
-                    else{
-                        try{
+                    else {
+                        if (problemInfo?.problemCode === undefined) return ""
+                        try {
                             const value = String.fromCharCode('A'.charCodeAt(0) + parseInt(problemInfo?.problemCode) - 1)
                             return <span style={{fontWeight: "bold"}}>{value} : </span>
-                        }catch (e){
+                        } catch (e) {
                             return problemInfo?.problemCode
                         }
                     }
@@ -102,12 +104,14 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                             </div>
                         </Space>
                     </div>
-                    <div style={{marginTop: "5px", fontSize: "16px"}}>
-                        <div>
-                            <span style={{fontWeight: "bold"}}>来源</span>
-                            : {problemInfo?.source}
+                    {problemInfo?.source !== undefined && (
+                        <div style={{marginTop: "5px", fontSize: "16px"}}>
+                            <div>
+                                <span style={{fontWeight: "bold"}}>来源</span>
+                                : {problemInfo?.source}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div style={{marginTop: "5px", fontSize: "16px"}}>
                         <div>
                             <span style={{fontWeight: "bold"}}>评测模板</span>
