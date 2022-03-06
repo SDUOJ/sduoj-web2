@@ -1,4 +1,4 @@
-import {UnControlled as CodeMirror} from 'react-codemirror2'
+import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/solarized.css';
 import {ck} from "../../Utils/empty";
@@ -9,7 +9,6 @@ interface ICodeEditor {
     code?: string
     value?: string
     className?: string
-    save?: any
     onChange?: any
     readOnly?: boolean
 
@@ -35,7 +34,7 @@ const CodeEditor = (props: ICodeEditor) => {
         <>
             <CodeMirror
                 className={"CodeMirror"}
-                value={props.code ?? props.value}
+                value={props.value as string}
                 options={{
                     readOnly: ck(props.readOnly, false),
                     mode: langMap[props.lang],
@@ -48,7 +47,9 @@ const CodeEditor = (props: ICodeEditor) => {
                 }}
                 onChange={(editor, data, value) => {
                     props.onChange && props.onChange(value)
-                    props.save && props.save(value)
+                }}
+                onBeforeChange={(editor, data, value) => {
+                    props.onChange && props.onChange(value)
                 }}
             />
         </>

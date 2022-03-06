@@ -49,6 +49,8 @@ const ContestHeader = (props: any) => {
             if (openness === "private" && !isPractice) props.history.replace(menuData[0].link)
             else props.history.replace(menuData[1].link)
         }
+        // 若已经注册，则不能访问注册页面
+        if(url.match(menuData[0].re) !== null && isPractice) props.history.replace(menuData[1].link)
         menuData.map((value) => {
             if (url.match(value.re) !== null) setSelectedKey(value.name)
         })

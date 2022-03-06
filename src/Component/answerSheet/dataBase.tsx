@@ -109,7 +109,7 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
                     </Col>
                     <Col span={12}>
                         <Card title="编辑代码" style={{minWidth: 500}}>
-                            <CodeEditor code={""} lang={"sql"}/>
+                            <CodeEditor value={""} lang={"sql"}/>
                             <Space>
                                 <Button type={"default"} onClick={() => {
                                 }}>{"执行"}</Button>
