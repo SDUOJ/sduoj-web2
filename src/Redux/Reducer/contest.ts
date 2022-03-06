@@ -4,7 +4,8 @@ import {ContestAction, ContestState} from "../Action/contest";
 
 const initState: ContestState = {
     contestInfo: {},
-    minWidth: 0
+    minWidth: 0,
+    afterContestSubmission: false
 }
 
 export const ContestReducer = (state: ContestState = initState, action: ContestAction) => {
@@ -16,6 +17,9 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
 
         case "setMinWidth":
             State.minWidth = action.data
+            break
+        case "setAfterContestSubmission":
+            State.afterContestSubmission = action.data
             break
     }
     return State

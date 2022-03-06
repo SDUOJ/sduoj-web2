@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Alert, Card, Col, Divider, Menu, message, Row, Slider, Space} from "antd";
+import {Alert, Card, Col, Divider, Form, Menu, message, Row, Slider, Space, Switch} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import getContestInfo from "./API/getContestInfo";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
@@ -8,11 +8,12 @@ import {TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import Countdown from "antd/lib/statistic/Countdown";
 import moment from "moment";
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
-import {ContestState} from "../../Redux/Action/contest";
+import {ContestState, setAfterContestSubmission} from "../../Redux/Action/contest";
 import {connect} from "react-redux";
 import {UserState} from "../../Type/Iuser";
 import {isValueEmpty} from "../../Utils/empty";
 import DTime from "../common/DTime";
+import judgeAuth from "../../Utils/judgeAhtu";
 
 const ContestHeader = (props: any) => {
 
@@ -50,7 +51,7 @@ const ContestHeader = (props: any) => {
             else props.history.replace(menuData[1].link)
         }
         // 若已经注册，则不能访问注册页面
-        if(url.match(menuData[0].re) !== null && isPractice) props.history.replace(menuData[1].link)
+        if (url.match(menuData[0].re) !== null && isPractice) props.history.replace(menuData[1].link)
         menuData.map((value) => {
             if (url.match(value.re) !== null) setSelectedKey(value.name)
         })
@@ -176,6 +177,20 @@ const ContestHeader = (props: any) => {
                             float: "right",
                             color: "grey"
                         }}>
+                            {judgeAuth(props.roles, ["admin", "superadmin"]) &&
+                                timeState === "end" && (
+                                    <>
+                                        赛后提交
+                                        <Switch
+                                            checked={props.afterContestSubmission}
+                                            onChange={props.setAfterContestSubmission}
+                                            checkedChildren={"显示"}
+                                            unCheckedChildren={"不显示"}
+                                        />
+                                        <Divider type={"vertical"}/>
+                                    </>
+                                )}
+
                             {contestInfo.features.mode === "acm" && (
                                 <span style={{
                                     backgroundColor: "#3676b6",
@@ -214,12 +229,20 @@ const ContestHeader = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const State: UserState = state.UserReducer
+    const CState: ContestState = state.ContestReducer
     return {
-        username: State.userInfo?.username
+        username: State.userInfo?.username,
+        roles: State.userInfo?.roles,
+        afterContestSubmission: CState.afterContestSubmission
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    setAfterContestSubmission: (data: boolean) => dispatch({
+        type: "setAfterContestSubmission",
+        data: data
+    })
+})
 
 export default connect(
     mapStateToProps,

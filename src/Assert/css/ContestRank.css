@@ -1,5 +1,5 @@
 .rowBase {
-    height: 60px;
+    height: 50px;
     text-align: center;
     margin: 0 auto;
 }
@@ -8,17 +8,38 @@
     padding: 2px;
 }
 
-.RankTable{
+.RankTable {
     width: auto;
 }
 
-.RankTable .ant-table-cell{
+.RankTable .ant-table-cell {
     text-align: center;
     margin: 0 auto;
     padding: 2px;
 }
 
-.ProHeader .ant-table-cell{
+.ProHeader .ant-table-cell {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.RankSummary {
+    height: 100px;
+    font-size: 16px;
+}
+
+.RankSummary-Pro {
+    font-size: 11px;
+}
+
+.accepted {
+    background-color: rgb(96, 231, 96);
+}
+
+.rejected {
+    background-color: rgb(232, 114, 114);
+}
+
+.firstAccept {
+    background-color: rgb(29, 170, 29);
 }

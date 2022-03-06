@@ -1,6 +1,7 @@
 export type ContestAction =
     setContestInfo |
-    setMinWidth
+    setMinWidth |
+    setAfterContestSubmission
 
 export interface setMinWidth {
     type: "setMinWidth",
@@ -13,8 +14,14 @@ export interface setContestInfo {
     data: any
 }
 
+export interface setAfterContestSubmission{
+    type: "setAfterContestSubmission",
+    data: boolean
+}
+
 
 export interface ContestState {
     contestInfo: { [key: string]: any }
     minWidth: number
+    afterContestSubmission: boolean
 }
