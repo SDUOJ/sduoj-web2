@@ -105,7 +105,9 @@ class CHeader extends Component<any, any> {
                                                     icon={<LogoutOutlined/>}
                                                     onClick={()=>{
                                                         this.props.userLogout()
-                                                        this.props.history.push("/v2/home")
+                                                        setTimeout(()=>{
+                                                            this.props.history.push("/v2/home")
+                                                        }, 200)
                                                         message.info("已退出登录")
                                                     }}
                                                 >
