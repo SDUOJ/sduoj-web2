@@ -31,14 +31,18 @@ export interface setAnswerSheet {
 export function updateChoiceTodo(groupKey: string, proIndex: number, choice: string, action: "yes" | "no") {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
+        const proNumber = EState.examProListInfo[groupKey].proList.length
         // 获取当前的数据
         if (isValueEmpty(EState.examAnswerSheetInfo[groupKey])) {
             EState.examAnswerSheetInfo[groupKey] = []
         }
         const answerSheets = EState.examAnswerSheetInfo[groupKey]
-        for (let i = 0; i <= proIndex; i++)
+        for (let i = 0; i < proNumber; i++) {
             if (isValueEmpty(answerSheets[i]))
-                answerSheets[i] = {index: proIndex, answer: [], pass: [], marked: false}
+                answerSheets[i] = {index: i, answer: [], pass: [], marked: false}
+            if (answerSheets[i].index !== i) answerSheets[i].index = i
+        }
+
         const answerSheet = answerSheets[proIndex]
         const proListType = EState.examProListInfo[groupKey].type
         // 根据用户操作，更新当前答题卡数据
@@ -65,14 +69,17 @@ export function updateChoiceTodo(groupKey: string, proIndex: number, choice: str
 export function updateFlagTodo(groupKey: string, proIndex: number) {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
+        const proNumber = EState.examProListInfo[groupKey].proList.length
         // 获取当前的数据
         if (isValueEmpty(EState.examAnswerSheetInfo[groupKey])) {
             EState.examAnswerSheetInfo[groupKey] = []
         }
         const answerSheets = EState.examAnswerSheetInfo[groupKey]
-        for (let i = 0; i <= proIndex; i++)
+        for (let i = 0; i < proNumber; i++) {
             if (isValueEmpty(answerSheets[i]))
-                answerSheets[i] = {index: proIndex, answer: [], pass: [], marked: false}
+                answerSheets[i] = {index: i, answer: [], pass: [], marked: false}
+            if (answerSheets[i].index !== i) answerSheets[i].index = i
+        }
         const answerSheet = answerSheets[proIndex]
         answerSheet.marked = !answerSheet.marked
         // 更新当前答题卡
@@ -85,6 +92,7 @@ export function setAnswerSheetTodo(answerSheets: SExamAnswerSheet[], groupKey: s
     return (dispatch: Dispatch<any>, getState: any) => {
         const examId = groupKey.split("_")[0]
         const groupId = groupKey.split("_")[1]
+        for (const x of answerSheets) x['choice'] = undefined
         eApi.setAnswerSheet({problemAnswer: answerSheets}, examId, groupId).then(() => {
             dispatch({
                 type: "setAnswerSheet",

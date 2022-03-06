@@ -66,6 +66,7 @@ export interface SExamAnswerSheet {
     answer: string[]
     pass: string[]
     marked: boolean
+    choice?: string[]
 }
 
 export interface ExamState {
