@@ -56,7 +56,7 @@ const TableWithPagination = (props: any) => {
             searchKey: searchKey === undefined ? searchText : searchKey,
             ...moreProps
         }).then((data: any) => {
-            if(data.rows === null) data.rows = []
+            if (data.rows === null) data.rows = []
             if (props.APIRowsTransForm !== undefined) {
                 setTableData(props.APIRowsTransForm(data.rows))
             } else setTableData(data.rows)
@@ -66,7 +66,7 @@ const TableWithPagination = (props: any) => {
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getInfo(PageNow, PageSize)
     }, [props.name])
 
@@ -74,7 +74,7 @@ const TableWithPagination = (props: any) => {
     const [form] = useForm()
     const onFinish = () => {
         const values = form.getFieldsValue()
-        if(JSON.stringify(values) !== "{}")
+        if (JSON.stringify(values) !== "{}")
             getInfo(1, PageSize, undefined, values)
     };
     const onReset = () => {

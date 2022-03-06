@@ -13,9 +13,12 @@ import {Submission} from "../../Type/IProblem";
 import SubmissionModal from "../submission/Processing/ModalProcessing";
 import useExamInfo from "./API/getExamInfo";
 import deepClone from "../../Utils/deepClone";
+import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";
 
 const ExamRun = (props: any) => {
     const eid = props.match.params.eid
+    const gid = props.match.params.gid
+    const pid = props.match.params.pid
 
     const examInfo = useExamInfo(eid)
 
@@ -27,8 +30,8 @@ const ExamRun = (props: any) => {
     // 获取题组信息
     useEffect(() => {
         if (problemList === undefined) {
-            eApi.getExamGroupList(eid).then((res: any)=>{
-                let data:{ [key: string]: SExamProListInfo } = {}
+            eApi.getExamGroupList(eid).then((res: any) => {
+                let data: { [key: string]: SExamProListInfo } = {}
                 for (const x of res) {
                     const proList: SProList[] = []
                     let cnt = 0
@@ -67,6 +70,7 @@ const ExamRun = (props: any) => {
         }
     }, [problemList])
 
+    console.log("problemList", problemList)
 
 
     return (
@@ -88,7 +92,24 @@ const ExamRun = (props: any) => {
                                     }}
                                 />
                                 <ExamAnswerSheet problemList={problemList}/>
-
+                                {problemList && problemList[`${eid}_${gid}`].type === "Program" && (
+                                    <div style={{marginTop: 30}}>
+                                        <RecentSubmissionList
+                                            name={`EXAM_${eid}_${gid}_${pid}`}
+                                            API={async (data: any) => {
+                                                return eApi.getSubmissionList({
+                                                    ...data,
+                                                    examId: parseInt(eid),
+                                                    problemGroup: parseInt(gid),
+                                                    problemIndex: parseInt(pid),
+                                                })
+                                            }}
+                                            QuerySubmissionAPI={async (submissionId: string) => {
+                                                return eApi.getSubmission(eid, submissionId)
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </Col>
                         </Row>
                     </div>
