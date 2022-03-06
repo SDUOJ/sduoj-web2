@@ -23,7 +23,7 @@ export interface TableWithPaginationProps {
     defaultPageSize?: number  // 表格默认的页大小
 
     // 面向 可选择的行 开放的接口
-    setDataSource?: any       // 输出当前表格的数据
+    // setDataSource?: any       // 输出当前表格的数据
     rowKey?: any              // 作为 key 记录的值
     rowSelection?: any        // 可选列的相关配置
 
@@ -56,12 +56,20 @@ const TableWithPagination = (props: any) => {
             searchKey: searchKey === undefined ? searchText : searchKey,
             ...moreProps
         }).then((data: any) => {
+            // console.log("data", data)
             if (data.rows === null) data.rows = []
             if (props.APIRowsTransForm !== undefined) {
                 setTableData(props.APIRowsTransForm(data.rows))
             } else setTableData(data.rows)
-            if (data.totalNum !== undefined) setTotal(data.totalNum)
-            else setTotal(ps * data.totalPage);
+            if (data.totalNum !== undefined) {
+                setTotal(data.totalNum)
+                if(props.name !== undefined)
+                    props.setTableInfo(props.name, {total: data.totalNum})
+            } else {
+                setTotal(ps * data.totalPage);
+                if(props.name !== undefined)
+                    props.setTableInfo(props.name, {total: ps * data.totalPage})
+            }
             setLoading(false)
         })
     }
@@ -177,7 +185,15 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    setTableInfo: (name: string, data: any)=> dispatch({
+        type: "setTableInfo",
+        name: name,
+        data: data
+    }),
+    setDataSource: (data: any, name: string) =>
+        dispatch({type: "setDataSource", data: data, name: name, add: false})
+})
 
 export default connect(
     mapStateToProps,

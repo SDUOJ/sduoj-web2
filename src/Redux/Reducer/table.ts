@@ -17,7 +17,8 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
             State.tableData[name] = {
                 selectedRowKeys: [],
                 dataSource: [],
-                tableVersion: 0
+                tableVersion: 0,
+                tableInfo: {}
             }
     }
 
@@ -40,6 +41,11 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
                 const nv = State.tableData[action.name].tableVersion
                 State.tableData[action.name].tableVersion = -(Math.abs(nv) + 1)
             }
+            break
+
+        case "setTableInfo":
+            initTableData(action.name)
+            State.tableData[action.name].tableInfo = action.data
             break
 
         default:

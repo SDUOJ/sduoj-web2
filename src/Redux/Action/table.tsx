@@ -3,7 +3,8 @@ import React from "react";
 export type TableAction =
     setSelectedRowKeys |
     addTableVersion |
-    setDataSource
+    setDataSource |
+    setTableInfo
 
 
 export interface setSelectedRowKeys {
@@ -22,4 +23,10 @@ export interface setDataSource {
     name: string
     data: any
     add: boolean
+}
+
+export interface setTableInfo{
+    type: "setTableInfo"
+    name: string
+    data: any
 }

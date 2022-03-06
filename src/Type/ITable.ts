@@ -5,7 +5,8 @@ export interface TableState {
         [key: string]: {
             selectedRowKeys: React.Key[]
             dataSource: any
-            tableVersion: number
+            tableVersion: number,
+            tableInfo: any
         }
     }
 }

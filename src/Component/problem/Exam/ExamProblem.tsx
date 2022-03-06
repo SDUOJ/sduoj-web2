@@ -36,6 +36,8 @@ const ExamProblem = (props: any) => {
     }
 
     const problemInfo = useProblemInfo(GetProblemInfoAPI, `EXAM_${eid}_${gid}_${pid}`)
+    // console.log("problemInfo", problemInfo)
+
     const problemList = useSelector((state: any) => {
         return state.ExamReducer.examProListInfo[eid + "_" + gid]
     })

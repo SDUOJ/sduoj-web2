@@ -11,6 +11,7 @@ import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 import {connect} from "react-redux";
 import {UserState} from "../../../Type/Iuser";
 import {isValueEmpty} from "../../../Utils/empty";
+import {TableState} from "../../../Type/ITable";
 
 interface ProProgramProps {
     // problemTitle: string       // 题目标题
@@ -32,6 +33,7 @@ interface ProProgramProps {
     scoreMod: displayType
     testcaseMod: displayType
 
+    tableData: any      // 表格数据
     isLogin: boolean
     showInfo: boolean   // 是否展示题目详情
 
@@ -62,6 +64,17 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
     let ps = ["", ""]
     if (problemInfo !== undefined && !isValueEmpty(problemInfo?.problemCode))
         ps = problemInfo?.problemCode.split("-")
+
+    const [totalSubmission, setTotalSubmission] = useState<number>(0)
+
+    useEffect(() => {
+        if (props.tableData !== undefined) {
+            const tableData = props.tableData["Pro-SubmissionList-" + props.name]
+            // console.log("tableData", tableData)
+            // console.log("tableData?.tableInfo?.total ?? 0", tableData?.tableInfo?.total ?? 0)
+            setTotalSubmission(tableData?.tableInfo?.total ?? 0)
+        }
+    }, [props.tableData])
 
     const ProgramHeader = (
         <div style={{textAlign: "center"}}>
@@ -126,7 +139,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                         SubmissionListName={"Pro-SubmissionList-" + props.name}
                         API={props.SubmitAPI}
                         title={problemInfo?.problemTitle}
-                        LeftSubmitCount={props.LeftSubmitCount}
+                        LeftSubmitCount={problemInfo?.submitNum - totalSubmission}
                         TopSubmissionInfo={{
                             title: problemInfo?.problemTitle,
                             scoreMod: "show",
@@ -147,6 +160,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             </div>
         </div>
     )
+
 
     // console.log(problemInfo)
 
@@ -200,10 +214,11 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
 const mapStateToProps = (state: any) => {
     const State: UserState = state.UserReducer
     const PState: ProblemState = state.ProblemReducer
-
+    const TState: TableState = state.TableReduce
     return {
         isLogin: State.isLogin,
-        ProblemInfo: PState.ProblemInfo
+        ProblemInfo: PState.ProblemInfo,
+        tableData: {...TState.tableData}
     }
 }
 
