@@ -32,7 +32,7 @@ const ProTag = (props: any) => {
                 >
                     <Badge dot={props.useDot ?? answerSheet?.marked}>
                         <Tag
-                            color={(props.color ?? ((answerSheet === undefined || answerSheet?.pass?.length === 0) ? undefined : "green"))}>
+                            color={(props.color ?? ((answerSheet === undefined || answerSheet?.answer?.length === 0) ? undefined : "green"))}>
                             {(() => {
                                 if (props.empty) return (<>&nbsp;&nbsp;</>)
                                 else return <>{pid + 1}</>

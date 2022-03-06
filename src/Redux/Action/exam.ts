@@ -2,6 +2,7 @@ import {examID} from "../../Type/types";
 import {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
 import {ExamState, SExamAnswerSheet, SExamInfo, SExamProListInfo} from "../../Type/IExam";
+import {isValueEmpty} from "../../Utils/empty";
 
 
 export type ExamAction =
@@ -27,37 +28,53 @@ export interface setAnswerSheet {
     key: string
 }
 
-export function updateChoiceTodo(groupKey: string, proIndex: number, choice: string, action: "yes" | "no" | "init") {
+export function updateChoiceTodo(groupKey: string, proIndex: number, choice: string, action: "yes" | "no") {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
         // 获取当前的数据
-        const answerSheets = [...EState.examAnswerSheetInfo[groupKey]]
+        if (isValueEmpty(EState.examAnswerSheetInfo[groupKey])) {
+            EState.examAnswerSheetInfo[groupKey] = []
+        }
+        const answerSheets = EState.examAnswerSheetInfo[groupKey]
+        for (let i = 0; i <= proIndex; i++)
+            if (isValueEmpty(answerSheets[i]))
+                answerSheets[i] = {index: proIndex, answer: [], pass: [], marked: false}
         const answerSheet = answerSheets[proIndex]
         const proListType = EState.examProListInfo[groupKey].type
         // 根据用户操作，更新当前答题卡数据
         if (action === "yes") {
-            if (proListType === "SingleChoice") answerSheet.answer = []
-            answerSheet.answer.push(choice)
+            if (answerSheet.answer.includes(choice))
+                answerSheet.answer = answerSheet.answer.filter(value => value !== choice)
+            else {
+                if (proListType === "SingleChoice") answerSheet.answer = []
+                answerSheet.answer.push(choice)
+            }
             answerSheet.pass = answerSheet.pass.filter(value => value !== choice)
         } else if (action === "no") {
-            answerSheet.pass.push(choice)
-            answerSheet.answer = answerSheet.answer.filter(value => value !== choice)
-        } else {
-            answerSheet.pass = answerSheet.pass.filter(value => value !== choice)
+            if (answerSheet.pass.includes(choice))
+                answerSheet.pass = answerSheet.pass.filter(value => value !== choice)
+            else answerSheet.pass.push(choice)
             answerSheet.answer = answerSheet.answer.filter(value => value !== choice)
         }
+        answerSheets[proIndex] = answerSheet
         // 更新当前答题卡
         dispatch(setAnswerSheetTodo(answerSheets, groupKey))
     }
 }
 
-export function updateFlagTodo(groupKey: string, proIndex: number, marked: boolean) {
+export function updateFlagTodo(groupKey: string, proIndex: number) {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
         // 获取当前的数据
-        const answerSheets = [...EState.examAnswerSheetInfo[groupKey]]
+        if (isValueEmpty(EState.examAnswerSheetInfo[groupKey])) {
+            EState.examAnswerSheetInfo[groupKey] = []
+        }
+        const answerSheets = EState.examAnswerSheetInfo[groupKey]
+        for (let i = 0; i <= proIndex; i++)
+            if (isValueEmpty(answerSheets[i]))
+                answerSheets[i] = {index: proIndex, answer: [], pass: [], marked: false}
         const answerSheet = answerSheets[proIndex]
-        answerSheet.marked = marked
+        answerSheet.marked = !answerSheet.marked
         // 更新当前答题卡
         dispatch(setAnswerSheetTodo(answerSheets, groupKey))
     }

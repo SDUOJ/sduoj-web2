@@ -16,8 +16,6 @@ const ProTagGroup = (props: any) => {
         return state.ExamReducer.examProListInfo[`${eid}_${gid}`]
     })
 
-    console.log("problemList", problemList)
-
     return (
         <>
             <Card

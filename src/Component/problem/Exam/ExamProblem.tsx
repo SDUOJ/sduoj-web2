@@ -9,6 +9,9 @@ import {examID} from "../../../Type/types";
 import eApi from "../../../Utils/API/e-api";
 import ProProgram from "../Program/ProProgram";
 import useProblemInfo from "../API/getProblemInfo";
+import {isValueEmpty} from "../../../Utils/empty";
+import {updateFlagTodo} from "../../../Redux/Action/exam";
+import {UserState} from "../../../Type/Iuser";
 
 
 const ExamProblem = (props: any) => {
@@ -33,15 +36,18 @@ const ExamProblem = (props: any) => {
     }
 
     const problemInfo = useProblemInfo(GetProblemInfoAPI, `EXAM_${eid}_${gid}_${pid}`)
-    console.log("problemInfo", problemInfo)
-
     const problemList = useSelector((state: any) => {
         return state.ExamReducer.examProListInfo[eid + "_" + gid]
     })
-    console.log("@@@@@", problemList)
+    const answerSheet = useSelector((state: any) => {
+        if (!isValueEmpty(state.ExamReducer.examAnswerSheetInfo[`${eid}_${gid}`]))
+            return state.ExamReducer.examAnswerSheetInfo[`${eid}_${gid}`][pid]
+        return undefined
+    })
 
     const baseInfo = problemList?.proList[pid] ?? {index: undefined, score: undefined}
     const proType = problemList?.type
+    const flag = answerSheet?.marked ?? false
 
     return (
 
@@ -62,9 +68,9 @@ const ExamProblem = (props: any) => {
                 proType !== "Program" && (
                     <Button type="default"
                             shape="round"
-                            icon={props.isFlag ? <StarFilled/> : <StarOutlined/>}
-                            danger={props.isFlag}
-                            onClick={() => props.flipFlag(eid, gid, pid)}
+                            icon={flag ? <StarFilled/> : <StarOutlined/>}
+                            danger={flag}
+                            onClick={() => props.flipFlag(`${eid}_${gid}`, pid)}
                     >
                         {props.t("Mark")}
                     </Button>
@@ -93,9 +99,9 @@ const ExamProblem = (props: any) => {
                                 SubmissionListAPI={async (data: any) => {
                                     return eApi.getSubmissionList({
                                         ...data,
-                                        examId: eid,
-                                        problemGroup: gid,
-                                        problemIndex: pid
+                                        examId: parseInt(eid),
+                                        problemGroup: parseInt(gid),
+                                        problemIndex: parseInt(pid),
                                     })
                                 }}
                                 QuerySubmissionAPI={async (submissionId: string) => {
@@ -120,14 +126,15 @@ const ExamProblem = (props: any) => {
 
 
 const mapStateToProps = (state: any) => {
-
+    const UState:UserState = state.UserReducer
+    return{
+        username: UState.userInfo?.username
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    flipFlag: (examId: examID) => dispatch({
-        type: "flipFlag",
-        examId: examId
-    }),
+    flipFlag: (groupKey: string, proIndex: number) =>
+        dispatch(updateFlagTodo(groupKey, proIndex)),
 })
 
 export default connect(

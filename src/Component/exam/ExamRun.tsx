@@ -43,7 +43,7 @@ const ExamRun = (props: any) => {
                         eApi.getAnswerSheet(eid, x.index).then((res: any) => {
                             dispatch({
                                 type: "setAnswerSheet",
-                                data: res,
+                                data: res.problemAnswer,
                                 key: eid + "_" + x.index
                             })
                         })
