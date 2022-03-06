@@ -284,7 +284,6 @@ const SubmissionList = (props: any) => {
                     rowKey={"submissionId"}
                     API={props.API}
                     APIRowsTransForm={(value: any) => {
-                        console.log("APIRowsTransForm-value", value)
                         if (isValueEmpty(value)) value = []
                         let webSocketQueryList = []
                         let data: any = []

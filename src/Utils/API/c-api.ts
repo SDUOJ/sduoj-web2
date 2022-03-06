@@ -105,7 +105,7 @@ export default {
     async getContestAcProblem(data: { contestId: string }) {
         return request.get("/contest/queryACProblem", data)
     },
-    async participateContest(data: { contestId: string, password: string }) {
+    async participateContest(data: { contestId: string, password?: string }) {
         return request.post("/contest/participate", data)
     },
     async submitContestProblem(data: { contestId: string } & any) {
