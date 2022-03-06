@@ -9,7 +9,7 @@
 }
 
 .RankTable{
-    position: absolute;
+    width: auto;
 }
 
 .RankTable .ant-table-cell{

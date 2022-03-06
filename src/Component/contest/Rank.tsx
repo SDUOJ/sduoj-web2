@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Table} from "antd";
-import {ContestState} from "../../Redux/Action/contest";
+import {ContestState, setMinWidth} from "../../Redux/Action/contest";
 import {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import cApi from "Utils/API/c-api"
@@ -20,7 +20,7 @@ const Rank = (props: any) => {
         console.log(timeState)
         cApi.getRank({contestId: contestId}).then((res: any) => {
             console.log(timeState, res)
-            if (timeState === "running"){
+            if (timeState === "running") {
                 setData(res.map((value: any, index: number) => {
                     return {
                         ...value,
@@ -28,7 +28,7 @@ const Rank = (props: any) => {
                     }
                 }))
             }
-            if(timeState === "running"){
+            if (timeState === "running") {
 
             }
         })
@@ -81,13 +81,15 @@ const Rank = (props: any) => {
             })
             tableWidth += problemWidth
         }
+        if(props.minWidth !== tableWidth)
+            props.setMinWidth(tableWidth)
     }
 
     return (
         <>
             <Table
                 className={"RankTable"}
-                style={{width: tableWidth}}
+                style={{width: tableWidth, minWidth: tableWidth}}
                 pagination={false}
                 bordered={true}
                 dataSource={data}
@@ -125,11 +127,11 @@ const Rank = (props: any) => {
                         width: 80,
                         render: (text, row) => {
                             let sumScore = 0
-                            let proSet = 
-                            row.submissions.map((value: any) => {
+                            let proSet =
+                                row.submissions.map((value: any) => {
 
-                                sumScore += value[2]
-                            })
+                                    sumScore += value[2]
+                                })
                             return (
                                 <>
                                     {contestInfo.features.mode === "ioi" && (
@@ -151,11 +153,16 @@ const Rank = (props: any) => {
 const mapStateToProps = (state: any) => {
     const State: ContestState = state.ContestReducer
     return {
-        ContestInfo: State.contestInfo
+        ContestInfo: State.contestInfo,
+        minWidth: State.minWidth
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    setMinWidth: (data: number) => dispatch({
+        type: "setMinWidth", data: data
+    })
+})
 
 export default connect(
     mapStateToProps,

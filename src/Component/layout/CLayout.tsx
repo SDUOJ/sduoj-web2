@@ -9,6 +9,7 @@ import FooterSDU from "./FooterSDU";
 import CHeader from "./CHeader";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {routerC} from "../../Config/router/routerC";
+import {ContestState} from "../../Redux/Action/contest";
 
 const {Content} = Layout;
 
@@ -22,12 +23,24 @@ class MLayout extends Component<any, any> {
     }
 
     render() {
+
+        let minWidth = 500
+        if (this.props.location.pathname.match(/\/v2\/contest\/.*\/rank/g) !== null) {
+            minWidth = Math.max(500, (this.props.minWidth ?? 0) + 100)
+        }
+
         return (
             <>
                 <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1000px"}}>
-                    <Layout style={{minWidth: 500}}>
+                    <Layout style={{minWidth: minWidth}}>
                         <CHeader/>
-                        <Content style={{backgroundColor: "#f0f2f5", paddingTop: 64, margin: '20px 16px 0', display: "table", height: "auto"}}>
+                        <Content style={{
+                            backgroundColor: "#f0f2f5",
+                            paddingTop: 64,
+                            margin: '20px 16px 0',
+                            display: "table",
+                            height: "auto"
+                        }}>
                             <div style={{padding: 18}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
@@ -51,7 +64,10 @@ class MLayout extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    return {}
+    const CState: ContestState = state.ContestReducer
+    return {
+        minWidth: CState.minWidth
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

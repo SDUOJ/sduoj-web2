@@ -3,7 +3,8 @@ import {ConfigAction} from "../Action/config";
 import {ContestAction, ContestState} from "../Action/contest";
 
 const initState: ContestState = {
-    contestInfo: {}
+    contestInfo: {},
+    minWidth: 0
 }
 
 export const ContestReducer = (state: ContestState = initState, action: ContestAction) => {
@@ -11,6 +12,10 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
     switch (action.type){
         case "setContestInfo":
             State.contestInfo[action.key] = action.data
+            break
+
+        case "setMinWidth":
+            State.minWidth = action.data
             break
     }
     return State
