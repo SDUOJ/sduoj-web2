@@ -23,7 +23,6 @@ class ExamOver extends Component<any, any> {
                         const eid = urls[urls.length - 1]
                         eApi.ExamOver({examId: eid}).then(() => {
                             this.props.history.push("/v2/exam/finish")
-                            this.props.cleanExam()
                         }).catch(() => {
                             this.setState({disabled: false})
                         })

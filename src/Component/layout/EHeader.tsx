@@ -23,13 +23,9 @@ class EHeader extends Component<any, any> {
                          alt={"SDUOJ-logo"}/>
                 </div>
                 <div style={{float: "right"}} key={"operator"}>
-                    {
-                        this.props.location.pathname.match(/\/exam\/running\//) !== null &&
-                        this.props.ExamInfoLoad &&
-                        (
-                                <ExamOver key={"ExamOver"}/>
-                        )
-                    }
+                    {this.props.location.pathname.match(/\/exam\/running\//) !== null && (
+                        <ExamOver key={"ExamOver"}/>
+                    )}
                     <ChangeLang/>
                     {
                         [''].map(() => {
@@ -70,7 +66,6 @@ class EHeader extends Component<any, any> {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
-    const State :ExamState = state.ExamReducer
     const realName = UState.userInfo?.realName
     const sduId = UState.userInfo?.sduId
     return {
@@ -82,7 +77,6 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     userLogout: () => dispatch(userLogoutTodo()),
-    cleanExam: () => dispatch({type: "cleanExam"}),
     getProfile: () => dispatch(userGetProfileTodo()),
 })
 
