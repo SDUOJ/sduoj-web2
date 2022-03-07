@@ -112,6 +112,7 @@ const ExamProblem = (props: any) => {
                                 scoreMod={"show"}
                                 testcaseMod={"show"}
                                 showInfo={true}
+                                enableLeftSubmitCount={true}
                             />
                         )
                     case "SingleChoice":

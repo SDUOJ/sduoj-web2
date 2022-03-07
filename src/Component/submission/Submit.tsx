@@ -73,21 +73,21 @@ const Submit = (props: SubmitPropsType & any) => {
             {props.t("Submit")}
         </Button>
     )
-
+    console.log("props.LeftSubmitCount", props.LeftSubmitCount)
     return (
         <>
-            {props.LeftSubmitCount !== undefined && (
+            {!isNaN(props.LeftSubmitCount) && props.LeftSubmitCount !== undefined && (
                 <Badge count={
                     <Tooltip placement="topLeft" title={"剩余提交次数"}>
-                    <span className={"Badge-Tooltip-Program"}>
-                        {props.LeftSubmitCount}
-                    </span>
+                        <span className={"Badge-Tooltip-Program"}>
+                            {props.LeftSubmitCount}
+                        </span>
                     </Tooltip>
                 }>
                     {SubmitButton}
                 </Badge>
             )}
-            {props.LeftSubmitCount === undefined && (
+            {(isNaN(props.LeftSubmitCount) || props.LeftSubmitCount === undefined) && (
                 SubmitButton
             )}
 
@@ -101,7 +101,8 @@ const Submit = (props: SubmitPropsType & any) => {
                    footer={[
                        <Space size={25}>
                            {
-                               props.LeftSubmitCount !== undefined && (
+                               props.LeftSubmitCount !== undefined &&
+                               !isNaN(props.LeftSubmitCount) && (
                                    <div style={{
                                        color: "red",
                                        fontSize: "15px",
@@ -116,7 +117,9 @@ const Submit = (props: SubmitPropsType & any) => {
                                key="submit" type="primary"
                                onClick={CodeSubmit}
                                disabled={
-                                   (props.LeftSubmitCount !== undefined && props.LeftSubmitCount <= 0)
+                                   (!isNaN(props.LeftSubmitCount) &&
+                                       props.LeftSubmitCount !== undefined &&
+                                       props.LeftSubmitCount <= 0)
                                    || SubmitDisable
                                }
                            >

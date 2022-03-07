@@ -36,6 +36,7 @@ interface ProProgramProps {
     tableData: any      // 表格数据
     isLogin: boolean
     showInfo: boolean   // 是否展示题目详情
+    enableLeftSubmitCount?: boolean
 
     ProblemInfo: any // 题目信息
 }
@@ -139,7 +140,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                         SubmissionListName={"Pro-SubmissionList-" + props.name}
                         API={props.SubmitAPI}
                         title={problemInfo?.problemTitle}
-                        LeftSubmitCount={problemInfo?.submitNum - totalSubmission}
+                        LeftSubmitCount={props.enableLeftSubmitCount ? (problemInfo?.submitNum - totalSubmission) : undefined}
                         TopSubmissionInfo={{
                             title: problemInfo?.problemTitle,
                             scoreMod: "show",
