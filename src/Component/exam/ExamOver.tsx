@@ -19,8 +19,7 @@ class ExamOver extends Component<any, any> {
                     title="交卷后将无法继续作答，你确定要交卷吗？"
                     onConfirm={() => {
                         this.setState({disabled: true})
-                        const urls = this.props.location.pathname.split('/')
-                        const eid = urls[urls.length - 1]
+                        const eid = this.props.match.params.eid
                         eApi.ExamOver({examId: eid}).then(() => {
                             this.props.history.push("/v2/exam/finish")
                         }).catch(() => {
