@@ -174,12 +174,8 @@ class ExamList extends Component<any, any> {
                             QuerySubmissionAPI={(submissionId: string) => {
                                 return eApi.getSubmission(record.examId, submissionId)
                             }}
-                            problemCodeRender={(text: any) => {
-                                return (
-                                    <Button type={"text"} size={"small"}>
-                                        {String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)}
-                                    </Button>
-                                )
+                            problemCodeRender={(text: any, row: any) => {
+                                return row.problemId
                             }}
                         />
                     </Space>
