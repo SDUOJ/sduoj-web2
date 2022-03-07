@@ -17,7 +17,7 @@ const Rank = (props: any) => {
     const [data, setData] = useState()
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
     const [SummaryInfo, setSummaryInfo] = useState<any>({})
-    const [lastSliderTime, setLastSliderTime] = useState<number>(0)
+    const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
 
 
     useEffect(() => {
@@ -40,8 +40,8 @@ const Rank = (props: any) => {
 
     useEffect(() => {
         if (rankInfo !== undefined) {
-            if (props.openSliderMove && Math.abs(props.sliderTime - lastSliderTime) <= 1000 * 60) return
-            if (props.openSliderMove) setLastSliderTime(props.sliderTime)
+            if (props.openSliderMove && Math.abs(Date.now() - lastSliderTime) <= 500) return
+            if (props.openSliderMove) setLastSliderTime(Date.now)
 
             // console.log(props.sliderTime)
 

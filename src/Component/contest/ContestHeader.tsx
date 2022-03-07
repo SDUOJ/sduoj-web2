@@ -22,6 +22,8 @@ const ContestHeader = (props: any) => {
     const url = props.location.pathname
     const contestInfo = getContestInfo(contestId)
     const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
+    const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
+
 
 
     // console.log(contestInfo)
@@ -64,7 +66,7 @@ const ContestHeader = (props: any) => {
         if(Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60){
             props.setSliderTime(nowSliderTime)
         }
-    }, [nowSliderTime, props.sliderTime])
+    }, [nowSliderTime, lastSliderTime, props.sliderTime])
 
     return (
         <>
@@ -189,6 +191,12 @@ const ContestHeader = (props: any) => {
                             float: "right",
                             color: "grey"
                         }}>
+                            {props.openSliderMove && (
+                                <>
+                                    {TimeDiff(contestInfo.gmtStart, nowSliderTime)}
+                                    <Divider type={"vertical"}/>
+                                </>
+                            )}
                             {props.allowSliderMove === true && (
                                 <>
                                     历史回放
