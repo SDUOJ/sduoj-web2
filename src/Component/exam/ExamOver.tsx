@@ -1,55 +1,56 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component, Dispatch, useState} from "react";
 import {Button, Popconfirm} from "antd";
 import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
-import {connect} from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import eApi from "Utils/API/e-api"
 
-class ExamOver extends Component<any, any> {
-    state = {
-        disabled: false
-    }
+const ExamOver = (props: any) => {
+    const [disabled, setDisabled] = useState<boolean>(false)
+    const dispatch = useDispatch()
 
-
-    render() {
-        return (
-            <>
-                <Popconfirm
-                    okType={"primary"}
-                    title="交卷后将无法继续作答，你确定要交卷吗？"
-                    onConfirm={() => {
-                        this.setState({disabled: true})
-                        const eid = this.props.match.params.eid
-                        eApi.ExamOver({examId: eid}).then(() => {
-                            this.props.history.push("/v2/exam/finish")
-                        }).catch(() => {
-                            this.setState({disabled: false})
+    return (
+        <>
+            <Popconfirm
+                okType={"primary"}
+                title="交卷后将无法继续作答，你确定要交卷吗？"
+                onConfirm={() => {
+                    setDisabled(true)
+                    const urls = props.location.pathname.split('/')
+                    const eid = urls[urls.length - 3]
+                    eApi.ExamOver({examId: eid}).then(() => {
+                        dispatch({
+                            type: "setExamInfo",
+                            key: eid,
+                            data: undefined
                         })
-                    }}
-                    okText="确定交卷"
-                    cancelText="取消"
-                    disabled={this.state.disabled}
+                        props.history.push("/v2/exam/finish")
+                    }).catch(() => {
+                        setDisabled(false)
+                    })
+                }}
+                okText="确定交卷"
+                cancelText="取消"
+                disabled={disabled}
+            >
+                <Button
+                    danger
+                    style={{marginRight: "30px"}}
+                    type={"primary"}
+                    disabled={disabled}
                 >
-                    <Button
-                        danger
-                        style={{marginRight: "30px"}}
-                        type={"primary"}
-                        disabled={this.state.disabled}
-                    >
-                        交卷
-                    </Button>
-                </Popconfirm>
-            </>
-        )
-    }
+                    交卷
+                </Button>
+            </Popconfirm>
+        </>
+    )
+
 }
 
 const mapStateToProps = (state: any) => {
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

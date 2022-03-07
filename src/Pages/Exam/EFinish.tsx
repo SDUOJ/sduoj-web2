@@ -6,34 +6,28 @@ import {getRouterPath} from "../../Config/router/router";
 import {routerE} from "../../Config/router/routerE";
 
 
-class EFinish extends Component<any, any> {
+const EFinish = (props: any) => {
 
-    constructor(props: any, context: any) {
-        super(props, context);
-    }
-
-    render() {
-        return (
-            <>
-                <Result
-                    status="success"
-                    title="试卷已提交成功"
-                    subTitle="请有序离场并耐心等待考试成绩"
-                    extra={
-                        <Button
-                            type="primary"
-                            key="return"
-                            onClick={() => {
-                                this.props.history.push(getRouterPath(routerE, 2));
-                            }}
-                        >
-                            返回题目列表
-                        </Button>
-                    }
-                />
-            </>
-        )
-    }
+    return (
+        <>
+            <Result
+                status="success"
+                title="试卷已提交成功"
+                subTitle="请有序离场并耐心等待考试成绩"
+                extra={
+                    <Button
+                        type="primary"
+                        key="return"
+                        onClick={() => {
+                            props.history.push(getRouterPath(routerE, 2));
+                        }}
+                    >
+                        返回考试列表
+                    </Button>
+                }
+            />
+        </>
+    )
 }
 
 export default withTranslation()(
