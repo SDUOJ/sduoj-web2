@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Col, Row, Space, Table} from "antd";
-import {ContestState, setMinWidth} from "../../Redux/Action/contest";
+import {ContestState, setAllowSliderMove, setMinWidth, setOpenSliderMove} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import cApi from "Utils/API/c-api"
@@ -13,19 +13,42 @@ import Icon, {TeamOutlined, FileTextOutlined} from "@ant-design/icons";
 const Rank = (props: any) => {
     const contestId = props.match.params.contestId
     const contestInfo = props.ContestInfo[contestId]
-    const [rankInfo, setRankInfo] = useState()
+    const [rankInfo, setRankInfo] = useState<any>()
     const [data, setData] = useState()
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
     const [SummaryInfo, setSummaryInfo] = useState<any>({})
+    const [lastSliderTime, setLastSliderTime] = useState<number>(0)
 
 
     useEffect(() => {
         // console.log("00--------------000000000000", contestInfo)
-        const problemInfo = contestInfo.problems
-        cApi.getRank({contestId: contestId}).then((res: any) => {
-            // console.log(timeState, res)
+        if (rankInfo === undefined) {
+            cApi.getRank({contestId: contestId}).then((res: any) => {
+                // 设置可以滑动
+                if (res.length > 0 && res[0].submission !== null)
+                    props.setAllowSliderMove(true)
+                res.map((value: any, index: number) => {
+                    if (value.submissions !== null)
+                        value.submissions.sort((a: any, b: any) => {
+                            return parseInt(a[1]) - parseInt(b[1])
+                        })
+                })
+                setRankInfo(res)
+            })
+        }
+    }, [rankInfo, setRankInfo, contestId, timeState])
+
+    useEffect(() => {
+        if (rankInfo !== undefined) {
+            if (props.openSliderMove && Math.abs(props.sliderTime - lastSliderTime) <= 1000 * 60) return
+            if (props.openSliderMove) setLastSliderTime(props.sliderTime)
+
+            // console.log(props.sliderTime)
+
+
+            const problemInfo = contestInfo.problems
             const summaryInfo: any = {}
-            summaryInfo.SumNumber = res.length
+            summaryInfo.SumNumber = rankInfo.length
 
             for (let i = 0; i < problemInfo.length; i++) {
                 summaryInfo[`submit_${i}`] = problemInfo[i].submitNum
@@ -36,7 +59,7 @@ const Rank = (props: any) => {
             }
 
             // 排序前 进行数据预处理
-            const beforeSort = res.map((value: any, index: number) => {
+            const beforeSort = rankInfo.map((value: any, index: number) => {
                 let sumScore = 0, ACNumber = 0, penalty = 0
                 let cell: any = {}
                 const official = value.official
@@ -81,37 +104,42 @@ const Rank = (props: any) => {
                 if (value.submissions === null) {
                     value.problemResults.map((value: any, index: number) => convertValue(value, index))
                 } else {
+                    const sliderTime = Math.max(props.sliderTime, parseInt(contestInfo.gmtStart))
+
                     let proSet: any = {}
-                    value.submissions.sort((a: any, b: any) => {
-                        return parseInt(a[1]) - parseInt(b[1])
-                    })
-                    value.submissions.map((value: any) => {
-                        if(!props.afterContestSubmission && parseInt(value[1]) > parseInt(contestInfo.gmtEnd))
-                            return
-                        if (proSet[value[0]] === undefined)
-                            proSet[value[0]] = {
+
+                    for (let i = 0; i < value.submissions.length; i++) {
+                        const sbm = value.submissions[i]
+                        if (!props.afterContestSubmission && parseInt(sbm[1]) > parseInt(contestInfo.gmtEnd)) break
+                        // 控制提交时间筛选
+                        if (props.openSliderMove && parseInt(sbm[1]) > sliderTime) break
+                        const proId = sbm[0]
+
+                        if (proSet[proId] === undefined)
+                            proSet[proId] = {
                                 time: 0,
                                 score: -1,
                                 result: 0,
                                 submission: 0,
                                 submissionBeforeAC: 0
                             }
-                        const proId = value[0]
                         // 取最大的分数，分数相同，取最时间小的
-                        if (proSet[proId].score < value[2]
-                            || (proSet[proId].score == value[2]
-                                && (proSet[proId].time > parseInt(value[1]) ||
-                                    (proSet[proId].result !== 1 && value[3] === 1)
+                        const obj = proSet[proId]
+                        if (obj.score < sbm[2] ||
+                            (obj.score == sbm[2] &&
+                                (obj.time > parseInt(sbm[1]) ||
+                                    (obj.result !== 1 && sbm[3] === 1)
                                 )
-                            )
-                        ) {
-                            proSet[proId].time = parseInt(value[1])
-                            proSet[proId].score = value[2]
-                            proSet[proId].result = value[3]
+                            )) {
+                            obj.time = parseInt(sbm[1])
+                            obj.score = sbm[2]
+                            obj.result = sbm[3]
                         }
-                        if (proSet[proId].result !== 1) proSet[proId].submissionBeforeAC += 1
-                        proSet[proId].submission += 1
-                    })
+                        if (obj.result !== 1)
+                            obj.submissionBeforeAC += 1
+                        obj.submission += 1
+                    }
+
                     for (const x in proSet) {
                         convertValue([
                             proSet[x].time.toString(),
@@ -170,8 +198,8 @@ const Rank = (props: any) => {
 
             setSummaryInfo(summaryInfo)
             setData(afterSort)
-        })
-    }, [rankInfo, setRankInfo, setData, contestId, timeState, props.afterContestSubmission])
+        }
+    }, [rankInfo, props.afterContestSubmission, props.sliderTime])
 
     const problemColumns = []
     let tableWidth = 330
@@ -341,16 +369,23 @@ const Rank = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const State: ContestState = state.ContestReducer
+
     return {
         ContestInfo: State.contestInfo,
         minWidth: State.minWidth,
-        afterContestSubmission: State.afterContestSubmission
+        afterContestSubmission: State.afterContestSubmission,
+        allowSliderMove: State.allowSliderMove,
+        sliderTime: State.sliderTime,
+        openSliderMove: State.openSliderMove
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setMinWidth: (data: number) => dispatch({
         type: "setMinWidth", data: data
+    }),
+    setAllowSliderMove: (data: boolean) => dispatch({
+        type: "setAllowSliderMove", data: data
     })
 })
 

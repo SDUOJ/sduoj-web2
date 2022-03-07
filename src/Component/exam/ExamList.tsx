@@ -14,6 +14,9 @@ import {getExamJson} from "../../Utils/exportExam";
 import SubmissionModal from "../submission/Processing/ModalProcessing";
 import {isValueEmpty} from "../../Utils/empty";
 import TableWithPagination from "../common/Table/TableWithPagination";
+import SubmissionList from "../submission/SubmissionList/SubmissionList";
+import cApi from "../../Utils/API/c-api";
+import ModalSubmissionList from "../submission/SubmissionList/ModalSubmissionList";
 
 
 class ExamList extends Component<any, any> {
@@ -157,7 +160,28 @@ class ExamList extends Component<any, any> {
                             getJson={() => getExamJson(record.examId)}
                             fileName={record.examTitle + "_" + Date.now() + "_结果导出"}
                         />
-                        {/*<SubmissionList/>*/}
+                        <ModalSubmissionList
+                            btnProps={{type: "link"}}
+                            btnText={"评测记录"}
+                            name={"Exam-Submission-" + record.examId}
+                            useForm={true}
+                            API={(data: any) => {
+                                return mApi.getExamSubmission({
+                                    ...data,
+                                    examId: record.examId
+                                })
+                            }}
+                            QuerySubmissionAPI={(submissionId: string) => {
+                                return eApi.getSubmission(record.examId, submissionId)
+                            }}
+                            problemCodeRender={(text: any) => {
+                                return (
+                                    <Button type={"text"} size={"small"}>
+                                        {String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)}
+                                    </Button>
+                                )
+                            }}
+                        />
                     </Space>
                 }
             }

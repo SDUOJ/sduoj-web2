@@ -1,6 +1,6 @@
 export default function apiAddress() {
     // const port = "9005"
-    const port = "9005"
+    const port = "8080"
     // if (process.env.NODE_ENV === 'development') return {
     //     CLIENT_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
     //     MANAGE_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
@@ -12,7 +12,7 @@ export default function apiAddress() {
         CLIENT_SERVER: 'http://api.oj.cs.sdu.edu.cn:' + port,
         MANAGE_SERVER: 'http://api.oj.cs.sdu.edu.cn:' + port,
         EXAM_SERVER: 'http://api.oj.cs.sdu.edu.cn:' + port,
-        FRONT_SERVER: 'http://api.oj.cs.sdu.edu.cn',
+        FRONT_SERVER: 'http://oj.cs.sdu.edu.cn：3000',
         SOCKET_SERVER: 'ws://api.oj.cs.sdu.edu.cn:' + port
     }
     // return {

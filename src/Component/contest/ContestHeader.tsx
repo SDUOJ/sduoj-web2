@@ -21,6 +21,8 @@ const ContestHeader = (props: any) => {
     const contestId = props.match.params.contestId
     const url = props.location.pathname
     const contestInfo = getContestInfo(contestId)
+    const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
+
 
     // console.log(contestInfo)
 
@@ -57,6 +59,12 @@ const ContestHeader = (props: any) => {
         })
     }, [url, openness, isPractice])
 
+
+    useEffect(()=>{
+        if(Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60){
+            props.setSliderTime(nowSliderTime)
+        }
+    }, [nowSliderTime, props.sliderTime])
 
     return (
         <>
@@ -97,7 +105,11 @@ const ContestHeader = (props: any) => {
                                 tipFormatter={null}
                                 min={parseInt(contestInfo.gmtStart)}
                                 max={parseInt(contestInfo.gmtEnd)}
-                                value={Math.max(Math.min(Date.now(), parseInt(contestInfo.gmtEnd)), parseInt(contestInfo.gmtStart))}
+                                value={
+                                    props.openSliderMove ? nowSliderTime :
+                                        Math.max(Math.min(Date.now(), parseInt(contestInfo.gmtEnd)), parseInt(contestInfo.gmtStart))
+                                }
+                                onChange={props.openSliderMove ? setNowSliderTime : undefined}
                             />
                         )}
                         <div style={{marginTop: 15}} className={"center"}>
@@ -177,6 +189,18 @@ const ContestHeader = (props: any) => {
                             float: "right",
                             color: "grey"
                         }}>
+                            {props.allowSliderMove === true && (
+                                <>
+                                    历史回放
+                                    <Switch
+                                        checked={props.openSliderMove}
+                                        onChange={props.setOpenSliderMove}
+                                        checkedChildren={"启用"}
+                                        unCheckedChildren={"关闭"}
+                                    />
+                                    <Divider type={"vertical"}/>
+                                </>
+                            )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
                                 timeState === "end" && (
                                     <>
@@ -233,7 +257,10 @@ const mapStateToProps = (state: any) => {
     return {
         username: State.userInfo?.username,
         roles: State.userInfo?.roles,
-        afterContestSubmission: CState.afterContestSubmission
+        afterContestSubmission: CState.afterContestSubmission,
+        allowSliderMove: CState.allowSliderMove,
+        sliderTime: CState.sliderTime,
+        openSliderMove: CState.openSliderMove
     }
 }
 
@@ -241,6 +268,12 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setAfterContestSubmission: (data: boolean) => dispatch({
         type: "setAfterContestSubmission",
         data: data
+    }),
+    setSliderTime: (data: number) => dispatch({
+        type: "setSliderTime", data: data
+    }),
+    setOpenSliderMove: (data: boolean) => dispatch({
+        type: "setOpenSliderMove", data: data
     })
 })
 

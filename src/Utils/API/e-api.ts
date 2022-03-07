@@ -4,7 +4,6 @@ import {ICreateSubmit, IGetProInfo} from "../../Type/IProblem";
 import React from "react";
 
 import request from "./request";
-import {sleep} from "../Sleep";
 
 export default {
 
@@ -22,7 +21,7 @@ export default {
     },
     // 提交代码
     async CreateSubmit(data: ICreateSubmit) {
-        return request.post('exam/createSubmission', data)
+        return request.post('/exam/createSubmission', data)
     },
     // 获取考试信息
     async getExamInfo(data: examID) {
@@ -46,7 +45,6 @@ export default {
         return request.post("/exam/getSubmissionList", data)
     },
     async getSubmission(examId: examID, submissionId: string){
-        return request.get("exam/" + examId + "/submission/" + submissionId)
+        return request.get("/exam/" + examId + "/submission/" + submissionId)
     }
-
 }

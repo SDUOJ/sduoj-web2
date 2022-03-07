@@ -5,7 +5,10 @@ import {ContestAction, ContestState} from "../Action/contest";
 const initState: ContestState = {
     contestInfo: {},
     minWidth: 0,
-    afterContestSubmission: false
+    afterContestSubmission: false,
+    sliderTime: 0,
+    allowSliderMove: false,
+    openSliderMove: false
 }
 
 export const ContestReducer = (state: ContestState = initState, action: ContestAction) => {
@@ -20,6 +23,15 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
             break
         case "setAfterContestSubmission":
             State.afterContestSubmission = action.data
+            break
+        case "setAllowSliderMove":
+            State.allowSliderMove = action.data
+            break
+        case "setSliderTime":
+            State.sliderTime = action.data
+            break
+        case "setOpenSliderMove":
+            State.openSliderMove = action.data
             break
     }
     return State
