@@ -47,6 +47,7 @@ const ModalForm = (props: ModalFormProps & any) => {
 
     const loadData = () => {
         if (props.type === "update" || props.type === "fork") {
+            // 若初始化信息为空，则调用数据加载器进行异步数据加载
             if (props.initData === undefined) {
                 const hied = message.loading({
                     content: "加载中",
@@ -65,9 +66,9 @@ const ModalForm = (props: ModalFormProps & any) => {
                     setFormVis(true)
                 }).catch((e: any) => {
                     hied()
-                    message.error(e)
                 })
             } else {
+                // 否则直接进行数据加载
                 setSaveInitData(props.initData)
                 setFormVis(true)
             }
@@ -76,17 +77,22 @@ const ModalForm = (props: ModalFormProps & any) => {
         }
     }
 
+    // 当表单的可见性发生改变时，维护表单信息
     useEffect(() => {
+        // 延迟向表单注入信息
         setTimeout(() => {
             formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.setFieldsValue(saveInitData);
             });
         }, 100)
+
+        // 当表单消失时，清除相关数据
         if (!formVis) {
             setCurrent(0)
             formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.resetFields()
             });
+            props.formName && props.addManageInitData(props.formName, undefined)
         }
     }, [formVis])
 
@@ -94,25 +100,28 @@ const ModalForm = (props: ModalFormProps & any) => {
         props.formName && props.addManageInitData(props.formName, saveInitData)
     }, [saveInitData])
 
+    // 提交数据
     const submitData = (values: any) => {
-        const submit = (value: any)=>{
+        const submit = (value: any) => {
             console.log("inner", value)
+            // 在提交表单数据之前，追加数据
             props.updateAppendProps && Object.assign(value, props.updateAppendProps)
             props.dataSubmitter(value).then((res: any) => {
                 setFormVis(false)
-                if (props.TableName !== undefined)
-                    props.addTableVersion(props.TableName)
+                // 当数据绑定表格时，更新表格数据
+                props.TableName && props.addTableVersion(props.TableName)
                 message.success("成功")
             })
         }
 
-        if(props.subForm.length === 1){
+        if (props.subForm.length === 1) {
+            // 只有一页的表单，需要手动进行验证
             form.validateFields().then((value) => {
-               submit(value)
+                submit(value)
             }).catch((e: any) => {
                 message.error('表单不完整')
             })
-        }else submit(values)
+        } else submit(values)
     }
 
     return (
@@ -159,13 +168,11 @@ const ModalForm = (props: ModalFormProps & any) => {
                     onCancel={() => {
                         setFormVis(false)
                     }}
-                    footer={
-                        [
-                            <Button type="primary" key="submit" onClick={submitData}>
-                                {props.t("Submit")}
-                            </Button>
-                        ]
-                    }
+                    footer={[
+                        <Button type="primary" key="submit" onClick={submitData}>
+                            {props.t("Submit")}
+                        </Button>
+                    ]}
                 >
                     <Form
                         form={form}

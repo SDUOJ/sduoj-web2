@@ -26,11 +26,11 @@ export default {
     // 获取考试信息
     async getExamInfo(data: examID) {
         // await sleep(1000)
-        return request.get('/exam/getInfo/' + data);
+        return request.get('/exam/getInfo', {examId: data});
     },
     // 获取考试列表
     async getExamList(data: any) {
-        return request.post("/exam/getInfo", data);
+        return request.post("/exam/getInfos", data);
     },
     async setAnswerSheet(data: any, eid: examID, groupId: React.Key){
         return request.post("/exam/" + eid + "/answerSheet/" + groupId, data)

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, Card, Space} from "antd";
+import {Button, Card, Descriptions, Space} from "antd";
 import MApi from "../../Utils/API/m-api";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {withTranslation} from "react-i18next";
@@ -11,6 +11,7 @@ import ItemSwitch from "../../Component/common/Form/Item/ItemSwitch";
 import ItemSelectGroup from "../../Component/group/Form/Item/ItemSelectGroup";
 import ItemText from "../../Component/common/Form/Item/ItemText";
 import FormJudgeType from "../../Component/problem/From/FormJudgeType";
+import ProDescriptions from "../../Component/problem/ProDescriptions";
 
 class MProblem extends Component<any, any> {
     render() {
@@ -141,7 +142,11 @@ class MProblem extends Component<any, any> {
                                     })
                                 }}
                             />
-                            <Button type={"link"} size={"small"}>{this.props.t("Description")}</Button>
+                            <ProDescriptions
+                                problemCode={rows.problemCode}
+                                title={rows.problemTitle}
+                                defaultDescriptionId={rows.defaultDescriptionId}
+                            />
                             <Button type={"link"} size={"small"}>{this.props.t("Checkpoint")}</Button>
                         </Space>
                     )

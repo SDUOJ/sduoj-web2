@@ -5,14 +5,14 @@ import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";
-import {genNumberList} from "../../../Type/IManage";
+import {genNumberList} from "../../../../Type/IManage";
 import mApi from "Utils/API/m-api"
 import Paragraph from "antd/lib/typography/Paragraph";
-import {examProblemType} from "../../../Type/IExam";
-import {ck, get} from "../../../Utils/empty";
+import {examProblemType} from "../../../../Type/IExam";
+import {ck, get} from "../../../../Utils/empty";
 
 
-const EditableTableWithDrag = (props: any) => {
+const ItemProblemAdd = (props: any) => {
     // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
     const [form] = Form.useForm();
@@ -20,12 +20,13 @@ const EditableTableWithDrag = (props: any) => {
 
     // === State ===
     const [sortSwitch, setSortSwitch] = useState<boolean>(false);  // 操作是否开启排序模式
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genNumberList(ck(props.initData, [])));  // 编辑区域构造
+    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genNumberList(ck(props.value, [])));  // 编辑区域构造
 
-    const [TableData, setTableDataX] = useState<any[]>(ck(props.initData, []))
+    const [TableData, setTableDataX] = useState<any[]>(ck(props.value, []))
     const [TableDataHis, setTableDataHis] = useState<any>({})
     const setTableData = (data: any) => {
         console.log("setTableData", data)
+        props.onChange && props.onChange(data)
         setTableDataX([...data])
     }
 
@@ -382,7 +383,8 @@ const EditableTableWithDrag = (props: any) => {
         if (ProblemType === "single" || ProblemType === "multi") columns = columns.concat(ObjectiveProblemPreviewColumnItem)
         if (ProblemType === "program") {
             columns = columns.concat(ProgramingProblemInfoColumnItem)
-            columns = columns.concat(ProblemSubmitLimitColumnItem)
+            if(props.useSubmitLimit) columns = columns.concat(ProblemSubmitLimitColumnItem)
+            if(props.useColor) columns = columns.concat(ProblemSubmitLimitColumnItem)
         }
         columns = columns.concat(ProblemScoreColumnItem)
     }
@@ -444,4 +446,4 @@ const EditableTableWithDrag = (props: any) => {
     );
 }
 
-export default withTranslation()(EditableTableWithDrag)
+export default withTranslation()(ItemProblemAdd)

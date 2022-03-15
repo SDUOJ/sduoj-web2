@@ -1,6 +1,6 @@
 import React, {Component, useState} from "react";
 import {withRouter} from "react-router-dom";
-import EditableTableWithDrag from "../../Component/common/Table/EditableTableWithDrag";
+import EditableTableWithDrag from "../../Component/problem/From/Item/ItemProblemAdd";
 import {isValueEmpty} from "../../Utils/empty";
 import TimeError from "../Error/TimeError";
 import Reconfirm from "../../Component/common/Reconfirm";

@@ -50,22 +50,24 @@ export interface functionTemplate {
 
 export interface problemBasic {
     problemCode: string,
-    isPublic: boolean,
-    problemTitle: string,
+    isPublic?: boolean,
+    problemTitle?: string,
     source?: string,
-    languages: string[],
-    memoryLimit: string | number,
-    timeLimit: string | number,
-    defaultDescriptionId: number,
-    judgeTemplates: number[],
-    managerGroups: number[],
+    languages?: string[],
+    memoryLimit?: string | number,
+    timeLimit?: string | number,
+    defaultDescriptionId?: number,
+    judgeTemplates?: number[],
+    managerGroups?: number[],
     functionTemplates?: functionTemplate[]
 }
 
 export interface problemDescription {
-    problemCode: string,
-    title: string,
-    markdownDescription: string
+    problemCode?: string,
+    id?: string | number
+    title?: string,
+    markdownDescription?: string
+    isPublic?: number
 }
 
 export interface checkPointData {
