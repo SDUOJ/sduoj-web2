@@ -269,6 +269,10 @@ h5.TestCase-text {
     word-wrap: break-word;
 }
 
+.mgb0{
+    margin-bottom: 0;
+}
+
 
 .ExamPageCtrl {
     margin-top: 20px;

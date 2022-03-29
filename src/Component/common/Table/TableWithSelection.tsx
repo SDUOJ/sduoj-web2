@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import TableWithPagination from "./TableWithPagination";
 import {TableState} from "../../../Type/ITable";
 import {ck} from "../../../Utils/empty";
+import TableWithAllData from "./TableWithAllData";
 
 
 class TableWithSelection extends Component<any, any> {
@@ -66,21 +67,26 @@ class TableWithSelection extends Component<any, any> {
 
         return (
             <>
-                <TableWithPagination
-                    {... this.props}
-                    rowSelection={this.props.disableSelection ? undefined : rowSelection}
-                />
-
+                {this.props.uesAlldata && (
+                    <TableWithAllData
+                        {... this.props}
+                        rowSelection={this.props.disableSelection ? undefined : rowSelection}
+                    />
+                )}
+                {this.props.uesAlldata === undefined && (
+                    <TableWithPagination
+                        {... this.props}
+                        rowSelection={this.props.disableSelection ? undefined : rowSelection}
+                    />
+                )}
             </>
         )
     }
 }
 
 const mapStateToProps = (state: any) => {
-    const UState: UserState = state.UserReducer
     const TState: TableState = state.TableReduce
     return {
-        roles: UState.userInfo?.roles,
         tableData: TState.tableData
     }
 
@@ -89,8 +95,6 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setSelectedRowKeys: (data: React.Key[], name: string) =>
         dispatch({type: "setSelectedRowKeys", data: data, name: name}),
-    setDataSource: (data: any, name: string) =>
-        dispatch({type: "setDataSource", data: data, name: name, add: false})
 })
 
 export default connect(

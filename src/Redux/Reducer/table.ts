@@ -12,6 +12,7 @@ const initState: TableState = {
 
 export const TableReduce = (state: TableState = initState, action: TableAction) => {
     let State = {...state}
+    State.tableData = {...State.tableData}
     const initTableData = (name: string) => {
         if (State.tableData[name] === undefined)
             State.tableData[name] = {

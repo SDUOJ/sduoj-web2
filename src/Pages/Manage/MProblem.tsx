@@ -12,6 +12,7 @@ import ItemSelectGroup from "../../Component/group/Form/Item/ItemSelectGroup";
 import ItemText from "../../Component/common/Form/Item/ItemText";
 import FormJudgeType from "../../Component/problem/From/FormJudgeType";
 import ProDescriptions from "../../Component/problem/ProDescriptions";
+import ProCheckPoints from "../../Component/problem/ProCheckPoints";
 
 class MProblem extends Component<any, any> {
     render() {
@@ -147,7 +148,10 @@ class MProblem extends Component<any, any> {
                                 title={rows.problemTitle}
                                 defaultDescriptionId={rows.defaultDescriptionId}
                             />
-                            <Button type={"link"} size={"small"}>{this.props.t("Checkpoint")}</Button>
+                            <ProCheckPoints
+                                problemCode={rows.problemCode}
+                                title={rows.problemTitle}
+                            />
                         </Space>
                     )
                 }

@@ -34,6 +34,25 @@ const getTime: Get | GetError = async (url: string) => {
     }
 }
 
+const getZipFile: any = async (url: string, data: object, config?: AxiosRequestConfig) => {
+    const response = await service.post(url, data, {
+        ...config, responseType: 'blob'
+    });
+    try {
+        let blob = new Blob([response.data], {type: 'application/zip'})
+        let Url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = Url
+        link.download = `${Date.now()}-TestCase.zip`
+        link.click()
+        URL.revokeObjectURL(Url)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+    return Promise.resolve()
+}
+
+
 const messageDisabledList = [
     "/user/getProfile",
     "/submit/queryACProblem",
@@ -107,5 +126,6 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
 export default {
     get,
     post,
-    getTime
+    getTime,
+    getZipFile
 };

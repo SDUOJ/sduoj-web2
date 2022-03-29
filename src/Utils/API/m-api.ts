@@ -174,35 +174,20 @@ export default {
     },
     // ----------------- 评测模板相关 -------------------
     // 单文件上传
-    singleUpload: async function (data: { file: any }) {
-        return request.post('/filesys/upload', data);
-    },
+    // singleUpload: async function (data: { file: any }) {
+    //     return request.post('/filesys/upload', data);
+    // },
     // 多文件上传
-    multiUpload: async function (data: { files: any }) {
-        return request.post('/filesys/uploadFiles', data);
-    },
+    // multiUpload: async function (data: { files: any }) {
+    //     return request.post('/filesys/uploadFiles', data);
+    // },
     // 用 md5 查文件
-    checkMD5: async function (md5: string) {
-        return request.get('/filesys/queryByMd5', {md5});
-    },
+    // checkMD5: async function (md5: string) {
+    //     return request.get('/filesys/queryByMd5', {md5});
+    // },
     // 以zip包下载多个文件
-    zipDownload: async function (data: {}) {
-        return new Promise((resolve, reject) => {
-            request.post<any>('filesys/zipDownload', data, {responseType: 'blob'}).then(ret => {
-                resolve(ret);
-                const blob = new Blob([ret.data], {type: ret.headers['content-type']});
-                const elink = document.createElement('a');
-                const filename = new Date().getTime().toString();
-                if ('download' in elink) {
-                    elink.download = filename;
-                    elink.href = URL.createObjectURL(blob);
-                    elink.click();
-                    URL.revokeObjectURL(elink.href);
-                } else {
-                    // navigator.msSaveBlob(blob, filename);
-                }
-            }, err => (reject(err)));
-        })
+    zipDownload: async function (data: any) {
+        return request.getZipFile("/filesys/zipDownload", data)
     },
     /* ************ group ****************** */
     createGroup: async function (data: groupInfo) {
@@ -265,17 +250,17 @@ export default {
         return request.get("/manage/exam/choiceProblem/queryChoiceProblem", params)
     },
     /* ************ 公告 ****************** */
-    createAnnouncement: async function (data: any){
+    createAnnouncement: async function (data: any) {
         return request.post("/manage/notice/create", data)
     },
-    updateAnnouncement: async function (data: any){
+    updateAnnouncement: async function (data: any) {
         return request.post("/manage/notice/update", data)
     },
     async getAnnouncementList(data: any) {
         data['filter'] = "default"
         return request.get("/manage/notice/list", data)
     },
-    deleteAnnouncement: async function (data: any){
+    deleteAnnouncement: async function (data: any) {
         return request.get("/manage/notice/delete", data)
     },
 

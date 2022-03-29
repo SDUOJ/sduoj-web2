@@ -12,6 +12,11 @@ import {ck} from "../../../Utils/empty";
 import {SizeType} from "antd/lib/config-provider/SizeContext";
 import {ColumnsType} from "antd/lib/table/interface";
 import {useForm} from "antd/es/form/Form";
+import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
+import {EditOutlined, MenuOutlined, SortAscendingOutlined} from "@ant-design/icons";
+import {arrayMoveImmutable} from "array-move";
+import {examProblemType} from "../../../Type/IExam";
+import {EditableProTable, ProColumns} from "@ant-design/pro-table";
 
 export interface TableWithPaginationProps {
     API: any                  // 表格查询数据的接口
@@ -26,9 +31,11 @@ export interface TableWithPaginationProps {
 }
 
 const TableWithAllData = (props: any) => {
-    const [tableData, setTableDataX] = useState()                            // 表格核心数据
+    const [tableData, setTableDataX] = useState([])                            // 表格核心数据
     const [loading, setLoading] = useState(true)                    // 表格的加载状态
     const [tableVersion, setTableVersion] = useState<number>(0)     // 表格版本（控制表格刷新）
+    // const [sortSwitch, setSortSwitch] = useState<boolean>(false);           // 操作是否开启排序模式
+
 
     const setTableData = (data: any) => {
         setTableDataX(data)
@@ -53,7 +60,6 @@ const TableWithAllData = (props: any) => {
         getInfo()
     }, [props.name])
 
-
     useEffect(() => {
         // 监听表格的版本变化，当版本变更时更新表格
         const propsTableVersion = props.tableData[props.name]?.tableVersion
@@ -70,14 +76,64 @@ const TableWithAllData = (props: any) => {
         }
     }, [props.tableData, tableVersion])
 
+    // === 拖拽排序 ===
+    // 可拖拽的排序手柄
+    const DragHandle = SortableHandle(() => <MenuOutlined style={{cursor: 'grab', color: '#999'}}/>);
+    const SortableItem = SortableElement((props: any) => <tr {...props} />);
+    const XSortableContainer = SortableContainer((props: any) => <tbody {...props} />);
+    // 排序结束后
+    const onSortEnd = ({oldIndex, newIndex}: any) => {
+        // 当前排序是有效的
+        if (oldIndex !== newIndex) {
+            // 移动数组中的元素，并设置到当前的状态
+            setTableData(arrayMoveImmutable(tableData, oldIndex, newIndex))
+        }
+    };
+    const DraggableContainer = (props: any) => {
+        return (
+            <XSortableContainer
+                useDragHandle
+                disableAutoscroll
+                helperClass="row-dragging"
+                onSortEnd={onSortEnd}
+                {...props}
+            />
+        )
+    }
+    const DraggableBodyRow = ({className, style, ...restProps}: any) => {
+        // function findIndex base on Table rowKey props and should always be a right array index
+        const index = tableData.findIndex((x: any) => x[props.rowKey] === restProps['data-row-key']);
+        return <SortableItem index={index} {...restProps} />
+    };
+    const sortColumns: any[] = [
+        {
+            title: "",
+            dataIndex: 'sort',
+            width: 50,
+            className: "drag-visable",
+            render: () => <DragHandle/>,
+        }
+    ]
+
+    let columns = props.columns;
+    if (props.useDrag) columns = sortColumns.concat(columns)
+
     return (
         <Table
+            {...props}
+            rowSelection={props.rowSelection}
             rowKey={props.rowKey}
             loading={loading}
             size={props.size}
-            columns={props.columns}
+            columns={columns}
             dataSource={tableData}
             pagination={false}
+            components={{
+                body: {
+                    wrapper: DraggableContainer,
+                    row: DraggableBodyRow,
+                },
+            }}
         />
     )
 
@@ -100,10 +156,14 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
         dispatch({type: "setDataSource", data: data, name: name, add: false})
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(
-    withRouter(TableWithAllData)
-))
+export default React.memo(connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(withTranslation()(
+        withRouter(TableWithAllData))), (props: any, nextProps: any) => {
+        return props.columns === nextProps.columns &&
+            props.rowSelection.selectedRowKeys.length === nextProps.rowSelection.selectedRowKeys.length ||
+            props.tableData === nextProps.tableData
+    }
+)
 

@@ -63,7 +63,7 @@ const ButtonWithSelection = (props: any) => {
                             <ExportExcel
                                 ButtonType={"default"}
                                 ButtonText={props.ButtonText}
-                                ButtonProps={{disabled: !isSelected()}}
+                                // ButtonProps={{disabled: !isSelected()}}
                                 fileName={props.fileName}
                                 getJson={async () => {
                                     if (!isSelected()) return Promise.reject("未选中")
@@ -100,17 +100,22 @@ const ButtonWithSelection = (props: any) => {
                                             data.push(dataSource[eleId][props.deleteKey])
                                         }
                                     }
-                                    MApi.deleteUsers(data).then((res) => {
-                                        props.addTableVersion(props.tableName)
+                                    if (props.delAPI !== undefined) {
+                                        props.delAPI(data).then((res: any) => {
+                                            props.addTableVersion(props.tableName)
+                                            props.setSelectedRowKeys([], props.tableName)
+                                            message.success("删除成功")
+                                        })
+                                    } else {
+                                        props.setDataSource(props.tableName, dataSource.filter((it: any) => selectedRowKeys.indexOf(it[props.rowKey]) === -1))
                                         props.setSelectedRowKeys([], props.tableName)
-                                        message.success("删除成功")
-                                    })
+                                    }
                                 }}
                                 content={
                                     <Button
                                         type={"primary"}
                                         danger={true}
-                                        disabled={!isSelected()}
+                                        // disabled={!isSelected()}
                                     >{props.ButtonText}</Button>
                                 }
                             />
@@ -133,6 +138,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
     setSelectedRowKeys: (data: React.Key[], name: string) =>
         dispatch({type: "setSelectedRowKeys", data: data, name: name}),
+    setDataSource: (name: string, data: any) => dispatch({type: "setDataSource", name: name, data: data, add: true})
 })
 
 export default connect(

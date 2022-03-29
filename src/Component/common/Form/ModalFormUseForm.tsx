@@ -5,7 +5,7 @@ import {withRouter} from "react-router";
 import {Button, Form, message, Modal, Tabs} from "antd";
 import {ButtonType} from "antd/lib/button/button";
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
-import {ck} from "../../../Utils/empty";
+import {ck, isValueEmpty} from "../../../Utils/empty";
 import {useForm} from "antd/es/form/Form";
 import {ProFormInstance, StepsForm} from "@ant-design/pro-form";
 
@@ -81,7 +81,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     useEffect(() => {
         // 延迟向表单注入信息
         setTimeout(() => {
-            formMapRef.current.forEach((formInstanceRef) => {
+            !isValueEmpty(formMapRef.current) && formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.setFieldsValue(saveInitData);
             });
         }, 100)
