@@ -129,7 +129,8 @@ const TableWithPagination = (props: any) => {
                                 onSearch={(text) => {
                                     setSearchText(text)
                                     setPageNow(1)
-                                    getInfo(1, PageSize, text)
+                                    const values = form.getFieldsValue()
+                                    getInfo(1, PageSize, text, values)
                                 }}
                                 enterButton
                                 style={{width: 300}}
@@ -160,7 +161,10 @@ const TableWithPagination = (props: any) => {
                 rowSelection={props.rowSelection}
                 dataSource={tableData}
                 pagination={{
-                    onChange: getInfo,
+                    onChange: (page, pageSize)=>{
+                        const values = form.getFieldsValue()
+                        getInfo(page, pageSize, searchText, values)
+                    },
                     current: PageNow,
                     defaultPageSize: ck(props.defaultPageSize, defaultPageSize),
                     total: total,
