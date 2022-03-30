@@ -19,7 +19,7 @@ type LoginType = 'SDUCAS' | 'account';
 const Login = (props: any) => {
 
     const formRef = useRef<ProFormInstance>()
-    const [loginType, setLoginType] = useState<LoginType>("account")
+    const [loginType, setLoginType] = useState<LoginType>("SDUCAS")
 
     return (
         <Card
@@ -102,7 +102,7 @@ const Login = (props: any) => {
                             textAlign: "right", marginBottom: 10
                         }}>
                             <Space size={3}>
-                                <Register button={<Button type={"link"} size={"small"}>注册</Button>}/>
+                                {/*<Register button={<Button type={"link"} size={"small"}>注册</Button>}/>*/}
                                 <ForgetPass button={<Button type={"link"} size={"small"}>忘记密码</Button>}/>
                             </Space>
                         </div>

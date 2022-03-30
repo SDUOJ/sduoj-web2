@@ -11,6 +11,7 @@ import SDU_Logo from "../../Assert/img/sdu-logo.jpg";
 import {testLoginTodo} from "../../Redux/Action/user";
 import Register from "../../Component/user/Form/Register";
 import Binding from "../../Component/user/Form/Binding";
+import {setState} from "jest-circus/build/state";
 
 
 class CThirdPartyLogin extends Component<any, any> {
@@ -22,7 +23,8 @@ class CThirdPartyLogin extends Component<any, any> {
             loading: true,
             thirdParty: "",
             info: "",
-            token: ""
+            token: "",
+            sduId: ""
         }
     }
 
@@ -43,6 +45,7 @@ class CThirdPartyLogin extends Component<any, any> {
                 if (resData.thirdParty === "SDUCAS") {
                     Object.assign(obj, {
                         info: resData.sduRealName + " (" + resData.sduId + ")",
+                        sduId: resData.sduId
                     })
                 }
                 this.setState(obj)
@@ -87,7 +90,7 @@ class CThirdPartyLogin extends Component<any, any> {
                                             <div style={{textAlign: "left"}}>
                                                 时效：当前认证<span style={{fontWeight: "bold"}}>5分钟</span>内有效
                                             </div>
-                                            <Register token={this.state.token} button={
+                                            <Register token={this.state.token} username={this.state.sduId} button={
                                                 <Button block={true} type={"primary"}>注册新用户并绑定</Button>
                                             }/>
                                             <Binding token={this.state.token} button={
