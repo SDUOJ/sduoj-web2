@@ -83,7 +83,7 @@ const ListWithPagination = (props: any) => {
 
     useEffect(() => {
         getInfo(PageNow, PageSize)
-    }, [])
+    }, [props.name])
 
     useEffect(() => {
         // 监听表格的版本变化，当版本变更时更新表格
@@ -96,7 +96,8 @@ const ListWithPagination = (props: any) => {
             } else {
                 // 否则，重新进行请求
                 setTableVersion(propsTableVersion)
-                getInfo(PageNow, PageSize)
+                const values = form.getFieldsValue()
+                getInfo(PageNow, PageSize, searchText, values)
             }
         }
     }, [props.tableData, tableVersion])
@@ -117,7 +118,8 @@ const ListWithPagination = (props: any) => {
                                 onSearch={(text) => {
                                     setSearchText(text)
                                     setPageNow(1)
-                                    getInfo(1, PageSize, text)
+                                    const values = form.getFieldsValue()
+                                    getInfo(1, PageSize, text, values)
                                 }}
                                 enterButton
                                 style={{width: 300}}
@@ -150,7 +152,10 @@ const ListWithPagination = (props: any) => {
                 dataSource={tableData}
                 renderItem={props.renderItem}
                 pagination={{
-                    onChange: getInfo,
+                    onChange: (page, pageSize)=>{
+                        const values = form.getFieldsValue()
+                        getInfo(page, pageSize, searchText, values)
+                    },
                     current: PageNow,
                     defaultPageSize: ck(props.defaultPageSize, defaultPageSize),
                     total: total,

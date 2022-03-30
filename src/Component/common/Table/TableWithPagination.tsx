@@ -110,7 +110,8 @@ const TableWithPagination = (props: any) => {
             } else {
                 // 否则，重新进行请求
                 setTableVersion(propsTableVersion)
-                getInfo(PageNow, PageSize)
+                const values = form.getFieldsValue()
+                getInfo(PageNow, PageSize, searchText, values)
             }
         }
     }, [props.tableData, tableVersion])
