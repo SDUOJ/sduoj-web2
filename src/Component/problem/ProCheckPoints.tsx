@@ -1,4 +1,4 @@
-import {Button, Form, Input, message, Modal, Space, Switch, Table, Typography} from "antd";
+import {Button, Form, Input, message, Modal, Space, Switch, Table, Tag, Typography} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
@@ -17,7 +17,7 @@ import TextEllipsis from "../common/TextEllipsis";
 import TableWithSelection from "../common/Table/TableWithSelection";
 import {useForm} from "antd/lib/form/Form";
 import {isValueEmpty} from "../../Utils/empty";
-import {DownloadOutlined} from "@ant-design/icons";
+import {DownloadOutlined, PlusOutlined, MinusOutlined} from "@ant-design/icons";
 import MApi from "../../Utils/API/m-api";
 import ButtonWithSelection from "../common/Table/ButtonWithSelection";
 
@@ -28,6 +28,7 @@ function DeleteOutlined() {
 const ProCheckPoints = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
     const [sumScore, setSumScore] = useState<number>(0)
+    const [caseInfo, setCaseInfo] = useState<any>({})
     const name = `ProCheckPoints-${props.problemCode}`
 
     const [form] = useForm();
@@ -52,8 +53,10 @@ const ProCheckPoints = (props: any) => {
         const data = props.tableData[name]?.dataSource;
         if (data !== undefined) {
             let formData: any = {}, score = 0
+            let ckData: any = {}
             for (let x of data) {
                 formData[x.checkpointId] = x.checkpointScore
+                ckData[x.checkpointId] = x.caseIndex
                 score += x.checkpointScore
             }
             form.setFieldsValue(formData)
@@ -63,6 +66,14 @@ const ProCheckPoints = (props: any) => {
 
     const selectedRowKeys = props.tableData[name]?.selectedRowKeys ?? []
     const dataSource = props.tableData[name]?.dataSource;
+
+    const setCase = (ckId: string)=>{
+
+    }
+
+    const removeCase = (ckId: string)=>{
+
+    }
 
     return (
         <>
@@ -75,20 +86,8 @@ const ProCheckPoints = (props: any) => {
                 width={1200}
                 footer={
                     <>
-                        <ModalFormUseForm
-                            TableName={name}
-                            width={1200}
-                            title={`${props.problemCode} 新建描述`}
-                            type={"create"}
-                            subForm={[{
-                                component: <></>,
-                                label: ""
-                            }]}
-                            dataSubmitter={(data: any) => {
-                                data.isPublic = data.isPublic ? 1 : 0
-                                return mApi.createDescription({...data, problemCode: props.problemCode})
-                            }}
-                        />
+                        <Button>取消</Button>
+                        <Button type={"primary"}> 保存 </Button>
                     </>
                 }
             >
@@ -96,7 +95,8 @@ const ProCheckPoints = (props: any) => {
                     let score = 0
                     for (const x in val) {
                         try {
-                            score += parseInt(val[x])
+                            if (!isValueEmpty(val[x]))
+                                score += parseInt(val[x])
                         } catch (e) {
                         }
                     }
@@ -148,44 +148,35 @@ const ProCheckPoints = (props: any) => {
                             },
                             {
                                 title: "操作", render: (text: any, row: any) => {
+                                    const caseIndex = caseInfo[row.checkpointId]
                                     return <>
-                                        <a onClick={() => {
+                                        <Button type={"link"} onClick={() => {
                                             mApi.zipDownload([
                                                 {id: row.inputFileId, downloadFilename: `${row.checkpointId}.in`},
                                                 {id: row.outputFileId, downloadFilename: `${row.checkpointId}.out`}
                                             ])
-                                        }}><DownloadOutlined/></a>
+                                        }}><DownloadOutlined/></Button>
                                         <TableRowDeleteButton
                                             tableName={name}
                                             rowKey={"checkpointId"}
                                             data={row.checkpointId}
-                                            btnText={<DeleteOutlined />}
-                                            btnProps={{type: "link", danger: true}}
+                                            btnText={<DeleteOutlined/>}
+                                            btnProps={{type: "link", danger: true, style: {padding: 0}}}
                                         />
-                                        <ModalFormUseForm
-                                            TableName={name}
-                                            width={1200}
-                                            title={`${props.problemCode} - ${row.title}`}
-                                            type={"update"}
-                                            dataLoader={() => {
-                                                return mApi.getProblemDescription({descriptionId: row.id})
-                                            }}
-                                            subForm={[{
-                                                component: <></>,
-                                                label: ""
-                                            }]}
-                                            dataSubmitter={(data: any) => {
-                                                data.isPublic = data.isPublic ? 1 : 0
-                                                return mApi.updateDescription({...data, id: row.id})
+                                        <Button
+                                            icon={isValueEmpty(caseIndex) ? <PlusOutlined/> : <MinusOutlined/>}
+                                            style={{color: "gray"}}
+                                            type={"link"}
+                                            size={"small"}
+                                            onClick={()=>{
+                                                if(isValueEmpty(caseIndex)) setCase(row.checkpointId)
+                                                else removeCase(row.checkpointId)
                                             }}
                                         />
-                                        <TableRowDeleteButton
-                                            type={"inline"}
-                                            name={name}
-                                            API={() => {
-                                                return mApi.deleteDescription({id: row.id})
-                                            }}
-                                        />
+                                        {!isValueEmpty(caseIndex) && (
+                                            <Tag style={{marginLeft: 20}}>Case {caseIndex}</Tag>
+                                        )}
+
                                     </>
                                 }
                             },
