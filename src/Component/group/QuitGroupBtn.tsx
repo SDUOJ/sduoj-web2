@@ -7,7 +7,7 @@ import React, {Dispatch} from "react";
 
 const QuitGroupBtn = (props: any) =>{
     const username = useSelector((state:any )=> {
-        return state.UserReducer.userInfo.username
+        return state.UserReducer?.userInfo?.username
     })
     return (
         <>
