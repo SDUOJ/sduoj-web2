@@ -4,6 +4,7 @@ import {LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 const ExamPageCtrl = (props: any) => {
@@ -19,7 +20,7 @@ const ExamPageCtrl = (props: any) => {
     const Loading = (ProNumber === undefined)
 
     const jump = (PID: number) => {
-        props.history.push(`/v2/exam/running/${eid}/${gid}/${PID}`)
+        props.history.push(UrlPrefix + `/exam/running/${eid}/${gid}/${PID}`)
     }
 
     return (

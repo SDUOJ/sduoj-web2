@@ -11,6 +11,7 @@ import {testLoginTodo, userLoginTodo} from "../../../Redux/Action/user";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
+import {UrlPrefix} from "../../../Config/constValue";
 
 const Binding = (props: any) => {
     const [form] = useForm()
@@ -29,7 +30,7 @@ const Binding = (props: any) => {
             onFinish={async (values) => {
                 Object.assign(values, {token: props.token})
                 return CApi.thirdPartyBinding(values).then((res: any) => {
-                    props.history.push("/v2/home")
+                    props.history.push(UrlPrefix + "/home")
                     message.success('绑定成功');
                     return true;
                 })

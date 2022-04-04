@@ -11,6 +11,7 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {routerM} from "../../Config/router/routerM";
+import {UrlPrefix} from "../../Config/constValue";
 
 const {Sider, Content} = Layout;
 
@@ -18,8 +19,8 @@ class MLayout extends Component<any, any> {
 
     componentDidMount() {
         if ((
-            this.props.location.pathname === '/v2/manage'
-            || this.props.location.pathname === '/v2/manage/'
+            this.props.location.pathname === UrlPrefix + '/manage'
+            || this.props.location.pathname === UrlPrefix + '/manage/'
         ) && routerM.length !== 0) {
             this.props.history.push(routerM[0].path);
         }

@@ -10,6 +10,7 @@ import SDU_Logo from "../../Assert/img/sdu-logo.jpg";
 import {testLoginTodo} from "../../Redux/Action/user";
 import Register from "../../Component/user/Form/Register";
 import Binding from "../../Component/user/Form/Binding";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class CThirdPartyLogin extends Component<any, any> {
@@ -48,7 +49,7 @@ class CThirdPartyLogin extends Component<any, any> {
                 }
                 this.setState(obj)
             } else {
-                this.props.history.push("/v2/home")
+                this.props.history.push(UrlPrefix + "/home")
             }
         })
     }

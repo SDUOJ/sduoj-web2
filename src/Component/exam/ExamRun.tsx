@@ -14,6 +14,7 @@ import SubmissionModal from "../submission/Processing/ModalProcessing";
 import useExamInfo from "./API/getExamInfo";
 import deepClone from "../../Utils/deepClone";
 import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";
+import {UrlPrefix} from "../../Config/constValue";
 
 const ExamRun = (props: any) => {
     const eid = props.match.params.eid
@@ -88,7 +89,7 @@ const ExamRun = (props: any) => {
                                     deadline={examInfo?.endTime}
                                     inline={true}
                                     onFinish={() => {
-                                        props.history.push("/v2/exam/finish")
+                                        props.history.push(UrlPrefix + "/exam/finish")
                                     }}
                                 />
                                 <ExamAnswerSheet problemList={problemList}/>

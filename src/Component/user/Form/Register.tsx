@@ -7,6 +7,8 @@ import React, {useEffect} from "react";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
 import {withRouter} from "react-router-dom";
+import {UrlPrefix} from "../../../Config/constValue";
+
 
 const Register = (props: any) => {
     const [form] = useForm()
@@ -33,7 +35,7 @@ const Register = (props: any) => {
                     Object.assign(values, {token: props.token})
                     return CApi.thirdPartyRegister(values).then((res: any) => {
                         CApi.login(values).then(() => {
-                            props.history.push("/v2/home")
+                            props.history.push(UrlPrefix + "/home")
                         })
                         message.success('注册成功');
                         return true;
@@ -41,7 +43,7 @@ const Register = (props: any) => {
                 } else {
                     return CApi.register(values).then((res: any) => {
                         CApi.login(values).then(() => {
-                            props.history.push("/v2/home")
+                            props.history.push(UrlPrefix + "/home")
                         })
                         message.success('注册成功');
                         return true;

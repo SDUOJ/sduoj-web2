@@ -7,6 +7,7 @@ import {UserState} from "../../Type/Iuser";
 import {testLoginTodo} from "../../Redux/Action/user";
 import Login from "../../Component/user/Login";
 import {getUrlParams} from "../../Utils/getUrlParams";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class CLogin extends Component<any, any> {
@@ -18,7 +19,7 @@ class CLogin extends Component<any, any> {
     testLogin = ()=>{
         if (this.props.isLogin) {
             let to = getUrlParams(this.props.location.search).to
-            if (to === undefined) this.props.history.push("/v2/home")
+            if (to === undefined) this.props.history.push(UrlPrefix + "/home")
             else {
                 this.props.history.replace(to)
                 message.success("登录成功")

@@ -5,6 +5,7 @@ import {useForm} from "antd/es/form/Form";
 import cApi from "Utils/API/c-api"
 import getContestInfo from "./API/getContestInfo";
 import {useEffect, useState} from "react";
+import {UrlPrefix} from "../../Config/constValue";
 
 const Register = (props: any) => {
 
@@ -35,7 +36,7 @@ const Register = (props: any) => {
                                             }).then(() => {
                                                 message.success("注册成功")
                                                 setUpdate(true)
-                                                props.history.replace("/v2/contest/" + contestId + "/overview")
+                                                props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
                                             })
                                         })
                                     }}>注册</Button>
@@ -49,7 +50,7 @@ const Register = (props: any) => {
                                         cApi.participateContest({contestId: contestId}).then(() => {
                                             message.success("注册成功")
                                             setUpdate(true)
-                                            props.history.replace("/v2/contest/" + contestId + "/overview")
+                                            props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
                                         })
                                     }}>注册</Button>
                                 </div>

@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import SubmissionList from "../../Component/submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
 import {Button} from "antd";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class CSubmissions extends Component<any, any> {
@@ -23,7 +24,7 @@ class CSubmissions extends Component<any, any> {
                                 let ps = text.split("-")
                                 return (
                                     <Button type={"text"} size={"small"} onClick={() => {
-                                        this.props.history.push("/v2/problem/" + text)
+                                        this.props.history.push(UrlPrefix + "/problem/" + text)
                                     }}>
                                         <span style={{fontWeight: "bold"}}>{ps[0]}</span>-<span>{ps[1]}</span>
                                     </Button>

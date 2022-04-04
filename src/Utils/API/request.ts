@@ -2,6 +2,7 @@ import apiAddress from "./apiAddress";
 import axios, {AxiosRequestConfig} from "axios";
 import {Get, GetError, Post} from "../../Type/types";
 import {message} from "antd";
+import {UrlPrefix} from "../../Config/constValue";
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api'
 
@@ -65,7 +66,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
             params, ...config
         });
         if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
-            window.location.replace("/v2/error/time")
+            window.location.replace(UrlPrefix + "/error/time")
             message.error("本地时间异常")
             return Promise.reject("本地时间异常")
         }
@@ -97,7 +98,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
             ...config
         });
         if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
-            window.location.replace("/v2/error/time")
+            window.location.replace(UrlPrefix + "/error/time")
             message.error("本地时间异常")
             return Promise.reject("本地时间异常")
         }

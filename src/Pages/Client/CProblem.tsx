@@ -4,6 +4,7 @@ import {Button, Card, Space, Tag} from "antd";
 import CApi from "Utils/API/c-api"
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {CheckOutlined} from "@ant-design/icons";
+import {UrlPrefix} from "../../Config/constValue";
 
 class CProblem extends Component<any, any> {
 
@@ -52,7 +53,7 @@ class CProblem extends Component<any, any> {
                                             return <>
                                                 <Space size={3}>
                                                     <Button size={"small"} type={"text"} onClick={()=>{
-                                                        this.props.history.push("/v2/problem/" + row.problemCode)
+                                                        this.props.history.push(UrlPrefix + "/problem/" + row.problemCode)
                                                     }}>{text}</Button>
                                                     {[""].map(() => {
                                                         if (this.state.ACList.indexOf(row.problemCode) !== -1) {

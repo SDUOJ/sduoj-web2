@@ -4,6 +4,7 @@ import {getUrlParams} from "../../Utils/getUrlParams";
 import {withRouter} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
+import {UrlPrefix} from "../../Config/constValue";
 
 
 const ResetPass = (props: any) => {
@@ -32,7 +33,7 @@ const ResetPass = (props: any) => {
                                         ...value,
                                         token: token
                                     }).then(()=>{
-                                        props.history.push("/v2/login")
+                                        props.history.push(UrlPrefix + "/login")
                                         message.success("密码重置成功，请重新登录")
                                     })
                                 })

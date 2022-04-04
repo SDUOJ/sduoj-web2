@@ -6,6 +6,7 @@ import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
 import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import React, {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
+import {UrlPrefix} from "../../Config/constValue";
 
 const ContestList = (props: any) => {
     const [myGroup, setMyGroup] = useState<any>(undefined)
@@ -77,7 +78,7 @@ const ContestList = (props: any) => {
                                         <>
                                             <a type={"text"} style={{marginRight: 10}}
                                                onClick={() => {
-                                                   props.history.push("/v2/contest/" + item.contestId)
+                                                   props.history.push(UrlPrefix + "/contest/" + item.contestId)
                                                }}>{item.contestTitle}</a>
                                             {item.features.openness === "private" && (
                                                 <LockFilled style={{color: "red"}}/>

@@ -12,6 +12,7 @@ import {testLoginTodo, userLogoutTodo} from "../../Redux/Action/user";
 import UserAvatar from "../user/Avatar";
 import judgeAuth from "../../Utils/judgeAhtu";
 import {routerC_M} from "../../Config/router/routerC";
+import {UrlPrefix} from "../../Config/constValue";
 
 const {Header} = Layout;
 
@@ -69,6 +70,10 @@ class CHeader extends Component<any, any> {
                 </div>
                 <div style={{float: "right"}} key={"operator"}>
                     <Space size={30}>
+                        <Button type={"text"} onClick={()=>{
+                            this.props.history.replace("/home")
+                            window.location.reload()
+                        }}>返回老版</Button>
                         <ChangeLang/>
                         {
                             [''].map(() => {
@@ -84,7 +89,7 @@ class CHeader extends Component<any, any> {
                                                             key="0"
                                                             icon={<RightOutlined />}
                                                             onClick={() => {
-                                                                this.props.history.push("/v2/manage")
+                                                                this.props.history.push(UrlPrefix + "/manage")
                                                             }}
                                                         >
                                                             {this.props.t("toManage")}
@@ -95,7 +100,7 @@ class CHeader extends Component<any, any> {
                                                     key="1"
                                                     icon={<UserOutlined/>}
                                                     onClick={() => {
-                                                        this.props.history.push("/v2/user")
+                                                        this.props.history.push(UrlPrefix + "/user")
                                                     }}
                                                 >
                                                     {this.props.t("Profile")}
@@ -106,7 +111,7 @@ class CHeader extends Component<any, any> {
                                                     onClick={()=>{
                                                         this.props.userLogout()
                                                         setTimeout(()=>{
-                                                            this.props.history.push("/v2/home")
+                                                            this.props.history.push(UrlPrefix + "/home")
                                                         }, 200)
                                                         message.info("已退出登录")
                                                     }}
@@ -132,7 +137,7 @@ class CHeader extends Component<any, any> {
                                         <>
                                             <Space>
                                                 <Button type={"text"} onClick={()=>{
-                                                    this.props.history.push("/v2/login?to=" + this.props.location.pathname)
+                                                    this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
                                                 }}>登录 / 注册</Button>
                                             </Space>
                                         </>

@@ -2,6 +2,7 @@ import {Component} from "react";
 import {Button, Image, Result, Space} from "antd";
 import I404 from "Assert/img/404.png"
 import {withRouter} from "react-router-dom";
+import {UrlPrefix} from "../../Config/constValue";
 
 class CBuild extends Component<any, any>{
 
@@ -19,11 +20,11 @@ class CBuild extends Component<any, any>{
                                 window.location.reload();
                             }}>返回老版</Button>
                             <Button type="primary" onClick={()=>{
-                                this.props.history.push("/v2/exam")
+                                this.props.history.push(UrlPrefix + "/exam")
                                 window.location.reload();
                             }}>考试系统</Button>
                             <Button type="default" onClick={()=>{
-                                this.props.history.push("/v2/manage")
+                                this.props.history.push(UrlPrefix + "/manage")
                                 window.location.reload();
                             }}>管理端</Button>
                         </Space>

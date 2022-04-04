@@ -4,6 +4,7 @@ import {connect, useSelector} from "react-redux";
 import cApi from "Utils/API/c-api"
 import {message} from "antd";
 import React, {Dispatch} from "react";
+import {UrlPrefix} from "../../Config/constValue";
 
 const QuitGroupBtn = (props: any) =>{
     const username = useSelector((state:any )=> {
@@ -17,7 +18,7 @@ const QuitGroupBtn = (props: any) =>{
               confirm={username}
               API={()=>{
                   cApi.quitGroup({groupId: props.groupId}).then(()=>{
-                      props.history.replace("/v2/group")
+                      props.history.replace(UrlPrefix + "/group")
                       message.success("退出成功")
                       props.addTableVersion("GroupList")
                   })

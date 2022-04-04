@@ -9,6 +9,7 @@ import Avatar from "../../Component/user/Avatar";
 import {isValueEmpty} from "../../Utils/empty";
 import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
 import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
+import {UrlPrefix} from "../../Config/constValue";
 
 const CGroup = (props: any) => {
 
@@ -86,7 +87,7 @@ const CGroup = (props: any) => {
                                                         ellipsis={{rows: 1, tooltip: item.title}}
                                                         style={{marginBottom: 0}}
                                                         onClick={() => {
-                                                            props.history.push("/v2/group/" + item.groupId)
+                                                            props.history.push(UrlPrefix + "/group/" + item.groupId)
                                                         }}>{item.title}</Typography.Title>
                                                 </a>
                                             }
@@ -101,7 +102,7 @@ const CGroup = (props: any) => {
                                                 style={{padding: 12, margin: 0}}
                                                 avatar={
                                                     <div onClick={() => {
-                                                        props.history.push("/v2/group/" + item.groupId)
+                                                        props.history.push(UrlPrefix + "/group/" + item.groupId)
                                                     }}>
                                                         <Avatar email={item.owner.email} shape={"square"} size={60}/>
                                                     </div>

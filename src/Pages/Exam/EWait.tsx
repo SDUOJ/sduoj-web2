@@ -11,6 +11,7 @@ import LoginCheck from "../../Component/common/LoginCheck";
 import useExamInfo from "../../Component/exam/API/getExamInfo";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import {isValueEmpty} from "../../Utils/empty";
+import {UrlPrefix} from "../../Config/constValue";
 
 const {Meta} = Card;
 
@@ -23,7 +24,7 @@ const EWait = (props: any) => {
             message.info("正在排队发卷，请勿刷新，并耐心等待几秒")
             setTimeout(() => {
                 setExamStartX(data)
-                props.history.push("/v2/exam/running/" + props.match.params.eid + "/0/0")
+                props.history.push(UrlPrefix + "/exam/running/" + props.match.params.eid + "/0/0")
             }, Math.random() * 5000)
         }
     }
@@ -68,7 +69,7 @@ const EWait = (props: any) => {
         <Button
             type="primary" disabled={!ExamStart}
             onClick={() => {
-                props.history.push("/v2/exam/running/" + props.match.params.eid + "/0/0")
+                props.history.push(UrlPrefix + "/exam/running/" + props.match.params.eid + "/0/0")
             }}
         >
             {getExamStartText()}

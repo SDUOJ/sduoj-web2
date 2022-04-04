@@ -11,6 +11,7 @@ import {ContestState} from "../../Redux/Action/contest";
 import {isValueEmpty} from "../../Utils/empty";
 import TestCase from "../submission/TestCase";
 import {StateList, SubmissionMap} from "../../Type/ISubmission";
+import {UrlPrefix} from "../../Config/constValue";
 
 const Overview = (props: any) => {
 
@@ -46,7 +47,7 @@ const Overview = (props: any) => {
                                                 <span className={"circle"} style={{backgroundColor: row.problemColor}}/>
                                             )}
                                             <Button type={"text"} size={"small"} onClick={() => {
-                                                props.history.push("/v2/contest/" + contestId + "/problem/" + row.problemCode)
+                                                props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + row.problemCode)
                                             }}>{text}</Button>
                                         </>
                                     )

@@ -10,14 +10,15 @@ import CHeader from "./CHeader";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {routerC} from "../../Config/router/routerC";
 import {ContestState} from "../../Redux/Action/contest";
+import {UrlPrefix} from "../../Config/constValue";
 
 const {Content} = Layout;
 
 class MLayout extends Component<any, any> {
 
     componentDidMount() {
-        if (this.props.location.pathname === '/v2' || this.props.location.pathname === '/v2/') {
-            this.props.history.push("/v2/home");
+        if (this.props.location.pathname === UrlPrefix || this.props.location.pathname === UrlPrefix + '/') {
+            this.props.history.push(UrlPrefix + "/home");
         }
         this.props.testLogin()
     }
@@ -25,7 +26,7 @@ class MLayout extends Component<any, any> {
     render() {
 
         let minWidth = 500
-        if (this.props.location.pathname.match(/\/v2\/contest\/.*\/rank/g) !== null) {
+        if (this.props.location.pathname.match(/\/contest\/.*\/rank/g) !== null) {
             minWidth = Math.max(500, (this.props.minWidth ?? 0) + 100)
         }
 

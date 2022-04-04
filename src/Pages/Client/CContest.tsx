@@ -9,6 +9,7 @@ import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import Countdown from "antd/lib/statistic/Countdown";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class CContest extends Component<any, any> {
@@ -48,7 +49,7 @@ class CContest extends Component<any, any> {
                                     >
                                         <div>
                                             <Button type={"link"} size={"large"} onClick={() => {
-                                                this.props.history.push("/v2/contest/" + this.state.upComing.contestId)
+                                                this.props.history.push(UrlPrefix + "/contest/" + this.state.upComing.contestId)
                                             }}>
                                                 {this.state.upComing.contestTitle}
                                             </Button>

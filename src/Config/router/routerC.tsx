@@ -1,82 +1,83 @@
 import {lazy} from "react";
 import {IBaseRouter, IRouter} from "./router";
+import {UrlPrefix} from "../constValue";
 
 export const routerC: IBaseRouter[] = [
     {
         id: 2,
-        path: "/v2/login",
+        path: UrlPrefix + "/login",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CLogin'))
     },
     {
         id: 3,
-        path: "/v2/test",
+        path: UrlPrefix + "/test",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CTest'))
     },
     {
         id: 4,
-        path: "/v2/home",
+        path: UrlPrefix + "/home",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CHome'))
     },
     {
         id: 5,
-        path: "/v2/problem",
+        path: UrlPrefix + "/problem",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CProblem'))
     },
     {
         id: 51,
-        path: "/v2/problem/:ProblemCode",
+        path: UrlPrefix + "/problem/:ProblemCode",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CProblemInfo'))
     },
     {
         id: 6,
-        path: "/v2/submission",
+        path: UrlPrefix + "/submission",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CSubmissions'))
     },
     {
         id: 7,
-        path: "/v2/contest",
+        path: UrlPrefix + "/contest",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CContest'))
     },
     {
         id: 71,
-        path: "/v2/contest/:contestId",
+        path: UrlPrefix + "/contest/:contestId",
         exact: false,
         component: lazy(() => import('../../Pages/Client/CContestInfo'))
     },
     {
         id: 8,
-        path: "/v2/group",
+        path: UrlPrefix + "/group",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CGroup'))
     },
     {
         id: 81,
-        path: "/v2/group/:groupId",
+        path: UrlPrefix + "/group/:groupId",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CGroupInfo'))
     },
     {
         id: 9,
-        path: "/v2/user",
+        path: UrlPrefix + "/user",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CUser'))
     },
     {
         id: 10,
-        path: "/v2/resetpass",
+        path: UrlPrefix + "/resetpass",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CResetPass'))
     },
     {
         id: 11,
-        path: "/v2/thirdPartyLogin",
+        path: UrlPrefix + "/thirdPartyLogin",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CThirdPartyLogin'))
     },
@@ -86,35 +87,35 @@ export const routerC_Contest_M: IRouter[] = [
     {
         id: 1,
         title_i18n: "Overview",
-        path: "/v2/contest/:contestId/overview",
+        path: UrlPrefix + "/contest/:contestId/overview",
         exact: true,
         component: lazy(() => import("../../Component/contest/Overview"))
     },
     {
         id: 2,
         title_i18n: "Problem",
-        path: "/v2/contest/:contestId/problem/:problemCode",
+        path: UrlPrefix + "/contest/:contestId/problem/:problemCode",
         exact: true,
         component: lazy(() => import("../../Component/contest/Problem"))
     },
     {
         id: 3,
         title_i18n: "Status",
-        path: "/v2/contest/:contestId/submission",
+        path: UrlPrefix + "/contest/:contestId/submission",
         exact: true,
         component: lazy(() => import("../../Component/contest/Status"))
     },
     {
         id: 4,
         title_i18n: "Rank",
-        path: "/v2/contest/:contestId/rank",
+        path: UrlPrefix + "/contest/:contestId/rank",
         exact: true,
         component: lazy(() => import("../../Component/contest/Rank"))
     },
     {
         id: 5,
         title_i18n: "Register",
-        path: "/v2/contest/:contestId/register",
+        path: UrlPrefix + "/contest/:contestId/register",
         exact: true,
         component: lazy(()=> import("../../Component/contest/Register"))
     }
@@ -125,41 +126,41 @@ export const routerC_M: IRouter[] = [
     {
         id: 1,
         title_i18n: "Home",
-        path: "/v2/home",
+        path: UrlPrefix + "/home",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CHome'))
     },
     {
         id: 2,
         title_i18n: "Problem",
-        path: "/v2/problem",
+        path: UrlPrefix + "/problem",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CProblem'))
     },
     {
         id: 3,
-        path: "/v2/submission",
+        path: UrlPrefix + "/submission",
         title_i18n: "Submission",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CSubmissions'))
     },
     {
         id: 4,
-        path: "/v2/contest",
+        path: UrlPrefix + "/contest",
         title_i18n: "Contest",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CContest'))
     },
     {
         id: 5,
-        path: "/v2/group",
+        path: UrlPrefix + "/group",
         title_i18n: "Group",
         exact: true,
         component: lazy(() => import('../../Pages/Client/CGroup'))
     },
     {
         id: 6,
-        path: "/v2/exam/list",
+        path: UrlPrefix + "/exam/list",
         title_i18n: "Exam System",
         exact: true,
         component: <></>

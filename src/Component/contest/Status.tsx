@@ -4,6 +4,7 @@ import SubmissionList from "../submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
 import {Button} from "antd";
 import React from "react";
+import {UrlPrefix} from "../../Config/constValue";
 
 const Status = (props: any) =>{
 
@@ -30,7 +31,7 @@ const Status = (props: any) =>{
                 problemCodeRender={(text: any) => {
                     return (
                         <Button type={"text"} size={"small"} onClick={() => {
-                           props.history.push("/v2/contest/" +contestId + "/problem/" + text)
+                           props.history.push(UrlPrefix + "/contest/" +contestId + "/problem/" + text)
                         }}>
                             {String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)}
                         </Button>

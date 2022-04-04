@@ -17,6 +17,7 @@ import TableWithPagination from "../common/Table/TableWithPagination";
 import SubmissionList from "../submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
 import ModalSubmissionList from "../submission/SubmissionList/ModalSubmissionList";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class ExamList extends Component<any, any> {
@@ -56,7 +57,7 @@ class ExamList extends Component<any, any> {
                                 size={"small"}
                                 type={"link"}
                                 onClick={() => {
-                                    this.props.history.push('/v2/exam/wait/' + record.examId.toString())
+                                    this.props.history.push(UrlPrefix + '/exam/wait/' + record.examId.toString())
                                 }}
                             >{text}</Button>
                         )

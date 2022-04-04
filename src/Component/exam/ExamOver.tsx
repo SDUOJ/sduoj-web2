@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {connect, useDispatch} from "react-redux";
 import eApi from "Utils/API/e-api"
+import {UrlPrefix} from "../../Config/constValue";
 
 const ExamOver = (props: any) => {
     const [disabled, setDisabled] = useState<boolean>(false)
@@ -24,7 +25,7 @@ const ExamOver = (props: any) => {
                             key: eid,
                             data: undefined
                         })
-                        props.history.push("/v2/exam/finish")
+                        props.history.push(UrlPrefix + "/exam/finish")
                     }).catch(() => {
                         setDisabled(false)
                     })

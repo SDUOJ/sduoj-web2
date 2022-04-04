@@ -14,6 +14,7 @@ import {isValueEmpty} from "../../Utils/empty";
 import TestCase from "../submission/TestCase";
 import {StateList, SubmissionMap} from "../../Type/ISubmission";
 import {ContestState} from "../../Redux/Action/contest";
+import {UrlPrefix} from "../../Config/constValue";
 
 const Problem = (props: any) => {
     const problemCode = props.match.params.problemCode
@@ -77,7 +78,7 @@ const Problem = (props: any) => {
                                             type={value.problemCode === problemCode ? "primary" : "text"}
                                             shape={"round"}
                                             onClick={() => {
-                                                props.history.push("/v2/contest/" + contestId + "/problem/" + value.problemCode)
+                                                props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + value.problemCode)
                                             }}
                                         >
                                             <span style={{fontWeight: "bold"}}>
@@ -122,7 +123,7 @@ const Problem = (props: any) => {
                                                                           style={{backgroundColor: row.problemColor}}/>
                                                                 )}
                                                                 <Button type={"text"} size={"small"} onClick={() => {
-                                                                    props.history.push("/v2/contest/" + contestId + "/problem/" + row.problemCode)
+                                                                    props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + row.problemCode)
                                                                 }}>{text}</Button>
                                                             </>
                                                         )

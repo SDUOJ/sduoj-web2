@@ -9,6 +9,7 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {routerE} from "../../Config/router/routerE";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 const {Footer, Content} = Layout;
@@ -17,8 +18,8 @@ class ELayout extends Component<any, any> {
 
     componentDidMount() {
         if ((
-            this.props.location.pathname === '/v2/exam' ||
-            this.props.location.pathname === '/v2/exam/'
+            this.props.location.pathname === UrlPrefix + '/exam' ||
+            this.props.location.pathname === UrlPrefix + '/exam/'
         ) && routerE.length !== 0) {
             this.props.history.push(getRouterPath(routerE, 2));
         }

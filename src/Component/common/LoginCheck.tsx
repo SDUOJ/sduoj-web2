@@ -6,6 +6,7 @@ import {withTranslation} from "react-i18next";
 import {UserReducer} from "../../Redux/Reducer/user";
 import {UserInfo, UserState} from "../../Type/Iuser";
 import cApi from "Utils/API/c-api"
+import {UrlPrefix} from "../../Config/constValue";
 
 const LoginCheck = (props: any) => {
 
@@ -15,7 +16,7 @@ const LoginCheck = (props: any) => {
                 props.setUserInfo({type: "setUserInfo", data: res})
                 props.userLogin({type: "userLogin"})
             }).catch(()=>{
-                props.history.push("/v2/login?to=" + props.location.pathname)
+                props.history.push(UrlPrefix + "/login?to=" + props.location.pathname)
             })
         }
     }, [props.isLogin])

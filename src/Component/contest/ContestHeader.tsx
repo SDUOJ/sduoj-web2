@@ -14,6 +14,7 @@ import {UserState} from "../../Type/Iuser";
 import {isValueEmpty} from "../../Utils/empty";
 import DTime from "../common/DTime";
 import judgeAuth from "../../Utils/judgeAhtu";
+import {UrlPrefix} from "../../Config/constValue";
 
 const ContestHeader = (props: any) => {
 
@@ -29,11 +30,11 @@ const ContestHeader = (props: any) => {
     // console.log(contestInfo)
 
     const menuData = [
-        {name: "Register", link: "/v2/contest/" + contestId + "/register", re: /\/v2\/contest\/.*\/register/g},
-        {name: "Overview", link: "/v2/contest/" + contestId + "/overview", re: /\/v2\/contest\/.*\/overview/g},
-        {name: "Problem", link: "/v2/contest/" + contestId + "/problem/1", re: /\/v2\/contest\/.*\/problem\/.*/g},
-        {name: "Status", link: "/v2/contest/" + contestId + "/submission", re: /\/v2\/contest\/.*\/submission/g},
-        {name: "Rank", link: "/v2/contest/" + contestId + "/rank", re: /\/v2\/contest\/.*\/rank/g},
+        {name: "Register", link: UrlPrefix + "/contest/" + contestId + "/register", re: /\/contest\/.*\/register/g},
+        {name: "Overview", link: UrlPrefix + "/contest/" + contestId + "/overview", re: /\/contest\/.*\/overview/g},
+        {name: "Problem", link: UrlPrefix + "/contest/" + contestId + "/problem/1", re: /\/contest\/.*\/problem\/.*/g},
+        {name: "Status", link: UrlPrefix + "/contest/" + contestId + "/submission", re: /\/contest\/.*\/submission/g},
+        {name: "Rank", link: UrlPrefix + "/contest/" + contestId + "/rank", re: /\/contest\/.*\/rank/g},
     ]
 
 
@@ -49,7 +50,7 @@ const ContestHeader = (props: any) => {
     const openness = contestInfo !== undefined ? contestInfo.features.openness : undefined
 
     useEffect(() => {
-        if (url.match(/\/v2\/contest\/[0-9]*\/?$/g) !== null && openness !== undefined && isPractice !== undefined) {
+        if (url.match(/\/contest\/[0-9]*\/?$/g) !== null && openness !== undefined && isPractice !== undefined) {
             // 在私有模式下，率先跳转到注册页面
             if (openness === "private" && !isPractice) props.history.replace(menuData[0].link)
             else props.history.replace(menuData[1].link)

@@ -48,26 +48,26 @@ export const routerLayout: IBaseRouter[] = [
     // Layout 大块
     {
         id: 0,
-        path: "/v2/manage",
+        path: UrlPrefix + "/manage",
         exact: false,
         component: lazy(() => import('../../Component/layout/MLayout'))
     },
     {
         id: 1,
-        path: "/v2/exam",
+        path: UrlPrefix + "/exam",
         exact: false,
         component: lazy(() => import('../../Component/layout/ELayout'))
     },
     {
         id: 4,
-        path: "/v2",
+        path: UrlPrefix,
         exact: true,
         component: lazy(() => import('../../Component/layout/CLayout'))
     },
     ...routerCLayout,
     {
         id: 14,
-        path: "/v2/error/time",
+        path: UrlPrefix + "/error/time",
         exact: true,
         component: lazy(() => import('../../Pages/Error/TimeError'))
     },

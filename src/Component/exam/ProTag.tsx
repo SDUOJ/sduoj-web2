@@ -7,6 +7,7 @@ import {withTranslation} from "react-i18next";
 import {ExamState, SProInfo} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {isValueEmpty} from "../../Utils/empty";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 const ProTag = (props: any) => {
@@ -27,7 +28,7 @@ const ProTag = (props: any) => {
             <Space>
                 <a className={"ProTag"}
                    onClick={props.empty ? undefined : () => {
-                       props.history.push(`/v2/exam/running/${eid}/${gid}/${pid}`)
+                       props.history.push(UrlPrefix + `/exam/running/${eid}/${gid}/${pid}`)
                    }}
                 >
                     <Badge dot={props.useDot ?? answerSheet?.marked}>

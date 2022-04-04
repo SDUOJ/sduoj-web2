@@ -10,11 +10,12 @@ import {
 } from "@ant-design/icons";
 import {lazy} from "react";
 import {IRouter} from "./router";
+import {UrlPrefix} from "../constValue";
 
 export const routerM: IRouter[] = [
     {
         id: 0,
-        path: "/v2/manage/user",
+        path: UrlPrefix + "/manage/user",
         title_i18n: "user",
         exact: false,
         icon: <UserOutlined/>,
@@ -22,7 +23,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 1,
-        path: "/v2/manage/problem",
+        path: UrlPrefix + "/manage/problem",
         title_i18n: "problem",
         exact: false,
         icon: <FolderOutlined/>,
@@ -30,7 +31,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 2,
-        path: "/v2/manage/contest",
+        path: UrlPrefix + "/manage/contest",
         title_i18n: "contest",
         exact: false,
         icon: <AppstoreOutlined/>,
@@ -38,7 +39,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 3,
-        path: "/v2/manage/template",
+        path: UrlPrefix + "/manage/template",
         title_i18n: "template",
         exact: false,
         icon: <FileOutlined/>,
@@ -46,7 +47,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 4,
-        path: "/v2/manage/group",
+        path: UrlPrefix + "/manage/group",
         title_i18n: "group",
         exact: false,
         icon: <UsergroupAddOutlined/>,
@@ -54,7 +55,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 5,
-        path: "/v2/manage/exam",
+        path: UrlPrefix + "/manage/exam",
         title_i18n: "exam",
         exact: true,
         icon: <ReadOutlined/>,
@@ -62,7 +63,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 6,
-        path: "/v2/manage/objective",
+        path: UrlPrefix + "/manage/objective",
         title_i18n: "objective",
         exact: true,
         icon: <CheckCircleOutlined/>,
@@ -70,7 +71,7 @@ export const routerM: IRouter[] = [
     },
     {
         id: 7,
-        path: "/v2/manage/announcement",
+        path: UrlPrefix + "/manage/announcement",
         title_i18n: "Announcement",
         exact: true,
         icon: <NotificationOutlined/>,

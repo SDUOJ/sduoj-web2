@@ -19,6 +19,7 @@ import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
 import Reconfirm from "../../Component/common/Reconfirm";
 import {isValueEmpty} from "../../Utils/empty";
 import LoadingData from "../../Component/common/LoadingData";
+import {UrlPrefix} from "../../Config/constValue";
 
 class CUser extends Component<any, any> {
 
@@ -29,13 +30,13 @@ class CUser extends Component<any, any> {
     componentDidMount() {
         if (!this.props.isLogin) {
             console.log("not login")
-            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
+            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
         }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            this.props.history.push("/v2/login?to=" + this.props.location.pathname)
+            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
         }
     }
 

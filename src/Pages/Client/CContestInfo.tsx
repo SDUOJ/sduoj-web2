@@ -28,7 +28,7 @@ const CContestInfo = (props: any) => {
         setPageWidth(e.target.innerWidth)
     }
 
-    if (props.location.pathname.match(/\/v2\/contest\/.*\/rank/g) !== null) {
+    if (props.location.pathname.match(/\/contest\/.*\/rank/g) !== null) {
         minWidth = Math.max(500, (props.minWidth ?? 0) + 100)
     }
     return (

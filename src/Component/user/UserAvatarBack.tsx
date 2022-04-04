@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {RightOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
 import UserAvatar from "./Avatar";
+import {UrlPrefix} from "../../Config/constValue";
 
 
 class UserAvatarBack extends Component<any, any> {
@@ -13,7 +14,7 @@ class UserAvatarBack extends Component<any, any> {
                 <Popover content={this.props.t("backToOJ")}>
                     <Button type="text" size={"large"}>
                         <div onClick={() => {
-                            this.props.history.push("/v2")
+                            this.props.history.push(UrlPrefix + "")
                         }}>
                             <Space>
                                 <div style={{marginTop: -10}}>

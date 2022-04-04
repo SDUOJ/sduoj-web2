@@ -3,6 +3,7 @@ import {TimeDiff, unix2Time} from "../../Utils/Time";
 import {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
 import CApi from "Utils/API/c-api"
+import {UrlPrefix} from "../../Config/constValue";
 
 const TimeError = (props: any) => {
 
@@ -47,7 +48,7 @@ const TimeError = (props: any) => {
                                         type="primary"
                                         key="return"
                                         onClick={()=>{
-                                            props.history.replace("/v2/home")
+                                            props.history.replace(UrlPrefix + "/home")
                                         }}
                                     >
                                         返回主页
