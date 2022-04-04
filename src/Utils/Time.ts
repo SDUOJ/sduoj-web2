@@ -38,3 +38,8 @@ export function unix2Time(time: number | string) {
     if (typeof time === "string") time = parseInt(time)
     return moment(time).format('YYYY-MM-DD HH:mm:ss')
 }
+
+export function unix2Date(time: number | string) {
+    if (typeof time === "string") time = parseInt(time)
+    return moment(time).format('YYYY-MM-DD')
+}

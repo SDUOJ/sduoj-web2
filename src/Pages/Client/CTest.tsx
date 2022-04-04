@@ -1,21 +1,7 @@
-import React, {Component, useState} from "react";
+import React, {useState} from "react";
 import {withRouter} from "react-router-dom";
 import EditableTableWithDrag from "../../Component/problem/From/Item/ItemProblemAdd";
 import {isValueEmpty} from "../../Utils/empty";
-import TimeError from "../Error/TimeError";
-import Reconfirm from "../../Component/common/Reconfirm";
-import SubmissionList from "../../Component/submission/SubmissionList/SubmissionList";
-import cApi from "Utils/API/c-api"
-import eApi from "../../Utils/API/e-api";
-import SubmissionModal from "../../Component/submission/Processing/ModalProcessing";
-import ListWithPagination from "../../Component/common/List/ListWithPagination";
-import {Button, Card, Divider, Form, Input, List, Select, Space, Tag} from "antd";
-import moment from "moment";
-import {ClockCircleOutlined, LockOutlined, TeamOutlined} from "@ant-design/icons";
-import {TimeDiff, TimeRangeState} from "../../Utils/Time";
-import {RunningResultList, StateList, SubmissionMap} from "../../Type/ISubmission";
-import TestCase from "../../Component/submission/TestCase";
-import ProblemAddForm from "../../Component/problem/ProblemAddForm";
 
 const CTest = (props: any) => {
 

@@ -1,6 +1,6 @@
 import React, {Dispatch, useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
-import {Card, Col, Row, Space} from "antd";
+import {Card, Col, Row} from "antd";
 import cApi from "Utils/API/c-api"
 import ProProgram from "../../Component/problem/Program/ProProgram";
 import {connect} from "react-redux";
@@ -10,7 +10,6 @@ import ProProgramDetail from "../../Component/problem/Program/ProProgramDetail";
 import RecentSubmissionList from "../../Component/submission/SubmissionList/RecentSubmissionList";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import ProProgramDescription from "../../Component/problem/Program/ProProgramDescription";
-import {ck} from "../../Utils/empty";
 import useProblemInfo from "../../Component/problem/API/getProblemInfo";
 
 const CProblemInfo = (props: any) => {

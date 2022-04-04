@@ -82,7 +82,7 @@ const ListWithPagination = (props: any) => {
     };
 
     useEffect(() => {
-        getInfo(PageNow, PageSize)
+        getInfo(PageNow, PageSize, undefined, props.initRequestProps)
     }, [props.name])
 
     useEffect(() => {
@@ -107,7 +107,7 @@ const ListWithPagination = (props: any) => {
             title={props.title}
             bordered={false}
             size={"default"}
-            className={"zeroBodyPaddingLeft"}
+            className={props.cardProps ?? "zeroBodyPaddingLeft"}
             extra={
                 (props.search === true || props.getForm !== undefined) && (
                     <>

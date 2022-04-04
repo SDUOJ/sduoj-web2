@@ -57,6 +57,12 @@ export const routerC: IBaseRouter[] = [
         component: lazy(() => import('../../Pages/Client/CGroup'))
     },
     {
+        id: 81,
+        path: "/v2/group/:groupId",
+        exact: true,
+        component: lazy(() => import('../../Pages/Client/CGroupInfo'))
+    },
+    {
         id: 9,
         path: "/v2/user",
         exact: true,

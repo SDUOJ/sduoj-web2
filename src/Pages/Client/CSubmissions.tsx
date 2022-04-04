@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
-import SubmissionModal from "../../Component/submission/Processing/ModalProcessing";
 import SubmissionList from "../../Component/submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
 import {Button} from "antd";

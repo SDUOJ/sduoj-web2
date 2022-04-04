@@ -269,7 +269,7 @@ h5.TestCase-text {
     word-wrap: break-word;
 }
 
-.mgb0{
+.mgb0 {
     margin-bottom: 0;
 }
 
@@ -513,6 +513,11 @@ h5.TestCase-text {
     margin-bottom: 10px;
 }
 
+.GroupPage .ant-form-item {
+    margin-top: 16px;
+    margin-bottom: 10px;
+}
+
 .ListPage .ant-list-item-meta-title {
     font-size: 17px;
     margin-top: 10px;
@@ -578,4 +583,29 @@ h5.TestCase-text {
 /*滚动条的小边角*/
 ::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+.GroupListItemCard .ant-card-body {
+    padding-bottom: 0;
+}
+
+.GroupListItemCard.ant-card-bordered {
+    border: 2px solid rgba(222, 222, 222, 0.75);
+    border-radius: 12px;
+}
+
+.GroupListItemCard .ant-card-actions {
+    border-radius: 12px;
+}
+
+.GroupPage .ant-card-head {
+    border-bottom: 0;
+}
+
+/*.GroupPage .ant-card-body{*/
+/*    padding-bottom: 12px;*/
+/*}*/
+
+.GroupPage .ant-list-pagination {
+    margin-top: 12px;
 }

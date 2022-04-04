@@ -1,7 +1,5 @@
 import {Button, Card, Form, message} from "antd";
 import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
-import ItemCaptcha from "../../Component/user/Form/Item/ItemCaptcha";
-import {useState} from "react";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import {withRouter} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";

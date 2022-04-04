@@ -8,12 +8,14 @@ import {AvatarSize} from "antd/es/avatar/SizeContext";
 interface IUserAvatar {
     email?: string | null
     size?: AvatarSize
+    shape?: 'circle' | 'square'
 }
 
 const UserAvatar = (props: IUserAvatar) => {
     if (props.email !== undefined && props.email !== null) {
         return (
             <Avatar
+                shape={props.shape}
                 src={"https://cravatar.cn/avatar/" + md5(props.email) +
                 (typeof props.size === "number" ? "?s=" + props.size : "") +
                 (typeof props.size === "number" ? "&d=identicon": "?d=identicon")

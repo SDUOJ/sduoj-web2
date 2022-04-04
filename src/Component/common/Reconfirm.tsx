@@ -3,7 +3,15 @@ import {Alert, Button, Input, Modal} from "antd";
 import {useState} from "react";
 import "Assert/css/Reconfirm.css"
 
-const Reconfirm = (props: any) => {
+interface ReconfirmProps{
+    btnProps: any
+    btnText: any
+    confirm: string
+    API: any
+    todo: string
+}
+
+const Reconfirm = (props: ReconfirmProps) => {
 
     const [modalVis, setModalVis] = useState<boolean>(false)
     const [value, setValue] = useState<string>("")

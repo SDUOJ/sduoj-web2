@@ -5,13 +5,11 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {getUrlParams} from "../../Utils/getUrlParams";
-import {thirdPartyLoginAction, thirdPartyLoginDataSDUCAS} from "../../Type/Iuser";
 import CApi from "../../Utils/API/c-api";
 import SDU_Logo from "../../Assert/img/sdu-logo.jpg";
 import {testLoginTodo} from "../../Redux/Action/user";
 import Register from "../../Component/user/Form/Register";
 import Binding from "../../Component/user/Form/Binding";
-import {setState} from "jest-circus/build/state";
 
 
 class CThirdPartyLogin extends Component<any, any> {

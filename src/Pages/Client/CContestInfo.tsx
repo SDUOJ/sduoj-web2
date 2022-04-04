@@ -1,8 +1,7 @@
 import {withTranslation} from "react-i18next";
-import {Link, Route, withRouter} from "react-router-dom";
+import {Route, withRouter} from "react-router-dom";
 import ContestHeader from "../../Component/contest/ContestHeader";
-import {Menu} from "antd";
-import {routerC, routerC_Contest_M, routerC_M} from "../../Config/router/routerC";
+import {routerC_Contest_M} from "../../Config/router/routerC";
 import React, {Dispatch, Suspense, useEffect, useState} from "react";
 import Loading from "../../Utils/Loading";
 import LoginCheck from "../../Component/common/LoginCheck";
