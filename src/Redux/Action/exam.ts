@@ -1,4 +1,3 @@
-import {examID} from "../../Type/types";
 import {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
 import {ExamState, SExamAnswerSheet, SExamInfo, SExamProListInfo} from "../../Type/IExam";

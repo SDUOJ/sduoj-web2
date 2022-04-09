@@ -1,4 +1,4 @@
-import {Form, Input, Radio} from "antd";
+import {Form, Radio} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 import {Sex} from "../../../../Type/Iuser";

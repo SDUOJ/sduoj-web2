@@ -1,9 +1,8 @@
-import React, {Component, Dispatch} from "react";
+import React, {Dispatch} from "react";
 import {Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {DownOutlined, LogoutOutlined} from "@ant-design/icons";
 import logo from "../../Assert/img/logo.png";
-import {ExamState} from "../../Type/IExam";
 import {UserState} from "../../Type/Iuser";
 import {connect, useDispatch} from "react-redux";
 import {withTranslation} from "react-i18next";

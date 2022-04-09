@@ -1,6 +1,5 @@
 import {withTranslation} from "react-i18next";
 import SubmissionList from "./SubmissionList";
-import {Card} from "antd";
 
 const RecentSubmissionList = (props: any) => {
     return (

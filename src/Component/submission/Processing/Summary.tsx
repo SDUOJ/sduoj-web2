@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import Title from "antd/es/typography/Title";
-import {Button, Card, Col, List, Progress, Row, Space, Statistic, Table} from "antd";
+import {Card, Col, Progress, Row, Space, Statistic, Table} from "antd";
 import JudgeResult from "./JudgeResult";
 import {StateList, SubmissionMap, TestCaseStates} from "../../../Type/ISubmission";
 import {unix2Time} from "../../../Utils/Time";
@@ -11,7 +11,6 @@ import Invalidate from "../Func/Invalidate";
 import DownloadTestCase from "../Func/DownloadTestCase";
 import {connect} from "react-redux";
 import {UserState} from "../../../Type/Iuser";
-import {TableState} from "../../../Type/ITable";
 import {Dispatch} from "react";
 import judgeAuth from "../../../Utils/judgeAhtu";
 

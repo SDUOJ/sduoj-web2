@@ -2,7 +2,7 @@ import React, {Dispatch, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {Button, Form, message, Modal, Tabs} from "antd";
+import {Button, Form, message, Modal} from "antd";
 import {ButtonType} from "antd/lib/button/button";
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {ck, isValueEmpty} from "../../../Utils/empty";

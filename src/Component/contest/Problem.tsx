@@ -4,15 +4,12 @@ import {Button, Card, Col, Row, Table} from "antd";
 import ProProgram from "../problem/Program/ProProgram";
 import cApi from "../../Utils/API/c-api";
 import ProProgramDetail from "../problem/Program/ProProgramDetail";
-import ProProgramDescription from "../problem/Program/ProProgramDescription";
 import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";
-import React, {Dispatch, useEffect} from "react";
+import React, {Dispatch} from "react";
 import {connect} from "react-redux";
 import {UserState} from "../../Type/Iuser";
 import useProblemInfo from "../problem/API/getProblemInfo";
 import {isValueEmpty} from "../../Utils/empty";
-import TestCase from "../submission/TestCase";
-import {StateList, SubmissionMap} from "../../Type/ISubmission";
 import {ContestState} from "../../Redux/Action/contest";
 import {UrlPrefix} from "../../Config/constValue";
 

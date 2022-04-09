@@ -1,4 +1,4 @@
-import React, {Component, Dispatch} from "react";
+import React, {Dispatch} from "react";
 import {Button, Modal} from "antd";
 import Processing from "./Processing";
 import {SubmissionState} from "../../../Type/ISubmission";

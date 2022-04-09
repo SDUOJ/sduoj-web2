@@ -1,12 +1,11 @@
-import React, {Component, Dispatch, useEffect} from "react";
-import {Card, Skeleton, Space} from "antd";
+import React, {Dispatch} from "react";
+import {Card, Space} from "antd";
 import Meta from "antd/lib/card/Meta";
 import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {ExamState} from "../../Type/IExam";
-import {examID} from "../../Type/types";
 import {withRouter} from "react-router";
 
 

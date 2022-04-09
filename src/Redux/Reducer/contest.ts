@@ -1,5 +1,3 @@
-import {ConfigState} from "../../Type/IConfig";
-import {ConfigAction} from "../Action/config";
 import {ContestAction, ContestState} from "../Action/contest";
 
 const initState: ContestState = {

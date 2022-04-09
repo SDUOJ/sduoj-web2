@@ -1,14 +1,10 @@
-import {Button, Form, Input, message, Modal, Space, Switch, Table, Tag, Typography} from "antd";
+import {Button, Form, Input, message, Modal, Space, Tag} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
-import ModalFormUseForm from "../common/Form/ModalFormUseForm";
 import {TableState} from "../../Type/ITable";
-import TableWithAllData from "../common/Table/TableWithAllData";
 import ItemTitle from "../common/Form/Item/ItemTitle";
 import ItemSwitch from "../common/Form/Item/ItemSwitch";
-import ItemText from "../common/Form/Item/ItemText";
-import ItemSelectGroup from "../group/Form/Item/ItemSelectGroup";
 import ItemEditor from "../common/Form/Item/ItemEditor";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
 import {withTranslation} from "react-i18next";
@@ -17,8 +13,7 @@ import TextEllipsis from "../common/TextEllipsis";
 import TableWithSelection from "../common/Table/TableWithSelection";
 import {useForm} from "antd/lib/form/Form";
 import {isValueEmpty} from "../../Utils/empty";
-import {DownloadOutlined, PlusOutlined, MinusOutlined} from "@ant-design/icons";
-import MApi from "../../Utils/API/m-api";
+import {DownloadOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import ButtonWithSelection from "../common/Table/ButtonWithSelection";
 
 function DeleteOutlined() {

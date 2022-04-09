@@ -1,10 +1,9 @@
-import React, {Component, Dispatch} from "react";
-import {Badge, Popover, Progress, Space, Tag} from "antd";
+import React, {Dispatch} from "react";
+import {Badge, Space, Tag} from "antd";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect, useSelector} from "react-redux";
-import {isProgramContent} from "../../Type/IProblem";
 import {withTranslation} from "react-i18next";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {isValueEmpty} from "../../Utils/empty";
 import {UrlPrefix} from "../../Config/constValue";

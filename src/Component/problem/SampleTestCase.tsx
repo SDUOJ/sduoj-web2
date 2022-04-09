@@ -1,5 +1,5 @@
 import React, {Component, Dispatch} from 'react';
-import {ProgramContent, TestCase} from "../../Type/IProblem";
+import {TestCase} from "../../Type/IProblem";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {Col, Row, Skeleton} from "antd";

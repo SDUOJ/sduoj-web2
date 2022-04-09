@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import UserAvatarBack from "../user/UserAvatarBack";
-import {Layout, Space} from "antd";
+import {Layout} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {UserState} from "../../Type/Iuser";
 import {testLoginTodo} from "../../Redux/Action/user";

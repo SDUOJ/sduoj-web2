@@ -1,5 +1,5 @@
 import {ModalForm} from "@ant-design/pro-form";
-import {Form, Input, message, Tabs} from "antd";
+import {message, Tabs} from "antd";
 import ItemCaptcha from "./Item/ItemCaptcha";
 import React, {useState} from "react";
 import {withTranslation} from "react-i18next";

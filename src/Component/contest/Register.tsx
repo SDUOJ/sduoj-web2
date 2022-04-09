@@ -4,7 +4,7 @@ import {Button, Card, Form, Input, message} from "antd";
 import {useForm} from "antd/es/form/Form";
 import cApi from "Utils/API/c-api"
 import getContestInfo from "./API/getContestInfo";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {UrlPrefix} from "../../Config/constValue";
 
 const Register = (props: any) => {

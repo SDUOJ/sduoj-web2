@@ -1,4 +1,3 @@
-import {ManageState} from "../../../Type/IManage";
 import React, {Dispatch} from "react";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";

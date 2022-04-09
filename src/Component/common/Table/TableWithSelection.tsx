@@ -1,5 +1,4 @@
 import React, {Component, Dispatch} from "react";
-import {UserState} from "../../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {connect} from "react-redux";

@@ -1,7 +1,7 @@
-import React, {Component, Dispatch} from "react";
+import React, {Dispatch} from "react";
 import ProTag from "./ProTag";
 import {Card, Col, Row} from "antd";
-import {ExamState, SProInfo} from "../../Type/IExam";
+import {ExamState} from "../../Type/IExam";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

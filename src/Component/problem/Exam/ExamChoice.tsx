@@ -1,9 +1,7 @@
-import React, {Component, Dispatch, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Skeleton} from "antd";
 import Options from "./ExamOptions";
-import {connect, useSelector} from "react-redux";
-import {ChoiceContent, IGetProInfo, ProblemState, ProContent} from "../../../Type/IProblem";
-import {ExamState, SProInfo} from "../../../Type/IExam";
+import {useSelector} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 

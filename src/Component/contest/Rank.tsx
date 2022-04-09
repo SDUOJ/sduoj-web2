@@ -1,14 +1,14 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Col, Row, Space, Table} from "antd";
-import {ContestState, setAllowSliderMove, setMinWidth, setOpenSliderMove} from "../../Redux/Action/contest";
+import {ContestState, setAllowSliderMove, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import cApi from "Utils/API/c-api"
 import "Assert/css/ContestRank.css"
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import {ReactComponent as Champion} from "Assert/img/champion.svg"
-import Icon, {TeamOutlined, FileTextOutlined} from "@ant-design/icons";
+import Icon, {FileTextOutlined, TeamOutlined} from "@ant-design/icons";
 
 const Rank = (props: any) => {
     const contestId = props.match.params.contestId

@@ -7,8 +7,6 @@ import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import {unix2Time} from "../../Utils/Time";
-import JudgeType from "../../Component/problem/From/FormJudgeType";
-import FormJudgeType from "../../Component/problem/From/FormJudgeType";
 
 
 class MGroup extends Component<any, any> {

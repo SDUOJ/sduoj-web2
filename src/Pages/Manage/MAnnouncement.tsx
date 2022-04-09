@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router";
-import {Button, Card, Form, Input, Space, Switch, Tag} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
+import {Card, Space, Tag} from "antd";
 import {withTranslation} from "react-i18next";
 import MApi from "../../Utils/API/m-api";
 import {unix2Time} from "../../Utils/Time";

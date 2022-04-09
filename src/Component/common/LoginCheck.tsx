@@ -1,10 +1,8 @@
 import {withRouter} from "react-router-dom";
 import {Dispatch, useEffect} from "react";
-import {examID} from "../../Type/types";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {UserReducer} from "../../Redux/Reducer/user";
-import {UserInfo, UserState} from "../../Type/Iuser";
+import {UserState} from "../../Type/Iuser";
 import cApi from "Utils/API/c-api"
 import {UrlPrefix} from "../../Config/constValue";
 

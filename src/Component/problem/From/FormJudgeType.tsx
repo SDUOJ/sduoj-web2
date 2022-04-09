@@ -4,9 +4,7 @@ import BodyChecker from "./Item/BodyChecker";
 import mApi from "Utils/API/m-api"
 import ItemSwitch from "../../common/Form/Item/ItemSwitch";
 import ItemCodeEditor from "../../common/Form/Item/ItemCodeEditor";
-import TableWithSelection from "../../common/Table/TableWithSelection";
 import {ManageState} from "../../../Type/IManage";
-import {UserState} from "../../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

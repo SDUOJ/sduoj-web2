@@ -2,7 +2,6 @@ import {Button, Card, Form, Space, Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import {defaultPageSize} from "../../../Config/constValue";
 import {UserState} from "../../../Type/Iuser";
-import {ManageState} from "../../../Type/IManage";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";

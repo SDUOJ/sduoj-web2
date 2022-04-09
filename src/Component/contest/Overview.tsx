@@ -1,12 +1,8 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Button, Table} from "antd";
-import React, {Dispatch, useEffect, useState} from "react";
-import cApi from "Utils/API/c-api"
+import React, {Dispatch} from "react";
 import {connect} from "react-redux";
-import {UserState} from "../../Type/Iuser";
-import {ExamState} from "../../Type/IExam";
-import {userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
 import {ContestState} from "../../Redux/Action/contest";
 import {isValueEmpty} from "../../Utils/empty";
 import TestCase from "../submission/TestCase";

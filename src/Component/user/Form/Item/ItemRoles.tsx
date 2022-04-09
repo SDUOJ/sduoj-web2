@@ -1,7 +1,6 @@
 import {Form, Select} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
-import {ck} from "../../../../Utils/empty";
 
 const ItemRoles = (props: any) => {
     return (

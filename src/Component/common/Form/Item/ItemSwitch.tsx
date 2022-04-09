@@ -1,4 +1,4 @@
-import {Form, Input, Switch} from "antd";
+import {Form, Switch} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";

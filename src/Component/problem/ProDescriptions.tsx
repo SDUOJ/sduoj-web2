@@ -1,14 +1,11 @@
-import {Button, Form, Input, message, Modal, Switch, Table} from "antd";
-import React, {Dispatch, useEffect, useState} from "react";
+import {Button, message, Modal, Switch} from "antd";
+import React, {Dispatch, useState} from "react";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
 import ModalFormUseForm from "../common/Form/ModalFormUseForm";
-import {TableState} from "../../Type/ITable";
 import TableWithAllData from "../common/Table/TableWithAllData";
 import ItemTitle from "../common/Form/Item/ItemTitle";
 import ItemSwitch from "../common/Form/Item/ItemSwitch";
-import ItemText from "../common/Form/Item/ItemText";
-import ItemSelectGroup from "../group/Form/Item/ItemSelectGroup";
 import ItemEditor from "../common/Form/Item/ItemEditor";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
 

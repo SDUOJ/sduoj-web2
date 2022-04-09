@@ -1,12 +1,9 @@
-import React, {Component, Dispatch, useEffect} from 'react';
+import React, {Dispatch, useEffect} from 'react';
 import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {connect, useSelector} from "react-redux";
-import {ChoiceContent, ChoiceState} from "../../../Type/IProblem";
-import {ExamState, SProInfo} from "../../../Type/IExam";
 import {withRouter} from "react-router-dom";
-import {examID} from "../../../Type/types";
 // @ts-ignore
 // import VditorPreview from 'vditor/dist/method.min'
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";

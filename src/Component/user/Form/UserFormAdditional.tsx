@@ -1,7 +1,5 @@
 import React, {Component} from "react";
-import {Checkbox, Form, Switch} from "antd";
 import {withTranslation} from "react-i18next";
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import ItemSwitch from "../../common/Form/Item/ItemSwitch";
 
 

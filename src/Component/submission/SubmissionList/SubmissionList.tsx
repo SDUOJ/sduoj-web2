@@ -1,11 +1,11 @@
 import {withTranslation} from "react-i18next";
-import {Button, Card, Form, Input, message, Select, Space, Table} from "antd";
+import {Button, Card, Form, Input, message, Select, Space} from "antd";
 import {SyncJudging} from "../SyncJudging";
 import cApi from "../../../Utils/API/c-api";
 import {ReloadOutlined} from "@ant-design/icons";
 import {RunningResultList, StateList, SubmissionMap, TopSubmissionInfoType} from "../../../Type/ISubmission";
 import TestCase from "../TestCase";
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, useState} from "react";
 import moment from "moment";
 import TableWithSelection from "../../common/Table/TableWithSelection";
 import ReJudge from "../Func/ReJudge";

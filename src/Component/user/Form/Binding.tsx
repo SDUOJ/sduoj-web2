@@ -2,13 +2,9 @@ import {ModalForm} from "@ant-design/pro-form";
 import {message} from "antd";
 import ItemUsername from "./Item/ItemUsername";
 import ItemPassword from "./Item/ItemPassword";
-import ItemEmail from "./Item/ItemEmail";
-import React, {Dispatch} from "react";
+import React from "react";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
-import {loginInfo} from "../../../Type/types";
-import {testLoginTodo, userLoginTodo} from "../../../Redux/Action/user";
-import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {UrlPrefix} from "../../../Config/constValue";

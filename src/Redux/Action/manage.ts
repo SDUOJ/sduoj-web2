@@ -1,6 +1,3 @@
-import React from "react";
-
-
 export type ManageAction = addManageInitData
 
 interface addManageInitData{

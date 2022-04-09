@@ -4,7 +4,6 @@ import {isValueEmpty} from "../../../Utils/empty";
 import {Card, Menu} from "antd";
 import {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {ProblemState} from "../../../Type/IProblem";
 import {RightOutlined} from "@ant-design/icons";
 
 const ProProgramDescription = (props: any) => {

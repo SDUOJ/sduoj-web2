@@ -1,11 +1,8 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
-import ListWithPagination from "../../Component/common/List/ListWithPagination";
 import cApi from "../../Utils/API/c-api";
-import {Button, Card, Col, Divider, Form, List, Row, Select, Space, Tag} from "antd";
-import moment from "moment";
-import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
-import {TimeDiff, TimeRangeState} from "../../Utils/Time";
+import {Button, Card, Col, Row, Space} from "antd";
+import {ClockCircleOutlined} from "@ant-design/icons";
 import Countdown from "antd/lib/statistic/Countdown";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";

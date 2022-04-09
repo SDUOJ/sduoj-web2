@@ -1,4 +1,3 @@
-import Editor from "../../Editor";
 import {Form} from "antd";
 import CodeEditor from "../../CodeEditor";
 

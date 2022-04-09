@@ -1,4 +1,4 @@
-import {Button, Form, FormInstance, Input, message, Modal} from "antd";
+import {Button, Form, Input, message, Modal} from "antd";
 import React, {useEffect, useState} from "react";
 import {withTranslation} from "react-i18next";
 import CApi from "Utils/API/c-api"

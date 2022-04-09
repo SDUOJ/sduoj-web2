@@ -4,13 +4,11 @@ import {LoginForm, ProFormInstance, ProFormText} from "@ant-design/pro-form";
 import {LockOutlined, UserOutlined,} from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from "./ThirdPartyLoginSDUCAS";
 import {withTranslation} from "react-i18next";
-import {ConfigState} from "../../Type/IConfig";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {userLoginTodo} from "../../Redux/Action/user";
 import {loginInfo} from "../../Type/types";
 import Logo from "Assert/img/sduoj.png"
-import Register from "./Form/Register";
 import ForgetPass from "./Form/ForgetPass";
 
 type LoginType = 'SDUCAS' | 'account';

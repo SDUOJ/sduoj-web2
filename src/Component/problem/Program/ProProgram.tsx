@@ -1,12 +1,11 @@
-import {TranslationProps, WithTranslation, withTranslation} from "react-i18next";
-import {Badge, Button, Card, Modal, Space} from "antd";
+import {WithTranslation, withTranslation} from "react-i18next";
+import {Card, Space} from "antd";
 import Submit from "../../submission/Submit";
-import React, {Dispatch, useEffect, useReducer, useState} from "react";
-import {JudgeTemplateAllType, ProblemState, TestCase} from "../../../Type/IProblem";
+import React, {Dispatch, useEffect, useState} from "react";
+import {JudgeTemplateAllType, ProblemState} from "../../../Type/IProblem";
 import SampleTestCase from "../SampleTestCase";
 import {displayType} from "../../../Type/ISubmission";
 import ModalSubmissionList from "../../submission/SubmissionList/ModalSubmissionList";
-import useProblemInfo from "../API/getProblemInfo";
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 import {connect} from "react-redux";
 import {UserState} from "../../../Type/Iuser";

@@ -1,22 +1,14 @@
-import {Button, Card, Form, Space, Table} from "antd";
+import {Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
-import {defaultPageSize} from "../../../Config/constValue";
-import {UserState} from "../../../Type/Iuser";
-import {ManageState} from "../../../Type/IManage";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import Search from "antd/es/input/Search";
 import {TableState} from "../../../Type/ITable";
-import {ck} from "../../../Utils/empty";
 import {SizeType} from "antd/lib/config-provider/SizeContext";
 import {ColumnsType} from "antd/lib/table/interface";
-import {useForm} from "antd/es/form/Form";
 import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
-import {EditOutlined, MenuOutlined, SortAscendingOutlined} from "@ant-design/icons";
+import {MenuOutlined} from "@ant-design/icons";
 import {arrayMoveImmutable} from "array-move";
-import {examProblemType} from "../../../Type/IExam";
-import {EditableProTable, ProColumns} from "@ant-design/pro-table";
 
 export interface TableWithPaginationProps {
     API: any                  // 表格查询数据的接口

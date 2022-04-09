@@ -1,4 +1,4 @@
-import {Form, Input, Switch} from "antd";
+import {Form, Input} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 

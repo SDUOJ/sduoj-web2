@@ -1,7 +1,6 @@
 import React, {Component, Dispatch} from 'react';
 
 import {Badge, Button, Space} from 'antd';
-import {SExamInfo} from "../../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -11,11 +10,8 @@ import ExamForm from "./Form/ExamForm";
 import {getDiffSecond, TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
 import {getExamJson} from "../../Utils/exportExam";
-import SubmissionModal from "../submission/Processing/ModalProcessing";
 import {isValueEmpty} from "../../Utils/empty";
 import TableWithPagination from "../common/Table/TableWithPagination";
-import SubmissionList from "../submission/SubmissionList/SubmissionList";
-import cApi from "../../Utils/API/c-api";
 import ModalSubmissionList from "../submission/SubmissionList/ModalSubmissionList";
 import {UrlPrefix} from "../../Config/constValue";
 

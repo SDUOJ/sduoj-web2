@@ -1,11 +1,10 @@
-import React, {Component, Dispatch, useEffect} from "react";
-import {Button, Card, Skeleton} from "antd";
+import React, {Dispatch, useEffect} from "react";
+import {Button, Card} from "antd";
 import {StarFilled, StarOutlined} from '@ant-design/icons';
 import ExamChoice from "./ExamChoice";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {examID} from "../../../Type/types";
 import eApi from "../../../Utils/API/e-api";
 import ProProgram from "../Program/ProProgram";
 import useProblemInfo from "../API/getProblemInfo";

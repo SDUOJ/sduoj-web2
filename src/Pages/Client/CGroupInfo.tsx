@@ -1,5 +1,5 @@
 import {withRouter} from "react-router-dom";
-import {Card, List, Row, Tabs, Tag} from "antd";
+import {Card, List, Tabs, Tag} from "antd";
 import React, {useEffect, useState} from "react";
 import cApi from "Utils/API/c-api"
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";

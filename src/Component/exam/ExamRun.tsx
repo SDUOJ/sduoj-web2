@@ -1,16 +1,13 @@
-import React, {Component, Dispatch, Suspense, useEffect} from 'react';
-import {connect, useDispatch, useSelector} from "react-redux";
-import {Col, Row, Skeleton} from "antd";
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {Col, Row} from "antd";
 import ExamProblem from "../problem/Exam/ExamProblem";
 import ExamPageCtrl from "./ExamPageCtrl";
 import ExamAnswerSheet from "./ExamAnswerSheet";
 import Timer from "./Timer";
-import {ExamState, SExamInfo, SExamProListInfo, SProList} from "../../Type/IExam";
-import {examID} from "../../Type/types";
+import {SExamProListInfo, SProList} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import eApi from "Utils/API/e-api"
-import {Submission} from "../../Type/IProblem";
-import SubmissionModal from "../submission/Processing/ModalProcessing";
 import useExamInfo from "./API/getExamInfo";
 import deepClone from "../../Utils/deepClone";
 import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";

@@ -1,8 +1,7 @@
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Card, Image, List, message, Result} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../../Component/exam/Timer";
-import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import moment from "moment";

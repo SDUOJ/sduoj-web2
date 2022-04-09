@@ -1,5 +1,5 @@
 import {withTranslation} from "react-i18next";
-import {Button, Form, Select, Switch} from "antd";
+import {Button, Form, Select} from "antd";
 import {PREDEFINED_CHECKERS, SPJ_Code, SPJ_Config} from "../../../../Config/constValue";
 import React, {Dispatch, useEffect, useState} from "react";
 import CodeEditor from "../../../common/CodeEditor";
@@ -7,7 +7,6 @@ import {ManageState} from "../../../../Type/IManage";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {isValueEmpty} from "../../../../Utils/empty";
-import mApi from "../../../../Utils/API/m-api";
 
 const BodyChecker = (props: any) => {
     const [selectValue, setSelectValue] = useState<string>("lcmp.cpp")

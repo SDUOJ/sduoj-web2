@@ -1,12 +1,11 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Alert, Card, Col, Divider, Form, Menu, message, Row, Slider, Space, Switch} from "antd";
+import {Alert, Card, Col, Divider, Menu, Row, Slider, Space, Switch} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import getContestInfo from "./API/getContestInfo";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import {TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import Countdown from "antd/lib/statistic/Countdown";
-import moment from "moment";
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
 import {ContestState, setAfterContestSubmission} from "../../Redux/Action/contest";
 import {connect} from "react-redux";
