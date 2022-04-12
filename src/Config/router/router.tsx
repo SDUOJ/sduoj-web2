@@ -71,6 +71,12 @@ export const routerLayout: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Error/TimeError'))
     },
+    {
+        id: 15,
+        path: UrlPrefix + "/error/browser",
+        exact: true,
+        component: lazy(() => import('../../Pages/Error/BrowserVersionError'))
+    },
 ]
 
 

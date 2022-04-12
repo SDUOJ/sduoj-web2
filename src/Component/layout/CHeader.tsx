@@ -36,6 +36,11 @@ class CHeader extends Component<any, any> {
 
     componentDidMount() {
         this.syncSelect()
+        try{
+            "test".replaceAll("t", "1")
+        }catch (e){
+            this.props.history.replace(UrlPrefix + "/error/browser")
+        }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
