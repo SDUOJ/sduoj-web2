@@ -63,7 +63,7 @@ const messageDisabledList = [
 const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.get(url, {
-            params, ...config
+            ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, params, ...config,
         });
         if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
             window.location.replace(UrlPrefix + "/error/time")
@@ -95,7 +95,7 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
 const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
     try {
         const response = await service.post(url, data, {
-            ...config
+            ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, ...config
         });
         if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
             window.location.replace(UrlPrefix + "/error/time")
