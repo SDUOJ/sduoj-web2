@@ -30,6 +30,12 @@ const ExamRun = (props: any) => {
         if (problemList === undefined) {
             eApi.getExamGroupList(eid).then((res: any) => {
                 let data: { [key: string]: SExamProListInfo } = {}
+                // console.log("aaaaaaaaaa == ", res)
+                let plistIndex = 0;
+                for(const x of res){
+                    x.index = x.index ?? plistIndex
+                    plistIndex += 1
+                }
                 for (const x of res) {
                     const proList: SProList[] = []
                     let cnt = 0
@@ -44,7 +50,7 @@ const ExamRun = (props: any) => {
                         eApi.getAnswerSheet(eid, x.index).then((res: any) => {
                             dispatch({
                                 type: "setAnswerSheet",
-                                data: res.problemAnswer,
+                                data: res?.problemAnswer ?? [],
                                 key: eid + "_" + x.index
                             })
                         })
@@ -69,7 +75,6 @@ const ExamRun = (props: any) => {
     }, [problemList])
 
     // console.log("problemList", problemList)
-
 
     return (
         <>
