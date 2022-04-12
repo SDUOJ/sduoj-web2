@@ -17,7 +17,7 @@ class MHeader extends Component<any, any> {
                     style={{minWidth: 550, position: 'fixed', zIndex: 1, width: '100%'}}
             >
                 <div style={{float: "right"}}>
-                    <div style={{position: "relative", left: "-60%"}}>
+                    <div style={{position: "relative", right: "200px"}}>
                         <ChangeLang/>
                         {
                             (this.props.isLogin && (
