@@ -1,6 +1,9 @@
-export type ManageAction = addManageInitData
+import {clearRedux} from "./common";
 
-interface addManageInitData{
+export type ManageAction = addManageInitData |
+    clearRedux
+
+interface addManageInitData {
     type: "addManageInitData",
     key: string,
     data: any

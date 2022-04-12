@@ -29,6 +29,9 @@ export const ConfigReducer = (state: ConfigState = initState, action: ConfigActi
             State.copyRight = action.data
             break
 
+        case "clearRedux":
+            return initState;
+
         default:
             break
     }

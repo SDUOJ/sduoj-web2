@@ -20,6 +20,8 @@ export const SubmissionReducer = (state: SubmissionState = initState, action: Su
         case "setSubmissionListInfo":
             State.submissionListInfo[action.key] = action.data
             break
+        case "clearRedux":
+            return initState;
     }
     return State
 }

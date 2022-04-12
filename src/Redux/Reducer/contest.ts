@@ -31,6 +31,15 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
         case "setOpenSliderMove":
             State.openSliderMove = action.data
             break
+        case "clearRedux":
+            return {
+                contestInfo: {},
+                minWidth: 0,
+                afterContestSubmission: false,
+                sliderTime: 0,
+                allowSliderMove: false,
+                openSliderMove: false
+            };
     }
     return State
 }

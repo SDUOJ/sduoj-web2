@@ -2,12 +2,14 @@ import {Dispatch} from "react";
 import eApi from "Utils/API/e-api"
 import {ExamState, SExamAnswerSheet, SExamInfo, SExamProListInfo} from "../../Type/IExam";
 import {isValueEmpty} from "../../Utils/empty";
+import {clearRedux} from "./common";
 
 
 export type ExamAction =
     setProLists |
     setExamInfo |
-    setAnswerSheet
+    setAnswerSheet |
+    clearRedux
 
 
 export interface setProLists {

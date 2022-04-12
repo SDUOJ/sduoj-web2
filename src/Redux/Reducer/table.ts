@@ -48,6 +48,10 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
             initTableData(action.name)
             State.tableData[action.name].tableInfo = action.data
             break
+        case "clearRedux":
+            return {
+                tableData: {}
+            };
 
         default:
 

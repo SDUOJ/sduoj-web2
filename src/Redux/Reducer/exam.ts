@@ -24,6 +24,12 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
         case "setExamInfo":
             State.examInfo[action.key] = action.data
             break
+        case "clearRedux":
+            return {
+                examInfo: {},
+                examProListInfo: {},
+                examAnswerSheetInfo: {}
+            };
         default:
             break
     }

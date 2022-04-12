@@ -1,10 +1,13 @@
+import {clearRedux} from "./common";
+
 export type ContestAction =
     setContestInfo |
     setMinWidth |
     setAfterContestSubmission |
     setAllowSliderMove |
     setSliderTime |
-    setOpenSliderMove
+    setOpenSliderMove |
+    clearRedux
 
 export interface setMinWidth {
     type: "setMinWidth",
@@ -17,22 +20,22 @@ export interface setContestInfo {
     data: any
 }
 
-export interface setAfterContestSubmission{
+export interface setAfterContestSubmission {
     type: "setAfterContestSubmission",
     data: boolean
 }
 
-export interface setAllowSliderMove{
+export interface setAllowSliderMove {
     type: "setAllowSliderMove",
     data: boolean
 }
 
-export interface setSliderTime{
+export interface setSliderTime {
     type: "setSliderTime",
     data: number
 }
 
-export interface setOpenSliderMove{
+export interface setOpenSliderMove {
     type: "setOpenSliderMove"
     data: boolean
 }

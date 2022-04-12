@@ -2,11 +2,11 @@ import deepClone from "Utils/deepClone";
 import {UserState} from "../../Type/Iuser";
 import {UserAction} from "../Action/user";
 
-const StateInit: UserState = {
+const initState: UserState = {
     isLogin: false
 }
 
-export const UserReducer = (state: UserState = StateInit, action: UserAction) => {
+export const UserReducer = (state: UserState = initState, action: UserAction) => {
     // 此处不做深拷贝，redux无法检测到更新
     let State: UserState = deepClone(state)
     switch (action.type) {

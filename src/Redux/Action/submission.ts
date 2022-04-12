@@ -1,9 +1,11 @@
 import {TopSubmissionInfoType} from "../../Type/ISubmission";
+import {clearRedux} from "./common";
 
 export type SubmissionAction =
     setTopSubmission |
     setSubmissionModalVis |
-    setSubmissionListInfo
+    setSubmissionListInfo |
+    clearRedux
 
 
 export interface setTopSubmission {

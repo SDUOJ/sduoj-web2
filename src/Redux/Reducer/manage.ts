@@ -15,6 +15,10 @@ export const ManageReducer = (state: ManageState = initState, action: ManageActi
         case "addManageInitData":
             State.manageInitData[action.key] = action.data
             break
+        case "clearRedux":
+            return {
+                manageInitData: {}
+            };
     }
     return State
 }

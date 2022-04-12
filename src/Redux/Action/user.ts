@@ -2,11 +2,13 @@ import CApi from "Utils/API/c-api"
 import {UserInfo} from "../../Type/Iuser";
 import {loginInfo} from "../../Type/types";
 import {Dispatch} from "react";
+import {clearRedux} from "./common";
 
 export type UserAction =
     setUserInfo |
     userLogin |
-    userLogout
+    userLogout |
+    clearRedux
 
 
 export function testLoginTodo() {
@@ -16,6 +18,7 @@ export function testLoginTodo() {
             dispatch({type: "userLogin"})
         }).catch(err => {
             dispatch({type: "userLogout"})
+            dispatch({type: "clearRedux"})
         })
     }
 }
@@ -35,6 +38,7 @@ export function userLogoutTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {
         CApi.logout().then((resData) => {
             dispatch({type: "userLogout"})
+            dispatch({type: "clearRedux"})
         })
     }
 }

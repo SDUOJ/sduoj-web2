@@ -5,13 +5,11 @@ import 'antd/dist/antd.css';
 import './Config/i18n'
 import {ConfigProvider} from "antd";
 import "vditor/src/assets/scss/index.scss";
-import {thirdPartyLoginAction} from "./Type/Iuser";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
-import {BrowserRouter as Router, Route, withRouter} from "react-router-dom";
+import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
-import {testLoginTodo} from "./Redux/Action/user";
 import SubmissionModal from "./Component/submission/Processing/ModalProcessing";
 
 

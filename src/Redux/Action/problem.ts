@@ -1,4 +1,7 @@
-export type ProblemAction = setProblemInfo
+import {clearRedux} from "./common";
+
+export type ProblemAction = setProblemInfo |
+    clearRedux
 
 
 export interface setProblemInfo {

@@ -1,10 +1,12 @@
 import React from "react";
+import {clearRedux} from "./common";
 
 export type TableAction =
     setSelectedRowKeys |
     addTableVersion |
     setDataSource |
-    setTableInfo
+    setTableInfo |
+    clearRedux
 
 
 export interface setSelectedRowKeys {
