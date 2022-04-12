@@ -73,7 +73,7 @@ const Submit = (props: SubmitPropsType & any) => {
             {props.t("Submit")}
         </Button>
     )
-    console.log("props.LeftSubmitCount", props.LeftSubmitCount)
+    // console.log("props.LeftSubmitCount", props.LeftSubmitCount)
     return (
         <>
             {!isNaN(props.LeftSubmitCount) && props.LeftSubmitCount !== undefined && (
