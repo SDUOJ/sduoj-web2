@@ -118,6 +118,10 @@ export interface TopSubmissionInfoType {
     downloadAPI: any
     // 请求 Submission 信息的 API
     QuerySubmissionAPI: any
+    // 重测 API
+    RejudgeAPI?: any
+    // 取消成绩 API
+    InvalidateAPI?: any
 }
 
 export interface RunningSubmissionInfo {

@@ -117,7 +117,9 @@ const SubmissionList = (props: any) => {
                         scoreMod: record.sumScore === undefined ? "disable" : "show",
                         sumScore: record.sumScore,
                         testcaseMod: "show",
-                        QuerySubmissionAPI: props.QuerySubmissionAPI
+                        QuerySubmissionAPI: props.QuerySubmissionAPI,
+                        RejudgeAPI: props.RejudgeAPI,
+                        InvalidateAPI: props.InvalidateAPI
                     })
                     props.setSubmissionModalVis(true)
                 }}>

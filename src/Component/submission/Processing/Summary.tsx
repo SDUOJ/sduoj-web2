@@ -2,7 +2,7 @@ import {withTranslation} from "react-i18next";
 import Title from "antd/es/typography/Title";
 import {Card, Col, Progress, Row, Space, Statistic, Table} from "antd";
 import JudgeResult from "./JudgeResult";
-import {StateList, SubmissionMap, TestCaseStates} from "../../../Type/ISubmission";
+import {StateList, SubmissionMap, SubmissionState, TestCaseStates} from "../../../Type/ISubmission";
 import {unix2Time} from "../../../Utils/Time";
 import TestCase from "../TestCase";
 import cApi from "../../../Utils/API/c-api";
@@ -114,12 +114,12 @@ const Summary = (props: any) => {
                         >
                             <Space direction={"horizontal"}>
                                 <ReJudge
-                                    API={cApi.rejudge}
+                                    API={props.RejudgeAPI ?? cApi.rejudge}
                                     data={[submissionInfo.submissionId]}
                                     afterSuccess={props.refresh}
                                 />
                                 <Invalidate
-                                    API={cApi.invalidateSubmission}
+                                    API={props.InvalidateAPI ?? cApi.invalidateSubmission}
                                     data={{submissionId: submissionInfo.submissionId}}
                                     afterSuccess={props.refresh}
                                 />
@@ -283,8 +283,12 @@ const Summary = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
+    const SubState: SubmissionState = state.SubmissionReducer
+
     return {
-        roles: UState.userInfo?.roles
+        roles: UState.userInfo?.roles,
+        RejudgeAPI: SubState.TopSubmissionInfo?.RejudgeAPI,
+        InvalidateAPI: SubState.TopSubmissionInfo?.InvalidateAPI
     }
 }
 

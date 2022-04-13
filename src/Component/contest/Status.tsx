@@ -28,6 +28,12 @@ const Status = (props: any) =>{
                 useForm={true}
                 API={SubmissionListAPI}
                 QuerySubmissionAPI={QuerySubmissionAPI}
+                // RejudgeAPI={(data: any)=>{
+                //     return cApi.rejudgeInContest({contestId: contestId, submissionIds: data})
+                // }}
+                InvalidateAPI={(data: any)=>{
+                    return cApi.invalidateContestSubmission({submissionId: data['submissionId'], contestId: contestId})
+                }}
                 problemCodeRender={(text: any) => {
                     return (
                         <Button type={"text"} size={"small"} onClick={() => {
