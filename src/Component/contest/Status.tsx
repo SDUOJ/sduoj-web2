@@ -13,7 +13,7 @@ const Status = (props: any) =>{
     const SubmissionListAPI = (data: any) => {
         return cApi.getContestSubmissionList({
             ...data,
-            username: props.username,
+            // username: props.username,
             contestId: contestId
         })
     }
