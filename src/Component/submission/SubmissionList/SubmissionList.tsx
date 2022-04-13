@@ -230,6 +230,20 @@ const SubmissionList = (props: any) => {
         )
     }
 
+    const API = (data: any)=>{
+        if("problemCode" in data && !isValueEmpty(data["problemCode"])){
+            let v: string = data["problemCode"]
+            if (v.length === 1) {
+                if (v.match(/^[a-z]$/) !== null) v = (v.charCodeAt(0) - 'a'.charCodeAt(0) + 1).toString()
+                if (v.match(/^[A-Z]$/) !== null) v = (v.charCodeAt(0) - 'A'.charCodeAt(0) + 1).toString()
+            } else if (v.match(/^[0-9]{4}$/) !== null) {
+                v = "SDUOJ-" + v
+            }
+            data["problemCode"] = v
+        }
+        return props.API(data)
+    }
+
     return (
         <>
             <Card
@@ -282,7 +296,7 @@ const SubmissionList = (props: any) => {
                     name={props.name}
                     size={"small"}
                     rowKey={"submissionId"}
-                    API={props.API}
+                    API={API}
                     APIRowsTransForm={(value: any) => {
                         if (isValueEmpty(value)) value = []
                         let webSocketQueryList = []
