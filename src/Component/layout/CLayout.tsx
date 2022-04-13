@@ -42,19 +42,15 @@ class MLayout extends Component<any, any> {
                             display: "table",
                             height: "auto"
                         }}>
-                            <div style={{padding: 18}}>
-                                <Suspense fallback={<Loading/>}>
-                                    {/*对应路由*/}
-                                    {
-                                        routerC.map((r) => {
-                                            return (
-                                                <Route key={r.id} path={r.path} exact={r.exact}
-                                                       component={r.component}/>
-                                            )
-                                        })
-                                    }
-                                </Suspense>
-                            </div>
+                            <Suspense fallback={<Loading/>}>
+                                {routerC.map(({id, path, exact, component}) => {
+                                    return (
+                                        <Route
+                                            key={id} path={path} exact={exact}
+                                            component={component}/>
+                                    )
+                                })}
+                            </Suspense>
                         </Content>
                         <FooterSDU/>
                     </Layout>
