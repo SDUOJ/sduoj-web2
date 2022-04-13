@@ -50,7 +50,7 @@ class CHeader extends Component<any, any> {
     render() {
         return (
             <Header className="site-layout-sub-header-background"
-                    style={{minWidth: 1200, position: 'fixed', zIndex: 1, width: '100%'}}>
+                    style={{minWidth: 1400, position: 'fixed', zIndex: 1, width: '100%'}}>
                 <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
                     <img src={logo} style={{width: "125px", height: '30px'}}
                          alt={"SDUOJ-logo"}/>
