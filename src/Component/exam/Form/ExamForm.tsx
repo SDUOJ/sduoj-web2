@@ -5,7 +5,6 @@ import {withTranslation} from "react-i18next";
 import moment from "moment";
 import {connect} from "react-redux";
 import ExamBaseForm from "./ExamBaseForm";
-import TabPane from "@ant-design/pro-card/lib/components/TabPane";
 import ExamMemberForm from "./ExamMemberForm";
 import ExamProblemForm from "./ExamProblemForm";
 import mApi from "Utils/API/m-api"
@@ -76,8 +75,9 @@ const ExamForm = (props: any) => {
                                         examTitle: resData.examTitle,
                                         examStartEndTime: [moment(parseInt(resData.gmtStart)), moment(parseInt(resData.gmtEnd))],
                                         examDescription: resData.description,
-                                        isScoreVisible: resData.features === null ? false : resData.features.isScoreVisible,
-                                        isSubmissionScoreVisible: resData.features === null ? false : resData.features.isSubmissionScoreVisible
+                                        scoreMod: resData.features === null ? "show" : resData.features.scoreMod,
+                                        caseMod: resData.features === null ? "show" : resData.features.caseMod,
+                                        openReport: resData.features === null ? 0 : resData.features.openReport,
                                     })
                                     let PL = [], GI = [], ManageGroup = null
                                     if (resData.participatingGroupDTOList !== null)
@@ -169,6 +169,7 @@ const ExamForm = (props: any) => {
                             // console.log("user", user)
                             // console.log("group-info", groupInfo)
                             // console.log("group-ProList", proList)
+
                             if (!examFormChecker({
                                 examProblemListInfo: proList,
                                 examProblemGroupInfo: groupInfo,
@@ -216,8 +217,9 @@ const ExamForm = (props: any) => {
                                 gmtEnd: base.examStartEndTime[1].unix() * 1000,
                                 description: base.examDescription,
                                 features:{
-                                    isScoreVisible: base.isScoreVisible,
-                                    isSubmissionScoreVisible: base.isSubmissionScoreVisible,
+                                    scoreMod: base.scoreMod,
+                                    caseMod: base.caseMod,
+                                    openReport: base.openReport
                                 },
                                 groupId: user?.ManageGroup,
                                 participatingGroups: user?.ParticipatingGroup,
@@ -247,23 +249,23 @@ const ExamForm = (props: any) => {
                 }
             >
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="基本信息" key="1">
+                    <Tabs.TabPane tab="基本信息" key="1">
                         <ExamBaseForm
                             getRef={getExamBaseFormRef}
                             initData={baseInit}
                             isDataLoad={isDataLoad}
                             isStart={props.isStart}
                         />
-                    </TabPane>
-                    <TabPane tab="人员信息" key="2">
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="人员信息" key="2">
                         <ExamMemberForm
                             getRef={getExamUserFormRef}
                             initData={userInit}
                             groupInfo={groupInfo}
                             isDataLoad={isDataLoad}
                         />
-                    </TabPane>
-                    <TabPane tab="题目信息" key="3">
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="题目信息" key="3">
                         <ExamProblemForm
                             groupData={examProGroupData}
                             setGroupData={setExamProGroupData}
@@ -272,7 +274,7 @@ const ExamForm = (props: any) => {
                             isDataLoad={isDataLoad}
                             isStart={props.isStart}
                         />
-                    </TabPane>
+                    </Tabs.TabPane>
                 </Tabs>
             </Modal>
         </>

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {withRouter} from "react-router-dom";
-import EditableTableWithDrag from "../../Component/problem/From/Item/ItemProblemAdd";
+import ItemProblemAdd from "../../Component/problem/From/Item/ItemProblemAdd";
 import {isValueEmpty} from "../../Utils/empty";
 
 const CTest = (props: any) => {
@@ -11,7 +11,7 @@ const CTest = (props: any) => {
     return (
         <>
             <div style={{width: "1250px"}}>
-                <EditableTableWithDrag
+                <ItemProblemAdd
                     type={"problem"}
                     editable={true}
                     problemType={"program"}

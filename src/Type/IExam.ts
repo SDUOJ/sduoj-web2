@@ -1,6 +1,7 @@
 import {ProContent, ProType} from "./IProblem";
 import React from "react";
 import moment from "moment";
+import {displayType} from "./ISubmission";
 
 // 用于 M端 考试信息
 export interface SExamManageInfo {
@@ -116,8 +117,9 @@ export interface examBasicType {
     examTitle: string,
     examStartEndTime: moment.Moment[],
     examDescription: string,
-    isScoreVisible?: boolean,
-    isSubmissionScoreVisible?: boolean
+    scoreMod?: displayType,
+    caseMod?: displayType,
+    openReport?: number
 }
 
 export interface examDataType {

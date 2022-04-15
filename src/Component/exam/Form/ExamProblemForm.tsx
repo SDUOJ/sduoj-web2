@@ -306,24 +306,24 @@ const ExamProblemForm = (props: any) => {
                         <Radio.Button value="edit">编辑</Radio.Button>
                         <Radio.Button value="sort">排序</Radio.Button>
                     </Radio.Group>
-                    <Radio.Group
-                        defaultValue="easy"
-                        buttonStyle="solid"
-                        onChange={(evt) => {
-                            switch (evt.target.value) {
-                                case "easy":
-                                    setUIMode("easy")
-                                    return
-                                case "all":
-                                    setUIMode("all")
-                                    return
-                            }
-                        }}
-                        disabled={props.isStart}
-                    >
-                        <Radio.Button value="easy">简单模式</Radio.Button>
-                        <Radio.Button value="all" disabled>完全模式（暂不支持）</Radio.Button>
-                    </Radio.Group>
+                    {/*<Radio.Group*/}
+                    {/*    defaultValue="easy"*/}
+                    {/*    buttonStyle="solid"*/}
+                    {/*    onChange={(evt) => {*/}
+                    {/*        switch (evt.target.value) {*/}
+                    {/*            case "easy":*/}
+                    {/*                setUIMode("easy")*/}
+                    {/*                return*/}
+                    {/*            case "all":*/}
+                    {/*                setUIMode("all")*/}
+                    {/*                return*/}
+                    {/*        }*/}
+                    {/*    }}*/}
+                    {/*    disabled={props.isStart}*/}
+                    {/*>*/}
+                    {/*    <Radio.Button value="easy">简单模式</Radio.Button>*/}
+                    {/*    <Radio.Button value="all" disabled>完全模式（暂不支持）</Radio.Button>*/}
+                    {/*</Radio.Group>*/}
                 </Space>
             </Skeleton>
         </>

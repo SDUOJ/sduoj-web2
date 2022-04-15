@@ -372,7 +372,7 @@ h5.TestCase-text {
     top: 50%;
     left: 50%;
     transform: translate(-50%, 0%);
-    min-width: 1300px;
+    min-width: 1100px;
 }
 
 .exam-form-preview .ant-card-meta-title {
