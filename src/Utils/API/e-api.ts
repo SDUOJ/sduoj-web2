@@ -20,8 +20,13 @@ export default {
     async getAnswerSheet(eid: examID, groupId: React.Key, reportMode: boolean = false) {
         return request.get("/exam/getAnswerSheet", {examId: eid, groupId: groupId, reportMode: reportMode})
     },
+    // 获取某一个提交
     async getSubmission(examId: examID, submissionId: string, reportMode: boolean = false) {
-        return request.get("/exam/getSubmission/", {examId: examId, submissionId: submissionId, reportMode})
+        return request.get("/exam/getSubmission", {examId: examId, submissionId: submissionId, reportMode})
+    },
+    // 获取成绩报告
+    async getExamResult(examId: string) {
+        return request.get("/exam/getExamResult", {examId: examId, reportMode: true})
     },
     // 提交代码
     async CreateSubmit(data: ICreateSubmit) {
@@ -50,7 +55,7 @@ export default {
     },
 
     // 获取提交列表
-    async getSubmissionList(data: { examId: examID, problemGroup: number, problemIndex: number }) {
-        return request.post("/exam/getSubmissionList", data)
+    async getSubmissionList(data: { examId: examID, problemGroup: number, problemIndex: number }, reportMode: boolean = false) {
+        return request.post("/exam/getSubmissionList", {...data, reportMode: reportMode})
     }
 }

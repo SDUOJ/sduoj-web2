@@ -25,7 +25,7 @@ const ItemProblemAdd = (props: any) => {
     const [TableData, setTableDataX] = useState<any[]>(ck(props.value, []))
     const [TableDataHis, setTableDataHis] = useState<any>({})
     const setTableData = (data: any) => {
-        console.log("setTableData", data)
+        // console.log("setTableData", data)
         props.onChange && props.onChange(data)
         setTableDataX([...data])
     }

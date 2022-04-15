@@ -133,7 +133,7 @@ class CUser extends Component<any, any> {
                                                     <SubmitButton
                                                         API={async () => {
                                                             return this.ref3.current?.validateFields().then((data: any) => {
-                                                                console.log(data)
+                                                                // console.log(data)
                                                                 return CApi.updateEmail(data).then((res) => {
                                                                     this.ref3.current?.resetFields()
                                                                     return Promise.resolve("成功")

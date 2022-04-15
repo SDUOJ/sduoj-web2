@@ -24,7 +24,7 @@ interface ProProgramProps {
     nameWithD: string   // 带有描述的题目名
     name: string
     GetProblemInfoAPI: any
-    SubmitAPI: any
+    SubmitAPI?: any
     SubmissionListAPI: any
     QuerySubmissionAPI: any
     LeftSubmitCount?: number
@@ -135,20 +135,22 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             )}
             <div style={{marginTop: "10px"}}>
                 <Space size={25}>
-                    <Submit
-                        SubmissionListName={"Pro-SubmissionList-" + props.name}
-                        API={props.SubmitAPI}
-                        title={problemInfo?.problemTitle}
-                        LeftSubmitCount={props.enableLeftSubmitCount ? (problemInfo?.submitNum - totalSubmission) : undefined}
-                        TopSubmissionInfo={{
-                            title: problemInfo?.problemTitle,
-                            scoreMod: "show",
-                            testcaseMod: "show",
-                            QuerySubmissionAPI: props.QuerySubmissionAPI
-                        }}
-                        JudgeTemplates={problemInfo?.judgeTemplates}
-                        FuncTemplates={problemInfo?.functionTemplates}
-                    />
+                    {props.SubmitAPI !== undefined && (
+                        <Submit
+                            SubmissionListName={"Pro-SubmissionList-" + props.name}
+                            API={props.SubmitAPI}
+                            title={problemInfo?.problemTitle}
+                            LeftSubmitCount={props.enableLeftSubmitCount ? (problemInfo?.submitNum - totalSubmission) : undefined}
+                            TopSubmissionInfo={{
+                                title: problemInfo?.problemTitle,
+                                scoreMod: "show",
+                                testcaseMod: "show",
+                                QuerySubmissionAPI: props.QuerySubmissionAPI
+                            }}
+                            JudgeTemplates={problemInfo?.judgeTemplates}
+                            FuncTemplates={problemInfo?.functionTemplates}
+                        />
+                    )}
                     <ModalSubmissionList
                         btnProps={{type: "default", disabled: !props.isLogin}}
                         btnText={"记录"}

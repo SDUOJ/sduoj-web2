@@ -30,7 +30,7 @@ const FormJudgeType = (props: any) => {
     }, [])
 
     useEffect(() => {
-        console.log("props.initData", props.initData)
+        // console.log("props.initData", props.initData)
         if (props.initData !== undefined && props.initData["ProblemInfo"] !== undefined) {
             const initData = props.initData["ProblemInfo"]
 
@@ -39,7 +39,7 @@ const FormJudgeType = (props: any) => {
 
             // 设定函数模板的使用
             if (!isValueEmpty(initData.functionTemplates) && Object.keys(initData.functionTemplates).length !== 0) {
-                console.log("functionTemplates", initData.functionTemplates)
+                // console.log("functionTemplates", initData.functionTemplates)
                 setUseFuncTemplate(true)
             }
 

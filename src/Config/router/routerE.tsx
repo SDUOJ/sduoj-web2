@@ -26,5 +26,11 @@ export const routerE: IBaseRouter[] = [
         path: UrlPrefix + "/exam/finish",
         exact: true,
         component: lazy(() => import('../../Pages/Exam/EFinish'))
-    }
+    },
+    {
+        id: 6,
+        path: UrlPrefix + "/exam/report/:eid",
+        exact: true,
+        component: lazy(() => import('../../Pages/Exam/EReport'))
+    },
 ]

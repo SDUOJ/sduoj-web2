@@ -103,7 +103,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     // 提交数据
     const submitData = (values: any) => {
         const submit = (value: any) => {
-            console.log("inner", value)
+            // console.log("inner", value)
             // 在提交表单数据之前，追加数据
             props.updateAppendProps && Object.assign(value, props.updateAppendProps)
             props.dataSubmitter(value).then((res: any) => {

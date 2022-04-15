@@ -19,8 +19,9 @@ const useExamInfo = (examId: React.Key) => {
                         participantNum: x.participantNum,
                         description: x.description.toString(),
                         userIsSubmit: x.userIsSubmit,
-                        isScoreVisible: x.features === null ? false : x.features.isScoreVisible,
-                        isSubmissionScoreVisible: x.features === null ? false : x.features.isSubmissionScoreVisible
+                        scoreMod: x.features === null ? "show" : x.features.scoreMod ?? "show",
+                        testcaseMod: x.features === null ? "show" : x.features.caseMod ?? "show",
+                        openReport: x.features === null ? 0 : x.features.openReport ?? 0,
                     }
                 })
             })

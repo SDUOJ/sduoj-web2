@@ -11,6 +11,7 @@ import useExamInfo from "../../Component/exam/API/getExamInfo";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import {isValueEmpty} from "../../Utils/empty";
 import {UrlPrefix} from "../../Config/constValue";
+import {getDescription} from "../../Component/exam/ExamUtils";
 
 const {Meta} = Card;
 
@@ -37,20 +38,6 @@ const EWait = (props: any) => {
         return props.t("StartAnswering")
     }
 
-    const getDescription = () => {
-        if (examInfo === undefined) return ""
-        let description: string = ""
-        const start = moment(examInfo.startTime), end = moment(examInfo.endTime)
-        description += "考试时长：" + TimeDiff(examInfo.startTime, examInfo.endTime) + "\n"
-        description += "考试时间："
-            + start.format("LL") + "(" + start.format("dddd") + ") "
-            + start.format("HH:mm") + " - "
-            + (start.format("LL") === end.format("LL") ? "" : (
-                end.format("LL") + "(" + end.format("dddd") + ") "
-            )) + end.format("HH:mm") + "\n"
-        return description
-    }
-
     if (examInfo !== undefined) {
         const examStart = examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1
         if (ExamStart !== examStart) setExamStartX(examStart)
@@ -75,13 +62,18 @@ const EWait = (props: any) => {
         </Button>
     ]
     if (examState === 'end') {
-        actions.push(
-            <Button
-                type={"primary"}
-            >
-                报告
-            </Button>
-        )
+        if(examInfo?.openReport === 1){
+            actions.push(
+                <Button
+                    type={"primary"}
+                    onClick={()=>{
+                        props.history.push(UrlPrefix + "/exam/report/" + props.match.params.eid)
+                    }}
+                >
+                    报告
+                </Button>
+            )
+        }
     }
 
     return (
@@ -114,7 +106,7 @@ const EWait = (props: any) => {
                         >
                             <List
                                 size="small"
-                                dataSource={getDescription().split('\n').filter((value: string) => value !== "")}
+                                dataSource={getDescription(examInfo).split('\n').filter((value: string) => value !== "")}
                                 renderItem={
                                     (item: string, index) => {
                                         return (
