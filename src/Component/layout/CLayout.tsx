@@ -32,7 +32,7 @@ class MLayout extends Component<any, any> {
 
         return (
             <>
-                <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1000px"}}>
+                <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1300px"}}>
                     <Layout style={{minWidth: minWidth}}>
                         <CHeader/>
                         <Content style={{
