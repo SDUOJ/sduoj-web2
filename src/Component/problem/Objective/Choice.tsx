@@ -10,7 +10,7 @@ const Choice = (props: any) => {
         if (props.description !== undefined) {
             MarkdownPreview("Choice-title-id", props.description.content)
         }
-    }, [props.description.content])
+    }, [props.description?.content])
 
     const choice = props.description?.choice
 

@@ -20,7 +20,7 @@ const Options = (props: any) => {
     }, [props.ChoiceContent])
 
     let OptionsState = ""
-    if (props.answer.answer.includes(props.ChoiceID)) OptionsState = "used"
+    if (props.answer.orgAnswer.includes(props.ChoiceID)) OptionsState = "used"
     else OptionsState = "init"
 
 

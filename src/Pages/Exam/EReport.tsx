@@ -145,9 +145,15 @@ const EReport = (props: any) => {
                     >
                         {(() => {
                             if (proData !== undefined && objectVis) {
+                                let answer;
+                                for(let i = 0; i < examRes.problemGroupResult[topInfo[1]].problemResult[0].length; i ++){
+                                    if(examRes.problemGroupResult[topInfo[1]].problemResult[0][i].problemIndex === topInfo[2]){
+                                        answer = examRes.problemGroupResult[topInfo[1]].problemResult[0][i]
+                                    }
+                                }
                                 return <>
                                     <Choice
-                                        answer={examRes.problemGroupResult[topInfo[1]].problemResult[0][topInfo[2]]}
+                                        answer={answer}
                                         description={proData.description}
                                         topInfo={topInfo}
                                     />
