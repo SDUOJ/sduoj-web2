@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Col, Row, Space, Table} from "antd";
+import {Col, Row, Space, Table, Typography} from "antd";
 import {ContestState, setAllowSliderMove, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -243,7 +243,9 @@ const Rank = (props: any) => {
                                         </div>
                                     )}
                                     {SData.minTime === undefined && (
-                                        <>&nbsp;&nbsp;</>
+                                        <div style={{fontSize: 16}}>
+                                            &nbsp;&nbsp;
+                                        </div>
                                     )}
                                     <div>{SData.tries} {SData.tries === 1 ? "try" : "tries"}</div>
                                 </div>
@@ -348,7 +350,11 @@ const Rank = (props: any) => {
                                                     {parseInt(contestInfo.gmtEnd) + 1 !== SummaryInfo[`first_ac_${i}`] && (
                                                         <div>
                                                             <Icon component={Champion}/>
-                                                            <>{TimeDiff(contestInfo.gmtStart, SummaryInfo[`first_ac_${i}`], "d", "h", "m", "s")}</>
+                                                            <Typography.Text ellipsis={{
+                                                                tooltip: TimeDiff(contestInfo.gmtStart, SummaryInfo[`first_ac_${i}`], "d", "h", "m", "s"),
+                                                            }} style={{width: 50}}>
+                                                                {TimeDiff(contestInfo.gmtStart, SummaryInfo[`first_ac_${i}`], "d", "h", "m", "s")}
+                                                            </Typography.Text>
                                                         </div>
                                                     )}
                                                 </div>
