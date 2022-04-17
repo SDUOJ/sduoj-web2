@@ -210,6 +210,7 @@ class MProblem extends Component<any, any> {
                 }
                 >
                     <TableWithPagination
+                        search={true}
                         columns={colData}
                         API={MApi.getProblemList}
                         size={"small"}

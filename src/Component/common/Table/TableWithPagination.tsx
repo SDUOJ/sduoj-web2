@@ -125,7 +125,7 @@ const TableWithPagination = (props: any) => {
                         {props.search === true && (
                             <Search
                                 key={"search"}
-                                placeholder={props.t("searchUser")}
+                                placeholder={"搜索"}
                                 onSearch={(text) => {
                                     setSearchText(text)
                                     setPageNow(1)
