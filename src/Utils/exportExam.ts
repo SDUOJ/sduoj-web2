@@ -48,7 +48,7 @@ export function getExamJson(eid: examID) {
                         proCnt += 1
                         proInfo[groupCnt + "-" + proCnt + "-分数"] = z.realScore
                         proInfo[groupCnt + "-" + proCnt + "-评测分数"] = z.score
-                        proInfo[groupCnt + "-" + proCnt + "-得分代码"] = z.code
+                        proInfo[groupCnt + "-" + proCnt + "-得分代码"] = z.code.substr(0, 32767)
                     }
                 } else if (y.type === "SingleChoice" || y.type === "MultipleChoice") {
                     proInfo['题组' + groupCnt + "-类型"] = "选择题"
