@@ -20,6 +20,7 @@ import {SyncJudging} from "../SyncJudging";
 import {ck, isValueEmpty} from "../../../Utils/empty";
 import Running from "./Running";
 import Summary from "./Summary";
+import cApi from "../../../Utils/API/c-api";
 
 interface IProcessingProp {
     TimeLimit: number
@@ -181,8 +182,11 @@ const Processing = (props: IProcessingProp & any) => {
                     {!isValueEmpty(sf?.code) && sf?.judgeTemplateTitle !== undefined && (
                         <CodeHighlight code={sf?.code} lang={langMap[sf.judgeTemplateTitle]}/>
                     )}
-                    {isValueEmpty(sf?.code) && (
+                    {isValueEmpty(sf?.zipFileId) && isValueEmpty(sf?.code) && (
                         "代码未公开"
+                    )}
+                    {!isValueEmpty(sf?.zipFileId) && (
+                        <a href={cApi.getFileDownloadUrl(sf?.zipFileId as string, Date.now().toString() + ".zip")}>点击下载</a>
                     )}
                 </>
             )

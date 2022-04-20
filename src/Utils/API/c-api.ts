@@ -1,7 +1,7 @@
 import {problemListQuery, thirdPartyLogin, updatePassWord} from '../../Type/types'
 import {forgetInfo, loginInfo, profileInfo, registerInfo, verificationEmail} from "../../Type/types";
 import request from "./request";
-import {sleep} from "../Sleep";
+import apiAddress from "./apiAddress";
 
 
 export default {
@@ -84,10 +84,17 @@ export default {
             headers: {"Content-Type": "multipart/form-data"}
         });
     },
+    async uploadSingleFile(data: any) {
+        return request.post('/filesys/upload', data, {
+            headers: {"Content-Type": "multipart/form-data"}
+        });
+    },
     async getFileByMD5(data: { md5: string }) {
         return request.get("/filesys/queryByMd5", data)
     },
-
+    getFileDownloadUrl(id: string, name: string){
+        return apiAddress().CLIENT_SERVER + "/api/filesys/download/" + id + "/" + name
+    },
 
     // 比赛相关
     async getContestList(data: any) {
