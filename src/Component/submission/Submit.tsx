@@ -48,14 +48,15 @@ const Submit = (props: SubmitPropsType & any) => {
                         value.code = funcTemplate.functionTemplate + value.code
                 }
             }
-
-            props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
+            return props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
                 setSubmitDisable(false)
                 props.setSubmissionModalVis(true)
                 props.SubmissionListName !== undefined && props.addTableVersion(props.SubmissionListName)
             })
+        }).catch((err: any) => {
+            setSubmitDisable(false)
         })
     }
 
