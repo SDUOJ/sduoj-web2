@@ -8,7 +8,6 @@ import {connect} from "react-redux";
 const ProProgramDetail = (props: any) => {
 
     const problemInfo = props.problemInfo
-
     return (
         <>
             <Card title={"题目详情"} className={"smallBodyPaddingTop"}>
