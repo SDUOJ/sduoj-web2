@@ -84,7 +84,7 @@ const CProblemInfo = (props: any) => {
                             {props.username !== undefined && (
                                 <div style={{marginTop: 30}}>
                                     <RecentSubmissionList
-                                        name={"Pro-SubmissionList-" + problemCode}
+                                        name={"Pro-SubmissionList-Recent-" + problemCode}
                                         API={SubmissionListAPI}
                                         QuerySubmissionAPI={QuerySubmissionAPI}
                                     />

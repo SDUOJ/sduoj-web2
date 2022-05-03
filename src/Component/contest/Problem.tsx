@@ -145,7 +145,7 @@ const Problem = (props: any) => {
                                 </div>
                                 <div style={{marginTop: 25}}>
                                     <RecentSubmissionList
-                                        name={"Pro-SubmissionList-" + proName}
+                                        name={"Pro-SubmissionList-Recent-" + proName}
                                         API={SubmissionListAPI}
                                         QuerySubmissionAPI={QuerySubmissionAPI}
                                     />

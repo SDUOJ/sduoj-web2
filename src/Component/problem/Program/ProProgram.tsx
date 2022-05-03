@@ -69,7 +69,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
 
     useEffect(() => {
         if (props.tableData !== undefined) {
-            const tableData = props.tableData["Pro-SubmissionList-" + props.name]
+            const tableData = props.tableData["Pro-SubmissionList-Recent-" + props.name]
             // console.log("tableData", tableData)
             // console.log("tableData?.tableInfo?.total ?? 0", tableData?.tableInfo?.total ?? 0)
             setTotalSubmission(tableData?.tableInfo?.total ?? 0)
@@ -137,7 +137,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                 <Space size={25}>
                     {props.SubmitAPI !== undefined && (
                         <Submit
-                            SubmissionListName={"Pro-SubmissionList-" + props.name}
+                            SubmissionListName={"Pro-SubmissionList-Recent-" + props.name}
                             API={props.SubmitAPI}
                             title={problemInfo?.problemTitle}
                             LeftSubmitCount={props.enableLeftSubmitCount ? (problemInfo?.submitNum - totalSubmission) : undefined}
