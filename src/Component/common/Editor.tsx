@@ -154,7 +154,7 @@ const Editor = (props: EditorProps & any) => {
 
     return (
         <>
-            <div id="vditor"/>
+            <div id="vditor" className="vditor"/>
         </>
     )
 
