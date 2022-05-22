@@ -136,6 +136,9 @@ export default {
     async submitInContest(data: { contestId: string } & any) {
         return request.post("/contest/createSubmission", data)
     },
+    async getContestReport(data: any){
+        return request.post("/contest/comprehensiveReport", data)
+    },
 
 
     // 比赛问答

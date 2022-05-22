@@ -6,7 +6,7 @@ const TextEllipsis = (props: any) => {
     const text = props.text.replace(/^\s+|\s+$/g, '')
     return (
         <Typography.Text
-            style={{width: 100}}
+            style={{width: props.width ?? 100}}
             ellipsis={{tooltip: <pre className={"preAutoLine mgb0"}>{text}</pre>}}
         >
             {text}

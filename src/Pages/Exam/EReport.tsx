@@ -19,7 +19,7 @@ import CodeHighlight from "../../Component/common/CodeHighlight";
 import ProProgram from "../../Component/problem/Program/ProProgram";
 
 const EReport = (props: any) => {
-    const eid = props.match.params.eid
+    const eid = props.match.params.eid ?? props.eid
 
     const examInfo = useExamInfo(eid)
     const [examRes, setExamRes] = useState<any>()
@@ -108,32 +108,34 @@ const EReport = (props: any) => {
             <LoginCheck/>
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "800px", minWidth: "400px", margin: "0 auto"}}>
-                    <Result
-                        className={"Ewait"}
-                        icon={<Title level={2}> 考试报告 </Title>}
-                        title={examInfo?.title}
-                        extra={
-                            <div className={"Ewait-content"}>
-                                <Card
-                                    className={"exam-wait-card"}
-                                >
-                                    <Title level={4}> 学号： {examRes?.username}</Title>
-                                    <Title level={4}> 姓名： {examRes?.nickname}</Title>
-                                    <List
-                                        size="small"
-                                        dataSource={getDescription(examInfo).split('\n').filter((value: string) => value !== "")}
-                                        renderItem={
-                                            (item: string, index) => {
-                                                return (
-                                                    <List.Item>{item}</List.Item>
-                                                )
+                    {props.eid === undefined && (
+                        <Result
+                            className={"Ewait"}
+                            icon={<Title level={2}> 考试报告 </Title>}
+                            title={examInfo?.title}
+                            extra={
+                                <div className={"Ewait-content"}>
+                                    <Card
+                                        className={"exam-wait-card"}
+                                    >
+                                        <Title level={4}> 学号： {examRes?.username}</Title>
+                                        <Title level={4}> 姓名： {examRes?.nickname}</Title>
+                                        <List
+                                            size="small"
+                                            dataSource={getDescription(examInfo).split('\n').filter((value: string) => value !== "")}
+                                            renderItem={
+                                                (item: string, index) => {
+                                                    return (
+                                                        <List.Item>{item}</List.Item>
+                                                    )
+                                                }
                                             }
-                                        }
-                                    />
-                                </Card>
-                            </div>
-                        }
-                    />
+                                        />
+                                    </Card>
+                                </div>
+                            }
+                        />
+                    )}
                     <Modal
                         title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 作答详情`}
                         visible={objectVis}
@@ -146,8 +148,8 @@ const EReport = (props: any) => {
                         {(() => {
                             if (proData !== undefined && objectVis) {
                                 let answer;
-                                for(let i = 0; i < examRes.problemGroupResult[topInfo[1]].problemResult[0].length; i ++){
-                                    if(examRes.problemGroupResult[topInfo[1]].problemResult[0][i].problemIndex === topInfo[2]){
+                                for (let i = 0; i < examRes.problemGroupResult[topInfo[1]].problemResult[0].length; i++) {
+                                    if (examRes.problemGroupResult[topInfo[1]].problemResult[0][i].problemIndex === topInfo[2]) {
                                         answer = examRes.problemGroupResult[topInfo[1]].problemResult[0][i]
                                     }
                                 }
@@ -172,7 +174,9 @@ const EReport = (props: any) => {
                     >
                         {examRes !== undefined && codeVis && (
                             <div style={{marginLeft: 36}}>
-                                <CodeHighlight code={examRes.problemGroupResult[topInfo[1]].problemResult[0][topInfo[2]].code} lang={"cpp"}/>
+                                <CodeHighlight
+                                    code={examRes.problemGroupResult[topInfo[1]].problemResult[0][topInfo[2]].code}
+                                    lang={"cpp"}/>
                             </div>
                         )}
                     </Modal>
@@ -185,8 +189,8 @@ const EReport = (props: any) => {
                         }}
                         footer={false}
                     >
-                        {(()=>{
-                            if(examInfo !== undefined && examRes !== undefined && programVis){
+                        {(() => {
+                            if (examInfo !== undefined && examRes !== undefined && programVis) {
                                 const eid = topInfo[0], gid = topInfo[1], pid = topInfo[2]
                                 return (
                                     <ProProgram
@@ -223,8 +227,10 @@ const EReport = (props: any) => {
                         score !== undefined &&
                         myScore !== undefined && (
                             <>
-                                <Title level={4}> 总成绩： {myScore['all']} / {score['all']}</Title>
-                                <Title level={4}> 明细 </Title>
+                                {props.eid === undefined && (<>
+                                    <Title level={4}> 总成绩： {myScore['all']} / {score['all']}</Title>
+                                    <Title level={4}> 明细 </Title>
+                                </>)}
                                 {examRes.problemGroupResult.map((groupData: any) => {
                                     const title = problemList[`${eid}_${groupData.groupIndex}`].title
                                     const type = groupData.type
