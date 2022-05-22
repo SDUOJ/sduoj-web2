@@ -425,7 +425,7 @@ const TSummary = (props: any) => {
                                                 header={<>
                                                     <Space>
                                                         <Title level={5}>
-                                                            {eInfo.examTitle} - {d.sumScore}/100
+                                                            {eInfo.examTitle} - {sumScore}/100
                                                             - {sumScore / 100 * 2}
                                                         </Title>
                                                         <Button
