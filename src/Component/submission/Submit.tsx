@@ -38,16 +38,16 @@ const Submit = (props: SubmitPropsType & any) => {
     const CodeSubmit = () => {
         form.validateFields().then((value) => {
             setSubmitDisable(true)
-            if (props.FuncTemplates !== undefined) {
-                let fid = props.FuncTemplates.findIndex((v: any) => {
-                    return v.judgeTemplateId === value.JudgeTemplate
-                })
-                if (fid !== -1) {
-                    const funcTemplate: functionTemplate = props.FuncTemplates[fid]
-                    if (funcTemplate.functionTemplate !== undefined)
-                        value.code = funcTemplate.functionTemplate + value.code
-                }
-            }
+            // if (props.FuncTemplates !== undefined) {
+            //     let fid = props.FuncTemplates.findIndex((v: any) => {
+            //         return v.judgeTemplateId === value.JudgeTemplate
+            //     })
+            //     if (fid !== -1) {
+            //         const funcTemplate: functionTemplate = props.FuncTemplates[fid]
+            //         if (funcTemplate.functionTemplate !== undefined)
+            //             value.code = funcTemplate.functionTemplate + value.code
+            //     }
+            // }
             return props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
