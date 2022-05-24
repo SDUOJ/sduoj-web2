@@ -190,7 +190,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                                         <pre>起始代码为只读模式，将在编译前被插入到答案代码的上方</pre>
                                                         <CodeEditor
                                                             lang={JudgeTemplate2lang(jtId)}
-                                                            code={funcTemplate.functionTemplate} readOnly={true}/>
+                                                            value={funcTemplate.functionTemplate} readOnly={true}/>
                                                     </Form.Item>
                                                 )}
                                                 <Form.Item label={"答案代码"} name={"code"}>
