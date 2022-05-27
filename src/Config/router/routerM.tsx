@@ -29,30 +29,30 @@ export const routerM: IRouter[] = [
         icon: <FolderOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MProblem'))
     },
-    {
-        id: 2,
-        path: UrlPrefix + "/manage/contest",
-        title_i18n: "contest",
-        exact: false,
-        icon: <AppstoreOutlined/>,
-        component: lazy(() => import('../../Pages/Manage/MContest'))
-    },
-    {
-        id: 3,
-        path: UrlPrefix + "/manage/template",
-        title_i18n: "template",
-        exact: false,
-        icon: <FileOutlined/>,
-        component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
-    },
-    {
-        id: 4,
-        path: UrlPrefix + "/manage/group",
-        title_i18n: "group",
-        exact: false,
-        icon: <UsergroupAddOutlined/>,
-        component: lazy(() => import('../../Pages/Manage/MGroup'))
-    },
+    // {
+    //     id: 2,
+    //     path: UrlPrefix + "/manage/contest",
+    //     title_i18n: "contest",
+    //     exact: false,
+    //     icon: <AppstoreOutlined/>,
+    //     component: lazy(() => import('../../Pages/Manage/MContest'))
+    // },
+    // {
+    //     id: 3,
+    //     path: UrlPrefix + "/manage/template",
+    //     title_i18n: "template",
+    //     exact: false,
+    //     icon: <FileOutlined/>,
+    //     component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
+    // },
+    // {
+    //     id: 4,
+    //     path: UrlPrefix + "/manage/group",
+    //     title_i18n: "group",
+    //     exact: false,
+    //     icon: <UsergroupAddOutlined/>,
+    //     component: lazy(() => import('../../Pages/Manage/MGroup'))
+    // },
     {
         id: 5,
         path: UrlPrefix + "/manage/exam",

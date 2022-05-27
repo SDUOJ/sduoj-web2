@@ -1,6 +1,6 @@
 import React, {Component, Dispatch} from "react";
 import UserAvatarBack from "../user/UserAvatarBack";
-import {Layout} from "antd";
+import {Button, Layout} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {UserState} from "../../Type/Iuser";
 import {testLoginTodo} from "../../Redux/Action/user";
@@ -18,6 +18,10 @@ class MHeader extends Component<any, any> {
             >
                 <div style={{float: "right"}}>
                     <div style={{position: "relative", right: "200px"}}>
+                        <Button type={"text"} onClick={()=>{
+                            this.props.history.replace("/manage")
+                            window.location.reload()
+                        }}>返回老版</Button>
                         <ChangeLang/>
                         {
                             (this.props.isLogin && (
