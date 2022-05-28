@@ -12,39 +12,7 @@ import TaskSubmission from "../../../Component/antiCheating/TaskSubmission";
 const Task = (props: any) => {
     return (
         <>
-            <ImportSubmission/>
-            <br/>
-            <br/>
-            <TaskSubmission/>
-            <br/>
-            <br/>
-            <ModalFormUseForm
-                TableName={"AntiCheatingTaskList"}
-                width={600}
-                title={"新建查重任务"}
-                type={"create"}
-                subForm={[
-                    {
-                        component: <>
-                            <ItemText name={"title"} label={"标题"}/>
-                            <ItemText name={"description"} label={"描述"}/>
-                            <ItemSwitch name={"isPublic"} label={"是否公开"} ck={"是"} unck={"否"}/>
-                            <ItemText name={"simRate"} label={"查重率"}/>
-                            <Form.Item name={"codesimCoreID"} label={"查重核心"}>
-                                <Checkbox.Group options={[
-                                    {label: "JPlag", value: "1"},
-                                    {label: "Winnowing", value: "2"},
-                                    {label: "Needle", value: "3"},
-                                ]}/>
-                            </Form.Item>
-                        </>,
-                        label: ""
-                    }
-                ]}
-                dataSubmitter={(value: any) => {
-                    return
-                }}
-            />
+
         </>
     )
 }

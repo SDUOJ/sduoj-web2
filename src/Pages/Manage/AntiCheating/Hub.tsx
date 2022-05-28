@@ -8,6 +8,7 @@ import UserFormAdditional from "../../../Component/user/Form/UserFormAdditional"
 import mApi from "../../../Utils/API/m-api";
 import TableWithSelection from "../../../Component/common/Table/TableWithSelection";
 import React from "react";
+import {withTranslation} from "react-i18next";
 
 const Hub = (props: any) => {
     return (
@@ -51,17 +52,17 @@ const Hub = (props: any) => {
                     </Space>
                 }
             >
-                <TableWithSelection
-                    name={"UserList"}
-                    search={true}
-                    columns={[]}
-                    API={MApi.getUserList}
-                    size={"small"}
-                    rowKey={"userId"}
-                />
+                {/*<TableWithSelection*/}
+                {/*    name={"UserList"}*/}
+                {/*    search={true}*/}
+                {/*    columns={[]}*/}
+                {/*    API={async ()=>{}}*/}
+                {/*    size={"small"}*/}
+                {/*    rowKey={"userId"}*/}
+                {/*/>*/}
             </Card>
         </div>
     )
 }
 
-export default Hub
+export default withTranslation()(Hub)
