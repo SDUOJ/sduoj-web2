@@ -16,6 +16,7 @@ import {
 import {SubmissionQueryType} from "../../Type/IManage";
 
 import request from "./request";
+import {IAddCodesToHub} from "../../Type/IAnti-cheating";
 
 export default {
     // 配置相关
@@ -263,5 +264,10 @@ export default {
     deleteAnnouncement: async function (data: any) {
         return request.get("/manage/notice/delete", data)
     },
+    // ----------------- 查重相关 -------------------
+    // 批量添加代码到代码仓库
+    async addCodesToHub(data: IAddCodesToHub[]){
+        return request.post("/manage/codesim/-", data)
+    }
 
 }

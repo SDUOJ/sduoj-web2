@@ -1,4 +1,4 @@
-import {
+import Icon, {
     AppstoreOutlined,
     CheckCircleOutlined,
     FileOutlined,
@@ -8,6 +8,12 @@ import {
     UsergroupAddOutlined,
     UserOutlined
 } from "@ant-design/icons";
+
+import {ReactComponent as Compare} from "Assert/img/compare.svg"
+import {ReactComponent as Hub} from "Assert/img/hub.svg"
+import {ReactComponent as Task} from "Assert/img/task.svg"
+import {ReactComponent as Core} from "Assert/img/core.svg"
+
 import {lazy} from "react";
 import {IRouter} from "./router";
 import {UrlPrefix} from "../constValue";
@@ -76,5 +82,38 @@ export const routerM: IRouter[] = [
         exact: true,
         icon: <NotificationOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MAnnouncement'))
+    },
+    {
+        id: 80,
+        title_i18n: "codeAntiCheating",
+        path: UrlPrefix + "/manage/anti-cheating/",
+        icon:  <Icon component={Compare}/>,
+        exact: false,
+        children:[
+            {
+                id: 81,
+                path: UrlPrefix + "/manage/anti-cheating/hub",
+                exact: true,
+                title_i18n: "codeRepository",
+                icon:  <Icon component={Hub}/>,
+                component: lazy(() => import('../../Pages/Manage/AntiCheating/Hub'))
+            },
+            {
+                id: 82,
+                path: UrlPrefix + "/manage/anti-cheating/task",
+                exact: true,
+                title_i18n: "codeAntiCheatingTask",
+                icon:  <Icon component={Task}/>,
+                component: lazy(() => import('../../Pages/Manage/AntiCheating/Task'))
+            },
+            {
+                id: 83,
+                path: UrlPrefix + "/manage/anti-cheating/core",
+                exact: true,
+                title_i18n: "codeAntiCheatingCore",
+                icon:  <Icon component={Core}/>,
+                component: lazy(() => import('../../Pages/Manage/AntiCheating/Core'))
+            },
+        ]
     }
 ]

@@ -177,6 +177,9 @@
   "NewPassword": "New Password",
   "confirmNewPassword": "Confirm New Password",
   "OldPassword": "Old Password",
-  "OnTestCase": "On Testcase "
-
+  "OnTestCase": "On Testcase ",
+  "codeAntiCheating": "Code Anti-cheating",
+  "codeRepository": "Code Hub",
+  "codeAntiCheatingTask": "Task",
+  "codeAntiCheatingCore": "Core"
 }

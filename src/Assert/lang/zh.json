@@ -180,5 +180,9 @@
   "OnTestCase": "在测试点",
   "Status": "状态",
   "Rank": "排行",
-  "Register": "注册"
+  "Register": "注册",
+  "codeAntiCheating": "代码反作弊",
+  "codeRepository": "代码仓库",
+  "codeAntiCheatingTask": "查重任务",
+  "codeAntiCheatingCore": "查重核心"
 }

@@ -12,6 +12,7 @@ import {withRouter} from "react-router";
 import {testLoginTodo} from "../../Redux/Action/user";
 import {routerM} from "../../Config/router/routerM";
 import {UrlPrefix} from "../../Config/constValue";
+import {IRouter} from "../../Config/router/router";
 
 const {Sider, Content} = Layout;
 
@@ -28,6 +29,17 @@ class MLayout extends Component<any, any> {
     }
 
     render() {
+        const geneRoute: any = (router: IRouter[]) => {
+            return router.map((r) => {
+                if (r.children !== undefined) return geneRoute(r.children)
+                else {
+                    return (
+                        <Route key={r.id} path={r.path} exact={r.exact}
+                               component={r.component}/>
+                    )
+                }
+            })
+        }
         return (
             <>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
@@ -50,14 +62,7 @@ class MLayout extends Component<any, any> {
                             <div className="site-layout-background" style={{padding: 24}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
-                                    {
-                                        routerM.map((r) => {
-                                            return (
-                                                <Route key={r.id} path={r.path} exact={r.exact}
-                                                       component={r.component}/>
-                                            )
-                                        })
-                                    }
+                                    {geneRoute(routerM)}
                                 </Suspense>
                             </div>
                         </Content>

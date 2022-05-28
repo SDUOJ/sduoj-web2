@@ -6,7 +6,7 @@ export interface IBaseRouter {
     id: number
     path: string
     exact?: boolean
-    component: any
+    component?: any
 }
 
 export interface IRouter extends IBaseRouter {
