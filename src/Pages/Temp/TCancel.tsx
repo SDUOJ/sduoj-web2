@@ -43,6 +43,7 @@ const TCancel = (props: any) => {
                                 contestId: value.contestId,
                             }).then(()=>{
                                 message.success("取消成功")
+                                form.resetFields()
                             })
                         })
                     }}

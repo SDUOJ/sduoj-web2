@@ -46,6 +46,7 @@ const Reconfirm = (props: ReconfirmProps) => {
                         disabled={props.confirm !== value}
                         onClick={() => {
                             props.API !== undefined && props.API()
+                            setValue("")
                             setModalVis(false)
                         }}
                     > 我确定要{props.todo} </Button>
