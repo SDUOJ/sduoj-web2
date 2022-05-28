@@ -139,6 +139,9 @@ export default {
     async getContestReport(data: any){
         return request.post("/contest/comprehensiveReport", data)
     },
+    async invalidateContestMySubmission(data: { submissionId: string, contestId: string }) {
+        return request.get("/contest/invalidateMySubmission", data)
+    },
 
 
     // 比赛问答

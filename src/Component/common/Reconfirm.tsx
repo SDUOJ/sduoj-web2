@@ -1,5 +1,5 @@
 import {withTranslation} from "react-i18next";
-import {Alert, Button, Input, Modal} from "antd";
+import {Alert, Button, Input, message, Modal} from "antd";
 import {useState} from "react";
 import "Assert/css/Reconfirm.css"
 
@@ -9,6 +9,7 @@ interface ReconfirmProps{
     confirm: string
     API: any
     todo: string
+    beforeCheck?: any
 }
 
 const Reconfirm = (props: ReconfirmProps) => {
@@ -21,7 +22,15 @@ const Reconfirm = (props: ReconfirmProps) => {
             <Button
                 {...props.btnProps}
                 onClick={() => {
-                    setModalVis(true)
+                    if(props.beforeCheck !== undefined){
+                        props.beforeCheck().then(()=>{
+                            setModalVis(true)
+                        }).catch(()=>{
+                            message.error("表单不完整")
+                        })
+                    }else{
+                        setModalVis(true)
+                    }
                 }}>{props.btnText}</Button>
             <Modal
                 title={"操作确认"}

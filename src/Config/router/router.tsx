@@ -83,6 +83,12 @@ export const routerLayout: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Temp/TSummary'))
     },
+    {
+        id: 998244354,
+        path: UrlPrefix + "/contestSubmissionCancel",
+        exact: true,
+        component: lazy(() => import('../../Pages/Temp/TCancel'))
+    },
 ]
 
 
