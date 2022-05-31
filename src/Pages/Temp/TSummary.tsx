@@ -66,10 +66,12 @@ const TSummary = (props: any) => {
                     {contestId: "169", title: "week11", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "172", title: "week12", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "175", title: "week13", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
+                    {contestId: "177", title: "week14", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
 
                     {contestId: "145", title: "Month3-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "155", title: "Month4-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "167", title: "Month5-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
+                    {contestId: "176", title: "Month6-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
 
                     {contestId: "152", title: "Exam-T3-1", weight: 1.5, timeoutScoreRatio: timeoutScoreRatio2},
                     {contestId: "163", title: "Exam-T3-2", weight: 1.5, timeoutScoreRatio: timeoutScoreRatio2},
