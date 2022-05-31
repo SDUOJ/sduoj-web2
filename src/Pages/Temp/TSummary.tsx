@@ -28,7 +28,7 @@ const TSummary = (props: any) => {
     const [score5, setScore5] = useState<number>(0)
 
     const getExam = async () => {
-        const examIds = ["20", "22", "29", "19", "21", "24"]
+        const examIds = ["20", "22", "29", "19", "21", "24", "30"]
         let examInfo: any = {}, examGroupInfo: any = {}, examResult: any = {}
         for (let examId of examIds) {
             await eApi.getExamInfo(examId).then((v1: any) => {
@@ -83,8 +83,8 @@ const TSummary = (props: any) => {
         }
     }, [])
 
-    const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175"]
-    const mt3 = ["145", "155", "167"]
+    const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175", "177"]
+    const mt3 = ["145", "155", "167", "176"]
 
     const ext3 = [
         {contestId: "152", examId: "20"},
@@ -92,7 +92,7 @@ const TSummary = (props: any) => {
         {contestId: "174", examId: "29"}
     ]
 
-    const ext124 = ["19", "21", "24"]
+    const ext124 = ["19", "21", "24", "30"]
 
 
     return (
