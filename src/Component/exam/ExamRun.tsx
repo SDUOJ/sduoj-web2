@@ -59,7 +59,7 @@ const ExamRun = (props: any) => {
                                 {problemList && problemList[`${eid}_${gid}`].type === "Program" && (
                                     <div style={{marginTop: 30}}>
                                         <RecentSubmissionList
-                                            name={`Pro-SubmissionList-EXAM_${eid}_${gid}_${pid}`}
+                                            name={`Pro-SubmissionList-Recent-EXAM_${eid}_${gid}_${pid}`}
                                             API={async (data: any) => {
                                                 return eApi.getSubmissionList({
                                                     ...data,
