@@ -36,6 +36,7 @@ const Submit = (props: SubmitPropsType & any) => {
 
 
     const CodeSubmit = () => {
+        let gb_hide: any;
         form.validateFields().then((value) => {
             setSubmitDisable(true)
             // if (props.FuncTemplates !== undefined) {
@@ -48,14 +49,19 @@ const Submit = (props: SubmitPropsType & any) => {
             //             value.code = funcTemplate.functionTemplate + value.code
             //     }
             // }
+            gb_hide = message.info("正在排队提交，请耐心等待", 0)
             return props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
                 setSubmitDisable(false)
                 props.setSubmissionModalVis(true)
                 props.SubmissionListName !== undefined && props.addTableVersion(props.SubmissionListName)
+                gb_hide && gb_hide()
+            }).catch(() => {
+                gb_hide && gb_hide()
             })
         }).catch((err: any) => {
+            gb_hide && gb_hide()
             setSubmitDisable(false)
         })
     }
