@@ -14,7 +14,7 @@ const LoginCheck = (props: any) => {
                 props.setUserInfo({type: "setUserInfo", data: res})
                 props.userLogin({type: "userLogin"})
             }).catch(()=>{
-                props.history.push(UrlPrefix + "/login?to=" + props.location.pathname)
+                props.history.replace(UrlPrefix + "/login?to=" + props.location.pathname)
             })
         }
     }, [props.isLogin])

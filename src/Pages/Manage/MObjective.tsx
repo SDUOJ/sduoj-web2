@@ -13,13 +13,13 @@ class MObjective extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
         }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
         }
     }
 

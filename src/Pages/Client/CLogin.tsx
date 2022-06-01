@@ -19,7 +19,7 @@ class CLogin extends Component<any, any> {
     testLogin = ()=>{
         if (this.props.isLogin) {
             let to = getUrlParams(this.props.location.search).to
-            if (to === undefined) this.props.history.push(UrlPrefix + "/home")
+            if (to === undefined) this.props.history.replace(UrlPrefix + "/home")
             else {
                 this.props.history.replace(to)
                 message.success("登录成功")

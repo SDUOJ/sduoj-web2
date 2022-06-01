@@ -46,7 +46,7 @@ const TSummary = (props: any) => {
 
     useEffect(() => {
         if (!props.isLogin) {
-            props.history.push(UrlPrefix + "/login?to=" + props.location.pathname)
+            props.history.replace(UrlPrefix + "/login?to=" + props.location.pathname)
         } else {
             const timeoutScoreRatio1 = [["0", 1.0], ["604800001", 0.9], ["1209600001", 0.8], ["12960000000", 0.7]];
             const timeoutScoreRatio2 = [["0", 0.85], ["604800001", 0.8], ["1209600001", 0.75], ["12960000000", 0.7]];
