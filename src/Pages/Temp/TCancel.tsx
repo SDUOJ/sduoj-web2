@@ -38,7 +38,7 @@ const TCancel = (props: any) => {
                     todo={"取消当前提交"}
                     API={()=>{
                         form.validateFields().then((value:any)=>{
-                            cApi.invalidateContestMySubmission({
+                            cApi.invalidateContestSubmission({
                                 submissionId: value.submissionId,
                                 contestId: value.contestId,
                             }).then(()=>{
