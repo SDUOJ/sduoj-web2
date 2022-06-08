@@ -42,6 +42,38 @@ class MProblem extends Component<any, any> {
             return value
         }
 
+        const ProblemForm = [
+            {
+                component: (
+                    <>
+                        <ItemTitle name={"problemTitle"} label={"题目标题"}/>
+                        <ItemSwitch name={"isPublic"} label={"公开"}/>
+                        <ItemText name={"source"} label={"来源"} required={false}/>
+                        <ItemSelectGroup name={"managerGroups"} label={"管理组"}
+                                         mode={"multiple"} formName={"ProblemInfo"}/>
+                    </>
+                ),
+                label: "基本信息"
+            },
+            {
+                component: (
+                    <>
+                        <ItemText name={"timeLimit"} label={"时间限制"} addonAfter={"ms"}
+                                  initialValue={1000}/>
+                        <ItemText name={"memoryLimit"} label={"空间限制"} addonAfter={"KB"}
+                                  initialValue={256 * 1024}/>
+                        <ItemText name={"outputLimit"} label={"输出限制"} addonAfter={"KB"}
+                                  initialValue={100 * 1024}/>
+                    </>
+                ),
+                label: "评测限制"
+            },
+            {
+                component: <FormJudgeType/>,
+                label: "评测方式"
+            },
+        ]
+
         let colData: any[] = [
             {
                 title: "ID",
@@ -156,38 +188,6 @@ class MProblem extends Component<any, any> {
                     )
                 }
             }
-        ]
-
-        const ProblemForm = [
-            {
-                component: (
-                    <>
-                        <ItemTitle name={"problemTitle"} label={"题目标题"}/>
-                        <ItemSwitch name={"isPublic"} label={"公开"}/>
-                        <ItemText name={"source"} label={"来源"} required={false}/>
-                        <ItemSelectGroup name={"managerGroups"} label={"管理组"}
-                                         mode={"multiple"}/>
-                    </>
-                ),
-                label: "基本信息"
-            },
-            {
-                component: (
-                    <>
-                        <ItemText name={"timeLimit"} label={"时间限制"} addonAfter={"ms"}
-                                  initialValue={1000}/>
-                        <ItemText name={"memoryLimit"} label={"空间限制"} addonAfter={"KB"}
-                                  initialValue={256 * 1024}/>
-                        <ItemText name={"outputLimit"} label={"输出限制"} addonAfter={"KB"}
-                                  initialValue={100 * 1024}/>
-                    </>
-                ),
-                label: "评测限制"
-            },
-            {
-                component: <FormJudgeType/>,
-                label: "评测方式"
-            },
         ]
 
 

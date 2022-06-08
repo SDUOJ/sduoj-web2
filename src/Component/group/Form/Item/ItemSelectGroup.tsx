@@ -1,4 +1,4 @@
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {Form, Select} from "antd";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
@@ -24,6 +24,12 @@ const ItemSelectGroup = (props: any) => {
         })
     }
 
+    useEffect(()=>{
+        if(props.formName !== undefined){
+            setGroupInfo(props.manageInitData[props.formName]?.managerGroupDTOList ?? [])
+        }
+    }, [props.manageInitData])
+
     return (
         <Form.Item label={props.label} name={props.name}>
             <Select
@@ -44,7 +50,7 @@ const ItemSelectGroup = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const State: ManageState = state.ManageReducer
-    return {}
+    return {manageInitData: State.manageInitData}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
