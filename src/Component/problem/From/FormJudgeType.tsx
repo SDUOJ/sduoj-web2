@@ -109,14 +109,14 @@ const FormJudgeType = (props: any) => {
                                         <Collapse.Panel header={templateName} key={value} forceRender={true}>
                                             <ItemSwitch
                                                 name={["functionTemplates", value, "isShowFunctionTemplate"]}
-                                                label={"模板"} InitValue={true} required={true}
+                                                label={"模板代码可见性"} InitValue={true}
                                                 ck={"显示"} unck={"不显示"}
                                             />
                                             <ItemCodeEditor
-                                                label={"模板代码"} required={true} lang={"text"}
+                                                label={"模板代码"} lang={"text"}
                                                 name={["functionTemplates", value, "functionTemplate"]}/>
                                             <ItemCodeEditor
-                                                label={"初始化代码"} required={true} lang={"text"}
+                                                label={"初始化代码"} lang={"text"}
                                                 name={["functionTemplates", value, "initialTemplate"]}/>
                                             <Form.Item
                                                 name={["functionTemplates", value, "judgeTemplateId"]}
