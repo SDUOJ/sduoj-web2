@@ -72,7 +72,7 @@ class TableWithSelection extends Component<any, any> {
                         rowSelection={this.props.disableSelection ? undefined : rowSelection}
                     />
                 )}
-                {this.props.uesAlldata === undefined && (
+                {this.props.uesAlldata !== true && (
                     <TableWithPagination
                         {... this.props}
                         rowSelection={this.props.disableSelection ? undefined : rowSelection}

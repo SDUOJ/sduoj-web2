@@ -154,7 +154,7 @@ export default React.memo(connect(
     )(withTranslation()(
         withRouter(TableWithAllData))), (props: any, nextProps: any) => {
         return props.columns === nextProps.columns &&
-            props.rowSelection.selectedRowKeys.length === nextProps.rowSelection.selectedRowKeys.length ||
+            props.rowSelection?.selectedRowKeys.length === nextProps.rowSelection?.selectedRowKeys.length ||
             props.tableData === nextProps.tableData
     }
 )

@@ -15,6 +15,7 @@ import {useForm} from "antd/lib/form/Form";
 import {isValueEmpty} from "../../Utils/empty";
 import {DownloadOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import ButtonWithSelection from "../common/Table/ButtonWithSelection";
+import TableWithAllData from "../common/Table/TableWithAllData";
 
 function DeleteOutlined() {
     return null;
@@ -70,6 +71,82 @@ const ProCheckPoints = (props: any) => {
 
     }
 
+    const tableColumns = (isCase: boolean) => [
+        {title: "ID", dataIndex: "checkpointId"},
+        {
+            title: "输入预览", dataIndex: "inputPreview", render: (text: string) => {
+                return <TextEllipsis text={text}/>
+            }
+        },
+        {
+            title: "输出预览", dataIndex: "outputPreview", render: (text: any) => {
+                text = text.replace(/^\s+|\s+$/g, '')
+                return <TextEllipsis text={text}/>
+            }
+        },
+        {
+            title: "输入/输出文件名", render: (text: any, row: any) => {
+                if (row.inputFilename === null && row.outputFilename === null) return ""
+                return `${row.inputFilename ?? ""}/${row.outputFilename ?? ""}`
+            }
+        },
+        {
+            title: "上传时间", dataIndex: "gmtCreate", render: (text: any, row: any) => {
+                return unix2Time(row.gmtCreate)
+            }
+        },
+        {
+            title: `分数`,
+            dataIndex: "checkpointScore",
+            shouldCellUpdate: (record: any, prevRecord: any) => {
+                return false
+            },
+            render: (text: any, row: any) => {
+                return (
+                    <Form.Item name={row.checkpointId} className={"mgb0"} style={{width: 100}}>
+                        <Input/>
+                    </Form.Item>
+                )
+            }
+        },
+        {
+            title: "操作", render: (text: any, row: any) => {
+                const caseIndex = row.caseIndex
+                return <>
+                    <Button type={"link"} onClick={() => {
+                        mApi.zipDownload([
+                            {id: row.inputFileId, downloadFilename: `${row.checkpointId}.in`},
+                            {id: row.outputFileId, downloadFilename: `${row.checkpointId}.out`}
+                        ])
+                    }}><DownloadOutlined/></Button>
+                    <TableRowDeleteButton
+                        tableName={name}
+                        rowKey={"checkpointId"}
+                        data={row.checkpointId}
+                        btnText={<DeleteOutlined/>}
+                        btnProps={{type: "link", danger: true, style: {padding: 0}}}
+                    />
+                    <Button
+                        icon={!isCase ? <PlusOutlined/> : <MinusOutlined/>}
+                        style={{color: "gray"}}
+                        type={"link"}
+                        size={"small"}
+                        onClick={()=>{
+                            if(!isCase) setCase(row.checkpointId)
+                            else removeCase(row.checkpointId)
+                        }}
+                    />
+                    {!isValueEmpty(caseIndex) && (
+                        <Tag style={{marginLeft: 20}}>Case {caseIndex}</Tag>
+                    )}
+
+                </>
+            }
+        },
+    ];
+
+
+
     return (
         <>
             <Button type={"link"} size={"small"} onClick={() => setVis(true)}> {props.t("Checkpoint")} </Button>
@@ -99,83 +176,24 @@ const ProCheckPoints = (props: any) => {
                 }}>
                     <TableWithSelection
                         uesAlldata={true}
+                        useDrag={false}
+                        disableSelection={true}
+                        rowKey={"checkpointId"}
+                        name={name+"-case"}
+                        size={"small"}
+                        columns={tableColumns(true)}
+                        API={() => {
+                            return mApi.getCheckpointList(props.problemCode)
+                        }}
+                        pagination={false}
+                    />
+                    <TableWithSelection
+                        uesAlldata={true}
                         useDrag={true}
                         rowKey={"checkpointId"}
                         name={name}
                         size={"small"}
-                        columns={[
-                            {title: "ID", dataIndex: "checkpointId"},
-                            {
-                                title: "输入预览", dataIndex: "inputPreview", render: (text: string) => {
-                                    return <TextEllipsis text={text}/>
-                                }
-                            },
-                            {
-                                title: "输出预览", dataIndex: "outputPreview", render: (text: any) => {
-                                    text = text.replace(/^\s+|\s+$/g, '')
-                                    return <TextEllipsis text={text}/>
-                                }
-                            },
-                            {
-                                title: "输入/输出文件名", render: (text: any, row: any) => {
-                                    if (row.inputFilename === null && row.outputFilename === null) return ""
-                                    return `${row.inputFilename ?? ""}/${row.outputFilename ?? ""}`
-                                }
-                            },
-                            {
-                                title: "上传时间", dataIndex: "gmtCreate", render: (text: any, row: any) => {
-                                    return unix2Time(row.gmtCreate)
-                                }
-                            },
-                            {
-                                title: `分数`,
-                                dataIndex: "checkpointScore",
-                                shouldCellUpdate: (record: any, prevRecord: any) => {
-                                    return false
-                                },
-                                render: (text: any, row: any) => {
-                                    return (
-                                        <Form.Item name={row.checkpointId} className={"mgb0"} style={{width: 100}}>
-                                            <Input/>
-                                        </Form.Item>
-                                    )
-                                }
-                            },
-                            {
-                                title: "操作", render: (text: any, row: any) => {
-                                    const caseIndex = caseInfo[row.checkpointId]
-                                    return <>
-                                        <Button type={"link"} onClick={() => {
-                                            mApi.zipDownload([
-                                                {id: row.inputFileId, downloadFilename: `${row.checkpointId}.in`},
-                                                {id: row.outputFileId, downloadFilename: `${row.checkpointId}.out`}
-                                            ])
-                                        }}><DownloadOutlined/></Button>
-                                        <TableRowDeleteButton
-                                            tableName={name}
-                                            rowKey={"checkpointId"}
-                                            data={row.checkpointId}
-                                            btnText={<DeleteOutlined/>}
-                                            btnProps={{type: "link", danger: true, style: {padding: 0}}}
-                                        />
-                                        <Button
-                                            icon={isValueEmpty(caseIndex) ? <PlusOutlined/> : <MinusOutlined/>}
-                                            style={{color: "gray"}}
-                                            type={"link"}
-                                            size={"small"}
-                                            onClick={()=>{
-                                                if(isValueEmpty(caseIndex)) setCase(row.checkpointId)
-                                                else removeCase(row.checkpointId)
-                                            }}
-                                        />
-                                        {!isValueEmpty(caseIndex) && (
-                                            <Tag style={{marginLeft: 20}}>Case {caseIndex}</Tag>
-                                        )}
-
-                                    </>
-                                }
-                            },
-                        ]}
+                        columns={tableColumns(false)}
                         API={() => {
                             return mApi.getCheckpointList(props.problemCode)
                         }}
