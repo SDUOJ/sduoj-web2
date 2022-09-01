@@ -122,6 +122,24 @@ const Editor = (props: EditorProps & any) => {
                             .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, "")
                             .replaceAll(/[?\\/:|<>*\[\]()$%{}@~]/g, "")
                             .replaceAll("/\\s/g", "")
+
+                        let suffix = name.substr(name.lastIndexOf(".") + 1).toUpperCase()
+                        let picSuffix = ["BMP", "DIB", "PCP", "DIF", "WMF", "GIF", "JPG", "TIF", "EPS", "PSD", "CDR", "IFF", "TGA", "PCD", "MPT", "PNG"]
+                        let text = ""
+                        if (picSuffix.indexOf(suffix) !== -1) {
+                            if (vditor0 && vditor0.vditor.currentMode === "wysiwyg") {
+                                text += `\n <img src="${path}" alt="${name}" style="zoom:100%;" />`;
+                            } else {
+                                text += `\n ![${name}](${path})`;
+                            }
+                        } else {
+                            if (vditor0 && vditor0.vditor.currentMode === "wysiwyg") {
+                                text += `\n <a href="${path}">${name}</a>`;
+                            } else {
+                                text += `\n [${name}](${path})`;
+                            }
+                        }
+                        document.execCommand("insertHTML", false, text);
                         notification.open({
                             message: '文件上传成功',
                             description: (
@@ -146,6 +164,7 @@ const Editor = (props: EditorProps & any) => {
                             type: "success",
                         });
                     }
+
                     fileUpload(files, callback);
                 }
             }
