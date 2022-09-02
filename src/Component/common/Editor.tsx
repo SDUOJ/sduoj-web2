@@ -115,13 +115,18 @@ const Editor = (props: EditorProps & any) => {
                         .replaceAll("/\\s/g", "");
                 },
                 handler(files: File[]): any {
+                    if(files[0].name.length > 64){
+                        message.error("文件名大于 64 字符")
+                        return Promise.reject("文件名大于 64 字符")
+                    }
                     function callback(value: any) {
-                        const path = apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + value.name
                         let name = files[0] && files[0].name;
                         name = name
                             .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, "")
                             .replaceAll(/[?\\/:|<>*\[\]()$%{}@~]/g, "")
                             .replaceAll("/\\s/g", "")
+
+                        const path = apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + name
 
                         let suffix = name.substr(name.lastIndexOf(".") + 1).toUpperCase()
                         let picSuffix = ["BMP", "DIB", "PCP", "DIF", "WMF", "GIF", "JPG", "TIF", "EPS", "PSD", "CDR", "IFF", "TGA", "PCD", "MPT", "PNG"]
@@ -133,6 +138,7 @@ const Editor = (props: EditorProps & any) => {
                                 text += `\n ![${name}](${path})`;
                             }
                         } else {
+                            console.log(vditor0.vditor.currentMode)
                             if (vditor0 && vditor0.vditor.currentMode === "wysiwyg") {
                                 text += `\n <a href="${path}">${name}</a>`;
                             } else {
@@ -164,7 +170,6 @@ const Editor = (props: EditorProps & any) => {
                             type: "success",
                         });
                     }
-
                     fileUpload(files, callback);
                 }
             }
