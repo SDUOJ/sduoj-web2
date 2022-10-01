@@ -181,5 +181,11 @@
   "codeAntiCheating": "Code Anti-cheating",
   "codeRepository": "Code Hub",
   "codeAntiCheatingTask": "Task",
-  "codeAntiCheatingCore": "Core"
+  "codeAntiCheatingCore": "Core",
+  "编程题": "Programing problem",
+  "客观题": "Objective problem",
+  "主观题": "Subjective problem",
+  "ioTemplate": "IO Judge Template",
+  "advancedTemplate": "Advanced Judge Template",
+  "problemSet": "Problem Set"
 }

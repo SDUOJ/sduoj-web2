@@ -4,7 +4,7 @@ import './App.css';
 import 'antd/dist/antd.css';
 import './Config/i18n'
 import {ConfigProvider} from "antd";
-import "vditor/src/assets/scss/index.scss";
+import "vditor/src/assets/less/index.less";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
 import {BrowserRouter as Router, Route} from "react-router-dom";

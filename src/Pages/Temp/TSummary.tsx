@@ -28,7 +28,7 @@ const TSummary = (props: any) => {
     const [score5, setScore5] = useState<number>(0)
 
     const getExam = async () => {
-        const examIds = ["20", "22", "29", "19", "21", "24", "30"]
+        const examIds = ["20", "22", "29", "19", "21", "24", "30", "31"]
         let examInfo: any = {}, examGroupInfo: any = {}, examResult: any = {}
         for (let examId of examIds) {
             await eApi.getExamInfo(examId).then((v1: any) => {
@@ -67,6 +67,7 @@ const TSummary = (props: any) => {
                     {contestId: "172", title: "week12", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "175", title: "week13", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "177", title: "week14", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
+                    {contestId: "180", title: "week15", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
 
                     {contestId: "145", title: "Month3-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
                     {contestId: "155", title: "Month4-T3", weight: 1.25, timeoutScoreRatio: timeoutScoreRatio1},
@@ -85,7 +86,7 @@ const TSummary = (props: any) => {
         }
     }, [])
 
-    const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175", "177"]
+    const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175", "177", "180"]
     const mt3 = ["145", "155", "167", "176"]
 
     const ext3 = [
@@ -101,7 +102,7 @@ const TSummary = (props: any) => {
         <>
             <Result
                 icon={<Image src={logo} width={"180px"} preview={false}/>}
-                title="2022年程序设计思维与实践 SDUOJ 客观成绩汇总（90分）"
+                title="2022年程序设计思维与实践 SDUOJ 客观成绩汇总（89分）"
                 subTitle={"以下成绩为未查重成绩，仅供参考，若有异常，请联系助教处理"}
             />
             <div style={{textAlign: "center", margin: "0 auto"}}>
@@ -111,16 +112,7 @@ const TSummary = (props: any) => {
                             let sum = score1 + score2 + score3 + score4 + score5
                             return (
                                 <Title level={4}>客观成绩汇总（<span
-                                    style={{color: "red"}}>{sum}分</span>/90分）</Title>
-                            )
-                        }
-                    })()}
-                    {(() => {
-                        if (data !== undefined) {
-                            let sum = score1 + score2 + score3 + score4
-                            return (
-                                <Title level={4}>客观成绩（除期末考试）汇总（<span
-                                    style={{color: "red"}}>{sum}分</span>/50分）</Title>
+                                    style={{color: "red"}}>{sum}分</span>/89分）</Title>
                             )
                         }
                     })()}
@@ -138,7 +130,7 @@ const TSummary = (props: any) => {
                                     if(sum !== score1) setScore1(sum)
                                     return (
                                         <Title level={3}>每周作业题（<span
-                                            style={{color: "red"}}>{sum}分</span>/16分=1*16）</Title>
+                                            style={{color: "red"}}>{sum}分</span>/15分=1*15）</Title>
                                     )
                                 }
                             })()}
@@ -510,12 +502,10 @@ const TSummary = (props: any) => {
                         </Panel>
                         <Panel header={<>
                             {(() => {
-                                if (data !== undefined) {
-                                    let sum = 0
-                                    // mt3.map((contestId: string) => {
-                                    //     let d = data.filter((item: any) => item.contestId === contestId)[0]
-                                    //     sum += d.sumScore / 100 * 1.25
-                                    // })
+                                if (dataExam !== undefined) {
+                                    let eResult = dataExam.examResult["31"]
+                                    let sum = eResult.score / 10
+
                                     if(sum !== score5) setScore5(sum)
                                     return (
                                         <Title level={3}>期末考试（<span
@@ -524,17 +514,17 @@ const TSummary = (props: any) => {
                                 }
                             })()}
                         </>} key="5">
-                            暂无
+                            只显示分数
                         </Panel>
                     </Collapse>
                 </div>
                 <div style={{paddingBottom: 100, paddingTop: 100}}>
-                    <Title level={4}>非客观成绩说明（10分）</Title>
+                    <Title level={4}>非客观成绩说明（11分）</Title>
                     <Title level={5}>考勤（3分）</Title>
                     满分：线上上课，线下实验，所有考勤中，缺勤（包括请假但没有提交假条）3次（包含）以内<br/>
                     缺勤超过3次，超出的每次扣除0.5分考勤成绩，扣完为止<br/><br/>
-                    <Title level={5}>实验报告（7分）</Title>
-                    根据书写内容，由助教进行打分，每次报告分值比例会根据当次报告的内容进行调整，满分 7 分<br/>
+                    <Title level={5}>实验报告（8分）</Title>
+                    根据书写内容，由助教进行打分，每次报告分值比例会根据当次报告的内容进行调整，满分 8 分<br/>
                 </div>
             </div>
         </>

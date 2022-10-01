@@ -1,13 +1,13 @@
 import React, {Component, Dispatch} from "react";
-import ObjectiveForm from "../../Component/problem/ObjectiveForm";
-import {UserState} from "../../Type/Iuser";
+import ObjectiveForm from "../../../Component/problem/ObjectiveForm";
+import {UserState} from "../../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Card, Space} from "antd";
-import ProblemList from "../../Component/problem/ProblemList";
-import AutoImportObjective from "../../Component/problem/AutoImportObjective";
-import {UrlPrefix} from "../../Config/constValue";
+import ProblemList from "../../../Component/problem/ProblemList";
+import AutoImportObjective from "../../../Component/problem/AutoImportObjective";
+import {UrlPrefix} from "../../../Config/constValue";
 
 class MObjective extends Component<any, any> {
 

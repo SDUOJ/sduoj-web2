@@ -81,6 +81,12 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Client/CThirdPartyLogin'))
     },
+    {
+        id: 12,
+        path: UrlPrefix + "/problemSet/:problemSetId",
+        exact: false,
+        component: lazy(() => import('../../Pages/Client/ProblemSet/Info'))
+    }
 ]
 
 export const routerC_Contest_M: IRouter[] = [
@@ -119,6 +125,30 @@ export const routerC_Contest_M: IRouter[] = [
         exact: true,
         component: lazy(()=> import("../../Component/contest/Register"))
     }
+]
+
+export const routerC_ProblemSet_M: IRouter[] = [
+    {
+        id: 1,
+        title_i18n: "Overview",
+        path: UrlPrefix + "/problemSet/:problemSetId/overview",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Overview"))
+    },
+    {
+        id: 2,
+        title_i18n: "Problem",
+        path: UrlPrefix + "/problemSet/:problemSetId/problem/:problemGroupId/:problemId",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Problem"))
+    },
+    {
+        id: 3,
+        title_i18n: "Rank",
+        path: UrlPrefix + "/contest/:problemSetId/rank",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Rank"))
+    },
 ]
 
 // C 端目录

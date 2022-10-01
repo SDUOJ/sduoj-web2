@@ -184,5 +184,9 @@
   "codeAntiCheating": "代码反作弊",
   "codeRepository": "代码仓库",
   "codeAntiCheatingTask": "查重任务",
-  "codeAntiCheatingCore": "查重核心"
+  "codeAntiCheatingCore": "查重核心",
+  "ioTemplate": "IO 评测模板",
+  "advancedTemplate": "高级评测模板",
+  "problemSet": "题单",
+  "defaultProblemSet": "作业/实验"
 }

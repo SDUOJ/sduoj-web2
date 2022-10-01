@@ -151,8 +151,8 @@ export default {
     },
     // ----------------- 评测模板相关 -------------------
     // 查询单个评测模板
-    getOneTemplate: async function (id: number) {
-        return request.get('/manage/judgetemplate/query', {id});
+    getOneTemplate: async function (params: any) {
+        return request.get('/manage/judgetemplate/query', params);
     },
     // 查询多页评测模板
     pageTemplateList: async function (params: groupListQuery) {

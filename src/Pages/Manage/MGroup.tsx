@@ -7,6 +7,7 @@ import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import {unix2Time} from "../../Utils/Time";
+import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 
 
 class MGroup extends Component<any, any> {
@@ -97,7 +98,7 @@ class MGroup extends Component<any, any> {
                         </>
                     }
                 >
-                    <TableWithSelection
+                    <TableWithPagination
                         name={"GroupList"}
                         columns={colData}
                         disableSelection={true}

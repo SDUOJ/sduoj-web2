@@ -470,6 +470,10 @@ h5.TestCase-text {
     min-height: 200px;
 }
 
+.JudgeTemplateCodeEditor .CodeMirror{
+    min-height: 100px;
+}
+
 .ant-message {
     z-index: 3000;
 }
