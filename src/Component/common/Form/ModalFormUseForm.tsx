@@ -21,12 +21,14 @@ interface ModalFormProps {
     initData?: { [key: string]: {} }
     dataLoader?: () => Promise<any>   // 异步数据加载
     dataSubmitter: (data: any) => Promise<any>
+    afterSubmit?: () => any                      // 提交完成之后的回调
     updateAppendProps?: { [key: string]: any }
 
     title: string           // 弹窗标题
     TableName?: string      // 若有需要更新的表格，其名称
     className?: any          // 类名
     subForm: subFormType[]  // 子表单信息
+    btnProps?: any
 }
 
 const ModalForm = (props: ModalFormProps & any) => {
@@ -110,6 +112,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 setFormVis(false)
                 // 当数据绑定表格时，更新表格数据
                 props.TableName && props.addTableVersion(props.TableName)
+                props.afterSubmit && props.afterSubmit()
                 message.success("成功")
             })
         }
@@ -127,6 +130,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     return (
         <>
             <Button
+                {... props.btnProps}
                 type={ck(props.btnType, BtnTypeMap[props.type])}
                 onClick={loadData}
                 style={

@@ -1,4 +1,4 @@
-import {Collapse, Form, Input, Radio, Select, Switch, Table} from "antd";
+import {Collapse, Form, Input, Radio, Select, Space, Switch, Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import BodyChecker from "./Item/BodyChecker";
 import mApi from "Utils/API/m-api"
@@ -9,9 +9,11 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {isValueEmpty} from "../../../Utils/empty";
+import TemplateMForm from "../../judgeTemplate/Form/TemplateMForm";
+import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
 
 const FormJudgeType = (props: any) => {
-    const [JudgeType, setJudgeType] = React.useState(0);
+    const [JudgeType, setJudgeType] = useState(0);
     const onChange = (e: any) => {
         setJudgeType(e.target.value);
     };
@@ -29,13 +31,25 @@ const FormJudgeType = (props: any) => {
         })
     }, [])
 
+    const updateAdvanced = ()=>{
+        const initData = props.initData["ProblemInfo"]
+        const problemCode = initData.problemCode
+
+        mApi.getJudgeTemplateList({type: 2, problemCode: problemCode}).then((value: any) => {
+            if (value.length !== 0) {
+                setAdvancedJT(value)
+            }
+        })
+    }
+
+
     useEffect(() => {
         // console.log("props.initData", props.initData)
         if (props.initData !== undefined && props.initData["ProblemInfo"] !== undefined) {
             const initData = props.initData["ProblemInfo"]
 
             // 设定当前评测模板
-            if(!isValueEmpty(initData.judgeTemplates)) setSelectJudgeTemplate(initData.judgeTemplates)
+            if (!isValueEmpty(initData.judgeTemplates)) setSelectJudgeTemplate(initData.judgeTemplates)
 
             // 设定函数模板的使用
             if (!isValueEmpty(initData.functionTemplates) && Object.keys(initData.functionTemplates).length !== 0) {
@@ -43,22 +57,29 @@ const FormJudgeType = (props: any) => {
                 setUseFuncTemplate(true)
             }
 
-            if (judgeTemplateInfo.length !== 0 && !isValueEmpty(initData.judgeTemplates)) {
-                if (initData.judgeTemplates.length !== 0) {
-                    const jt = initData.judgeTemplates[0]
-                    if (judgeTemplateInfo.findIndex(value => value.id === jt) === -1) {
-                        const problemCode = initData.problemCode
-
+            const problemCode = initData.problemCode
+            const loadAdvanced = () => {
+                // 请求绑定当前题目的 jt
+                mApi.getJudgeTemplateList({type: 2, problemCode: problemCode}).then((value: any) => {
+                    if (value.length !== 0) {
                         // 设定当前为高级模式
                         setJudgeType(2)
-
-                        // 请求绑定当前题目的 jt
-                        mApi.getJudgeTemplateList({type: 2, problemCode: problemCode}).then((value: any) => {
-                            setAdvancedJT(value)
-                            setRowSelection(initData.judgeTemplates)
-                        })
+                        setAdvancedJT(value)
+                        setRowSelection(initData.judgeTemplates)
                     }
+                })
+            }
+
+            // 等待IO模板请求完成之后，如果发现 IO 模板没有，或者发现模板列表中的第一个不是 IO 模板，则按照高级模板处理
+            if (judgeTemplateInfo.length !== 0) {
+                if (!isValueEmpty(initData.judgeTemplates) && initData.judgeTemplates.length !== 0) {
+                    const jt = initData.judgeTemplates[0]
+                    if (judgeTemplateInfo.findIndex(value => value.id === jt) === -1) loadAdvanced()
+                } else {
+                    loadAdvanced()
                 }
+
+
             }
         }
     }, [props.initData, judgeTemplateInfo])
@@ -160,19 +181,91 @@ const FormJudgeType = (props: any) => {
                                 {title: "标题", dataIndex: "title"},
                                 {title: "注释", dataIndex: "comment"},
                                 {
-                                    title: "操作", render: (text: any, row: any) => {
-                                        return <>
-                                            复用 JudgeTemplate Edit 与 Fork
-                                        </>
+                                    title: "操作", render: (text: any, rows: any) => {
+                                        return <Space size={3}>
+                                            <ModalFormUseForm
+                                                width={600}
+                                                title={rows.title}
+                                                type={"update"}
+                                                subForm={[{component: <TemplateMForm/>, label: ""},]}
+                                                dataLoader={async () => {
+                                                    return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
+                                                        return Promise.resolve(value)
+                                                    })
+                                                }}
+                                                updateAppendProps={{id: rows.id}}
+                                                afterSubmit={updateAdvanced}
+                                                dataSubmitter={(value: any) => {
+                                                    return mApi.updateTemplate({type: 2, ...value})
+                                                }}
+                                            />
+                                            <ModalFormUseForm
+                                                width={600}
+                                                title={"新建模板(克隆自" + rows.title + ")"}
+                                                type={"fork"}
+                                                subForm={[{component: <TemplateMForm/>, label: ""}]}
+                                                dataLoader={async () => {
+                                                    return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
+                                                        return Promise.resolve(value)
+                                                    })
+                                                }}
+                                                afterSubmit={updateAdvanced}
+                                                dataSubmitter={(value: any) => {
+                                                    return mApi.createTemplate({
+                                                        problemCode: props.initData["ProblemInfo"].problemCode,
+                                                        type: 2, ...value
+                                                    })
+                                                }}
+                                            />
+                                        </Space>
                                     }
                                 }
                             ]}
                             dataSource={AdvancedJT}
                         />
                     )}
+                    <div style={{marginTop: 24}}>
+                        <ModalFormUseForm
+                            btnProps={{size: "small"}}
+                            width={600}
+                            title={"新建模板"}
+                            type={"create"}
+                            subForm={[{component: <TemplateMForm/>, label: ""}]}
+                            afterSubmit={updateAdvanced}
+                            dataSubmitter={(value: any) => {
+                                return mApi.createTemplate({
+                                    problemCode: props.initData["ProblemInfo"].problemCode,
+                                    type: 2, ...value
+                                })
+                            }}
+                        />
+                    </div>
+                    <div style={{display: "none"}}>
+                        <Form.Item name={"judgeTemplates"}>
+                            <JudgeTemplateRowSelected rowSelection={rowSelection} setRowSelection={setRowSelection}/>
+                        </Form.Item>
+                    </div>
                 </>
             )}
         </>
+    )
+}
+
+const JudgeTemplateRowSelected = (props: any) => {
+    const {value, onChange} = props
+
+    useEffect(() => {
+        if (props.rowSelection !== undefined && JSON.stringify(value) !== JSON.stringify(props.rowSelection))
+            onChange(props.rowSelection)
+    }, [props.rowSelection])
+
+    useEffect(() => {
+        if (value !== undefined && JSON.stringify(value) !== JSON.stringify(props.rowSelection))
+            props.setRowSelection(value)
+    }, [value])
+
+    return (
+        <></>
     )
 }
 

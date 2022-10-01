@@ -103,7 +103,6 @@ const MJudgeTemplate = (props: any) => {
                                 return Promise.resolve(value)
                             })
                         }}
-                        updateAppendProps={{id: rows.id}}
                         dataSubmitter={(value: any) => {
                             return mApi.createTemplate({type: type === "io" ? 0 : 2, ...value})
                         }}
