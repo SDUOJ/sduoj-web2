@@ -11,7 +11,8 @@ import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
 
 const ProDescriptions = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
-    const name = `ProDescriptions-${props.problemCode}`
+    const tableName = `ProDescriptions-${props.problemCode}`
+    const [defaultDescriptionId, setDefaultDescriptionId] = useState(props.defaultDescriptionId)
 
     const DescriptionForm = (
         <>
@@ -41,7 +42,7 @@ const ProDescriptions = (props: any) => {
                 footer={
                     <>
                         <ModalFormUseForm
-                            TableName={name}
+                            TableName={tableName}
                             width={1200}
                             title={`${props.problemCode} 新建描述`}
                             type={"create"}
@@ -58,7 +59,8 @@ const ProDescriptions = (props: any) => {
                 }
             >
                 <TableWithAllData
-                    name={name}
+                    updateTrick={defaultDescriptionId}
+                    name={tableName}
                     size={"small"}
                     columns={[
                         {title: "ID", dataIndex: "id"},
@@ -75,7 +77,7 @@ const ProDescriptions = (props: any) => {
                                                 id: row.id,
                                                 isPublic: checked ? 1 : 0
                                             }).then((value: any) => {
-                                                props.addTableVersion(name);
+                                                props.addTableVersion(tableName);
                                             })
                                         }}
                                     />
@@ -84,19 +86,22 @@ const ProDescriptions = (props: any) => {
                         },
                         {
                             title: "默认题面", dataIndex: "id", render: (text: any) => {
+                                console.log(text, defaultDescriptionId, text === defaultDescriptionId)
                                 return (
                                     <Switch
-                                        checked={text === props.defaultDescriptionId}
+                                        checked={text === defaultDescriptionId}
                                         checkedChildren={"是"}
                                         unCheckedChildren={"否"}
                                         onChange={(checked, event) => {
-                                            mApi.updateProblemInfo({
-                                                problemCode: props.problemCode,
-                                                defaultDescriptionId: text
-                                            }).then(() => {
-                                                message.success("成功")
-                                                props.addTableVersion("ProblemList");
-                                            })
+                                            if(defaultDescriptionId !== text){
+                                                mApi.updateProblemInfo({
+                                                    problemCode: props.problemCode,
+                                                    defaultDescriptionId: parseInt(text)
+                                                }).then((res) => {
+                                                    message.success("成功")
+                                                    setDefaultDescriptionId(text)
+                                                })
+                                            }
                                         }}
                                     />
                                 )
@@ -108,7 +113,7 @@ const ProDescriptions = (props: any) => {
                             title: "操作", render: (text: any, row: any) => {
                                 return <>
                                     <ModalFormUseForm
-                                        TableName={name}
+                                        TableName={tableName}
                                         width={1200}
                                         title={`${props.problemCode} - ${row.title}`}
                                         type={"update"}
@@ -126,7 +131,7 @@ const ProDescriptions = (props: any) => {
                                     />
                                     <TableRowDeleteButton
                                         type={"inline"}
-                                        name={name}
+                                        name={tableName}
                                         API={() => {
                                             return mApi.deleteDescription({id: row.id})
                                         }}
@@ -145,7 +150,8 @@ const ProDescriptions = (props: any) => {
     )
 }
 
-const mapStateToProps = (state: any) => {}
+const mapStateToProps = (state: any) => {
+}
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
