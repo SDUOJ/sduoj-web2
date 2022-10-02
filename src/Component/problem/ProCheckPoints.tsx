@@ -1,4 +1,4 @@
-import {Button, Form, Input, message, Modal, Space, Tag} from "antd";
+import {Button, Form, Input, message, Modal, Select, Space, Tabs, Tag} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
@@ -16,6 +16,12 @@ import {isValueEmpty} from "../../Utils/empty";
 import {DownloadOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import ButtonWithSelection from "../common/Table/ButtonWithSelection";
 import TableWithAllData from "../common/Table/TableWithAllData";
+import {NEWLINE_CONVERT, NEWLINE_CONVERT_INDEX} from "../../Config/constValue";
+import ItemPassword from "../user/Form/Item/ItemPassword";
+import ModalFormUseForm from "../common/Form/ModalFormUseForm";
+import FormCheckPointsUpload from "./From/FormCheckPointsUpload";
+import Title from "antd/es/typography/Title";
+import {modifyProblemsCheckPoint} from "../../Type/types";
 
 function DeleteOutlined() {
     return null;
@@ -24,27 +30,11 @@ function DeleteOutlined() {
 const ProCheckPoints = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
     const [sumScore, setSumScore] = useState<number>(0)
-    const [caseInfo, setCaseInfo] = useState<any>({})
     const name = `ProCheckPoints-${props.problemCode}`
 
     const [form] = useForm();
 
-    const CheckPointsForm = (
-        <>
-            <ItemTitle/>
-            <ItemSwitch
-                name={"isPublic"}
-                label={"公开性"}
-                ck={"公开"}
-                unck={"不公开"}
-            />
-            <ItemEditor
-                name={"markdownDescription"}
-                label={"题面"}
-            />
-        </>
-    )
-
+    // 维护当前总分
     useEffect(() => {
         const data = props.tableData[name]?.dataSource;
         if (data !== undefined) {
@@ -60,18 +50,80 @@ const ProCheckPoints = (props: any) => {
         }
     }, [props.tableData])
 
+    // 维护当前表格数据
+    const [dataSource, setDatasource] = useState(props.tableData[name]?.dataSource)
+
+    // 处理删除与批量删除后的 Case 信息
+    const updateCaseInfo = () => {
+        if (dataSource === undefined) return;
+        let caseLeft: any = []
+        let caseIndexMax = 0
+        dataSource.forEach((x: any) => {
+            if (x.caseIndex !== null) {
+                caseLeft.push(x.caseIndex)
+                caseIndexMax = Math.max(caseIndexMax, x.caseIndex)
+            }
+        })
+        if (caseLeft.length === caseIndexMax) return
+        caseLeft.sort()
+        let changeMap: any = {}
+        let cnt = 0
+        for (let x of caseLeft) changeMap[x] = ++cnt;
+        let newDataSource: any = []
+        for (let x of dataSource) {
+            if (x.caseIndex !== null) {
+                newDataSource.push({...x, caseIndex: changeMap[x.caseIndex]})
+            } else newDataSource.push(x)
+        }
+        props.setDataSource(newDataSource, name)
+    }
+
+    useEffect(updateCaseInfo, [dataSource])
+
+    useEffect(() => {
+        if (props.tableData[name]?.dataSource && JSON.stringify(dataSource) !== JSON.stringify(props.tableData[name]?.dataSource)) {
+            setDatasource(props.tableData[name]?.dataSource)
+        }
+    }, [props.tableData, props.tableData[name]])
+
     const selectedRowKeys = props.tableData[name]?.selectedRowKeys ?? []
-    const dataSource = props.tableData[name]?.dataSource;
 
-    const setCase = (ckId: string)=>{
-
+    // 不改变 Case 的相对值
+    const setCase = (ckId: string) => {
+        let newDataSource: any = []
+        // 获取到当前 新增的 Case 应该写入的编号
+        let caseId = 0
+        dataSource.forEach((x: any) => {
+            if (x.caseIndex !== null) caseId = Math.max(caseId, x.caseIndex)
+        })
+        // 更新数据
+        for (let x of dataSource) {
+            if (x.checkpointId === ckId) {
+                newDataSource.push({...x, caseIndex: caseId + 1})
+            } else newDataSource.push(x)
+        }
+        props.setDataSource(newDataSource, name)
     }
 
-    const removeCase = (ckId: string)=>{
-
+    // 找到要删除的 CaseId，后续的 Case 前移
+    const removeCase = (ckId: string) => {
+        let newDataSource: any = []
+        let caseId = 0
+        dataSource.forEach((x: any) => {
+            if (x.checkpointId === ckId) caseId = x.caseIndex
+        })
+        for (let x of dataSource) {
+            if (x.caseIndex !== null && x.caseIndex !== caseId) {
+                if (x.caseIndex > caseId)
+                    newDataSource.push({...x, caseIndex: x.caseIndex - 1})
+                if (x.caseIndex < caseId)
+                    newDataSource.push(x)
+            } else newDataSource.push({...x, caseIndex: null})
+        }
+        props.setDataSource(newDataSource, name)
     }
 
-    const tableColumns = (isCase: boolean) => [
+    const tableColumns = () => [
         {title: "ID", dataIndex: "checkpointId"},
         {
             title: "输入预览", dataIndex: "inputPreview", render: (text: string) => {
@@ -111,12 +163,11 @@ const ProCheckPoints = (props: any) => {
         },
         {
             title: "操作", render: (text: any, row: any) => {
-                const caseIndex = row.caseIndex
                 return <>
                     <Button type={"link"} onClick={() => {
                         mApi.zipDownload([
-                            {id: row.inputFileId, downloadFilename: `${row.checkpointId}.in`},
-                            {id: row.outputFileId, downloadFilename: `${row.checkpointId}.out`}
+                            {id: row.inputFileId, downloadFilename: row.inputFilename ?? `${row.checkpointId}.in`},
+                            {id: row.outputFileId, downloadFilename: row.outputFilename ?? `${row.checkpointId}.out`}
                         ])
                     }}><DownloadOutlined/></Button>
                     <TableRowDeleteButton
@@ -127,24 +178,31 @@ const ProCheckPoints = (props: any) => {
                         btnProps={{type: "link", danger: true, style: {padding: 0}}}
                     />
                     <Button
-                        icon={!isCase ? <PlusOutlined/> : <MinusOutlined/>}
+                        icon={row.caseIndex === null ? <PlusOutlined/> : <MinusOutlined/>}
                         style={{color: "gray"}}
                         type={"link"}
                         size={"small"}
-                        onClick={()=>{
-                            if(!isCase) setCase(row.checkpointId)
+                        onClick={() => {
+                            if (row.caseIndex === null) setCase(row.checkpointId)
                             else removeCase(row.checkpointId)
                         }}
                     />
-                    {!isValueEmpty(caseIndex) && (
-                        <Tag style={{marginLeft: 20}}>Case {caseIndex}</Tag>
-                    )}
-
                 </>
             }
         },
+        {
+            title: "样例点",
+            width: 120,
+            render: (text: any, row: any) => {
+                const caseIndex = row.caseIndex
+                return <>
+                    {!isValueEmpty(caseIndex) && (
+                        <Tag style={{marginLeft: 20}}>Case {caseIndex}</Tag>
+                    )}
+                </>
+            }
+        }
     ];
-
 
 
     return (
@@ -158,8 +216,34 @@ const ProCheckPoints = (props: any) => {
                 width={1200}
                 footer={
                     <>
-                        <Button>取消</Button>
-                        <Button type={"primary"}> 保存 </Button>
+                        <Button onClick={() => setVis(false)}>取消</Button>
+                        <Button type={"primary"} onClick={() => {
+                            form.validateFields().then((res) => {
+                                let checkpoints: any = []
+                                let caseMap: any = {}
+                                for (let x of dataSource) {
+                                    checkpoints.push({
+                                        checkpointId: x.checkpointId,
+                                        checkpointScore: res[x.checkpointId]
+                                    })
+                                    if (x.caseIndex !== null)
+                                        caseMap[x.caseIndex] = x.checkpointId
+                                }
+                                let checkPointCases: any = []
+                                for (let x of Object.keys(caseMap).sort()) {
+                                    checkPointCases.push(caseMap[x])
+                                }
+                                mApi.updateProblemCheckpoints({
+                                    problemCode: props.problemCode,
+                                    checkpoints: checkpoints,
+                                    checkpointCases: checkPointCases
+                                }).then((res) => {
+                                    message.success("成功")
+                                    setVis(false)
+                                })
+
+                            })
+                        }}> 保存 </Button>
                     </>
                 }
             >
@@ -176,24 +260,11 @@ const ProCheckPoints = (props: any) => {
                 }}>
                     <TableWithSelection
                         uesAlldata={true}
-                        useDrag={false}
-                        disableSelection={true}
-                        rowKey={"checkpointId"}
-                        name={name+"-case"}
-                        size={"small"}
-                        columns={tableColumns(true)}
-                        API={() => {
-                            return mApi.getCheckpointList(props.problemCode)
-                        }}
-                        pagination={false}
-                    />
-                    <TableWithSelection
-                        uesAlldata={true}
                         useDrag={true}
                         rowKey={"checkpointId"}
                         name={name}
                         size={"small"}
-                        columns={tableColumns(false)}
+                        columns={tableColumns()}
                         API={() => {
                             return mApi.getCheckpointList(props.problemCode)
                         }}
@@ -211,11 +282,11 @@ const ProCheckPoints = (props: any) => {
                                         const pos = dataSource.findIndex((it: any) => it.checkpointId === value)
                                         data.push({
                                             id: dataSource[pos].inputFileId,
-                                            downloadFilename: `${dataSource[pos].checkpointId}.in`
+                                            downloadFilename: dataSource[pos].inputFilename ?? `${dataSource[pos].checkpointId}.in`
                                         })
                                         data.push({
                                             id: dataSource[pos].outputFileId,
-                                            downloadFilename: `${dataSource[pos].checkpointId}.out`
+                                            downloadFilename: dataSource[pos].outputFilename ?? `${dataSource[pos].checkpointId}.out`
                                         })
                                     })
                                     mApi.zipDownload(data).catch((e: any) => {
@@ -229,7 +300,33 @@ const ProCheckPoints = (props: any) => {
                                 rowKey={"checkpointId"}
                                 tableName={name}
                             />
-                            <Button>上传</Button>
+                            <ModalFormUseForm
+                                btnName={"上传"}
+                                btnIcon={false}
+                                btnType={"default"}
+                                title={"新增测试点"}
+                                subForm={[
+                                    {component: <FormCheckPointsUpload/>, label: ""},
+                                ]}
+                                dataSubmitter={(value: any) => {
+                                    if (value.type === "s") {
+                                        return mApi.uploadSingleCheckpoint(value)
+                                    } else if (value.type === "m") {
+                                        const formData = new FormData();
+                                        for (let file of value.files)
+                                            formData.append('files', file);
+                                        formData.append("mode", value.mode)
+                                        return mApi.uploadCheckpointFiles(formData)
+                                    }
+                                }}
+                                afterSubmit={(res: any) => {
+                                    let newData = [...dataSource]
+                                    if (Array.isArray(res)) {
+                                        for (let x of res) newData.push({...x, caseIndex: null, checkpointScore: 0})
+                                    } else newData.push({...res, caseIndex: null, checkpointScore: 0})
+                                    props.setDataSource(newData, name)
+                                }}
+                            />
                         </Space>
                     </div>
                     <div style={{float: "right"}}>
@@ -272,7 +369,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
     setDataSource: (data: any, name: string) =>
-        dispatch({type: "setDataSource", data: data, name: name, add: false})
+        dispatch({type: "setDataSource", data: data, name: name, add: true})
 })
 
 export default connect(

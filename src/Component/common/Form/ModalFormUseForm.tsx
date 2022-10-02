@@ -112,7 +112,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 setFormVis(false)
                 // 当数据绑定表格时，更新表格数据
                 props.TableName && props.addTableVersion(props.TableName)
-                props.afterSubmit && props.afterSubmit()
+                props.afterSubmit && props.afterSubmit(res)
                 message.success("成功")
             })
         }

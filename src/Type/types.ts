@@ -83,11 +83,11 @@ export interface multiCheckpointFileUpload {
 
 export interface modifyProblemsCheckPoint {
     problemCode: string,
-    checkPoints: {
+    checkpoints: {
         checkpointId: string | number,
-        checkPointScore: number
+        checkpointScore: number
     }[],
-    checkPointCases: string[]
+    checkpointCases: string[]
 }
 
 export type problemListQuery = query & {

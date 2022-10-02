@@ -67,3 +67,25 @@ export const SPJ_Config = `{
     "envs": null
   }
 }`
+
+export const NEWLINE_CONVERT_INDEX = {
+    DEFAULT: '',
+    DOS2UNIX: 'dos2unix',
+    UNIX2DOS: 'unix2dos'
+};
+
+export const NEWLINE_CONVERT = {
+    [NEWLINE_CONVERT_INDEX.DOS2UNIX]: {
+        name: NEWLINE_CONVERT_INDEX.DOS2UNIX,
+        description: '将 DOS(CR-LF) 转化为 UNIX(LF)'
+    },
+    [NEWLINE_CONVERT_INDEX.UNIX2DOS]: {
+        name: NEWLINE_CONVERT_INDEX.UNIX2DOS,
+        description: '将 UNIX(LF) 转化为 DOS(CR-LF)'
+    },
+    [NEWLINE_CONVERT_INDEX.DEFAULT]: {
+        name: NEWLINE_CONVERT_INDEX.DEFAULT,
+        description: '不进行转化'
+    }
+};
+

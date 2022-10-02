@@ -96,8 +96,10 @@ export default {
         return request.post('/manage/checkpoint/upload', data);
     },
     // checkpoint批量上传
-    uploadCheckpointFiles: async function (data: multiCheckpointFileUpload[]) {
-        return request.post('/manage/checkpoint/uploadFiles', data);
+    uploadCheckpointFiles: async function (data: any) {
+        return request.post('/manage/checkpoint/uploadFiles', data,
+            {headers: {"Content-Type": "multipart/form-data"}}
+        );
     },
     // 获取题目的checkpoint列表
     getCheckpointList: async function (problemCode: string) {
@@ -266,7 +268,7 @@ export default {
     },
     // ----------------- 查重相关 -------------------
     // 批量添加代码到代码仓库
-    async addCodesToHub(data: IAddCodesToHub[]){
+    async addCodesToHub(data: IAddCodesToHub[]) {
         return request.post("/manage/codesim/-", data)
     }
 
