@@ -29,6 +29,7 @@ interface ModalFormProps {
     className?: any          // 类名
     subForm: subFormType[]  // 子表单信息
     btnProps?: any
+    layout?: any
 }
 
 const ModalForm = (props: ModalFormProps & any) => {
@@ -130,7 +131,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     return (
         <>
             <Button
-                {... props.btnProps}
+                {...props.btnProps}
                 type={ck(props.btnType, BtnTypeMap[props.type])}
                 onClick={loadData}
                 style={
@@ -164,6 +165,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             {props.subForm.length === 1 && (
                 <Modal
                     width={props.width}
+                    style={{minWidth: props.width}}
                     destroyOnClose={true}
                     title={props.title}
                     className={props.className}
@@ -180,7 +182,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 >
                     <Form
                         form={form}
-                        layout={"vertical"}
+                        layout={props.layout ?? "vertical"}
                         initialValues={props.initData}
                         scrollToFirstError
                         preserve={false}
@@ -210,6 +212,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                                 visible={formVis}
                                 maskClosable={false}
                                 width={props.width ?? 1200}
+                                style={{minWidth: props.width}}
                                 onCancel={() => {
                                     setFormVis(false)
                                 }}
@@ -223,6 +226,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     {props.subForm.map((item: any, index: number) => {
                         return (
                             <StepsForm.StepForm
+                                layout={props.layout ?? "vertical"}
                                 name={"step" + index}
                                 title={item.label}
                                 onFinish={async () => {

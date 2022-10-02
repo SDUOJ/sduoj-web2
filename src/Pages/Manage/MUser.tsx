@@ -173,11 +173,10 @@ class MUser extends Component<any, any> {
                                 type={"create"}
                                 subForm={[
                                     {
-                                        component: <>
-
-                                        </>,
-                                        label: ""
-                                    }
+                                        component: <UserFormProfile editUsername={true} needPassword={true}/>,
+                                        label: "基本信息"
+                                    },
+                                    {component: <UserFormAdditional/>, label: "附加信息"},
                                 ]}
                                 dataSubmitter={(value: any) => {
                                     value.features.banThirdParty = (value.features.banThirdParty ? 1 : 0)

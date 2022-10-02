@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import {ManageState} from "Type/IManage";
 import {groupSelection} from "Type/Igroup";
 import mApi from "Utils/API/m-api";
+import {isValueEmpty} from "../../../../Utils/empty";
 
 const {Option} = Select;
 
@@ -24,14 +25,24 @@ const ItemSelectGroup = (props: any) => {
         })
     }
 
-    useEffect(()=>{
-        if(props.formName !== undefined){
-            setGroupInfo(props.manageInitData[props.formName]?.managerGroupDTOList ?? [])
+    useEffect(() => {
+        if (props.formName !== undefined) {
+            let newData: any = []
+            const add = (val: any) => {
+                if (!isValueEmpty(val)) {
+                    if (Array.isArray(val)) newData = [...newData, ...val]
+                    else newData.push(val)
+                }
+            }
+            add(props.manageInitData[props.formName]?.managerGroupDTOList)
+            add(props.manageInitData[props.formName]?.managerGroupDTO)
+            add(props.manageInitData[props.formName]?.participatingGroupDTOList)
+            setGroupInfo(newData)
         }
     }, [props.manageInitData])
 
     return (
-        <Form.Item label={props.label} name={props.name}>
+        <Form.Item label={props.label} name={props.name} help={props.help}>
             <Select
                 mode={props.mode} // "multiple"
                 showSearch
@@ -50,7 +61,9 @@ const ItemSelectGroup = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const State: ManageState = state.ManageReducer
-    return {manageInitData: State.manageInitData}
+    return {
+        manageInitData: {...State.manageInitData}
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

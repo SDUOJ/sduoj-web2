@@ -1,4 +1,4 @@
-import {Dispatch, useEffect} from "react";
+import {Dispatch, useEffect, useState} from "react";
 import Vditor from "vditor";
 import {fileUpload} from "../../Utils/fileUpload";
 import {Button, message, notification, Space} from "antd";
@@ -39,7 +39,12 @@ const CopiedButton = (props: any) => {
 }
 
 const Editor = (props: EditorProps & any) => {
-    useEffect(() => {
+
+    const [vditors, setVditors] = useState<any>(undefined)
+    const [finishRender, setFinishRender] = useState(false)
+
+
+    const setEditor = () => {
         const vditor0 = new Vditor("vditor", {
             height: props.height === undefined ? 800 : props.height,
             mode: "ir", //及时渲染模式
@@ -101,6 +106,7 @@ const Editor = (props: EditorProps & any) => {
             ],
             after() {
                 vditor0.setValue(props.value === undefined ? "" : props.value);
+                setFinishRender(true)
             },
             blur() {
                 props.onChange && props.onChange(vditor0.getValue())
@@ -115,10 +121,11 @@ const Editor = (props: EditorProps & any) => {
                         .replaceAll("/\\s/g", "");
                 },
                 handler(files: File[]): any {
-                    if(files[0].name.length > 64){
+                    if (files[0].name.length > 64) {
                         message.error("文件名大于 64 字符")
                         return Promise.reject("文件名大于 64 字符")
                     }
+
                     function callback(value: any) {
                         let name = files[0] && files[0].name;
                         name = name
@@ -138,7 +145,7 @@ const Editor = (props: EditorProps & any) => {
                                 text += `\n ![${name}](${path})`;
                             }
                         } else {
-                            console.log(vditor0.vditor.currentMode)
+                            // console.log(vditor0.vditor.currentMode)
                             if (vditor0 && vditor0.vditor.currentMode === "wysiwyg") {
                                 text += `\n <a href="${path}">${name}</a>`;
                             } else {
@@ -161,8 +168,9 @@ const Editor = (props: EditorProps & any) => {
                                     <Space>
                                         <CopiedButton text={`<a href="${path}">${name}</a>`}
                                                       btnText={"HTML链接"}/>
-                                        <CopiedButton text={`<img src="${path}" alt="${name}" style="zoom:100%;" />`}
-                                                      btnText={"HTML图片"}/>
+                                        <CopiedButton
+                                            text={`<img src="${path}" alt="${name}" style="zoom:100%;" />`}
+                                            btnText={"HTML图片"}/>
                                     </Space>
                                 </>
                             ),
@@ -170,11 +178,23 @@ const Editor = (props: EditorProps & any) => {
                             type: "success",
                         });
                     }
+
                     fileUpload(files, callback);
                 }
             }
         });
+        setVditors(vditor0)
+    }
+
+    useEffect(() => {
+        setEditor()
     }, [props.langCode])
+
+    useEffect(() => {
+        if (finishRender && vditors !== undefined && vditors.getValue() !== props.value) {
+            vditors.setValue(props.value ?? "")
+        }
+    }, [vditors, props.value, finishRender])
 
     return (
         <>

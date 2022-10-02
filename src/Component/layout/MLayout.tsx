@@ -50,7 +50,7 @@ class MLayout extends Component<any, any> {
                         </div>
                         <MMenu id={1} roles={["superadmin"]}/>
                     </Sider>
-                    <Layout style={{minWidth: 500, marginLeft: 200}}>
+                    <Layout style={{minWidth: 1200, marginLeft: 200}}>
                         <MHeader/>
                         <Content style={{
                             backgroundColor: "#f0f2f5",

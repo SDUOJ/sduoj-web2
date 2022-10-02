@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {withRouter} from "react-router-dom";
-import ItemProblemAdd from "../../Component/problem/From/Item/ItemProblemAdd";
+import ItemProblemAdd from "../../Component/problem/From/Item/ProblemAddBody";
 import {isValueEmpty} from "../../Utils/empty";
 
 const CTest = (props: any) => {
