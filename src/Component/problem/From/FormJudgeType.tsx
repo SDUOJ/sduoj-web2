@@ -31,7 +31,7 @@ const FormJudgeType = (props: any) => {
         })
     }, [])
 
-    const updateAdvanced = ()=>{
+    const updateAdvanced = () => {
         const initData = props.initData["ProblemInfo"]
         const problemCode = initData.problemCode
 
@@ -166,85 +166,86 @@ const FormJudgeType = (props: any) => {
                         "高级评测模板需要在创建后进行添加"
                     )}
                     {props.initData["ProblemInfo"]?.problemCode !== undefined && (
-                        <Table
-                            size={"small"}
-                            pagination={false}
-                            rowSelection={{
-                                selectedRowKeys: rowSelection,
-                                onChange: (selectedRowKeys: React.Key[]) => {
-                                    setRowSelection(selectedRowKeys)
-                                }
-                            }}
-                            rowKey={"id"}
-                            columns={[
-                                {title: "ID", dataIndex: "id"},
-                                {title: "标题", dataIndex: "title"},
-                                {title: "注释", dataIndex: "comment"},
-                                {
-                                    title: "操作", render: (text: any, rows: any) => {
-                                        return <Space size={3}>
-                                            <ModalFormUseForm
-                                                width={600}
-                                                title={rows.title}
-                                                type={"update"}
-                                                subForm={[{component: <TemplateMForm/>, label: ""},]}
-                                                dataLoader={async () => {
-                                                    return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
-                                                        return Promise.resolve(value)
-                                                    })
-                                                }}
-                                                updateAppendProps={{id: rows.id}}
-                                                afterSubmit={updateAdvanced}
-                                                dataSubmitter={(value: any) => {
-                                                    return mApi.updateTemplate({type: 2, ...value})
-                                                }}
-                                            />
-                                            <ModalFormUseForm
-                                                width={600}
-                                                title={"新建模板(克隆自" + rows.title + ")"}
-                                                type={"fork"}
-                                                subForm={[{component: <TemplateMForm/>, label: ""}]}
-                                                dataLoader={async () => {
-                                                    return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
-                                                        return Promise.resolve(value)
-                                                    })
-                                                }}
-                                                afterSubmit={updateAdvanced}
-                                                dataSubmitter={(value: any) => {
-                                                    return mApi.createTemplate({
-                                                        problemCode: props.initData["ProblemInfo"].problemCode,
-                                                        type: 2, ...value
-                                                    })
-                                                }}
-                                            />
-                                        </Space>
+                        <>
+                            <Table
+                                size={"small"}
+                                pagination={false}
+                                rowSelection={{
+                                    selectedRowKeys: rowSelection,
+                                    onChange: (selectedRowKeys: React.Key[]) => {
+                                        setRowSelection(selectedRowKeys)
                                     }
-                                }
-                            ]}
-                            dataSource={AdvancedJT}
-                        />
+                                }}
+                                rowKey={"id"}
+                                columns={[
+                                    {title: "ID", dataIndex: "id"},
+                                    {title: "标题", dataIndex: "title"},
+                                    {title: "注释", dataIndex: "comment"},
+                                    {
+                                        title: "操作", render: (text: any, rows: any) => {
+                                            return <Space size={3}>
+                                                <ModalFormUseForm
+                                                    width={600}
+                                                    title={rows.title}
+                                                    type={"update"}
+                                                    subForm={[{component: <TemplateMForm/>, label: ""},]}
+                                                    dataLoader={async () => {
+                                                        return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
+                                                            return Promise.resolve(value)
+                                                        })
+                                                    }}
+                                                    updateAppendProps={{id: rows.id}}
+                                                    afterSubmit={updateAdvanced}
+                                                    dataSubmitter={(value: any) => {
+                                                        return mApi.updateTemplate({type: 2, ...value})
+                                                    }}
+                                                />
+                                                <ModalFormUseForm
+                                                    width={600}
+                                                    title={"新建模板(克隆自" + rows.title + ")"}
+                                                    type={"fork"}
+                                                    subForm={[{component: <TemplateMForm/>, label: ""}]}
+                                                    dataLoader={async () => {
+                                                        return mApi.getOneTemplate({id: rows.id}).then((value: any) => {
+                                                            return Promise.resolve(value)
+                                                        })
+                                                    }}
+                                                    afterSubmit={updateAdvanced}
+                                                    dataSubmitter={(value: any) => {
+                                                        return mApi.createTemplate({
+                                                            problemCode: props.initData["ProblemInfo"].problemCode,
+                                                            type: 2, ...value
+                                                        })
+                                                    }}
+                                                />
+                                            </Space>
+                                        }
+                                    }
+                                ]}
+                                dataSource={AdvancedJT}
+                            />
+                            <div style={{marginTop: 24}}>
+                                <ModalFormUseForm
+                                    btnProps={{size: "small"}}
+                                    width={600}
+                                    title={"新建模板"}
+                                    type={"create"}
+                                    subForm={[{component: <TemplateMForm/>, label: ""}]}
+                                    afterSubmit={updateAdvanced}
+                                    dataSubmitter={(value: any) => {
+                                        return mApi.createTemplate({
+                                            problemCode: props.initData["ProblemInfo"].problemCode,
+                                            type: 2, ...value
+                                        })
+                                    }}
+                                />
+                            </div>
+                        </>
+
                     )}
-                    <div style={{marginTop: 24}}>
-                        <ModalFormUseForm
-                            btnProps={{size: "small"}}
-                            width={600}
-                            title={"新建模板"}
-                            type={"create"}
-                            subForm={[{component: <TemplateMForm/>, label: ""}]}
-                            afterSubmit={updateAdvanced}
-                            dataSubmitter={(value: any) => {
-                                return mApi.createTemplate({
-                                    problemCode: props.initData["ProblemInfo"].problemCode,
-                                    type: 2, ...value
-                                })
-                            }}
-                        />
-                    </div>
-                    <div style={{display: "none"}}>
-                        <Form.Item name={"judgeTemplates"}>
-                            <JudgeTemplateRowSelected rowSelection={rowSelection} setRowSelection={setRowSelection}/>
-                        </Form.Item>
-                    </div>
+                    <Form.Item name={"judgeTemplates"} hidden>
+                        <JudgeTemplateRowSelected rowSelection={rowSelection} setRowSelection={setRowSelection}/>
+                    </Form.Item>
                 </>
             )}
         </>
