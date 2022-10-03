@@ -282,8 +282,41 @@ export default {
     async updateSubjective(data: any) {
         return request.post("/manage/subjectiveproblem/update", data)
     },
-    async  getSubjectiveInfo(data: any){
+    async getSubjectiveInfo(data: any) {
         return request.get("/manage/subjectiveproblem/query", data)
+    },
+
+    // ----------------- 题单相关 -------------------
+    async getProblemSetList(data: any) {
+        return request.post("/manage/problemset/list", data)
+    },
+    async createProblemSet(data: any){
+        return request.post("/manage/problemset/create", data)
+    },
+    async updateProblemSet(data: any){
+        return request.post("/manage/problemset/update", data)
+    },
+    async getProblemSetInfo(data: any){
+        return request.get("/manage/problemset/query", data)
+    },
+    // -------------- 题单中的题组相关 ------------------
+    async getProblemSetGroupList(data: any){
+        return request.get("", data)
+    },
+    async createProblemSetGroup(data: any){
+        return request.post("/manage/problemset/addProblemGroup", data)
+    },
+    async updateProblemSetGroup(data: any){
+        return request.post("/manage/problemset/updateProblemGroup", data)
+    },
+    async getProblemSetGroupInfo(data: any){
+        return request.get("/manage/problemset/queryProblemGroup", data)
+    },
+    async deleteProblemSetGroup(data: any){
+        return request.post("/manage/problemset/deleteProblem", data)
+    },
+    async updateOrderProblemSetGroup(data: any){
+        return request.post("/manage/problemset/updateOrder", data)
     }
 
 

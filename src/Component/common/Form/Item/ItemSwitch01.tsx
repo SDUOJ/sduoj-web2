@@ -10,7 +10,7 @@ const ItemSwitch01 = (props: any) => {
                 name={props.name}
                 label={props.label}
                 initialValue={props.InitValue ?? 0}
-                rules={[{required: props.required ?? true}]}
+                required={props.required ?? true}
             >
                 <SwitchX ck={props.ck} unck={props.unck}/>
             </Form.Item>

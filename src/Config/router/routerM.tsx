@@ -89,7 +89,7 @@ export const routerM: IRouter[] = [
                 exact: true,
                 title_i18n: "defaultProblemSet",
                 icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
+                component: lazy(() => import('../../Pages/Manage/MProblemSet'))
             },
             {
                 id: 23,

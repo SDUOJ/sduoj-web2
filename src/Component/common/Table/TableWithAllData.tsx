@@ -79,6 +79,7 @@ const TableWithAllData = (props: any) => {
         if (oldIndex !== newIndex) {
             // 移动数组中的元素，并设置到当前的状态
             setTableData(arrayMoveImmutable(tableData, oldIndex, newIndex))
+            props.afterDrag && props.afterDrag(tableData, oldIndex, newIndex)
         }
     };
     const DraggableContainer = (props: any) => {

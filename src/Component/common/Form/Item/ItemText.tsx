@@ -10,6 +10,7 @@ const ItemText = (props: any) => {
                 name={props.name}
                 rules={[{required: props.required ?? true}]}
                 initialValue={props.initialValue}
+                help={props.help}
             >
                 <Input addonAfter={props.addonAfter}/>
             </Form.Item>

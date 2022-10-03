@@ -12,18 +12,11 @@ import moment from "moment";
 import {isValueEmpty} from "../../../Utils/empty";
 import ItemEditor from "../../common/Form/Item/ItemEditor";
 import ItemSwitch01 from "../../common/Form/Item/ItemSwitch01";
+import ItemTimeRange from "../../common/Form/Item/ItemTimeRange";
 
 const ContestMFormBase = (props: any) => {
 
     const [openness, setOpenness] = useState("public")
-    const [timeRange, setTimeRange] = useState<any>()
-    const [timeRange1, setTimeRange1] = useState<any>()
-    const [timeRange2, setTimeRange2] = useState<any>()
-    const {RangePicker} = DatePicker;
-
-    useEffect(() => {
-        setTimeRange([timeRange1, timeRange2])
-    }, [timeRange1, timeRange2])
 
     return (
         <div style={{width: 1100}}>
@@ -61,21 +54,7 @@ const ContestMFormBase = (props: any) => {
             </Row>
             <Row>
                 <Col span={11}>
-                    <Form.Item
-                        label="比赛起止时间"
-                        required
-                    >
-                        <RangePicker
-                            showTime={{minuteStep: 5, secondStep: 30}}
-                            format={"YYYY-MM-DD HH:mm:ss"}
-                            value={timeRange}
-                            onChange={(v: any) => {
-                                setTimeRange(v)
-                                setTimeRange1(v[0])
-                                setTimeRange2(v[1])
-                            }}
-                        />
-                    </Form.Item>
+                    <ItemTimeRange label="比赛起止时间" required={true}/>
                 </Col>
                 <Col span={12}>
                     <ItemText name={"source"} label={"来源"} required={false}/>
@@ -84,17 +63,6 @@ const ContestMFormBase = (props: any) => {
 
             <Form.Item name={["features", "openness"]} hidden required>
                 <FormExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b}/>
-            </Form.Item>
-
-            <Form.Item name={"gmtStart"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1.unix() * 1000} setV={(v: any) => {
-                    setTimeRange1(moment(parseInt(v)))
-                }} eqs={(a: string, b: string) => a === b}/>
-            </Form.Item>
-            <Form.Item name={"gmtEnd"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2.unix() * 1000} setV={(v: any) => {
-                    setTimeRange2(moment(parseInt(v)))
-                }} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
 
             <ItemEditor name={"markdownDescription"} label={"比赛公告"}/>
