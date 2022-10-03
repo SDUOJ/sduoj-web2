@@ -50,58 +50,66 @@ export const routerM: IRouter[] = [
                 icon:  <Icon component={Task}/>,
                 component: lazy(() => import('../../Pages/Manage/Problem/MObjective'))
             },
-            {
-                id: 13,
-                path: UrlPrefix + "/manage/problem/subjective",
-                exact: true,
-                title_i18n: "主观题",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/Problem/MSubjective'))
-            },
-            {
-                id: 14,
-                path: UrlPrefix + "/manage/problem/review",
-                exact: true,
-                title_i18n: "题目批阅",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/Problem/MReview'))
-            },
+            // {
+            //     id: 13,
+            //     path: UrlPrefix + "/manage/problem/subjective",
+            //     exact: true,
+            //     title_i18n: "主观题",
+            //     icon:  <Icon component={Task}/>,
+            //     component: lazy(() => import('../../Pages/Manage/Problem/MSubjective'))
+            // },
+            // {
+            //     id: 14,
+            //     path: UrlPrefix + "/manage/problem/review",
+            //     exact: true,
+            //     title_i18n: "题目批阅",
+            //     icon:  <Icon component={Task}/>,
+            //     component: lazy(() => import('../../Pages/Manage/Problem/MReview'))
+            // },
         ]
     },
     {
-        id: 2,
-        path: UrlPrefix + "/manage/problemSet",
-        title_i18n: "problemSet",
-        exact: false,
-        icon: <AppstoreOutlined/>,
-        children:[
-            {
-                id: 21,
-                path: UrlPrefix + "/manage/problemSet/contest",
-                exact: true,
-                title_i18n: "contest",
-                icon:  <Icon component={Hub}/>,
-                component: lazy(() => import('../../Pages/Manage/MContest'))
-            },
-            {
-                id: 22,
-                path: UrlPrefix + "/manage/problemSet/default",
-                exact: true,
-                title_i18n: "defaultProblemSet",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/MProblemSet'))
-            },
-            {
-                id: 23,
-                path: UrlPrefix + "/manage/problemSet/exam",
-                exact: true,
-                title_i18n: "exam",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/MExam'))
-            },
-        ]
-
+        id: 21,
+        path: UrlPrefix + "/manage/contest",
+        exact: true,
+        title_i18n: "contest",
+        icon:  <Icon component={Hub}/>,
+        component: lazy(() => import('../../Pages/Manage/MContest'))
     },
+    // {
+    //     id: 2,
+    //     path: UrlPrefix + "/manage/problemSet",
+    //     title_i18n: "problemSet",
+    //     exact: false,
+    //     icon: <AppstoreOutlined/>,
+    //     children:[
+    //         {
+    //             id: 21,
+    //             path: UrlPrefix + "/manage/problemSet/contest",
+    //             exact: true,
+    //             title_i18n: "contest",
+    //             icon:  <Icon component={Hub}/>,
+    //             component: lazy(() => import('../../Pages/Manage/MContest'))
+    //         },
+            // {
+            //     id: 22,
+            //     path: UrlPrefix + "/manage/problemSet/default",
+            //     exact: true,
+            //     title_i18n: "defaultProblemSet",
+            //     icon:  <Icon component={Task}/>,
+            //     component: lazy(() => import('../../Pages/Manage/MProblemSet'))
+            // },
+            // {
+            //     id: 23,
+            //     path: UrlPrefix + "/manage/problemSet/exam",
+            //     exact: true,
+            //     title_i18n: "exam",
+            //     icon:  <Icon component={Task}/>,
+            //     component: lazy(() => import('../../Pages/Manage/MExam'))
+            // },
+    //     ]
+    //
+    // },
     {
         id: 3,
         path: UrlPrefix + "/manage/template",
@@ -128,14 +136,14 @@ export const routerM: IRouter[] = [
             },
         ]
     },
-    {
-        id: 4,
-        path: UrlPrefix + "/manage/group",
-        title_i18n: "group",
-        exact: false,
-        icon: <UsergroupAddOutlined/>,
-        component: lazy(() => import('../../Pages/Manage/MGroup'))
-    },
+    // {
+    //     id: 4,
+    //     path: UrlPrefix + "/manage/group",
+    //     title_i18n: "group",
+    //     exact: false,
+    //     icon: <UsergroupAddOutlined/>,
+    //     component: lazy(() => import('../../Pages/Manage/MGroup'))
+    // },
     // {
     //     id: 5,
     //     path: UrlPrefix + "/manage/exam",
