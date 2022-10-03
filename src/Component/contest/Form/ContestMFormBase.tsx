@@ -5,7 +5,7 @@ import {Col, DatePicker, Form, Radio, Row, Select} from "antd";
 import ItemSwitch from "../../common/Form/Item/ItemSwitch";
 import Item from "antd/es/list/Item";
 import React, {useEffect, useState} from "react";
-import FromExtraInfo from "../../common/Form/FromExtraInfo";
+import FormExtraInfo from "../../common/Form/FormExtraInfo";
 import ItemPassword from "../../user/Form/Item/ItemPassword";
 import {InfoCircleOutlined} from "@ant-design/icons";
 import moment from "moment";
@@ -83,16 +83,16 @@ const ContestMFormBase = (props: any) => {
             </Row>
 
             <Form.Item name={["features", "openness"]} hidden required>
-                <FromExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b}/>
+                <FormExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
 
             <Form.Item name={"gmtStart"} hidden required>
-                <FromExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1.unix() * 1000} setV={(v: any) => {
+                <FormExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1.unix() * 1000} setV={(v: any) => {
                     setTimeRange1(moment(parseInt(v)))
                 }} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
             <Form.Item name={"gmtEnd"} hidden required>
-                <FromExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2.unix() * 1000} setV={(v: any) => {
+                <FormExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2.unix() * 1000} setV={(v: any) => {
                     setTimeRange2(moment(parseInt(v)))
                 }} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>

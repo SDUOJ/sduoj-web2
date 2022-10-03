@@ -56,7 +56,7 @@ export const routerM: IRouter[] = [
                 exact: true,
                 title_i18n: "主观题",
                 icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/Problem/MObjective'))
+                component: lazy(() => import('../../Pages/Manage/Problem/MSubjective'))
             },
             {
                 id: 14,

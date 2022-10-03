@@ -20,6 +20,7 @@ import {CheckCard} from '@ant-design/pro-card';
 import "Assert/css/Review.css"
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons"
 import MarkdownText from "../../Utils/MarkdownText";
+import ScoreMode from "../../Component/subjectiveProblem/ScoreMode";
 
 
 const {Paragraph, Text} = Typography;
@@ -79,10 +80,10 @@ const CReview = (props: any) => {
     ]
 
     const scoreModeInfo = {
-        sumScore: 100,
-        body: [
+        score: 100,
+        children: [
             {
-                id: "1",
+                key: "1",
                 title: "问答题",
                 score: 20,
                 answer: "时间复杂度为: $O(n)$, $O(n^2)$",
@@ -94,20 +95,20 @@ const CReview = (props: any) => {
                 ]
             },
             {
-                id: "2",
+                key: "2",
                 title: "实验报告",
                 score: 80,
-                child: [
+                children: [
                     {
-                        id: "2-1",
+                        key: "2-1",
                         title: "T1",
                         score: 40,
-                        child: [
-                            {id: "2-1-1", title: "题目分析", score: 10, quick: true},
-                            {id: "2-1-2", title: "时间复杂度", score: 10, quick: true},
-                            {id: "2-1-3", title: "代码", score: 10, quick: true},
+                        children: [
+                            {key: "2-1-1", title: "题目分析", score: 10, quick: true},
+                            {key: "2-1-2", title: "时间复杂度", score: 10, quick: true},
+                            {key: "2-1-3", title: "代码", score: 10, quick: true},
                             {
-                                id: "2-1-4",
+                                key: "2-1-4",
                                 title: "代码注释", score: 10, info: [
                                     [10, "注释3个以上，且充分"],
                                     [5, "存在有效注释"],
@@ -117,15 +118,15 @@ const CReview = (props: any) => {
                         ]
                     },
                     {
-                        id: "2-2",
+                        key: "2-2",
                         title: "T2",
                         score: 40,
-                        child: [
-                            {id: "2-2-1", title: "题目分析", score: 10, quick: true},
-                            {id: "2-2-2", title: "时间复杂度", score: 10, quick: true},
-                            {id: "2-2-3", title: "代码", score: 10, quick: true},
+                        children: [
+                            {key: "2-2-1", title: "题目分析", score: 10, quick: true},
+                            {key: "2-2-2", title: "时间复杂度", score: 10, quick: true},
+                            {key: "2-2-3", title: "代码", score: 10, quick: true},
                             {
-                                id: "2-2-4",
+                                key: "2-2-4",
                                 title: "代码注释", score: 10, info: [
                                     [10, "注释3个以上，且充分"],
                                     [5, "存在有效注释"],
@@ -139,109 +140,6 @@ const CReview = (props: any) => {
         ]
     }
 
-    const updateScore = (id: string, value: number) => {
-        let nd2 = {...reviewInfo}
-        let idList = id.split("-")
-        let idNow = ""
-
-        nd2[id] = (nd2[id] ?? 0)
-        nd2["0"] = (nd2["0"] ?? 0) - nd2[id] + value
-        for (let x of idList) {
-            idNow += x;
-            nd2[idNow] = (nd2[idNow] ?? 0) + value - nd2[id]
-            idNow += "-";
-        }
-        setReviewInfo(nd2)
-    }
-
-    const scoreRender = (data: any) => {
-        return (
-            <Card title={data.title} size={"small"} bordered={false}
-                  extra={
-                      <Space>
-                          {data.child === undefined && (
-                              <Space>
-                                  <Button
-                                      type="primary" shape="round"
-                                      size={"small"} icon={<CheckOutlined/>}
-                                      onClick={() => {
-                                          updateScore(data.id, data.score)
-                                      }}/>
-                                  <Button
-                                      type="primary" shape="round"
-                                      size={"small"} danger={true}
-                                      icon={<CloseOutlined/>}
-                                      onClick={() => {
-                                          updateScore(data.id, 0)
-                                      }}/>
-                              </Space>
-                          )}
-                          <span>总分：
-                              {data.child === undefined && (
-                                  <InputNumber
-                                      style={{width: 64}}
-                                      size={"small"}
-                                      min={0} max={data.score}
-                                      value={reviewInfo[data.id]}
-                                      onChange={(value) => {
-                                          updateScore(data.id, value)
-                                      }}/>
-                              )}
-                              {data.child !== undefined && (reviewInfo[data.id] ?? 0)}
-                              {" "}/ {data.score}</span>
-                      </Space>
-                  }
-            >
-                {(() => {
-                    if (data.child === undefined) {
-                        return (
-                            <>
-                                {(() => {
-                                    if (data.answer !== undefined) {
-                                        return (
-                                            <Alert
-                                                message={
-                                                    <MarkdownText id={`problemReview-answer-${data.id}`}
-                                                                  text={data.answer}/>
-                                                }
-                                                type="success"
-                                            />
-                                        )
-
-                                    }
-                                })()}
-                                {(() => {
-                                    if (data.info !== undefined) {
-                                        return (
-                                            <Radio.Group
-                                                onChange={(e) => {
-                                                    updateScore(data.id, e.target.value)
-                                                }}
-                                                value={reviewInfo[data.id]}
-                                            >
-                                                <Row>
-                                                    {data.info && data.info.map((r: any) => {
-                                                        return (
-                                                            <Col span={12}><Radio
-                                                                value={r[0]}> {r[0]}分 {r[1]}</Radio></Col>
-                                                        )
-                                                    })}
-                                                </Row>
-                                            </Radio.Group>
-                                        )
-                                    }
-                                })()}
-                            </>
-                        )
-                    } else {
-                        return data.child.map((c: any) => {
-                            return scoreRender(c)
-                        })
-                    }
-                })()}
-            </Card>
-        )
-    }
 
     const refresh = () => {
         setPageHeight(document.body.clientHeight)
@@ -270,11 +168,15 @@ const CReview = (props: any) => {
             <Drawer
                 placement={"top"}
                 closable={false}
-                onClose={()=>{setDrawerOpen(false)}}
+                onClose={() => {
+                    setDrawerOpen(false)
+                }}
                 visible={drawerOpen}
                 size={"large"}
                 footer={<div style={{float: "right"}}>
-                    <Button onClick={()=>{setDrawerOpen(false)}} type={"primary"}>关闭</Button>
+                    <Button onClick={() => {
+                        setDrawerOpen(false)
+                    }} type={"primary"}>关闭</Button>
                 </div>}
             >
                 <Tabs defaultActiveKey="1" onChange={onChange}>
@@ -343,13 +245,15 @@ const CReview = (props: any) => {
                 <Col span={6} style={{"height": Math.max(pageHeight - 64, 800), "overflow": "auto"}}>
                     <Card className={"scorePane"} title={"分数面板"} extra={
                         <>
-                            总分：{reviewInfo["0"] ?? 0} / {scoreModeInfo.sumScore}
+                            总分：{reviewInfo["0"] ?? 0} / {scoreModeInfo.score}
                         </>
                     }>
                         <div>
-                            {scoreModeInfo.body.map((c) => {
-                                return scoreRender(c)
-                            })}
+                            <ScoreMode
+                                reviewInfo={reviewInfo}
+                                setReviewInfo={setReviewInfo}
+                                scoreModeInfo={scoreModeInfo}
+                            />
                             <Button block={true} type="primary"> 提交分数 </Button>
                         </div>
                     </Card>

@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-const FromExtraInfo = (props: any) =>{
+const FormExtraInfo = (props: any) =>{
 
     const {value, onChange} = props
 
@@ -19,4 +19,4 @@ const FromExtraInfo = (props: any) =>{
     )
 }
 
-export default FromExtraInfo
+export default FormExtraInfo

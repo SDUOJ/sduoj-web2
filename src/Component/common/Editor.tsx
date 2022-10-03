@@ -8,11 +8,13 @@ import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {ConfigState} from "../../Type/IConfig";
 import apiAddress from "../../Utils/API/apiAddress";
+import {isValueEmpty} from "../../Utils/empty";
 
 export interface EditorProps {
     value: string
     height?: number
     save: any
+    id?: any
 }
 
 const CopiedButton = (props: any) => {
@@ -45,7 +47,7 @@ const Editor = (props: EditorProps & any) => {
 
 
     const setEditor = () => {
-        const vditor0 = new Vditor("vditor", {
+        const vditor0 = new Vditor(props.id ?? "vditor", {
             height: props.height === undefined ? 800 : props.height,
             mode: "ir", //及时渲染模式
             placeholder: "支持 Markdown，支持 KaTex 公式\n表格插入一行：Ctrl+'+' \n表格插入一列：Ctrl+Shift+'+'",
@@ -187,7 +189,9 @@ const Editor = (props: EditorProps & any) => {
     }
 
     useEffect(() => {
-        setEditor()
+        console.log("props.langCode", props.langCode)
+        if(!isValueEmpty(props.langCode))
+            setEditor()
     }, [props.langCode])
 
     useEffect(() => {
@@ -198,7 +202,7 @@ const Editor = (props: EditorProps & any) => {
 
     return (
         <>
-            <div id="vditor" className="vditor"/>
+            <div id={props.id ?? "vditor"} className="vditor"/>
         </>
     )
 

@@ -89,3 +89,32 @@ export const NEWLINE_CONVERT = {
     }
 };
 
+export const scoreModeDefault = `{
+    "key": "1",
+    "title": "作业",
+    "score": 100,
+    "children": [
+        {
+            "key": "1-1",
+            "title": "T1",
+            "score": 50,
+            "answer": "$15$",
+            "info": [
+                [10, "全部正确"],
+                [5, "部分正确"],
+                [0, "错误"]
+            ]
+        },
+        {
+            "key": "1-2",
+            "title": "T2",
+            "score": 50,
+            "answer": "$64$",
+            "info": [
+                [10, "全部正确"],
+                [5, "部分正确"],
+                [0, "错误"]
+            ]
+        },
+    ]
+}`

@@ -5,7 +5,7 @@ const ItemEditor = (props: any) => {
     return (
 
         <Form.Item label={props.label} name={props.name}>
-            <Editor height={500} />
+            <Editor height={500} id={props.id}/>
         </Form.Item>
     )
 }

@@ -5,7 +5,7 @@ import React, {useState} from "react";
 import TextArea from "antd/es/input/TextArea";
 import ItemUpload from "../../common/Form/Item/ItemUpload";
 import ItemUploadMulti from "../../common/Form/Item/ItemUploadMulti";
-import FromExtraInfo from "../../common/Form/FromExtraInfo";
+import FormExtraInfo from "../../common/Form/FormExtraInfo";
 
 const FormCheckPointsUpload = (props: any) => {
     const [activeKey, setActiveKey] = useState("s")
@@ -22,7 +22,7 @@ const FormCheckPointsUpload = (props: any) => {
                 </Select>
             </Form.Item>
             <Form.Item hidden name={"type"}>
-                <FromExtraInfo v={activeKey} setV={setActiveKey} eqs={(a: string, b: string) => a === b}/>
+                <FormExtraInfo v={activeKey} setV={setActiveKey} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
 
             <Tabs activeKey={activeKey} onChange={setActiveKey}>

@@ -270,6 +270,22 @@ export default {
     // 批量添加代码到代码仓库
     async addCodesToHub(data: IAddCodesToHub[]) {
         return request.post("/manage/codesim/-", data)
+    },
+
+    // ----------------- 主观题相关 -------------------
+    async getSubjectiveList(data: any[]) {
+        return request.get("/manage/subjectiveproblem/list", data)
+    },
+    async createSubjective(data: any) {
+        return request.post("/manage/subjectiveproblem/create", data)
+    },
+    async updateSubjective(data: any) {
+        return request.post("/manage/subjectiveproblem/update", data)
+    },
+    async  getSubjectiveInfo(data: any){
+        return request.get("/manage/subjectiveproblem/query", data)
     }
+
+
 
 }
