@@ -1,4 +1,4 @@
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {Badge, Button, Form, message, Modal, Select, Space, Tooltip, Upload} from "antd";
 import {JudgeTemplate, JudgeTemplateAllType} from "../../Type/IProblem";
 import {connect} from "react-redux";
@@ -14,6 +14,7 @@ import {fileUpload, fileUploadWithoutMD5} from "../../Utils/fileUpload";
 import {MaxCodeLength} from "../../Config/constValue";
 import {UserState} from "../../Type/Iuser";
 import {functionTemplate} from "../../Type/types";
+import {isValueEmpty} from "../../Utils/empty";
 
 
 export interface SubmitPropsType {
@@ -34,6 +35,14 @@ const Submit = (props: SubmitPropsType & any) => {
     const [judgeTemplateId, setJudgeTemplateId] = useState<number | undefined>()
     const [zipFileId, setZipFileId] = useState<string | undefined>()
 
+    useEffect(()=>{
+        const value: any = localStorage.getItem("SDUOJ-Last-Submit-JT");
+        if(!isValueEmpty(value) && props.JudgeTemplates !== undefined){
+            form.setFieldValue("JudgeTemplate", value)
+            const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
+            setJudgeTemplateId(id)
+        }
+    }, [props.JudgeTemplates])
 
     const CodeSubmit = () => {
         let gb_hide: any;
@@ -56,6 +65,7 @@ const Submit = (props: SubmitPropsType & any) => {
                 setSubmitDisable(false)
                 props.setSubmissionModalVis(true)
                 props.SubmissionListName !== undefined && props.addTableVersion(props.SubmissionListName)
+                localStorage.setItem('SDUOJ-Last-Submit-JT', value.JudgeTemplate);
                 gb_hide && gb_hide()
             }).catch(() => {
                 gb_hide && gb_hide()
