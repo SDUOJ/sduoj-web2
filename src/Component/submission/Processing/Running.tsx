@@ -2,10 +2,16 @@ import {withTranslation} from "react-i18next";
 import {Alert, Progress, Steps} from "antd";
 import {ClimbingBoxLoader} from "react-spinners";
 import Title from "antd/es/typography/Title";
-import {RunningStateType, TestCaseStates} from "../../../Type/ISubmission";
+import {RunningStateType, SubmissionState, TestCaseStates} from "../../../Type/ISubmission";
 import TestCase from "../TestCase";
 import {LoadingOutlined} from "@ant-design/icons";
 import {isValueEmpty} from "../../../Utils/empty";
+import cApi from "../../../Utils/API/c-api";
+import ReJudge from "../Func/ReJudge";
+import judgeAuth from "../../../Utils/judgeAhtu";
+import {connect} from "react-redux";
+import {UserState} from "../../../Type/Iuser";
+import {Dispatch} from "react";
 
 const Running = (props: any) => {
     const {Step} = Steps
@@ -73,6 +79,18 @@ const Running = (props: any) => {
                     }
                 })}
             </div>
+
+            {judgeAuth(props.roles, ["admin", "superadmin"])
+                && (RunningState !== "-4" && RunningState !== "-3" && RunningState !== "-2") &&
+                (
+                    <div style={{marginTop: "30px"}}>
+                        <ReJudge
+                            API={props.RejudgeAPI ?? cApi.rejudge}
+                            data={[submissionInfo.submissionId]}
+                            afterSuccess={props.refresh}
+                        />
+                    </div>
+                )}
 
             {/*
                 排队中的提示
@@ -146,7 +164,7 @@ const Running = (props: any) => {
                 {
                     (RunningState === "-2" || RunningState === "-1") &&     // 已经到达了测试点阶段
                     RunningResult !== "8" && RunningResult !== "5" &&       // 不是编译错误或系统错误
-                    testcaseMod === "show" && TestCaseStateList.length !== 0 &&(                             // 测试点设置为可显示
+                    testcaseMod === "show" && TestCaseStateList.length !== 0 && (                             // 测试点设置为可显示
                         [''].map(() => {
                             return (
                                 <>
@@ -166,4 +184,20 @@ const Running = (props: any) => {
     )
 }
 
-export default withTranslation()(Running)
+const mapStateToProps = (state: any) => {
+    const UState: UserState = state.UserReducer
+    const SubState: SubmissionState = state.SubmissionReducer
+
+    return {
+        roles: UState.userInfo?.roles,
+        RejudgeAPI: SubState.TopSubmissionInfo?.RejudgeAPI,
+        InvalidateAPI: SubState.TopSubmissionInfo?.InvalidateAPI
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withTranslation()(Running))

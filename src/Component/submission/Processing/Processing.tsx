@@ -206,6 +206,7 @@ const Processing = (props: IProcessingProp & any) => {
                     RunningState={RunningState}
                     RunningResult={RunningResult}
                     submissionInfo={submissionInfo}
+                    refresh={getSubmissionInfo}
                 />
             )
         },
