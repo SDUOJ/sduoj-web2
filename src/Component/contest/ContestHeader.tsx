@@ -197,7 +197,7 @@ const ContestHeader = (props: any) => {
                                     <Divider type={"vertical"}/>
                                 </>
                             )}
-                            {props.allowSliderMove === true && (
+                            {props.allowSliderMove === true && selectedKey == "Rank" &&  (
                                 <>
                                     历史回放
                                     <Switch
@@ -210,7 +210,7 @@ const ContestHeader = (props: any) => {
                                 </>
                             )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
-                                timeState === "end" && (
+                                timeState === "end" && selectedKey == "Rank" && (
                                     <>
                                         赛后提交
                                         <Switch
