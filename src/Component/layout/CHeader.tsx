@@ -50,16 +50,17 @@ class CHeader extends Component<any, any> {
     render() {
         return (
             <Header className="site-layout-sub-header-background"
-                    style={{minWidth: 1300, position: 'fixed', zIndex: 1, width: '100%'}}>
-                <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
+                    style={{position: 'fixed', zIndex: 1, width: '100%', display: "flex", justifyContent: "space-between"}}>
+                <div className="logo" style={{flex: "125px 0 0", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
                     <img src={logo} style={{width: "125px", height: '30px'}}
                          alt={"SDUOJ-logo"}/>
                 </div>
-                <div style={{float: "left", width: "600px"}}>
+                <div style={{minWidth: 0, flex: "auto"}}>
                     <Menu
                         mode="horizontal"
                         theme={"light"}
                         selectedKeys={[this.state.selectedKey]}
+                        style={{}}
                     >
                         {
                             routerC_M.map((r, i) => {
@@ -73,12 +74,12 @@ class CHeader extends Component<any, any> {
                         }
                     </Menu>
                 </div>
-                <div style={{float: "right"}} key={"operator"}>
+                <div style={{flex: "0"}} key={"operator"}>
                     <Space size={30}>
-                        <Button type={"text"} onClick={()=>{
-                            this.props.history.replace("/home")
-                            window.location.reload()
-                        }}>返回老版</Button>
+                        {/*<Button type={"text"} onClick={()=>{*/}
+                        {/*    this.props.history.replace("/home")*/}
+                        {/*    window.location.reload()*/}
+                        {/*}}>返回老版</Button>*/}
                         <ChangeLang/>
                         {
                             [''].map(() => {
