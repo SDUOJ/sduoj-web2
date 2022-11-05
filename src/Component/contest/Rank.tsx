@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Col, Row, Space, Table, Typography} from "antd";
+import {Col, Modal, Row, Space, Table, Typography} from "antd";
 import {ContestState, setAllowSliderMove, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -9,6 +9,9 @@ import "Assert/css/ContestRank.css"
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import {ReactComponent as Champion} from "Assert/img/champion.svg"
 import Icon, {FileTextOutlined, TeamOutlined} from "@ant-design/icons";
+import Submit from "../submission/Submit";
+import ModalSubmissionList from "../submission/SubmissionList/ModalSubmissionList";
+import SubmissionList from "../submission/SubmissionList/SubmissionList";
 
 const Rank = (props: any) => {
     const contestId = props.match.params.contestId
@@ -18,6 +21,10 @@ const Rank = (props: any) => {
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
     const [SummaryInfo, setSummaryInfo] = useState<any>({})
     const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
+
+    const [ModalVis, setModalVis] = useState<boolean>(false);
+    const [sbl_user, setSbl_user] = useState<string>("");
+    const [sbl_pro, setSbl_pro] = useState<string>("");
 
 
     useEffect(() => {
@@ -225,7 +232,11 @@ const Rank = (props: any) => {
                     const SData = row.Cell[x.problemCode]
                     if (SData === undefined) return <></>
                     return (
-                        <div>
+                        <div onClick={()=>{
+                            setSbl_user(row.username)
+                            setSbl_pro(x.problemCode)
+                            setModalVis(true)
+                        }}>
                             {contestInfo.features.mode === "ioi" && (
                                 <span style={{
                                     fontWeight: "bold",
@@ -262,6 +273,31 @@ const Rank = (props: any) => {
 
     return (
         <>
+            <Modal
+                width={1250}
+                visible={ModalVis}
+                footer={false}
+                destroyOnClose={true}
+                onCancel={() => {
+                    setModalVis(false)
+                }}
+            >
+                <SubmissionList
+                    btnText={"记录-" + sbl_user + "-" + sbl_pro}
+                    name={"Contest-Rank-SubmissionList-" + sbl_user + "-" + sbl_pro}
+                    API={async (data: any)=>{
+                        return cApi.getContestSubmissionList({
+                            ...data,
+                            problemCode: sbl_pro,
+                            username: sbl_user,
+                            contestId: contestId
+                        })
+                    }}
+                    QuerySubmissionAPI={async (submissionId: string) => {
+                        return cApi.getContestSubmissionInfo({contestId: contestId, submissionId: submissionId})
+                    }}
+                />
+            </Modal>
             <Table
                 className={"RankTable"}
                 style={{width: tableWidth, minWidth: tableWidth}}
