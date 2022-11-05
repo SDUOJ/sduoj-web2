@@ -59,6 +59,7 @@ const Submit = (props: SubmitPropsType & any) => {
                 gb_hide && gb_hide()
             }).catch(() => {
                 gb_hide && gb_hide()
+                setSubmitDisable(false)
             })
         }).catch((err: any) => {
             gb_hide && gb_hide()
