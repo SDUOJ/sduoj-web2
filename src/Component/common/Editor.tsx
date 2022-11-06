@@ -189,7 +189,7 @@ const Editor = (props: EditorProps & any) => {
     }
 
     useEffect(() => {
-        console.log("props.langCode", props.langCode)
+        // console.log("props.langCode", props.langCode)
         if(!isValueEmpty(props.langCode))
             setEditor()
     }, [props.langCode])

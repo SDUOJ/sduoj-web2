@@ -17,9 +17,6 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
 
     useEffect(() => {
         let select: any[] = []
-
-        console.log()
-
         const find = (router:any)=>{
             for (let i = 0; i < router.length; i++) {
                 if (RegExp(router[i].path).exec(props.location.pathname) !== null) {

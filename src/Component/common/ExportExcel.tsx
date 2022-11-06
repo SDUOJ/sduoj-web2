@@ -84,7 +84,7 @@ class ExportExcel extends Component<IButtonText, any> {
                         this.props.getJson().then((json: any) => {
                             this.handleExportAllJson(json, this.props.fileName)
                         }).catch((e: any) => {
-                            console.log(e)
+                            // console.log(e)
                             message.error(e)
                         })
                     } else {

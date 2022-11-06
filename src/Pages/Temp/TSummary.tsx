@@ -80,7 +80,7 @@ const TSummary = (props: any) => {
                 ]
             }).then((value) => {
                 setData(value)
-                console.log(value)
+                // console.log(value)
             })
             getExam()
         }

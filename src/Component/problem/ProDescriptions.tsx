@@ -86,7 +86,7 @@ const ProDescriptions = (props: any) => {
                         },
                         {
                             title: "默认题面", dataIndex: "id", render: (text: any) => {
-                                console.log(text, defaultDescriptionId, text === defaultDescriptionId)
+                                // console.log(text, defaultDescriptionId, text === defaultDescriptionId)
                                 return (
                                     <Switch
                                         checked={text === defaultDescriptionId}

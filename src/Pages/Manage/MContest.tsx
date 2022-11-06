@@ -194,7 +194,7 @@ class MContest extends Component<any, any> {
                                 subForm={ProblemSubForm}
                                 formName={"ContestForm"}
                                 dataSubmitter={(value: any) => {
-                                    console.log(value)
+                                    // console.log(value)
                                     return mApi.createContest(beforeSubmit(value))
                                 }}
                             />

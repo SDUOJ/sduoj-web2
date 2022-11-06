@@ -55,7 +55,7 @@ const TableWithPagination = (props: any) => {
                 setSearchText(propsTableInfo.searchKey)
             moreProps = moreProps ?? propsTableInfo.moreProps
             if (propsTableInfo.moreProps !== undefined){
-                console.log(propsTableInfo.moreProps)
+                // console.log(propsTableInfo.moreProps)
                 form.setFieldsValue(propsTableInfo.moreProps)
             }
         }

@@ -61,7 +61,7 @@ const SubjectiveBase = (props: any) => {
                                     setAccept(res)
                                 }}
                                 eqs={(a: any, b: any) => {
-                                    console.log("a", a, "b", b)
+                                    // console.log("a", a, "b", b)
                                     return a === b
                                 }}
                             />
