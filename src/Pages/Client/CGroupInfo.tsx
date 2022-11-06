@@ -1,6 +1,6 @@
 import {withRouter} from "react-router-dom";
 import {Card, List, Tabs, Tag} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import cApi from "Utils/API/c-api"
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import Title from "antd/es/typography/Title";
@@ -10,6 +10,9 @@ import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
 import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
 import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
+import {connect} from "react-redux";
+import {SubmissionState} from "../../Type/ISubmission";
+import {CommonState} from "../../Redux/Action/common";
 
 
 const CGroupInfo = (props: any) => {
@@ -19,12 +22,16 @@ const CGroupInfo = (props: any) => {
     const [pageNow, setPageNow] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(24)
 
+    const [activeKey, setActiveKey] = useState<string>("Announcement")
 
     useEffect(() => {
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
             MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? "暂无" : value.markdown)
         })
+        const act = props.keyValueData["Group-C-activeKey-" + groupId]
+        if (act !== undefined)
+            setActiveKey(act)
     }, [])
 
     return (
@@ -60,13 +67,17 @@ const CGroupInfo = (props: any) => {
                             }
                             style={{marginTop: 25}}>
 
-                            <Tabs defaultActiveKey="Announcement">
+                            <Tabs activeKey={activeKey} onChange={(atk) => {
+                                setActiveKey(atk)
+                                props.setKeyValueData("Group-C-activeKey-" + groupId, atk)
+                            }}>
                                 <Tabs.TabPane tab="公告" key="Announcement">
                                     <div id={"AnnouncementMD"}>
                                     </div>
                                 </Tabs.TabPane>
                                 <Tabs.TabPane tab="比赛" key="contest">
                                     <ContestList
+                                        name={"GroupInfo-" + groupId + "-ContestList"}
                                         apiProp={{groupId: groupId}}
                                         useGroup={false}
                                     />
@@ -135,4 +146,22 @@ const CGroupInfo = (props: any) => {
     )
 }
 
-export default withRouter(CGroupInfo)
+const mapStateToProps = (state: any) => {
+    const State: CommonState = state.CommonReducer
+    return {
+        keyValueData: State.keyValueData
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    setKeyValueData: (key: string, value: any) => dispatch({
+        type: "setKeyValue",
+        key: key,
+        value: value
+    }),
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withRouter(CGroupInfo))

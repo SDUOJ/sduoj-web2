@@ -1,4 +1,4 @@
-import {Button, Card, Form, Space, Table} from "antd";
+import {Button, Card, Form, List, Space, Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import {defaultPageSize} from "../../../Config/constValue";
 import {UserState} from "../../../Type/Iuser";
@@ -35,6 +35,7 @@ const TableWithPagination = (props: any) => {
     const [PageNow, setPageNow] = useState<number>(1)               // 当前的页码数
     const [PageSize, setPageSize] = useState<number>(ck(props.defaultPageSize, defaultPageSize))         // 当前的页大小
     const [searchText, setSearchText] = useState<string | undefined>()        // 搜索的文本
+    const [formMoreProps, setFormMoreProps] = useState<string | undefined>(props.initRequestProps)        // 搜索的文本
     const [tableVersion, setTableVersion] = useState<number>(0)     // 表格版本（控制表格刷新）
 
     const setTableData = (data: any) => {
@@ -44,37 +45,63 @@ const TableWithPagination = (props: any) => {
             props.setDataSource(data, props.name)
     }
 
-    const getInfo = (pageNow: number, pageSize?: number, searchKey?: string, moreProps?: any) => {
-        let ps = pageSize === undefined ? PageSize : pageSize
-        setPageNow(pageNow)
+    const getInfo = (pageNow?: number, pageSize?: number, searchKey?: string, moreProps?: any) => {
+        const propsTableInfo = props.tableData[props.name]?.tableInfo
+        if (propsTableInfo !== undefined) {
+            pageNow = pageNow ?? propsTableInfo.pageNow
+            pageSize = pageSize ?? propsTableInfo.pageSize
+            searchKey = searchKey ?? propsTableInfo.searchKey
+            if (propsTableInfo.searchKey !== undefined)
+                setSearchText(propsTableInfo.searchKey)
+            moreProps = moreProps ?? propsTableInfo.moreProps
+            if (propsTableInfo.moreProps !== undefined){
+                console.log(propsTableInfo.moreProps)
+                form.setFieldsValue(propsTableInfo.moreProps)
+            }
+        }
+        let pn = pageNow ?? PageNow
+        let ps = pageSize ?? PageSize
+        let sk = searchKey ?? searchText
+        let fmp = moreProps ?? formMoreProps
+        setPageNow(pn)
         setPageSize(ps)
         setLoading(true)
         props.API({
-            pageNow: pageNow,
+            pageNow: pn,
             pageSize: ps,
-            searchKey: searchKey === undefined ? searchText : searchKey,
-            ...moreProps
+            searchKey: sk,
+            ...fmp
         }).then((data: any) => {
             // console.log("data", data)
             if (data.rows === null) data.rows = []
             if (props.APIRowsTransForm !== undefined) {
                 setTableData(props.APIRowsTransForm(data.rows))
             } else setTableData(data.rows)
-            if (data.totalNum !== undefined) {
+            if (data.totalNum !== undefined && data.totalNum !== "0") {
                 setTotal(data.totalNum)
-                if(props.name !== undefined)
-                    props.setTableInfo(props.name, {total: data.totalNum})
+                props.name && props.setTableInfo(props.name, {
+                    total: data.totalNum,
+                    pageNow: pn,
+                    pageSize: ps,
+                    searchKey: sk,
+                    moreProps: fmp
+                })
             } else {
                 setTotal(ps * data.totalPage);
-                if(props.name !== undefined)
-                    props.setTableInfo(props.name, {total: ps * data.totalPage})
+                props.name && props.setTableInfo(props.name, {
+                    total: ps * data.totalPage,
+                    pageNow: pn,
+                    pageSize: ps,
+                    searchKey: sk,
+                    moreProps: fmp
+                })
             }
             setLoading(false)
         })
     }
 
     useEffect(() => {
-        getInfo(PageNow, PageSize)
+        getInfo()
     }, [props.name])
 
     // 带有表单的筛选
@@ -94,9 +121,6 @@ const TableWithPagination = (props: any) => {
 
     };
 
-    // useEffect(() => {
-    //     getInfo(PageNow, PageSize)
-    // }, [])
 
     useEffect(() => {
         // 监听表格的版本变化，当版本变更时更新表格
@@ -116,66 +140,137 @@ const TableWithPagination = (props: any) => {
     }, [props.tableData, tableVersion])
 
     return (
-        <Card
-            bordered={false}
-            size={"small"}
-            extra={
-                (props.search === true || props.getForm !== undefined) && (
-                    <>
-                        {props.search === true && (
-                            <Search
-                                key={"search"}
-                                placeholder={"搜索"}
-                                onSearch={(text) => {
-                                    setSearchText(text)
-                                    setPageNow(1)
-                                    const values = form.getFieldsValue()
-                                    getInfo(1, PageSize, text, values)
-                                }}
-                                enterButton
-                                style={{width: 300}}
-                            />
-                        )}
-                        {props.getForm !== undefined && (
-                            <Form form={form}>
-                                {props.getForm(onFinish)}
-                                <Space style={{marginLeft: "30px"}} size={20}>
-                                    <Button type="primary" onClick={onFinish}>
-                                        筛选
-                                    </Button>
-                                    <Button htmlType="button" onClick={onReset}>
-                                        重置
-                                    </Button>
-                                </Space>
-                            </Form>
-                        )}
-                    </>
-                )
-            }
-        >
-            <Table
-                rowKey={props.rowKey}
-                loading={loading}
-                size={props.size}
-                columns={props.columns}
-                rowSelection={props.rowSelection}
-                dataSource={tableData}
-                pagination={{
-                    onChange: (page, pageSize)=>{
-                        const values = form.getFieldsValue()
-                        getInfo(page, pageSize, searchText, values)
-                    },
-                    current: PageNow,
-                    defaultPageSize: ck(props.defaultPageSize, defaultPageSize),
-                    total: total,
-                    hideOnSinglePage: true,
-                    showQuickJumper: true,
-                    showLessItems: true,
-                    showSizeChanger: ck(props.showSizeChanger, true),
-                    pageSizeOptions: ["5", "15", "20", "50", "80"],
-                }}
-            />
-        </Card>
+        <>
+            {props.useList && (
+                <Card
+                    title={props.title}
+                    bordered={false}
+                    size={"default"}
+                    className={props.cardProps ?? "zeroBodyPaddingLeft"}
+                    extra={
+                        (props.search === true || props.getForm !== undefined) && (
+                            <>
+                                {props.search === true && (
+                                    <Search
+                                        key={"search"}
+                                        placeholder={props.t("searchUser")}
+                                        onSearch={(text) => {
+                                            setSearchText(text)
+                                            setPageNow(1)
+                                            const values = form.getFieldsValue()
+                                            getInfo(1, PageSize, text, values)
+                                        }}
+                                        enterButton
+                                        style={{width: 300}}
+                                    />
+                                )}
+                                {props.getForm !== undefined && (
+                                    <Form form={form}>
+                                        {props.getForm(onFinish)}
+                                        {props.useFormBtn && (
+                                            <Space style={{marginLeft: "30px"}} size={20}>
+                                                <Button type="primary" onClick={onFinish}>
+                                                    筛选
+                                                </Button>
+                                                <Button htmlType="button" onClick={onReset}>
+                                                    重置
+                                                </Button>
+                                            </Space>
+                                        )}
+                                    </Form>
+                                )}
+                            </>
+                        )
+                    }
+                >
+                    <List
+                        grid={props.grid}
+                        itemLayout={"vertical"}
+                        loading={loading}
+                        size={props.size}
+                        dataSource={tableData}
+                        renderItem={props.renderItem}
+                        pagination={{
+                            onChange: (page, pageSize) => {
+                                const values = form.getFieldsValue()
+                                getInfo(page, pageSize, searchText, values)
+                            },
+                            current: PageNow,
+                            pageSize: PageSize,
+                            total: total,
+                            size: "small",
+                            hideOnSinglePage: true,
+                            showQuickJumper: true,
+                            showLessItems: true,
+                            showSizeChanger: ck(props.showSizeChanger, true),
+                            pageSizeOptions: ["5", "15", "20", "50", "80"],
+                        }}
+                    />
+                </Card>
+            )}
+            {!props.useList && (
+                <Card
+                    bordered={false}
+                    size={"small"}
+                    extra={
+                        (props.search === true || props.getForm !== undefined) && (
+                            <>
+                                {props.search === true && (
+                                    <Search
+                                        key={"search"}
+                                        placeholder={"搜索"}
+                                        onSearch={(text) => {
+                                            setSearchText(text)
+                                            setPageNow(1)
+                                            const values = form.getFieldsValue()
+                                            getInfo(1, PageSize, text, values)
+                                        }}
+                                        enterButton
+                                        style={{width: 300}}
+                                    />
+                                )}
+                                {props.getForm !== undefined && (
+                                    <Form form={form}>
+                                        {props.getForm(onFinish)}
+                                        <Space style={{marginLeft: "30px"}} size={20}>
+                                            <Button type="primary" onClick={onFinish}>
+                                                筛选
+                                            </Button>
+                                            <Button htmlType="button" onClick={onReset}>
+                                                重置
+                                            </Button>
+                                        </Space>
+                                    </Form>
+                                )}
+                            </>
+                        )
+                    }
+                >
+                    <Table
+                        rowKey={props.rowKey}
+                        loading={loading}
+                        size={props.size}
+                        columns={props.columns}
+                        rowSelection={props.rowSelection}
+                        dataSource={tableData}
+                        pagination={{
+                            onChange: (page, pageSize) => {
+                                const values = form.getFieldsValue()
+                                getInfo(page, pageSize, searchText, values)
+                            },
+                            current: PageNow,
+                            pageSize: PageSize,
+                            total: total,
+                            hideOnSinglePage: true,
+                            showQuickJumper: true,
+                            showLessItems: true,
+                            showSizeChanger: ck(props.showSizeChanger, true),
+                            pageSizeOptions: ["5", "15", "20", "50", "80"],
+                        }}
+                    />
+                </Card>
+            )}
+        </>
     )
 
 }
@@ -190,7 +285,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    setTableInfo: (name: string, data: any)=> dispatch({
+    setTableInfo: (name: string, data: any) => dispatch({
         type: "setTableInfo",
         name: name,
         data: data

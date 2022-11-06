@@ -81,6 +81,7 @@ class CProblem extends Component<any, any> {
                                     },
                                 ]}
                                 size={"small"}
+                                name={"C-ProblemList-Main"}
                             />
                         </Card>
                     </div>

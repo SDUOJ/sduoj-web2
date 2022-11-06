@@ -1,7 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import {Card, Form, Input, List, Select, Space, Tag, Typography} from "antd";
-import ListWithPagination from "../../Component/common/List/ListWithPagination";
 import cApi from "Utils/API/c-api"
 import {ClockCircleOutlined, UserOutlined} from "@ant-design/icons";
 import {unix2Date} from "../../Utils/Time";
@@ -10,6 +9,7 @@ import {isValueEmpty} from "../../Utils/empty";
 import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
 import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
 import {UrlPrefix} from "../../Config/constValue";
+import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 
 const CGroup = (props: any) => {
 
@@ -25,7 +25,8 @@ const CGroup = (props: any) => {
                     {/*    返回老版 Group*/}
                     {/*</Button>*/}
                     <div className={"GroupPage"}>
-                        <ListWithPagination
+                        <TableWithPagination
+                            useList={true}
                             cardProps={{}}
                             name={"GroupList"}
                             title={"用户组"}

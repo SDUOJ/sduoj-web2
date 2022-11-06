@@ -9,6 +9,7 @@ import {ManageReducer} from "../Reducer/manage";
 import {SubmissionReducer} from "../Reducer/submission";
 import {ContestReducer} from "../Reducer/contest";
 import {ProblemSetReducer} from "../Reducer/problemSet";
+import {CommonReducer} from "../Reducer/common";
 
 // 全局创建多个 reducer 在这里合并统一调度
 export const rootReducers =
@@ -21,5 +22,6 @@ export const rootReducers =
         ManageReducer,          // 管理端
         SubmissionReducer,
         ContestReducer,
-        ProblemSetReducer
+        ProblemSetReducer,
+        CommonReducer
     })

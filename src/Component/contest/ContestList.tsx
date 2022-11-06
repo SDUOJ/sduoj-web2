@@ -1,4 +1,3 @@
-import ListWithPagination from "../common/List/ListWithPagination";
 import cApi from "../../Utils/API/c-api";
 import {Divider, Form, List, Select, Space, Tag} from "antd";
 import moment from "moment";
@@ -7,6 +6,7 @@ import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import React, {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
 import {UrlPrefix} from "../../Config/constValue";
+import TableWithPagination from "../common/Table/TableWithPagination";
 
 const ContestList = (props: any) => {
     const [myGroup, setMyGroup] = useState<any>(undefined)
@@ -20,7 +20,8 @@ const ContestList = (props: any) => {
     return (
         <>
             <div className={"ListPage"}>
-                <ListWithPagination
+                <TableWithPagination
+                    useList={true}
                     title={"比赛列表"}
                     API={async (data: any) => {
                         return cApi.getContestList({...data, ...props.apiProp})
@@ -137,7 +138,7 @@ const ContestList = (props: any) => {
                             </List.Item>
                         )
                     }}
-                    name={"ContestList"}
+                    name={props.name ?? "ContestList"}
                 />
             </div>
         </>
