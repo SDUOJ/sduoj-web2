@@ -7,7 +7,8 @@ export type ContestAction =
     setAllowSliderMove |
     setSliderTime |
     setOpenSliderMove |
-    clearRedux
+    clearRedux |
+    setExportData
 
 export interface setMinWidth {
     type: "setMinWidth",
@@ -40,6 +41,10 @@ export interface setOpenSliderMove {
     data: boolean
 }
 
+export interface setExportData{
+    type: "setExportData"
+    data: any
+}
 
 export interface ContestState {
     contestInfo: { [key: string]: any }
@@ -48,4 +53,5 @@ export interface ContestState {
     allowSliderMove: boolean
     sliderTime: number
     openSliderMove: boolean
+    exportData: any
 }

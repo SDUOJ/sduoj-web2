@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Col, Modal, Row, Space, Table, Typography} from "antd";
-import {ContestState, setAllowSliderMove, setMinWidth} from "../../Redux/Action/contest";
+import {ContestState, setAllowSliderMove, setExportData, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import cApi from "Utils/API/c-api"
@@ -205,10 +205,54 @@ const Rank = (props: any) => {
 
             setSummaryInfo(summaryInfo)
             setData(afterSort)
+            props.setExportData(afterSort)
+
         }
     }, [rankInfo, props.afterContestSubmission, props.sliderTime])
 
-    const problemColumns = []
+    const problemColumns: any = [{
+        title: "排名",
+        dataIndex: "rank",
+        width: 80,
+        render: (text: any) => {
+            return <span className={"center"}> {text} </span>
+        }
+    }, {
+        title: "参赛人",
+        width: 150,
+        render: (text: any, row: any) => {
+            return (
+                <div style={{paddingLeft: 10, paddingRight: 10}}>
+                    <span style={{float: "left", marginTop: 10}}>
+                        {/*TODO::like*/}
+                    </span>
+                    <span style={{float: "right", textAlign: "right"}}>
+                        <div style={{fontWeight: "bold"}}>{row.username}</div>
+                        <div style={{color: "grey", fontSize: 12}}>{row.nickname}</div>
+                    </span>
+                </div>
+            )
+        }
+    }, {
+        title: "分数",
+        width: 100,
+        render: (text: any, row: any) => {
+            return (
+                <>
+                    {contestInfo.features.mode === "ioi" && (
+                        <span>{row.sumScore}</span>
+                    )}
+                    {contestInfo.features.mode === "acm" && (
+                        <Row>
+                            <Col span={12}><span
+                                style={{fontWeight: "bold"}}>{row.ACNumber}</span></Col>
+                            <Col span={11}><span>{Math.floor(row.penalty)}</span></Col>
+                        </Row>
+                    )}
+                </>
+            )
+        }
+    }]
     let tableWidth = 330
     const problemWidth = 70
 
@@ -218,8 +262,9 @@ const Rank = (props: any) => {
                 title: (
                     <div className={"ProHeader"}>
                         <div>
-                            <span
-                                style={{fontWeight: "bold"}}>{String.fromCharCode('A'.charCodeAt(0) + parseInt(x.problemCode) - 1)}</span>
+                            <span style={{fontWeight: "bold"}}>
+                                {String.fromCharCode('A'.charCodeAt(0) + parseInt(x.problemCode) - 1)}
+                            </span>
                             {/* TODO 气球颜色 */}
                         </div>
                         <div style={{color: "grey", fontSize: 12}}>
@@ -232,7 +277,7 @@ const Rank = (props: any) => {
                     const SData = row.Cell[x.problemCode]
                     if (SData === undefined) return <></>
                     return (
-                        <div onClick={()=>{
+                        <div onClick={() => {
                             setSbl_user(row.username)
                             setSbl_pro(x.problemCode)
                             setModalVis(true)
@@ -285,7 +330,7 @@ const Rank = (props: any) => {
                 <SubmissionList
                     btnText={"记录-" + sbl_user + "-" + sbl_pro}
                     name={"Contest-Rank-SubmissionList-" + sbl_user + "-" + sbl_pro}
-                    API={async (data: any)=>{
+                    API={async (data: any) => {
                         return cApi.getContestSubmissionList({
                             ...data,
                             problemCode: sbl_pro,
@@ -307,54 +352,7 @@ const Rank = (props: any) => {
                 rowClassName={(row, index) => {
                     return "rowBase"
                 }}
-                columns={[
-                    {
-                        title: "排名",
-                        dataIndex: "rank",
-                        width: 80,
-                        render: (text) => {
-                            return <span className={"center"}> {text} </span>
-                        }
-                    },
-                    {
-                        title: "参赛人",
-                        width: 150,
-                        render: (text, row) => {
-                            return (
-                                <div style={{paddingLeft: 10, paddingRight: 10}}>
-                                    <span style={{float: "left", marginTop: 10}}>
-                                        {/*TODO::like*/}
-                                    </span>
-                                    <span style={{float: "right", textAlign: "right"}}>
-                                        <div style={{fontWeight: "bold"}}>{row.username}</div>
-                                        <div style={{color: "grey", fontSize: 12}}>{row.nickname}</div>
-                                    </span>
-                                </div>
-                            )
-                        }
-                    },
-                    {
-                        title: "分数",
-                        width: 100,
-                        render: (text, row) => {
-                            return (
-                                <>
-                                    {contestInfo.features.mode === "ioi" && (
-                                        <span>{row.sumScore}</span>
-                                    )}
-                                    {contestInfo.features.mode === "acm" && (
-                                        <Row>
-                                            <Col span={12}><span
-                                                style={{fontWeight: "bold"}}>{row.ACNumber}</span></Col>
-                                            <Col span={11}><span>{Math.floor(row.penalty)}</span></Col>
-                                        </Row>
-                                    )}
-                                </>
-                            )
-                        }
-                    },
-                    ...problemColumns
-                ]}
+                columns={problemColumns}
                 summary={() => (
                     <Table.Summary>
                         <Table.Summary.Row className={"RankSummary"}>
@@ -428,6 +426,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     }),
     setAllowSliderMove: (data: boolean) => dispatch({
         type: "setAllowSliderMove", data: data
+    }),
+    setExportData: (data: any) => dispatch({
+        type: "setExportData", data: data
     })
 })
 

@@ -14,6 +14,8 @@ import {isValueEmpty} from "../../Utils/empty";
 import DTime from "../common/DTime";
 import judgeAuth from "../../Utils/judgeAhtu";
 import {UrlPrefix} from "../../Config/constValue";
+import ExportExcel from "../common/ExportExcel";
+import exportRank from "./exportRank";
 
 const ContestHeader = (props: any) => {
 
@@ -23,7 +25,6 @@ const ContestHeader = (props: any) => {
     const contestInfo = getContestInfo(contestId)
     const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
     const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
-
 
 
     // console.log(contestInfo)
@@ -62,8 +63,8 @@ const ContestHeader = (props: any) => {
     }, [url, openness, isPractice])
 
 
-    useEffect(()=>{
-        if(Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60){
+    useEffect(() => {
+        if (Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60) {
             props.setSliderTime(nowSliderTime)
         }
     }, [nowSliderTime, lastSliderTime, props.sliderTime])
@@ -159,10 +160,11 @@ const ContestHeader = (props: any) => {
                 </>
             )}
             <Row style={{backgroundColor: "white"}}>
-                <Col span={12}>
+                <Col span={10}>
                     <Menu
                         mode="horizontal"
                         theme={"light"}
+                        style={{border: 0}}
                         selectedKeys={[selectedKey]}
                     >
                         {menuData.map((value) => {
@@ -180,9 +182,8 @@ const ContestHeader = (props: any) => {
                             )
                         })}
                     </Menu>
-
                 </Col>
-                <Col span={12}>
+                <Col span={14}>
                     {contestInfo !== undefined && (
                         <Space size={10} style={{
                             marginTop: "12px",
@@ -197,7 +198,7 @@ const ContestHeader = (props: any) => {
                                     <Divider type={"vertical"}/>
                                 </>
                             )}
-                            {props.allowSliderMove === true && selectedKey == "Rank" &&  (
+                            {props.allowSliderMove === true && selectedKey == "Rank" && (
                                 <>
                                     历史回放
                                     <Switch
@@ -222,7 +223,19 @@ const ContestHeader = (props: any) => {
                                         <Divider type={"vertical"}/>
                                     </>
                                 )}
-
+                            {judgeAuth(props.roles, ["admin", "superadmin"]) &&
+                                selectedKey == "Rank" && (
+                                    <>
+                                        <ExportExcel
+                                            ButtonProps={{size: "small"}}
+                                            ButtonText={"导出"}
+                                            ButtonType={"link"}
+                                            getJson={() => exportRank(props.exportData)}
+                                            fileName={contestInfo.contestTitle + "_" + Date.now() + "_结果导出"}
+                                        />
+                                        <Divider type={"vertical"}/>
+                                    </>
+                                )}
                             {contestInfo.features.mode === "acm" && (
                                 <span style={{
                                     backgroundColor: "#3676b6",
@@ -268,7 +281,8 @@ const mapStateToProps = (state: any) => {
         afterContestSubmission: CState.afterContestSubmission,
         allowSliderMove: CState.allowSliderMove,
         sliderTime: CState.sliderTime,
-        openSliderMove: CState.openSliderMove
+        openSliderMove: CState.openSliderMove,
+        exportData: CState.exportData
     }
 }
 

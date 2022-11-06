@@ -6,7 +6,8 @@ const initState: ContestState = {
     afterContestSubmission: false,
     sliderTime: 0,
     allowSliderMove: false,
-    openSliderMove: false
+    openSliderMove: false,
+    exportData: []
 }
 
 export const ContestReducer = (state: ContestState = initState, action: ContestAction) => {
@@ -14,6 +15,10 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
     switch (action.type){
         case "setContestInfo":
             State.contestInfo[action.key] = action.data
+            break
+
+        case "setExportData":
+            State.exportData = action.data
             break
 
         case "setMinWidth":
