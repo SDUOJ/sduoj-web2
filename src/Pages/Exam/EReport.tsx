@@ -194,6 +194,7 @@ const EReport = (props: any) => {
                                 const eid = topInfo[0], gid = topInfo[1], pid = topInfo[2]
                                 return (
                                     <ProProgram
+                                        showMdExport={false}
                                         nameWithD={`EXAM_${eid}_${gid}_${pid}`}
                                         name={`EXAM_${eid}_${gid}_${pid}`}
                                         GetProblemInfoAPI={eApi.getProInfo({

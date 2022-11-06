@@ -11,6 +11,7 @@ import {connect} from "react-redux";
 import {UserState} from "../../../Type/Iuser";
 import {isValueEmpty} from "../../../Utils/empty";
 import {TableState} from "../../../Type/ITable";
+import MD2export from "../../common/Md2export";
 
 interface ProProgramProps {
     // problemTitle: string       // 题目标题
@@ -38,6 +39,7 @@ interface ProProgramProps {
     enableLeftSubmitCount?: boolean
 
     ProblemInfo: any // 题目信息
+    showMdExport: boolean
 }
 
 export const getJudgeStr = (judgeTemplates: JudgeTemplateAllType[]) => {
@@ -53,11 +55,13 @@ export const getJudgeStr = (judgeTemplates: JudgeTemplateAllType[]) => {
 
 const ProProgram = (props: ProProgramProps & WithTranslation) => {
 
+    const [markdownDescription, setMarkdownDescription] = useState()
     const problemInfo = props.ProblemInfo[props.nameWithD]
 
     useEffect(() => {
         if (problemInfo !== undefined && problemInfo.problemDescriptionDTO !== null) {
             MarkdownPreview("problem-content", problemInfo.problemDescriptionDTO.markdownDescription)
+            setMarkdownDescription(problemInfo.problemDescriptionDTO.markdownDescription)
         }
     }, [problemInfo])
 
@@ -163,9 +167,6 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
         </div>
     )
 
-
-    // console.log(problemInfo)
-
     const testCase = problemInfo?.problemCaseDTOList
     return (
         <div className={"Problem-Program"}>
@@ -201,6 +202,9 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             {ProgramHeader}
             {/*题目主干*/}
             <Card bordered={false} className={"problemBody"}>
+                <div style={{right: "24px", position: "absolute"}}>
+                    <><MD2export value={markdownDescription}/></>
+                </div>
                 <div id={"problem-content"} style={{overflow: "hidden"}}>
                 </div>
             </Card>

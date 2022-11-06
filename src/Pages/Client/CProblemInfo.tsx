@@ -51,6 +51,7 @@ const CProblemInfo = (props: any) => {
                         <Col span={17}>
                             <Card size={"small"}>
                                 <ProProgram
+                                    showMdExport={true}
                                     name={problemCode}
                                     nameWithD={nameWithD}
                                     GetProblemInfoAPI={GetProblemInfoAPI}

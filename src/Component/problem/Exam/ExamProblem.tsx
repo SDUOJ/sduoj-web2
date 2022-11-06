@@ -83,6 +83,7 @@ const ExamProblem = (props: any) => {
                     case "Program":
                         return (
                             <ProProgram
+                                showMdExport={false}
                                 nameWithD={`EXAM_${eid}_${gid}_${pid}`}
                                 name={`EXAM_${eid}_${gid}_${pid}`}
                                 GetProblemInfoAPI={GetProblemInfoAPI}
