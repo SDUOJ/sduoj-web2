@@ -35,12 +35,14 @@ const Submit = (props: SubmitPropsType & any) => {
     const [judgeTemplateId, setJudgeTemplateId] = useState<number | undefined>()
     const [zipFileId, setZipFileId] = useState<string | undefined>()
 
-    useEffect(()=>{
+    useEffect(() => {
         const value: any = localStorage.getItem("SDUOJ-Last-Submit-JT");
-        if(!isValueEmpty(value) && props.JudgeTemplates !== undefined){
-            form.setFieldValue("JudgeTemplate", value)
+        if (!isValueEmpty(value) && props.JudgeTemplates !== undefined) {
             const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
-            setJudgeTemplateId(id)
+            if(id !== -1){
+                form.setFieldValue("JudgeTemplate", value)
+                setJudgeTemplateId(id)
+            }
         }
     }, [props.JudgeTemplates])
 
@@ -179,7 +181,7 @@ const Submit = (props: SubmitPropsType & any) => {
                     {
                         [''].map(() => {
                             const jtId = judgeTemplateId
-                            if (jtId !== undefined && props.JudgeTemplates !== undefined) {
+                            if (jtId !== undefined && props.JudgeTemplates !== undefined && props.JudgeTemplates[jtId] !== undefined) {
                                 let accept = "", num = 0
                                 for (const x of props.JudgeTemplates[jtId].acceptFileExtensions) {
                                     if (num !== 0) accept += ','
