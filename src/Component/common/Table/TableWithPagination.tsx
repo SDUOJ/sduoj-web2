@@ -35,7 +35,6 @@ const TableWithPagination = (props: any) => {
     const [PageNow, setPageNow] = useState<number>(1)               // 当前的页码数
     const [PageSize, setPageSize] = useState<number>(ck(props.defaultPageSize, defaultPageSize))         // 当前的页大小
     const [searchText, setSearchText] = useState<string | undefined>()        // 搜索的文本
-    const [formMoreProps, setFormMoreProps] = useState<string | undefined>(props.initRequestProps)        // 搜索的文本
     const [tableVersion, setTableVersion] = useState<number>(0)     // 表格版本（控制表格刷新）
 
     const setTableData = (data: any) => {
@@ -51,20 +50,18 @@ const TableWithPagination = (props: any) => {
             pageNow = pageNow ?? propsTableInfo.pageNow
             pageSize = pageSize ?? propsTableInfo.pageSize
             searchKey = searchKey ?? propsTableInfo.searchKey
-            if (propsTableInfo.searchKey !== undefined)
-                setSearchText(propsTableInfo.searchKey)
             moreProps = moreProps ?? propsTableInfo.moreProps
             if (propsTableInfo.moreProps !== undefined){
-                // console.log(propsTableInfo.moreProps)
                 form.setFieldsValue(propsTableInfo.moreProps)
             }
         }
         let pn = pageNow ?? PageNow
         let ps = pageSize ?? PageSize
         let sk = searchKey ?? searchText
-        let fmp = moreProps ?? formMoreProps
+        let fmp = moreProps ?? form.getFieldsValue()
         setPageNow(pn)
         setPageSize(ps)
+        setSearchText(sk)
         setLoading(true)
         props.API({
             pageNow: pn,
@@ -101,6 +98,7 @@ const TableWithPagination = (props: any) => {
     }
 
     useEffect(() => {
+        form.setFieldsValue(props.initRequestProps)
         getInfo()
     }, [props.name])
 
@@ -192,8 +190,7 @@ const TableWithPagination = (props: any) => {
                         renderItem={props.renderItem}
                         pagination={{
                             onChange: (page, pageSize) => {
-                                const values = form.getFieldsValue()
-                                getInfo(page, pageSize, searchText, values)
+                                getInfo(page, pageSize)
                             },
                             current: PageNow,
                             pageSize: PageSize,
@@ -222,8 +219,7 @@ const TableWithPagination = (props: any) => {
                                         onSearch={(text) => {
                                             setSearchText(text)
                                             setPageNow(1)
-                                            const values = form.getFieldsValue()
-                                            getInfo(1, PageSize, text, values)
+                                            getInfo(1, PageSize, text)
                                         }}
                                         enterButton
                                         style={{width: 300}}
@@ -255,8 +251,7 @@ const TableWithPagination = (props: any) => {
                         dataSource={tableData}
                         pagination={{
                             onChange: (page, pageSize) => {
-                                const values = form.getFieldsValue()
-                                getInfo(page, pageSize, searchText, values)
+                                getInfo(page, pageSize)
                             },
                             current: PageNow,
                             pageSize: PageSize,
