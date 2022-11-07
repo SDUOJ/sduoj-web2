@@ -32,19 +32,15 @@ const Login = (props: any) => {
                 }
                 submitter={{
                     resetButtonProps: false,
-                    submitButtonProps: {block: true},
-                    searchConfig: {
-                        submitText: props.t("Login")
-                    },
                     render: (prop, def) => {
-                        if (loginType !== 'SDUCAS') return def
+                        if (loginType !== 'SDUCAS')
+                            return <Button type={"primary"} block onClick={()=>{
+                                formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
+                                    props.login(value)
+                                })}
+                            }> {props.t("Login")} </Button>
                         return <ThirdPartyLoginSDUCAS/>
                     },
-                    onSubmit: () => {
-                        formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
-                            props.login(value)
-                        })
-                    }
                 }}
             >
                 <Tabs activeKey={loginType} onChange={(activeKey) => setLoginType(activeKey as LoginType)}>
