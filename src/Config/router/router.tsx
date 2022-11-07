@@ -22,6 +22,7 @@ const routerCLayoutData: any = [
     ["problem", false],
     ["contest", false],
     ["problemSet", false],
+    ["ide", true],
     ["submission", false],
     ["group", false],
     // 用户信息页面
@@ -96,6 +97,12 @@ export const routerLayout: IBaseRouter[] = [
         exact: false,
         component: lazy(() => import('../../Pages/Client/CReview'))
     },
+    {
+        id: 17,
+        path: UrlPrefix + "/ide/:type/:id",
+        exact: false,
+        component: lazy(() => import('../../Pages/Client/CIDE'))
+    }
 ]
 
 
