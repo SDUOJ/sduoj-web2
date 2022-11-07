@@ -73,7 +73,8 @@ const ContestHeader = (props: any) => {
         <>
             {contestInfo !== undefined && (
                 <>
-                    {!isValueEmpty(contestInfo.markdownDescription.trim()) && (
+                    {!isValueEmpty(contestInfo.markdownDescription)
+                        && !isValueEmpty(contestInfo.markdownDescription.trim()) && (
                         <Alert
                             message={
                                 <div id={"contest-markdownDescription"}>
