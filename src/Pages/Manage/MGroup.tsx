@@ -1,17 +1,19 @@
-import React, {Component, Dispatch} from "react";
+import React, {Component, Dispatch, useState} from "react";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
-import {Button, Card} from "antd";
-import TableWithSelection from "../../Component/common/Table/TableWithSelection";
+import {Card, Space} from "antd";
 import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import {unix2Time} from "../../Utils/Time";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 
+import mApi from "../../Utils/API/m-api";
+import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
+import GroupFormProfile from "../../Component/group/Form/Item/GroupFormProfile";
+import GroupMember from "../../Component/group/GroupMember";
 
 class MGroup extends Component<any, any> {
-
 
     render() {
 
@@ -53,19 +55,9 @@ class MGroup extends Component<any, any> {
             },
             {
                 title: "开放性",
-                dataIndex:"openness",
+                dataIndex: "openness",
                 width: "auto",
                 responsive: ["lg"],
-                render: (text: any) => {
-                    switch (text) {
-                        case 0:
-                            return "公开"
-                        case 1:
-                            return "申请"
-                        case 2:
-                            return "私有"
-                    }
-                }
             },
             {
                 title: "成员数量",
@@ -76,11 +68,39 @@ class MGroup extends Component<any, any> {
             {
                 title: this.props.t("operator"),
                 width: "150px",
-                render: () => {
+                render: (text: any, rows: any) => {
                     return (
-                        <>
-                            <Button type={"link"}>{this.props.t("Edit")}</Button>
-                        </>
+                        <Space>
+                            <ModalFormUseForm
+                                TableName={"GroupList"}
+                                width={1200}
+                                title={rows.title}
+                                type={"update"}
+                                subForm={[
+                                    {component: <GroupFormProfile/>}
+                                ]}
+                                initData={rows}
+                                updateAppendProps={{groupId: rows.groupId}}
+                                dataSubmitter={(value: any) => {
+                                    return mApi.updateGroup(value)
+                                }}
+                            />
+                            <GroupMember
+                                btnName={"成员管理"}
+                                btnType={"link"}
+                                width={1200}
+                                title={"Members in " + rows.title + "(Group ID:" + rows.groupId + ")"}
+                                initData={rows}
+                                groupId={rows.groupId}
+                            />
+                            {/*删除组*/}
+                            {/*<TableRowDeleteButton*/}
+                            {/*    type={"inline"}*/}
+                            {/*    API={MApi.deleteGroup}*/}
+                            {/*    data={{groupId: rows.groupId}}*/}
+                            {/*    name={"GroupList"}*/}
+                            {/*/>*/}
+                        </Space>
                     )
                 }
             }
@@ -93,9 +113,20 @@ class MGroup extends Component<any, any> {
                     bordered={false}
                     title={"用户组列表"}
                     extra={
-                        <>
-
-                        </>
+                        <Space>
+                            <ModalFormUseForm
+                                TableName={"GroupList"}
+                                width={1200}
+                                title={"新建用户组"}
+                                type={"create"}
+                                subForm={[
+                                    {component: <GroupFormProfile/>}
+                                ]}
+                                dataSubmitter={(value: any) => {
+                                    return mApi.createGroup(value)
+                                }}
+                            />
+                        </Space>
                     }
                 >
                     <TableWithPagination

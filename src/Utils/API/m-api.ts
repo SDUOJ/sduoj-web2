@@ -196,7 +196,7 @@ export default {
     createGroup: async function (data: groupInfo) {
         return request.post('/manage/group/create', data);
     },
-    updateGroup: async function (data: groupInfo) {
+    updateGroup: async function (data: any) {
         return request.post('/manage/group/update', data);
     },
     getGroupDetail: async function (params: { groupId: number }) {

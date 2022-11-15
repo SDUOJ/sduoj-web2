@@ -8,6 +8,7 @@ const ItemTop = (props: any) => {
             <Form.Item
                 name={"top"}
                 label={props.t("IsTop")}
+                initialValue={false}
                 valuePropName="checked"
                 rules={[{required: true}]}
             >
