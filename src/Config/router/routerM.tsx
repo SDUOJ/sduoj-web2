@@ -144,14 +144,14 @@ export const routerM: IRouter[] = [
         icon: <UsergroupAddOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MGroup'))
     },
-    {
-        id: 5,
-        path: UrlPrefix + "/manage/exam",
-        title_i18n: "exam",
-        exact: true,
-        icon: <ReadOutlined/>,
-        component: lazy(() => import('../../Pages/Manage/MExam'))
-    },
+    // {
+    //     id: 5,
+    //     path: UrlPrefix + "/manage/exam",
+    //     title_i18n: "exam",
+    //     exact: true,
+    //     icon: <ReadOutlined/>,
+    //     component: lazy(() => import('../../Pages/Manage/MExam'))
+    // },
     {
         id: 7,
         path: UrlPrefix + "/manage/announcement",
