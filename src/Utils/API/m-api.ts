@@ -189,8 +189,8 @@ export default {
     //     return request.get('/filesys/queryByMd5', {md5});
     // },
     // 以zip包下载多个文件
-    zipDownload: async function (data: any) {
-        return request.getZipFile("/filesys/zipDownload", data)
+    zipDownload: async function (data: any, filename?: string) {
+        return request.getZipFile("/filesys/zipDownload", data, {}, filename)
     },
     /* ************ group ****************** */
     createGroup: async function (data: groupInfo) {

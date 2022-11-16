@@ -38,7 +38,7 @@ const ProDescriptions = (props: any) => {
                 onCancel={() => setVis(false)}
                 visible={vis}
                 destroyOnClose={true}
-                width={1050}
+                width={1200}
                 footer={
                     <>
                         <ModalFormUseForm

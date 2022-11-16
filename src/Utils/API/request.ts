@@ -35,7 +35,7 @@ const getTime: Get | GetError = async (url: string) => {
     }
 }
 
-const getZipFile: any = async (url: string, data: object, config?: AxiosRequestConfig) => {
+const getZipFile: any = async (url: string, data: object, config?: AxiosRequestConfig, filename?:string) => {
     const response = await service.post(url, data, {
         ...config, responseType: 'blob'
     });
@@ -44,7 +44,7 @@ const getZipFile: any = async (url: string, data: object, config?: AxiosRequestC
         let Url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = Url
-        link.download = `${Date.now()}-TestCase.zip`
+        link.download = filename ?? `${Date.now()}-TestCase.zip`
         link.click()
         URL.revokeObjectURL(Url)
     } catch (e) {

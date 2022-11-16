@@ -8,7 +8,7 @@ const ItemText = (props: any) => {
             <Form.Item
                 label={props.label}
                 name={props.name}
-                rules={[{required: props.required ?? true}]}
+                required={props.required ?? true}
                 initialValue={props.initialValue}
                 help={props.help}
             >

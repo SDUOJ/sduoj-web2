@@ -31,6 +31,7 @@ const routerCLayoutData: any = [
     ["thirdPartyLogin", true],
     ["resetpass", true],
     ["test", false],
+    ["hws", false],
 ]
 let routerCLayout: IBaseRouter[] = []
 let num = 100;

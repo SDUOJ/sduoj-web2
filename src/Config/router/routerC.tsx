@@ -86,7 +86,19 @@ export const routerC: IBaseRouter[] = [
         path: UrlPrefix + "/problemSet/:problemSetId",
         exact: false,
         component: lazy(() => import('../../Pages/Client/ProblemSet/Info'))
-    }
+    },
+    {
+        id: 7359,
+        path: UrlPrefix + "/hws",
+        exact: true,
+        component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
+    },
+    {
+        id: 7360,
+        path: UrlPrefix + "/hws/:cid",
+        exact: true,
+        component: lazy(() => import('../../Pages/Ext/Ext-HwsInfo'))
+    },
 ]
 
 export const routerC_Contest_M: IRouter[] = [
@@ -190,9 +202,9 @@ export const routerC_M: IRouter[] = [
     },
     {
         id: 6,
-        path: UrlPrefix + "/exam/list",
-        title_i18n: "Exam System",
+        path: UrlPrefix + "/hws",
+        title_i18n: "文件提交",
         exact: true,
-        component: <></>
+        component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
     },
 ]
