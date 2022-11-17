@@ -368,7 +368,7 @@ const ExtHwsInfo = (props: any) => {
                                         size={"small"}
                                     />
                                     <Title level={4} style={{marginTop: 24}}> 预设提交列表 </Title>
-                                    <TableWithAllData
+                                    <TableWithPagination
                                         name={"Ext-hwsHomeworkList-pre"}
                                         columns={colDataPre}
                                         API={(data: any) => {
