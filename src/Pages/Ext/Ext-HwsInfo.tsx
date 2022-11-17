@@ -46,17 +46,14 @@ const ExtHwsInfo = (props: any) => {
             <ItemEditor name={"description"} label={"收集描述"}/>
         </>
     )
-
-    const update = () => {
-        extApi.getCourseInfo({cid: cid}).then((res) => {
-            setData(res)
-        })
-    }
+    
 
     useEffect(() => {
         if (data === null)
-            update()
-    })
+            extApi.getCourseInfo({cid: cid}).then((res) => {
+                setData(res)
+            })
+    }, [cid, data, setData])
 
 
     let colData: any[] = [
