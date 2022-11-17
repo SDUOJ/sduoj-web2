@@ -26,7 +26,6 @@ import ItemUploadFileMulti from "../../Component/ExtHws/ItemUploadFileMulti";
 import MoveModal from "../../Component/ExtHws/MoveModal";
 
 
-
 const ExtHwsInfo = (props: any) => {
     const cid = props.match.params.cid
     const [data, setData] = useState<any>(null)
@@ -215,40 +214,6 @@ const ExtHwsInfo = (props: any) => {
         }
     ]
 
-    if (judgeAuth(props.roles, ["admin"])) {
-        colData.push({
-            title: "管理员操作",
-            width: "150px",
-            render: (text: any, rows: any) => {
-                return (
-                    <Space size={3}>
-                        <ModalFormUseForm
-                            TableName={"Ext-hwsHomeworkList"}
-                            width={1200}
-                            title={"编辑(" + rows.name + ")"}
-                            type={"update"}
-                            subForm={[{component: form, label: ""}]}
-                            formName={"Ext-hwsCourseList-Form"}
-                            updateAppendProps={{hid: rows.hid}}
-                            initData={rows}
-                            dataSubmitter={(value: any) => {
-                                value.submit_type = value.submit_type.toString()
-                                value.cid = cid
-                                return extApi.editHomework(value)
-                            }}
-                        />
-                        <SubmitInfo
-                            groupId={data?.groupId} hid={rows.hid} deadline={rows.deadline}
-                            filename={rows.name + "_打包下载_" + Date.now().toString()}
-                        />
-                    </Space>
-
-                )
-            }
-        })
-    }
-
-
     const colDataPre: any = [
         {
             title: "ID",
@@ -289,6 +254,63 @@ const ExtHwsInfo = (props: any) => {
 
         }
     ]
+
+    if (judgeAuth(props.roles, ["admin"])) {
+        colData.push({
+            title: "管理员操作",
+            width: "150px",
+            render: (text: any, rows: any) => {
+                return (
+                    <Space size={3}>
+                        <ModalFormUseForm
+                            TableName={"Ext-hwsHomeworkList"}
+                            width={1200}
+                            title={"编辑(" + rows.name + ")"}
+                            type={"update"}
+                            subForm={[{component: form, label: ""}]}
+                            formName={"Ext-hwsCourseList-Form"}
+                            updateAppendProps={{hid: rows.hid}}
+                            initData={rows}
+                            dataSubmitter={(value: any) => {
+                                value.submit_type = value.submit_type.toString()
+                                value.cid = cid
+                                return extApi.editHomework(value)
+                            }}
+                        />
+                        <SubmitInfo
+                            groupId={data?.groupId} hid={rows.hid} deadline={rows.deadline}
+                            filename={rows.name + "_打包下载_" + Date.now().toString()}
+                        />
+                    </Space>
+
+                )
+            }
+        })
+        colDataPre.push({
+            title: "管理员操作",
+            width: "150px",
+            render: (text: any, rows: any) => {
+                return (
+                    <Space size={3}>
+                        <Reconfirm
+                            btnProps={{type: "link", size: "small"}}
+                            btnText={"删除"}
+                            confirm={props.username}
+                            API={() => {
+                                extApi.hwCancelSubmit({sid: rows.sid}).then((res) => {
+                                    message.success("删除成功")
+                                    props.addTableVersion("Ext-hwsHomeworkList-pre")
+                                })
+                            }}
+                            todo={`删除提交 ${rows.file_name} `}
+                        />
+                    </Space>
+
+                )
+            }
+        })
+    }
+
 
     return (
         <>

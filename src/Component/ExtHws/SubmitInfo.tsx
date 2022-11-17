@@ -41,7 +41,7 @@ const SubmitInfo = (props: any) => {
                 sbi[x["username"]] = x
                 down.push({
                     id: x["file_id"],
-                    downloadFilename: x["file_name"]
+                    downloadFilename: x["username"] + "." + x["real_name"] + '.' + x["create_time"] + "." + x['file_name']
                 })
             }
             setDownload(down)
