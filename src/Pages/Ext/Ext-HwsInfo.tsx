@@ -24,6 +24,7 @@ import ItemUploadUser from "../../Component/common/Form/Item/ItemUploadUser";
 import TableWithAllData from "../../Component/common/Table/TableWithAllData";
 import ItemUploadFileMulti from "../../Component/ExtHws/ItemUploadFileMulti";
 import MoveModal from "../../Component/ExtHws/MoveModal";
+import {brotliCompress} from "zlib";
 
 
 const ExtHwsInfo = (props: any) => {
@@ -105,7 +106,11 @@ const ExtHwsInfo = (props: any) => {
             width: "auto",
             responsive: ["lg", "sm"],
             render: (text: string) => {
-                return TimeDiff(Date.now(), parseInt(text)).split("分")[0] + "分"
+                if(Date.now() <= parseInt(text)){
+                    return TimeDiff(Date.now(), parseInt(text)).split("分")[0] + "分"
+                } else{
+                    return "已结束"
+                }
             }
         },
         {

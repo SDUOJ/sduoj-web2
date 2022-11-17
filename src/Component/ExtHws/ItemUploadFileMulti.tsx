@@ -31,6 +31,9 @@ const UploadPro = (props: any) => {
 
     const cb = (res: any) => {
         let nm: any = res.name.split(".")
+        for(let i = 4; i < nm.length; i ++){
+            nm[3] += "." + nm[i]
+        }
         data.push({
             file_id: res.id,
             username: nm[0],
