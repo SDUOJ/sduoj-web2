@@ -70,7 +70,7 @@ const SubmitInfo = (props: any) => {
                 }}
                 footer={
                     <Space size={24}>
-                        <PackageDownload deadline={props.deadline} submitInfo={submitInfo}/>
+                        <PackageDownload deadline={props.deadline} submitInfo={submitInfo} filename={props.filename}/>
                         <Button onClick={() => setVis(false)}> 取消 </Button>
                     </Space>
                 }

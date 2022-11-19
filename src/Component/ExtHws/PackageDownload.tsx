@@ -7,7 +7,7 @@ import {unix2Time} from "../../Utils/Time";
 const PackageDownload = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
     const [download, setDownload] = useState<any>(null)
-    const [ban, setBan] = useState<any>(null)
+    const [ban, setBan] = useState<any>(false)
 
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -62,7 +62,6 @@ const PackageDownload = (props: any) => {
             setDownload(down)
         } else {
             setDownload(null)
-            setBan(null)
         }
     }, [targetKeys, splitChar])
 
@@ -90,7 +89,7 @@ const PackageDownload = (props: any) => {
                 footer={
                     <>
                         <Button type={"primary"} icon={ban ? <LoadingOutlined/> : <DownloadOutlined/>}
-                                disabled={download === null}
+                                disabled={download === null || ban}
                                 onClick={() => {
                                     setBan(true)
                                     mApi.zipDownload(download, props.filename).then(() => {
