@@ -300,7 +300,7 @@ const ExtHwsInfo = (props: any) => {
                             btnText={"删除"}
                             confirm={props.username}
                             API={() => {
-                                extApi.hwCancelSubmit({sid: rows.sid}).then((res) => {
+                                extApi.hwDeleteSubmit({sid: rows.sid}).then((res) => {
                                     message.success("删除成功")
                                     props.addTableVersion("Ext-hwsHomeworkList-pre")
                                 })
@@ -393,7 +393,7 @@ const ExtHwsInfo = (props: any) => {
                                         }}
                                         size={"small"}
                                     />
-                                    <Title level={4} style={{marginTop: 24}}> 预设提交列表 </Title>
+                                    <Title level={4} style={{marginTop: 24}}> 历史提交列表 </Title>
                                     <TableWithPagination
                                         name={"Ext-hwsHomeworkList-pre"}
                                         columns={colDataPre}

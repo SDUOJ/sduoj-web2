@@ -46,6 +46,9 @@ export default {
     hwCancelSubmit: async (data: any) => {
         return request.post('/hws/submit/cancel', data);
     },
+    hwDeleteSubmit: async (data: any) => {
+        return request.post('/hws/submit/delete', data);
+    },
     hwSubmitMove: async (data: any) =>{
         return request.post('/hws/submit/move', data);
     }
