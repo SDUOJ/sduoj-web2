@@ -1,7 +1,7 @@
 import React, {Component, Dispatch, useState} from "react";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
-import {Card, Space} from "antd";
+import {Card, Radio, Space} from "antd";
 import MApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
@@ -58,34 +58,37 @@ class MGroup extends Component<any, any> {
                 dataIndex: "openness",
                 width: "auto",
                 responsive: ["lg"],
-            },
-            {
-                title: "成员数量",
-                width: "auto",
-                dataIndex: "memberNum",
-                responsive: ["lg"]
-            },
-            {
-                title: this.props.t("operator"),
-                width: "150px",
-                render: (text: any, rows: any) => {
-                    return (
-                        <Space>
-                            <ModalFormUseForm
+                render: (text: any, row: any) => {
+                                return ["公开", "申请", "私有"][text]
+                            }
+                            },
+                            {
+                                title: "成员数量",
+                                width: "auto",
+                                dataIndex: "memberNum",
+                                responsive: ["lg"]
+                            },
+                            {
+                                title: this.props.t("operator"),
+                                width: "150px",
+                                render: (text: any, rows: any) => {
+                                return (
+                                <Space>
+                                <ModalFormUseForm
                                 TableName={"GroupList"}
                                 width={1200}
                                 title={rows.title}
                                 type={"update"}
                                 subForm={[
-                                    {component: <GroupFormProfile/>}
+                            {component: <GroupFormProfile/>}
                                 ]}
                                 initData={rows}
                                 updateAppendProps={{groupId: rows.groupId}}
                                 dataSubmitter={(value: any) => {
-                                    return mApi.updateGroup(value)
-                                }}
-                            />
-                            <GroupMember
+                                return mApi.updateGroup(value)
+                            }}
+                                />
+                                <GroupMember
                                 btnName={"成员管理"}
                                 btnType={"link"}
                                 width={1200}
@@ -120,7 +123,7 @@ class MGroup extends Component<any, any> {
                                 title={"新建用户组"}
                                 type={"create"}
                                 subForm={[
-                                    {component: <GroupFormProfile/>}
+                                    {component: <GroupFormProfile/>, label: ""}
                                 ]}
                                 dataSubmitter={(value: any) => {
                                     return mApi.createGroup(value)

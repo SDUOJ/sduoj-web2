@@ -1,8 +1,8 @@
 export default function apiAddress() {
     // const port = "9005"
-    // const port = "8080"
+    const port = "8080"
     //jym的测试端口
-    const port = "20000"
+    // const port = "20000"
     //sjq开的端口
     // const port = "20001"
 

@@ -76,40 +76,40 @@ export const routerM: IRouter[] = [
         icon:  <Icon component={Hub}/>,
         component: lazy(() => import('../../Pages/Manage/MContest'))
     },
-    {
-        id: 2,
-        path: UrlPrefix + "/manage/problemSet",
-        title_i18n: "problemSet",
-        exact: false,
-        icon: <AppstoreOutlined/>,
-        children:[
-            {
-                id: 21,
-                path: UrlPrefix + "/manage/problemSet/contest",
-                exact: true,
-                title_i18n: "contest",
-                icon:  <Icon component={Hub}/>,
-                component: lazy(() => import('../../Pages/Manage/MContest'))
-            },
-            {
-                id: 22,
-                path: UrlPrefix + "/manage/problemSet/default",
-                exact: true,
-                title_i18n: "defaultProblemSet",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/MProblemSet'))
-            },
-            {
-                id: 23,
-                path: UrlPrefix + "/manage/problemSet/exam",
-                exact: true,
-                title_i18n: "exam",
-                icon:  <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/MExam'))
-            },
-        ]
-
-    },
+    // {
+    //     id: 2,
+    //     path: UrlPrefix + "/manage/problemSet",
+    //     title_i18n: "problemSet",
+    //     exact: false,
+    //     icon: <AppstoreOutlined/>,
+    //     children:[
+    //         {
+    //             id: 21,
+    //             path: UrlPrefix + "/manage/problemSet/contest",
+    //             exact: true,
+    //             title_i18n: "contest",
+    //             icon:  <Icon component={Hub}/>,
+    //             component: lazy(() => import('../../Pages/Manage/MContest'))
+    //         },
+    //         {
+    //             id: 22,
+    //             path: UrlPrefix + "/manage/problemSet/default",
+    //             exact: true,
+    //             title_i18n: "defaultProblemSet",
+    //             icon:  <Icon component={Task}/>,
+    //             component: lazy(() => import('../../Pages/Manage/MProblemSet'))
+    //         },
+    //         {
+    //             id: 23,
+    //             path: UrlPrefix + "/manage/problemSet/exam",
+    //             exact: true,
+    //             title_i18n: "exam",
+    //             icon:  <Icon component={Task}/>,
+    //             component: lazy(() => import('../../Pages/Manage/MExam'))
+    //         },
+    //     ]
+    //
+    // },
     {
         id: 3,
         path: UrlPrefix + "/manage/template",

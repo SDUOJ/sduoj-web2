@@ -5,6 +5,8 @@ import {withRouter} from "react-router";
 import MApi from "../../Utils/API/m-api";
 import {Button, Input, message, Modal, Space, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
+import YesNoOperConfirm from "../common/YesNoOperConfirm";
+
 const {TextArea} = Input;
 
 interface DataType {
@@ -145,15 +147,20 @@ const GroupMember = (props: any) => {
             title: props.t("operator"),
             width: "150px",
             render: (text: any, rows: any) => {
-                console.log("rows", rows)
+                // console.log("rows", rows)
                 return (
                     <Space>
-                        <Button type="link" onClick={() => setUserStatus([rows], 2)}>同意</Button>
-                        <Button type="link" onClick={() => setUserStatus([rows], 3)}>拒绝</Button>
+                        <YesNoOperConfirm
+                            onConfirm={() => setUserStatus([rows], 2)}
+                            content={<Button type="link" size={"small"}>同意</Button>}
+                        />
+                        <YesNoOperConfirm
+                            onConfirm={() => setUserStatus([rows], 3)}
+                            content={<Button type="link" size={"small"}>拒绝</Button>}
+                        />
                     </Space>
                 )
             }
-
         }
     ]
 
@@ -167,23 +174,16 @@ const GroupMember = (props: any) => {
                     <Space>
                         {owner && rows.userId !== owner.userId && (
                             <>
-                                <Button
-                                    type="link"
-                                    onClick={() => transferGroupLeader(rows)}
-                                >
-                                    转让
-                                </Button>
-                                <Button
-                                    type="link"
-                                    onClick={() => {
-                                        setUserStatus([rows], 3)
-                                    }}
-                                >
-                                    移除
-                                </Button>
+                                <YesNoOperConfirm
+                                    onConfirm={() => transferGroupLeader(rows)}
+                                    content={<Button type="link" size={"small"}>转让</Button>}
+                                />
+                                <YesNoOperConfirm
+                                    onConfirm={() => setUserStatus([rows], 3)}
+                                    content={<Button type="link" size={"small"}>移除</Button>}
+                                />
                             </>
                         )}
-
                     </Space>
                 )
             }
@@ -209,37 +209,45 @@ const GroupMember = (props: any) => {
                 footer={false}
             >
                 <Space wrap>
-                    申请用户 ({applyData !== undefined ? applyData.length : 0})
-                    <Button type="primary" size={"small"} onClick={() => {
-                        setUserStatus(applyData, 2)
-                    }}>Accept All</Button>
-                    <Button type="primary" danger size={"small"} onClick={() => {
-                        setUserStatus(applyData, 3)
-                    }}>Reject All</Button>
+                    <div>申请用户({applyData !== undefined ? applyData.length : 0})</div>
+                    <YesNoOperConfirm
+                        onConfirm={() => setUserStatus(applyData, 2)}
+                        content={<Button type="primary" size={"small"}>Accept All</Button>}
+                        disabled={applyData.length === 0}
+                    />
+                    <YesNoOperConfirm
+                        onConfirm={() => setUserStatus(applyData, 3)}
+                        content={<Button type="primary" danger size={"small"}>Reject All</Button>}
+                        disabled={applyData.length === 0}
+                    />
+
                     <Table
+                        size={"small"}
                         columns={ApplyColumns}
                         dataSource={applyData}
                         pagination={false}
                         scroll={{y: 200}}
                     />
 
-                    用户列表 ({memberData.length})
+                    <div>用户列表({memberData.length})</div>
                     {/*<Button type="primary" size={"small"} ></Button>*/}
                     {/*<Button type="primary" danger size={"small"} >Reject All</Button>*/}
 
                     <TextArea
-                        onChange={
-                            (e) => {
-                                addUserData.current = e.currentTarget.value.split(/,|，|\n| |\t/)
-                            }
-                        }
+                        onChange={(e) => {
+                            addUserData.current = e.currentTarget.value.split(/,|，|\n| |\t/)
+                        }}
                         cols={180}
                         rows={4}
                         placeholder={"将用户名用空格' ',TAB'\\t',换行'\\n'或逗号','分隔"}
                     />
-                    <Button type={"primary"} size={"small"} onClick={addUser}>添加用户</Button>
+
+                    <Button type={"primary"} size={"small"} onClick={addUser}>
+                        添加用户
+                    </Button>
 
                     <Table
+                        size={"small"}
                         columns={columns}
                         dataSource={memberData}
                         pagination={false}
