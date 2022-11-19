@@ -6,6 +6,7 @@ import GroupUserListCard from "../common/GroupUserListCard";
 import {isValueEmpty} from "../../Utils/empty";
 import {DownloadOutlined, LoadingOutlined} from "@ant-design/icons";
 import mApi from "../../Utils/API/m-api";
+import PackageDownload from "./PackageDownload";
 
 
 const SubmitInfo = (props: any) => {
@@ -19,8 +20,7 @@ const SubmitInfo = (props: any) => {
     const [already1, setAlready1] = useState<any>(null)
     const [did_not, setDid_not] = useState<any>(null)
 
-    const [download, setDownload] = useState<any>(null)
-    const [ban, setBan] = useState<any>(null)
+
 
     useEffect(() => {
         if (vis && groupInfo === null && props.groupId !== undefined) {
@@ -36,15 +36,10 @@ const SubmitInfo = (props: any) => {
     useEffect(() => {
         if (groupInfo !== null && submitInfo !== null && already === null) {
             let a: any = [], a0: any = [], a1: any = [], dn: any = []
-            let sbi: any = {}, down: any = []
+            let sbi: any = {}
             for (const x of submitInfo) {
                 sbi[x["username"]] = x
-                down.push({
-                    id: x["file_id"],
-                    downloadFilename: x["username"] + "." + x["real_name"] + '.' + x["create_time"] + "." + x['file_name']
-                })
             }
-            setDownload(down)
             for (const u of groupInfo.members) {
                 if (sbi[u["username"]] === undefined) {
                     dn.push({...u})
@@ -75,16 +70,7 @@ const SubmitInfo = (props: any) => {
                 }}
                 footer={
                     <Space size={24}>
-                        <Button type={"primary"} icon={ban ? <LoadingOutlined/> : <DownloadOutlined/>}
-                                disabled={download === null}
-                                onClick={() => {
-                                    setBan(true)
-                                    mApi.zipDownload(download, props.filename).then(() => {
-                                        setBan(false)
-                                    }).catch(() => {
-                                        setBan(false)
-                                    })
-                                }}> {ban ? "文件生成中" : "打包下载"} </Button>
+                        <PackageDownload deadline={props.deadline} submitInfo={submitInfo}/>
                         <Button onClick={() => setVis(false)}> 取消 </Button>
                     </Space>
                 }
