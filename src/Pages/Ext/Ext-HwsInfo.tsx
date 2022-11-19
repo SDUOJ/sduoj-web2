@@ -24,6 +24,8 @@ import ItemUploadUser from "../../Component/common/Form/Item/ItemUploadUser";
 import TableWithAllData from "../../Component/common/Table/TableWithAllData";
 import ItemUploadFileMulti from "../../Component/ExtHws/ItemUploadFileMulti";
 import MoveModal from "../../Component/ExtHws/MoveModal";
+import {brotliCompress} from "zlib";
+import LoginCheck from "../../Component/common/LoginCheck";
 
 
 const ExtHwsInfo = (props: any) => {
@@ -44,17 +46,14 @@ const ExtHwsInfo = (props: any) => {
             <ItemEditor name={"description"} label={"收集描述"}/>
         </>
     )
-
-    const update = () => {
-        extApi.getCourseInfo({cid: cid}).then((res) => {
-            setData(res)
-        })
-    }
+    
 
     useEffect(() => {
         if (data === null)
-            update()
-    })
+            extApi.getCourseInfo({cid: cid}).then((res) => {
+                setData(res)
+            })
+    }, [cid, data, setData])
 
 
     let colData: any[] = [
@@ -105,7 +104,11 @@ const ExtHwsInfo = (props: any) => {
             width: "auto",
             responsive: ["lg", "sm"],
             render: (text: string) => {
-                return TimeDiff(Date.now(), parseInt(text)).split("分")[0] + "分"
+                if(Date.now() <= parseInt(text)){
+                    return TimeDiff(Date.now(), parseInt(text)).split("分")[0] + "分"
+                } else{
+                    return "已结束"
+                }
             }
         },
         {
@@ -314,6 +317,7 @@ const ExtHwsInfo = (props: any) => {
 
     return (
         <>
+            <LoginCheck/>
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                     <div>
