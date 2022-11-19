@@ -1,6 +1,11 @@
 export default function apiAddress() {
     // const port = "9005"
-    const port = "8080"
+    // const port = "8080"
+    //jym的测试端口
+    const port = "20000"
+    //sjq开的端口
+    // const port = "20001"
+
     // if (process.env.NODE_ENV === 'development') return {
     //     CLIENT_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',
     //     MANAGE_SERVER: 'http://api.oj.cs.sdu.edu.cn:8080',

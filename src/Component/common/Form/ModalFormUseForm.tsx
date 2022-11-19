@@ -72,6 +72,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 })
             } else {
                 // 否则直接进行数据加载
+                // console.log("initData",props.initData)
                 setSaveInitData(props.initData)
                 setFormVis(true)
             }
@@ -87,6 +88,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             !isValueEmpty(formMapRef.current) && formMapRef.current.forEach((formInstanceRef) => {
                 formInstanceRef.current?.setFieldsValue(saveInitData);
             });
+            form && form.setFieldsValue(saveInitData)
         }, 100)
 
         // 当表单消失时，清除相关数据
@@ -97,7 +99,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             });
             props.formName && props.addManageInitData(props.formName, undefined)
         }
-    }, [formVis])
+    }, [formVis, saveInitData])
 
     useEffect(() => {
         props.formName && props.addManageInitData(props.formName, saveInitData)
@@ -106,7 +108,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     // 提交数据
     const submitData = (values: any) => {
         const submit = (value: any) => {
-            // console.log("inner", value)
+            console.log("inner", value)
             // 在提交表单数据之前，追加数据
             props.updateAppendProps && Object.assign(value, props.updateAppendProps)
             props.dataSubmitter(value).then((res: any) => {
@@ -162,7 +164,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     }
                 })()}
             </Button>
-            {props.subForm.length === 1 && (
+            {props.subForm.length === 1 ? (
                 <Modal
                     width={props.width}
                     style={{minWidth: props.width}}
@@ -187,12 +189,56 @@ const ModalForm = (props: ModalFormProps & any) => {
                         scrollToFirstError
                         preserve={false}
                     >
+
                         {props.subForm.map((item: any) => {
                             return item.component
                         })}
                     </Form>
                 </Modal>
-            )}
+            ) : (
+                <StepsForm
+                    current={current}
+                    onCurrentChange={(currentPage: number) => {
+                        setCurrent(currentPage)
+                    }}
+                    formMapRef={formMapRef}
+                    onFinish={async (values) => {
+                        submitData(values)
+                    }}
+                    stepsFormRender={(dom, submitter) => {
+                        return (
+                            <Modal
+                                destroyOnClose={true}
+                                title={props.title}
+                                className={props.className}
+                                visible={formVis}
+                                maskClosable={false}
+                                width={props.width ?? 1200}
+                                onCancel={() => {
+                                    setFormVis(false)
+                                }}
+                                footer={submitter}
+                            >
+                                {dom}
+                            </Modal>
+                        );
+                    }}
+                >
+                    {props.subForm.map((item: any, index: number) => {
+                        return (
+                            <StepsForm.StepForm
+                                name={"step" + index}
+                                title={item.label}
+                                onFinish={async () => {
+                                    return true;
+                                }}
+                            >
+                                {item.component}
+                            </StepsForm.StepForm>
+                        )
+                    })}
+                </StepsForm>
+                )}
             {props.subForm.length !== 1 && (
                 <StepsForm
                     current={current}

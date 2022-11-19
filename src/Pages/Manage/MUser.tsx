@@ -161,7 +161,7 @@ class MUser extends Component<any, any> {
                                     rowKey={"userId"}
                                     deleteKey={"username"}
                                     tableName={"UserList"}
-                                    delAPI={(data: any)=>{
+                                    delAPI={(data: any) => {
                                         return MApi.deleteUsers(data)
                                     }}
                                 />
