@@ -92,7 +92,7 @@ const PackageDownload = (props: any) => {
                                 disabled={download === null || ban}
                                 onClick={() => {
                                     setBan(true)
-                                    mApi.zipDownload(download, props.filename).then(() => {
+                                    mApi.zipDownloadFast(download, props.filename).then(() => {
                                         setBan(false)
                                     }).catch(() => {
                                         setBan(false)

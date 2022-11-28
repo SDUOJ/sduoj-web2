@@ -192,6 +192,10 @@ export default {
     zipDownload: async function (data: any, filename?: string) {
         return request.getZipFile("/filesys/zipDownload", data, {}, filename)
     },
+    // 以较低地压缩率，较高的速度完成压缩
+    zipDownloadFast: async function (data: any, filename?: string) {
+        return request.getZipFile("/filesys/zipDownloadWithoutCompression", data, {}, filename)
+    },
     /* ************ group ****************** */
     createGroup: async function (data: groupInfo) {
         return request.post('/manage/group/create', data);
