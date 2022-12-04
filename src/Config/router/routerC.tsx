@@ -207,4 +207,11 @@ export const routerC_M: IRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
     },
+    {
+        id: 7,
+        path: UrlPrefix + "/exam",
+        title_i18n: "考试系统",
+        exact: true,
+        component: lazy(() => import('../../Pages/Exam/EList'))
+    },
 ]

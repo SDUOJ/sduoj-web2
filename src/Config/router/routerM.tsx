@@ -33,13 +33,13 @@ export const routerM: IRouter[] = [
         title_i18n: "problem",
         exact: false,
         icon: <FolderOutlined/>,
-        children:[
+        children: [
             {
                 id: 11,
                 path: UrlPrefix + "/manage/problem/program",
                 exact: true,
                 title_i18n: "编程题",
-                icon:  <Icon component={Hub}/>,
+                icon: <Icon component={Hub}/>,
                 component: lazy(() => import('../../Pages/Manage/Problem/MProblem'))
             },
             {
@@ -47,7 +47,7 @@ export const routerM: IRouter[] = [
                 path: UrlPrefix + "/manage/problem/objective",
                 exact: true,
                 title_i18n: "客观题",
-                icon:  <Icon component={Task}/>,
+                icon: <Icon component={Task}/>,
                 component: lazy(() => import('../../Pages/Manage/Problem/MObjective'))
             },
             // {
@@ -73,7 +73,7 @@ export const routerM: IRouter[] = [
         path: UrlPrefix + "/manage/contest",
         exact: true,
         title_i18n: "contest",
-        icon:  <Icon component={Hub}/>,
+        icon: <Icon component={Hub}/>,
         component: lazy(() => import('../../Pages/Manage/MContest'))
     },
     // {
@@ -99,14 +99,14 @@ export const routerM: IRouter[] = [
     //             icon:  <Icon component={Task}/>,
     //             component: lazy(() => import('../../Pages/Manage/MProblemSet'))
     //         },
-    //         {
-    //             id: 23,
-    //             path: UrlPrefix + "/manage/problemSet/exam",
-    //             exact: true,
-    //             title_i18n: "exam",
-    //             icon:  <Icon component={Task}/>,
-    //             component: lazy(() => import('../../Pages/Manage/MExam'))
-    //         },
+    {
+        id: 23,
+        path: UrlPrefix + "/manage/problemSet/exam",
+        exact: true,
+        title_i18n: "exam",
+        icon: <Icon component={Task}/>,
+        component: lazy(() => import('../../Pages/Manage/MExam'))
+    },
     //     ]
     //
     // },
@@ -117,13 +117,13 @@ export const routerM: IRouter[] = [
         exact: false,
         icon: <FileOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MJudgeTemplate')),
-        children:[
+        children: [
             {
                 id: 31,
                 path: UrlPrefix + "/manage/template/io",
                 exact: true,
                 title_i18n: "ioTemplate",
-                icon:  <Icon component={Hub}/>,
+                icon: <Icon component={Hub}/>,
                 component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
             },
             {
@@ -131,7 +131,7 @@ export const routerM: IRouter[] = [
                 path: UrlPrefix + "/manage/template/advanced",
                 exact: true,
                 title_i18n: "advancedTemplate",
-                icon:  <Icon component={Task}/>,
+                icon: <Icon component={Task}/>,
                 component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
             },
         ]
