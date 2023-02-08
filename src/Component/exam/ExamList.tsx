@@ -201,6 +201,7 @@ class ExamList extends Component<any, any> {
 
 
 const mapStateToProps = (state: any) => {
+    return {}
 }
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 

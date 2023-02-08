@@ -24,7 +24,6 @@ const Problem = (props: any) => {
     const proName = "Contest-" + contestId + "-" + problemCode
 
 
-
     const GetProblemInfoAPI = () => {
         return cApi.getContestProblem({contestId: contestId, problemCode: problemCode})
     }
@@ -90,92 +89,92 @@ const Problem = (props: any) => {
                                             </span>
                                         </Button>
                                     </Col>
-                            )
+                                )
                             })}
-                            </Row>
-                            </div>
-                                <div style={{marginTop: 25}}>
-                                    <ProProgramDetail
-                                        problemInfo={problemInfo}
-                                    />
-                                </div>
-                                <div style={{marginTop: 25}}>
-                                    <Card title={"题目导航"} className={"smallBodyPadding"}>
-                                        <Table
-                                            size={"small"}
-                                            dataSource={contestInfo?.problems}
-                                            pagination={false}
-                                            showHeader={false}
-                                            columns={[
-                                                {
-                                                    key: "ID",
-                                                    title: "ID",
-                                                    dataIndex: "problemCode",
-                                                    render: (text) => {
-                                                        return String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)
-                                                    }
-                                                },
-                                                {
-                                                    key: "title",
-                                                    title: props.t("title"),
-                                                    dataIndex: "problemTitle",
-                                                    render: (text, row) => {
-                                                        return (
-                                                            <>
-                                                                {!isValueEmpty(row.problemColor) && (
-                                                                    <span className={"circle"}
-                                                                          style={{backgroundColor: row.problemColor}}/>
-                                                                )}
-                                                                <Button type={"text"} size={"small"} onClick={() => {
-                                                                    props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + row.problemCode)
-                                                                }}>{text}</Button>
-                                                            </>
-                                                        )
-                                                    }
-                                                },
-                                                {
-                                                    key: "AC_Submits",
-                                                    title: "通过 / 提交",
-                                                    render: (text, row) => {
-                                                        return (
-                                                            <>
-                                                                {row.acceptNum} / {row.submitNum}
-                                                            </>
-                                                        )
-                                                    }
-                                                }
-                                            ]}
-                                        >
+                        </Row>
+                    </div>
+                    <div style={{marginTop: 25}}>
+                        <ProProgramDetail
+                            problemInfo={problemInfo}
+                        />
+                    </div>
+                    <div style={{marginTop: 25}}>
+                        <Card title={"题目导航"} className={"smallBodyPadding"}>
+                            <Table
+                                size={"small"}
+                                dataSource={contestInfo?.problems}
+                                pagination={false}
+                                showHeader={false}
+                                columns={[
+                                    {
+                                        key: "ID",
+                                        title: "ID",
+                                        dataIndex: "problemCode",
+                                        render: (text) => {
+                                            return String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)
+                                        }
+                                    },
+                                    {
+                                        key: "title",
+                                        title: props.t("title"),
+                                        dataIndex: "problemTitle",
+                                        render: (text, row) => {
+                                            return (
+                                                <>
+                                                    {!isValueEmpty(row.problemColor) && (
+                                                        <span className={"circle"}
+                                                              style={{backgroundColor: row.problemColor}}/>
+                                                    )}
+                                                    <Button type={"text"} size={"small"} onClick={() => {
+                                                        props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + row.problemCode)
+                                                    }}>{text}</Button>
+                                                </>
+                                            )
+                                        }
+                                    },
+                                    {
+                                        key: "AC_Submits",
+                                        title: "通过 / 提交",
+                                        render: (text, row) => {
+                                            return (
+                                                <>
+                                                    {row.acceptNum} / {row.submitNum}
+                                                </>
+                                            )
+                                        }
+                                    }
+                                ]}
+                            >
 
-                                        </Table>
-                                    </Card>
-                                </div>
-                                <div style={{marginTop: 25}}>
-                                    <RecentSubmissionList
-                                        name={"Pro-SubmissionList-Recent-" + proName}
-                                        API={SubmissionListAPI}
-                                        QuerySubmissionAPI={QuerySubmissionAPI}
-                                    />
-                                </div>
-                            </Col>
-                            </Row>
-                            </>
-                            )
-                            }
+                            </Table>
+                        </Card>
+                    </div>
+                    <div style={{marginTop: 25}}>
+                        <RecentSubmissionList
+                            name={"Pro-SubmissionList-Recent-" + proName}
+                            API={SubmissionListAPI}
+                            QuerySubmissionAPI={QuerySubmissionAPI}
+                        />
+                    </div>
+                </Col>
+            </Row>
+        </>
+    )
+}
 
-                                const mapStateToProps = (state: any) => {
-                                const State: UserState = state.UserReducer
-                                const CState: ContestState = state.ContestReducer
-                                return {
-                                username: State.userInfo?.username,
-                                ContestInfo: CState.contestInfo
+const mapStateToProps = (state: any) => {
+    const State: UserState = state.UserReducer
+    const CState: ContestState = state.ContestReducer
+    return {
+        username: State.userInfo?.username,
+        ContestInfo: CState.contestInfo
 
-                            }
-                            }
+    }
+}
 
-                                const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
-                                export default connect(
-                                mapStateToProps,
-                                mapDispatchToProps
-                                )(withTranslation()(withRouter(Problem)))
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withTranslation()(withRouter(Problem)))

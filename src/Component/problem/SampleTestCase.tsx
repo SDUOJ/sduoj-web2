@@ -38,6 +38,7 @@ class SampleTestCase extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
+    return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

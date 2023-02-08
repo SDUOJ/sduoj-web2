@@ -43,7 +43,7 @@ const MGroupInfo = (props: any) => {
                                 type={"create"}
                                 subForm={ProblemSetGroupForm}
                                 dataSubmitter={(value: any) => {
-                                    return mApi.createProblemSetGroup(value)
+                                    // return mApi.createProblemSetGroup(value)
                                 }}
                             />
                         </Space>
@@ -65,18 +65,18 @@ const MGroupInfo = (props: any) => {
                                             title={`${props.problemCode} - ${row.title}`}
                                             type={"update"}
                                             dataLoader={() => {
-                                                return mApi.getProblemSetGroupInfo({descriptionId: row.id})
+                                                // return mApi.getProblemSetGroupInfo({descriptionId: row.id})
                                             }}
                                             subForm={ProblemSetGroupForm}
                                             dataSubmitter={(data: any) => {
-                                                return mApi.updateProblemSetGroup({...data, id: row.id})
+                                                // return mApi.updateProblemSetGroup({...data, id: row.id})
                                             }}
                                         />
                                         <TableRowDeleteButton
                                             type={"inline"}
                                             name={tableName}
                                             API={() => {
-                                                return mApi.deleteProblemSetGroup({id: row.id})
+                                                // return mApi.deleteProblemSetGroup({id: row.id})
                                             }}
                                         />
                                     </>
@@ -84,7 +84,7 @@ const MGroupInfo = (props: any) => {
                             },
                         ]}
                         API={() => {
-                            return mApi.getProblemSetGroupList({problemCode: props.problemCode})
+                            // return mApi.getProblemSetGroupList({problemCode: props.problemCode})
                         }}
                         pagination={false}
                     />

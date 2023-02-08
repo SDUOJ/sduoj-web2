@@ -20,7 +20,8 @@ export const defaultKeyMapping = {
     ProblemPreview: "ProblemPreview",
     ProblemSubmitNumber: "ProblemSubmitNumber",
     ProblemScore: "ProblemScore",
-    problemColor: "problemColor"
+    problemColor: "problemColor",
+    antiCheatingRate: "antiCheatingRate"
 }
 
 interface ProblemAddBodyType {
@@ -37,6 +38,7 @@ interface ProblemAddBodyType {
 }
 
 const ProblemAddBody = (props: any) => {
+
     // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
     const keyMapping = {...defaultKeyMapping, ...props.keyMapping};
@@ -45,7 +47,7 @@ const ProblemAddBody = (props: any) => {
     const [sortSwitch, setSortSwitch] = useState<boolean>(false);  // 操作是否开启排序模式
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(genNumberList(ck(props.value, [])));  // 编辑区域构造
 
-    const [TableData, setTableDataX] = useState<any[]>(props.value ?? [])
+    const [TableData, setTableDataX] = useState<any[]>([])
     const [TableDataHis, setTableDataHis] = useState<any>({})
     const setTableData = (data: any) => {
         // console.log("setTableData", data)
@@ -75,11 +77,11 @@ const ProblemAddBody = (props: any) => {
             setTableDataX(props.value)
             setEditableRowKeys(genNumberList(props.value))
             for (let x of props.value) {
-                TableDataHis[x.id] = x.problemCode
-                getProblemDescriptionInfo(x.problemCode)
+                let nowKey = x[keyMapping["ProblemCode"]]
+                TableDataHis[x.id] = nowKey
+                getProblemDescriptionInfo(nowKey)
             }
             setTableDataHis(TableDataHis)
-
         }
     }, [props, props.value, TableData])
 
@@ -97,8 +99,9 @@ const ProblemAddBody = (props: any) => {
                 }
 
                 const check = (nameA: string, arr: any) => {
-                    if (forceUpdate || (value[nameA] === undefined && get(arr[value[keyMapping["ProblemCode"]]], nameA) !== undefined)) {
-                        obj[nameA] = get(arr[value[keyMapping["ProblemCode"]]], nameA)
+                    let nowKey = value[keyMapping["ProblemCode"]]
+                    if (forceUpdate || (value[nameA] === undefined && get(arr[nowKey], nameA) !== undefined)) {
+                        obj[nameA] = get(arr[nowKey], nameA)
                         updateNum += 1
                     }
                 }
@@ -177,7 +180,7 @@ const ProblemAddBody = (props: any) => {
                             let res: any = {}
                             for (const x of resData) res[x.id] = ({text: x.title})
                             problemDescriptionCache[problemCode] = {"DescriptionInfo": res}
-                            setProblemDescriptionCache(problemDescriptionCache)
+                            setProblemDescriptionCache({...problemDescriptionCache})
                             return Promise.resolve()
                         }
                     }
@@ -396,6 +399,18 @@ const ProblemAddBody = (props: any) => {
             }
         }
     ];
+    const ProblemAntiCheatColumnItem: ProColumns[] = [
+        {
+            title: "查重率",
+            dataIndex: keyMapping['antiCheatingRate'],
+            tooltip: '不填即为不查重，查重系数应在 0.4 - 1 之间',
+            valueType: "digit",
+            width: 140,
+            editable: () => {
+                return true
+            }
+        }
+    ];
     const ProblemColorColumnItem: ProColumns[] = [
         {
             title: "气球颜色",
@@ -423,6 +438,7 @@ const ProblemAddBody = (props: any) => {
         columns = columns.concat(ProgramingProblemInfoColumnItem)
         if (props.useSubmitLimit) columns = columns.concat(ProblemSubmitLimitColumnItem)
         if (props.useColor) columns = columns.concat(ProblemColorColumnItem)
+        if (props.useAntiCheating) columns = columns.concat(ProblemAntiCheatColumnItem)
     }
     columns = columns.concat(ProblemScoreColumnItem)
 
@@ -488,8 +504,8 @@ const ColorPickerBody = ({value, onChange}: any) => {
 
     const [open, setOpen] = useState<boolean>(false);
 
-    useEffect(()=>{
-        if(value === undefined){
+    useEffect(() => {
+        if (value === undefined) {
             onChange("")
         }
     }, [value, onChange])

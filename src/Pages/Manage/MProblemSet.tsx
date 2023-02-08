@@ -121,12 +121,12 @@ const MProblemSet = (props: any) => {
                             formName={"SubjectiveForm"}
                             updateAppendProps={{problemSetId: rows.problemSetId}}
                             dataLoader={async () => {
-                                return mApi.getProblemSetInfo({problemSetId: rows.problemSetId}).then((value: any) => {
-                                    return Promise.resolve(value)
-                                })
+                                // return mApi.getProblemSetInfo({problemSetId: rows.problemSetId}).then((value: any) => {
+                                //     return Promise.resolve(value)
+                                // })
                             }}
                             dataSubmitter={(value: any) => {
-                                return mApi.updateProblemSet(value)
+                                // return mApi.updateProblemSet(value)
                             }}
                         />
                         <ModalFormUseForm
@@ -137,12 +137,12 @@ const MProblemSet = (props: any) => {
                             subForm={ProblemSetForm}
                             formName={"SubjectiveForm"}
                             dataLoader={async () => {
-                                return mApi.getSubjectiveInfo({problemSetId: rows.problemSetId}).then((value: any) => {
-                                    return Promise.resolve(value)
-                                })
+                                // return mApi.getSubjectiveInfo({problemSetId: rows.problemSetId}).then((value: any) => {
+                                //     return Promise.resolve(value)
+                                // })
                             }}
                             dataSubmitter={(value: any) => {
-                                return mApi.createProblemSet(value)
+                                // return mApi.createProblemSet(value)
                             }}
                         />
                         <MGroupInfo problemSetId={rows.problemSetId} problemSetTitle={rows.problemSetTitle}/>
@@ -176,7 +176,7 @@ const MProblemSet = (props: any) => {
                 <TableWithPagination
                     name={"ProblemSetList"}
                     columns={colData}
-                    API={MApi.getProblemSetList}
+                    // API={MApi.getProblemSetList}
                     size={"small"}
                 />
             </Card>

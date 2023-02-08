@@ -62,6 +62,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     return
                 }
                 props.dataLoader && props.dataLoader().then((data: any) => {
+                    // console.log("dataLoaderData", data)
                     if (props.subForm.length !== 1) {
                         setSaveInitData(data)
                     } else form.setFieldsValue(data)
@@ -246,7 +247,7 @@ const ModalForm = (props: ModalFormProps & any) => {
 }
 
 const mapStateToProps = (state: any) => {
-
+    return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
@@ -257,7 +258,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(ModalForm)
-    ))
+)(withTranslation()(
+    withRouter(ModalForm)
+))

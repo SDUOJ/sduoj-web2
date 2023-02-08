@@ -93,12 +93,12 @@ const MSubjective = (props: any) => {
                             formName={"SubjectiveForm"}
                             updateAppendProps={{problemCode: rows.code}}
                             dataLoader={async () => {
-                                return mApi.getSubjectiveInfo({problemCode: rows.code}).then((value: any) => {
-                                    return Promise.resolve(value)
-                                })
+                                // return mApi.getSubjectiveInfo({problemCode: rows.code}).then((value: any) => {
+                                //     return Promise.resolve(value)
+                                // })
                             }}
                             dataSubmitter={(value: any) => {
-                                return mApi.updateSubjective(value)
+                                // return mApi.updateSubjective(value)
                             }}
                         />
                         <ModalFormUseForm
@@ -109,9 +109,9 @@ const MSubjective = (props: any) => {
                             subForm={SubjectiveForm}
                             formName={"SubjectiveForm"}
                             dataLoader={async () => {
-                                return mApi.getSubjectiveInfo({problemCode: rows.code}).then((value: any) => {
-                                    return Promise.resolve(value)
-                                })
+                                // return mApi.getSubjectiveInfo({problemCode: rows.code}).then((value: any) => {
+                                //     return Promise.resolve(value)
+                                // })
                             }}
                             dataSubmitter={(value: any) => {
                                 return mApi.createSubjective(value)
@@ -147,7 +147,7 @@ const MSubjective = (props: any) => {
                 <TableWithPagination
                     name={"SubjectiveList"}
                     columns={colData}
-                    API={MApi.getSubjectiveList}
+                    // API={MApi.getSubjectiveList}
                     size={"small"}
                 />
             </Card>

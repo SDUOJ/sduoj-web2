@@ -1,18 +1,16 @@
 import Icon, {
-    AppstoreOutlined,
-    CheckCircleOutlined,
     FileOutlined,
-    FolderOutlined,
     NotificationOutlined,
-    ReadOutlined,
+    FolderOpenOutlined,
     UsergroupAddOutlined,
-    UserOutlined
+    UserOutlined,
+    LaptopOutlined,
+    MedicineBoxOutlined,
+    ContainerOutlined,
+    ReconciliationOutlined,
+    BlockOutlined,
+    BuildOutlined
 } from "@ant-design/icons";
-
-import {ReactComponent as Compare} from "Assert/img/compare.svg"
-import {ReactComponent as Hub} from "Assert/img/hub.svg"
-import {ReactComponent as Task} from "Assert/img/task.svg"
-import {ReactComponent as Core} from "Assert/img/core.svg"
 
 import {lazy} from "react";
 import {IRouter} from "./router";
@@ -28,52 +26,53 @@ export const routerM: IRouter[] = [
         component: lazy(() => import('../../Pages/Manage/MUser'))
     },
     {
-        id: 1,
-        path: UrlPrefix + "/manage/problem",
-        title_i18n: "problem",
-        exact: false,
-        icon: <FolderOutlined/>,
-        children: [
-            {
-                id: 11,
-                path: UrlPrefix + "/manage/problem/program",
-                exact: true,
-                title_i18n: "编程题",
-                icon: <Icon component={Hub}/>,
-                component: lazy(() => import('../../Pages/Manage/Problem/MProblem'))
-            },
-            {
-                id: 12,
-                path: UrlPrefix + "/manage/problem/objective",
-                exact: true,
-                title_i18n: "客观题",
-                icon: <Icon component={Task}/>,
-                component: lazy(() => import('../../Pages/Manage/Problem/MObjective'))
-            },
-            // {
-            //     id: 13,
-            //     path: UrlPrefix + "/manage/problem/subjective",
-            //     exact: true,
-            //     title_i18n: "主观题",
-            //     icon:  <Icon component={Task}/>,
-            //     component: lazy(() => import('../../Pages/Manage/Problem/MSubjective'))
-            // },
-            // {
-            //     id: 14,
-            //     path: UrlPrefix + "/manage/problem/review",
-            //     exact: true,
-            //     title_i18n: "题目批阅",
-            //     icon:  <Icon component={Task}/>,
-            //     component: lazy(() => import('../../Pages/Manage/Problem/MReview'))
-            // },
-        ]
+        id: 11,
+        path: UrlPrefix + "/manage/problem/program",
+        exact: true,
+        title_i18n: "题目",
+        icon: <ContainerOutlined />,
+        component: lazy(() => import('../../Pages/Manage/Problem/MProblem'))
     },
+    // {
+    //     id: 1,
+    //     path: UrlPrefix + "/manage/problem",
+    //     title_i18n: "problem",
+    //     exact: false,
+    //     icon: <FolderOutlined/>,
+    //     children: [
+    //
+    //         {
+    //             id: 12,
+    //             path: UrlPrefix + "/manage/problem/objective",
+    //             exact: true,
+    //             title_i18n: "客观题",
+    //             icon: <Icon component={Task}/>,
+    //             component: lazy(() => import('../../Pages/Manage/Problem/MObjective'))
+    //         },
+    //         // {
+    //         //     id: 13,
+    //         //     path: UrlPrefix + "/manage/problem/subjective",
+    //         //     exact: true,
+    //         //     title_i18n: "主观题",
+    //         //     icon:  <Icon component={Task}/>,
+    //         //     component: lazy(() => import('../../Pages/Manage/Problem/MSubjective'))
+    //         // },
+    //         // {
+    //         //     id: 14,
+    //         //     path: UrlPrefix + "/manage/problem/review",
+    //         //     exact: true,
+    //         //     title_i18n: "题目批阅",
+    //         //     icon:  <Icon component={Task}/>,
+    //         //     component: lazy(() => import('../../Pages/Manage/Problem/MReview'))
+    //         // },
+    //     ]
+    // },
     {
         id: 21,
         path: UrlPrefix + "/manage/contest",
         exact: true,
         title_i18n: "contest",
-        icon: <Icon component={Hub}/>,
+        icon: <LaptopOutlined />,
         component: lazy(() => import('../../Pages/Manage/MContest'))
     },
     // {
@@ -99,14 +98,14 @@ export const routerM: IRouter[] = [
     //             icon:  <Icon component={Task}/>,
     //             component: lazy(() => import('../../Pages/Manage/MProblemSet'))
     //         },
-    {
-        id: 23,
-        path: UrlPrefix + "/manage/problemSet/exam",
-        exact: true,
-        title_i18n: "exam",
-        icon: <Icon component={Task}/>,
-        component: lazy(() => import('../../Pages/Manage/MExam'))
-    },
+    // {
+    //     id: 23,
+    //     path: UrlPrefix + "/manage/problemSet/exam",
+    //     exact: true,
+    //     title_i18n: "exam",
+    //     icon: <Icon component={Task}/>,
+    //     component: lazy(() => import('../../Pages/Manage/MExam'))
+    // },
     //     ]
     //
     // },
@@ -123,7 +122,7 @@ export const routerM: IRouter[] = [
                 path: UrlPrefix + "/manage/template/io",
                 exact: true,
                 title_i18n: "ioTemplate",
-                icon: <Icon component={Hub}/>,
+                icon: <BuildOutlined />,
                 component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
             },
             {
@@ -131,8 +130,34 @@ export const routerM: IRouter[] = [
                 path: UrlPrefix + "/manage/template/advanced",
                 exact: true,
                 title_i18n: "advancedTemplate",
-                icon: <Icon component={Task}/>,
+                icon: <BlockOutlined />,
                 component: lazy(() => import('../../Pages/Manage/MJudgeTemplate'))
+            },
+        ]
+    },
+    {
+        id: 9,
+        path: UrlPrefix + "/manage/problemSet",
+        title_i18n: "problemSetMod",
+        exact: false,
+        icon: <FolderOpenOutlined />,
+        children: [
+            {
+                id: 91,
+                path: UrlPrefix + "/manage/problemSet/problem_group",
+                exact: true,
+                title_i18n: "problemGroup",
+                icon: <MedicineBoxOutlined />,
+                component: lazy(() => import('../../Pages/Manage/MProblemGroup'))
+
+            },
+            {
+                id: 92,
+                path: UrlPrefix + "/manage/problemSet/problem_set",
+                exact: true,
+                title_i18n: "problemSet",
+                icon: <ReconciliationOutlined />,
+                component: lazy(() => import('../../Pages/Manage/MProblemSet')),
             },
         ]
     },
@@ -160,6 +185,7 @@ export const routerM: IRouter[] = [
         icon: <NotificationOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MAnnouncement'))
     },
+
     // {
     //     id: 8,
     //     title_i18n: "codeAntiCheating",

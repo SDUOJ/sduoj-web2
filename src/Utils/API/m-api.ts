@@ -277,52 +277,84 @@ export default {
     },
 
     // ----------------- 主观题相关 -------------------
-    async getSubjectiveList(data: any[]) {
-        return request.get("/manage/subjectiveproblem/list", data)
-    },
-    async createSubjective(data: any) {
-        return request.post("/manage/subjectiveproblem/create", data)
-    },
-    async updateSubjective(data: any) {
-        return request.post("/manage/subjectiveproblem/update", data)
-    },
-    async getSubjectiveInfo(data: any) {
-        return request.get("/manage/subjectiveproblem/query", data)
-    },
+    // async getSubjectiveList(data: any[]) {
+    //     return request.get("/manage/subjectiveproblem/list", data)
+    // },
+    // async createSubjective(data: any) {
+    //     return request.post("/manage/subjectiveproblem/create", data)
+    // },
+    // async updateSubjective(data: any) {
+    //     return request.post("/manage/subjectiveproblem/update", data)
+    // },
+    // async getSubjectiveInfo(data: any) {
+    //     return request.get("/manage/subjectiveproblem/query", data)
+    // },
 
     // ----------------- 题单相关 -------------------
-    async getProblemSetList(data: any) {
-        return request.post("/manage/problemset/list", data)
-    },
-    async createProblemSet(data: any){
-        return request.post("/manage/problemset/create", data)
-    },
-    async updateProblemSet(data: any){
-        return request.post("/manage/problemset/update", data)
-    },
-    async getProblemSetInfo(data: any){
-        return request.get("/manage/problemset/query", data)
-    },
+    // async getProblemSetList(data: any) {
+    //     return request.post("/manage/problemset/list", data)
+    // },
+    // async createProblemSet(data: any){
+    //     return request.post("/manage/problemset/create", data)
+    // },
+    // async updateProblemSet(data: any){
+    //     return request.post("/manage/problemset/update", data)
+    // },
+    // async getProblemSetInfo(data: any){
+    //     return request.get("/manage/problemset/query", data)
+    // },
     // -------------- 题单中的题组相关 ------------------
-    async getProblemSetGroupList(data: any){
-        return request.get("", data)
+    // async getProblemSetGroupList(data: any){
+    //     return request.get("", data)
+    // },
+    // async createProblemSetGroup(data: any){
+    //     return request.post("/manage/problemset/addProblemGroup", data)
+    // },
+    // async updateProblemSetGroup(data: any){
+    //     return request.post("/manage/problemset/updateProblemGroup", data)
+    // },
+    // async getProblemSetGroupInfo(data: any){
+    //     return request.get("/manage/problemset/queryProblemGroup", data)
+    // },
+    // async deleteProblemSetGroup(data: any){
+    //     return request.post("/manage/problemset/deleteProblem", data)
+    // },
+    // async updateOrderProblemSetGroup(data: any){
+    //     return request.post("/manage/problemset/updateOrder", data)
+    // },
+    // -------------- 新版题单组件相关 ------------------
+    async createProblemGroup(data: any) {
+        return request.post("/ps/group/add", data)
     },
-    async createProblemSetGroup(data: any){
-        return request.post("/manage/problemset/addProblemGroup", data)
+    async editProblemGroup(data: any) {
+        return request.post("/ps/group/edit", data)
     },
-    async updateProblemSetGroup(data: any){
-        return request.post("/manage/problemset/updateProblemGroup", data)
+    async getProblemGroupInfo(data: any) {
+        return request.post("/ps/group/info", data)
     },
-    async getProblemSetGroupInfo(data: any){
-        return request.get("/manage/problemset/queryProblemGroup", data)
+    async getProblemGroupList(data: any) {
+        return request.post("/ps/group/list", data)
     },
-    async deleteProblemSetGroup(data: any){
-        return request.post("/manage/problemset/deleteProblem", data)
-    },
-    async updateOrderProblemSetGroup(data: any){
-        return request.post("/manage/problemset/updateOrder", data)
-    }
 
+    async createObjective(data: any) {
+        return request.post("/ps/objective/add", data)
+    },
+    async editObjective(data: any) {
+        return request.post("/ps/objective/edit", data)
+    },
+    async getObjective(data: any) {
+        return request.post("/ps/objective/info", data)
+    },
+
+    async createSubjective(data: any) {
+        return request.post("/ps/subjective/add", data)
+    },
+    async editSubjective(data: any) {
+        return request.post("/ps/subjective/edit", data)
+    },
+    async getSubjective(data: any) {
+        return request.post("/ps/subjective/info", data)
+    }
 
 
 }

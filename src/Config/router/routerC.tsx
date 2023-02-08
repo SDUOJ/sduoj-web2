@@ -200,13 +200,13 @@ export const routerC_M: IRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Client/CGroup'))
     },
-    {
-        id: 6,
-        path: UrlPrefix + "/hws",
-        title_i18n: "文件提交",
-        exact: true,
-        component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
-    },
+    // {
+    //     id: 6,
+    //     path: UrlPrefix + "/hws",
+    //     title_i18n: "文件提交",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
+    // },
     {
         id: 7,
         path: UrlPrefix + "/exam",

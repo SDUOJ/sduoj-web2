@@ -188,5 +188,16 @@
   "ioTemplate": "IO 评测模板",
   "advancedTemplate": "高级评测模板",
   "problemSet": "题单",
-  "defaultProblemSet": "作业/实验"
+  "problemSetMod": "题单组件",
+  "defaultProblemSet": "作业/实验",
+  "problemGroup": "题组",
+  "QuestionType": "题型",
+  "ObjectiveQuestions": "客观题",
+  "SubjectiveQuestions": "主观题",
+  "ProgrammingQuestions": "编程题",
+  "ProblemGroupList": "题组列表",
+  "ManagementGroup": "管理组",
+  "ProblemType": "题目类型",
+  "BasicInformation": "基本信息",
+  "ProblemList": "题目列表"
 }

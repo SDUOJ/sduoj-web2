@@ -34,10 +34,11 @@ const Login = (props: any) => {
                     resetButtonProps: false,
                     render: (prop, def) => {
                         if (loginType !== 'SDUCAS')
-                            return <Button type={"primary"} block onClick={()=>{
+                            return <Button type={"primary"} block onClick={() => {
                                 formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
                                     props.login(value)
-                                })}
+                                })
+                            }
                             }> {props.t("Login")} </Button>
                         return <ThirdPartyLoginSDUCAS/>
                     },
@@ -54,7 +55,7 @@ const Login = (props: any) => {
                             fieldProps={{
                                 size: 'large',
                                 prefix: <UserOutlined className={'prefixIcon'}/>,
-                                onPressEnter: ()=>{
+                                onPressEnter: () => {
                                     formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
                                         props.login(value)
                                     })
@@ -74,7 +75,7 @@ const Login = (props: any) => {
                             fieldProps={{
                                 size: 'large',
                                 prefix: <LockOutlined className={'prefixIcon'}/>,
-                                onPressEnter: ()=>{
+                                onPressEnter: () => {
                                     formRef.current?.validateFieldsReturnFormatValue?.()?.then((value) => {
                                         props.login(value)
                                     })
@@ -108,7 +109,9 @@ const Login = (props: any) => {
 }
 
 
-const mapStateToProps = (state: any) => {}
+const mapStateToProps = (state: any) => {
+    return {}
+}
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     login: (data: loginInfo) => dispatch(userLoginTodo(data))

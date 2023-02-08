@@ -187,5 +187,16 @@
   "主观题": "Subjective problem",
   "ioTemplate": "IO Judge Template",
   "advancedTemplate": "Advanced Judge Template",
-  "problemSet": "Problem Set"
+  "problemSet": "Problem Set",
+  "problemSetMod": "Problem Set Components",
+  "problemGroup": "Problem Group",
+  "QuestionType": "Question Type",
+  "ObjectiveQuestions": "Objective questions",
+  "SubjectiveQuestions": "Subjective questions",
+  "ProgrammingQuestions": "Programming questions",
+  "ProblemGroupList": "Problem Group List",
+  "ManagementGroup": "Management Group",
+  "ProblemType": "Problem type",
+  "BasicInformation": "Basic Information",
+  "ProblemList": "Problem List"
 }

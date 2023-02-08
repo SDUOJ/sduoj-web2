@@ -261,6 +261,7 @@ const GroupMember = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
+    return {}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
