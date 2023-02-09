@@ -206,7 +206,6 @@ const MProblemSet = (props: any) => {
                         <Form.Item label={"赛后补题"}>
                             <SwitchX ck={"开"} unck={"关"} value={usePractice} onChange={setUsePractice}/>
                         </Form.Item>
-
                         {usePractice === 1 && (
                             <>
                                 <Form.Item
@@ -220,8 +219,6 @@ const MProblemSet = (props: any) => {
                             </>
 
                         )}
-
-
                     </>
                 )}
                 <Row gutter={24}>
@@ -265,9 +262,7 @@ const MProblemSet = (props: any) => {
                                 >{"新增题组"}</Button>
                             ]
                         }}
-                        rowButton={(row: any, value: any, onChange: any) => {
-                            return []
-                        }}
+                        rowButton={() => []}
                     />
                 </Form.Item>
             </>,
@@ -337,10 +332,10 @@ const MProblemSet = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemSetList"}
                             width={1200}
-                            title={"编辑(" + rows.code + ")"}
+                            title={"编辑(" + rows.name + ")"}
                             type={"update"}
                             subForm={ProblemSetForm}
-                            formName={"SubjectiveForm"}
+                            formName={"ProblemSetForm"}
                             updateAppendProps={{psid: rows.psid}}
                             dataLoader={async () => {
                                 return mApi.getProblemSetInfo({psid: rows.psid}).then((value: any) => {
@@ -359,10 +354,10 @@ const MProblemSet = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemSetList"}
                             width={1200}
-                            title={"新建题单(克隆自" + rows.problemSetTitle + ")"}
+                            title={"新建题单(克隆自" + rows.name + ")"}
                             type={"fork"}
                             subForm={ProblemSetForm}
-                            formName={"SubjectiveForm"}
+                            formName={"ProblemSetForm"}
                             dataLoader={async () => {
                                 return mApi.getProblemSetInfo({psid: rows.psid}).then((value: any) => {
                                     return Promise.resolve(problemSetGet(value))
