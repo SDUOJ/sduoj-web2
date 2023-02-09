@@ -1,24 +1,11 @@
-import {Router, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
-import {Card, InputNumber, Select, Space} from "antd";
+import {Card, Space} from "antd";
 import ModalFormUseForm from "../../../Component/common/Form/ModalFormUseForm";
-import UserFormProfile from "../../../Component/user/Form/UserFormProfile";
-import UserFormAdditional from "../../../Component/user/Form/UserFormAdditional";
 import mApi from "../../../Utils/API/m-api";
-import judgeAuth from "../../../Utils/judgeAhtu";
-import ItemPassword from "../../../Component/user/Form/Item/ItemPassword";
 import React from "react";
-import {Form} from "antd"
-import MApi from "../../../Utils/API/m-api";
-import TableWithSelection from "../../../Component/common/Table/TableWithSelection";
-import ItemTitle from "../../../Component/common/Form/Item/ItemTitle";
 import ItemEditor from "../../../Component/common/Form/Item/ItemEditor";
-import ReviewStrategy from "../../../Component/subjectiveProblem/Form/Item/ReviewStrategy";
-import ItemSwitch from "../../../Component/common/Form/Item/ItemSwitch";
-import ItemSwitch01 from "../../../Component/common/Form/Item/ItemSwitch01";
-import TextArea from "antd/es/input/TextArea";
 import ItemCodeEditor from "../../../Component/common/Form/Item/ItemCodeEditor";
-import ItemSelectGroup from "../../../Component/group/Form/Item/ItemSelectGroup";
 import SubjectiveBase from "../../../Component/subjectiveProblem/Form/SubjectiveBase";
 import {scoreModeDefault} from "../../../Config/constValue";
 import TableWithPagination from "../../../Component/common/Table/TableWithPagination";

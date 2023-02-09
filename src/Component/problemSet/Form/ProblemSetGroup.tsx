@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import ItemTitle from "../../common/Form/Item/ItemTitle";
 import React, {useState} from "react";
-import {Col, Form, Row, Select} from "antd";
+import {Form, Select} from "antd";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
 import ItemTimeRange from "../../common/Form/Item/ItemTimeRange";
 import ItemProblemAdd from "../../problem/From/Item/ItemProblemAdd";

@@ -1,8 +1,7 @@
 import {withTranslation} from "react-i18next";
-import {Button, Form, Image, message} from "antd";
+import {Form, message} from "antd";
 import ItemText from "../../Component/common/Form/Item/ItemText";
 import {useForm} from "antd/es/form/Form";
-import BK1 from "../../Assert/img/ban1news.jpg";
 import React from "react";
 import Title from "antd/es/typography/Title";
 import Reconfirm from "../../Component/common/Reconfirm";

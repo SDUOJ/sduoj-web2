@@ -1,9 +1,8 @@
 import {withTranslation} from "react-i18next";
-import {Form, Select, Space, Tabs} from "antd";
+import {Form, Select, Tabs} from "antd";
 import {NEWLINE_CONVERT, NEWLINE_CONVERT_INDEX} from "../../../Config/constValue";
 import React, {useState} from "react";
 import TextArea from "antd/es/input/TextArea";
-import ItemUpload from "../../common/Form/Item/ItemUpload";
 import ItemUploadMulti from "../../common/Form/Item/ItemUploadMulti";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
 

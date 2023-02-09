@@ -1,12 +1,9 @@
 import {withTranslation} from "react-i18next";
-import {Button, Card, Form, message, Modal, Space, Switch} from "antd";
-import TableWithPagination from "../common/Table/TableWithPagination";
+import {Button, Card, Modal, Space} from "antd";
 import TableWithAllData from "../common/Table/TableWithAllData";
-import mApi from "../../Utils/API/m-api";
 import React, {useState} from "react";
 import ModalFormUseForm from "../common/Form/ModalFormUseForm";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
-import ItemTitle from "../common/Form/Item/ItemTitle";
 import ProblemSetGroup from "./Form/ProblemSetGroup";
 
 const MGroupInfo = (props: any) => {

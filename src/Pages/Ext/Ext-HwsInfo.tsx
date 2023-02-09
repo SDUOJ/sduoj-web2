@@ -1,30 +1,27 @@
 import {withRouter} from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import React, {Dispatch, useEffect, useState} from "react";
-import {Alert, Button, Card, Form, InputNumber, message, Select, Space, Tag} from "antd";
+import {Button, Card, Form, InputNumber, message, Select, Space, Tag} from "antd";
 import extApi from "../../Utils/API/ext-api";
 import cApi from "../../Utils/API/c-api";
 import {isValueEmpty} from "../../Utils/empty";
 import MarkdownText from "../../Utils/MarkdownText";
 import ItemText from "../../Component/common/Form/Item/ItemText";
-import ItemSelectGroup from "../../Component/group/Form/Item/ItemSelectGroup";
 import ItemEditor from "../../Component/common/Form/Item/ItemEditor";
 import ItemTime from "../../Component/common/Form/Item/ItemTime";
 import judgeAuth from "../../Utils/judgeAhtu";
 import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
 import {connect} from "react-redux";
 import {UserState} from "../../Type/Iuser";
-import {DownloadOutlined, UploadOutlined} from "@ant-design/icons";
+import {UploadOutlined} from "@ant-design/icons";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {TimeDiff, unix2Time} from "../../Utils/Time";
 import ModalMarkdown from "../../Component/common/ModalMarkdown";
 import SubmitInfo from "../../Component/ExtHws/SubmitInfo";
 import Reconfirm from "../../Component/common/Reconfirm";
 import ItemUploadUser from "../../Component/common/Form/Item/ItemUploadUser";
-import TableWithAllData from "../../Component/common/Table/TableWithAllData";
 import ItemUploadFileMulti from "../../Component/ExtHws/ItemUploadFileMulti";
 import MoveModal from "../../Component/ExtHws/MoveModal";
-import {brotliCompress} from "zlib";
 import LoginCheck from "../../Component/common/LoginCheck";
 
 
@@ -46,7 +43,7 @@ const ExtHwsInfo = (props: any) => {
             <ItemEditor name={"description"} label={"收集描述"}/>
         </>
     )
-    
+
 
     useEffect(() => {
         if (data === null)

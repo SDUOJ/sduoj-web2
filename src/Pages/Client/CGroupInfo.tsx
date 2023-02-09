@@ -1,17 +1,14 @@
 import {withRouter} from "react-router-dom";
-import {Card, List, Tabs, Tag} from "antd";
+import {Card, Tabs, Tag} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import cApi from "Utils/API/c-api"
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import Title from "antd/es/typography/Title";
-import UserAvatar from "../../Component/user/Avatar";
-import Search from "antd/es/input/Search";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
 import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
 import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
 import {connect} from "react-redux";
-import {SubmissionState} from "../../Type/ISubmission";
 import {CommonState} from "../../Redux/Action/common";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
 

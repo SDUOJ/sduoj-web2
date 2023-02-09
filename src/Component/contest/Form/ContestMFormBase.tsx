@@ -1,15 +1,9 @@
 import {withTranslation} from "react-i18next";
 import ItemText from "../../common/Form/Item/ItemText";
 import ItemTitle from "../../common/Form/Item/ItemTitle";
-import {Col, DatePicker, Form, Radio, Row, Select} from "antd";
-import ItemSwitch from "../../common/Form/Item/ItemSwitch";
-import Item from "antd/es/list/Item";
-import React, {useEffect, useState} from "react";
+import {Col, Form, Radio, Row, Select} from "antd";
+import React, {useState} from "react";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
-import ItemPassword from "../../user/Form/Item/ItemPassword";
-import {InfoCircleOutlined} from "@ant-design/icons";
-import moment from "moment";
-import {isValueEmpty} from "../../../Utils/empty";
 import ItemEditor from "../../common/Form/Item/ItemEditor";
 import ItemSwitch01 from "../../common/Form/Item/ItemSwitch01";
 import ItemTimeRange from "../../common/Form/Item/ItemTimeRange";

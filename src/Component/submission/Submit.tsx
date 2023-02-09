@@ -10,7 +10,7 @@ import CodeEditor from "../common/CodeEditor";
 import {withRouter} from "react-router-dom";
 import {TopSubmissionInfoType} from "../../Type/ISubmission";
 import {JudgeTemplate2lang} from "../../Utils/JudgeTemplate2lang";
-import {fileUpload, fileUploadWithoutMD5} from "../../Utils/fileUpload";
+import {fileUploadWithoutMD5} from "../../Utils/fileUpload";
 import {MaxCodeLength} from "../../Config/constValue";
 import {UserState} from "../../Type/Iuser";
 import {functionTemplate} from "../../Type/types";

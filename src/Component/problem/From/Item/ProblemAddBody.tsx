@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Button, Form, Popconfirm, Popover, Space} from "antd";
+import {Button, Popconfirm, Popover, Space} from "antd";
 import {CloseOutlined, EditOutlined, MenuOutlined, PlusOutlined, SortAscendingOutlined} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
@@ -11,7 +11,6 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import {examProblemType} from "../../../../Type/IExam";
 import {ck, get, isValueEmpty} from "../../../../Utils/empty";
 import {SketchPicker} from "react-color";
-import {ProFormColorPicker} from "@ant-design/pro-form";
 
 export const defaultKeyMapping = {
     ProblemCode: "ProblemCode",

@@ -1,14 +1,11 @@
-import React, {Dispatch, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
-import {connect, useSelector} from "react-redux";
 import {withRouter} from "react-router-dom";
 // @ts-ignore
 // import VditorPreview from 'vditor/dist/method.min'
 import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
-import {isValueEmpty} from "../../../Utils/empty";
-import {updateChoiceTodo} from "../../../Redux/Action/exam";
 
 
 const Options = (props: any) => {

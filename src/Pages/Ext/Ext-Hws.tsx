@@ -1,5 +1,5 @@
 import LoginCheck from "../../Component/common/LoginCheck";
-import {Card, Space, Tag} from "antd";
+import {Card, Space} from "antd";
 import {connect} from "react-redux";
 import {UserState} from "../../Type/Iuser";
 import React, {Dispatch} from "react";

@@ -2,8 +2,7 @@ import {Button, Form} from "antd";
 import React, {useState} from "react";
 import Dragger from "antd/lib/upload/Dragger";
 import {DownloadOutlined, InboxOutlined, LoadingOutlined} from "@ant-design/icons";
-import {fileUpload, fileUploadWithoutMD5} from "../../Utils/fileUpload";
-import Title from "antd/es/typography/Title";
+import {fileUpload} from "../../Utils/fileUpload";
 
 
 const ItemUploadFileMulti = (props: any) => {

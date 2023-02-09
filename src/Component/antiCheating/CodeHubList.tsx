@@ -1,5 +1,4 @@
 import {withTranslation} from "react-i18next";
-import TableWithSelection from "../common/Table/TableWithSelection";
 
 const CodeHubList = (props: any) =>{
     return (

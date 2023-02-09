@@ -12,7 +12,6 @@ import useProblemInfo from "../problem/API/getProblemInfo";
 import {isValueEmpty} from "../../Utils/empty";
 import {ContestState} from "../../Redux/Action/contest";
 import {UrlPrefix} from "../../Config/constValue";
-import {setState} from "jest-circus/build/state";
 
 const Problem = (props: any) => {
     const problemCode = props.match.params.problemCode

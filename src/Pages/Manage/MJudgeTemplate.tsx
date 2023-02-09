@@ -1,16 +1,11 @@
-import React, {Component} from "react";
-import {Role, Sex} from "../../Type/Iuser";
-import {ManOutlined, QuestionOutlined, WomanOutlined} from "@ant-design/icons";
-import {Button, Card, Space, Tag} from "antd";
-import TableWithSelection from "../../Component/common/Table/TableWithSelection";
+import React from "react";
+import {Card, Space} from "antd";
 import MApi from "../../Utils/API/m-api";
+import mApi from "../../Utils/API/m-api";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {unix2Time} from "../../Utils/Time";
-import UserFormProfile from "../../Component/user/Form/UserFormProfile";
-import UserFormAdditional from "../../Component/user/Form/UserFormAdditional";
-import mApi from "../../Utils/API/m-api";
 import ModalFormUseForm from "../../Component/common/Form/ModalFormUseForm";
 import TemplateMForm from "../../Component/judgeTemplate/Form/TemplateMForm";
 

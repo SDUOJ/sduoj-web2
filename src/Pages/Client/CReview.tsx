@@ -1,25 +1,7 @@
-import {
-    Alert,
-    Button,
-    Card,
-    Col, Drawer,
-    Input,
-    InputNumber,
-    Radio,
-    Row,
-    Select,
-    Space,
-    Switch,
-    Table,
-    Tabs,
-    Tag,
-    Typography
-} from "antd";
+import {Button, Card, Col, Drawer, Row, Select, Table, Tabs, Tag, Typography} from "antd";
 import {useEffect, useState} from "react";
 import {CheckCard} from '@ant-design/pro-card';
 import "Assert/css/Review.css"
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons"
-import MarkdownText from "../../Utils/MarkdownText";
 import ScoreMode from "../../Component/subjectiveProblem/ScoreMode";
 
 

@@ -5,11 +5,9 @@ import ExamProblem from "../problem/Exam/ExamProblem";
 import ExamPageCtrl from "./ExamPageCtrl";
 import ExamAnswerSheet from "./ExamAnswerSheet";
 import Timer from "./Timer";
-import {SExamProListInfo, SProList} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import eApi from "Utils/API/e-api"
 import useExamInfo from "./API/getExamInfo";
-import deepClone from "../../Utils/deepClone";
 import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";
 import {UrlPrefix} from "../../Config/constValue";
 import {getExamGroupListFunc} from "./API/getExamGroupListFunc";

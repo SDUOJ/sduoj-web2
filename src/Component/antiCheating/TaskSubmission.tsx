@@ -1,11 +1,7 @@
 import {withTranslation} from "react-i18next";
 import React, {useState} from "react";
-import {PlusOutlined} from "@ant-design/icons";
 import {Button, Col, Modal, Row, Tabs} from "antd";
-import CodeHubList from "./CodeHubList";
 import ImportSubmission from "./ImportSubmission";
-import cApi from "../../Utils/API/c-api";
-import SubmissionList from "../submission/SubmissionList/SubmissionList";
 
 const TaskSubmission = (props: any) => {
 

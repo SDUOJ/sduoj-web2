@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Menu} from 'antd';
 import {Link, RouteComponentProps, withRouter} from "react-router-dom";
 import {IUserPropRoles} from "../../Type/Iuser";

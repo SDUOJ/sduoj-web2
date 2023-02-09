@@ -1,11 +1,8 @@
-import {Button, Form, Input, message, Modal, Select, Space, Tabs, Tag} from "antd";
+import {Button, Form, Input, message, Modal, Space, Tag} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
 import {TableState} from "../../Type/ITable";
-import ItemTitle from "../common/Form/Item/ItemTitle";
-import ItemSwitch from "../common/Form/Item/ItemSwitch";
-import ItemEditor from "../common/Form/Item/ItemEditor";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
 import {withTranslation} from "react-i18next";
 import {unix2Time} from "../../Utils/Time";
@@ -15,13 +12,8 @@ import {useForm} from "antd/lib/form/Form";
 import {isValueEmpty} from "../../Utils/empty";
 import {DownloadOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import ButtonWithSelection from "../common/Table/ButtonWithSelection";
-import TableWithAllData from "../common/Table/TableWithAllData";
-import {NEWLINE_CONVERT, NEWLINE_CONVERT_INDEX} from "../../Config/constValue";
-import ItemPassword from "../user/Form/Item/ItemPassword";
 import ModalFormUseForm from "../common/Form/ModalFormUseForm";
 import FormCheckPointsUpload from "./From/FormCheckPointsUpload";
-import Title from "antd/es/typography/Title";
-import {modifyProblemsCheckPoint} from "../../Type/types";
 
 function DeleteOutlined() {
     return null;

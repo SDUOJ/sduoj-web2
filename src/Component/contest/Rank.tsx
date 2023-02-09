@@ -9,8 +9,6 @@ import "Assert/css/ContestRank.css"
 import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import {ReactComponent as Champion} from "Assert/img/champion.svg"
 import Icon, {FileTextOutlined, TeamOutlined} from "@ant-design/icons";
-import Submit from "../submission/Submit";
-import ModalSubmissionList from "../submission/SubmissionList/ModalSubmissionList";
 import SubmissionList from "../submission/SubmissionList/SubmissionList";
 
 const Rank = (props: any) => {

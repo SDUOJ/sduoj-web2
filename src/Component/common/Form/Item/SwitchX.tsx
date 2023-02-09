@@ -1,7 +1,6 @@
 import {Switch} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import React from "react";
-import {isValueEmpty} from "../../../../Utils/empty";
 
 const SwitchX = (props: any) => {
     const {value, onChange} = props

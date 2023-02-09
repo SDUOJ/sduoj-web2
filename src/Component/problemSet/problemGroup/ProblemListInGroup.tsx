@@ -13,7 +13,6 @@ import SubjectiveConfigForm from "../Form/SubjectiveConfigForm";
 import subjectiveGet from "../dataConvert/subjectiveGet";
 import {isValueEmpty} from "../../../Utils/empty";
 import ItemProblemAdd from "../../problem/From/Item/ItemProblemAdd";
-import {PlusOutlined} from "@ant-design/icons";
 
 
 const ProblemListInGroup = (props: any) => {

@@ -1,10 +1,5 @@
 import {Button, Form} from "antd";
 import {withTranslation} from "react-i18next";
-import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
-import ObjectiveForm from "./ObjectiveForm";
-import mApi from "../../../Utils/API/m-api";
-import objectiveSubmit from "../dataConvert/objectiveSubmit";
-import objectiveGet from "../dataConvert/objectiveGet";
 import CellEditTable from "../../common/Table/CellEditTable";
 import React from "react";
 import {PlusOutlined} from "@ant-design/icons";

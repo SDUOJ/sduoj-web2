@@ -3,7 +3,6 @@ import {withRouter} from "react-router-dom";
 import {Button, Card, Col, Row, Slider, Space, Table} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {isValueEmpty} from "../../Utils/empty";
 import TestCase from "../submission/TestCase";
 import {StateList, SubmissionMap} from "../../Type/ISubmission";
 import {UrlPrefix} from "../../Config/constValue";

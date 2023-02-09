@@ -5,15 +5,10 @@ import LoginCheck from "../../../Component/common/LoginCheck";
 
 import {connect} from "react-redux";
 import {ContestState} from "../../../Redux/Action/contest";
-import {routerC_Contest_M, routerC_ProblemSet_M} from "../../../Config/router/routerC";
+import {routerC_ProblemSet_M} from "../../../Config/router/routerC";
 import Loading from "../../../Utils/Loading";
-import {Alert, Card, Col, Menu, Row, Slider, Space} from "antd";
+import {Card, Menu} from "antd";
 import {UrlPrefix} from "../../../Config/constValue";
-import {isValueEmpty} from "../../../Utils/empty";
-import {TimeRangeState, unix2Time} from "../../../Utils/Time";
-import {LockFilled} from "@ant-design/icons";
-import DTime from "../../../Component/common/DTime";
-import Countdown from "antd/lib/statistic/Countdown";
 import MarkdownText from "../../../Utils/MarkdownText";
 
 const ProblemSetInfo = (props: any) => {

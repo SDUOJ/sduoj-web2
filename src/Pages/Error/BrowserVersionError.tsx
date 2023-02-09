@@ -1,8 +1,5 @@
-import {Button, message, Result} from "antd";
-import {TimeDiff, unix2Time} from "../../Utils/Time";
-import {useEffect, useState} from "react";
+import {Button, Result} from "antd";
 import {withRouter} from "react-router-dom";
-import CApi from "Utils/API/c-api"
 import {UrlPrefix} from "../../Config/constValue";
 
 const BrowserVersionError = (props: any) => {

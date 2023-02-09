@@ -1,11 +1,8 @@
-import {Button, Form, Input, Space} from "antd";
+import {Form} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 import {InboxOutlined} from "@ant-design/icons";
 import Dragger from "antd/lib/upload/Dragger";
-import {isValueEmpty} from "../../../../Utils/empty";
-import apiAddress from "../../../../Utils/API/apiAddress";
-import {fileUpload, fileUploadWithoutMD5} from "../../../../Utils/fileUpload";
 
 interface ItemUploadPropsType {
     label: string       // Form 标签

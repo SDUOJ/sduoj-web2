@@ -1,9 +1,8 @@
 import React, {Dispatch, useEffect, useState} from "react";
-import {Col, DatePicker, Form, FormInstance, Input, List, Radio, Row, Skeleton} from "antd";
+import {Col, DatePicker, Form, FormInstance, Input, Radio, Row, Skeleton} from "antd";
 import {InfoCircleOutlined} from "@ant-design/icons"
 import {withTranslation} from "react-i18next";
 import Meta from "antd/lib/card/Meta";
-import TextArea from "antd/lib/input/TextArea";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import moment from "moment";

@@ -4,8 +4,7 @@ import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../../Component/exam/Timer";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import moment from "moment";
-import {TimeDiff, TimeRangeState} from "../../Utils/Time";
+import {TimeRangeState} from "../../Utils/Time";
 import LoginCheck from "../../Component/common/LoginCheck";
 import useExamInfo from "../../Component/exam/API/getExamInfo";
 import {MarkdownPreview} from "../../Utils/MarkdownPreview";

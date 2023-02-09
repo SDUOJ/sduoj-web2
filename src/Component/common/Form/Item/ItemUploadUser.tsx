@@ -1,11 +1,10 @@
-import {Button, Form, Input, message, Space} from "antd";
+import {Button, Form, message, Space} from "antd";
 import React, {useState} from "react";
 import {withTranslation} from "react-i18next";
 import {InboxOutlined} from "@ant-design/icons";
 import Dragger from "antd/lib/upload/Dragger";
 import {isValueEmpty} from "../../../../Utils/empty";
-import apiAddress from "../../../../Utils/API/apiAddress";
-import {fileUpload, fileUploadWithoutMD5} from "../../../../Utils/fileUpload";
+import {fileUploadWithoutMD5} from "../../../../Utils/fileUpload";
 import FormExtraInfo from "../FormExtraInfo";
 
 interface ItemUploadPropsType {

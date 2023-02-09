@@ -1,12 +1,9 @@
 import {withTranslation} from "react-i18next";
-import {Form, Input, InputNumber, Table} from "antd";
-import Item from "antd/es/list/Item";
-import ItemSwitch from "../../common/Form/Item/ItemSwitch";
+import {Form, InputNumber, Table} from "antd";
 import "Assert/css/MContest.css"
 import ItemSelectGroup from "../../group/Form/Item/ItemSelectGroup";
 import React from "react";
 import TextArea from "antd/es/input/TextArea";
-import {isValueEmpty} from "../../../Utils/empty";
 import ItemSwitch01 from "../../common/Form/Item/ItemSwitch01";
 
 const ContestMFormManagement = (props: any) => {

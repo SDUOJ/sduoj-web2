@@ -1,6 +1,6 @@
-import {Button, Descriptions, Form, Input, Modal, Select, Tabs} from "antd";
+import {Button, Form, Modal, Tabs} from "antd";
 import {withTranslation} from "react-i18next";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useForm} from "antd/es/form/Form";
 import {PlusOutlined} from "@ant-design/icons";
 import ItemSwitch from "../common/Form/Item/ItemSwitch";
@@ -8,7 +8,6 @@ import ItemText from "../common/Form/Item/ItemText";
 import CodeHubList from "./CodeHubList";
 import SubmissionList from "../submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
-import {UrlPrefix} from "../../Config/constValue";
 
 const ImportSubmission = (props: any) => {
 

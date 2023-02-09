@@ -1,7 +1,6 @@
-import {Form, Switch} from "antd";
+import {Form} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import SwitchX from "./SwitchX";
 
 const ItemSwitch01 = (props: any) => {
