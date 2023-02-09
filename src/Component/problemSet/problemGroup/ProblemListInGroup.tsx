@@ -13,6 +13,7 @@ import SubjectiveConfigForm from "../Form/SubjectiveConfigForm";
 import subjectiveGet from "../dataConvert/subjectiveGet";
 import {isValueEmpty} from "../../../Utils/empty";
 import ItemProblemAdd from "../../problem/From/Item/ItemProblemAdd";
+import {PlusOutlined} from "@ant-design/icons";
 
 
 const ProblemListInGroup = (props: any) => {
@@ -115,11 +116,15 @@ const ProblemListInGroup = (props: any) => {
                                 return [<ModalFormUseForm
                                     width={900}
                                     type={"create"}
+                                    btnProps={{block: true}}
+                                    btnType={"dashed"}
                                     title={"新建客观题"}
                                     subForm={[{component: <ObjectiveForm type={"create"}/>, label: ""}]}
                                     formName={"ProblemObjectForm"}
                                     dataSubmitter={(value: any) => {
-                                        return mApi.createObjective({...objectiveSubmit(value), gid: props.gid})
+                                        let data = objectiveSubmit(value)
+                                        if (data == null) return Promise.reject()
+                                        return mApi.createObjective({...data, gid: props.gid})
                                     }}
                                     afterSubmit={(data: any) => {
                                         actionRef.current?.addEditRecord?.({
@@ -131,6 +136,8 @@ const ProblemListInGroup = (props: any) => {
                                 return [<ModalFormUseForm
                                     width={900}
                                     type={"create"}
+                                    btnProps={{block: true}}
+                                    btnType={"dashed"}
                                     title={"新建主观题"}
                                     subForm={[
                                         {component: <SubjectiveForm type={"create"}/>, label: "基本信息"},
@@ -169,7 +176,9 @@ const ProblemListInGroup = (props: any) => {
                                             })
                                         }}
                                         dataSubmitter={(value: any) => {
-                                            return mApi.editObjective(objectiveSubmit(value))
+                                            let data = objectiveSubmit(value)
+                                            if (data == null) return Promise.reject()
+                                            return mApi.editObjective(data)
                                         }}
                                         afterSubmit={(data: any) => {
                                             value = value.map((v: any) => {

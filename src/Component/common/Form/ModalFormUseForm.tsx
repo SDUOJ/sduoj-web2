@@ -29,7 +29,8 @@ interface ModalFormProps {
     className?: any          // 类名
     subForm: subFormType[]  // 子表单信息
     btnProps?: any
-    layout?: any
+    layout?: any,
+    onClose?: any   // 关闭时进行回调
 }
 
 const ModalForm = (props: ModalFormProps & any) => {
@@ -113,10 +114,11 @@ const ModalForm = (props: ModalFormProps & any) => {
             // 在提交表单数据之前，追加数据
             props.updateAppendProps && Object.assign(value, props.updateAppendProps)
             props.dataSubmitter(value).then((res: any) => {
-                setFormVis(false)
                 // 当数据绑定表格时，更新表格数据
                 props.TableName && props.addTableVersion(props.TableName)
                 props.afterSubmit && props.afterSubmit(res)
+                props.onClose && props.onClose()
+                setFormVis(false)
                 message.success("成功")
             })
         }
@@ -176,6 +178,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     visible={formVis}
                     maskClosable={false}
                     onCancel={() => {
+                        props.onClose && props.onClose()
                         setFormVis(false)
                     }}
                     footer={[
@@ -216,6 +219,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                                 width={props.width ?? 1200}
                                 style={{minWidth: props.width}}
                                 onCancel={() => {
+                                    props.onClose && props.onClose()
                                     setFormVis(false)
                                 }}
                                 footer={submitter}

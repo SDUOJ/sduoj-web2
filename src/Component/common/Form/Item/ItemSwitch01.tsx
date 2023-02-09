@@ -2,6 +2,7 @@ import {Form, Switch} from "antd";
 import React from "react";
 import {withTranslation} from "react-i18next";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import SwitchX from "./SwitchX";
 
 const ItemSwitch01 = (props: any) => {
     return (
@@ -18,21 +19,7 @@ const ItemSwitch01 = (props: any) => {
     )
 }
 
-const SwitchX = (props: any) => {
-    const {value, onChange} = props
-    return (
-        <>
-            <Switch
-                checked={value === 1}
-                onChange={(v) => {
-                    onChange(v ? 1 : 0)
-                }}
-                checkedChildren={props.ck ?? <CheckOutlined/>}
-                unCheckedChildren={props.unck ?? <CloseOutlined/>}
-            />
-        </>
-    )
-}
+
 
 
 export default withTranslation()(ItemSwitch01)

@@ -97,13 +97,14 @@ const ObjectiveForm = (props: any) => {
                     onChange={setChoiceData}
                     toolBar={(actionRef: any) => {
                         return [<Button
+                            type={"dashed"}
+                            block
                             onClick={() => {
                                 actionRef.current?.addEditRecord?.({
                                     id: Date.now(),
                                     content: ""
                                 }, {newRecordType: "dataSource"});
                             }}
-                            type="default"
                             icon={<PlusOutlined/>}
                             disabled={choiceData && choiceData.length >= 26}
                         >

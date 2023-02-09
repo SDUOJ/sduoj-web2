@@ -335,6 +335,9 @@ export default {
     async getProblemGroupList(data: any) {
         return request.post("/ps/group/list", data)
     },
+    async getProblemGroupSearch(data: any) {
+        return request.post("/ps/group/search", data)
+    },
 
     async createObjective(data: any) {
         return request.post("/ps/objective/add", data)
@@ -354,6 +357,19 @@ export default {
     },
     async getSubjective(data: any) {
         return request.post("/ps/subjective/info", data)
+    },
+
+    async getProblemSetList(data: any) {
+        return request.post("/ps/problem_set/list", data)
+    },
+    async getProblemSetInfo(data: any) {
+        return request.post("/ps/problem_set/info", data)
+    },
+    async createProblemSet(data: any) {
+        return request.post("/ps/problem_set/add", data)
+    },
+    async editProblemSet(data: any) {
+        return request.post("/ps/problem_set/edit", data)
     }
 
 

@@ -7,6 +7,7 @@ import objectiveSubmit from "../dataConvert/objectiveSubmit";
 import objectiveGet from "../dataConvert/objectiveGet";
 import CellEditTable from "../../common/Table/CellEditTable";
 import React from "react";
+import {PlusOutlined} from "@ant-design/icons";
 
 const SubjectiveConfigForm = (props: any) => {
     const tableColumns = [
@@ -38,7 +39,9 @@ const SubjectiveConfigForm = (props: any) => {
                     toolBar={(actionRef: any) => {
                         return [
                             <Button
-                                type={"default"}
+                                type={"dashed"}
+                                block
+                                icon={<PlusOutlined/>}
                                 onClick={() => {
                                     actionRef.current?.addEditRecord?.({
                                         id: Date.now()

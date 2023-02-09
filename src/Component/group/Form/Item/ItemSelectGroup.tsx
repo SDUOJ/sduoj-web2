@@ -42,7 +42,7 @@ const ItemSelectGroup = (props: any) => {
     }, [props.manageInitData])
 
     return (
-        <Form.Item label={props.label} name={props.name} help={props.help}>
+        <Form.Item label={props.label} name={props.name} help={props.help} required={props.required}>
             <Select
                 mode={props.mode} // "multiple"
                 showSearch

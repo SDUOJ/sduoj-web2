@@ -29,9 +29,6 @@ const CellEditTable = (props: any) => {
                 props.onChange && props.onChange(data)
             }}
             recordCreatorProps={false}
-            toolBarRender={() => {
-                return props.toolBar(actionRef);
-            }}
             editable={{
                 type: 'multiple',
                 editableKeys: editableKeys,
@@ -44,6 +41,7 @@ const CellEditTable = (props: any) => {
                 onChange: setEditableRowKeys,
             }}
         />
+        {props.toolBar(actionRef)}
     </>
 }
 

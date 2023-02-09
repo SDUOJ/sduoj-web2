@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
 import ItemEditor from "../../common/Form/Item/ItemEditor";
 import CellEditTable from "../../common/Table/CellEditTable";
+import {PlusOutlined} from "@ant-design/icons";
 
 const SubjectiveForm = (props: any) => {
 
@@ -59,7 +60,9 @@ const SubjectiveForm = (props: any) => {
                             toolBar={(actionRef: any) => {
                                 return [
                                     <Button
-                                        type={"default"}
+                                        type={"dashed"}
+                                        block
+                                        icon={<PlusOutlined/>}
                                         onClick={() => {
                                             actionRef.current?.addEditRecord?.({
                                                 id: Date.now()
