@@ -4,7 +4,7 @@ import {Col, Row} from "antd";
 import ExamProblem from "../problem/Exam/ExamProblem";
 import ExamPageCtrl from "./ExamPageCtrl";
 import ExamAnswerSheet from "./ExamAnswerSheet";
-import Timer from "./Timer";
+import Timer from "../common/Timer";
 import {withRouter} from "react-router-dom";
 import eApi from "Utils/API/e-api"
 import useExamInfo from "./API/getExamInfo";

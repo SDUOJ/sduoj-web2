@@ -1,172 +1,293 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Button, Card, Col, Row, Segmented, Table} from "antd";
+import {Badge, Button, Card, Col, message, Row} from "antd";
 import ProProgram from "../problem/Program/ProProgram";
 import cApi from "../../Utils/API/c-api";
 import ProProgramDetail from "../problem/Program/ProProgramDetail";
 import RecentSubmissionList from "../submission/SubmissionList/RecentSubmissionList";
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {UserState} from "../../Type/Iuser";
 import useProblemInfo from "../problem/API/getProblemInfo";
-import {isValueEmpty} from "../../Utils/empty";
-import {ContestState} from "../../Redux/Action/contest";
 import {UrlPrefix} from "../../Config/constValue";
+import {ProblemSetState} from "../../Redux/Action/problemSet";
+import {StarFilled, StarOutlined} from "@ant-design/icons";
+import ProblemSetPageCtrl from "./ProblemSetPageCtrl";
+import useProblemSetInfo from "./API/getProblemSetInfo";
+import Objective from "../problem/Objective/Objective";
+import Timer from "../common/Timer";
+import Subjective from "../problem/Subjective/Subjective";
+import Reconfirm from "../common/Reconfirm";
 
 const Problem = (props: any) => {
-    const problemCode = props.match.params.problemCode
-    const contestId = props.match.params.contestId
-    const contestInfo = props.ContestInfo[contestId]
+    const psid = props.match.params.problemSetId
+    const gid = props.match.params.problemGroupId
+    const pid = props.match.params.problemId
+    const problemSetInfo = useProblemSetInfo(psid)
 
-    const [nowGroupId, setNowGroupId] = useState<any>("题组1")
+    const proName = "problemSet-" + gid + "-" + pid
+    const psType = problemSetInfo?.type
+    const groupType = problemSetInfo?.groupInfo[gid].type
+    const proType = problemSetInfo?.groupInfo[gid].problemInfo[pid].type
+    const score = problemSetInfo?.groupInfo[gid].problemInfo[pid].point
 
-    const proName = "Contest-" + contestId + "-" + problemCode
+    const [flag, setFlag] = useState(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
+    const [upd, setUpd] = useState(0)
 
+    useEffect(() => {
+        if (problemSetInfo && flag !== problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
+            setFlag(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
+    }, [psid, pid, gid, problemSetInfo])
+
+    const getTypeText = () => {
+        if (proType === 0) return "单选题"
+        if (proType === 1) return "多选题"
+        if (proType === 2) return "不定项"
+    }
+
+    useEffect(() => {
+        document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
+            e = e || window.event;
+            return false;
+        };
+    })
 
     const GetProblemInfoAPI = () => {
-        return cApi.getContestProblem({contestId: contestId, problemCode: problemCode})
+        return cApi.getProblemSetProblem({
+            router: {psid: psid, gid: gid, pid: pid},
+        })
     }
     const SubmissionListAPI = (data: any) => {
-        return cApi.getContestSubmissionList({
+        return cApi.getProblemSetSubmissionList({
             ...data,
-            problemCode: problemCode,
+            router: {psid: psid, gid: gid, pid: pid},
             username: props.username,
-            contestId: contestId
+            problemSetId: psid
+        })
+    }
+
+    const submitAPI = (data: any) => {
+        return cApi.submitProblemSetProblem({
+            data: data,
+            router: {psid: psid, gid: gid, pid: pid},
+        }).then((res: any) => {
+            let hasAnswer = true
+            if (groupType !== 2)
+                hasAnswer = res
+            problemSetInfo.groupInfo[gid].problemInfo[pid].hasAnswer = hasAnswer
+            setUpd(upd + 1)
+            return Promise.resolve(res)
+        })
+    }
+
+    const getAs = () => {
+        return cApi.getProblemSetProblemAS({
+            router: {psid: psid, gid: gid, pid: pid},
         })
     }
     const QuerySubmissionAPI = (submissionId: string) => {
-        return cApi.getContestSubmissionInfo({contestId: contestId, submissionId: submissionId})
+        return cApi.getProblemSetSubmissionInfo({psid: psid, gid: gid, submissionId: submissionId})
     }
 
     const problemInfo = useProblemInfo(GetProblemInfoAPI, proName)
+    const hasTimer = problemSetInfo !== undefined &&
+        psType === 1 && problemSetInfo.config.useSameSE == 1 &&
+        parseInt(problemSetInfo.tm_end) > Date.now()
 
     return (
-        <>
-            <Segmented options={['题组1', '题组2', '题组3']} value={nowGroupId} onChange={setNowGroupId} block={true}/>
-
-            <Row gutter={20} style={{marginTop: "24px"}}>
-                <Col span={17}>
-                    <Card size={"small"}>
-                        <ProProgram
-                            showMdExport={true}
-                            name={proName}
-                            nameWithD={proName}
-                            GetProblemInfoAPI={GetProblemInfoAPI}
-                            SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
-                                return cApi.submitContestProblem({
-                                    judgeTemplateId: judgeTemplate,
-                                    code: code,
-                                    problemCode: problemCode,
-                                    zipFileId: zipId,
-                                    contestId: contestId
-                                })
-                            }}
-                            SubmissionListAPI={SubmissionListAPI}
-                            QuerySubmissionAPI={QuerySubmissionAPI}
-                            scoreMod={"show"}
-                            testcaseMod={"show"}
-                            showInfo={false}
-                        />
-                    </Card>
-                </Col>
-                <Col span={7}>
-                    <div>
-                        <Row gutter={10}>
-                            {contestInfo?.problems.map((value: any) => {
-                                return (
-                                    <Col span={3}>
-                                        <Button
-                                            size={"middle"}
-                                            type={value.problemCode === problemCode ? "primary" : "text"}
-                                            shape={"round"}
-                                            onClick={() => {
-                                                props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + value.problemCode)
+        <div style={{textAlign: "center", margin: "0 auto"}}>
+            <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
+                <Row gutter={20} style={{marginTop: "24px"}}>
+                    <Col span={17}>
+                        <Card title={
+                            <>
+                                {groupType === 0 && (
+                                    <>
+                                        【{getTypeText()}】
+                                    </>
+                                )}
+                                <>{parseInt(pid) + 1}.</>
+                                {score !== undefined && (
+                                    <>（{score}{props.t(score === 1 ? "point" : "points")}）</>
+                                )}
+                            </>
+                        }
+                              extra={
+                                  <Button
+                                      type="default"
+                                      shape="round"
+                                      icon={flag ? <StarFilled/> : <StarOutlined/>}
+                                      danger={flag}
+                                      onClick={() => {
+                                          cApi.updateProblemSetProblemCollect({
+                                              router: {psid: psid, gid: gid, pid: pid},
+                                          }).then((res) => {
+                                              problemSetInfo.groupInfo[gid].problemInfo[pid].collect = 1 - flag
+                                              setFlag(1 - flag)
+                                          })
+                                      }}
+                                  >
+                                      {props.t("Mark")}
+                                  </Button>
+                              }>
+                            {(() => {
+                                switch (groupType) {
+                                    case 2:
+                                        return (
+                                            <ProProgram
+                                                showMdExport={false}
+                                                name={proName}
+                                                nameWithD={proName}
+                                                GetProblemInfoAPI={GetProblemInfoAPI}
+                                                SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
+                                                    return submitAPI({
+                                                        judgeTemplateId: judgeTemplate,
+                                                        code: code,
+                                                        zipFileId: zipId,
+                                                        problemSetId: psid
+                                                    })
+                                                }}
+                                                SubmissionListAPI={SubmissionListAPI}
+                                                QuerySubmissionAPI={QuerySubmissionAPI}
+                                                scoreMod={"show"}
+                                                testcaseMod={"show"}
+                                                showInfo={false}
+                                            />
+                                        )
+                                    case 1:
+                                        return (
+                                            <Subjective
+                                                problemInfo={problemInfo}
+                                                onAnswerM={submitAPI}
+                                                getAS={getAs}
+                                                key_o={`sbjective-${psid}-${gid}-${pid}`}
+                                            />
+                                        )
+                                    case 0:
+                                        return (
+                                            <Objective
+                                                key_o={`objective-${psid}-${gid}-${pid}`}
+                                                onMark={(SID: string) => {
+                                                    return cApi.markObjectiveProblem({
+                                                        data: SID,
+                                                        router: {psid: psid, gid: gid, pid: pid},
+                                                    }).then((res: any) => {
+                                                        problemSetInfo.groupInfo[gid].problemInfo[pid].hasAnswer = res.hasAnswer
+                                                        setUpd(upd + 1)
+                                                        return Promise.resolve(res)
+                                                    })
+                                                }}
+                                                onAnswerM={submitAPI}
+                                                getAS={getAs}
+                                                problemInfo={problemInfo}
+                                            />
+                                        )
+                                }
+                            })()}
+                        </Card>
+                        <ProblemSetPageCtrl/>
+                    </Col>
+                    <Col span={7}>
+                        <div>
+                            {hasTimer && (
+                                <>
+                                    <Reconfirm
+                                        btnProps={{block: true, danger: true, type: "primary"}}
+                                        btnText={"交卷"}
+                                        confirm={props.username}
+                                        API={() => {
+                                            cApi.finishProblemSet(
+                                                {router: {psid: psid, gid: 0, pid: 0}}
+                                            ).then(() => {
+                                                message.success("交卷成功")
+                                                props.history.push(UrlPrefix + `/problemSet/${psid}`)
+                                            })
+                                        }}
+                                        todo={"交卷"}
+                                    />
+                                    <div style={{marginTop: 24}}>
+                                        <Timer
+                                            deadline={parseInt(problemSetInfo?.tm_end)}
+                                            inline={true}
+                                            onFinish={() => {
+                                                props.history.push(UrlPrefix + `/problemSet/${psid}`)
                                             }}
-                                        >
-                                            <span style={{fontWeight: "bold"}}>
-                                                {String.fromCharCode('A'.charCodeAt(0) + parseInt(value.problemCode) - 1)}
-                                            </span>
-                                        </Button>
-                                    </Col>
+                                        />
+                                    </div>
+                                </>
+
+                            )}
+                        </div>
+                        <div
+                            style={hasTimer ? {marginTop: 25} : {}}>
+                            {problemSetInfo?.groupInfo.map((group: any) => {
+                                return (
+                                    <div>
+                                        <Card size={"small"} title={group.name} bordered={false}>
+                                            <Row gutter={10}>
+                                                {group.problemInfo.map((problem: any, index: number) => {
+                                                    return (
+                                                        <Col span={3}>
+                                                            <Button
+                                                                ghost={true}
+                                                                size={"middle"}
+                                                                type={(group.index == gid && index == pid) ? "primary" : "text"}
+
+                                                                shape={"round"}
+                                                                onClick={() => {
+                                                                    props.history.push(UrlPrefix + "/problemSet/" + psid + "/problem/" + group.index + "/" + index)
+                                                                }}
+                                                            >
+                                                                <Badge dot={problem.collect === 1} offset={[10, 0]}>
+                                                                    <span style={{
+                                                                        fontWeight: "bold",
+                                                                        color: (problem.hasAnswer ? "#3ad506" : undefined)
+                                                                    }}>
+                                                                        {index + 1}
+                                                                    </span>
+                                                                </Badge>
+                                                            </Button>
+                                                        </Col>
+                                                    )
+                                                })}
+                                            </Row>
+                                        </Card>
+                                    </div>
                                 )
                             })}
-                        </Row>
-                    </div>
-                    <div style={{marginTop: 25}}>
-                        <ProProgramDetail
-                            problemInfo={problemInfo}
-                        />
-                    </div>
-                    <div style={{marginTop: 25}}>
-                        <Card title={"题目导航"} className={"smallBodyPadding"}>
-                            <Table
-                                size={"small"}
-                                dataSource={contestInfo?.problems}
-                                pagination={false}
-                                showHeader={false}
-                                columns={[
-                                    {
-                                        key: "ID",
-                                        title: "ID",
-                                        dataIndex: "problemCode",
-                                        render: (text) => {
-                                            return String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)
-                                        }
-                                    },
-                                    {
-                                        key: "title",
-                                        title: props.t("title"),
-                                        dataIndex: "problemTitle",
-                                        render: (text, row) => {
-                                            return (
-                                                <>
-                                                    {!isValueEmpty(row.problemColor) && (
-                                                        <span className={"circle"}
-                                                              style={{backgroundColor: row.problemColor}}/>
-                                                    )}
-                                                    <Button type={"text"} size={"small"} onClick={() => {
-                                                        props.history.push(UrlPrefix + "/contest/" + contestId + "/problem/" + row.problemCode)
-                                                    }}>{text}</Button>
-                                                </>
-                                            )
-                                        }
-                                    },
-                                    {
-                                        key: "AC_Submits",
-                                        title: "通过 / 提交",
-                                        render: (text, row) => {
-                                            return (
-                                                <>
-                                                    {row.acceptNum} / {row.submitNum}
-                                                </>
-                                            )
-                                        }
-                                    }
-                                ]}
-                            >
-
-                            </Table>
-                        </Card>
-                    </div>
-                    <div style={{marginTop: 25}}>
-                        <RecentSubmissionList
-                            name={"Pro-SubmissionList-Recent-" + proName}
-                            API={SubmissionListAPI}
-                            QuerySubmissionAPI={QuerySubmissionAPI}
-                        />
-                    </div>
-                </Col>
-            </Row>
-        </>
+                        </div>
+                        <div>
+                            {groupType === 2 && (
+                                <>
+                                    <div style={{marginTop: 25}}>
+                                        <ProProgramDetail
+                                            problemInfo={problemInfo}
+                                        />
+                                    </div>
+                                    <div style={{marginTop: 25}}>
+                                        <RecentSubmissionList
+                                            name={"Pro-SubmissionList-Recent-" + proName}
+                                            API={SubmissionListAPI}
+                                            QuerySubmissionAPI={QuerySubmissionAPI}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+        </div>
     )
 }
 
+
 const mapStateToProps = (state: any) => {
     const State: UserState = state.UserReducer
-    const CState: ContestState = state.ContestReducer
+    const PSState: ProblemSetState = state.ProblemSetReducer
     return {
         username: State.userInfo?.username,
-        ContestInfo: CState.contestInfo
+        problemSetInfo: PSState.problemSetInfo
 
     }
 }

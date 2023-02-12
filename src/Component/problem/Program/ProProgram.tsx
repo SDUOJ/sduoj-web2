@@ -141,6 +141,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                 <Space size={25}>
                     {props.SubmitAPI !== undefined && (
                         <Submit
+                            name={"Submit-"+props.name}
                             SubmissionListName={"Pro-SubmissionList-Recent-" + props.name}
                             API={props.SubmitAPI}
                             title={problemInfo?.problemTitle}
@@ -202,9 +203,11 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             {ProgramHeader}
             {/*题目主干*/}
             <Card bordered={false} className={"problemBody"}>
-                <div style={{right: "24px", position: "absolute"}}>
-                    <><MD2export value={markdownDescription}/></>
-                </div>
+                {props.showMdExport === true && (
+                    <div style={{right: "24px", position: "absolute"}}>
+                        <><MD2export value={markdownDescription}/></>
+                    </div>
+                )}
                 <div id={"problem-content"} style={{overflow: "hidden"}}>
                 </div>
             </Card>

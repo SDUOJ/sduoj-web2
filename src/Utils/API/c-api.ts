@@ -1,5 +1,13 @@
-import {problemListQuery, thirdPartyLogin, updatePassWord} from '../../Type/types'
-import {forgetInfo, loginInfo, profileInfo, registerInfo, verificationEmail} from "../../Type/types";
+import {
+    forgetInfo,
+    loginInfo,
+    problemListQuery,
+    profileInfo,
+    registerInfo,
+    thirdPartyLogin,
+    updatePassWord,
+    verificationEmail
+} from '../../Type/types'
 import request from "./request";
 import apiAddress from "./apiAddress";
 
@@ -92,7 +100,7 @@ export default {
     async getFileByMD5(data: { md5: string }) {
         return request.get("/filesys/queryByMd5", data)
     },
-    getFileDownloadUrl(id: string, name: string){
+    getFileDownloadUrl(id: string, name: string) {
         return apiAddress().CLIENT_SERVER + "/api/filesys/download/" + id + "/" + name
     },
 
@@ -136,28 +144,28 @@ export default {
     async submitInContest(data: { contestId: string } & any) {
         return request.post("/contest/createSubmission", data)
     },
-    async getContestReport(data: any){
+    async getContestReport(data: any) {
         return request.post("/contest/comprehensiveReport", data)
     },
 
 
     // 比赛问答
-    async createQuestion(data: {contestId: string, title: string, message: string}){
+    async createQuestion(data: { contestId: string, title: string, message: string }) {
         return request.post("/contest/createQuestion", data)
     },
-    async replyQuestion(data: {contestId: string, message: string, rootId: string, parentId: string}){
+    async replyQuestion(data: { contestId: string, message: string, rootId: string, parentId: string }) {
         return request.post("/contest/reply", data)
     },
-    async deleteQuestion(data: {clarificationId: string}){
+    async deleteQuestion(data: { clarificationId: string }) {
         return request.get("/contest/delete", data)
     },
-    async getQuestionList(data: {contestId: string}){
+    async getQuestionList(data: { contestId: string }) {
         return request.get("/contest/listQuestion", data)
     },
-    async getQuestionDetail(data: {clarificationId:string}){
+    async getQuestionDetail(data: { clarificationId: string }) {
         return request.get("/contest/questionDetail", data)
     },
-    async publicQuestion(data: {clarificationId:string}){
+    async publicQuestion(data: { clarificationId: string }) {
         //// TODO 此处正确性未知
         return request.post("/contest/publicQuestion", data)
     },
@@ -223,6 +231,58 @@ export default {
     },
     async quitGroup(data: { groupId: string }) {
         return request.get("/group/quit", data)
-    }
+    },
 
+    // 题单相关
+    async getProblemSetInfo(data: any) {
+        return request.post("/ps/problem_set/info_c", data)
+    },
+    // 获取单个题目信息
+    async getProblemSetProblem(data: any) {
+        return request.post("/ps/problem_set/pro_info", data)
+    },
+
+    // 提交题目答案
+    async submitProblemSetProblem(data: any) {
+        return request.post("/ps/answer_sheet/answer", data)
+    },
+    // 获取答题卡信息
+    async getProblemSetProblemAS(data: any) {
+        return request.post("/ps/answer_sheet/info", data)
+    },
+    // 标记客观题选项
+    async markObjectiveProblem(data: any) {
+        return request.post("/ps/answer_sheet/mark", data)
+    },
+    // 标记题目
+    async updateProblemSetProblemCollect(data: any) {
+        return request.post("/ps/answer_sheet/collect", data)
+    },
+
+    // 编程题提交列表
+    async getProblemSetSubmissionList(data: any) {
+        return request.post("/ps/answer_sheet/submissionList", data)
+    },
+    // 编程题提交详情
+    async getProblemSetSubmissionInfo(data: any) {
+        return request.post("/ps/answer_sheet/submissionInfo", data)
+    },
+
+    async finishProblemSet(data: any) {
+        return request.post("/ps/answer_sheet/finish", data)
+    },
+
+    async getJudgeList(data: any){
+        return request.post("/ps/judge/list", data)
+    },
+    async getJudgeInfo(data: any){
+        return request.post("/ps/judge/info", data)
+    },
+    async updateJudgeInfo(data: any){
+        return request.post("/ps/judge/add", data)
+    },
+
+    async getProblemSummary(data: any){
+        return request.post("/ps/summary/summary", data)
+    }
 }

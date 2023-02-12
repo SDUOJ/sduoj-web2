@@ -8,7 +8,7 @@ const Choice = (props: any) => {
 
     useEffect(() => {
         if (props.description !== undefined) {
-            MarkdownPreview("Choice-title-id", props.description.content)
+            MarkdownPreview("Choice-title-id" + (props.id ?? ""), props.description.content)
         }
     }, [props.description?.content])
 
@@ -18,7 +18,7 @@ const Choice = (props: any) => {
 
     return (
         <div className={"Choice"}>
-            <div className={"Choice-title"} id={"Choice-title-id"}>
+            <div className={"Choice-title"} id={"Choice-title-id" + (props.id ?? "")}>
 
             </div>
             {choice !== undefined && (

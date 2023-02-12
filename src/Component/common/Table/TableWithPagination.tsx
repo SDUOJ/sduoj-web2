@@ -43,17 +43,17 @@ const TableWithPagination = (props: any) => {
         if (props.setDataSource !== undefined && props.name !== undefined)
             props.setDataSource(data, props.name)
     }
-
+    // 这里的所有的参数都只能增量的修改，不能删除，删除需要手动更新 redux
     const getInfo = (pageNow?: number, pageSize?: number, searchKey?: string, moreProps?: any) => {
         const propsTableInfo = props.tableData[props.name]?.tableInfo
         if (propsTableInfo !== undefined) {
+            if (moreProps === undefined && propsTableInfo.moreProps !== undefined){
+                form.setFieldsValue(propsTableInfo.moreProps)
+            }
             pageNow = pageNow ?? propsTableInfo.pageNow
             pageSize = pageSize ?? propsTableInfo.pageSize
             searchKey = searchKey ?? propsTableInfo.searchKey
             moreProps = moreProps ?? propsTableInfo.moreProps
-            if (propsTableInfo.moreProps !== undefined){
-                form.setFieldsValue(propsTableInfo.moreProps)
-            }
         }
         let pn = pageNow ?? PageNow
         let ps = pageSize ?? PageSize
@@ -112,6 +112,14 @@ const TableWithPagination = (props: any) => {
     const onReset = () => {
         const values = form.getFieldsValue()
         form.resetFields();
+        const tf = props.tableData[props.name]?.tableInfo
+        props.name && props.setTableInfo(props.name, {
+            total: tf.total,
+            pageNow: tf.pageNow,
+            pageSize: tf.pageSize,
+            searchKey: tf.searchKey,
+            moreProps: undefined
+        })
         const valuesAfter = form.getFieldsValue()
         // 重置前后若发生改变，则重新加载表格
         if (JSON.stringify(values) !== JSON.stringify(valuesAfter))

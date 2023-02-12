@@ -16,8 +16,6 @@ import GroupUserListCard from "../../Component/common/GroupUserListCard";
 const CGroupInfo = (props: any) => {
     const groupId = props.match.params.groupId;
     const [groupInfo, setGroupInfo] = useState<any>();
-
-
     const [activeKey, setActiveKey] = useState<string>("Announcement")
 
     useEffect(() => {
@@ -71,6 +69,10 @@ const CGroupInfo = (props: any) => {
                                     <div id={"AnnouncementMD"}>
                                     </div>
                                 </Tabs.TabPane>
+                                <Tabs.TabPane tab="练习" key="practice">
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="考试" key="exam">
+                                </Tabs.TabPane>
                                 <Tabs.TabPane tab="比赛" key="contest">
                                     <ContestList
                                         name={"GroupInfo-" + groupId + "-ContestList"}
@@ -86,7 +88,6 @@ const CGroupInfo = (props: any) => {
                             </Tabs>
                         </Card>
                     </div>
-
                 </div>
             </div>
         </>

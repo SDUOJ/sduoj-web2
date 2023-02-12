@@ -64,9 +64,9 @@ const ModalForm = (props: ModalFormProps & any) => {
                 }
                 props.dataLoader && props.dataLoader().then((data: any) => {
                     // console.log("dataLoaderData", data)
-                    if (props.subForm.length !== 1) {
-                        setSaveInitData(data)
-                    } else form.setFieldsValue(data)
+                    setSaveInitData(data)
+                    // if (props.subForm.length !== 1) {
+                    // } else form.setFieldsValue(data)
                     hied()
                     setFormVis(true)
                 }).catch((e: any) => {

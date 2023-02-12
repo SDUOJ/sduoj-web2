@@ -79,24 +79,24 @@ export const routerLayout: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Error/BrowserVersionError'))
     },
-    {
-        id: 998244353,
-        path: UrlPrefix + "/summary/2022cxsjswysj",
-        exact: true,
-        component: lazy(() => import('../../Pages/Temp/TSummary'))
-    },
-    {
-        id: 998244354,
-        path: UrlPrefix + "/contestSubmissionCancel",
-        exact: true,
-        component: lazy(() => import('../../Pages/Temp/TCancel'))
-    },
-    {
-        id: 16,
-        path: UrlPrefix + "/review/:problemSetId/:problemGroup/:problemId/:userId",
-        exact: false,
-        component: lazy(() => import('../../Pages/Client/CReview'))
-    },
+    // {
+    //     id: 998244353,
+    //     path: UrlPrefix + "/summary/2022cxsjswysj",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Temp/TSummary'))
+    // },
+    // {
+    //     id: 998244354,
+    //     path: UrlPrefix + "/contestSubmissionCancel",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Temp/TCancel'))
+    // },
+    // {
+    //     id: 16,
+    //     path: UrlPrefix + "/review/:problemSetId/:problemGroup/:problemId/:userId",
+    //     exact: false,
+    //     component: lazy(() => import('../../Pages/Client/Review'))
+    // },
 ]
 
 

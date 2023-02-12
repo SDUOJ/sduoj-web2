@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, Image, List, message, Result} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
-import Timer from "../../Component/exam/Timer";
+import Timer from "../../Component/common/Timer";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {TimeRangeState} from "../../Utils/Time";

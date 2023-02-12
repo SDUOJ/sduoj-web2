@@ -9,12 +9,12 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import('../../Pages/Client/CLogin'))
     },
-    {
-        id: 3,
-        path: UrlPrefix + "/test",
-        exact: true,
-        component: lazy(() => import('../../Pages/Client/CTest'))
-    },
+    // {
+    //     id: 3,
+    //     path: UrlPrefix + "/test",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Client/CTest'))
+    // },
     {
         id: 4,
         path: UrlPrefix + "/home",
@@ -85,19 +85,46 @@ export const routerC: IBaseRouter[] = [
         id: 12,
         path: UrlPrefix + "/problemSet/:problemSetId",
         exact: false,
-        component: lazy(() => import('../../Pages/Client/ProblemSet/Info'))
+        component: lazy(() => import("../../Component/problemSet/PSLayout"))
+    },
+    // {
+    //     id: 7359,
+    //     path: UrlPrefix + "/hws",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
+    // },
+    // {
+    //     id: 7360,
+    //     path: UrlPrefix + "/hws/:cid",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Ext/Ext-HwsInfo'))
+    // },
+]
+
+export const router_ProblemSet: IBaseRouter[] = [
+    {
+        id: 13,
+        path: UrlPrefix + "/problemSet/:problemSetId/overview",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Overview"))
     },
     {
-        id: 7359,
-        path: UrlPrefix + "/hws",
+        id: 14,
+        path: UrlPrefix + "/problemSet/:problemSetId/problem/:problemGroupId/:problemId",
         exact: true,
-        component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
+        component: lazy(() => import("../../Component/problemSet/Problem"))
     },
     {
-        id: 7360,
-        path: UrlPrefix + "/hws/:cid",
+        id: 15,
+        path: UrlPrefix + "/problemSet/:problemSetId/rank",
         exact: true,
-        component: lazy(() => import('../../Pages/Ext/Ext-HwsInfo'))
+        component: lazy(() => import("../../Component/problemSet/Rank"))
+    },
+    {
+        id: 16,
+        path: UrlPrefix + "/problemSet/:problemSetId/review",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Review"))
     },
 ]
 
@@ -137,30 +164,6 @@ export const routerC_Contest_M: IRouter[] = [
         exact: true,
         component: lazy(()=> import("../../Component/contest/Register"))
     }
-]
-
-export const routerC_ProblemSet_M: IRouter[] = [
-    {
-        id: 1,
-        title_i18n: "Overview",
-        path: UrlPrefix + "/problemSet/:problemSetId/overview",
-        exact: true,
-        component: lazy(() => import("../../Component/problemSet/Overview"))
-    },
-    {
-        id: 2,
-        title_i18n: "Problem",
-        path: UrlPrefix + "/problemSet/:problemSetId/problem/:problemGroupId/:problemId",
-        exact: true,
-        component: lazy(() => import("../../Component/problemSet/Problem"))
-    },
-    {
-        id: 3,
-        title_i18n: "Rank",
-        path: UrlPrefix + "/contest/:problemSetId/rank",
-        exact: true,
-        component: lazy(() => import("../../Component/problemSet/Rank"))
-    },
 ]
 
 // C 端目录
@@ -207,11 +210,11 @@ export const routerC_M: IRouter[] = [
     //     exact: true,
     //     component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
     // },
-    {
-        id: 7,
-        path: UrlPrefix + "/exam",
-        title_i18n: "考试系统",
-        exact: true,
-        component: lazy(() => import('../../Pages/Exam/EList'))
-    },
+    // {
+    //     id: 7,
+    //     path: UrlPrefix + "/exam",
+    //     title_i18n: "考试系统",
+    //     exact: true,
+    //     component: lazy(() => import('../../Pages/Exam/EList'))
+    // },
 ]

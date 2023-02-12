@@ -153,6 +153,7 @@ const MProblemGroup = (props: any) => {
                                 title={"新建题组"}
                                 type={"create"}
                                 subForm={ProblemGroupForm}
+                                formName={"ProblemGroupForm"}
                                 dataSubmitter={(value: any) => {
                                     value.problemInfo = []
                                     return mApi.createProblemGroup(value)

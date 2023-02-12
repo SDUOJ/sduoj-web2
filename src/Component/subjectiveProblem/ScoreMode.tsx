@@ -45,7 +45,8 @@ const ScoreMode = (props: any) => {
                                       }}/>
                               </Space>
                           )}
-                          <span>总分：
+                          <span>
+                              {data.key === "0" ? "总分：" : "分数："}
                               {data.children === undefined && (
                                   <InputNumber
                                       style={{width: 64}}
@@ -57,7 +58,8 @@ const ScoreMode = (props: any) => {
                                       }}/>
                               )}
                               {data.children !== undefined && (reviewInfo[data.key] ?? 0)}
-                              {" "}/ {data.score}</span>
+                              {" "}/ {data.score}
+                          </span>
                       </Space>
                   }
             >

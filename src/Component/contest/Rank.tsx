@@ -46,7 +46,7 @@ const Rank = (props: any) => {
     useEffect(() => {
         if (rankInfo !== undefined) {
             if (props.openSliderMove && Math.abs(Date.now() - lastSliderTime) <= 500) return
-            if (props.openSliderMove) setLastSliderTime(Date.now)
+            if (props.openSliderMove) setLastSliderTime(Date.now())
 
             // console.log(props.sliderTime)
 
