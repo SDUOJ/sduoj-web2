@@ -86,7 +86,7 @@ const Problem = (props: any) => {
         })
     }
     const QuerySubmissionAPI = (submissionId: string) => {
-        return cApi.getProblemSetSubmissionInfo({psid: psid, gid: gid, submissionId: submissionId})
+        return cApi.getProblemSetSubmissionInfo({psid: psid, gid: gid, pid: pid, submissionId: submissionId})
     }
 
     const problemInfo = useProblemInfo(GetProblemInfoAPI, proName)
@@ -108,7 +108,7 @@ const Problem = (props: any) => {
                                 )}
                                 <>{parseInt(pid) + 1}.</>
                                 {score !== undefined && (
-                                    <>（{score}{props.t(score === 1 ? "point" : "points")}）</>
+                                    <>（{score.toFixed(2)}{props.t(score === 1 ? "point" : "points")}）</>
                                 )}
                             </>
                         }

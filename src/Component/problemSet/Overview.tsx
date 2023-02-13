@@ -130,7 +130,7 @@ const Overview = (props: any) => {
                                         title={() => {
                                             return (
                                                 <>
-                                                    题组{value.index + 1} {value.name} {`(${value.point}分)`}
+                                                    题组{value.index + 1} {value.name} {`(${value.point.toFixed(2)}分)`}
                                                 </>
                                             )
                                         }}
@@ -182,7 +182,7 @@ const Overview = (props: any) => {
                                                 render: (text, row) => {
                                                     if (row.score === undefined)
                                                         return (
-                                                            <span> {`-/${text}`}  </span>
+                                                            <span> {`-/${text.toFixed(2)}`}  </span>
                                                         )
                                                     return (
                                                         <span>
@@ -190,7 +190,7 @@ const Overview = (props: any) => {
                                                                 setDetailInfo({...row, proType: value.type})
                                                                 setVis(true)
                                                             }}>
-                                                                {`${row.score}/${text}`}
+                                                                {`${row.score.toFixed(2)}/${text.toFixed(2)}`}
                                                             </Button>
                                                         </span>
                                                     )
@@ -308,7 +308,7 @@ const TimeCard = (props: TimeCardProps) => {
                                     {(() => {
                                         for (let i = 0; i < props.timeSetting.length; i++) {
                                             let x = props.timeSetting[i]
-                                            if(x.tm_start <= Date.now() && Date.now() <= x.tm_end){
+                                            if (x.tm_start <= Date.now() && Date.now() <= x.tm_end) {
                                                 return (x.weight * 100).toString() + "%"
                                             }
                                         }
@@ -323,10 +323,10 @@ const TimeCard = (props: TimeCardProps) => {
                             {timeState === "running" && (
                                 <span style={{float: "right"}}>
                                     <span style={{fontWeight: "bold"}}>折扣剩余：</span>
-                                    {(()=>{
+                                    {(() => {
                                         for (let i = 0; i < props.timeSetting.length; i++) {
                                             let x = props.timeSetting[i]
-                                            if(x.tm_start <= Date.now() && Date.now() <= x.tm_end){
+                                            if (x.tm_start <= Date.now() && Date.now() <= x.tm_end) {
                                                 return (
                                                     <DTime type={"after"} time={x.tm_end}/>
                                                 )
