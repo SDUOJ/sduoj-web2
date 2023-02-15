@@ -12,6 +12,7 @@ import Countdown from "antd/lib/statistic/Countdown";
 import {UserState} from "../../Type/Iuser";
 import useProblemSetInfo from "./API/getProblemSetInfo";
 import {isValueEmpty} from "../../Utils/empty";
+import dealFloat from "../../Utils/dealFloat";
 
 const Overview = (props: any) => {
 
@@ -128,11 +129,15 @@ const Overview = (props: any) => {
                                         className={"problemSet-overview-table"}
                                         size={"small"}
                                         title={() => {
-                                            return (
-                                                <>
-                                                    题组{value.index + 1} {value.name} {`(${value.point.toFixed(2)}分)`}
-                                                </>
-                                            )
+                                            if (problemSetInfo.config.showScoreInRunning === 0) {
+                                                return (<>
+                                                    题组{value.index + 1} {value.name}
+                                                </>)
+                                            } else {
+                                                return (<>
+                                                    题组{value.index + 1} {value.name} {`(${dealFloat(value.point)}分)`}
+                                                </>)
+                                            }
                                         }}
                                         dataSource={value.problemInfo}
                                         pagination={false}
@@ -180,21 +185,25 @@ const Overview = (props: any) => {
                                                 width: "auto",
                                                 dataIndex: "point",
                                                 render: (text, row) => {
-                                                    if (row.score === undefined)
+                                                    if(problemSetInfo.config.showScoreInRunning === 0){
+                                                        return "-"
+                                                    }else{
+                                                        if (row.score === undefined)
+                                                            return (
+                                                                <span> {`-/${text.toFixed(2)}`}  </span>
+                                                            )
                                                         return (
-                                                            <span> {`-/${text.toFixed(2)}`}  </span>
-                                                        )
-                                                    return (
-                                                        <span>
+                                                            <span>
                                                             <Button type={"link"} onClick={() => {
                                                                 setDetailInfo({...row, proType: value.type})
                                                                 setVis(true)
                                                             }}>
-                                                                {`${row.score.toFixed(2)}/${text.toFixed(2)}`}
+                                                                {`${dealFloat(row.score)}/${dealFloat(text)}`}
                                                             </Button>
                                                         </span>
-                                                    )
+                                                        )
 
+                                                    }
                                                 }
                                             },
                                             // {

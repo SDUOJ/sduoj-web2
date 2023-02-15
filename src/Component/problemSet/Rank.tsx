@@ -8,6 +8,7 @@ import "Assert/css/ContestRank.css"
 import cApi from "Utils/API/c-api"
 import {CheckOutlined, QuestionOutlined} from "@ant-design/icons";
 import useProblemSetInfo from "./API/getProblemSetInfo";
+import dealFloat from "../../Utils/dealFloat";
 
 const Rank = (props: any) => {
     const problemSetId = props.match.params.problemSetId
@@ -54,22 +55,16 @@ const Rank = (props: any) => {
                     ),
                     dataIndex: `${x.index + 1}-${y.index + 1}`,
                     width: problemWidth,
-                    render: (text: any, row: any) => {
+                    render: (text: any) => {
                         if (text.h) {
                             // 是否已经阅卷
-                            if (text.j) {
-                                return (
-                                    <Badge count={<CheckOutlined style={{color: '#52c41a'}}/>} offset={[15, -3]}>
-                                        <span style={{fontWeight: "bold"}}>{text.s}</span>
-                                    </Badge>
-                                )
-                            } else {
-                                return (
-                                    <Badge count={<QuestionOutlined style={{color: '#faad14'}}/>} offset={[15, -3]}>
-                                        <span style={{fontWeight: "bold"}}>{text.s}</span>
-                                    </Badge>
-                                )
-                            }
+                            const cop = text.j ? <CheckOutlined style={{color: '#52c41a'}}/> :
+                                <QuestionOutlined style={{color: '#faad14'}}/>
+                            return (
+                                <Badge count={cop} offset={[15, -3]}>
+                                    <span style={{fontWeight: "bold"}}>{dealFloat(text.s)}</span>
+                                </Badge>
+                            )
                         }
 
                     }
@@ -90,7 +85,7 @@ const Rank = (props: any) => {
                 pagination={false}
                 bordered={true}
                 dataSource={rankInfo}
-                rowClassName={(row, index) => {
+                rowClassName={() => {
                     return "rowBase"
                 }}
                 columns={[
@@ -122,7 +117,7 @@ const Rank = (props: any) => {
                         render: (text, row) => {
                             return (
                                 <>
-                                    <span>{row.sum_score}</span>
+                                    <span>{dealFloat(row.sum_score)}</span>
                                 </>
                             )
                         }

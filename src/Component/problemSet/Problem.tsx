@@ -18,6 +18,7 @@ import Objective from "../problem/Objective/Objective";
 import Timer from "../common/Timer";
 import Subjective from "../problem/Subjective/Subjective";
 import Reconfirm from "../common/Reconfirm";
+import dealFloat from "../../Utils/dealFloat";
 
 const Problem = (props: any) => {
     const psid = props.match.params.problemSetId
@@ -108,7 +109,7 @@ const Problem = (props: any) => {
                                 )}
                                 <>{parseInt(pid) + 1}.</>
                                 {score !== undefined && (
-                                    <>（{score.toFixed(2)}{props.t(score === 1 ? "point" : "points")}）</>
+                                    <>（{dealFloat(score)}{props.t(score === 1 ? "point" : "points")}）</>
                                 )}
                             </>
                         }
@@ -139,6 +140,7 @@ const Problem = (props: any) => {
                                                 name={proName}
                                                 nameWithD={proName}
                                                 GetProblemInfoAPI={GetProblemInfoAPI}
+                                                enableLeftSubmitCount={true}
                                                 SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
                                                     return submitAPI({
                                                         judgeTemplateId: judgeTemplate,

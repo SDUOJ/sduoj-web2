@@ -141,11 +141,12 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                 <Space size={25}>
                     {props.SubmitAPI !== undefined && (
                         <Submit
-                            name={"Submit-"+props.name}
+                            name={"Submit-" + props.name}
                             SubmissionListName={"Pro-SubmissionList-Recent-" + props.name}
                             API={props.SubmitAPI}
                             title={problemInfo?.problemTitle}
-                            LeftSubmitCount={props.enableLeftSubmitCount ? (problemInfo?.submitNum - totalSubmission) : undefined}
+                            LeftSubmitCount={
+                                (props.enableLeftSubmitCount && problemInfo?.submitNum) ? (problemInfo?.submitNum - totalSubmission) : undefined}
                             TopSubmissionInfo={{
                                 title: problemInfo?.problemTitle,
                                 scoreMod: "show",
