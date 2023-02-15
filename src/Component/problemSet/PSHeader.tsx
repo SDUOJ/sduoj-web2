@@ -35,13 +35,19 @@ const PSHeader = (props: any) => {
             link: UrlPrefix + "/problemSet/" + problemSetId + "/rank",
             re: /\/problemSet\/.*\/rank/g
         },
+        {
+            name: "提交列表",
+            link: UrlPrefix + "/problemSet/" + problemSetId + "/submission",
+            re: /\/problemSet\/.*\/submission/g
+        },
     ]
 
     const [nowKey, setNowKey] = useState<any>()
 
     const menuList:any = ["总览", "题目"]
     if(judgeAuth(props.roles, ["admin"]))
-        menuList.push('评阅', "榜单")
+        menuList.push('评阅', "提交列表", "榜单")
+
 
 
     useEffect(() => {

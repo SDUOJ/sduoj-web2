@@ -126,6 +126,12 @@ export const router_ProblemSet: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import("../../Component/problemSet/Review"))
     },
+    {
+        id: 17,
+        path: UrlPrefix + "/problemSet/:problemSetId/submission",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Submission"))
+    },
 ]
 
 export const routerC_Contest_M: IRouter[] = [
