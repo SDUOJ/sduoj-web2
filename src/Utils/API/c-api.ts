@@ -293,6 +293,7 @@ export default {
     async getProblemSetLabelList(data: any){
         return request.post("/ps/problem_set/key", data)
     },
+    // 获取题单列表
     async getProblemSetList(data: any){
         return request.post("/ps/problem_set/search", data)
     }
