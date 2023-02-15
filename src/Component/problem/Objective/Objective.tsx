@@ -33,13 +33,7 @@ const Objective = (props: propType & any) => {
             MarkdownPreview("Choice-title-id" + props.key_o, props.problemInfo.description)
         }
     }, [props.problemInfo?.description])
-
-    const getIndex = (index: number) => {
-        if (answerSheet?.order !== undefined) {
-            return answerSheet.order[index]
-        }
-        return index
-    }
+    
 
     return (
         <div className={"Choice"}>
@@ -64,7 +58,6 @@ const Objective = (props: propType & any) => {
                             answer={answerSheet?.answer ?? []}
                             answer_m={answerSheet?.answer_m ?? []}
                             index={index}
-                            t_index={getIndex(index)}
                             content={v}
                             key_o={props.key_o + "-" + index.toString()}
                         />
@@ -80,7 +73,6 @@ interface ObjectiveOptionType {
     key_o: string         // 关键字
     content: string     // 文本内容
     index: number       // 在所有选项中的编号
-    t_index: number
     mark: string        // 标记的选项
     onMark: any         // 在标记时调用
     answer_m: string    // 我的答案
@@ -96,11 +88,10 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
     }, [props.content])
 
     const SID = String.fromCharCode('A'.charCodeAt(0) + props.index)
-    const t_SID = String.fromCharCode('A'.charCodeAt(0) + props.t_index)
 
     let OptionsState = ""
-    if (props.answer_m.includes(t_SID)) OptionsState = "used"
-    else if (props.mark.includes(t_SID)) OptionsState = "unused"
+    if (props.answer_m.includes(SID)) OptionsState = "used"
+    else if (props.mark.includes(SID)) OptionsState = "unused"
     else OptionsState = "init"
 
 
@@ -108,12 +99,12 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
         <>
             <div
                 onContextMenu={() => {
-                    props.onMark && props.onMark(t_SID)
+                    props.onMark && props.onMark(SID)
                 }}
                 onClick={() => {
-                    props.onAnswerM && props.onAnswerM(t_SID)
+                    props.onAnswerM && props.onAnswerM(SID)
                 }}
-                className={"Options-" + OptionsState + ` Options-${props.answer.includes(t_SID) ? "green" : ""}`}
+                className={"Options-" + OptionsState + ` Options-${props.answer.includes(SID) ? "green" : ""}`}
             >
                 <Row>
                     <Col span={1}>
