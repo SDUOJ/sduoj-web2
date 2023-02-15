@@ -11,12 +11,16 @@ import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
 import {connect} from "react-redux";
 import {CommonState} from "../../Redux/Action/common";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
+import ProblemSetList from "../../Component/problemSet/ProblemSetList";
 
 
 const CGroupInfo = (props: any) => {
     const groupId = props.match.params.groupId;
     const [groupInfo, setGroupInfo] = useState<any>();
     const [activeKey, setActiveKey] = useState<string>("Announcement")
+    const [psActiveKey, setPsActiveKey] = useState<string>()
+    const [psSum, setPsSum] = useState<string>()
+    const [psTabItems, setPsTabItems] = useState<any>()
 
     useEffect(() => {
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
@@ -26,6 +30,27 @@ const CGroupInfo = (props: any) => {
         const act = props.keyValueData["Group-C-activeKey-" + groupId]
         if (act !== undefined)
             setActiveKey(act)
+
+        cApi.getProblemSetLabelList({groupId: groupId}).then((res: any) => {
+            const label = res.label;
+            const score = res.score;
+            const tb: any = []
+            for (let x of label) {
+                tb.push({
+                    key: x,
+                    label: x + `(${score[x]}分)`,
+                    children: <ProblemSetList groupId={groupId} tag={x}/>
+                })
+            }
+            if(label.length !== 0) setPsActiveKey(label[0])
+            setPsTabItems(tb)
+            setPsSum(res.sum);
+        })
+
+        const act2 = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
+        if (act2 !== undefined)
+            setPsActiveKey(act2)
+
     }, [])
 
     return (
@@ -69,9 +94,19 @@ const CGroupInfo = (props: any) => {
                                     <div id={"AnnouncementMD"}>
                                     </div>
                                 </Tabs.TabPane>
-                                <Tabs.TabPane tab="练习" key="practice">
-                                </Tabs.TabPane>
-                                <Tabs.TabPane tab="考试" key="exam">
+                                <Tabs.TabPane tab={`题单(${psSum}分)`} key="practice">
+                                    <Tabs activeKey={psActiveKey} onChange={(v:string)=>{
+                                        setPsActiveKey(v)
+                                        props.setKeyValueData(`Group-C-activeKey-${groupId}-ProblemSet`, v)
+                                    }}>
+                                        {psTabItems && psTabItems.map((item:any)=>{
+                                            return (
+                                                <Tabs.TabPane tab={item.label} key={item.key}>
+                                                    {item.children}
+                                                </Tabs.TabPane>
+                                            )
+                                        })}
+                                    </Tabs>
                                 </Tabs.TabPane>
                                 <Tabs.TabPane tab="比赛" key="contest">
                                     <ContestList
