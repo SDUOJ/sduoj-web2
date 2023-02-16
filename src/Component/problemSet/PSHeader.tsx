@@ -13,7 +13,12 @@ import judgeAuth from "../../Utils/judgeAhtu";
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
     const path = props.location.pathname
-    const problemSetInfo = useProblemSetInfo(problemSetId)
+
+    const onError = () =>{
+        props.history.replace(UrlPrefix + "/problemSetPublic/" + problemSetId)
+    }
+
+    const problemSetInfo = useProblemSetInfo(problemSetId, onError)
 
 
     const menuData = [
@@ -46,10 +51,9 @@ const PSHeader = (props: any) => {
 
     const [nowKey, setNowKey] = useState<any>()
 
-    const menuList:any = ["总览", "题目"]
-    if(problemSetInfo?.isAdmin === true)
+    const menuList: any = ["总览", "题目"]
+    if (problemSetInfo?.isAdmin === true)
         menuList.push('评阅', "提交列表", "榜单")
-
 
 
     useEffect(() => {
@@ -107,9 +111,7 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

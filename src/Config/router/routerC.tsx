@@ -87,6 +87,12 @@ export const routerC: IBaseRouter[] = [
         exact: false,
         component: lazy(() => import("../../Component/problemSet/PSLayout"))
     },
+    {
+        id: 13,
+        path: UrlPrefix + "/problemSetPublic/:problemSetId",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Public"))
+    },
     // {
     //     id: 7359,
     //     path: UrlPrefix + "/hws",

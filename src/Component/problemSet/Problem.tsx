@@ -202,7 +202,7 @@ const Problem = (props: any) => {
                                                 {router: {psid: psid, gid: 0, pid: 0}}
                                             ).then(() => {
                                                 message.success("交卷成功")
-                                                props.history.push(UrlPrefix + `/problemSet/${psid}`)
+                                                props.history.replace(UrlPrefix + "/problemSetPublic/" + psid)
                                             })
                                         }}
                                         todo={"交卷"}
@@ -212,7 +212,7 @@ const Problem = (props: any) => {
                                             deadline={parseInt(problemSetInfo?.tm_end)}
                                             inline={true}
                                             onFinish={() => {
-                                                props.history.push(UrlPrefix + `/problemSet/${psid}`)
+                                                props.history.replace(UrlPrefix + "/problemSetPublic/" + psid)
                                             }}
                                         />
                                     </div>

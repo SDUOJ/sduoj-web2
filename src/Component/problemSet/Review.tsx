@@ -211,6 +211,10 @@ const Review = (props: any) => {
                 }}
                 useFormBtn={false}
             />
+            <div style={{marginTop: 12, float: "right"}}>
+                <Title level={5}>提示：题单结束之前，无法评阅主观题</Title>
+            </div>
+
             <Modal
                 title={"主观题评分"}
                 width={1400}

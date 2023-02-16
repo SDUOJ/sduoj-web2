@@ -2,7 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import cApi from "Utils/API/c-api"
 import {useEffect, useState} from "react";
 
-const useProblemSetInfo = (psid: string) => {
+const useProblemSetInfo = (psid: string, onError: any = undefined) => {
     const problemSetInfo = useSelector((state: any) => {
         return state.ProblemSetReducer.problemSetInfo[psid]
     })
@@ -34,12 +34,14 @@ const useProblemSetInfo = (psid: string) => {
                         data: undefined
                     })
                     setNowValue(res)
+                }).catch((error) => {
+                    onError && onError(error)
                 })
             } else {
                 setNowValue(problemSetInfo)
             }
             setNowKey(psid)
-        }else {
+        } else {
             setNowValue(problemSetInfo)
         }
     }, [problemSetInfo, psid])

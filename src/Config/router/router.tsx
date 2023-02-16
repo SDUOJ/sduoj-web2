@@ -22,6 +22,7 @@ const routerCLayoutData: any = [
     ["problem", false],
     ["contest", false],
     ["problemSet", false],
+    ["problemSetPublic", false],
     ["submission", false],
     ["group", false],
     // 用户信息页面
