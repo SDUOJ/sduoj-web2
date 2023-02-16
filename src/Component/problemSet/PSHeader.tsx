@@ -13,6 +13,8 @@ import judgeAuth from "../../Utils/judgeAhtu";
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
     const path = props.location.pathname
+    const problemSetInfo = useProblemSetInfo(problemSetId)
+
 
     const menuData = [
         {
@@ -45,7 +47,7 @@ const PSHeader = (props: any) => {
     const [nowKey, setNowKey] = useState<any>()
 
     const menuList:any = ["总览", "题目"]
-    if(judgeAuth(props.roles, ["admin"]))
+    if(problemSetInfo?.isAdmin === true)
         menuList.push('评阅', "提交列表", "榜单")
 
 
@@ -60,7 +62,6 @@ const PSHeader = (props: any) => {
     }, [path])
 
 
-    const problemSetInfo = useProblemSetInfo(problemSetId)
     return (
         <>
             {problemSetInfo !== undefined && (
