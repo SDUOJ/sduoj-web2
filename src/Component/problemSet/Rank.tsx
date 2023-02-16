@@ -1,25 +1,31 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Badge, Table} from "antd";
+import {Badge, Popover, Table, Tag} from "antd";
 import {ContestState, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import "Assert/css/ContestRank.css"
 import cApi from "Utils/API/c-api"
 import {CheckOutlined, QuestionOutlined} from "@ant-design/icons";
-import useProblemSetInfo from "./API/getProblemSetInfo";
 import dealFloat from "../../Utils/dealFloat";
+import {unix2Time} from "../../Utils/Time";
+import ExportExcel from "../common/ExportExcel";
+import exportRank from "./exportRank";
 
 const Rank = (props: any) => {
     const problemSetId = props.match.params.problemSetId
-    const problemSetInfo = useProblemSetInfo(problemSetId)
+    // const problemSetInfo = useProblemSetInfo(problemSetId)
 
     const [rankInfo, setRankInfo] = useState<any>()
+    const [lastUpdate, setLastUpdate] = useState<any>()
+    const [problemSetInfo, setProblemSetInfo] = useState<any>()
 
     useEffect(() => {
         if (rankInfo === undefined) {
             cApi.getProblemSummary({psid: problemSetId}).then((res: any) => {
-                setRankInfo(res)
+                setRankInfo(res.data)
+                setLastUpdate(res.lastUpdate)
+                setProblemSetInfo(res.info)
             })
         }
     }, [rankInfo, setRankInfo])
@@ -79,6 +85,18 @@ const Rank = (props: any) => {
 
     return (
         <div style={{marginTop: 24}}>
+            <div style={{fontWeight: "lighter", marginBottom: 16, marginLeft: 4}}>
+                榜单更新有大约1分钟的延迟，上次更新时间：{lastUpdate ? unix2Time(lastUpdate) : undefined}
+                <div style={{float: "right"}}>
+                    <ExportExcel
+                        ButtonProps={{}}
+                        ButtonText={"导出成绩"}
+                        ButtonType={"default"}
+                        getJson={() => exportRank(rankInfo, problemSetInfo)}
+                        fileName={problemSetInfo?.name + "_" + Date.now() + "_结果导出"}
+                    />
+                </div>
+            </div>
             <Table
                 className={"RankTable"}
                 style={{width: tableWidth, minWidth: tableWidth}}
@@ -106,6 +124,37 @@ const Rank = (props: any) => {
                                     <span style={{float: "right", textAlign: "right"}}>
                                         <div style={{fontWeight: "bold"}}>{row.username}</div>
                                         <div style={{color: "grey", fontSize: 12}}>{row.nickname}</div>
+                                    </span>
+                                </div>
+                            )
+                        }
+                    },
+                    {
+                        title: "状态",
+                        width: 150,
+                        render: (text, row) => {
+                            return (
+                                <div style={{paddingLeft: 10, paddingRight: 10}}>
+                                    <span style={{float: "left"}}>
+                                        {row.finish === 1 && (
+                                            <Popover content={<>{unix2Time(row.finish_time)}</>} title="交卷时间">
+                                                <Tag color={"red"}>交卷</Tag>
+                                            </Popover>
+                                        )}
+                                    </span>
+                                    <span style={{float: "right", textAlign: "right"}}>
+                                        {row.ips.length <= 1 && (
+                                            <Tag color={"green"}>Ip正常</Tag>
+                                        )}
+                                        {row.ips.length > 1 && (
+                                            <Popover
+                                                content={
+                                                    <>{row.ips.map((ip: string) => <div>{ip}</div>)}</>
+                                                }
+                                                title="使用Ip">
+                                                <Tag color={"orange"}>Ip异常</Tag>
+                                            </Popover>
+                                        )}
                                     </span>
                                 </div>
                             )

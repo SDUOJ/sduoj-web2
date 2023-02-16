@@ -1,6 +1,5 @@
 export default async function exportRank(data: any) {
     let res: any = []
-    console.log(data)
     for (const x of data) {
         if (x.official === true) {
             let obj: any = {
