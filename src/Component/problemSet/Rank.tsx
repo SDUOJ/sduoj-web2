@@ -143,13 +143,13 @@ const Rank = (props: any) => {
                                         )}
                                     </span>
                                     <span style={{float: "right", textAlign: "right"}}>
-                                        {row.ips.length <= 1 && (
+                                        {row.ips?.length <= 1 && (
                                             <Tag color={"green"}>Ip正常</Tag>
                                         )}
-                                        {row.ips.length > 1 && (
+                                        {row.ips?.length > 1 && (
                                             <Popover
                                                 content={
-                                                    <>{row.ips.map((ip: string) => <div>{ip}</div>)}</>
+                                                    <>{row.ips?.map((ip: string) => <div>{ip}</div>)}</>
                                                 }
                                                 title="使用Ip">
                                                 <Tag color={"orange"}>Ip异常</Tag>
