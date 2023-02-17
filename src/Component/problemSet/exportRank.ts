@@ -9,8 +9,8 @@ const exportRank = async (rankInfo: any, psInfo: any) => {
             "姓名": x.nickname,
             "学号": x.username,
             "总分": x.sum_score,
-            "ip数量": x.ips.length,
-            "ip地址": x.ips.toString(),
+            "ip数量": x.ips?.length,
+            "ip地址": x.ips?.toString(),
             "交卷时间": !isValueEmpty(x.finish_time) ? unix2Time(x.finish_time) : ""
         }
         for (const y in x) {
