@@ -147,11 +147,11 @@ const Overview = (props: any) => {
                                                 title: "ID",
                                                 dataIndex: "index",
                                                 width: "auto",
-                                                render: (text, row) => {
+                                                render: (text, row, index) => {
                                                     return (
                                                         <Button type={"text"} size={"small"} onClick={() => {
-                                                            props.history.push(UrlPrefix + `/problemSet/${problemSetId}/problem/${value.index}/${row.index}`)
-                                                        }}>{text + 1} {row.name ? `(${row.name})` : ""}</Button>
+                                                            props.history.push(UrlPrefix + `/problemSet/${problemSetId}/problem/${value.index}/${index}`)
+                                                        }}>{index + 1} {row.name ? `(${row.name})` : ""}</Button>
                                                     )
 
                                                     return
@@ -185,9 +185,9 @@ const Overview = (props: any) => {
                                                 width: "auto",
                                                 dataIndex: "point",
                                                 render: (text, row) => {
-                                                    if(problemSetInfo.config.showScoreInRunning === 0){
+                                                    if (problemSetInfo.config.showScoreInRunning === 0) {
                                                         return "-"
-                                                    }else{
+                                                    } else {
                                                         if (row.score === undefined)
                                                             return (
                                                                 <span> {`-/${text.toFixed(2)}`}  </span>
