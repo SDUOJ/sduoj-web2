@@ -28,7 +28,7 @@ const Public = (props: any) => {
     const getStartText = () => {
         if (info === undefined) return ""
         if (info.finish === 1) return "已交卷"
-        if (info.endTime < Date.now()) return "已结束"
+        if (info.tm_end < Date.now()) return "已结束"
         return props.t("StartAnswering")
     }
 

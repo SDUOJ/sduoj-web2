@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Badge, Popover, Table, Tag} from "antd";
+import {Badge, message, Popover, Table, Tag} from "antd";
 import {ContestState, setMinWidth} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -22,10 +22,16 @@ const Rank = (props: any) => {
 
     useEffect(() => {
         if (rankInfo === undefined) {
+            const hied = message.loading({
+                content: "榜单信息内容较多，请耐心等待",
+                duration: 0,
+            })
             cApi.getProblemSummary({psid: problemSetId}).then((res: any) => {
                 setRankInfo(res.data)
                 setLastUpdate(res.lastUpdate)
                 setProblemSetInfo(res.info)
+            }).finally(()=>{
+                hied()
             })
         }
     }, [rankInfo, setRankInfo])
