@@ -78,7 +78,10 @@ const ModalForm = (props: ModalFormProps & any) => {
                 setSaveInitData(props.initData)
                 setFormVis(true)
             }
-        } else {
+        } else if (props.type === "create") {
+            if (props.initData !== undefined) {
+                setSaveInitData(props.initData)
+            }
             setFormVis(true)
         }
     }

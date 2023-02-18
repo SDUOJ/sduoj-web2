@@ -347,7 +347,7 @@ const MProblemSet = (props: any) => {
                                 if (data == null) return Promise.reject()
                                 return mApi.editProblemSet(data)
                             }}
-                            onClose={()=>{
+                            onClose={() => {
                                 clearStates()
                             }}
                         />
@@ -368,7 +368,7 @@ const MProblemSet = (props: any) => {
                                 if (data == null) return Promise.reject()
                                 return mApi.createProblemSet(data)
                             }}
-                            onClose={()=>{
+                            onClose={() => {
                                 clearStates()
                             }}
                         />
@@ -392,12 +392,19 @@ const MProblemSet = (props: any) => {
                             title={"新建题单"}
                             type={"create"}
                             subForm={ProblemSetForm}
+                            initData={{
+                                config: {
+                                    usePractice: 0,
+                                    useSameSE: 1,
+                                    showReport: 0
+                                }
+                            }}
                             dataSubmitter={(value: any) => {
                                 let data = problemSetSubmit(value)
                                 if (data == null) return Promise.reject()
                                 return mApi.createProblemSet(data)
                             }}
-                            onClose={()=>{
+                            onClose={() => {
                                 clearStates()
                             }}
                         />
