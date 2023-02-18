@@ -4,7 +4,7 @@ import {fileUpload} from "../../Utils/fileUpload";
 import {Button, message, notification, Space} from "antd";
 import ClipboardJS from "clipboard";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation, withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {ConfigState} from "../../Type/IConfig";
 import apiAddress from "../../Utils/API/apiAddress";
@@ -20,6 +20,7 @@ export interface EditorProps {
 const CopiedButton = (props: any) => {
 
     const rds = Date.now().toString()
+    const {t} = useTranslation();
 
     const clipboard = new ClipboardJS("." + props.btnText + rds, {
         text(elem: Element): string {
@@ -27,7 +28,7 @@ const CopiedButton = (props: any) => {
         }
     })
     clipboard.on('success', function (e) {
-        message.success("复制成功")
+        message.success(t("ReplicationSuccess"))
     });
 
     return (

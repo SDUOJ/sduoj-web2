@@ -103,7 +103,7 @@ const Processing = (props: IProcessingProp & any) => {
                     })
                 }
                 // 评测已经结束后，当编译信息为空时，显示编译成功
-                if (isValueEmpty(resData.judgeLog)) resData.judgeLog = "编译成功"
+                if (isValueEmpty(resData.judgeLog)) resData.judgeLog = props.t("CompileSuccess")
                 setSubmissionInfo(resData)
                 setTestCaseStateList(TestCaseInit)
                 setCurrentStep(2)
@@ -172,7 +172,7 @@ const Processing = (props: IProcessingProp & any) => {
 
     let steps: { [key: string]: any } = {
         code: {
-            title: "代码",
+            title: props.t("Code"),
             icon: getIcon("code"),
             status: getStatus("code"),
             disabled: getDisabled("code"),
@@ -183,16 +183,16 @@ const Processing = (props: IProcessingProp & any) => {
                         <CodeHighlight code={sf?.code} lang={langMap[sf.judgeTemplateTitle]}/>
                     )}
                     {isValueEmpty(sf?.zipFileId) && isValueEmpty(sf?.code) && (
-                        "代码未公开"
+                        props.t("codeIsNotPublic")
                     )}
                     {!isValueEmpty(sf?.zipFileId) && (
-                        <a href={cApi.getFileDownloadUrl(sf?.zipFileId as string, Date.now().toString() + ".zip")}>点击下载</a>
+                        <a href={cApi.getFileDownloadUrl(sf?.zipFileId as string, Date.now().toString() + ".zip")}>{props.t("clickToDownload")}</a>
                     )}
                 </>
             )
         },
         running: {
-            title: "运行",
+            title: props.t("run"),
             icon: getIcon("running"),
             status: getStatus("running"),
             disabled: getDisabled("running") || RunningResult === "99",

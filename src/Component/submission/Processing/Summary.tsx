@@ -51,13 +51,13 @@ const Summary = (props: any) => {
             <Title level={4}> {props.t("Overview")}</Title>
             <Row style={{marginBottom: 20}}>
                 <Col span={11}>
-                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>评测信息</span>}>
+                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>{props.t("judgingInformation")}</span>}>
                         <Table
                             size={"small"}
                             pagination={false}
                             dataSource={[
                                 {
-                                    key: "结论",
+                                    key: props.t("conclusion"),
                                     value: (
                                         <Space>
                                             <TestCase
@@ -74,10 +74,10 @@ const Summary = (props: any) => {
                                         </Space>
                                     )
                                 },
-                                {key: "编号", value: submissionInfo.submissionId},
-                                {key: "提交时间", value: unix2Time(submissionInfo.gmtCreate)},
-                                {key: "评测时间", value: unix2Time(submissionInfo.gmtModified)},
-                                {key: "评测模板", value: submissionInfo.judgeTemplateTitle},
+                                {key: props.t("index"), value: submissionInfo.submissionId},
+                                {key: props.t("submissionTime"), value: unix2Time(submissionInfo.gmtCreate)},
+                                {key: props.t("judgingTime"), value: unix2Time(submissionInfo.gmtModified)},
+                                {key: props.t("template"), value: submissionInfo.judgeTemplateTitle},
                             ]}
                             showHeader={false}
                             columns={[
@@ -88,14 +88,14 @@ const Summary = (props: any) => {
                     </Card>
                 </Col>
                 <Col span={12} offset={1}>
-                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>关联信息</span>}>
+                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>{props.t("affiliateInformation")}</span>}>
                         <Table
                             size={"small"}
                             pagination={false}
                             dataSource={[
-                                {key: "提交用户", value: submissionInfo.username + " (ID: " + submissionInfo.userId + ")"},
+                                {key: props.t("submitUser"), value: submissionInfo.username + " (ID: " + submissionInfo.userId + ")"},
                                 {
-                                    key: "题目信息",
+                                    key: props.t("problemInformation"),
                                     value: submissionInfo.problemTitle + "(" + submissionInfo.problemCode + ")"
                                 }
                             ]}
@@ -109,7 +109,7 @@ const Summary = (props: any) => {
                     {judgeAuth(props.roles, ["admin", "superadmin"]) && (
                         <Card
                             size={"small"}
-                            title={<span style={{fontWeight: "bold"}}>操作</span>}
+                            title={<span style={{fontWeight: "bold"}}>{props.t("operator")}</span>}
                             style={{marginTop: 20}}
                         >
                             <Space direction={"horizontal"}>
@@ -163,16 +163,16 @@ const Summary = (props: any) => {
                                     <>
                                         <div style={{marginTop: "50px", marginBottom: "40px"}}>
                                             {info.AC === info.SumAll && (
-                                                <Title level={5} style={{color: "green"}}>全部通过</Title>
+                                                <Title level={5} style={{color: "green"}}>{props.t("allPassed")}</Title>
                                             )}
                                             {info.AC !== info.SumAll && info.AC !== 0 && (
-                                                <Title level={5} style={{color: "orange"}}>部分通过</Title>
+                                                <Title level={5} style={{color: "orange"}}>{props.t("partiallyPassed")}</Title>
                                             )}
                                             {info.AC === 0 && (
-                                                <Title level={5} style={{color: "red"}}>未通过</Title>
+                                                <Title level={5} style={{color: "red"}}>{props.t("failed")}</Title>
                                             )}
                                         </div>
-                                        <span>评测结果</span>
+                                        <span>{props.t("JudgeResult")}</span>
                                     </>
                                 )}
                             </Col>

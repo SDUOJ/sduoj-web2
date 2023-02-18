@@ -22,7 +22,7 @@ class CLogin extends Component<any, any> {
             if (to === undefined) this.props.history.replace(UrlPrefix + "/home")
             else {
                 this.props.history.replace(to)
-                message.success("登录成功")
+                message.success(this.props.t("loginSuccessfully"))
             }
         }
     }

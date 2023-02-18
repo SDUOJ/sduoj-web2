@@ -56,7 +56,7 @@ const SubmissionList = (props: any) => {
     }
     const columns = [
         {
-            title: "结果",
+            title: props.t("results"),
             dataIndex: "result",
             key: "result",
             render: (text: any, record: any) => {
@@ -84,7 +84,7 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "得分",
+            title: props.t("score"),
             dataIndex: "score",
             key: "score",
             render: (text: number, record: any) => {
@@ -94,7 +94,7 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "提交时间",
+            title: props.t("submissionTime"),
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
@@ -128,23 +128,23 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "用户名",
+            title: props.t("username"),
             dataIndex: "username",
             key: "username"
         },
         {
-            title: "题目编号",
+            title: props.t("problemNo."),
             dataIndex: "problemCode",
             key: "problemCode",
             render: props.problemCodeRender
         },
         {
-            title: "题目名",
+            title: props.t("problemName"),
             dataIndex: "problemTitle",
             key: "problemTitle"
         },
         {
-            title: "结果",
+            title: props.t("results"),
             dataIndex: "result",
             key: "result",
             width: 170,
@@ -157,7 +157,7 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "得分",
+            title: props.t("score"),
             dataIndex: "score",
             key: "score",
             render: (text: number, record: any) => {
@@ -167,12 +167,12 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "评测模板",
+            title: props.t("template"),
             dataIndex: "judgeTemplateTitle",
             key: "judgeTemplateTitle"
         },
         {
-            title: "内存使用",
+            title: props.t("memoryUsage"),
             dataIndex: "usedMemory",
             key: "usedMemory",
             render: (text: any) => {
@@ -180,7 +180,7 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "时间使用",
+            title: props.t("timeUsage"),
             dataIndex: "usedTime",
             key: "usedTime",
             render: (text: any) => {
@@ -188,7 +188,7 @@ const SubmissionList = (props: any) => {
             }
         },
         {
-            title: "提交时间",
+            title: props.t("submissionTime"),
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
@@ -200,7 +200,7 @@ const SubmissionList = (props: any) => {
     const getForm = (onFinish: any) => {
         return (
             <Space size={30}>
-                <Form.Item label={"用户名"} name={"username"}>
+                <Form.Item label={props.t("username")} name={"username"}>
                     <Input
                         onPressEnter={(e: any) => {
                             onFinish()
@@ -208,7 +208,7 @@ const SubmissionList = (props: any) => {
                         allowClear
                     />
                 </Form.Item>
-                <Form.Item label={"题目编号"} name={"problemCode"}>
+                <Form.Item label={props.t("problemNo.")} name={"problemCode"}>
                     <Input
                         onPressEnter={(e: any) => {
                             onFinish()
@@ -216,7 +216,7 @@ const SubmissionList = (props: any) => {
                         allowClear
                     />
                 </Form.Item>
-                <Form.Item label={"评测结果"} name={"judgeResult"}>
+                <Form.Item label={props.t("JudgeResult")} name={"judgeResult"}>
                     <Select onChange={onFinish} allowClear style={{width: 200}}>
                         {
                             RunningResultList.map((value) => {
@@ -251,7 +251,7 @@ const SubmissionList = (props: any) => {
             <Card
                 title={
                     <Space>
-                        {props.title !== undefined ? props.title : "提交记录"}
+                        {props.title !== undefined ? props.title : props.t("submissionRecord")}
                         <SyncJudging
                             open={webSocketOpen}
                             dataHandle={addCaseInfo}
@@ -277,14 +277,14 @@ const SubmissionList = (props: any) => {
                             onClick={() => {
                                 setRefreshDisable(true)
                                 props.addTableVersion(props.name)
-                                message.success("刷新成功")
+                                message.success(props.t("refreshSuccessfully"))
                                 setTimeout(() => {
                                     setRefreshDisable(false)
                                 }, 3000)
                             }}
                             disabled={refreshDisable}
                         >
-                            刷新
+                            {props.t("refresh")}
                         </Button>
                     </Space>
                 }

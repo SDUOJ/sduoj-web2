@@ -238,10 +238,10 @@ const TableWithPagination = (props: any) => {
                                         {props.getForm(onFinish)}
                                         <Space style={{marginLeft: "30px"}} size={20}>
                                             <Button type="primary" onClick={onFinish}>
-                                                筛选
+                                                {props.t("filtering")}
                                             </Button>
                                             <Button htmlType="button" onClick={onReset}>
-                                                重置
+                                                {props.t("Reset")}
                                             </Button>
                                         </Space>
                                     </Form>

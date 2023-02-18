@@ -5,18 +5,21 @@ import {withRouter} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
 import {UrlPrefix} from "../../Config/constValue";
+import {useTranslation} from "react-i18next";
 
 
 const ResetPass = (props: any) => {
 
     const token = getUrlParams(props.location.search).token
     const [form] = useForm()
+    const {t} = useTranslation()
+
     return (
         <>
             <div style={{width: "500px", textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left"}}>
                     <Card
-                        title={"重置密码"}
+                        title={t("resetPassword")}
                     >
                         <Form
                             layout={"vertical"}
@@ -34,12 +37,12 @@ const ResetPass = (props: any) => {
                                         token: token
                                     }).then(()=>{
                                         props.history.push(UrlPrefix + "/login")
-                                        message.success("密码重置成功，请重新登录")
+                                        message.success(t("passwordResetSuccessfully,PleaseLogInAgain"))
                                     })
                                 })
                             }}
                         >
-                            提交
+                            {t("Submit")}
                         </Button>
                     </Card>
                 </div>

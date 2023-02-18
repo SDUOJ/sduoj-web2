@@ -9,12 +9,12 @@ const Invalidate = (props: any)=>{
                 icon={<CloseOutlined />}
                 onClick={()=>{
                     props.API(props.data).then((res: any)=>{
-                        message.success("已取消成绩")
+                        message.success(props.t("canceledResults"))
                         props.afterSuccess !== undefined && props.afterSuccess()
                     })
                 }}
             >
-                取消成绩
+                {props.t("cancelResults")}
             </Button>
         </>
     )

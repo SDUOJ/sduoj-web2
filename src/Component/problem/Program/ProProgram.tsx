@@ -124,14 +124,14 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                     {problemInfo?.source !== undefined && (
                         <div style={{marginTop: "5px", fontSize: "16px"}}>
                             <div>
-                                <span style={{fontWeight: "bold"}}>来源</span>
+                                <span style={{fontWeight: "bold"}}>{props.t("source")}</span>
                                 : {problemInfo?.source}
                             </div>
                         </div>
                     )}
                     <div style={{marginTop: "5px", fontSize: "16px"}}>
                         <div>
-                            <span style={{fontWeight: "bold"}}>评测模板</span>
+                            <span style={{fontWeight: "bold"}}>{props.t("template")}</span>
                             : {getJudgeStr(problemInfo?.judgeTemplates)}
                         </div>
                     </div>
@@ -159,7 +159,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                     )}
                     <ModalSubmissionList
                         btnProps={{type: "default", disabled: !props.isLogin}}
-                        btnText={"记录"}
+                        btnText={props.t("records")}
                         name={"Pro-SubmissionList-" + props.name}
                         API={props.SubmissionListAPI}
                         QuerySubmissionAPI={props.QuerySubmissionAPI}

@@ -6,7 +6,7 @@ const RecentSubmissionList = (props: any) => {
         <>
             <SubmissionList
                 {...props}
-                title={"最近提交"}
+                title={props.t("recentlySubmitted")}
                 lessInfo={true}
             />
         </>

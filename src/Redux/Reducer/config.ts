@@ -2,9 +2,10 @@ import deepClone from "Utils/deepClone";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../Action/config";
 import {languageMap} from "../../Config/i18n";
+import {initLanguage} from "../../Utils/initLanguage";
 
 const initState: ConfigState = {
-    lang: languageMap['zh'],
+    lang: languageMap[initLanguage()],
     langCode: "",
     mode: "exam",
     timestamp: Date.now(),

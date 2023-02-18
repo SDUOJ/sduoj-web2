@@ -7,6 +7,7 @@ import React, {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
 import {UrlPrefix} from "../../Config/constValue";
 import TableWithPagination from "../common/Table/TableWithPagination";
+import {withTranslation} from "react-i18next";
 
 const ContestList = (props: any) => {
     const [myGroup, setMyGroup] = useState<any>(undefined)
@@ -22,7 +23,7 @@ const ContestList = (props: any) => {
             <div className={"ListPage"}>
                 <TableWithPagination
                     useList={true}
-                    title={"比赛列表"}
+                    title={props.t("contestList")}
                     API={async (data: any) => {
                         return cApi.getContestList({...data, ...props.apiProp})
                     }}
@@ -31,10 +32,10 @@ const ContestList = (props: any) => {
                         return (
                             <Space size={30}>
                                 {props.useGroup === undefined && myGroup !== undefined && (
-                                    <Form.Item label={"组"} name={"groupId"}>
+                                    <Form.Item label={props.t("group")} name={"groupId"}>
                                         <Select onChange={onFinish} style={{width: 200}}
                                                 defaultValue={""}>
-                                            <Select.Option value={""}>全部</Select.Option>
+                                            <Select.Option value={""}>{props.t("All")}</Select.Option>
                                             {myGroup.map((val: any) => {
                                                 return (
                                                     <Select.Option value={val.groupId}>
@@ -45,10 +46,10 @@ const ContestList = (props: any) => {
                                         </Select>
                                     </Form.Item>
                                 )}
-                                <Form.Item label={"赛制"} name={"mode"}>
+                                <Form.Item label={props.t("contestRules")} name={"mode"}>
                                     <Select onChange={onFinish} style={{width: 80}}
                                             defaultValue={""}>
-                                        <Select.Option value={""}>全部</Select.Option>
+                                        <Select.Option value={""}>{props.t("All")}</Select.Option>
                                         <Select.Option value={"acm"}>ACM</Select.Option>
                                         <Select.Option value={"ioi"}>IOI</Select.Option>
                                         <Select.Option value={"oi"}>OI</Select.Option>
@@ -123,13 +124,13 @@ const ContestList = (props: any) => {
                                             <span><TeamOutlined/> {item.participantNum}</span>
                                             <Divider type={"vertical"}/>
                                             {TimeRangeState(item.gmtStart, item.gmtEnd) === "end" && (
-                                                <Tag color={"green"}>结束</Tag>
+                                                <Tag color={"green"}>{props.t("end")}</Tag>
                                             )}
                                             {TimeRangeState(item.gmtStart, item.gmtEnd) === "running" && (
-                                                <Tag color={"orange"}>进行中</Tag>
+                                                <Tag color={"orange"}>{props.t("running")}</Tag>
                                             )}
                                             {item.isPublic === 0 && (
-                                                <Tag color={"red"}>私有</Tag>
+                                                <Tag color={"red"}>{props.t("private")}</Tag>
                                             )}
                                         </Space>
 
@@ -145,4 +146,4 @@ const ContestList = (props: any) => {
     )
 }
 
-export default withRouter(ContestList)
+export default withTranslation()(withRouter(ContestList))

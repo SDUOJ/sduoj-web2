@@ -49,7 +49,7 @@ class CUser extends Component<any, any> {
                             <Row style={{marginTop: 0}}>
                                 <Col span={16}>
                                     <Card
-                                        title={"用户信息"}
+                                        title={this.props.t("Profile")}
                                     >
                                         <Form
                                             initialValues={this.props.userInfo}
@@ -65,14 +65,14 @@ class CUser extends Component<any, any> {
                                                             return this.ref1.current?.validateFields().then((data: any) => {
                                                                 return CApi.updateProfile(data).then((res) => {
                                                                     this.props.testLogin()
-                                                                    return Promise.resolve("成功")
+                                                                    return Promise.resolve(this.props.t("success"))
                                                                 })
                                                             }).catch((e: any) => {
                                                                 return Promise.reject(e)
                                                             })
                                                         }}
                                                         btnProps={{type: "default"}}
-                                                        btnText={"更新"}
+                                                        btnText={this.props.t("update")}
                                                     />
 
                                                 </Col>
@@ -88,7 +88,7 @@ class CUser extends Component<any, any> {
                                     </Card>
                                     <Card
                                         style={{marginTop: 30}}
-                                        title={"修改密码"}
+                                        title={this.props.t("ChangePass")}
                                     >
                                         <Form
                                             ref={this.ref2}
@@ -102,14 +102,14 @@ class CUser extends Component<any, any> {
                                                             return this.ref2.current?.validateFields().then((data: any) => {
                                                                 return CApi.updateProfile(data).then((res) => {
                                                                     this.ref2.current?.resetFields()
-                                                                    return Promise.resolve("成功")
+                                                                    return Promise.resolve(this.props.t("success"))
                                                                 })
                                                             }).catch((e: any) => {
                                                                 return Promise.reject(e)
                                                             })
                                                         }}
                                                         btnProps={{type: "default"}}
-                                                        btnText={"更新"}
+                                                        btnText={this.props.t("update")}
                                                     />
                                                 </Col>
                                                 <Col offset={1} span={11}>
@@ -121,7 +121,7 @@ class CUser extends Component<any, any> {
                                     </Card>
                                     <Card
                                         style={{marginTop: 30}}
-                                        title={"修改邮箱"}
+                                        title={this.props.t("modifyEmail")}
                                     >
                                         <Form
                                             ref={this.ref3}
@@ -136,14 +136,14 @@ class CUser extends Component<any, any> {
                                                                 // console.log(data)
                                                                 return CApi.updateEmail(data).then((res) => {
                                                                     this.ref3.current?.resetFields()
-                                                                    return Promise.resolve("成功")
+                                                                    return Promise.resolve(this.props.t("success"))
                                                                 })
                                                             }).catch((e: any) => {
                                                                 return Promise.reject(e)
                                                             })
                                                         }}
                                                         btnProps={{type: "default"}}
-                                                        btnText={"更新"}
+                                                        btnText={this.props.t("update")}
                                                     />
                                                 </Col>
                                                 <Col offset={1} span={11}>
@@ -166,7 +166,8 @@ class CUser extends Component<any, any> {
                                                 <Avatar email={this.props.userInfo?.email} size={150}/><br/>
                                             </div>
                                             <div style={{marginTop: 25}}>
-                                                我们使用 <a href={"https://cravatar.cn/"}>Cravatar</a> 来呈现你的头像图标
+                                                {this.props.t("weUse")} <a
+                                                href={"https://cravatar.cn/"}>Cravatar</a> {this.props.t("toPresentYourAvatarIcon")}
                                             </div>
 
                                         </div>
@@ -176,7 +177,7 @@ class CUser extends Component<any, any> {
                                             if (!isValueEmpty(this.props.userInfo?.sduId)) {
                                                 return (
                                                     <Card
-                                                        title={"SDUCAS（SDU 统一身份认证平台）"}
+                                                        title={`SDUCAS（${this.props.t("sduUnifiedIdentityPlatform")}）`}
                                                         style={{marginTop: 30}}
                                                     >
                                                         <div style={{textAlign: "center", margin: "0 auto"}}>
@@ -184,12 +185,12 @@ class CUser extends Component<any, any> {
                                                             <Divider type={"vertical"}/>
                                                             <Reconfirm
                                                                 btnProps={{size: "small", type: "link"}}
-                                                                btnText={"解绑"}
-                                                                todo={"解除 SDU 统一身份认证绑定"}
+                                                                btnText={this.props.t("unbinding")}
+                                                                todo={this.props.t("unbindSdusForUnifiedAuthentication")}
                                                                 confirm={this.props.userInfo.sduId}
                                                                 API={() => {
                                                                     CApi.thirdPartyUnbinding({thirdParty: "SDUCAS"}).then((res: any) => {
-                                                                        message.success("解除成功")
+                                                                        message.success(this.props.t("unwindingSuccessful"))
                                                                         this.props.testLogin()
                                                                     })
                                                                 }}

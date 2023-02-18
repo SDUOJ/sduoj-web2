@@ -67,7 +67,7 @@ const Running = (props: any) => {
                             }
                             if (RunningResult === "8") obj = {message: props.t("CompileFailed"), type: "error"}
                             else if (RunningResult === "5") obj = {message: props.t("SystemError"), type: "error"}
-                            else obj = {message: "评测日志", type: "info"}
+                            else obj = {message: props.t("judgingLog"), type: "info"}
                             return (
                                 <Alert
                                     description={<pre className="preAutoLine">{submissionInfo.judgeLog}</pre>}
@@ -100,8 +100,8 @@ const Running = (props: any) => {
                     <div style={{textAlign: "center", paddingTop: "100px"}}>
                         <ClimbingBoxLoader color={"#99CCFF"} loading={true} size={15}/>
                         <div style={{marginTop: "50px"}}>
-                            {RunningState === "-4" && (<>排队中，请稍后...</>)}
-                            {RunningState === "-3" && (<>编译中，请稍后...</>)}
+                            {RunningState === "-4" && (<>{props.t("inQueue,PleaseWait...")}</>)}
+                            {RunningState === "-3" && (<>{props.t("compilationInProgress,PleaseWait...")}</>)}
                         </div>
                     </div>
                 )}
@@ -136,7 +136,7 @@ const Running = (props: any) => {
                             }
                             return (
                                 <>
-                                    <Title level={4}> 测试进度 </Title>
+                                    <Title level={4}> {props.t("testingProgress")} </Title>
                                     <div style={{textAlign: "center"}}>
                                         <Progress
                                             percent={JudgedNum / TestCaseStateList.length * 100}

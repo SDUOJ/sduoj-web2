@@ -5,25 +5,27 @@ import cApi from "Utils/API/c-api"
 import {message} from "antd";
 import React, {Dispatch} from "react";
 import {UrlPrefix} from "../../Config/constValue";
+import {useTranslation} from "react-i18next";
 
 const QuitGroupBtn = (props: any) =>{
     const username = useSelector((state:any )=> {
         return state.UserReducer?.userInfo?.username
     })
+    const {t} = useTranslation()
     return (
         <>
           <Reconfirm
               btnProps={{type: "link"}}
-              btnText={"退出"}
+              btnText={t("exit")}
               confirm={username}
               API={()=>{
                   cApi.quitGroup({groupId: props.groupId}).then(()=>{
                       props.history.replace(UrlPrefix + "/group")
-                      message.success("退出成功")
+                      message.success(t("successfulExit"))
                       props.addTableVersion("GroupList")
                   })
               }}
-              todo={`退出组 ${props.groupName} `}
+              todo={`${t("exitGroup")} ${props.groupName} `}
           />
         </>
     )

@@ -5,6 +5,7 @@ import CApi from "Utils/API/c-api"
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {CheckOutlined} from "@ant-design/icons";
 import {UrlPrefix} from "../../Config/constValue";
+import {withTranslation} from "react-i18next";
 
 class CProblem extends Component<any, any> {
 
@@ -30,12 +31,12 @@ class CProblem extends Component<any, any> {
             <>
                 <div style={{textAlign: "center", margin: "0 auto"}}>
                     <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
-                        <Card title={"题目列表"}>
+                        <Card title={this.props.t("ProblemList")}>
                             <TableWithPagination
                                 API={CApi.getProblemList}
                                 columns={[
                                     {
-                                        title: "题号",
+                                        title: this.props.t("problemCode"),
                                         dataIndex: "problemCode",
                                         key: "problemCode",
                                         render: (text: string) => {
@@ -46,7 +47,7 @@ class CProblem extends Component<any, any> {
                                         }
                                     },
                                     {
-                                        title: "标题",
+                                        title: this.props.t("title"),
                                         dataIndex: "problemTitle",
                                         key: "problemTitle",
                                         render: (text: string, row: any) => {
@@ -62,7 +63,7 @@ class CProblem extends Component<any, any> {
                                                     })}
                                                     {[""].map(() => {
                                                         if (row.isPublic === 0) {
-                                                            return <Tag color={"orange"}>私有</Tag>
+                                                            return <Tag color={"orange"}>{this.props.t("private")}</Tag>
                                                         }
                                                     })}
                                                 </Space>
@@ -70,12 +71,12 @@ class CProblem extends Component<any, any> {
                                         }
                                     },
                                     {
-                                        title: "来源",
+                                        title: this.props.t("source"),
                                         dataIndex: "source",
                                         key: "source"
                                     },
                                     {
-                                        title: "通过数",
+                                        title: this.props.t("acceptNumber"),
                                         dataIndex: "acceptNum",
                                         key: "acceptNum"
                                     },
@@ -91,4 +92,4 @@ class CProblem extends Component<any, any> {
     }
 }
 
-export default withRouter(CProblem)
+export default withTranslation()(withRouter(CProblem))

@@ -7,11 +7,14 @@ import {connect} from "react-redux";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../../Redux/Action/config";
 import {Locale} from "antd/lib/locale-provider";
+import moment from 'moment';
+import {initLanguage} from "../../Utils/initLanguage";
+
 
 const {Option} = Select;
 
 class ChangeLang extends Component<any, any> {
-    defLang: string = "zh"
+    defLang: string = initLanguage()
 
     constructor(props: any) {
         super(props);
@@ -30,6 +33,8 @@ class ChangeLang extends Component<any, any> {
             return item.id === value
         })
         this.props.ChangeLanguage(languageMap[value], language[id].code)
+        moment.locale(language[id].code);
+        localStorage.setItem('language', language[id].code)
     }
 
     render() {

@@ -6,7 +6,7 @@ const DownloadTestCase = (props: any) =>{
     return (
         <>
             <Button icon={<DownloadOutlined />}>
-                下载数据
+                {props.t("downloadData")}
             </Button>
         </>
     )

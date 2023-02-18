@@ -18,13 +18,13 @@ class SearchProblem extends Component<any, any> {
                         <>
                             <Space>
                                 <SearchOutlined />
-                                搜索题目(暂不开放)
+                                {`${this.props.t("searchProblem")} (${this.props.t("temporarilyClosed")})`}
                             </Space>
                         </>
                     }
                 >
                     <Search
-                        placeholder="请输入题目标题，题号，来源等信息"
+                        placeholder={this.props.t("pleaseEnterTheTitle,ProblemId,SourceAndOtherInformation")}
                         disabled={true}
                         onSearch={this.onSearch}
                         enterButton

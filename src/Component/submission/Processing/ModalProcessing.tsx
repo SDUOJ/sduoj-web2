@@ -4,14 +4,15 @@ import Processing from "./Processing";
 import {SubmissionState} from "../../../Type/ISubmission";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 
 const ModalProcessing = (props: any) => {
-
+    const {t} = useTranslation()
     return (
         <Modal
             title={
-                "提交详情" +
+                t("submissionDetails") +
                 (props.title !== undefined ? "(" + props.title + ")" : "")
             }
             destroyOnClose={true}

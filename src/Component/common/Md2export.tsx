@@ -66,10 +66,10 @@ const MD2export = (props: any) => {
         <>
             <Button type={"link"} onClick={() => {
                 setVis(true)
-            }}> Markdown 文本 </Button>
+            }}> {props.t("markdownText")} </Button>
 
             <Modal
-                title={"Markdown 文本"}
+                title={props.t("markdownText")}
                 visible={vis}
                 footer={false}
                 width={1200}

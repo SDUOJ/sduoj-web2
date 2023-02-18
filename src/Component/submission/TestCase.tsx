@@ -115,7 +115,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             CompilationError: {
                 icon: <CloseCircleOutlined/>,
                 text: "CE",
-                textAll: "编译错误",
+                textAll: t("compilationError"),
                 color: "error",
                 type: "warning",
                 tagColor: "#c46304"
@@ -123,7 +123,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             PresentationError: {
                 icon: <CloseCircleOutlined/>,
                 text: "PE",
-                textAll: "格式错误",
+                textAll: t("formatError"),
                 color: "error",
                 type: "danger",
                 tagColor: "#ff1500"
@@ -131,7 +131,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             SystemError: {
                 icon: <CloseCircleOutlined/>,
                 text: "SE",
-                textAll: "系统错误",
+                textAll: t("SystemError"),
                 color: "error",
                 type: "danger",
                 tagColor: "#ff1500"
@@ -139,19 +139,19 @@ class TestCase extends Component<ITestCaseProp, any> {
             Queueing: {
                 icon: <ClockCircleOutlined/>,
                 text: "Queueing",
-                textAll: "排队",
+                textAll: t("Pending"),
                 color: undefined
             },
             Compiling: {
                 icon: <SyncOutlined spin/>,
                 text: "Compiling",
-                textAll: "编译中",
+                textAll: t("Compiling"),
                 color: 'blue'
             },
             Judging: {
                 icon: <SyncOutlined spin/>,
                 text: "Judging",
-                textAll: "评测中",
+                textAll: t("judging"),
                 color: 'blue'
             },
             End: {
@@ -163,7 +163,7 @@ class TestCase extends Component<ITestCaseProp, any> {
             Cancelled: {
                 icon: <CloseCircleOutlined/>,
                 text: "Cancelled",
-                textAll: "已取消",
+                textAll: t("canceled"),
                 color: "black"
             }
         }

@@ -61,7 +61,7 @@ const Submit = (props: SubmitPropsType & any) => {
             //             value.code = funcTemplate.functionTemplate + value.code
             //     }
             // }
-            gb_hide = message.info("正在排队提交，请耐心等待", 0)
+            gb_hide = message.info(props.t("inQueueForSubmission,PleaseBePatient"), 0)
             return props.API(value.JudgeTemplate, value.code, zipFileId).then((data: any) => {
                 props.setTopSubmission(data, props.TopSubmissionInfo)
                 setSubmitModalVis(false)
@@ -84,7 +84,7 @@ const Submit = (props: SubmitPropsType & any) => {
         <Button
             type={"primary"}
             onClick={() => {
-                if (!props.isLogin) message.error("请登录")
+                if (!props.isLogin) message.error(props.t("PleaseLogin"))
                 else setSubmitModalVis(true)
             }}
             disabled={
@@ -99,7 +99,7 @@ const Submit = (props: SubmitPropsType & any) => {
         <>
             {!isNaN(props.LeftSubmitCount) && props.LeftSubmitCount !== undefined && (
                 <Badge count={
-                    <Tooltip placement="topLeft" title={"剩余提交次数"}>
+                    <Tooltip placement="topLeft" title={props.t("numberOfRemainingSubmissions")}>
                         <span className={"Badge-Tooltip-Program"}>
                             {props.LeftSubmitCount}
                         </span>
@@ -130,7 +130,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                        marginBottom: "10px",
                                        margin: "0px auto"
                                    }}>
-                                       剩余提交次数：{props.LeftSubmitCount}
+                                       {props.t("numberOfRemainingSubmissions")}:{props.LeftSubmitCount}
                                    </div>
                                )
                            }
@@ -144,12 +144,12 @@ const Submit = (props: SubmitPropsType & any) => {
                                    || SubmitDisable
                                }
                            >
-                               提交
+                               {props.t("Submit")}
                            </Button>
                            <Button key="back" onClick={() => {
                                setSubmitModalVis(false)
                            }}>
-                               取消
+                               {props.t("no")}
                            </Button>
                        </Space>
                    ]}
@@ -206,14 +206,14 @@ const Submit = (props: SubmitPropsType & any) => {
                                         return (
                                             <>
                                                 {funcTemplate.isShowFunctionTemplate === 1 && (
-                                                    <Form.Item label={"起始代码"}>
-                                                        <pre>起始代码为只读模式，将在编译前被插入到答案代码的上方</pre>
+                                                    <Form.Item label={props.t("startingCode")}>
+                                                        <pre>{props.t("theStartCodeIsInReadOnlyModeAndWillBeInsertedAboveTheAnswerCodeBeforeCompilation")}</pre>
                                                         <CodeEditor
                                                             lang={JudgeTemplate2lang(jtId)}
                                                             value={funcTemplate.functionTemplate} readOnly={true}/>
                                                     </Form.Item>
                                                 )}
-                                                <Form.Item label={"答案代码"} name={"code"}>
+                                                <Form.Item label={props.t("answerCode")} name={"code"}>
                                                     <CodeEditor lang={JudgeTemplate2lang(jtId)}/>
                                                 </Form.Item>
                                             </>
@@ -221,7 +221,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                     } else {
                                         return (
                                             <>
-                                                <Form.Item label={"文件"}>
+                                                <Form.Item label={props.t("file")}>
                                                     <Upload
                                                         multiple={false}
                                                         accept={accept}
@@ -237,22 +237,22 @@ const Submit = (props: SubmitPropsType & any) => {
                                                                 try {
                                                                     const str = event.target?.result as string
                                                                     if (str.length > MaxCodeLength)
-                                                                        message.error("上传文件字符数超过" + MaxCodeLength)
+                                                                        message.error(props.t("theNumberOfCharactersInTheUploadedFileExceeds") + MaxCodeLength)
                                                                     form.setFieldsValue({
                                                                         ...form.getFieldsValue(),
                                                                         code: str.substr(0, MaxCodeLength)
                                                                     })
                                                                 } catch (e) {
-                                                                    message.error('文件解析失败！');
+                                                                    message.error(props.t("fileParsingFailed!"));
                                                                 }
                                                             }
                                                         }}
                                                     >
-                                                        <Button icon={<UploadOutlined/>}>上传</Button>
+                                                        <Button icon={<UploadOutlined/>}>{props.t("upload")}</Button>
                                                     </Upload>
                                                 </Form.Item>
 
-                                                <Form.Item label={"代码"} name={"code"}>
+                                                <Form.Item label={props.t("Code")} name={"code"}>
                                                     <CodeEditor lang={JudgeTemplate2lang(jtId)}/>
                                                 </Form.Item>
                                             </>
@@ -261,7 +261,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                 } else {
                                     // 自定义 JudgeTemplate 的提交
                                     return (
-                                        <Form.Item label={"文件"}>
+                                        <Form.Item label={props.t("file")}>
                                             <Upload
                                                 multiple={false}
                                                 accept={accept}
@@ -276,7 +276,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                                     })
                                                 }}
                                             >
-                                                <Button icon={<UploadOutlined/>}>上传</Button>
+                                                <Button icon={<UploadOutlined/>}>{props.t("upload")}</Button>
                                             </Upload>
                                         </Form.Item>
                                     )

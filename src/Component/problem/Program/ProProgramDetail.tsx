@@ -10,15 +10,15 @@ const ProProgramDetail = (props: any) => {
     const problemInfo = props.problemInfo
     return (
         <>
-            <Card title={"题目详情"} className={"smallBodyPaddingTop"}>
+            <Card title={props.t("problemDetails")} className={"smallBodyPaddingTop"}>
                 <Table
                     size={"small"}
                     pagination={false}
                     dataSource={[
                         {key: props.t("TimeLimit"), value: problemInfo?.timeLimit + " ms"},
                         {key: props.t("MemoryLimit"), value: Math.floor(problemInfo?.memoryLimit / 1024) + " MB"},
-                        {key: "评测模板", value: getJudgeStr(problemInfo?.judgeTemplates)},
-                        {key: "来源", value: problemInfo?.source},
+                        {key: props.t("template"), value: getJudgeStr(problemInfo?.judgeTemplates)},
+                        {key: props.t("source"), value: problemInfo?.source},
                     ]}
                     showHeader={false}
                     columns={[

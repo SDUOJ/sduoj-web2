@@ -7,6 +7,7 @@ import Countdown from "antd/lib/statistic/Countdown";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
 import {UrlPrefix} from "../../Config/constValue";
+import {withTranslation} from "react-i18next";
 
 
 class CContest extends Component<any, any> {
@@ -41,7 +42,7 @@ class CContest extends Component<any, any> {
                             <Col span={7}>
                                 {!isValueEmpty(this.state.upComing) && (
                                     <Card
-                                        title={"即将到来"}
+                                        title={this.props.t("ComingSoon")}
                                         className={"smallBodyPadding bodyCenter"}
                                     >
                                         <div>
@@ -57,7 +58,7 @@ class CContest extends Component<any, any> {
                                                 <Countdown
                                                     className={"contestTimer"}
                                                     value={parseInt(this.state.upComing.gmtStart)}
-                                                    format="H 时 m 分 s 秒"
+                                                    format={this.props.t("TimeFormat")}
                                                     onFinish={this.getUpComing}
                                                 />
                                             </Space>
@@ -73,4 +74,4 @@ class CContest extends Component<any, any> {
     }
 }
 
-export default withRouter(CContest)
+export default withTranslation()(withRouter(CContest))

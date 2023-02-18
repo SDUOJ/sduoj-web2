@@ -58,7 +58,7 @@ class Announcement extends Component<any, any> {
                                 key: "ID"
                             },
                             {
-                                title: "标题",
+                                title: this.props.t("title"),
                                 dataIndex: "title",
                                 key: "title",
                                 render: (text: string, row: any) => {
@@ -79,7 +79,7 @@ class Announcement extends Component<any, any> {
                                 }
                             },
                             {
-                                title: "发布日期",
+                                title: this.props.t("ReleaseDate"),
                                 dataIndex: "gmtCreate",
                                 key: "date",
                                 render: (text: any) => {

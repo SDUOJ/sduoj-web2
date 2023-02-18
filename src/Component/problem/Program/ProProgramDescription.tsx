@@ -21,7 +21,7 @@ const ProProgramDescription = (props: any) => {
     return (
         <>
             <Card
-                title={"题目描述"}
+                title={props.t("Description")}
                 className={"zeroBodyPadding"}
             >
                 <Menu

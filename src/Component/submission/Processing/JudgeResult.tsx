@@ -38,7 +38,7 @@ class JudgeResult extends Component<IJudgeResult, any> {
         return (
             <Card
                 size="small"
-                title={<span style={{fontWeight: "bold"}}>评测数据集</span>}
+                title={<span style={{fontWeight: "bold"}}>{this.props.t("evaluationDataSet")}</span>}
                 className={"card"}
             >
                 <Row>
@@ -92,7 +92,7 @@ class JudgeResult extends Component<IJudgeResult, any> {
                                     type="dashboard"
                                     format={() => `${info.ACNumber} / ${info.CaseNumber}`}
                                 />
-                                <span>{this.props.t("通过数量")}</span>
+                                <span>{this.props.t("acceptedNumber")}</span>
                             </>
                         )}
                     </Col>

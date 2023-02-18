@@ -33,7 +33,7 @@ class CThirdPartyLogin extends Component<any, any> {
             thirdParty: paras.thirdParty,
             ticket: paras.ticket
         }).then((resData: any) => {
-            message.success("认证成功")
+            message.success(this.props.t("certificationSuccess"))
             if (resData.user === null) {
                 // 之前没有绑定账号，现在进行绑定
                 let obj: any = {
@@ -61,7 +61,7 @@ class CThirdPartyLogin extends Component<any, any> {
                     [''].map(() => {
                         if (this.state.loading === true) {
                             return (
-                                <Spin tip="认证中...">
+                                <Spin tip={this.props.t("certificationIn...")}>
                                     <div style={{textAlign: "center", margin: "0 auto"}}>
                                         <div>
                                             <Image width={200} src={SDU_Logo} preview={false}/>
@@ -75,25 +75,27 @@ class CThirdPartyLogin extends Component<any, any> {
                                     <Card title={
                                         (
                                             <span>
-                                                首次使用
+                                                {this.props.t("firstTimeUse")}
                                                 <span style={{fontWeight: "bold"}}>{this.state.thirdParty}</span>
-                                                登录，需要进行绑定操作
+                                                {this.props.t("login,BindingOperationRequired")}
                                             </span>
                                         )
                                     }>
 
                                         <Space direction={"vertical"} size={15}>
                                             <div style={{textAlign: "left"}}>
-                                                认证信息：<span style={{fontWeight: "bold"}}>{this.state.info}</span>
+                                                {this.props.t("certificationInformation:")}<span
+                                                style={{fontWeight: "bold"}}>{this.state.info}</span>
                                             </div>
                                             <div style={{textAlign: "left"}}>
-                                                时效：当前认证<span style={{fontWeight: "bold"}}>5分钟</span>内有效
+                                                {this.props.t("statuteOfLimitations:CurrentCertification")}<span
+                                                style={{fontWeight: "bold"}}>{this.props.t("5Minutes")}</span>{this.props.t("validWithin")}
                                             </div>
                                             <Register token={this.state.token} username={this.state.sduId} button={
-                                                <Button block={true} type={"primary"}>注册新用户并绑定</Button>
+                                                <Button block={true} type={"primary"}>{this.props.t("registerAsANewUserAndBind")}</Button>
                                             }/>
                                             <Binding token={this.state.token} button={
-                                                <Button block={true} type={"primary"}>绑定已有账号</Button>
+                                                <Button block={true} type={"primary"}>{this.props.t("bindExistingAccounts")}</Button>
                                             }/>
                                         </Space>
 

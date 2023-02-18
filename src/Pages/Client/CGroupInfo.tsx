@@ -12,6 +12,7 @@ import {connect} from "react-redux";
 import {CommonState} from "../../Redux/Action/common";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
 import ProblemSetList from "../../Component/problemSet/ProblemSetList";
+import {useTranslation} from "react-i18next";
 
 
 const CGroupInfo = (props: any) => {
@@ -21,11 +22,12 @@ const CGroupInfo = (props: any) => {
     const [psActiveKey, setPsActiveKey] = useState<string>()
     const [psSum, setPsSum] = useState<string>()
     const [psTabItems, setPsTabItems] = useState<any>()
+    const {t} = useTranslation()
 
     useEffect(() => {
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
-            MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? "暂无" : value.markdown)
+            MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? t("notAvailable") : value.markdown)
         })
         const act = props.keyValueData["Group-C-activeKey-" + groupId]
         if (act !== undefined)
@@ -38,7 +40,7 @@ const CGroupInfo = (props: any) => {
             for (let x of label) {
                 tb.push({
                     key: x,
-                    label: x + `(${score[x]}分)`,
+                    label: x + `(${score[x]}${t("point")})`,
                     children: <ProblemSetList groupId={groupId} tag={x}/>
                 })
             }
@@ -68,19 +70,19 @@ const CGroupInfo = (props: any) => {
                             extra={
                                 <div>
                                     {groupInfo?.status === 1 && (
-                                        <Tag color={"green"}>申请中</Tag>
+                                        <Tag color={"green"}>{t("ApplicationInProgress")}</Tag>
                                     )}
                                     {groupInfo?.status === 2 && (
                                         <QuitGroupBtn groupId={groupInfo?.groupId} groupName={groupInfo?.title}/>
                                     )}
                                     {groupInfo?.status === 3 && (
-                                        <Tag color={"orange"}>申请被拒绝</Tag>
+                                        <Tag color={"orange"}>{t("ApplicationRejected")}</Tag>
                                     )}
                                     {(groupInfo?.status === 0 || groupInfo?.status === 3) && groupInfo?.openness !== 2 && (
                                         <JoinGroupBtn groupId={groupInfo?.groupId} groupName={groupInfo?.title}/>
                                     )}
                                     {groupInfo?.status === 0 && groupInfo?.openness === 2 && (
-                                        <Tag color={"red"}>私有</Tag>
+                                        <Tag color={"red"}>{t("private")}</Tag>
                                     )}
                                 </div>
                             }
@@ -90,11 +92,11 @@ const CGroupInfo = (props: any) => {
                                 setActiveKey(atk)
                                 props.setKeyValueData("Group-C-activeKey-" + groupId, atk)
                             }}>
-                                <Tabs.TabPane tab="公告" key="Announcement">
+                                <Tabs.TabPane tab={t("Announcement")} key="Announcement">
                                     <div id={"AnnouncementMD"}>
                                     </div>
                                 </Tabs.TabPane>
-                                <Tabs.TabPane tab={`题单(${psSum}分)`} key="practice">
+                                <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">
                                     <Tabs activeKey={psActiveKey} onChange={(v:string)=>{
                                         setPsActiveKey(v)
                                         props.setKeyValueData(`Group-C-activeKey-${groupId}-ProblemSet`, v)
@@ -108,14 +110,14 @@ const CGroupInfo = (props: any) => {
                                         })}
                                     </Tabs>
                                 </Tabs.TabPane>
-                                <Tabs.TabPane tab="比赛" key="contest">
+                                <Tabs.TabPane tab={t("contest")} key="contest">
                                     <ContestList
                                         name={"GroupInfo-" + groupId + "-ContestList"}
                                         apiProp={{groupId: groupId}}
                                         useGroup={false}
                                     />
                                 </Tabs.TabPane>
-                                <Tabs.TabPane tab="用户" key={"member"}>
+                                <Tabs.TabPane tab={t("user")} key={"member"}>
                                     {groupInfo !== undefined && (
                                         <GroupUserListCard members={groupInfo.members}/>
                                     )}

@@ -12,16 +12,16 @@ const ReJudge = (props: any) => {
                 onClick={() => {
                     const RejudgeNumber = ck(props.data.length, props.data?.submissionIds?.length)
                     if (RejudgeNumber === 0) {
-                        message.error("未选择任何项")
+                        message.error(props.t("noItemSelected"))
                     } else {
                         props.API(props.data).then((res: any) => {
-                            message.success("正在重测" + RejudgeNumber + "个提交")
+                            message.success(props.t("retesting") + RejudgeNumber + props.t("submissionInProgress"))
                             props.afterSuccess !== undefined && props.afterSuccess()
                         })
                     }
                 }}
             >
-                重测
+                {props.t("retesting")}
             </Button>
         </>
     )
