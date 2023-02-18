@@ -21,7 +21,7 @@ const ReJudge = (props: any) => {
                     }
                 }}
             >
-                {props.t("retesting")}
+                {props.t("rejudging")}
             </Button>
         </>
     )
