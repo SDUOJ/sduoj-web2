@@ -1,126 +1,32 @@
-# SDUOJ 新版前端
+# SDUOJ Front End - React
 
-之前的前端，管理端与用户端是分离的，使用了 Vue 作为开发的框架，
-由于使用的 UI 框架有一些 Bug 长时间无人维护，所以决定使用 React 与 Ant Design
-重新进行编写。
+This response is a web system that use ``React`` to adapt more services of SDUOJ.
 
-> 项目正在施工中，预计完成时间为 2022 年 7 月
+This system is still in its early stages and there are still a large number of issues to be resolved.
 
-## 当前进度
+> Warning: This code currently contains a large number of unfixed warnings and has some performance issues, but is believed to be fixed in the future. (2023/02/19)
 
-- [ ] 整体优化
-  - [ ] package 打包优化，减小 JS 体积
-  - [ ] css 文件分离
-  - [ ] 黑暗模式
-  - [ ] 消除警告
-  - [ ] 路由前缀分离，形成配置文件
-  - [ ] 适配多语言
-- [x] C 端
-  - [x] 主页
-    - [x] 公告
-    - [ ] 搜索
-  - [x] 用户
-    - [x] 登录
-    - [X] 注册
-    - [X] 找回密码
-    - [X] 统一身份认证绑定
-    - [X] 个人信息
-  - [x] 题目
-    - [X] 题目列表
-    - [x] 题目详情
-  - [x] 提交
-    - [x] submit 页面 
-    - [x] submission 列表
-      - [x] 基础功能
-      - [x] 筛选
-    - [ ] submission 页面
-      - [x] 适配高级模式，使用 zip 的相关模式 
-      - [X] 显示模式
-          - [X] 分数
-            - [X] 完全显示
-            - [X] 显示【未通过，部分通过，通过】对应【0分，部分分，满分】
-            - [X] 不显示
-          - [X] 测试点信息
-            - [X] 完全显示
-            - [X] 显示第一个错误的测试点编号
-            - [X] 不显示
-      - [x] 基础功能
-        - [x] 代码
-        - [x] 运行时
-        - [X] 总结
-          - [X] 提交信息
-            - [X] Submission ID，提交时间，评测时间
-            - [X] 用户名，评测结果，评测模板
-          - [x] 统计
-          - [x] 评测结果
-      - [X] 重测
-      - [X] 取消成绩
-      - [ ] 数据点下载
-  - [ ] 比赛
-    - [x] 比赛列表
-      - [x] 基本功能  (1.28)
-      - [x] 按组筛选  (1.28)
-      - [x] 按比赛类型筛选  (1.28)
-    - [ ] 比赛详情
-      - [x] 基本信息  (1.28)
-      - [x] 总览  (1.28)
-      - [x] 问题详情  (1.28)
-      - [x] 提交  (1.28)
-      - [ ] 排行榜  (1.29-1.30)
-        - [ ] 基本功能  
-          - [x] 榜单
-          - [ ] 练习参赛
-          - [ ] 收藏
-        - [ ] 导出
-        - [x] 是否显示练习提交
-      - [ ] 问答
-  - [x] 用户组
-    - [x] 卡片表
-    - [x] 详情
-      - [x] 公告
-      - [x] 比赛列表
-      - [x] 成员列表
-      - [x] 退出功能
-- [ ] M 端 (Manage)
-  - [ ] 权限排查
-  - [ ] 用户
-    - [x] 列表
-    - [x] 新建/编辑
-    - [x] 批量删除
-    - [x] 批量导出
-    - [ ] 批量导入
-    - [x] 单个删除
-  - [ ] 题目
-    - [x] 列表  (1.28)
-    - [ ] 新建/编辑/克隆  (1.28)
-    - [ ] 批量编辑  (1.28)
-  - [ ] 比赛
-    - [ ] 列表  (1.29)
-    - [ ] 新建/编辑/克隆  (1.29)
-  - [ ] 评测模板
-    - [ ] 列表
-    - [ ] 新建/编辑/克隆
-  - [ ] 用户组  (1.31)
-    - [ ] 列表
-    - [ ] 新建/编辑
-    - [ ] 成员管理
-  - [x] 考试
-    - [x] 查看（基于表格）
-    - [x] 添加
-    - [x] 修改
-    - [x] 导出考试结果
-    - [x] 查看编程题提交记录
-      - [x] 重测题目
-  - [x] 客观题
-    - [x] 查看
-    - [x] 单个添加
-    - [x] 批量添加
-    - [x] 修改
-  - [x] 公告
-    - [x] 列表
-    - [x] 新建/编辑
-- [x] E 端 (Exam)
-  - [x] 考试列表（基于表格）
-  - [x] 考前等待页面
-  - [x] 考试页面
-  - [x] 考试完成页面
+
+## How to build
+
+To build it, you need a version 16.x of ``nodejs``.
+
+As the first time you run the code, you need to install modules:
+
+```shell
+npm install -g yarn
+yarn install
+```
+
+If you want to run it for development, run:
+
+```shell
+yaen start
+```
+
+If you want to build a release package, run:
+
+```shell
+yarn build
+```
+Then you can find all the files in the build directory that can be accessed directly using a proxy server such as nginx.
