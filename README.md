@@ -11,6 +11,8 @@ This system is still in its early stages and there are still a large number of i
 
 To build it, you need a version 16.x of ``nodejs``.
 
+To change you nodejs version, we recommend you ues [nvm](https://github.com/nvm-sh/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows).
+
 As the first time you run the code, you need to install modules:
 
 ```shell
