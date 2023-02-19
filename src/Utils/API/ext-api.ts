@@ -1,5 +1,4 @@
 import request from "./request";
-import apiAddress from "./apiAddress";
 
 export default {
     // 课程相关接口

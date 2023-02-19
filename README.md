@@ -23,7 +23,7 @@ yarn install
 If you want to run it for development, run:
 
 ```shell
-yaen start
+yarn start
 ```
 
 If you want to build a release package, run:

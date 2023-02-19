@@ -82,7 +82,6 @@ const ANCContent = (props: any) => {
                 avatar={<UserAvatar email={email}/>}
                 content={
                     <div id="markdownPreview" style={{overflowY: "hidden"}}>
-
                     </div>
                 }
                 datetime={

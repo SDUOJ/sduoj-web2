@@ -1,16 +1,17 @@
 import {
-    checkPointData, examID,
+    checkPointData,
+    examID,
     groupInfo,
     groupListQuery,
     judgeTemplate,
     loginInfo,
     modifyProblemsCheckPoint,
-    multiCheckpointFileUpload,
     problemBasic,
     problemDescription,
     problemListQuery,
     query,
-    studentBasic, updateUserStates,
+    studentBasic,
+    updateUserStates,
     userListQuery
 } from '../../Type/types'
 import {SubmissionQueryType} from "../../Type/IManage";

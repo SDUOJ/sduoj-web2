@@ -16,7 +16,7 @@ const TemplateMForm = (props: any) => {
             <ItemCodeEditor
                 label={"shell脚本"}
                 name={"shellScript"}
-                lang={"shell"}
+                lang={"cpp"}
                 className={"JudgeTemplateCodeEditor"}
                 rules={[{required: true}]}
             />

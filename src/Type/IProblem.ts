@@ -1,4 +1,4 @@
-import {RunningResultType, TestCaseType} from "./ISubmission";
+import {RunningResultType} from "./ISubmission";
 import {examID} from "./types";
 import React from "react";
 import Choice from "../Component/problem/Exam/ExamChoice";

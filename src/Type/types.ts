@@ -1,7 +1,5 @@
-import {
-    AxiosResponse, AxiosRequestConfig, CustomSuccessData
-} from "axios";
-import {Sex, sex} from "./Iuser";
+import {AxiosRequestConfig, CustomSuccessData} from "axios";
+import {Sex} from "./Iuser";
 import React from "react";
 
 export interface Get {

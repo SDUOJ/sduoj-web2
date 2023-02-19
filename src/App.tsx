@@ -13,34 +13,29 @@ import {routerLayout} from "./Config/router/router";
 import SubmissionModal from "./Component/submission/Processing/ModalProcessing";
 
 
-class App extends Component<any, any> {
+const App = (props: any) => {
 
-    componentDidMount() {
 
-    }
-
-    render() {
-        return (
-            // antd 全局化配置  国际化参数
-            <ConfigProvider locale={this.props.local}>
-                {/*顶级路由*/}
-                <Router>
-                    {/*提交详情窗体*/}
-                    <SubmissionModal/>
-                    <Suspense fallback={<Loading/>}>
-                        {
-                            routerLayout.map((r) => {
-                                return (
-                                    <Route key={r.id} path={r.path} exact={r.exact}
-                                           component={r.component}/>
-                                )
-                            })
-                        }
-                    </Suspense>
-                </Router>
-            </ConfigProvider>
-        );
-    }
+    return (
+        // antd 全局化配置  国际化参数
+        <ConfigProvider locale={props.local}>
+            {/*顶级路由*/}
+            <Router>
+                {/*提交详情窗体*/}
+                <SubmissionModal/>
+                <Suspense fallback={<Loading/>}>
+                    {
+                        routerLayout.map((r) => {
+                            return (
+                                <Route key={r.id} path={r.path} exact={r.exact}
+                                       component={r.component}/>
+                            )
+                        })
+                    }
+                </Suspense>
+            </Router>
+        </ConfigProvider>
+    );
 
 }
 

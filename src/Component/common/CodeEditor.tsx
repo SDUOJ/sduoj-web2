@@ -1,11 +1,13 @@
-import {Controlled as CodeMirror} from 'react-codemirror2'
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/solarized.css';
-import {ck} from "../../Utils/empty";
-import 'codemirror/addon/display/autorefresh'
+import CodeMirror from '@uiw/react-codemirror';
+import {githubLight, githubLightInit, githubDark, githubDarkInit} from '@uiw/codemirror-theme-github';
+import {cpp} from '@codemirror/lang-cpp';
+import {java} from '@codemirror/lang-java';
+import {sql} from '@codemirror/lang-sql';
+import {python} from '@codemirror/lang-python';
+
 
 interface ICodeEditor {
-    lang: "c" | "cpp" | "java" | "sql" | "python" | "text" | "shell"
+    lang: "c" | "cpp" | "java" | "sql" | "python"
     code?: string
     value?: string
     className?: string
@@ -14,45 +16,50 @@ interface ICodeEditor {
 
 }
 
-require('codemirror/mode/sql/sql')
-require('codemirror/mode/clike/clike')
-require('codemirror/mode/python/python')
-require('codemirror/mode/shell/shell')
-
 
 const langMap = {
-    cpp: "text/x-c++src",
-    c: "text/x-csrc",
-    java: "text/x-java",
-    sql: "sql",
-    python: "python",
-    shell: "shell",
-    text: ""
+    cpp: cpp,
+    c: cpp,
+    java: java,
+    sql: sql,
+    python: python
 }
 
 const CodeEditor = (props: ICodeEditor) => {
 
+    console.log(props.lang)
+
     return (
         <>
             <CodeMirror
-                className={props.className ?? "CodeMirror"}
-                value={props.value as string}
-                options={{
-                    readOnly: ck(props.readOnly, false),
-                    mode: langMap[props.lang],
-                    theme: 'solarized',
-                    indentUnit: 4,
-                    smartIndent: true,
-                    tabSize: 4,
+                value={props.value}
+                height={"400px"}
+                readOnly={props.readOnly ?? false}
+                theme={githubLight}
+                autoFocus={true}
+                extensions={[
+                    (langMap[props.lang])()
+                ]}
+                basicSetup={{
                     lineNumbers: true,
-                    lineWrapping: true,
-                    autoRefresh: true,
-                    electricChars: true
+                    autocompletion: true,
+                    syntaxHighlighting: true,
+                    tabSize: 4,
+                    completionKeymap:true,
+                    lintKeymap: true,
+                    foldKeymap: true,
+                    searchKeymap: true,
+                    allowMultipleSelections: true,
+                    bracketMatching: true
                 }}
-                onChange={(editor, data, value) => {
-                    props.onChange && props.onChange(value)
-                }}
-                onBeforeChange={(editor, data, value) => {
+                // options={{
+                //     indentUnit: 4,
+                //     smartIndent: true,
+                //     lineWrapping: true,
+                //     autoRefresh: true,
+                //     electricChars: true
+                // }}
+                onChange={(value) => {
                     props.onChange && props.onChange(value)
                 }}
             />

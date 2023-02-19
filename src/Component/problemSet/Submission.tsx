@@ -1,7 +1,5 @@
 import {withRouter} from "react-router-dom";
 import cApi from "../../Utils/API/c-api";
-import {Button} from "antd";
-import {UrlPrefix} from "../../Config/constValue";
 import SubmissionList from "../submission/SubmissionList/SubmissionList";
 import React from "react";
 

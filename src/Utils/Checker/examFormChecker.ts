@@ -1,11 +1,11 @@
 import {message} from "antd";
-import moment from "moment";
 import {
     examBasicType,
     examDataType,
     examProblemGroupType,
     examProblemListType,
-    examProblemType, problemGroupProType
+    examProblemType,
+    problemGroupProType
 } from "../../Type/IExam";
 
 function examBasicInfoChecker(data: examBasicType): boolean {

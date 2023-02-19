@@ -1,6 +1,6 @@
 import {withRouter} from "react-router-dom";
 import LoginCheck from "../common/LoginCheck";
-import {Button, Card, Image, List, Result} from "antd";
+import {Button, Card, Result} from "antd";
 import Timer from "../common/Timer";
 import {isValueEmpty} from "../../Utils/empty";
 import React, {useEffect, useState} from "react";

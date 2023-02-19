@@ -8,7 +8,6 @@ import {UrlPrefix} from "../../Config/constValue";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {UserState} from "../../Type/Iuser";
-import judgeAuth from "../../Utils/judgeAhtu";
 
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId

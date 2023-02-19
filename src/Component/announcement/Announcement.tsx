@@ -1,4 +1,4 @@
-import {Component} from "react";
+import {useState} from "react";
 import {Button, Card, Modal, Space, Tag} from "antd";
 import {withTranslation} from "react-i18next";
 import {InfoCircleOutlined} from "@ant-design/icons"
@@ -8,92 +8,81 @@ import CApi from "Utils/API/c-api"
 import {unix2Time} from "../../Utils/Time";
 import "Assert/css/Announcement.css"
 
-class Announcement extends Component<any, any> {
+const Announcement = (props: any) => {
 
+    const [show, setShow] = useState(false)
+    const [showId, setShowId] = useState(0)
+    const [showTitle, setShowTitle] = useState("")
 
-    constructor(props: any, context: any) {
-        super(props, context);
-        this.state = {
-            show: false,
-            showId: 0,
-            showTitle: ""
-        }
-    }
+    return (
+        <>
+            <Modal
+                title={props.t("AnnouncementDetails") + " (" + showTitle + ")"}
+                open={show}
+                onCancel={() => {
+                    setShow( false)
+                }}
+                onOk={() => {
+                    setShow(false)
+                }}
+                footer={null}
+                width={1100}
+                destroyOnClose={true}
+            >
+                <ANCContent id={showId}/>
+            </Modal>
+            <Card
+                title={
+                    <Space>
+                        <InfoCircleOutlined/>
+                        {props.t("Announcement")}
+                    </Space>
+                }
+                className={"Announcement-Card"}
+            >
+                <TableWithPagination
+                    size={"small"}
+                    defaultPageSize={5}
+                    columns={[
+                        {
+                            title: "ID",
+                            dataIndex: "noticeId",
+                            key: "ID"
+                        },
+                        {
+                            title: props.t("title"),
+                            dataIndex: "title",
+                            key: "title",
+                            render: (text: string, row: any) => {
+                                return (
+                                    <Space size={5}>
+                                        <Button size={"small"} type={"link"} onClick={() => {
+                                            setShow(true)
+                                            setShowId(parseInt(row.noticeId))
+                                            setShowTitle(row.title)
+                                        }}>{text}</Button>
+                                        {row.top === 1 && (<Tag color={"#e10000"}>{props.t("Top")}</Tag>)}
+                                    </Space>
 
+                                )
 
-    render() {
-        return (
-            <>
-                <Modal
-                    title={this.props.t("AnnouncementDetails") + " (" + this.state.showTitle + ")"}
-                    visible={this.state.show}
-                    onCancel={() => {
-                        this.setState({show: false})
-                    }}
-                    onOk={() => {
-                        this.setState({show: true})
-                    }}
-                    footer={null}
-                    width={1100}
-                    destroyOnClose={true}
-                >
-                    <ANCContent id={this.state.showId}/>
-                </Modal>
-                <Card
-                    title={
-                        <Space>
-                            <InfoCircleOutlined/>
-                            {this.props.t("Announcement")}
-                        </Space>
-                    }
-                    className={"Announcement-Card"}
-                >
-                    <TableWithPagination
-                        size={"small"}
-                        defaultPageSize={5}
-                        columns={[
-                            {
-                                title: "ID",
-                                dataIndex: "noticeId",
-                                key: "ID"
-                            },
-                            {
-                                title: this.props.t("title"),
-                                dataIndex: "title",
-                                key: "title",
-                                render: (text: string, row: any) => {
-                                    return (
-                                        <Space size={5}>
-                                            <Button size={"small"} type={"link"} onClick={() => {
-                                                this.setState({
-                                                    show: true,
-                                                    showId: parseInt(row.noticeId),
-                                                    showTitle: row.title
-                                                })
-                                            }}>{text}</Button>
-                                            {row.top === 1 && (<Tag color={"#e10000"}>{this.props.t("Top")}</Tag>)}
-                                        </Space>
-
-                                    )
-
-                                }
-                            },
-                            {
-                                title: this.props.t("ReleaseDate"),
-                                dataIndex: "gmtCreate",
-                                key: "date",
-                                render: (text: any) => {
-                                    return unix2Time(parseInt(text))
-                                }
                             }
-                        ]}
-                        API={CApi.getAnnouncementList}
-                    />
+                        },
+                        {
+                            title: props.t("ReleaseDate"),
+                            dataIndex: "gmtCreate",
+                            key: "date",
+                            render: (text: any) => {
+                                return unix2Time(parseInt(text))
+                            }
+                        }
+                    ]}
+                    API={CApi.getAnnouncementList}
+                />
 
-                </Card>
-            </>
-        )
-    }
+            </Card>
+        </>
+    )
 }
 
 export default withTranslation()(Announcement)

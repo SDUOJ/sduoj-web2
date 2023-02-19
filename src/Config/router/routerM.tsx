@@ -1,15 +1,15 @@
-import Icon, {
+import {
+    BlockOutlined,
+    BuildOutlined,
+    ContainerOutlined,
     FileOutlined,
-    NotificationOutlined,
     FolderOpenOutlined,
-    UsergroupAddOutlined,
-    UserOutlined,
     LaptopOutlined,
     MedicineBoxOutlined,
-    ContainerOutlined,
+    NotificationOutlined,
     ReconciliationOutlined,
-    BlockOutlined,
-    BuildOutlined
+    UsergroupAddOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 
 import {lazy} from "react";

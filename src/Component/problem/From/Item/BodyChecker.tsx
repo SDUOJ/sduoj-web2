@@ -60,10 +60,10 @@ const BodyChecker = (props: any) => {
                         }}>使用C++预设</Button>
                     </div>
                     <Form.Item label={"代码"} required>
-                        <CodeEditor lang={"text"} value={source} onChange={setSource}/>
+                        <CodeEditor lang={"cpp"} value={source} onChange={setSource}/>
                     </Form.Item>
                     <Form.Item label={"配置"} required>
-                        <CodeEditor lang={"text"} value={spj} onChange={setSpj}/>
+                        <CodeEditor lang={"cpp"} value={spj} onChange={setSpj}/>
                     </Form.Item>
                 </div>
             )}
