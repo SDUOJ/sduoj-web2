@@ -1,6 +1,4 @@
 import {Locale} from "antd/lib/locale-provider";
-import {Dispatch} from "react";
-import cApi from "../../Utils/API/c-api";
 import "./common"
 import {clearRedux} from "./common";
 
@@ -24,16 +22,4 @@ export interface updateTimestamp {
 export interface setCopyRight{
     type: "setCopyRight"
     data: string
-}
-
-export function getCopyRightTodo() {
-    return (dispatch: Dispatch<any>, getState: any) => {
-
-        cApi.getCopyright().then(function (resData) {
-            // console.log("copy", resData)
-            dispatch({type: "setCopyRight", data: resData})
-        })
-
-
-    }
 }

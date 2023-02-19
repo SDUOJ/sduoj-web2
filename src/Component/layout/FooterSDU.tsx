@@ -1,30 +1,32 @@
-import React, {Component, Dispatch} from "react";
+import React, {Dispatch, useEffect} from "react";
 import {Layout} from "antd";
 import {withTranslation} from "react-i18next";
 import {ConfigState} from "../../Type/IConfig";
 
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import {getCopyRightTodo} from "../../Redux/Action/config";
+import cApi from "../../Utils/API/c-api";
 
-const {Footer, Content} = Layout;
+const {Footer} = Layout;
 
-class FooterSDU extends Component<any, any> {
+const FooterSDU = (props: any) => {
 
-    componentDidMount() {
-        if (this.props.copyRight.length === 0)
-            this.props.getCopyRight()
-    }
+    useEffect(() => {
+        if (props.copyRight.length === 0) {
+            cApi.getCopyright().then((data: any) => {
+                props.setCopyRight(data)
+            })
+        }
+    })
 
-    render() {
-        return (
-            <>
-                <Footer style={{textAlign: 'center'}}>
-                    <div dangerouslySetInnerHTML={{__html: this.props.copyRight}}/>
-                </Footer>
-            </>
-        )
-    }
+    return (
+        <>
+            <Footer style={{textAlign: 'center'}}>
+                <div dangerouslySetInnerHTML={{__html: props.copyRight}}/>
+            </Footer>
+        </>
+    )
+
 }
 
 const mapStateToProps = (state: any) => {
@@ -35,7 +37,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    getCopyRight: () => dispatch(getCopyRightTodo()),
+    setCopyRight: (data: any) => dispatch({type: "setCopyRight", data: data}),
 })
 
 export default connect(
