@@ -23,7 +23,6 @@ class MLayout extends Component<any, any> {
         ) && routerM.length !== 0) {
             this.props.history.push(routerM[0].path);
         }
-        this.props.testLogin()
     }
 
     render() {
