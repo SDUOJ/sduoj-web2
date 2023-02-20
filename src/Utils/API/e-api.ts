@@ -5,7 +5,7 @@ import React from "react";
 
 import request from "./request";
 
-export default {
+const eApi = {
 
     // 获取题组信息
     async getExamGroupList(data: examID, reportNode: boolean = false) {
@@ -59,3 +59,5 @@ export default {
         return request.post("/exam/getSubmissionList", {...data, reportMode: reportMode})
     }
 }
+
+export default eApi;

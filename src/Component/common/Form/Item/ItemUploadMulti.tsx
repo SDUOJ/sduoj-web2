@@ -30,7 +30,7 @@ const ItemUploadMulti = (props: ItemUploadPropsType & any) => {
 
 const UploadPro = (props: any)=>{
 
-    const {value, onChange} = props
+    const {onChange} = props
 
     let nameList: string[] = []
     for (let nm of props.accept.split(",")) {

@@ -122,7 +122,7 @@ const ProblemListInGroup = (props: any) => {
                                     formName={"ProblemObjectForm"}
                                     dataSubmitter={(value: any) => {
                                         let data = objectiveSubmit(value)
-                                        if (data == null) return Promise.reject()
+                                        if (data === null) return Promise.reject()
                                         return mApi.createObjective({...data, gid: props.gid})
                                     }}
                                     afterSubmit={(data: any) => {
@@ -176,7 +176,7 @@ const ProblemListInGroup = (props: any) => {
                                         }}
                                         dataSubmitter={(value: any) => {
                                             let data = objectiveSubmit(value)
-                                            if (data == null) return Promise.reject()
+                                            if (data === null) return Promise.reject()
                                             return mApi.editObjective(data)
                                         }}
                                         afterSubmit={(data: any) => {

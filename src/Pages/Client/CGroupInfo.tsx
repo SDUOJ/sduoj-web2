@@ -24,12 +24,16 @@ const CGroupInfo = (props: any) => {
     const [psTabItems, setPsTabItems] = useState<any>()
     const {t} = useTranslation()
 
+    const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
+    const keyValueData_ps = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
+
+
     useEffect(() => {
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
             MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? t("notAvailable") : value.markdown)
         })
-        const act = props.keyValueData["Group-C-activeKey-" + groupId]
+        const act = keyValueData_g
         if (act !== undefined)
             setActiveKey(act)
 
@@ -49,11 +53,11 @@ const CGroupInfo = (props: any) => {
             setPsSum(res.sum);
         })
 
-        const act2 = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
+        const act2 = keyValueData_ps
         if (act2 !== undefined)
             setPsActiveKey(act2)
 
-    }, [])
+    }, [groupId, t, keyValueData_ps, keyValueData_g])
 
     return (
         <>

@@ -92,7 +92,7 @@ const Problem = (props: any) => {
 
     const problemInfo = useProblemInfo(GetProblemInfoAPI, proName)
     const hasTimer = problemSetInfo !== undefined &&
-        psType === 1 && problemSetInfo.config.useSameSE == 1 &&
+        psType === 1 && problemSetInfo.config.useSameSE === 1 &&
         parseInt(problemSetInfo.tm_end) > Date.now()
 
     return (
@@ -233,7 +233,7 @@ const Problem = (props: any) => {
                                                             <Button
                                                                 ghost={true}
                                                                 size={"middle"}
-                                                                type={(group.index == gid && index == pid) ? "primary" : "text"}
+                                                                type={(group.index === gid && index === pid) ? "primary" : "text"}
 
                                                                 shape={"round"}
                                                                 onClick={() => {

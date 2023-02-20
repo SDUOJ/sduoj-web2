@@ -36,7 +36,7 @@ interface ProblemAddBodyType {
     onChange: any
 }
 
-const ProblemAddBody = (props: any) => {
+const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
     // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
@@ -123,6 +123,7 @@ const ProblemAddBody = (props: any) => {
                     use = true
                 } else newTableData.push(value)
             } else newTableData.push(value)
+            return undefined
         })
         // console.log("use", use, "useHis", useHis)
         // console.log("newTableData", newTableData, "TableDataHis", TableDataHis)

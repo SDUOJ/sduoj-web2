@@ -1,4 +1,4 @@
-import {Button, Card, Col, Form, Input, message, Modal, Row, Select, Space, Tabs, Typography} from "antd";
+import {Button, Card, Col, Form, Input, message, Modal, Row, Select, Space} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import "Assert/css/Review.css"
 import ScoreMode from "../subjectiveProblem/ScoreMode";
@@ -13,15 +13,6 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
-
-
-const {Paragraph, Text} = Typography;
-const {Option} = Select;
-
-const {TabPane} = Tabs;
-const onChange = (key: string) => {
-    console.log(key);
-};
 
 
 const Review = (props: any) => {
@@ -44,66 +35,66 @@ const Review = (props: any) => {
 
     // console.log("review", reviewInfo)
 
-    const scoreModeInfo = {
-        score: 100,
-        children: [
-            {
-                key: "1",
-                title: "问答题",
-                score: 20,
-                answer: "时间复杂度为: $O(n)$, $O(n^2)$",
-                info: [
-                    [20, "答案正确，解释充分"],
-                    [15, "答案正确，解释不充分"],
-                    [5, "答案错误，解释部分正确"],
-                    [0, "答案错误"]
-                ]
-            },
-            {
-                key: "2",
-                title: "实验报告",
-                score: 80,
-                children: [
-                    {
-                        key: "2-1",
-                        title: "T1",
-                        score: 40,
-                        children: [
-                            {key: "2-1-1", title: "题目分析", score: 10, quick: true},
-                            {key: "2-1-2", title: "时间复杂度", score: 10, quick: true},
-                            {key: "2-1-3", title: "代码", score: 10, quick: true},
-                            {
-                                key: "2-1-4",
-                                title: "代码注释", score: 10, info: [
-                                    [10, "注释3个以上，且充分"],
-                                    [5, "存在有效注释"],
-                                    [0, "无注释"]
-                                ]
-                            },
-                        ]
-                    },
-                    {
-                        key: "2-2",
-                        title: "T2",
-                        score: 40,
-                        children: [
-                            {key: "2-2-1", title: "题目分析", score: 10, quick: true},
-                            {key: "2-2-2", title: "时间复杂度", score: 10, quick: true},
-                            {key: "2-2-3", title: "代码", score: 10, quick: true},
-                            {
-                                key: "2-2-4",
-                                title: "代码注释", score: 10, info: [
-                                    [10, "注释3个以上，且充分"],
-                                    [5, "存在有效注释"],
-                                    [0, "无注释"]
-                                ]
-                            },
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+    // const scoreModeInfo = {
+    //     score: 100,
+    //     children: [
+    //         {
+    //             key: "1",
+    //             title: "问答题",
+    //             score: 20,
+    //             answer: "时间复杂度为: $O(n)$, $O(n^2)$",
+    //             info: [
+    //                 [20, "答案正确，解释充分"],
+    //                 [15, "答案正确，解释不充分"],
+    //                 [5, "答案错误，解释部分正确"],
+    //                 [0, "答案错误"]
+    //             ]
+    //         },
+    //         {
+    //             key: "2",
+    //             title: "实验报告",
+    //             score: 80,
+    //             children: [
+    //                 {
+    //                     key: "2-1",
+    //                     title: "T1",
+    //                     score: 40,
+    //                     children: [
+    //                         {key: "2-1-1", title: "题目分析", score: 10, quick: true},
+    //                         {key: "2-1-2", title: "时间复杂度", score: 10, quick: true},
+    //                         {key: "2-1-3", title: "代码", score: 10, quick: true},
+    //                         {
+    //                             key: "2-1-4",
+    //                             title: "代码注释", score: 10, info: [
+    //                                 [10, "注释3个以上，且充分"],
+    //                                 [5, "存在有效注释"],
+    //                                 [0, "无注释"]
+    //                             ]
+    //                         },
+    //                     ]
+    //                 },
+    //                 {
+    //                     key: "2-2",
+    //                     title: "T2",
+    //                     score: 40,
+    //                     children: [
+    //                         {key: "2-2-1", title: "题目分析", score: 10, quick: true},
+    //                         {key: "2-2-2", title: "时间复杂度", score: 10, quick: true},
+    //                         {key: "2-2-3", title: "代码", score: 10, quick: true},
+    //                         {
+    //                             key: "2-2-4",
+    //                             title: "代码注释", score: 10, info: [
+    //                                 [10, "注释3个以上，且充分"],
+    //                                 [5, "存在有效注释"],
+    //                                 [0, "无注释"]
+    //                             ]
+    //                         },
+    //                     ]
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // }
 
     const options: any = []
     if (problemSetInfo !== undefined) {

@@ -1,5 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror';
-import {githubLight, githubLightInit, githubDark, githubDarkInit} from '@uiw/codemirror-theme-github';
+import {githubLight} from '@uiw/codemirror-theme-github';
 import {cpp} from '@codemirror/lang-cpp';
 import {java} from '@codemirror/lang-java';
 import {sql} from '@codemirror/lang-sql';

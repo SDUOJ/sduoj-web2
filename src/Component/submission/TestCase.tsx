@@ -11,7 +11,6 @@ import Icon, {
 import {ReactComponent as Memory} from "Assert/img/memory.svg"
 import {ReactComponent as RE} from "Assert/img/bomb.svg"
 import {ReactComponent as OLE} from "Assert/img/output.svg"
-import {ReactComponent as Pending} from "Assert/img/pending.svg"
 import {withTranslation, WithTranslation} from "react-i18next";
 import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
@@ -269,6 +268,7 @@ class TestCase extends Component<ITestCaseProp, any> {
                                     </span>
                         )
                 }
+                return undefined
             })
 
         )

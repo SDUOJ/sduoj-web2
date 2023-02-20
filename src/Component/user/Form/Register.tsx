@@ -16,7 +16,7 @@ const Register = (props: any) => {
     useEffect(() => {
         if (props.token !== undefined)
             form.setFieldsValue({username: props.username})
-    }, [])
+    }, [props, form])
 
     return (
         <ModalForm<any>

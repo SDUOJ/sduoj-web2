@@ -29,6 +29,7 @@ const Options = (props: any) => {
                     {[''].map(() => {
                         if (OptionsState === "used") return <CheckOutlined/>
                         if (OptionsState === "unused") return <CloseOutlined/>
+                        return undefined
                     })}
                 </Col>
                 <Col className={"Options-Choice"} span={1}>

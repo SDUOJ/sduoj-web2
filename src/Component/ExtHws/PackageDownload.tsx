@@ -40,7 +40,7 @@ const PackageDownload = (props: any) => {
                     else downloadFilename += "延时" + splitChar
                 }
                 for (let i = 0; i < targetKeys.length; i++) {
-                    let item = dataSource.find((item: any) => item.key == targetKeys[i])
+                    let item = dataSource.find((item: any) => item.key === targetKeys[i])
                     if (parseInt(item.key) > 6) {
                         downloadFilename += item.title + splitChar
                     }

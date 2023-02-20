@@ -18,10 +18,13 @@ class ChangeLang extends Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        i18n.languages.map((value):void=>{
-            if(language.filter((v)=>{return v.id === value}).length !== 0){
-                if(this.defLang.length === 0) this.defLang = value
+        i18n.languages.map((value): void => {
+            if (language.filter((v) => {
+                return v.id === value
+            }).length !== 0) {
+                if (this.defLang.length === 0) this.defLang = value
             }
+            return undefined
         })
         this.changeLang = this.changeLang.bind(this)
         this.changeLang(this.defLang)
@@ -29,7 +32,7 @@ class ChangeLang extends Component<any, any> {
 
     changeLang(value: string) {
         i18n.changeLanguage(value)
-        const id = language.findIndex((item)=>{
+        const id = language.findIndex((item) => {
             return item.id === value
         })
         this.props.ChangeLanguage(languageMap[value], language[id].code)
@@ -66,7 +69,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
-    ChangeLanguage: (lang:Locale, langCode: string) => dispatch({
+    ChangeLanguage: (lang: Locale, langCode: string) => dispatch({
         type: "updateLanguage",
         lang: lang,
         langCode: langCode
@@ -74,6 +77,6 @@ const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
 })
 
 export default connect(
-    undefined,
+    mapStateToProps,
     mapDispatchToProps
 )(ChangeLang)

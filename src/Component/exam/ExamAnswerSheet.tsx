@@ -5,7 +5,6 @@ import ProTagGroup from "./ProTagGroup";
 import ProTag from "./ProTag";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {ExamState} from "../../Type/IExam";
 import {withRouter} from "react-router";
 
 
@@ -13,8 +12,8 @@ const ExamAnswerSheet = (props: any) => {
 
 
     const eid = props.match.params.eid
-    const gid = props.match.params.gid
-    const pid = props.match.params.pid
+    // const gid = props.match.params.gid
+    // const pid = props.match.params.pid
 
 
     const problemList = useSelector((state: any) => {
@@ -52,7 +51,6 @@ const ExamAnswerSheet = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
     return {}
 }
 

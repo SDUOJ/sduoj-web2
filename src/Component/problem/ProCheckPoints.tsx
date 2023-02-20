@@ -233,7 +233,6 @@ const ProCheckPoints = (props: any) => {
                                     message.success("成功")
                                     setVis(false)
                                 })
-
                             })
                         }}> 保存 </Button>
                     </>
@@ -280,6 +279,7 @@ const ProCheckPoints = (props: any) => {
                                             id: dataSource[pos].outputFileId,
                                             downloadFilename: dataSource[pos].outputFilename ?? `${dataSource[pos].checkpointId}.out`
                                         })
+                                        return undefined
                                     })
                                     mApi.zipDownload(data).catch((e: any) => {
                                         message.error(e)

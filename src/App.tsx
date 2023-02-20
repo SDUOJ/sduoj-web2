@@ -1,4 +1,4 @@
-import React, {Component, Dispatch, Suspense} from 'react';
+import React, {Dispatch, Suspense} from 'react';
 
 import './App.css';
 import 'antd/dist/antd.css';

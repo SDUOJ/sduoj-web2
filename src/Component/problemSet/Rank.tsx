@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Badge, message, Popover, Table, Tag} from "antd";
-import {ContestState, setMinWidth} from "../../Redux/Action/contest";
+import {ContestState} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import "Assert/css/ContestRank.css"

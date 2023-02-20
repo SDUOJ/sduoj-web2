@@ -7,7 +7,7 @@ import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable
 import {withTranslation} from "react-i18next";
 import ProblemAddForm from "../../problem/ProblemAddForm";
 import {connect} from "react-redux";
-import {genNumberList, ManageState} from "../../../Type/IManage";
+import {genNumberList} from "../../../Type/IManage";
 import {examProblemGroupType, examProblemListType} from "../../../Type/IExam";
 
 
@@ -331,7 +331,6 @@ const ExamProblemForm = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ManageState = state.ManageReducer
     return {}
 }
 

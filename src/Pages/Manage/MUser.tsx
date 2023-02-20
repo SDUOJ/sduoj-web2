@@ -89,6 +89,7 @@ class MUser extends Component<any, any> {
                                         case "superadmin":
                                             return <Tag color={"red"}>{this.props.t("superadmin")}</Tag>
                                     }
+                                    return undefined
                                 })
                             }
                         </Space>

@@ -84,7 +84,7 @@ const CGroup = (props: any) => {
                                                 </>
                                             }
                                             title={
-                                                <a type={"text"}>
+                                                <a type={"text"} href={UrlPrefix + "/group/" + item.groupId}>
                                                     <Typography.Title
                                                         level={5}
                                                         ellipsis={{rows: 1, tooltip: item.title}}

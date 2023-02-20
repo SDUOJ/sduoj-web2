@@ -24,8 +24,6 @@ const ContestHeader = (props: any) => {
     const url = props.location.pathname
     const contestInfo = getContestInfo(contestId)
     const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
-    const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
-
 
     // console.log(contestInfo)
 
@@ -67,7 +65,7 @@ const ContestHeader = (props: any) => {
         if (Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60) {
             props.setSliderTime(nowSliderTime)
         }
-    }, [nowSliderTime, lastSliderTime, props.sliderTime])
+    }, [nowSliderTime, props.sliderTime])
 
     return (
         <>
@@ -199,7 +197,7 @@ const ContestHeader = (props: any) => {
                                     <Divider type={"vertical"}/>
                                 </>
                             )}
-                            {props.allowSliderMove === true && selectedKey == "Rank" && (
+                            {props.allowSliderMove === true && selectedKey === "Rank" && (
                                 <>
                                     历史回放
                                     <Switch
@@ -212,7 +210,7 @@ const ContestHeader = (props: any) => {
                                 </>
                             )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
-                                timeState === "end" && selectedKey == "Rank" && (
+                                timeState === "end" && selectedKey === "Rank" && (
                                     <>
                                         赛后提交
                                         <Switch
@@ -225,7 +223,7 @@ const ContestHeader = (props: any) => {
                                     </>
                                 )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
-                                selectedKey == "Rank" && (
+                                selectedKey === "Rank" && (
                                     <>
                                         <ExportExcel
                                             ButtonProps={{size: "small"}}

@@ -121,6 +121,7 @@ const ExamBaseForm = (props: any) => {
                                     if (examTime?.length === 2) {
                                         return TimeDiff(examTime[0].unix() * 1000, examTime[1].unix() * 1000)
                                     }
+                                    return undefined
                                 })
                             } className={"exam-form-preview"}/>
                         </Col>

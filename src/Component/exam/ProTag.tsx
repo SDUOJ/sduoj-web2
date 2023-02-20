@@ -3,7 +3,6 @@ import {Badge, Space, Tag} from "antd";
 import {ExamAction} from "../../Redux/Action/exam";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {ExamState} from "../../Type/IExam";
 import {withRouter} from "react-router-dom";
 import {isValueEmpty} from "../../Utils/empty";
 import {UrlPrefix} from "../../Config/constValue";
@@ -25,7 +24,7 @@ const ProTag = (props: any) => {
     return (
         <div className={"tag-div"}>
             <Space>
-                <a className={"ProTag"}
+                <a className={"ProTag"} href={UrlPrefix + `/exam/running/${eid}/${gid}/${pid}`}
                    onClick={props.empty ? undefined : () => {
                        props.history.push(UrlPrefix + `/exam/running/${eid}/${gid}/${pid}`)
                    }}
@@ -54,8 +53,6 @@ const ProTag = (props: any) => {
 
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
-
     return {}
 }
 

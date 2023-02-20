@@ -60,11 +60,13 @@ class CProblem extends Component<any, any> {
                                                         if (this.state.ACList.indexOf(row.problemCode) !== -1) {
                                                             return <CheckOutlined style={{color: "green"}}/>
                                                         }
+                                                        return undefined
                                                     })}
                                                     {[""].map(() => {
                                                         if (row.isPublic === 0) {
                                                             return <Tag color={"orange"}>{this.props.t("private")}</Tag>
                                                         }
+                                                        return undefined
                                                     })}
                                                 </Space>
                                             </>

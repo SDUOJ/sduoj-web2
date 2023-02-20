@@ -33,7 +33,7 @@ const Objective = (props: propType & any) => {
             MarkdownPreview("Choice-title-id" + props.key_o, props.problemInfo.description)
         }
     }, [props.problemInfo?.description])
-    
+
 
     return (
         <div className={"Choice"}>
@@ -111,6 +111,7 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
                         {[''].map(() => {
                             if (OptionsState === "used") return <CheckOutlined/>
                             if (OptionsState === "unused") return <CloseOutlined/>
+                            return undefined
                         })}
                     </Col>
                     <Col className={"Options-Choice"} span={1}>

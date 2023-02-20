@@ -61,6 +61,7 @@ const PSHeader = (props: any) => {
         }
         menuData.map((value) => {
             if (path.match(value.re) !== null) setNowKey(value.name)
+            return undefined
         })
     }, [path])
 
@@ -93,6 +94,7 @@ const PSHeader = (props: any) => {
                             menuData.map((item) => {
                                 if (item.name === value)
                                     props.history.push(item.link)
+                                return undefined
                             })
                         }}
 

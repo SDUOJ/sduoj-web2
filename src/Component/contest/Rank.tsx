@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Col, Modal, Row, Space, Table, Typography} from "antd";
-import {ContestState, setAllowSliderMove, setExportData, setMinWidth} from "../../Redux/Action/contest";
+import {ContestState} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import cApi from "Utils/API/c-api"
@@ -131,7 +131,7 @@ const Rank = (props: any) => {
                         // 取最大的分数，分数相同，取最时间小的
                         const obj = proSet[proId]
                         if (obj.score < sbm[2] ||
-                            (obj.score == sbm[2] &&
+                            (obj.score === sbm[2] &&
                                 (obj.time > parseInt(sbm[1]) ||
                                     (obj.result !== 1 && sbm[3] === 1)
                                 )

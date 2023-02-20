@@ -17,7 +17,7 @@ const FooterSDU = (props: any) => {
                 props.setCopyRight(data)
             })
         }
-    })
+    }, [props.copyRight])
 
     return (
         <>

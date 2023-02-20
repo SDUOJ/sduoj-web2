@@ -57,7 +57,7 @@ const EReport = (props: any) => {
             rs['all'] = sumScore
             setScore(rs)
         }
-    }, [problemList])
+    }, [dispatch, eid, problemList])
 
     useEffect(() => {
         if (examRes !== undefined) {
@@ -75,7 +75,7 @@ const EReport = (props: any) => {
             rs['all'] = sumScore
             setMyScore(rs)
         }
-    }, [examRes])
+    }, [eid, examRes])
 
     useEffect(() => {
         if (!isValueEmpty(topInfo[1])) {
@@ -92,7 +92,7 @@ const EReport = (props: any) => {
                 setProData(res)
             })
         }
-    }, [topInfo[0], topInfo[1], topInfo[2]])
+    }, [dispatch, topInfo])
 
     useEffect(() => {
         if (examRes === undefined) {
@@ -100,7 +100,7 @@ const EReport = (props: any) => {
                 setExamRes(res)
             })
         }
-    }, [])
+    }, [eid, examRes])
 
 
     return (

@@ -1,6 +1,5 @@
 import React, {Component, Dispatch} from "react";
 import {Button, Card, Image, message, Space, Spin} from "antd";
-import {ExamState} from "../../Type/IExam";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -111,7 +110,6 @@ class CThirdPartyLogin extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
     return {}
 }
 

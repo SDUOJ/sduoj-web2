@@ -1,9 +1,9 @@
-import {Button, message, Result} from "antd";
+import {Button, Result} from "antd";
 import {TimeDiff, unix2Time} from "../../Utils/Time";
 import {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
-import CApi from "Utils/API/c-api"
 import {UrlPrefix} from "../../Config/constValue";
+import cApi from "Utils/API/c-api";
 
 const TimeError = (props: any) => {
 
@@ -20,18 +20,20 @@ const TimeError = (props: any) => {
         return () => clearInterval(id)
     })
 
-    useEffect(()=>{
-        CApi.getTime().then((time: any)=>{
-            setSerTime(parseInt(time))
-            setSysTime(Date.now())
-        })
+    const update = ()=>{
+        setSerTime(parseInt(localStorage.getItem("server-time") ?? "0"))
+        setSysTime(Date.now())
+    }
+
+    useEffect(() => {
+        update()
     }, [])
 
     return (
         <div className={"page-center"}>
             {
-                [''].map(()=>{
-                    if(Math.abs(sysTime - serTime) < 60000){
+                [''].map(() => {
+                    if (Math.abs(sysTime - serTime) < 60000) {
                         return (
                             <Result
                                 status="success"
@@ -47,7 +49,7 @@ const TimeError = (props: any) => {
                                     <Button
                                         type="primary"
                                         key="return"
-                                        onClick={()=>{
+                                        onClick={() => {
                                             props.history.replace(UrlPrefix + "/home")
                                         }}
                                     >
@@ -56,7 +58,7 @@ const TimeError = (props: any) => {
                                 }
                             />
                         )
-                    }else{
+                    } else {
                         return (
                             <Result
                                 status="warning"
@@ -72,11 +74,9 @@ const TimeError = (props: any) => {
                                     <Button
                                         type="primary"
                                         key="retry"
-                                        onClick={()=>{
-                                            CApi.getTime().then((time: any)=>{
-                                                setSerTime(parseInt(time))
-                                                setSysTime(Date.now())
-                                                message.success("时间同步成功")
+                                        onClick={() => {
+                                            cApi.getCopyright().then(()=>{
+                                                update()
                                             })
                                         }}
                                     >

@@ -3,8 +3,6 @@ import {Form, Skeleton} from "antd";
 import {withTranslation} from "react-i18next";
 
 import {connect} from "react-redux";
-import {ManageState} from "../../../Type/IManage";
-
 import SelectGroup from "../../group/Form/Item/ItemSelectGroup";
 
 
@@ -34,7 +32,6 @@ const ExamMemberForm = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ManageState = state.ManageReducer
     return {}
 }
 

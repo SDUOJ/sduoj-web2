@@ -1,10 +1,10 @@
 import {TableAction} from "../Action/table";
 import {TableState} from "../../Type/ITable";
 
-interface MTableState {
-    Data: []
-    SelectedRow: []
-}
+// interface MTableState {
+//     Data: []
+//     SelectedRow: []
+// }
 
 const initState: TableState = {
     tableData: {}

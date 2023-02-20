@@ -142,6 +142,7 @@ const ExamForm = (props: any) => {
                 {
                     [''].map(() => {
                         if (props.type === "create") return <PlusOutlined/>
+                        return undefined
                     })
                 }
                 {props.type === "create" ? props.t("create") : props.t("Edit")}

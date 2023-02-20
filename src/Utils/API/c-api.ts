@@ -12,11 +12,8 @@ import request from "./request";
 import apiAddress from "./apiAddress";
 
 
-export default {
+const cApi = {
     // Config
-    async getTime() {
-        return request.getTime('/site/getCopyright')
-    },
     async getCopyright() {
         return request.get<string>('/site/getCopyright');
     },
@@ -302,3 +299,5 @@ export default {
         return request.post("ps/problem_set/public", data)
     }
 }
+
+export default cApi;

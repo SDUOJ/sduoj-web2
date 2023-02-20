@@ -9,7 +9,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 
 const PSLayout = (props: any) => {
-    const path = props.location.pathname
+    // const path = props.location.pathname
     let minWidth = 500
 
     const [pageWidth, setPageWidth] = useState<number>(document.querySelector('body')?.clientWidth as number)

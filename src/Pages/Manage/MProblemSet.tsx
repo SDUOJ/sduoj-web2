@@ -38,17 +38,17 @@ const MProblemSet = (props: any) => {
         setUsePractice(undefined)
     }
 
-    const getType = (tp: number) => {
-        if (tp === 0)
-            return props.t("ObjectiveQuestions")
-        else if (tp === 1)
-            return props.t("SubjectiveQuestions")
-        else if (tp === 2)
-            return props.t("ProgrammingQuestions")
-    }
 
     useEffect(() => {
         if (pidValueEnum === undefined) {
+            const getType = (tp: number) => {
+                if (tp === 0)
+                    return props.t("ObjectiveQuestions")
+                else if (tp === 1)
+                    return props.t("SubjectiveQuestions")
+                else if (tp === 2)
+                    return props.t("ProgrammingQuestions")
+            }
             mApi.getProblemGroupSearch({search: ""}).then((res: any) => {
                 let data: any = []
                 for (let x of res) {
@@ -60,7 +60,7 @@ const MProblemSet = (props: any) => {
                 setPidValueEnum(data)
             })
         }
-    }, [pidValueEnum])
+    }, [props, pidValueEnum])
 
     const tableColumns: any = [
         {
@@ -344,7 +344,7 @@ const MProblemSet = (props: any) => {
                             }}
                             dataSubmitter={(value: any) => {
                                 let data = problemSetSubmit(value)
-                                if (data == null) return Promise.reject()
+                                if (data === null) return Promise.reject()
                                 return mApi.editProblemSet(data)
                             }}
                             onClose={() => {
@@ -365,7 +365,7 @@ const MProblemSet = (props: any) => {
                             }}
                             dataSubmitter={(value: any) => {
                                 let data = problemSetSubmit(value)
-                                if (data == null) return Promise.reject()
+                                if (data === null) return Promise.reject()
                                 return mApi.createProblemSet(data)
                             }}
                             onClose={() => {
@@ -401,7 +401,7 @@ const MProblemSet = (props: any) => {
                             }}
                             dataSubmitter={(value: any) => {
                                 let data = problemSetSubmit(value)
-                                if (data == null) return Promise.reject()
+                                if (data === null) return Promise.reject()
                                 return mApi.createProblemSet(data)
                             }}
                             onClose={() => {

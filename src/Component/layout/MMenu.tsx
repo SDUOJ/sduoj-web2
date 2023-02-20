@@ -5,9 +5,9 @@ import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {routerM} from "../../Config/router/routerM";
 
-interface IMenuState {
-    selectedKey: string
-}
+// interface IMenuState {
+//     selectedKey: string
+// }
 
 const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
 

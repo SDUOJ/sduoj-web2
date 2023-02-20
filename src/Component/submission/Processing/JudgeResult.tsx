@@ -71,6 +71,7 @@ class JudgeResult extends Component<IJudgeResult, any> {
                                         </Tabs.TabPane>
                                     )
                                 }
+                                return undefined
                             })}
                         </Tabs>
                     </Col>

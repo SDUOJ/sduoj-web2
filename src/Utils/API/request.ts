@@ -12,30 +12,8 @@ const service = axios.create({
 })
 service.defaults.withCredentials = true
 
-const getTime: Get | GetError = async (url: string) => {
-    try {
-        const response = await service.get(url);
-        switch (response.data.code) {
-            case 0:
-                return response.data.timestamp
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response === undefined) {
-            message.error("服务器不可达")
-            return Promise.reject("服务器不可达")
-        }
-        switch (response.data.code) {
-            default:
-                return Promise.reject(response.data.message)
-        }
-    }
-}
 
-const getZipFile: any = async (url: string, data: object, config?: AxiosRequestConfig, filename?:string) => {
+const getZipFile: any = async (url: string, data: object, config?: AxiosRequestConfig, filename?: string) => {
     const response = await service.post(url, data, {
         ...config, responseType: 'blob'
     });
@@ -60,11 +38,11 @@ const messageDisabledList = [
     "/group/my"
 ]
 
-const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
+const dealResponse = async (resp: any, url: string) => {
+
     try {
-        const response = await service.get(url, {
-            ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, params, ...config,
-        });
+        const response = await resp;
+        localStorage.setItem('server-time', response.data.timestamp)
         if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
             window.location.replace(UrlPrefix + "/error/time")
             message.error("本地时间异常")
@@ -90,43 +68,23 @@ const get: Get | GetError = async (url: string, params?: object, config?: AxiosR
                 return Promise.reject(response.data.message)
         }
     }
+}
+
+const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
+    return await dealResponse(service.get(url, {
+        ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, params, ...config,
+    }), url)
 }
 
 const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
-    try {
-        const response = await service.post(url, data, {
-            ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, ...config
-        });
-        if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
-            window.location.replace(UrlPrefix + "/error/time")
-            message.error("本地时间异常")
-            return Promise.reject("本地时间异常")
-        }
-        switch (response.data.code) {
-            case 0:
-                return response.data.data
-            default:
-                message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    } catch (e: any) {
-        const response = e.response
-        if (response === undefined) {
-            message.error("服务器不可达")
-            return Promise.reject("服务器不可达")
-        }
-        switch (response.data.code) {
-            default:
-                if (messageDisabledList.indexOf(url) === -1)
-                    message.error(response.data.message);
-                return Promise.reject(response.data.message)
-        }
-    }
+    return await dealResponse(service.post(url, data, {
+        ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, ...config
+    }), url);
 }
 
-export default {
+const request = {
     get,
     post,
-    getTime,
     getZipFile
-};
+}
+export default request;

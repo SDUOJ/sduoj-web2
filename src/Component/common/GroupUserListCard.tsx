@@ -44,7 +44,7 @@ const GroupUserListCard = (props: any) => {
                     }}
                     dataSource={props.members.filter((item: any) => {
                         if (isValueEmpty(searchKey)) return true;
-                        return item.username.indexOf(searchKey) != -1 || item.nickname.indexOf(searchKey) != -1
+                        return item.username.indexOf(searchKey) !== -1 || item.nickname.indexOf(searchKey) !== -1
                     })}
                     pagination={{
                         total: props.members.length,

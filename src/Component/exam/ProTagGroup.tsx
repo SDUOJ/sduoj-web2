@@ -1,7 +1,6 @@
 import React, {Dispatch} from "react";
 import ProTag from "./ProTag";
 import {Card, Col, Row} from "antd";
-import {ExamState} from "../../Type/IExam";
 import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -41,7 +40,6 @@ const ProTagGroup = (props: any) => {
 }
 
 const mapStateToProps = (state: any) => {
-    const State: ExamState = state.ExamReducer
     return {}
 }
 

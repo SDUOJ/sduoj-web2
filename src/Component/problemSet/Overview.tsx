@@ -153,8 +153,6 @@ const Overview = (props: any) => {
                                                             props.history.push(UrlPrefix + `/problemSet/${problemSetId}/problem/${value.index}/${index}`)
                                                         }}>{index + 1} {row.name ? `(${row.name})` : ""}</Button>
                                                     )
-
-                                                    return
                                                 }
                                             },
                                             {

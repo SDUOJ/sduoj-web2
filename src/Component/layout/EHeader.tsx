@@ -4,7 +4,7 @@ import ChangeLang from "../common/ChangeLang";
 import {DownOutlined, LogoutOutlined} from "@ant-design/icons";
 import logo from "../../Assert/img/logo.png";
 import {UserState} from "../../Type/Iuser";
-import {connect, useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
@@ -14,7 +14,7 @@ const {Header} = Layout;
 
 const EHeader = (props: any) => {
 
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     return (
         <Header className="site-layout-sub-header-background" style={{minWidth: 550}}>
             <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
@@ -53,12 +53,13 @@ const EHeader = (props: any) => {
                                 </Dropdown>
                             )
                         }
+                        return undefined
                     })
                 }
             </div>
         </Header>
     )
-    
+
 }
 
 

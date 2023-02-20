@@ -1,4 +1,4 @@
-import React, {Component, Dispatch, Suspense} from "react";
+import React, {Component, Suspense} from "react";
 import {Layout} from "antd";
 import logo from "../../Assert/img/logo.png";
 import MMenu from "./MMenu";
@@ -6,13 +6,11 @@ import MHeader from "./MHeader";
 import Loading from "../../Utils/Loading";
 import {Route} from "react-router-dom";
 import {withTranslation} from "react-i18next";
-import {ManageState} from "../../Type/IManage";
-import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import {testLoginTodo} from "../../Redux/Action/user";
 import {routerM} from "../../Config/router/routerM";
 import {UrlPrefix} from "../../Config/constValue";
 import {IRouter} from "../../Config/router/router";
+import LoginCheck from "../common/LoginCheck";
 
 const {Sider, Content} = Layout;
 
@@ -42,6 +40,7 @@ class MLayout extends Component<any, any> {
         }
         return (
             <>
+                <LoginCheck/>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
                     <Sider theme="dark" style={{position: 'fixed', zIndex: 50, height: '100vh', overflow: "auto"}}>
                         <div className="logo">
@@ -74,18 +73,7 @@ class MLayout extends Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: any) => {
-    const State: ManageState = state.ManageReducer
-    return {}
-}
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(
+export default withTranslation()(
     withRouter(MLayout)
-))
+)

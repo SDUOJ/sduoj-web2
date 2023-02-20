@@ -12,10 +12,6 @@ import {UrlPrefix} from "../../Config/constValue";
 
 class CLogin extends Component<any, any> {
 
-    constructor(props: any, context: any) {
-        super(props, context);
-    }
-
     testLogin = ()=>{
         if (this.props.isLogin) {
             let to = getUrlParams(this.props.location.search).to

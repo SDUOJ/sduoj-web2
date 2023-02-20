@@ -199,6 +199,7 @@ class CUser extends Component<any, any> {
                                                     </Card>
                                                 )
                                             }
+                                            return undefined
                                         })
                                     }
                                 </Col>

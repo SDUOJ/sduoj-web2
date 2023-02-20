@@ -19,7 +19,7 @@ import {SubmissionQueryType} from "../../Type/IManage";
 import request from "./request";
 import {IAddCodesToHub} from "../../Type/IAnti-cheating";
 
-export default {
+const mApi = {
     // 配置相关
     async getCopyright() {
         return request.get('/site/getCopyright');
@@ -372,6 +372,6 @@ export default {
     async editProblemSet(data: any) {
         return request.post("/ps/problem_set/edit", data)
     }
-
-
 }
+
+export default mApi;

@@ -17,7 +17,7 @@ import judgeAuth from "../../../Utils/judgeAhtu";
 const Summary = (props: any) => {
     const {TestCaseStateList, submissionInfo} = props
     const getCaseInfo = () => {
-        let scoreAC = 0, scoreSum = 0, scoreAll = 0, mxTime: number = 0, mxMem: number = 0
+        let scoreAC = 0, scoreSum = 0, mxTime: number = 0, mxMem: number = 0
         let SumTime = 0, SumMem = 0, firstUnACCaseNumber = undefined
         const Tcl = TestCaseStateList
         for (let i = 0; i < Tcl.length; i++) {
@@ -30,7 +30,7 @@ const Summary = (props: any) => {
                 scoreSum += add
             } else if (Tcl[i].caseType === TestCaseStates.Pending
                 || Tcl[i].caseType === TestCaseStates.Running) scoreSum += add
-            scoreAll += add
+            // scoreAll += add
             const caseTime: number = Tcl[i].caseTime === undefined ? 0 : Tcl[i].caseTime
             const caseMem: number = Tcl[i].caseMemory === undefined ? 0 : Tcl[i].caseMemory
 

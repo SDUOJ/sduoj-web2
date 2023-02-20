@@ -4,15 +4,14 @@ import {Button, Card, Form, Input, message} from "antd";
 import {useForm} from "antd/es/form/Form";
 import cApi from "Utils/API/c-api"
 import getContestInfo from "./API/getContestInfo";
-import {useState} from "react";
 import {UrlPrefix} from "../../Config/constValue";
 
 const Register = (props: any) => {
 
     const [form] = useForm()
-    const [update, setUpdate] = useState(false)
+    // const [update, setUpdate] = useState(false)
     const contestId = props.match.params.contestId
-    const contestInfo = getContestInfo(contestId, update)
+    // const contestInfo = getContestInfo(contestId, update)
     const contestInfoX = getContestInfo(contestId)
 
     return (
@@ -35,8 +34,8 @@ const Register = (props: any) => {
                                                 password: value.password
                                             }).then(() => {
                                                 message.success("注册成功")
-                                                setUpdate(true)
                                                 props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
+                                                window.location.reload()
                                             })
                                         })
                                     }}>注册</Button>
@@ -49,8 +48,8 @@ const Register = (props: any) => {
                                     <Button type={"primary"} block onClick={() => {
                                         cApi.participateContest({contestId: contestId}).then(() => {
                                             message.success("注册成功")
-                                            setUpdate(true)
                                             props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
+                                            window.location.reload()
                                         })
                                     }}>注册</Button>
                                 </div>

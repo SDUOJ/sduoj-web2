@@ -87,6 +87,7 @@ const GroupMember = (props: any) => {
                 data.forEach((d: any) => {
                     v.status = v.userId === d.userId ? status : v.status
                 })
+                return undefined
             })
             let changeData = initData.filter((v: any) => v.status === 2 || v.status === 1)
             setInitData(changeData)

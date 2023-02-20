@@ -32,13 +32,13 @@ export const SyncJudging = (props: IWebSocket) => {
         }
     }, [props.queryList, readyState])
 
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: '连接中',
-        [ReadyState.OPEN]: '已连接',
-        [ReadyState.CLOSING]: '关闭中',
-        [ReadyState.CLOSED]: '已关闭',
-        [ReadyState.UNINSTANTIATED]: '未知',
-    }[readyState];
+    // const connectionStatus = {
+    //     [ReadyState.CONNECTING]: '连接中',
+    //     [ReadyState.OPEN]: '已连接',
+    //     [ReadyState.CLOSING]: '关闭中',
+    //     [ReadyState.CLOSED]: '已关闭',
+    //     [ReadyState.UNINSTANTIATED]: '未知',
+    // }[readyState];
 
     return (
         <>

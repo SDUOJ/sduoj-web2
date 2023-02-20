@@ -7,7 +7,6 @@ import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import eApi from "../../../Utils/API/e-api";
 import ProProgram from "../Program/ProProgram";
-import useProblemInfo from "../API/getProblemInfo";
 import {isValueEmpty} from "../../../Utils/empty";
 import {updateFlagTodo} from "../../../Redux/Action/exam";
 import {UserState} from "../../../Type/Iuser";
@@ -34,7 +33,7 @@ const ExamProblem = (props: any) => {
         })
     }
 
-    const problemInfo = useProblemInfo(GetProblemInfoAPI, `EXAM_${eid}_${gid}_${pid}`)
+    // const problemInfo = useProblemInfo(GetProblemInfoAPI, `EXAM_${eid}_${gid}_${pid}`)
     // console.log("problemInfo", problemInfo)
 
     const problemList = useSelector((state: any) => {
