@@ -25,7 +25,7 @@ import problemSetSubmit from "../../Component/problemSet/dataConvert/problemSetS
 const MProblemSet = (props: any) => {
 
     const [type, setType] = useState()
-    const [useGlobalTime, setUseGlobalTime] = useState()
+    const [useGlobalTime, setUseGlobalTime] = useState(1)
     const [useReport, setUseReport] = useState()
     const [usePractice, setUsePractice] = useState()
 
@@ -34,7 +34,7 @@ const MProblemSet = (props: any) => {
     const clearStates = () => {
         setType(undefined)
         setUseReport(undefined)
-        setUseGlobalTime(undefined)
+        setUseGlobalTime(1)
         setUsePractice(undefined)
     }
 
@@ -155,15 +155,15 @@ const MProblemSet = (props: any) => {
             component: <>
 
                 <Row gutter={24}>
-                    <Col span={6}>
+                    {/*<Col span={6}>*/}
                         <Form.Item name={["config", "useSameSE"]} hidden>
                             <FormExtraInfo v={useGlobalTime} setV={setUseGlobalTime} eqs={(a: any, b: any) => a === b}/>
                         </Form.Item>
-                        <Form.Item label={"使用统一时间"}>
-                            <SwitchX ck={"是"} unck={"否"} value={useGlobalTime} onChange={setUseGlobalTime}/>
-                        </Form.Item>
+                        {/*<Form.Item label={"使用统一时间"}>*/}
+                        {/*    <SwitchX ck={"是"} unck={"否"} value={useGlobalTime} onChange={setUseGlobalTime}/>*/}
+                        {/*</Form.Item>*/}
 
-                    </Col>
+                    {/*</Col>*/}
                     <Col span={18}>
                         {useGlobalTime === 1 && (
                             <ItemTimeRange label="起止时间" required={true} startName={"tm_start"} endName={"tm_end"}/>
