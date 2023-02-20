@@ -6,12 +6,12 @@ import {JudgeTemplateAllType, ProblemState} from "../../../Type/IProblem";
 import SampleTestCase from "../SampleTestCase";
 import {displayType} from "../../../Type/ISubmission";
 import ModalSubmissionList from "../../submission/SubmissionList/ModalSubmissionList";
-import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 import {connect} from "react-redux";
 import {UserState} from "../../../Type/Iuser";
 import {isValueEmpty} from "../../../Utils/empty";
 import {TableState} from "../../../Type/ITable";
 import MD2export from "../../common/Md2export";
+import MarkdownText from "../../../Utils/MarkdownText";
 
 interface ProProgramProps {
     // problemTitle: string       // 题目标题
@@ -54,16 +54,7 @@ export const getJudgeStr = (judgeTemplates: JudgeTemplateAllType[]) => {
 }
 
 const ProProgram = (props: ProProgramProps & WithTranslation) => {
-
-    const [markdownDescription, setMarkdownDescription] = useState()
     const problemInfo = props.ProblemInfo[props.nameWithD]
-
-    useEffect(() => {
-        if (problemInfo !== undefined && problemInfo.problemDescriptionDTO !== null) {
-            MarkdownPreview("problem-content", problemInfo.problemDescriptionDTO.markdownDescription)
-            setMarkdownDescription(problemInfo.problemDescriptionDTO.markdownDescription)
-        }
-    }, [problemInfo])
 
     let ps = ["", ""]
     if (problemInfo !== undefined && !isValueEmpty(problemInfo?.problemCode))
@@ -206,11 +197,10 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             <Card bordered={false} className={"problemBody"}>
                 {props.showMdExport === true && (
                     <div style={{right: "24px", position: "absolute"}}>
-                        <><MD2export value={markdownDescription}/></>
+                        <><MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription}/></>
                     </div>
                 )}
-                <div id={"problem-content"} style={{overflow: "hidden"}}>
-                </div>
+                <MarkdownText id={"problem-content"} text={problemInfo?.problemDescriptionDTO.markdownDescription}/>
             </Card>
             {/*测试用例*/}
             {testCase !== undefined && testCase.length !== 0 && (

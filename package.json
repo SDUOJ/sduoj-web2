@@ -2,7 +2,6 @@
   "name": "sduoj",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/v2",
   "dependencies": {
     "@ant-design/pro-card": "^1.18.34",
     "@ant-design/pro-descriptions": "^1.10.49",
