@@ -25,91 +25,88 @@ const ScoreMode = (props: any) => {
 
     const scoreRender = (data: any) => {
         return (
-            <Card title={data.title} size={"small"} bordered={false}
-                  extra={
-                      <Space>
-                          {data.children === undefined && (
-                              <Space>
-                                  <Button
-                                      type="primary" shape="round"
-                                      size={"small"} icon={<CheckOutlined/>}
-                                      onClick={() => {
-                                          updateScore(data.key, data.score)
-                                      }}/>
-                                  <Button
-                                      type="primary" shape="round"
-                                      size={"small"} danger={true}
-                                      icon={<CloseOutlined/>}
-                                      onClick={() => {
-                                          updateScore(data.key, 0)
-                                      }}/>
-                              </Space>
-                          )}
-                          <span>
+            <Card title={data.title} size={"small"} bordered={false}>
+                <div style={{float: "right"}}>
+                    <Space>
+                        {data.children === undefined && (
+                            <Space>
+                                <Button
+                                    type="primary" shape="round"
+                                    size={"small"} icon={<CheckOutlined/>}
+                                    onClick={() => {
+                                        updateScore(data.key, data.score)
+                                    }}/>
+                                <Button
+                                    type="primary" shape="round"
+                                    size={"small"} danger={true}
+                                    icon={<CloseOutlined/>}
+                                    onClick={() => {
+                                        updateScore(data.key, 0)
+                                    }}/>
+                            </Space>
+                        )}
+                        <span>
                               {data.key === "0" ? "总分：" : "分数："}
-                              {data.children === undefined && (
-                                  <InputNumber
-                                      style={{width: 64}}
-                                      size={"small"}
-                                      min={0} max={data.score}
-                                      value={reviewInfo[data.key]}
-                                      onChange={(value) => {
-                                          updateScore(data.key, value)
-                                      }}/>
-                              )}
-                              {data.children !== undefined && (reviewInfo[data.key] ?? 0)}
-                              {" "}/ {data.score}
+                            {data.children === undefined && (
+                                <InputNumber
+                                    style={{width: 64}}
+                                    size={"small"}
+                                    min={0} max={data.score}
+                                    value={reviewInfo[data.key]}
+                                    onChange={(value) => {
+                                        updateScore(data.key, value)
+                                    }}/>
+                            )}
+                            {data.children !== undefined && (reviewInfo[data.key] ?? 0)}
+                            {" "}/ {data.score}
                           </span>
-                      </Space>
-                  }
-            >
-                {(() => {
-                    if (data.children === undefined) {
-                        return (
-                            <>
-                                {(() => {
-                                    if (data.answer !== undefined) {
-                                        return (
-                                            <Alert
-                                                message={
-                                                    <MarkdownText id={`problemReview-answer-${data.key}`}
-                                                                  text={data.answer}/>
-                                                }
-                                                type="success"
-                                            />
-                                        )
+                    </Space>
+                </div>
+                <div style={{marginTop: 32}}>
+                    {(() => {
+                        if (data.children === undefined) {
+                            return (
+                                <>
+                                    {data.answer !== undefined && (
 
-                                    }
-                                })()}
-                                {(() => {
-                                    if (data.info !== undefined) {
-                                        return (
-                                            <Radio.Group
-                                                onChange={(e) => {
-                                                    updateScore(data.key, e.target.value)
-                                                }}
-                                                value={reviewInfo[data.key]}
-                                            >
-                                                <Row>
-                                                    {data.info && data.info.map((r: any) => {
-                                                        return (
-                                                            <Col span={12}><Radio
-                                                                value={r[0]}> {r[0]}分 {r[1]}</Radio></Col>
-                                                        )
-                                                    })}
-                                                </Row>
-                                            </Radio.Group>
-                                        )
-                                    }
-                                })()}
-                            </>
-                        )
-                    } else {
-                        return data.children.map((c: any) => {
-                            return scoreRender(c)
-                        })
-                    }
-                })()}
+                                        <Alert
+                                            message={
+                                                <MarkdownText id={`problemReview-answer-${data.key}`}
+                                                              text={data.answer}/>
+                                            }
+                                            type="success"
+                                        />
+                                    )}
+                                    {(() => {
+                                        if (data.info !== undefined) {
+                                            return (
+                                                <Radio.Group
+                                                    onChange={(e) => {
+                                                        updateScore(data.key, e.target.value)
+                                                    }}
+                                                    value={reviewInfo[data.key]}
+                                                >
+                                                    <Row>
+                                                        {data.info && data.info.map((r: any) => {
+                                                            return (
+                                                                <Col span={12}><Radio
+                                                                    value={r[0]}> {r[0]}分 {r[1]}</Radio></Col>
+                                                            )
+                                                        })}
+                                                    </Row>
+                                                </Radio.Group>
+                                            )
+                                        }
+                                    })()}
+                                </>
+                            )
+                        } else {
+                            return data.children.map((c: any) => {
+                                return scoreRender(c)
+                            })
+                        }
+                    })()}
+                </div>
             </Card>
         )
     }

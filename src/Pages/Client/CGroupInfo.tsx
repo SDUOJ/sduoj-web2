@@ -24,11 +24,11 @@ const CGroupInfo = (props: any) => {
     const [psTabItems, setPsTabItems] = useState<any>()
     const {t} = useTranslation()
 
-    const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
-    const keyValueData_ps = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
-
 
     useEffect(() => {
+        const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
+        const keyValueData_ps = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
+
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
             MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? t("notAvailable") : value.markdown)
@@ -48,7 +48,7 @@ const CGroupInfo = (props: any) => {
                     children: <ProblemSetList groupId={groupId} tag={x}/>
                 })
             }
-            if(label.length !== 0) setPsActiveKey(label[0])
+            if (label.length !== 0) setPsActiveKey(label[0])
             setPsTabItems(tb)
             setPsSum(res.sum);
         })
@@ -57,7 +57,7 @@ const CGroupInfo = (props: any) => {
         if (act2 !== undefined)
             setPsActiveKey(act2)
 
-    }, [groupId, t, keyValueData_ps, keyValueData_g])
+    }, [groupId])
 
     return (
         <>
@@ -101,11 +101,11 @@ const CGroupInfo = (props: any) => {
                                     </div>
                                 </Tabs.TabPane>
                                 <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">
-                                    <Tabs activeKey={psActiveKey} onChange={(v:string)=>{
+                                    <Tabs activeKey={psActiveKey} onChange={(v: string) => {
                                         setPsActiveKey(v)
                                         props.setKeyValueData(`Group-C-activeKey-${groupId}-ProblemSet`, v)
                                     }}>
-                                        {psTabItems && psTabItems.map((item:any)=>{
+                                        {psTabItems && psTabItems.map((item: any) => {
                                             return (
                                                 <Tabs.TabPane tab={item.label} key={item.key}>
                                                     {item.children}

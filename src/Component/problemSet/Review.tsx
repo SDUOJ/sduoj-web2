@@ -203,7 +203,7 @@ const Review = (props: any) => {
                 useFormBtn={false}
             />
             <div style={{marginTop: 12, float: "right"}}>
-                <Title level={5}>提示：题单结束之前，无法评阅主观题</Title>
+                <span>提示：如果对主观题进行了批阅，会导致学生无法再次提交，请确定作答完成后再进行批阅</span>
             </div>
 
             <Modal
@@ -213,12 +213,13 @@ const Review = (props: any) => {
                 maskClosable={false}
                 onCancel={() => {
                     setVis(false)
+                    props.addTableVersion("problemSetSubjectiveJudgeList")
                 }}
                 footer={false}
                 destroyOnClose
             >
                 <Row gutter={24}>
-                    <Col span={16}>
+                    <Col span={14}>
                         <div>
                             <Card
                                 title={<Title level={5}> 原问题 </Title>}
@@ -247,7 +248,7 @@ const Review = (props: any) => {
 
                         </Card>
                     </Col>
-                    <Col span={8}>
+                    <Col span={10}>
                         <Card className={"scorePane"} title={"分数面板"}>
                             <div>
                                 <ScoreMode
@@ -274,8 +275,24 @@ const Review = (props: any) => {
                                         judgeLog: res
                                     }).then((res: any) => {
                                         setVis(false)
+                                        props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
                                 }}> 提交分数 </Button>
+                                {judgeInfo.judgeLock_username === props.username && (
+                                    <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
+                                        cApi.updateJudgeInfo({
+                                            psid: psid,
+                                            gid: judgeInfo.gid,
+                                            pid: judgeInfo.pid,
+                                            username: judgeInfo.username,
+                                            judgeLog: [],
+                                            cancel: 1
+                                        }).then((res: any) => {
+                                            setVis(false)
+                                            props.addTableVersion("problemSetSubjectiveJudgeList")
+                                        })
+                                    }}>取消评测</Button>
+                                )}
                             </div>
                         </Card>
                     </Col>
@@ -293,7 +310,9 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    addTableVersion: (name: string) => dispatch({type: "addTableVersion", name: name}),
+})
 
 export default connect(
     mapStateToProps,
