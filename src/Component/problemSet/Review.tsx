@@ -6,13 +6,12 @@ import TableWithPagination from "../common/Table/TableWithPagination";
 import cApi from "../../Utils/API/c-api";
 import {unix2Time} from "../../Utils/Time";
 import useProblemSetInfo from "./API/getProblemSetInfo";
-import MarkdownText from "../../Utils/MarkdownText";
-import Title from "antd/es/typography/Title";
 import {isValueEmpty} from "../../Utils/empty";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
+import SubjectivePreview from "./SubjectivePreview";
 
 
 const Review = (props: any) => {
@@ -23,14 +22,12 @@ const Review = (props: any) => {
     const [reviewInfo, setReviewInfo] = useState<any>({});
     const [judgeInfo, setJudgeInfo] = useState<any>({});
     const [vis, setVis] = useState<any>(false);
-    const [mxLength, setMxLength] = useState<any>(240);
 
 
     useEffect(() => {
         setReviewInfo({})
         setJudgeInfo({})
         setVis(false)
-        setMxLength(240)
     }, [problemSetInfo])
 
     // console.log("review", reviewInfo)
@@ -220,33 +217,10 @@ const Review = (props: any) => {
             >
                 <Row gutter={24}>
                     <Col span={14}>
-                        <div>
-                            <Card
-                                title={<Title level={5}> 原问题 </Title>}
-                                style={{marginTop: 24}}
-                                extra={<Button type={"default"} onClick={() => {
-                                    if (mxLength === 998244353) {
-                                        setMxLength(240)
-                                    } else {
-                                        setMxLength(998244353)
-                                    }
-                                }}>{mxLength === 998244353 ? "收齐全文" : "展开全文"}</Button>}
-                            >
-                                <MarkdownText
-                                    id={"proDescription"}
-                                    text={(judgeInfo?.description ?? "").substr(0, mxLength)}
-                                />
-                            </Card>
-                        </div>
-                        <Card title={
-                            <Title level={5}> 学生答案 </Title>
-                        } style={{marginTop: 24}}>
-                            <MarkdownText
-                                id={"userAnswer"}
-                                text={judgeInfo?.answer?.[0]}
-                            />
-
-                        </Card>
+                        <SubjectivePreview
+                            description={judgeInfo?.description}
+                            answe={judgeInfo?.answer}
+                        />
                     </Col>
                     <Col span={10}>
                         <Card className={"scorePane"} title={"分数面板"}>
@@ -273,7 +247,7 @@ const Review = (props: any) => {
                                         pid: judgeInfo.pid,
                                         username: judgeInfo.username,
                                         judgeLog: res
-                                    }).then((res: any) => {
+                                    }).then(() => {
                                         setVis(false)
                                         props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
@@ -287,7 +261,7 @@ const Review = (props: any) => {
                                             username: judgeInfo.username,
                                             judgeLog: [],
                                             cancel: 1
-                                        }).then((res: any) => {
+                                        }).then(() => {
                                             setVis(false)
                                             props.addTableVersion("problemSetSubjectiveJudgeList")
                                         })

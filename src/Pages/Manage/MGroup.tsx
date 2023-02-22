@@ -57,37 +57,37 @@ class MGroup extends Component<any, any> {
                 dataIndex: "openness",
                 width: "auto",
                 responsive: ["lg"],
-                render: (text: any, row: any) => {
-                                return ["公开", "申请", "私有"][text]
-                            }
-                            },
-                            {
-                                title: "成员数量",
-                                width: "auto",
-                                dataIndex: "memberNum",
-                                responsive: ["lg"]
-                            },
-                            {
-                                title: this.props.t("operator"),
-                                width: "150px",
-                                render: (text: any, rows: any) => {
-                                return (
-                                <Space>
-                                <ModalFormUseForm
+                render: (text: any) => {
+                    return ["公开", "申请", "私有"][text]
+                }
+            },
+            {
+                title: "成员数量",
+                width: "auto",
+                dataIndex: "memberNum",
+                responsive: ["lg"]
+            },
+            {
+                title: this.props.t("operator"),
+                width: "150px",
+                render: (text: any, rows: any) => {
+                    return (
+                        <Space>
+                            <ModalFormUseForm
                                 TableName={"GroupList"}
                                 width={1200}
                                 title={rows.title}
                                 type={"update"}
                                 subForm={[
-                            {component: <GroupFormProfile/>}
+                                    {component: <GroupFormProfile/>}
                                 ]}
-                                initData={rows}
+                                dataLoader={async () => mApi.getGroupDetail({groupId: rows.groupId})}
                                 updateAppendProps={{groupId: rows.groupId}}
                                 dataSubmitter={(value: any) => {
-                                return mApi.updateGroup(value)
-                            }}
-                                />
-                                <GroupMember
+                                    return mApi.updateGroup(value)
+                                }}
+                            />
+                            <GroupMember
                                 btnName={"成员管理"}
                                 btnType={"link"}
                                 width={1200}
@@ -152,7 +152,7 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = () => ({})
 
 export default connect(
     mapStateToProps,

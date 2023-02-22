@@ -286,6 +286,10 @@ const cApi = {
     async getProblemSummary(data: any) {
         return request.post("/ps/summary/summary", data)
     },
+    // 获取榜单的题目预览数据
+    async getProblemSetProPreview(data: any){
+        return request.post("/ps/summary/preview", data)
+    },
     // 获取题单的标签列表
     async getProblemSetLabelList(data: any) {
         return request.post("/ps/problem_set/key", data)
@@ -296,7 +300,7 @@ const cApi = {
     },
     // 获取题单公开信息
     async getProblemSetPublic(data: any) {
-        return request.post("ps/problem_set/public", data)
+        return request.post("/ps/problem_set/public", data)
     }
 }
 

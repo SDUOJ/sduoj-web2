@@ -69,7 +69,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     // } else form.setFieldsValue(data)
                     hied()
                     setFormVis(true)
-                }).catch((e: any) => {
+                }).catch(() => {
                     hied()
                 })
             } else {
@@ -82,6 +82,8 @@ const ModalForm = (props: ModalFormProps & any) => {
             if (props.initData !== undefined) {
                 setSaveInitData(props.initData)
             }
+            setFormVis(true)
+        } else {
             setFormVis(true)
         }
     }
@@ -131,7 +133,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             // console.log(form)
             form.validateFields().then((value) => {
                 submit(value)
-            }).catch((e: any) => {
+            }).catch(() => {
                 message.error('表单不完整')
             })
         } else submit(values)
@@ -253,7 +255,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     )
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = () => {
     return {}
 }
 

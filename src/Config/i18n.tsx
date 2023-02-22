@@ -4,30 +4,40 @@ import enUS from 'antd/lib/locale/en_US';
 import zhCN from 'antd/lib/locale/zh_CN';
 import {Locale} from "antd/lib/locale-provider";
 import {initLanguage} from "../Utils/initLanguage";
+import moment from "moment/moment";
 
 interface ILanguage {
     id: string
     name: string
-    code: string
+    code: string,
+    time: string
 }
 
 export const language: ILanguage[] = [
     {
         id: "en",
         name: "English",
-        code: "en_US"
+        code: "en_US",
+        time: "en"
     },
     {
         id: "zh",
         name: "简体中文",
-        code: "zh_CN"
+        code: "zh_CN",
+        time: "zh-cn"
     }
 ]
 
-export const languageMap: {[key: string]: Locale } = {
+export const languageMap: { [key: string]: Locale } = {
     "zh": zhCN,
     "en": enUS
 }
+
+const defLang = initLanguage();
+const id_ = language.findIndex((item) => {
+    return item.id === defLang
+})
+moment.locale(language[id_].time);
 
 i18n.use(initReactI18next) //init i18next
     .init({
@@ -41,7 +51,7 @@ i18n.use(initReactI18next) //init i18next
             }
         },
         //选择默认语言，选择内容为上述配置中的key，即en/zh
-        lng: initLanguage(),
+        lng: defLang,
         debug: false,
         interpolation: {
             escapeValue: false, // not needed for react as it escapes by default

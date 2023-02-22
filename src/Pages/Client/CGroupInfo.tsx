@@ -100,20 +100,22 @@ const CGroupInfo = (props: any) => {
                                     <div id={"AnnouncementMD"}>
                                     </div>
                                 </Tabs.TabPane>
-                                <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">
-                                    <Tabs activeKey={psActiveKey} onChange={(v: string) => {
-                                        setPsActiveKey(v)
-                                        props.setKeyValueData(`Group-C-activeKey-${groupId}-ProblemSet`, v)
-                                    }}>
-                                        {psTabItems && psTabItems.map((item: any) => {
-                                            return (
-                                                <Tabs.TabPane tab={item.label} key={item.key}>
-                                                    {item.children}
-                                                </Tabs.TabPane>
-                                            )
-                                        })}
-                                    </Tabs>
-                                </Tabs.TabPane>
+                                {!isValueEmpty(psTabItems) && psTabItems.length !== 0 && (
+                                    <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">
+                                        <Tabs activeKey={psActiveKey} onChange={(v: string) => {
+                                            setPsActiveKey(v)
+                                            props.setKeyValueData(`Group-C-activeKey-${groupId}-ProblemSet`, v)
+                                        }}>
+                                            {psTabItems.map((item: any) => {
+                                                return (
+                                                    <Tabs.TabPane tab={item.label} key={item.key}>
+                                                        {item.children}
+                                                    </Tabs.TabPane>
+                                                )
+                                            })}
+                                        </Tabs>
+                                    </Tabs.TabPane>
+                                )}
                                 <Tabs.TabPane tab={t("contest")} key="contest">
                                     <ContestList
                                         name={"GroupInfo-" + groupId + "-ContestList"}

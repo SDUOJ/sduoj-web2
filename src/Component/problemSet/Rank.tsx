@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Badge, message, Popover, Table, Tag} from "antd";
+import {Badge, message, Modal, Popover, Table, Tag} from "antd";
 import {ContestState} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -11,6 +11,9 @@ import dealFloat from "../../Utils/dealFloat";
 import {unix2Time} from "../../Utils/Time";
 import ExportExcel from "../common/ExportExcel";
 import exportRank from "./exportRank";
+import SubmissionList from "../submission/SubmissionList/SubmissionList";
+import SubjectivePreview from "./SubjectivePreview";
+import Objective from "../problem/Objective/Objective";
 
 const Rank = (props: any) => {
     const problemSetId = props.match.params.problemSetId
@@ -19,6 +22,9 @@ const Rank = (props: any) => {
     const [rankInfo, setRankInfo] = useState<any>()
     const [lastUpdate, setLastUpdate] = useState<any>()
     const [problemSetInfo, setProblemSetInfo] = useState<any>()
+
+    const [ModalVis, setModalVis] = useState<boolean>(false);
+    const [ModalInfo, setModalInfo] = useState<any>({});
 
     useEffect(() => {
         if (rankInfo === undefined) {
@@ -30,7 +36,7 @@ const Rank = (props: any) => {
                 setRankInfo(res.data)
                 setLastUpdate(res.lastUpdate)
                 setProblemSetInfo(res.info)
-            }).finally(()=>{
+            }).finally(() => {
                 hied()
             })
         }
@@ -67,18 +73,58 @@ const Rank = (props: any) => {
                     ),
                     dataIndex: `${x.index + 1}-${y.index + 1}`,
                     width: problemWidth,
-                    render: (text: any) => {
+                    render: (text: any, row: any) => {
                         if (text.h) {
                             // 是否已经阅卷
                             const cop = text.j ? <CheckOutlined style={{color: '#52c41a'}}/> :
                                 <QuestionOutlined style={{color: '#faad14'}}/>
                             return (
-                                <Badge count={cop} offset={[15, -3]}>
-                                    <span style={{fontWeight: "bold"}}>{dealFloat(text.s)}</span>
-                                </Badge>
+                                <div onClick={() => {
+                                    setModalVis(true)
+                                    let tp = problemSetInfo.groupInfo[x.index].type;
+                                    if (tp === 0 || tp === 1) {
+                                        cApi.getProblemSetProPreview({
+                                            psid: problemSetId,
+                                            gid: x.index,
+                                            pid: y.index,
+                                            username: row.username
+                                        }).then((res: any) => {
+                                            if (tp === 0) {
+                                                setModalInfo({
+                                                    type: 0,
+                                                    problemInfo: res.problemInfo,
+                                                    answerSheet: {
+                                                        answer_m: res.answerSheet.answer,
+                                                        answer: res.problemInfo.answer,
+                                                        mark: res.answerSheet.mark
+                                                    },
+                                                    key_o: `${x.index + 1}-${y.index + 1}`
+                                                })
+                                            }
+                                            if (tp === 1) {
+                                                setModalInfo({
+                                                    type: 1,
+                                                    description: res.problemInfo.description,
+                                                    answer: res.answerSheet.answer
+                                                })
+                                            }
+                                        })
+
+                                    } else if (tp === 2) {
+                                        setModalInfo({
+                                            type: 2,
+                                            username: row.username,
+                                            router: {psid: problemSetId, gid: x.index, pid: y.index},
+                                            proName: `题组${x.index + 1} - ${x.name}`
+                                        })
+                                    }
+                                }}>
+                                    <Badge count={cop} offset={[15, -3]}>
+                                        <span style={{fontWeight: "bold"}}>{dealFloat(text.s)}</span>
+                                    </Badge>
+                                </div>
                             )
                         }
-
                     }
                 })
                 tableWidth += problemWidth
@@ -89,8 +135,85 @@ const Rank = (props: any) => {
             props.setMinWidth(tableWidth)
     }
 
+    const stateColum: any = []
+    console.log()
+    if (problemSetInfo?.type === 1) {
+        stateColum.push({
+            title: "状态",
+            width: 150,
+            render: (text: any, row: any) => {
+                return (
+                    <div style={{paddingLeft: 10, paddingRight: 10}}>
+                        <span style={{float: "left"}}>
+                            {row.finish === 1 && (
+                                <Popover content={<>{unix2Time(row.finish_time)}</>} title="交卷时间">
+                                    <Tag color={"red"}>交卷</Tag>
+                                </Popover>
+                            )}
+                        </span>
+                        <span style={{float: "right", textAlign: "right"}}>
+                            {row.ips?.length <= 1 && (
+                                <Tag color={"green"}>Ip正常</Tag>
+                            )}
+                            {row.ips?.length > 1 && (
+                                <Popover
+                                    content={
+                                        <>{row.ips?.map((ip: string) => <div>{ip}</div>)}</>
+                                    }
+                                    title="使用Ip">
+                                    <Tag color={"orange"}>Ip异常</Tag>
+                                </Popover>
+                            )}
+                        </span>
+                    </div>
+                )
+            }
+        })
+    }
+
     return (
         <div style={{marginTop: 24}}>
+            <Modal
+                width={1250}
+                visible={ModalVis}
+                footer={false}
+                destroyOnClose={true}
+                onCancel={() => {
+                    setModalVis(false)
+                }}
+            >
+                {ModalInfo.type === 0 && (
+                    <Objective
+                        problemInfo={ModalInfo?.problemInfo}
+                        answerSheet={ModalInfo?.answerSheet}
+                        key_o={ModalInfo?.key_o}
+                    />
+                )}
+                {ModalInfo.type === 1 && (
+                    <SubjectivePreview
+                        description={ModalInfo?.description}
+                        answer={ModalInfo?.answer}
+                    />
+                )}
+                {ModalInfo.type === 2 && (
+                    <SubmissionList
+                        btnText={"记录-" + ModalInfo.username + "-" + ModalInfo.proName}
+                        name={"Contest-Rank-SubmissionList-" + ModalInfo.username + "-" + ModalInfo.proName}
+                        API={async (data: any) => {
+                            return cApi.getProblemSetSubmissionList({
+                                ...data,
+                                router: ModalInfo.router,
+                                username: ModalInfo.username,
+                                problemSetId: ModalInfo.router.psid
+                            })
+                        }}
+                        QuerySubmissionAPI={async (submissionId: string) => {
+                            return cApi.getProblemSetSubmissionInfo({...ModalInfo.router, submissionId: submissionId})
+                        }}
+                    />
+                )}
+
+            </Modal>
             <div style={{fontWeight: "lighter", marginBottom: 16, marginLeft: 4}}>
                 榜单更新有大约1分钟的延迟，上次更新时间：{lastUpdate ? unix2Time(lastUpdate) : undefined}
                 <div style={{float: "right"}}>
@@ -135,37 +258,7 @@ const Rank = (props: any) => {
                             )
                         }
                     },
-                    {
-                        title: "状态",
-                        width: 150,
-                        render: (text, row) => {
-                            return (
-                                <div style={{paddingLeft: 10, paddingRight: 10}}>
-                                    <span style={{float: "left"}}>
-                                        {row.finish === 1 && (
-                                            <Popover content={<>{unix2Time(row.finish_time)}</>} title="交卷时间">
-                                                <Tag color={"red"}>交卷</Tag>
-                                            </Popover>
-                                        )}
-                                    </span>
-                                    <span style={{float: "right", textAlign: "right"}}>
-                                        {row.ips?.length <= 1 && (
-                                            <Tag color={"green"}>Ip正常</Tag>
-                                        )}
-                                        {row.ips?.length > 1 && (
-                                            <Popover
-                                                content={
-                                                    <>{row.ips?.map((ip: string) => <div>{ip}</div>)}</>
-                                                }
-                                                title="使用Ip">
-                                                <Tag color={"orange"}>Ip异常</Tag>
-                                            </Popover>
-                                        )}
-                                    </span>
-                                </div>
-                            )
-                        }
-                    },
+                    ...stateColum,
                     {
                         title: "总分",
                         width: 100,

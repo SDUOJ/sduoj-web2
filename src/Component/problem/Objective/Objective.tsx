@@ -15,14 +15,18 @@ interface propType {
 
 const Objective = (props: propType & any) => {
 
-    const [answerSheet, setAnswerSheet] = useState<any>()
+    const [answerSheet, setAnswerSheet] = useState<any>(props.answerSheet)
 
-    useEffect(() => {
-        updateAnswerSheet()
-    }, [props.problemInfo])
+    useEffect(()=>{
+        if(props.answerSheet !== undefined){
+            setAnswerSheet(props.answerSheet)
+        }else{
+            updateAnswerSheet()
+        }
+    }, [props.key_o])
 
     const updateAnswerSheet = () => {
-        props.getAS().then((res: any) => {
+        props.getAS && props.getAS().then((res: any) => {
             setAnswerSheet(res)
         })
     }
@@ -45,12 +49,12 @@ const Objective = (props: propType & any) => {
                     return (
                         <ObjectiveOption
                             onMark={(SID: string) => {
-                                props.onMark(SID).then(() => {
+                                props.onMark && props.onMark(SID).then(() => {
                                     updateAnswerSheet()
                                 })
                             }}
                             onAnswerM={(SID: string) => {
-                                props.onAnswerM(SID).then(() => {
+                                props.onAnswerM && props.onAnswerM(SID).then(() => {
                                     updateAnswerSheet()
                                 })
                             }}
@@ -90,8 +94,8 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
     const SID = String.fromCharCode('A'.charCodeAt(0) + props.index)
 
     let OptionsState = ""
-    if (props.answer_m.includes(SID)) OptionsState = "used"
-    else if (props.mark.includes(SID)) OptionsState = "unused"
+    if (props.answer_m.indexOf(SID) !== -1) OptionsState = "used"
+    else if (props.mark.indexOf(SID) !== -1) OptionsState = "unused"
     else OptionsState = "init"
 
 
@@ -104,7 +108,7 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
                 onClick={() => {
                     props.onAnswerM && props.onAnswerM(SID)
                 }}
-                className={"Options-" + OptionsState + ` Options-${props.answer.includes(SID) ? "green" : ""}`}
+                className={"Options-" + OptionsState + ` Options-${props.answer.indexOf(SID) !== -1 ? "green" : ""}`}
             >
                 <Row>
                     <Col span={1}>
