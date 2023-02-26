@@ -32,7 +32,7 @@ const Rank = (props: any) => {
                 content: "榜单信息内容较多，请耐心等待",
                 duration: 0,
             })
-            cApi.getProblemSummary({psid: problemSetId}).then((res: any) => {
+            cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
                 setRankInfo(res.data)
                 setLastUpdate(res.lastUpdate)
                 setProblemSetInfo(res.info)
@@ -136,7 +136,7 @@ const Rank = (props: any) => {
     }
 
     const stateColum: any = []
-    console.log()
+
     if (problemSetInfo?.type === 1) {
         stateColum.push({
             title: "状态",
@@ -221,7 +221,7 @@ const Rank = (props: any) => {
                         ButtonProps={{}}
                         ButtonText={"导出成绩"}
                         ButtonType={"default"}
-                        getJson={() => exportRank(rankInfo, problemSetInfo)}
+                        getJson={() => exportRank(problemSetId)}
                         fileName={problemSetInfo?.name + "_" + Date.now() + "_结果导出"}
                     />
                 </div>
