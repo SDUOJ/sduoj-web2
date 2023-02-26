@@ -222,7 +222,7 @@ const Problem = (props: any) => {
                         </div>
                         <div
                             style={hasTimer ? {marginTop: 25} : {}}>
-                            {problemSetInfo?.groupInfo.map((group: any) => {
+                            {problemSetInfo?.groupInfo.map((group: any, g_index: number) => {
                                 return (
                                     <div>
                                         <Card size={"small"} title={group.name} bordered={false}>
@@ -233,8 +233,7 @@ const Problem = (props: any) => {
                                                             <Button
                                                                 ghost={true}
                                                                 size={"middle"}
-                                                                type={(group.index === gid && index === pid) ? "primary" : "text"}
-
+                                                                type={(g_index.toString() === gid && index.toString() === pid) ? "primary" : "text"}
                                                                 shape={"round"}
                                                                 onClick={() => {
                                                                     props.history.push(UrlPrefix + "/problemSet/" + psid + "/problem/" + group.index + "/" + index)
