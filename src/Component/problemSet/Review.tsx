@@ -219,7 +219,7 @@ const Review = (props: any) => {
                     <Col span={14}>
                         <SubjectivePreview
                             description={judgeInfo?.description}
-                            answe={judgeInfo?.answer}
+                            answer={judgeInfo?.answer}
                         />
                     </Col>
                     <Col span={10}>
