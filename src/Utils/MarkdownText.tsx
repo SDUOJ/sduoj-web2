@@ -8,7 +8,7 @@ const MarkdownText = (props: any) => {
     }, [props.id, props.text])
 
     return (
-        <div id={props.id}>
+        <div id={props.id} style={{overflowY: "hidden"}}>
         </div>
     )
 }
