@@ -81,6 +81,10 @@ const Rank = (props: any) => {
                             return (
                                 <div onClick={() => {
                                     setModalVis(true)
+                                    const hied = message.loading({
+                                        content: "加载中",
+                                        duration: 0,
+                                    })
                                     let tp = problemSetInfo.groupInfo[x.index].type;
                                     if (tp === 0 || tp === 1) {
                                         cApi.getProblemSetProPreview({
@@ -108,6 +112,8 @@ const Rank = (props: any) => {
                                                     answer: res.answerSheet.answer
                                                 })
                                             }
+                                        }).finally(() => {
+                                            hied()
                                         })
 
                                     } else if (tp === 2) {

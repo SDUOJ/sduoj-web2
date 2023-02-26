@@ -1,8 +1,13 @@
 import {unix2Time} from "../../Utils/Time";
 import {isValueEmpty} from "../../Utils/empty";
 import cApi from "../../Utils/API/c-api";
+import {message} from "antd";
 
 const exportRank = async (psid: any) => {
+    const hied = message.loading({
+        content: "导出内容较多，请耐心等待",
+        duration: 0,
+    })
     return cApi.getProblemSummary({psid: psid, code: 1}).then((result: any) => {
         const rankInfo = result.data
         let res: any = []
@@ -26,6 +31,7 @@ const exportRank = async (psid: any) => {
             }
             res.push(obj)
         }
+        hied()
         return Promise.resolve(res)
     })
 
