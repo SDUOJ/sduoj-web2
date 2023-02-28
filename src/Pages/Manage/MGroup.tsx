@@ -112,7 +112,7 @@ class MGroup extends Component<any, any> {
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
                     size={"small"}
-                    bordered={false}
+                    bordered={true}
                     title={"用户组列表"}
                     extra={
                         <Space>

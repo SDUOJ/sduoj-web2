@@ -28,7 +28,7 @@ class MObjective extends Component<any, any> {
             <>
                 <Card
                     size={"small"}
-                    bordered={false}
+                    bordered={true}
                     title={"客观题列表"}
                     extra={
                         <Space>

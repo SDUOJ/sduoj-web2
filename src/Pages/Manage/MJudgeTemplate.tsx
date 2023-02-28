@@ -111,7 +111,7 @@ const MJudgeTemplate = (props: any) => {
         <div style={{marginTop: -20, overflow: "hidden"}}>
             <Card
                 size={"small"}
-                bordered={false}
+                bordered={true}
                 title={type === "io" ? "基础IO模板" : "高阶评测模板"}
                 extra={
                     <>

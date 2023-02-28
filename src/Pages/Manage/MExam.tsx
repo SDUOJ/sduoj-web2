@@ -33,7 +33,7 @@ class MExam extends Component<any, any> {
             <>
                 <Card
                     size={"small"}
-                    bordered={false}
+                    bordered={true}
                     title={"考试列表"}
                     extra={[
                         <ExamForm type={"create"}/>

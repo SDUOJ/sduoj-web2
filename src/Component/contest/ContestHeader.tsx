@@ -158,7 +158,7 @@ const ContestHeader = (props: any) => {
 
                 </>
             )}
-            <Row style={{backgroundColor: "white"}}>
+            <Row style={{backgroundColor: "white", border: "1px solid #dcdee2"}}>
                 <Col span={10}>
                     <Menu
                         mode="horizontal"

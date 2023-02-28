@@ -150,7 +150,7 @@ const TableWithPagination = (props: any) => {
             {props.useList && (
                 <Card
                     title={props.title}
-                    bordered={false}
+                    bordered={true}
                     size={"default"}
                     className={props.cardProps ?? "zeroBodyPaddingLeft"}
                     extra={

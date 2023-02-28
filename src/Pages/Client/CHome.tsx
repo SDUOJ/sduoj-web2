@@ -11,13 +11,15 @@ class CHome extends Component<any, any> {
         return (
             <>
                 <div style={{textAlign: "center", margin: "0 auto"}}>
-                    <Image src={BK1} preview={false} style={{maxHeight: "310px"}}/>
+                    <Image src={BK1}
+                           preview={false}
+                           style={{maxWidth: "1500px", boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.3)"}}/>
                     <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                         <Row style={{marginTop: "25px"}}>
                             <Col span={16}>
                                 <Announcement/>
                             </Col>
-                            <Col span={7} style={{marginLeft: "30px"}}>
+                            <Col span={7} offset={1}>
                                 <SearchProblem/>
                             </Col>
                         </Row>

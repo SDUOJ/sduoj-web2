@@ -14,7 +14,7 @@ const Hub = (props: any) => {
         <div style={{marginTop: -20, overflow: "hidden"}}>
             <Card
                 size={"small"}
-                bordered={false}
+                bordered={true}
                 title={props.t("代码仓库列表")}
                 extra={
                     <Space>

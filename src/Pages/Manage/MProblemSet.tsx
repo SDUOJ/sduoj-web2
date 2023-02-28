@@ -382,7 +382,7 @@ const MProblemSet = (props: any) => {
         <div style={{marginTop: -20, overflow: "hidden"}}>
             <Card
                 size={"small"}
-                bordered={false}
+                bordered={true}
                 title={"主观题列表"}
                 extra={
                     <Space>

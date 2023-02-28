@@ -51,7 +51,7 @@ class MLayout extends Component<any, any> {
                     <Layout style={{minWidth: 1200, marginLeft: 200}}>
                         <MHeader/>
                         <Content style={{
-                            backgroundColor: "#f0f2f5",
+                            backgroundColor: "#ffffff",
                             paddingTop: 64,
                             margin: '20px 16px 0',
                             display: "table",

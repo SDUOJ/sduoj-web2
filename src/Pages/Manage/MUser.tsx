@@ -144,7 +144,7 @@ class MUser extends Component<any, any> {
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
                     size={"small"}
-                    bordered={false}
+                    bordered={true}
                     title={this.props.t("userList")}
                     extra={
                         <Space>

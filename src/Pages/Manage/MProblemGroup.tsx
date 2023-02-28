@@ -143,7 +143,7 @@ const MProblemGroup = (props: any) => {
             <div style={{marginTop: -20, overflow: "hidden"}}>
                 <Card
                     size={"small"}
-                    bordered={false}
+                    bordered={true}
                     title={props.t("ProblemGroupList")}
                     extra={
                         <Space>

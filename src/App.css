@@ -104,6 +104,24 @@
     text-align: center;
 }
 
+.ant-card-bordered {
+    border: 1px solid #dcdee2;
+}
+
+.ant-layout-header {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-layout {
+    background: #ffffff;
+}
+
+.ant-layout-footer {
+    padding: 50px 50px 24px;
+    background: #ffffff;
+}
+
 .Progress-set-Statistic {
     text-align: center;
 }
@@ -594,7 +612,7 @@ h5.TestCase-text {
 }
 
 .GroupListItemCard.ant-card-bordered {
-    border: 2px solid rgba(222, 222, 222, 0.75);
+    border: 1px solid #dcdee2;
     border-radius: 12px;
 }
 
