@@ -53,6 +53,7 @@
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "clipboard": "^2.0.11",
     "codemirror": "^5.65.3",
+    "cross-env": "^7.0.3",
     "css-loader": "4.3.0",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
@@ -126,7 +127,7 @@
     "yarn": "^1.22.19"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "cross-env HTTPS=true SSL_CRT_FILE=./.cert/cert.pem SSL_KEY_FILE=./.cert/key.pem node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/src.js/Test"
   },
