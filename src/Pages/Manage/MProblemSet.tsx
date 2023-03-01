@@ -60,7 +60,7 @@ const MProblemSet = (props: any) => {
                 setPidValueEnum(data)
             })
         }
-    }, [props, pidValueEnum])
+    }, [pidValueEnum])
 
     const tableColumns: any = [
         {
