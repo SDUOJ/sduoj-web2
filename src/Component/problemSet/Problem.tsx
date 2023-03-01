@@ -26,7 +26,7 @@ const Problem = (props: any) => {
     const pid = props.match.params.problemId
     const problemSetInfo = useProblemSetInfo(psid)
 
-    const proName = "problemSet-" + gid + "-" + pid
+    const proName = `problemSet-${psid}-${gid}-${pid}`
     const psType = problemSetInfo?.type
     const groupType = problemSetInfo?.groupInfo[gid].type
     const proType = problemSetInfo?.groupInfo[gid].problemInfo[pid].type
