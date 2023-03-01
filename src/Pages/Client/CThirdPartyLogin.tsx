@@ -87,7 +87,7 @@ class CThirdPartyLogin extends Component<any, any> {
                                                 style={{fontWeight: "bold"}}>{this.state.info}</span>
                                             </div>
                                             <div style={{textAlign: "left"}}>
-                                                {this.props.t("statuteOfLimitations:CurrentCertification")}<span
+                                                {this.props.t("statuteOfLimitationsCurrentCertification")}<span
                                                 style={{fontWeight: "bold"}}>{this.props.t("5Minutes")}</span>{this.props.t("validWithin")}
                                             </div>
                                             <Register token={this.state.token} username={this.state.sduId} button={

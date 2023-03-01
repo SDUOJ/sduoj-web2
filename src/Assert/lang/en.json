@@ -229,7 +229,7 @@
   "firstTimeUse": "First time use",
   "login,BindingOperationRequired": "login, binding operation required",
   "certificationInformation:": "Certification Information:",
-  "statuteOfLimitations:CurrentCertification": "Statute of limitations: current certification effective within",
+  "statuteOfLimitationsCurrentCertification": "Statute of limitations: current certification effective within",
   "5Minutes": "5 minutes",
   "validWithin": "Valid within",
   "registerAsANewUserAndBind": "Register as a new user and bind",

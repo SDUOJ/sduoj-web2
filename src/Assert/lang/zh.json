@@ -230,7 +230,7 @@
   "firstTimeUse": "首次使用",
   "login,BindingOperationRequired": "登录，需要进行绑定操作",
   "certificationInformation:": "认证信息：",
-  "statuteOfLimitations:CurrentCertification": "时效：当前认证",
+  "statuteOfLimitationsCurrentCertification": "时效：当前认证",
   "5Minutes": "5分钟",
   "validWithin": "内有效",
   "registerAsANewUserAndBind": "注册新用户并绑定",

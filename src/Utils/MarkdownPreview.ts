@@ -14,14 +14,14 @@ export function MarkdownPreview(id: string, code?: string | null) {
     const config = {
         mode: "light",
         cdn: process.env.NODE_ENV === 'development' ?
-            "http://oj.cs.sdu.edu.cn:3000/vditor" :
+            "https://oj.cs.sdu.edu.cn:3000/vditor" :
             runHost + "/vditor",
         emojiPath: process.env.NODE_ENV === 'development' ?
-            "http://oj.cs.sdu.edu.cn:3000/vditor/dist/images/emoji" :
+            "https://oj.cs.sdu.edu.cn:3000/vditor/dist/images/emoji" :
             runHost + "/vditor/dist/images/emoji",
         theme: {
             path: process.env.NODE_ENV === 'development' ?
-                "http://oj.cs.sdu.edu.cn:3000/vditor/dist/css/content-theme" :
+                "https://oj.cs.sdu.edu.cn:3000/vditor/dist/css/content-theme" :
                 runHost + "/vditor/dist/css/content-theme"
         },
         hljs: {
