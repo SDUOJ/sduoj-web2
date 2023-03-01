@@ -8,12 +8,13 @@ import {UrlPrefix} from "../../Config/constValue";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {UserState} from "../../Type/Iuser";
+import PSTakePicture from "./PSTakePicture";
 
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
     const path = props.location.pathname
 
-    const onError = () =>{
+    const onError = () => {
         props.history.replace(UrlPrefix + "/problemSetPublic/" + problemSetId)
     }
 
@@ -70,7 +71,11 @@ const PSHeader = (props: any) => {
         <>
             {problemSetInfo !== undefined && (
                 <>
-                    <Card style={{marginTop: 25}}>
+                    <Card style={{marginTop: 25}} extra={
+                        <div style={{marginTop: 12}}>
+                            {/*<PSTakePicture/>*/}
+                        </div>
+                    }>
                         {problemSetInfo.config.useSameSE === 1 && (
                             <>
                                 <div style={{textAlign: "center"}}>
