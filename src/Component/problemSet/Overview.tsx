@@ -13,6 +13,8 @@ import {UserState} from "../../Type/Iuser";
 import useProblemSetInfo from "./API/getProblemSetInfo";
 import {isValueEmpty} from "../../Utils/empty";
 import dealFloat from "../../Utils/dealFloat";
+import {StateList, SubmissionMap} from "../../Type/ISubmission";
+import TestCase from "../submission/TestCase";
 
 const Overview = (props: any) => {
 
@@ -122,6 +124,36 @@ const Overview = (props: any) => {
                             start = value.timeSetting[0].tm_start
                             end = value.timeSetting[value.timeSetting.length - 1].tm_end
                         }
+                        const programCol: any = []
+                        if (value.type === 2) {
+                            programCol.push({
+                                key: "Result",
+                                title: "评测结果",
+                                width: "auto",
+                                render: (text: any, row: any) => {
+                                    return (
+                                        <Space size={24}>
+                                            {row.e_status && (
+                                                <Space size={0}>
+                                                    限时：<TestCase
+                                                        type={"text"}
+                                                        caseType={StateList.indexOf(SubmissionMap[row.e_status])}
+                                                    />
+                                                </Space>
+                                            )}
+                                            {row.p_status && (
+                                                <Space size={0}>
+                                                    补题：<TestCase
+                                                    type={"text"}
+                                                    caseType={StateList.indexOf(SubmissionMap[row.p_status])}
+                                                />
+                                                </Space>
+                                            )}
+                                        </Space>
+                                    )
+                                }
+                            })
+                        }
                         return (
                             <Row gutter={24}>
                                 <Col span={problemSetInfo.config.useSameSE === 1 ? 24 : 16}>
@@ -177,6 +209,7 @@ const Overview = (props: any) => {
                                                     }
                                                 }
                                             },
+                                            ...programCol,
                                             {
                                                 key: "Point",
                                                 title: "分数与详情",
