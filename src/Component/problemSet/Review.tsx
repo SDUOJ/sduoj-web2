@@ -21,6 +21,7 @@ const Review = (props: any) => {
     // 打分数据
     const [reviewInfo, setReviewInfo] = useState<any>({});
     const [judgeInfo, setJudgeInfo] = useState<any>({});
+    const [judgeComment, setJudgeComment] = useState<any>();
     const [vis, setVis] = useState<any>(false);
 
 
@@ -161,6 +162,7 @@ const Review = (props: any) => {
                                         }
                                         // console.log(res)
                                         setJudgeInfo(res)
+                                        setJudgeComment(res.judgeComment)
                                         setVis(true)
                                     })
                                 }}>开始打分</Button>
@@ -213,7 +215,7 @@ const Review = (props: any) => {
                     props.addTableVersion("problemSetSubjectiveJudgeList")
                 }}
                 footer={false}
-                destroyOnClose
+                destroyOnClose={true}
             >
                 <Row gutter={24}>
                     <Col span={14}>
@@ -230,6 +232,14 @@ const Review = (props: any) => {
                                     setReviewInfo={setReviewInfo}
                                     scoreModeInfo={judgeInfo.judgeConfig}
                                 />
+                                <Form layout={"vertical"} style={{marginBottom: 32}}>
+                                    <Form.Item label={"评阅备注"}>
+                                        <Input.TextArea value={judgeComment} onChange={(e)=>{
+                                            setJudgeComment(e.target.value)
+                                        }}/>
+                                    </Form.Item>
+                                </Form>
+
                                 <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
                                         type="primary" onClick={() => {
                                     if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
@@ -246,7 +256,8 @@ const Review = (props: any) => {
                                         gid: judgeInfo.gid,
                                         pid: judgeInfo.pid,
                                         username: judgeInfo.username,
-                                        judgeLog: res
+                                        judgeLog: res,
+                                        judgeComment: judgeComment
                                     }).then(() => {
                                         setVis(false)
                                         props.addTableVersion("problemSetSubjectiveJudgeList")

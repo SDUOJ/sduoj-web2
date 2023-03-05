@@ -5,8 +5,9 @@ import React, {useEffect, useState} from "react";
 
 const SubjectivePreview = (props: any) => {
     const [mxLength, setMxLength] = useState<any>(240);
+    const [show, setShow] = useState<boolean>(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         setMxLength(240)
     }, [props.description, props.answer])
 
@@ -31,13 +32,26 @@ const SubjectivePreview = (props: any) => {
                     />
                 </Card>
             </div>
-            <Card title={
-                <Title level={5}> 学生答案 </Title>
-            } style={{marginTop: 24}}>
-                <MarkdownText
-                    id={"userAnswer"}
-                    text={props?.answer?.[0]}
-                />
+            <Card
+                title={
+                    <Title level={5}> 学生答案 </Title>
+                }
+                style={{marginTop: 24}}
+                extra={<Button type={"default"} onClick={() => {
+                    setShow(!show)
+                }}>{show ? "显示渲染" : "显示原文"}</Button>}
+            >
+                {show && (
+                    <pre>
+                        {props?.answer?.[0]}
+                    </pre>
+                )}
+                {!show && (
+                    <MarkdownText
+                        id={"userAnswer"}
+                        text={props?.answer?.[0]}
+                    />
+                )}
             </Card>
         </>
     )

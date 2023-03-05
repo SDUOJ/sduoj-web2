@@ -19,6 +19,7 @@ import Timer from "../common/Timer";
 import Subjective from "../problem/Subjective/Subjective";
 import Reconfirm from "../common/Reconfirm";
 import dealFloat from "../../Utils/dealFloat";
+import {TimeRangeState} from "../../Utils/Time";
 
 const Problem = (props: any) => {
     const psid = props.match.params.problemSetId
@@ -47,10 +48,17 @@ const Problem = (props: any) => {
     }
 
     useEffect(() => {
-        document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
-            e = e || window.event;
-            return false;
-        };
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        // window.addEventListener('keydown', function(e) {
+        //     if (e.key === 'F12') {
+        //         e.preventDefault();
+        //     }
+        // }, false);
+        // window.addEventListener('contextmenu', function(e) {
+        //     e.preventDefault();
+        // }, false);
     })
 
     const GetProblemInfoAPI = () => {
@@ -97,7 +105,9 @@ const Problem = (props: any) => {
 
     return (
         <div style={{textAlign: "center", margin: "0 auto"}}>
-            <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
+            <div style={{
+                textAlign: "left", maxWidth: "1500px", margin: "0 auto", userSelect: "none"
+            }}>
                 <Row gutter={20} style={{marginTop: "24px"}}>
                     <Col span={17}>
                         <Card title={
@@ -157,12 +167,14 @@ const Problem = (props: any) => {
                                             />
                                         )
                                     case 1:
+                                        const timeState_running = TimeRangeState(problemSetInfo.tm_start, problemSetInfo.tm_end)
                                         return (
                                             <Subjective
                                                 problemInfo={problemInfo}
                                                 onAnswerM={submitAPI}
                                                 getAS={getAs}
                                                 key_o={`sbjective-${psid}-${gid}-${pid}`}
+                                                finish={timeState_running === "end"}
                                             />
                                         )
                                     case 0:
