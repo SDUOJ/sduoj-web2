@@ -3,18 +3,10 @@ import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {withRouter} from "react-router-dom";
-// @ts-ignore
-// import VditorPreview from 'vditor/dist/method.min'
-import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
+import MarkdownText from "../../../Utils/MarkdownText";
 
 
 const Options = (props: any) => {
-
-    useEffect(() => {
-        if (props.ChoiceContent !== undefined) {
-            MarkdownPreview("Options-content-id-" + props.ChoiceID, props.ChoiceContent)
-        }
-    }, [props.ChoiceContent])
 
     let OptionsState = ""
     if (props.answer.orgAnswer.includes(props.ChoiceID)) OptionsState = "used"
@@ -36,8 +28,7 @@ const Options = (props: any) => {
                     {props.ChoiceID}.
                 </Col>
                 <Col className={"Options-content"} span={22}>
-                    <div id={"Options-content-id-" + props.ChoiceID}>
-                    </div>
+                    <MarkdownText id={"Options-content-id-" + props.ChoiceID} text={props.ChoiceContent}/>
                 </Col>
             </Row>
         </div>

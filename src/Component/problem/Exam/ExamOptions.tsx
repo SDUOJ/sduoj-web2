@@ -4,11 +4,9 @@ import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {connect, useSelector} from "react-redux";
 import {withRouter} from "react-router-dom";
-// @ts-ignore
-// import VditorPreview from 'vditor/dist/method.min'
-import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 import {isValueEmpty} from "../../../Utils/empty";
 import {updateChoiceTodo} from "../../../Redux/Action/exam";
+import MarkdownText from "../../../Utils/MarkdownText";
 
 
 const ExamOptions = (props: any) => {
@@ -22,12 +20,6 @@ const ExamOptions = (props: any) => {
             return state.ExamReducer.examAnswerSheetInfo[`${eid}_${gid}`][pid]
         return undefined
     })
-
-    useEffect(() => {
-        if (props.ChoiceContent !== undefined) {
-            MarkdownPreview("Options-content-id-" + props.ChoiceID, props.ChoiceContent)
-        }
-    }, [props.ChoiceContent])
 
 
     let OptionsState = ""
@@ -59,8 +51,7 @@ const ExamOptions = (props: any) => {
                     {props.ChoiceID}.
                 </Col>
                 <Col className={"Options-content"} span={22}>
-                    <div id={"Options-content-id-" + props.ChoiceID}>
-                    </div>
+                    <MarkdownText id={"Options-content-id-" + props.ChoiceID} text={props.ChoiceContent}/>
                 </Col>
             </Row>
         </div>

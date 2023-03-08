@@ -1,10 +1,12 @@
 import {MarkdownPreview} from "./MarkdownPreview";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import {isValueEmpty} from "./empty";
 
 const MarkdownText = (props: any) => {
-
     useEffect(() => {
-        MarkdownPreview(props.id, props.text)
+        if (!isValueEmpty(props.text)) {
+            MarkdownPreview(props.text, props.id)
+        }
     }, [props.id, props.text])
 
     return (

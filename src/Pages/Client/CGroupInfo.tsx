@@ -2,7 +2,6 @@ import {withRouter} from "react-router-dom";
 import {Card, Tabs, Tag} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import cApi from "Utils/API/c-api"
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import Title from "antd/es/typography/Title";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
@@ -13,6 +12,7 @@ import {CommonState} from "../../Redux/Action/common";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
 import ProblemSetList from "../../Component/problemSet/ProblemSetList";
 import {useTranslation} from "react-i18next";
+import MarkdownText from "../../Utils/MarkdownText";
 
 
 const CGroupInfo = (props: any) => {
@@ -31,7 +31,6 @@ const CGroupInfo = (props: any) => {
 
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
-            MarkdownPreview("AnnouncementMD", isValueEmpty(value.markdown) ? t("notAvailable") : value.markdown)
         })
         const act = keyValueData_g
         if (act !== undefined)
@@ -97,8 +96,9 @@ const CGroupInfo = (props: any) => {
                                 props.setKeyValueData("Group-C-activeKey-" + groupId, atk)
                             }}>
                                 <Tabs.TabPane tab={t("Announcement")} key="Announcement">
-                                    <div id={"AnnouncementMD"}>
-                                    </div>
+                                    <MarkdownText
+                                        id={"AnnouncementMD"}
+                                        text={isValueEmpty(groupInfo.markdown) ? t("notAvailable") : groupInfo.markdown}/>
                                 </Tabs.TabPane>
                                 {!isValueEmpty(psTabItems) && psTabItems.length !== 0 && (
                                     <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">

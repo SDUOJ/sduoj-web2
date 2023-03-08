@@ -197,7 +197,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             <Card bordered={false} className={"problemBody"}>
                 {props.showMdExport === true && (
                     <div style={{right: "24px", position: "absolute"}}>
-                        <><MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription}/></>
+                        <MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription}/>
                     </div>
                 )}
                 <MarkdownText id={"problem-content"} text={problemInfo?.problemDescriptionDTO.markdownDescription}/>

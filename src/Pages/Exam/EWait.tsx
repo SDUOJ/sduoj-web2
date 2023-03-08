@@ -7,10 +7,10 @@ import {withRouter} from "react-router";
 import {TimeRangeState} from "../../Utils/Time";
 import LoginCheck from "../../Component/common/LoginCheck";
 import useExamInfo from "../../Component/exam/API/getExamInfo";
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import {isValueEmpty} from "../../Utils/empty";
 import {UrlPrefix} from "../../Config/constValue";
 import {getDescription} from "../../Component/exam/ExamUtils";
+import MarkdownText from "../../Utils/MarkdownText";
 
 const {Meta} = Card;
 
@@ -44,8 +44,6 @@ const EWait = (props: any) => {
 
     useEffect(() => {
         if (examInfo !== undefined) {
-            if (!isValueEmpty(examInfo.description))
-                MarkdownPreview("ExamDescription-content", examInfo.description)
             setExamState(TimeRangeState(examInfo.startTime, examInfo.endTime))
         }
     }, [examInfo, examState])
@@ -120,8 +118,7 @@ const EWait = (props: any) => {
                                     title={props.t("ExamDescription")}
                                     description={
                                         <>
-                                            <div id={"ExamDescription-content"}>
-                                            </div>
+                                            <MarkdownText id={"ExamDescription-content"} text={examInfo.description}/>
                                         </>
                                     } className={"exam-wait-tip"}/>
                             )}

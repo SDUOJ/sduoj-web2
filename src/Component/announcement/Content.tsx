@@ -4,8 +4,8 @@ import moment from 'moment';
 // import {DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
 import UserAvatar from "../user/Avatar";
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import CApi from "Utils/API/c-api"
+import MarkdownText from "../../Utils/MarkdownText";
 
 const ANCContent = (props: any) => {
 
@@ -61,6 +61,7 @@ const ANCContent = (props: any) => {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>();
     const [time, setTime] = useState<number>(Date.now());
+    const [text, setText] = useState<number>(Date.now());
 
     useEffect(() => {
         if (props.id !== 0) {
@@ -68,7 +69,7 @@ const ANCContent = (props: any) => {
                 setEmail(data.email);
                 setUsername(data.username)
                 setTime(parseInt(data.gmtCreate))
-                MarkdownPreview("markdownPreview", data.text)
+                setText(data.text)
             })
         }
     }, [props.id])
@@ -81,8 +82,7 @@ const ANCContent = (props: any) => {
                 author={username !== undefined ? username : ""}
                 avatar={<UserAvatar email={email}/>}
                 content={
-                    <div id="markdownPreview" style={{overflowY: "hidden"}}>
-                    </div>
+                    <MarkdownText id={"markdownPreview"} text={text}/>
                 }
                 datetime={
                     <Tooltip title={moment(time).format('YYYY-MM-DD HH:mm:ss')}>

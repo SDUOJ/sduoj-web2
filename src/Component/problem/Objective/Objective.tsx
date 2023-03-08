@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
 import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
 import {withRouter} from "react-router-dom";
+import MarkdownText from "../../../Utils/MarkdownText";
 
 interface propType {
     key_o: string         // 题目索引名
@@ -17,10 +17,10 @@ const Objective = (props: propType & any) => {
 
     const [answerSheet, setAnswerSheet] = useState<any>(props.answerSheet)
 
-    useEffect(()=>{
-        if(props.answerSheet !== undefined){
+    useEffect(() => {
+        if (props.answerSheet !== undefined) {
             setAnswerSheet(props.answerSheet)
-        }else{
+        } else {
             updateAnswerSheet()
         }
     }, [props.key_o])
@@ -31,18 +31,10 @@ const Objective = (props: propType & any) => {
         })
     }
 
-
-    useEffect(() => {
-        if (props.problemInfo?.description !== undefined) {
-            MarkdownPreview("Choice-title-id" + props.key_o, props.problemInfo.description)
-        }
-    }, [props.problemInfo?.description])
-
-
     return (
         <div className={"Choice"}>
-            <div className={"Choice-title"} id={"Choice-title-id" + props.key_o}>
-
+            <div className={"Choice-title"}>
+                <MarkdownText id={"Choice-title-id" + props.key_o} text={props.problemInfo?.description}/>
             </div>
             {props.problemInfo?.choice !== undefined && (
                 props.problemInfo.choice.map((v: any, index: number) => {
@@ -85,11 +77,6 @@ interface ObjectiveOptionType {
 }
 
 const ObjectiveOption = (props: ObjectiveOptionType) => {
-    useEffect(() => {
-        if (props.content !== undefined) {
-            MarkdownPreview("Options-content-id-" + props.key_o, props.content)
-        }
-    }, [props.content])
 
     const SID = String.fromCharCode('A'.charCodeAt(0) + props.index)
 
@@ -122,8 +109,7 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
                         {SID}.
                     </Col>
                     <Col className={"Options-content"} span={22}>
-                        <div id={"Options-content-id-" + props.key_o}>
-                        </div>
+                        <MarkdownText id={"Options-content-id-" + props.key_o} text={props.content}/>
                     </Col>
                 </Row>
             </div>

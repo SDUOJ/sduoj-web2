@@ -3,7 +3,6 @@ import {withRouter} from "react-router-dom";
 import {Alert, Card, Col, Divider, Menu, Row, Slider, Space, Switch} from "antd";
 import React, {Dispatch, useEffect, useState} from "react";
 import getContestInfo from "./API/getContestInfo";
-import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 import {TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import Countdown from "antd/lib/statistic/Countdown";
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
@@ -16,6 +15,7 @@ import judgeAuth from "../../Utils/judgeAhtu";
 import {UrlPrefix} from "../../Config/constValue";
 import ExportExcel from "../common/ExportExcel";
 import exportRank from "./exportRank";
+import MarkdownText from "../../Utils/MarkdownText";
 
 const ContestHeader = (props: any) => {
 
@@ -34,13 +34,6 @@ const ContestHeader = (props: any) => {
         {name: "Status", link: UrlPrefix + "/contest/" + contestId + "/submission", re: /\/contest\/.*\/submission/g},
         {name: "Rank", link: UrlPrefix + "/contest/" + contestId + "/rank", re: /\/contest\/.*\/rank/g},
     ]
-
-
-    useEffect(() => {
-        if (contestInfo !== undefined && !isValueEmpty(contestInfo.markdownDescription)) {
-            MarkdownPreview("contest-markdownDescription", contestInfo.markdownDescription)
-        }
-    }, [contestInfo])
 
 
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
@@ -73,14 +66,14 @@ const ContestHeader = (props: any) => {
                 <>
                     {!isValueEmpty(contestInfo.markdownDescription)
                         && !isValueEmpty(contestInfo.markdownDescription.trim()) && (
-                        <Alert
-                            message={
-                                <div id={"contest-markdownDescription"}>
-                                </div>
-                            }
-                            type="info"
-                        />
-                    )}
+                            <Alert
+                                message={
+                                    <MarkdownText id={"contest-markdownDescription"}
+                                                  text={contestInfo.markdownDescription}/>
+                                }
+                                type="info"
+                            />
+                        )}
                     <Card style={{marginTop: 25}}>
                         <div className={"center"}>
                             <span style={{float: "left"}}>

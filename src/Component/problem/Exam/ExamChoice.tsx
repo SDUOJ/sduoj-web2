@@ -3,7 +3,7 @@ import {Skeleton} from "antd";
 import Options from "./ExamOptions";
 import {useSelector} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {MarkdownPreview} from "../../../Utils/MarkdownPreview";
+import MarkdownText from "../../../Utils/MarkdownText";
 
 
 const ExamChoice = (props: any) => {
@@ -16,19 +16,13 @@ const ExamChoice = (props: any) => {
         return state.ProblemReducer.ProblemInfo[`EXAM_${eid}_${gid}_${pid}`]
     })
 
-    useEffect(() => {
-        if (problemInfo?.description !== undefined) {
-            MarkdownPreview("Choice-title-id", problemInfo.description.content)
-        }
-    }, [problemInfo])
-
     const choice = problemInfo?.description?.choice
 
     return (
         <Skeleton active loading={problemInfo?.description === undefined}>
             <div className={"Choice"}>
-                <div className={"Choice-title"} id={"Choice-title-id"}>
-
+                <div className={"Choice-title"}>
+                    <MarkdownText id={"Choice-title-id"} text={problemInfo.description.content}/>
                 </div>
                 {choice !== undefined && (
                     Object.keys(choice).map((v: any) => {
