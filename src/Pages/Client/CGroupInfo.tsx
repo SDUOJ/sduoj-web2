@@ -98,7 +98,7 @@ const CGroupInfo = (props: any) => {
                                 <Tabs.TabPane tab={t("Announcement")} key="Announcement">
                                     <MarkdownText
                                         id={"AnnouncementMD"}
-                                        text={isValueEmpty(groupInfo.markdown) ? t("notAvailable") : groupInfo.markdown}/>
+                                        text={isValueEmpty(groupInfo?.markdown) ? t("notAvailable") : groupInfo?.markdown}/>
                                 </Tabs.TabPane>
                                 {!isValueEmpty(psTabItems) && psTabItems.length !== 0 && (
                                     <Tabs.TabPane tab={`${t("problemSet")}(${psSum}${t("point")})`} key="practice">

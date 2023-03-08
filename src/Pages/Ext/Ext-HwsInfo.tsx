@@ -378,7 +378,7 @@ const ExtHwsInfo = (props: any) => {
                                         && !isValueEmpty(data.description.trim()) && (
                                             <>
                                                 <Title level={4}> 收集说明 </Title>
-                                                <MarkdownText id={"ExtHwsInfo-description"} text={data.description}/>
+                                                <MarkdownText id={"ExtHwsInfo-description"} text={data?.description}/>
                                             </>
                                         )}
                                     <Title level={4} style={{marginTop: 24}}> 收集项列表 </Title>

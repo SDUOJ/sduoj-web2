@@ -51,7 +51,7 @@ const ExamOptions = (props: any) => {
                     {props.ChoiceID}.
                 </Col>
                 <Col className={"Options-content"} span={22}>
-                    <MarkdownText id={"Options-content-id-" + props.ChoiceID} text={props.ChoiceContent}/>
+                    <MarkdownText id={"Options-content-id-" + props.ChoiceID} text={props?.ChoiceContent}/>
                 </Col>
             </Row>
         </div>

@@ -7,7 +7,7 @@ const devHost = "https://oj.cs.sdu.edu.cn:3000"
 const host = process.env.NODE_ENV === 'development' ? devHost : runHost;
 
 export function MarkdownPreview(code: string | null | undefined, id: string) {
-    if (isValueEmpty(code)) code = ""
+    if (isValueEmpty(code) || isValueEmpty(code?.trim())) code = ""
     code = code?.replaceAll(/`{3}\n([-|0-9a-zA-Z])/g, "```plaintext\n$1")
     // 针对原本 $ 换行的公式，加以修正
     code = code?.replaceAll(/\$\n(.*)\n\$/g, "$ $1 $")

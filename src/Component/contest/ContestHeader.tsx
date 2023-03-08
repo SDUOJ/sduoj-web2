@@ -69,7 +69,7 @@ const ContestHeader = (props: any) => {
                             <Alert
                                 message={
                                     <MarkdownText id={"contest-markdownDescription"}
-                                                  text={contestInfo.markdownDescription}/>
+                                                  text={contestInfo?.markdownDescription}/>
                                 }
                                 type="info"
                             />

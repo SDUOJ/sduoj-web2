@@ -100,7 +100,7 @@ const Subjective = (props: any) => {
                                             message={
                                                 <MarkdownText
                                                     id={`subjective-problem-answer-${index}`}
-                                                    text={config.answer}
+                                                    text={config?.answer}
                                                 />
                                             }
                                             type="success"

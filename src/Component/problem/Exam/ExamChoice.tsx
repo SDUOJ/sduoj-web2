@@ -22,7 +22,7 @@ const ExamChoice = (props: any) => {
         <Skeleton active loading={problemInfo?.description === undefined}>
             <div className={"Choice"}>
                 <div className={"Choice-title"}>
-                    <MarkdownText id={"Choice-title-id"} text={problemInfo.description.content}/>
+                    <MarkdownText id={"Choice-title-id"} text={problemInfo?.description.content}/>
                 </div>
                 {choice !== undefined && (
                     Object.keys(choice).map((v: any) => {

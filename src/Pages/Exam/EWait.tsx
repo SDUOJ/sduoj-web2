@@ -118,7 +118,7 @@ const EWait = (props: any) => {
                                     title={props.t("ExamDescription")}
                                     description={
                                         <>
-                                            <MarkdownText id={"ExamDescription-content"} text={examInfo.description}/>
+                                            <MarkdownText id={"ExamDescription-content"} text={examInfo?.description}/>
                                         </>
                                     } className={"exam-wait-tip"}/>
                             )}
