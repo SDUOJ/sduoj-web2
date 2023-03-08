@@ -35,16 +35,19 @@ const Submit = (props: SubmitPropsType & any) => {
     const [zipFileId, setZipFileId] = useState<string | undefined>()
 
     useEffect(() => {
-        form.resetFields()
-        const value: any = localStorage.getItem("SDUOJ-Last-Submit-JT");
-        if (!isValueEmpty(value) && props.JudgeTemplates !== undefined) {
-            const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
-            if (id !== -1) {
-                form.setFieldValue("JudgeTemplate", value)
-                setJudgeTemplateId(id)
+        if(SubmitModalVis){
+            form.resetFields()
+            const value: any = localStorage.getItem("SDUOJ-Last-Submit-JT");
+            if (!isValueEmpty(value) && props.JudgeTemplates !== undefined) {
+                const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
+                console.log("111", id)
+                if (id !== -1) {
+                    form.setFieldValue("JudgeTemplate", value)
+                    setJudgeTemplateId(id)
+                }
             }
         }
-    }, [props.JudgeTemplates, props.name])
+    }, [props.JudgeTemplates, props.name, SubmitModalVis])
 
     const CodeSubmit = () => {
         let gb_hide: any;
@@ -73,7 +76,7 @@ const Submit = (props: SubmitPropsType & any) => {
                 gb_hide && gb_hide()
                 setSubmitDisable(false)
             })
-        }).catch((err: any) => {
+        }).catch(() => {
             gb_hide && gb_hide()
             setSubmitDisable(false)
         })
@@ -164,7 +167,7 @@ const Submit = (props: SubmitPropsType & any) => {
                     <Form.Item name={"JudgeTemplate"} label={props.t("template")} rules={[{required: true}]}>
                         <Select
                             allowClear
-                            onChange={(value, option) => {
+                            onChange={(value) => {
                                 const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
                                 setJudgeTemplateId(id >= 0 ? id : undefined)
                             }}
@@ -225,7 +228,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                                         multiple={false}
                                                         accept={accept}
                                                         customRequest={(obj: any) => {
-                                                            obj.onSuccess((body: any) => {
+                                                            obj.onSuccess(() => {
                                                             })
                                                         }}
                                                         listType={"text"}
@@ -265,7 +268,7 @@ const Submit = (props: SubmitPropsType & any) => {
                                                 multiple={false}
                                                 accept={accept}
                                                 customRequest={(obj: any) => {
-                                                    obj.onSuccess((body: any) => {
+                                                    obj.onSuccess(() => {
                                                     })
                                                 }}
                                                 listType={"text"}
