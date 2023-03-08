@@ -40,7 +40,6 @@ const Submit = (props: SubmitPropsType & any) => {
             const value: any = localStorage.getItem("SDUOJ-Last-Submit-JT");
             if (!isValueEmpty(value) && props.JudgeTemplates !== undefined) {
                 const id = props.JudgeTemplates.findIndex((val: any) => val.id === value)
-                console.log("111", id)
                 if (id !== -1) {
                     form.setFieldValue("JudgeTemplate", value)
                     setJudgeTemplateId(id)
