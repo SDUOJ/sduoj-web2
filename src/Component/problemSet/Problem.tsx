@@ -47,20 +47,6 @@ const Problem = (props: any) => {
         if (proType === 2) return "不定项"
     }
 
-    useEffect(() => {
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
-        // window.addEventListener('keydown', function(e) {
-        //     if (e.key === 'F12') {
-        //         e.preventDefault();
-        //     }
-        // }, false);
-        // window.addEventListener('contextmenu', function(e) {
-        //     e.preventDefault();
-        // }, false);
-    })
-
     const GetProblemInfoAPI = () => {
         return cApi.getProblemSetProblem({
             router: {psid: psid, gid: gid, pid: pid},
