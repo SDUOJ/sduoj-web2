@@ -61,7 +61,7 @@ const ANCContent = (props: any) => {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>();
     const [time, setTime] = useState<number>(Date.now());
-    const [text, setText] = useState<number>(Date.now());
+    const [text, setText] = useState<any>();
 
     useEffect(() => {
         if (props.id !== 0) {
