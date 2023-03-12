@@ -59,10 +59,10 @@ const Processing = (props: IProcessingProp & any) => {
             else {
                 resData.checkpointResults = resData.checkpointResults.map((value: any) => {
                     return {
-                        RunningResult: value[0].toString(),
-                        Score: value[1],
-                        Time: value[2],
-                        Memory: value[3]
+                        RunningResult: value[1].toString(),
+                        Score: value[2],
+                        Time: value[3],
+                        Memory: value[4]
                     }
                 })
             }
@@ -121,23 +121,33 @@ const Processing = (props: IProcessingProp & any) => {
 
 
     const addCaseInfo = (data: any[]) => {
-        // 若测试点信息，不是当前界面的，直接忽略
-        if (data[0] !== props.submissionId) return
+        const submissionIdHex = data[0]
+        const submissionVersion = data[1]
+        const checkpointType = data[2]
+        const checkpointIndex = data[3]
+        const checkpointId = data[4]
+        const judgeResult = data[5]
+        const judgeScore = data[6]
+        const usedTime = data[7]
+        const usedMemory = data[8]
 
-        if (data[1] < 0) {  // 小于 0，同步测试点状态
-            setRunningState(data[1].toString())
+        // 若测试点信息，不是当前界面的，直接忽略
+        if (submissionIdHex !== props.submissionId) return
+
+        if (checkpointIndex < 0) {  // 小于 0，同步测试点状态
+            setRunningState(checkpointIndex.toString())
             // -1 表示评测结束
-            if (data[1] === -1) {
+            if (checkpointIndex === -1) {
                 getSubmissionInfo()
                 setWebSocketOpen(false)
             }
         } else { // 否则表示同步测试点信息
-            TestCaseStateList[data[1]] = {
-                caseIndex: data[1] + 1,
-                caseType: StateList.indexOf(SubmissionMap[data[2].toString()]),
-                caseScore: data[3],
-                caseTime: data[4],
-                caseMemory: data[5]
+            TestCaseStateList[checkpointIndex] = {
+                caseIndex: checkpointIndex + 1,
+                caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
+                caseScore: judgeScore,
+                caseTime: usedTime,
+                caseMemory: usedMemory
             }
             setTestCaseStateList([...TestCaseStateList])
         }

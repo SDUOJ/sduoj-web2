@@ -29,27 +29,36 @@ const SubmissionList = (props: any) => {
     const dataSource = ck(props.tableData[props.name]?.dataSource, [])
 
     const addCaseInfo = (data: any[]) => {
+
+        const submissionIdHex = data[0]
+        const submissionVersion = data[1]
+        const checkpointType = data[2]
+        const checkpointIndex = data[3]
+        const checkpointId = data[4]
+        const judgeResult = data[5]
+        const judgeScore = data[6]
+        const usedTime = data[7]
+        const usedMemory = data[8]
+
         let dt = dataSource
-        const Index = dt.findIndex((value: any) => value.submissionId === data[0])
+        const Index = dt.findIndex((value: any) => value.submissionId === submissionIdHex)
         if (Index === -1) return
-        if (data[1] < 0) {
-            dt[Index].result = data[1].toString()
-            if (data[1] === -1) {
-                if (data.length > 3) {
-                    dt[Index].result = data[2]
-                    dt[Index].score = data[3]
-                    dt[Index].usedTime = data[4]
-                    dt[Index].usedMemory = data[5]
-                }
+        if (checkpointIndex < 0) {
+            dt[Index].result = checkpointIndex.toString()
+            if (checkpointIndex === -1) {
+                dt[Index].result = judgeResult
+                dt[Index].score = judgeScore
+                dt[Index].usedTime = usedTime
+                dt[Index].usedMemory = usedMemory
             }
             // 检查还有没有未更新完的
             let runningNumber = 0
             for (const x of dt) if (parseInt(x.result) <= 0) runningNumber += 1
             if (runningNumber === 0) setWebSocketOpen(false)
         } else {
-            if (dt[Index].RunningStep < data[1] + 1) {
-                dt[Index].RunningStep = data[1] + 1
-                dt[Index].score += data[3]
+            if (dt[Index].RunningStep < checkpointIndex + 1) {
+                dt[Index].RunningStep = checkpointIndex + 1
+                dt[Index].score += judgeScore
             }
         }
         props.setDataSource(dt, props.name)
@@ -232,8 +241,8 @@ const SubmissionList = (props: any) => {
         )
     }
 
-    const API = (data: any)=>{
-        if("problemCode" in data && !isValueEmpty(data["problemCode"])){
+    const API = (data: any) => {
+        if ("problemCode" in data && !isValueEmpty(data["problemCode"])) {
             let v: string = data["problemCode"]
             if (v.length === 1) {
                 if (v.match(/^[a-z]$/) !== null) v = (v.charCodeAt(0) - 'a'.charCodeAt(0) + 1).toString()
