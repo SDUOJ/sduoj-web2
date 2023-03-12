@@ -287,7 +287,7 @@ const cApi = {
         return request.post("/ps/summary/summary", data)
     },
     // 获取榜单的题目预览数据
-    async getProblemSetProPreview(data: any){
+    async getProblemSetProPreview(data: any) {
         return request.post("/ps/summary/preview", data)
     },
     // 获取题单的标签列表
@@ -301,6 +301,20 @@ const cApi = {
     // 获取题单公开信息
     async getProblemSetPublic(data: any) {
         return request.post("/ps/problem_set/public", data)
+    },
+
+    //   ---- 公共数据集 -----
+    // 新增一个公共数据
+    async addPublicCheckpoints(data: any) {
+        return request.post("/problem/appendCheckpoints", data)
+    },
+    // 列出题目的检查点
+    async getPublicCheckpoints(data: { problemId: number }) {
+        return request.get("/problem/listCheckpoints", data)
+    },
+    // 删除题目的检查点
+    async delPublicCheckpoints(data: any) {
+        return request.post("/checkpoint/deleteCheckpoints", data)
     }
 }
 
