@@ -20,6 +20,7 @@ import Subjective from "../problem/Subjective/Subjective";
 import Reconfirm from "../common/Reconfirm";
 import dealFloat from "../../Utils/dealFloat";
 import {TimeRangeState} from "../../Utils/Time";
+import {isValueEmpty} from "../../Utils/empty";
 
 const Problem = (props: any) => {
     const psid = props.match.params.problemSetId
@@ -53,12 +54,17 @@ const Problem = (props: any) => {
         })
     }
     const SubmissionListAPI = (data: any) => {
-        return cApi.getProblemSetSubmissionList({
-            ...data,
-            router: {psid: psid, gid: gid, pid: pid},
-            username: props.username,
-            problemSetId: psid
-        })
+        if(!isValueEmpty(props.username)){
+            return cApi.getProblemSetSubmissionList({
+                ...data,
+                router: {psid: psid, gid: gid, pid: pid},
+                username: props.username,
+                problemSetId: psid
+            })
+        }else{
+            return Promise.reject("用户未登录")
+        }
+
     }
 
     const submitAPI = (data: any) => {

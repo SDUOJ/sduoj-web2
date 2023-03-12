@@ -19,17 +19,19 @@ const PSLayout = (props: any) => {
 
     useEffect(() => {
         window.addEventListener('resize', handleResize)
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'F12') {
+        if(process.env.NODE_ENV !== 'development'){
+            document.addEventListener('contextmenu', function (e) {
                 e.preventDefault();
-            }
-        }, false);
-        window.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        }, false);
+            });
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                }
+            }, false);
+            window.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            }, false);
+        }
         return () => {
             window.removeEventListener('resize', handleResize)
         }
