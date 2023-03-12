@@ -41,6 +41,9 @@ const CopiedButton = (props: any) => {
     )
 }
 
+const runHost = "https://oj.qd.sdu.edu.cn"
+const devHost = "https://oj.cs.sdu.edu.cn:3000"
+const host = process.env.NODE_ENV === 'development' ? devHost : runHost;
 const Editor = (props: EditorProps & any) => {
 
     const [vditors, setVditors] = useState<any>(undefined)
@@ -53,17 +56,13 @@ const Editor = (props: EditorProps & any) => {
             mode: "ir", //及时渲染模式
             placeholder: "支持 Markdown，支持 KaTex 公式\n表格插入一行：Ctrl+'+' \n表格插入一列：Ctrl+Shift+'+'",
             lang: props.langCode,
-            cdn: process.env.NODE_ENV === 'development' ?
-                "http://oj.cs.sdu.edu.cn:3000/vditor" :
-                "https://oj.qd.sdu.edu.cn/vditor",
+            cdn: host + "/vditor",
             outline: {
                 enable: false,
                 position: 'left',
             },
             hint: {
-                emojiPath: process.env.NODE_ENV === 'development' ?
-                    "http://oj.cs.sdu.edu.cn:3000/vditor/dist/images/emoji" :
-                    "https://oj.qd.sdu.edu.cn/vditor/dist/images/emoji"
+                emojiPath: host + "/vditor/dist/images/emoji",
             },
             preview: {
                 delay: 500,
