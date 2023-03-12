@@ -94,11 +94,11 @@ const mApi = {
     // ---------------------- 测试点相关 ----------------------
     // checkpoint单点上传
     uploadSingleCheckpoint: async function (data: checkPointData) {
-        return request.post('/manage/checkpoint/upload', data);
+        return request.post('/checkpoint/upload', data);
     },
     // checkpoint批量上传
     uploadCheckpointFiles: async function (data: any) {
-        return request.post('/manage/checkpoint/uploadFiles', data,
+        return request.post('/checkpoint/uploadFiles', data,
             {headers: {"Content-Type": "multipart/form-data"}}
         );
     },
