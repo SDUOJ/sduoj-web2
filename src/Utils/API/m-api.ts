@@ -371,7 +371,18 @@ const mApi = {
     },
     async editProblemSet(data: any) {
         return request.post("/ps/problem_set/edit", data)
+    },
+
+    // 公共数据集相关
+    // 更新公共数据集测试点信息
+    async updatePublicCheckpoints(data: any) {
+        return request.post("/manage/checkpoint/updateCheckpoints", data)
+    },
+    // 重新排序测试点
+    async reArrangeCheckpoints(data: any) {
+        return request.post("/manage/problem/rearrangeCheckpoints", data)
     }
+
 }
 
 export default mApi;
