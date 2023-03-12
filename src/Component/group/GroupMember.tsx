@@ -33,6 +33,7 @@ const GroupMember = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
 
     const addUserData = useRef<string[]>([])
+    const [addUserValue, setAdduserValue] = useState("")
 
     const updateTable = () => {
         props.addTableVersion("GroupList")
@@ -48,11 +49,11 @@ const GroupMember = (props: any) => {
             content: "加载中",
             duration: 0,
         })
-        MApi.updateGroup(d).then((res: any) => {
+        MApi.updateGroup(d).then(() => {
             hied && hied()
             setOwner(data)
             updateTable()
-        }).catch((e: any) => {
+        }).catch(() => {
             console.log("error")
         })
     }
@@ -68,7 +69,7 @@ const GroupMember = (props: any) => {
         MApi.getGroupDetail({groupId: props.groupId}).then((data: any) => {
             updateData(data.members)
             setOwner(data.owner)
-        }).catch((e: any) => {
+        }).catch(() => {
             console.log("error")
         })
     }
@@ -82,7 +83,7 @@ const GroupMember = (props: any) => {
             }),
             "status": status
         }
-        MApi.updateUserStatus(d).then((res: any) => {
+        MApi.updateUserStatus(d).then(() => {
             initData.map((v: any) => {
                 data.forEach((d: any) => {
                     v.status = v.userId === d.userId ? status : v.status
@@ -94,7 +95,7 @@ const GroupMember = (props: any) => {
             setMemberData(initData.filter((v: any) => v.status === 2))
             setApplyData(initData.filter((v: any) => v.status === 1))
             updateTable()
-        }).catch((e: any) => {
+        }).catch(() => {
             console.log("error")
         })
     }
@@ -105,10 +106,14 @@ const GroupMember = (props: any) => {
             "groupId": props.groupId,
             "usernames": addUserData.current
         }
-        MApi.addUsersToGroup(data).then((res: any) => {
+        MApi.addUsersToGroup(data).then(() => {
             getGroupDetail()
             updateTable()
-        }).catch((e: any) => {
+            // 提示成功并清除文本框内的数据
+            message.success("Success!")
+            setAdduserValue("")
+            addUserData.current = []
+        }).catch(() => {
             console.log("error in add user")
         })
     }
@@ -237,7 +242,9 @@ const GroupMember = (props: any) => {
                     <TextArea
                         onChange={(e) => {
                             addUserData.current = e.currentTarget.value.split(/,|，|\n| |\t/)
+                            setAdduserValue(e.currentTarget.value)
                         }}
+                        value={addUserValue}
                         cols={180}
                         rows={4}
                         placeholder={"将用户名用空格' ',TAB'\\t',换行'\\n'或逗号','分隔"}
