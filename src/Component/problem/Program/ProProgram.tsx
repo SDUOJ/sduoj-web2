@@ -12,6 +12,7 @@ import {isValueEmpty} from "../../../Utils/empty";
 import {TableState} from "../../../Type/ITable";
 import MD2export from "../../common/Md2export";
 import MarkdownText from "../../../Utils/MarkdownText";
+import PublicCheckpointsFormModal from "../../submission/publicCheckpoints/FormModal";
 
 interface ProProgramProps {
     // problemTitle: string       // 题目标题
@@ -40,6 +41,10 @@ interface ProProgramProps {
 
     ProblemInfo: any // 题目信息
     showMdExport: boolean
+    AddPublicCheckpointsAPI?: any
+    GetPublicCheckpointAPI?: any
+    DelPublicCheckpointAPI?: any
+    UpdPublicCheckpointAPI?: any
 }
 
 export const getJudgeStr = (judgeTemplates: JudgeTemplateAllType[]) => {
@@ -155,6 +160,16 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                         API={props.SubmissionListAPI}
                         QuerySubmissionAPI={props.QuerySubmissionAPI}
                     />
+                    {props.AddPublicCheckpointsAPI && props.GetPublicCheckpointAPI && (
+                        <PublicCheckpointsFormModal
+                            addPublicCheckpoints={props.AddPublicCheckpointsAPI}
+                            getPublicCheckpoints={props.GetPublicCheckpointAPI}
+                            delPublicCheckpoints={props.DelPublicCheckpointAPI}
+                            updPublicCheckpoints={props.UpdPublicCheckpointAPI}
+                            btnProps={{type: "default"}}
+                            title={problemInfo?.problemTitle}
+                        />
+                    )}
                 </Space>
             </div>
         </div>
@@ -195,7 +210,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             {ProgramHeader}
             {/*题目主干*/}
             <Card bordered={false} className={"problemBody"}>
-                {props.showMdExport === true && (
+                {props.showMdExport && (
                     <div style={{right: "24px", position: "absolute"}}>
                         <MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription}/>
                     </div>

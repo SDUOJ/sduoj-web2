@@ -11,6 +11,7 @@ import RecentSubmissionList from "../../Component/submission/SubmissionList/Rece
 import {getUrlParams} from "../../Utils/getUrlParams";
 import ProProgramDescription from "../../Component/problem/Program/ProProgramDescription";
 import useProblemInfo from "../../Component/problem/API/getProblemInfo";
+import mApi from "../../Utils/API/m-api";
 
 const CProblemInfo = (props: any) => {
 
@@ -65,6 +66,31 @@ const CProblemInfo = (props: any) => {
                                     }}
                                     SubmissionListAPI={SubmissionListAPI}
                                     QuerySubmissionAPI={QuerySubmissionAPI}
+                                    AddPublicCheckpointsAPI={(data: any) => {
+                                        return cApi.addPublicCheckpoints({
+                                            ...data,
+                                            problemId: problemInfo?.problemId
+                                        })
+                                    }}
+                                    GetPublicCheckpointAPI={
+                                        problemInfo?.problemId === undefined ? undefined : () => {
+                                            return cApi.getPublicCheckpoints({
+                                                problemId: problemInfo?.problemId
+                                            })
+                                        }
+                                    }
+                                    DelPublicCheckpointAPI={(data: any) => {
+                                        return cApi.delPublicCheckpoints({
+                                            ...data,
+                                            problemId: problemInfo?.problemId
+                                        })
+                                    }}
+                                    UpdPublicCheckpointAPI={(data: any) => {
+                                        return mApi.updatePublicCheckpoints({
+                                            ...data,
+                                            problemId: problemInfo?.problemId
+                                        })
+                                    }}
                                     scoreMod={"show"}
                                     testcaseMod={"show"}
                                     showInfo={false}
