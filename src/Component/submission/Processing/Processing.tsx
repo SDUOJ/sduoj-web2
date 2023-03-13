@@ -42,6 +42,8 @@ const Processing = (props: IProcessingProp & any) => {
 
     // 测试点当前评测状态
     const [TestCaseStateList, setTestCaseStateList] = useState<TestCaseProp[]>([])
+    const [PublicTestCaseStateList, setPublicTestCaseStateList] = useState<TestCaseProp[]>([])
+
     // 测试结果信息
     const [submissionInfo, setSubmissionInfo] = useState<submissionInfoType | undefined>()
 
@@ -51,24 +53,52 @@ const Processing = (props: IProcessingProp & any) => {
     // ws 发送的信息（在打开时，当前数据的变更将同步发送至 ws）
     const [webSocketQueryList, setWebSocketQueryList] = useState<string[]>([])
 
+    const preDealCheckpointSet = (resData: any, key: string) => {
+        if (resData[key] === null) resData[key] = []
+        else {
+            resData[key] = resData[key].map((value: any) => {
+                return {
+                    RunningResult: value[1].toString(),
+                    Score: value[2],
+                    Time: value[3],
+                    Memory: value[4],
+                    Index: value[0]
+                }
+            })
+        }
+    }
+    const initCaseData = (data: TestCaseProp[], num: number) => {
+        for (let i = 1; i <= num; i++) {
+            data.push({
+                caseIndex: i,
+                caseType: TestCaseStates.Pending,
+            })
+        }
+    }
+
+    const setCaseValue = (resData: any, key: string, data: TestCaseProp[]) => {
+        for (let i = 0; i < resData[key].length; i++) {
+            data.push({
+                caseIndex: i + 1,
+                caseType: StateList.indexOf(SubmissionMap[resData[key][i].RunningResult.toString()]),
+                caseScore: resData[key][i].Score,
+                caseTime: resData[key][i].Time,
+                caseMemory: resData[key][i].Memory,
+                caseID: resData[key][i].Index
+            })
+        }
+    }
 
     const getSubmissionInfo = () => {
         props.QuerySubmissionAPI(props.submissionId).then((resData: any) => {
             // 格式化当前测试点信息
-            if (resData.checkpointResults === null) resData.checkpointResults = []
-            else {
-                resData.checkpointResults = resData.checkpointResults.map((value: any) => {
-                    return {
-                        RunningResult: value[1].toString(),
-                        Score: value[2],
-                        Time: value[3],
-                        Memory: value[4]
-                    }
-                })
-            }
+            preDealCheckpointSet(resData, "checkpointResults")
+            preDealCheckpointSet(resData, "publicCheckpointResults")
+
             // 根据当前的结果，初始化测试点信息，且调整当前布局
             // 分 3 类分别处理： 1. 未评测完   2. 已评测完，但结果是编译错误或系统错误   3. 已评测完
             let TestCaseInit: TestCaseProp[] = []
+            let PublicTestCaseInit: TestCaseProp[] = []
             if (resData.judgeResult === 8 || resData.judgeResult === 5) {
                 // 当前状态为 系统错误 或 编译错误
                 setSubmissionInfo(resData)
@@ -78,14 +108,14 @@ const Processing = (props: IProcessingProp & any) => {
                 setRunningResult(resData.judgeResult.toString())
             } else if (resData.judgeResult <= 0) { // resData.checkpointResults.length === 0
                 // 当前还在等待状态
-                for (let i = 1; i <= resData.checkpointNum; i++) {
-                    TestCaseInit.push({
-                        caseIndex: i,
-                        caseType: TestCaseStates.Pending,
-                    })
-                }
+                initCaseData(TestCaseInit, resData.checkpointNum)
+                initCaseData(PublicTestCaseInit, resData.publicCheckpointNum)
+
                 setSubmissionInfo(resData)
+
                 setTestCaseStateList(TestCaseInit)
+                setPublicTestCaseStateList(PublicTestCaseInit)
+
                 setCurrentStep(1)
                 setShowStep(1)
                 setRunningState(resData.judgeResult === 0 ? "-4" : resData.judgeResult.toString())
@@ -93,19 +123,15 @@ const Processing = (props: IProcessingProp & any) => {
                 setWebSocketQueryList([resData.submissionId])
             } else {
                 // 当前状态为已完成评测
-                for (let i = 0; i < resData.checkpointResults.length; i++) {
-                    TestCaseInit.push({
-                        caseIndex: i + 1,
-                        caseType: StateList.indexOf(SubmissionMap[resData.checkpointResults[i].RunningResult.toString()]),
-                        caseScore: resData.checkpointResults[i].Score,
-                        caseTime: resData.checkpointResults[i].Time,
-                        caseMemory: resData.checkpointResults[i].Memory
-                    })
-                }
+                setCaseValue(resData, "checkpointResults", TestCaseInit)
+                setCaseValue(resData, "publicCheckpointResults", PublicTestCaseInit)
+
                 // 评测已经结束后，当编译信息为空时，显示编译成功
                 if (isValueEmpty(resData.judgeLog)) resData.judgeLog = props.t("CompileSuccess")
                 setSubmissionInfo(resData)
                 setTestCaseStateList(TestCaseInit)
+                setPublicTestCaseStateList(PublicTestCaseInit)
+
                 setCurrentStep(2)
                 setShowStep(2)
                 setRunningState("-1")
@@ -142,14 +168,26 @@ const Processing = (props: IProcessingProp & any) => {
                 setWebSocketOpen(false)
             }
         } else { // 否则表示同步测试点信息
-            TestCaseStateList[checkpointIndex] = {
-                caseIndex: checkpointIndex + 1,
-                caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
-                caseScore: judgeScore,
-                caseTime: usedTime,
-                caseMemory: usedMemory
+            if (checkpointType === 0) {
+                TestCaseStateList[checkpointIndex] = {
+                    caseIndex: checkpointIndex + 1,
+                    caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
+                    caseScore: judgeScore,
+                    caseTime: usedTime,
+                    caseMemory: usedMemory
+                }
+                setTestCaseStateList([...TestCaseStateList])
+            } else if (checkpointType === 1) {
+                PublicTestCaseStateList[checkpointIndex] = {
+                    caseIndex: checkpointIndex + 1,
+                    caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
+                    caseScore: judgeScore,
+                    caseTime: usedTime,
+                    caseMemory: usedMemory
+                }
+                setPublicTestCaseStateList([...PublicTestCaseStateList])
             }
-            setTestCaseStateList([...TestCaseStateList])
+
         }
     }
 
@@ -210,6 +248,7 @@ const Processing = (props: IProcessingProp & any) => {
             content: (
                 <Running
                     TestCaseStateList={TestCaseStateList}
+                    PublicTestCaseStateList={PublicTestCaseStateList}
                     scoreMod={props.scoreMod}
                     testcaseMod={props.testcaseMod}
                     sumScore={props.sumScore}
@@ -229,6 +268,7 @@ const Processing = (props: IProcessingProp & any) => {
             content: (
                 <Summary
                     TestCaseStateList={TestCaseStateList}
+                    PublicTestCaseStateList={PublicTestCaseStateList}
                     scoreMod={props.scoreMod}
                     testcaseMod={props.testcaseMod}
                     sumScore={props.sumScore}

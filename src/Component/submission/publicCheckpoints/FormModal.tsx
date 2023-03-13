@@ -1,4 +1,4 @@
-import {Button, Card, Modal, Popconfirm, Space, Table, Tag} from "antd";
+import {Button, Card, message, Modal, Popconfirm, Space, Table, Tag} from "antd";
 import {useTranslation} from "react-i18next";
 import React, {useEffect, useState} from "react";
 import {unix2Time} from "../../../Utils/Time";
@@ -148,6 +148,9 @@ const PublicCheckpointsFormModal = (props: any) => {
                                                     props.delPublicCheckpoints({
                                                         type: 1,
                                                         checkpoints: [{checkpointId: row.checkpointId}]
+                                                    }).then(()=>{
+                                                        message.success("Delete success")
+                                                        updData()
                                                     })
                                                 }}
                                                 okText={t("yes")}

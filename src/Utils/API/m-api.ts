@@ -107,8 +107,8 @@ const mApi = {
         return request.get('/manage/checkpoint/list', {problemCode});
     },
     // 获取checkpoint详情
-    getCheckpointPreview: async function (checkpointId: number) {
-        return request.get('/manage/checkpoint/query', {checkpointId});
+    getCheckpointPreview: async function (checkpointId: string) {
+        return request.get('/checkpoint/query', {checkpointId});
     },
     // 全量更新题目的checkpoint
     updateProblemCheckpoints: async function (data: modifyProblemsCheckPoint) {
@@ -376,7 +376,7 @@ const mApi = {
     // 公共数据集相关
     // 更新公共数据集测试点信息
     async updatePublicCheckpoints(data: any) {
-        return request.post("/manage/checkpoint/updateCheckpoints", data)
+        return request.post("/manage/problem/updateCheckpoints", data)
     },
     // 重新排序测试点
     async reArrangeCheckpoints(data: any) {

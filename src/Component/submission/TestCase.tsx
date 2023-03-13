@@ -32,6 +32,7 @@ export interface TestCaseProp {
     append?: string
     textLevel?: number
     scoreMod?: displayType
+    caseID?: string
 }
 
 interface ITestCaseProp extends WithTranslation, TestCaseProp, ViewType {
@@ -196,7 +197,7 @@ class TestCase extends Component<ITestCaseProp, any> {
                     )
                 }
                 {
-                    this.props.caseScore !== undefined && this.props.scoreMod === "show" &&  (
+                    this.props.caseScore !== undefined && this.props.scoreMod === "show" && (
                         <>
                             <br/>
                             <Text strong>
@@ -209,20 +210,21 @@ class TestCase extends Component<ITestCaseProp, any> {
         ) : <></>
 
         return (
-            [''].map(() => {
-                switch (this.props.type) {
-                    case undefined:
-                    case "tag":
-                        return (
-                            <span
-                                onMouseEnter={() => {
-                                    this.setState({MouseIn: true})
-                                }}
-                                onMouseLeave={() => {
-                                    this.setState({MouseIn: false})
-                                }}
-                                className={"test-case-e"}
-                            >
+            <>
+                {[''].map(() => {
+                    switch (this.props.type) {
+                        case undefined:
+                        case "tag":
+                            return (
+                                <span
+                                    onMouseEnter={() => {
+                                        this.setState({MouseIn: true})
+                                    }}
+                                    onMouseLeave={() => {
+                                        this.setState({MouseIn: false})
+                                    }}
+                                    className={"test-case-e"}
+                                >
                                 <Popover content={content} visible={visible && this.state.MouseIn}
                                          zIndex={2001}>
                                     <Tag icon={CaseList[type].icon} color={CaseList[type].color}>
@@ -230,47 +232,47 @@ class TestCase extends Component<ITestCaseProp, any> {
                                     </Tag>
                                 </Popover>
                             </span>
-                        )
-                    case "tag-simple":
-                        return (
-                            <Tooltip title={CaseList[type].textAll}>
-                                <Tag color={CaseList[type].tagColor} className={"tag-simple"}>
-                                    {CaseList[type].text}
-                                </Tag>
-                            </Tooltip>
-                        )
+                            )
+                        case "tag-simple":
+                            return (
+                                <Tooltip title={CaseList[type].textAll}>
+                                    <Tag color={CaseList[type].tagColor} className={"tag-simple"}>
+                                        {CaseList[type].text}
+                                    </Tag>
+                                </Tooltip>
+                            )
 
-                    case "text":
-                        return (
-                            <Title
-                                level={ck(this.props.textLevel, 5)}
-                                type={CaseList[type].type}
-                                className={"TestCase-text"}
-                            >
-                                {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
-                            </Title>
-                        )
-                    case "index":
-                        return (
-                            <span
-                                onMouseEnter={() => {
-                                    this.setState({MouseIn: true})
-                                }}
-                                onMouseLeave={() => {
-                                    this.setState({MouseIn: false})
-                                }}
-                                className={"test-case"}
-                            >
+                        case "text":
+                            return (
+                                <Title
+                                    level={ck(this.props.textLevel, 5)}
+                                    type={CaseList[type].type}
+                                    className={"TestCase-text"}
+                                >
+                                    {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
+                                </Title>
+                            )
+                        case "index":
+                            return (
+                                <span
+                                    onMouseEnter={() => {
+                                        this.setState({MouseIn: true})
+                                    }}
+                                    onMouseLeave={() => {
+                                        this.setState({MouseIn: false})
+                                    }}
+                                    className={"test-case"}
+                                >
                                         <Popover content={content} visible={visible && this.state.MouseIn}
                                                  zIndex={2001}>
                                              <Tag color={CaseList[type].color}> #{this.props.caseIndex} </Tag>
                                         </Popover>
                                     </span>
-                        )
-                }
-                return undefined
-            })
-
+                            )
+                    }
+                    return undefined
+                })}
+            </>
         )
     }
 }
