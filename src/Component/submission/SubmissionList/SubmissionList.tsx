@@ -56,13 +56,33 @@ const SubmissionList = (props: any) => {
             for (const x of dt) if (parseInt(x.result) <= 0) runningNumber += 1
             if (runningNumber === 0) setWebSocketOpen(false)
         } else {
-            if (dt[Index].RunningStep < checkpointIndex + 1) {
-                dt[Index].RunningStep = checkpointIndex + 1
+            let nowID = 0
+            if (checkpointType === 0) {
+                nowID = checkpointIndex + 1
+            } else if (checkpointType === 1) {
+                nowID = dt[Index].checkpointNum + checkpointIndex + 1
+            }
+            if (dt[Index].RunningStep < nowID) {
+                dt[Index].RunningStep = nowID
                 dt[Index].score += judgeScore
             }
         }
         props.setDataSource(dt, props.name)
     }
+
+    const showSubmission = (record: any) => {
+        props.setTopSubmission(record.submissionId, {
+            title: record.problemTitle,
+            TimeLimit: record.timeLimit,
+            MemoryLimit: record.memoryLimit,
+            scoreMod: record.sumScore === undefined ? "disable" : "show",
+            sumScore: record.sumScore,
+            testcaseMod: "show",
+            QuerySubmissionAPI: props.QuerySubmissionAPI
+        })
+        props.setSubmissionModalVis(true)
+    }
+
     const columns = [
         {
             title: props.t("results"),
@@ -71,21 +91,16 @@ const SubmissionList = (props: any) => {
             render: (text: any, record: any) => {
                 return (
                     <div onClick={() => {
-                        props.setTopSubmission(record.submissionId, {
-                            title: record.problemTitle,
-                            TimeLimit: record.timeLimit,
-                            MemoryLimit: record.memoryLimit,
-                            scoreMod: record.sumScore === undefined ? "disable" : "show",
-                            sumScore: record.sumScore,
-                            testcaseMod: "show",
-                            QuerySubmissionAPI: props.QuerySubmissionAPI
-                        })
-                        props.setSubmissionModalVis(true)
+                        showSubmission(record)
                     }}>
                         <TestCase
                             type={"text"}
                             caseType={StateList.indexOf(SubmissionMap[text])}
-                            append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                            append={
+                                text === "-2" ?
+                                    "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")"
+                                    : ""
+                            }
                         />
                     </div>
 
@@ -119,18 +134,7 @@ const SubmissionList = (props: any) => {
             key: "submissionId",
             render: (text: any, record: any) => {
                 return <Button type={"link"} size={"small"} onClick={() => {
-                    props.setTopSubmission(record.submissionId, {
-                        title: record.problemTitle,
-                        TimeLimit: record.timeLimit,
-                        MemoryLimit: record.memoryLimit,
-                        scoreMod: record.sumScore === undefined ? "disable" : "show",
-                        sumScore: record.sumScore,
-                        testcaseMod: "show",
-                        QuerySubmissionAPI: props.QuerySubmissionAPI,
-                        RejudgeAPI: props.RejudgeAPI,
-                        InvalidateAPI: props.InvalidateAPI
-                    })
-                    props.setSubmissionModalVis(true)
+                    showSubmission(record)
                 }}>
                     {text}
                 </Button>
@@ -161,7 +165,11 @@ const SubmissionList = (props: any) => {
                 return <TestCase
                     type={"text"}
                     caseType={StateList.indexOf(SubmissionMap[text])}
-                    append={text === "-2" ? "(" + record.RunningStep + "/" + record.checkpointNum + ")" : ""}
+                    append={
+                        text === "-2" ?
+                            "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")" :
+                            ""
+                    }
                 />
             }
         },

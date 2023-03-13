@@ -15,7 +15,16 @@ import {Dispatch} from "react";
 
 const Running = (props: any) => {
     const {Step} = Steps
-    const {RunningState, RunningResult, submissionInfo, TestCaseStateList, scoreMod, testcaseMod} = props
+    const {
+        RunningState,
+        RunningResult,
+        submissionInfo,
+        TestCaseStateList,
+        PublicTestCaseStateList,
+        scoreMod,
+        testcaseMod
+    } = props
+
     const getRunningIcon = (w: RunningStateType) => {
         if (w === RunningState) return <LoadingOutlined/>
         return undefined
@@ -158,26 +167,31 @@ const Running = (props: any) => {
                 }
             </div>
 
-            {/*
-                显示测试点详细信息
-            */}
+            {/*显示测试点详细信息*/}
             <div style={{marginTop: "30px"}}>
                 {
                     (RunningState === "-2" || RunningState === "-1") &&     // 已经到达了测试点阶段
                     RunningResult !== "8" && RunningResult !== "5" &&       // 不是编译错误或系统错误
                     testcaseMod === "show" && TestCaseStateList.length !== 0 && (                             // 测试点设置为可显示
-                        [''].map(() => {
-                            return (
-                                <>
-                                    <Title level={4}> {props.t("TestCaseInfo")} </Title>
-                                    {
-                                        TestCaseStateList.map((value: any) => {
-                                            return <TestCase {...value} scoreMod={scoreMod}/>
-                                        })
-                                    }
-                                </>
-                            )
-                        })
+                        <>
+                            <div>
+                                <Title level={4}> {props.t("TestCaseInfo")} </Title>
+                                <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
+                                    {TestCaseStateList.map((value: any) => {
+                                        return <TestCase {...value} scoreMod={scoreMod}/>
+                                    })}
+                                </div>
+
+                            </div>
+                            <div style={{marginTop: 30}}>
+                                <Title level={4}> {props.t("PublicTestCaseInfo")} </Title>
+                                <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
+                                    {PublicTestCaseStateList.map((value: any) => {
+                                        return <TestCase {...value} scoreMod={scoreMod}/>
+                                    })}
+                                </div>
+                            </div>
+                        </>
                     )
                 }
             </div>

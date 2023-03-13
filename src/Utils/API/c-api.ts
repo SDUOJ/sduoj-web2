@@ -314,7 +314,7 @@ const cApi = {
     },
     // 删除题目的检查点
     async delPublicCheckpoints(data: any) {
-        return request.post("/checkpoint/deleteCheckpoints", data)
+        return request.post("/problem/deleteCheckpoints", data)
     }
 }
 

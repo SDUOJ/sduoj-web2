@@ -15,7 +15,7 @@ import {Dispatch} from "react";
 import judgeAuth from "../../../Utils/judgeAhtu";
 
 const Summary = (props: any) => {
-    const {TestCaseStateList, submissionInfo} = props
+    const {TestCaseStateList, submissionInfo, PublicTestCaseStateList} = props
     const getCaseInfo = () => {
         let scoreAC = 0, scoreSum = 0, mxTime: number = 0, mxMem: number = 0
         let SumTime = 0, SumMem = 0, firstUnACCaseNumber = undefined
@@ -51,7 +51,8 @@ const Summary = (props: any) => {
             <Title level={4}> {props.t("Overview")}</Title>
             <Row style={{marginBottom: 20}}>
                 <Col span={11}>
-                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>{props.t("judgingInformation")}</span>}>
+                    <Card size={"small"}
+                          title={<span style={{fontWeight: "bold"}}>{props.t("judgingInformation")}</span>}>
                         <Table
                             size={"small"}
                             pagination={false}
@@ -65,12 +66,12 @@ const Summary = (props: any) => {
                                                 caseType={StateList.indexOf(SubmissionMap[submissionInfo.judgeResult])}
                                             />
                                             {props.testcaseMod !== "disable" &&
-                                            info.firstUnACCaseNumber !== undefined &&
-                                            submissionInfo.judgeResult !== 99 && (
-                                                <span>
+                                                info.firstUnACCaseNumber !== undefined &&
+                                                submissionInfo.judgeResult !== 99 && (
+                                                    <span>
                                                     ({props.t("OnTestCase")}{info.firstUnACCaseNumber})
                                                 </span>
-                                            )}
+                                                )}
                                         </Space>
                                     )
                                 },
@@ -88,12 +89,16 @@ const Summary = (props: any) => {
                     </Card>
                 </Col>
                 <Col span={12} offset={1}>
-                    <Card size={"small"} title={<span style={{fontWeight: "bold"}}>{props.t("affiliateInformation")}</span>}>
+                    <Card size={"small"}
+                          title={<span style={{fontWeight: "bold"}}>{props.t("affiliateInformation")}</span>}>
                         <Table
                             size={"small"}
                             pagination={false}
                             dataSource={[
-                                {key: props.t("submitUser"), value: submissionInfo.username + " (ID: " + submissionInfo.userId + ")"},
+                                {
+                                    key: props.t("submitUser"),
+                                    value: submissionInfo.username + " (ID: " + submissionInfo.userId + ")"
+                                },
                                 {
                                     key: props.t("problemInformation"),
                                     value: submissionInfo.problemTitle + "(" + submissionInfo.problemCode + ")"
@@ -166,7 +171,8 @@ const Summary = (props: any) => {
                                                 <Title level={5} style={{color: "green"}}>{props.t("allPassed")}</Title>
                                             )}
                                             {info.AC !== info.SumAll && info.AC !== 0 && (
-                                                <Title level={5} style={{color: "orange"}}>{props.t("partiallyPassed")}</Title>
+                                                <Title level={5}
+                                                       style={{color: "orange"}}>{props.t("partiallyPassed")}</Title>
                                             )}
                                             {info.AC === 0 && (
                                                 <Title level={5} style={{color: "red"}}>{props.t("failed")}</Title>
@@ -246,7 +252,7 @@ const Summary = (props: any) => {
                                            suffix="MB"/>
                             </Col>
                         )}
-                        {(props.scoreMod === "disable" ||  props.sumScore === undefined) && (
+                        {(props.scoreMod === "disable" || props.sumScore === undefined) && (
                             <>
                                 <Col span={6} style={{margin: "auto"}}>
                                     <Statistic title={props.t("TotalRunningTime")}
@@ -266,17 +272,26 @@ const Summary = (props: any) => {
                 </Card>
             )}
             {props.testcaseMod === "show" &&
-            props.submissionInfo.judgeResult !== 99 &&
-            TestCaseStateList.length !== 0 && (
-                <>
-                    <Title level={4}> {props.t("JudgeResult")}</Title>
-                    <JudgeResult
-                        data={TestCaseStateList}
-                        scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
-                        sumScore={props.sumScore}
-                    />
-                </>
-            )}
+                props.submissionInfo.judgeResult !== 99 &&
+                TestCaseStateList.length !== 0 && (
+                    <>
+                        <Title level={4}> {props.t("JudgeResult")}</Title>
+                        <JudgeResult
+                            useDownload={false}
+                            title={props.t("evaluationDataSet")}
+                            data={TestCaseStateList}
+                            scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
+                            sumScore={props.sumScore}
+                        />
+                        <JudgeResult
+                            useDownload={true}
+                            title={props.t("publicDataSet")}
+                            data={PublicTestCaseStateList}
+                            scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
+                            sumScore={props.sumScore}
+                        />
+                    </>
+                )}
         </>
     )
 }
