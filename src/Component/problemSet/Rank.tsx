@@ -175,6 +175,7 @@ const Rank = (props: any) => {
                 )
             }
         })
+        tableWidth += 150
     }
 
     return (
