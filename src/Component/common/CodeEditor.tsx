@@ -27,8 +27,6 @@ const langMap = {
 
 const CodeEditor = (props: ICodeEditor) => {
 
-    console.log(props.lang)
-
     return (
         <>
             <CodeMirror

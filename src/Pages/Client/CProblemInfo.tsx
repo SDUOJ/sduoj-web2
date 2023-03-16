@@ -51,50 +51,50 @@ const CProblemInfo = (props: any) => {
                     <Row gutter={20}>
                         <Col span={17}>
                             <Card size={"small"}>
-                                <ProProgram
-                                    showMdExport={true}
-                                    name={problemCode}
-                                    nameWithD={nameWithD}
-                                    GetProblemInfoAPI={GetProblemInfoAPI}
-                                    SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
-                                        return cApi.submit({
-                                            judgeTemplateId: judgeTemplate,
-                                            code: code,
-                                            problemCode: problemCode,
-                                            zipFileId: zipId
-                                        })
-                                    }}
-                                    SubmissionListAPI={SubmissionListAPI}
-                                    QuerySubmissionAPI={QuerySubmissionAPI}
-                                    AddPublicCheckpointsAPI={(data: any) => {
-                                        return cApi.addPublicCheckpoints({
-                                            ...data,
-                                            problemId: problemInfo?.problemId
-                                        })
-                                    }}
-                                    GetPublicCheckpointAPI={
-                                        problemInfo?.problemId === undefined ? undefined : () => {
+                                {problemInfo && (
+                                    <ProProgram
+                                        showMdExport={true}
+                                        name={problemCode}
+                                        nameWithD={nameWithD}
+                                        GetProblemInfoAPI={GetProblemInfoAPI}
+                                        SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
+                                            return cApi.submit({
+                                                judgeTemplateId: judgeTemplate,
+                                                code: code,
+                                                problemCode: problemCode,
+                                                zipFileId: zipId
+                                            })
+                                        }}
+                                        SubmissionListAPI={SubmissionListAPI}
+                                        QuerySubmissionAPI={QuerySubmissionAPI}
+                                        AddPublicCheckpointsAPI={(data: any) => {
+                                            return cApi.addPublicCheckpoints({
+                                                ...data,
+                                                problemId: problemInfo?.problemId
+                                            })
+                                        }}
+                                        GetPublicCheckpointAPI={() => {
                                             return cApi.getPublicCheckpoints({
                                                 problemId: problemInfo?.problemId
                                             })
-                                        }
-                                    }
-                                    DelPublicCheckpointAPI={(data: any) => {
-                                        return cApi.delPublicCheckpoints({
-                                            ...data,
-                                            problemId: problemInfo?.problemId
-                                        })
-                                    }}
-                                    UpdPublicCheckpointAPI={(data: any) => {
-                                        return mApi.updatePublicCheckpoints({
-                                            ...data,
-                                            problemId: problemInfo?.problemId
-                                        })
-                                    }}
-                                    scoreMod={"show"}
-                                    testcaseMod={"show"}
-                                    showInfo={false}
-                                />
+                                        }}
+                                        DelPublicCheckpointAPI={(data: any) => {
+                                            return cApi.delPublicCheckpoints({
+                                                ...data,
+                                                problemId: problemInfo?.problemId
+                                            })
+                                        }}
+                                        UpdPublicCheckpointAPI={(data: any) => {
+                                            return mApi.updatePublicCheckpoints({
+                                                ...data,
+                                                problemId: problemInfo?.problemId
+                                            })
+                                        }}
+                                        scoreMod={"show"}
+                                        testcaseMod={"show"}
+                                        showInfo={false}
+                                    />
+                                )}
                             </Card>
                         </Col>
                         <Col span={7}>
