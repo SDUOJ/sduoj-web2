@@ -3,9 +3,9 @@ import {useTranslation} from "react-i18next";
 import React, {useEffect, useState} from "react";
 import {unix2Time} from "../../../Utils/Time";
 import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
-import FormCheckPointsUpload from "../../problem/From/FormCheckPointsUpload";
 import mApi from "../../../Utils/API/m-api";
 import {DeleteOutlined, DownloadOutlined} from "@ant-design/icons";
+import UploadForm from "./UploadForm";
 
 const PublicCheckpointsFormModal = (props: any) => {
 
@@ -16,11 +16,11 @@ const PublicCheckpointsFormModal = (props: any) => {
     const [load, setLoad] = useState<boolean>(false)
 
     const updData = () => {
-        if(load) return
+        if (load) return
         setLoad(true)
         props.getPublicCheckpoints().then((res: any) => {
             setData(res)
-        }).finally(()=>{
+        }).finally(() => {
             setLoad(false)
         })
     }
@@ -38,10 +38,8 @@ const PublicCheckpointsFormModal = (props: any) => {
     }
 
     useEffect(() => {
-        if (props.getPublicCheckpoints !== undefined) {
-            updData()
-        }
-    }, [props.getPublicCheckpoints])
+        updData()
+    }, [])
 
     return (
         <>
@@ -73,27 +71,21 @@ const PublicCheckpointsFormModal = (props: any) => {
                             btnType={"default"}
                             title={"新增测试点"}
                             subForm={[
-                                {component: <FormCheckPointsUpload/>, label: ""},
+                                {component: <UploadForm/>, label: ""},
                             ]}
                             dataSubmitter={(value: any) => {
-                                if (value.type === "s") {
-                                    return mApi.uploadSingleCheckpoint(value)
-                                } else if (value.type === "m") {
-                                    const formData = new FormData();
-                                    for (let file of value.files)
-                                        formData.append('files', file);
-                                    formData.append("mode", value.mode)
-                                    return mApi.uploadCheckpointFiles(formData)
-                                }
+                                value.input = value.input ?? ""
+                                value.output = value.output ?? ""
+                                return mApi.uploadSingleCheckpoint(value).then((res: any) => {
+                                    let checkpointsData: any = []
+                                    checkpointsData.push({...res, note: value.note})
+                                    return Promise.resolve(checkpointsData)
+                                })
                             }}
-                            afterSubmit={(res: any) => {
-                                let newData = []
-                                if (Array.isArray(res)) {
-                                    for (let x of res) newData.push({...x})
-                                } else newData.push({...res})
+                            afterSubmit={(checkpointsData: any) => {
                                 props.addPublicCheckpoints({
                                     type: 1,
-                                    checkpoints: newData
+                                    checkpoints: checkpointsData
                                 }).then(() => {
                                     updData()
                                 })
@@ -106,6 +98,8 @@ const PublicCheckpointsFormModal = (props: any) => {
                         dataSource={data}
                         columns={[
                             {title: t("ID"), dataIndex: "checkpointId"},
+                            {title: t("InputPreview"), dataIndex: ["checkpoint", "inputPreview"]},
+                            {title: t("OutputPreview"), dataIndex: ["checkpoint", "outputPreview"]},
                             {
                                 title: t("Modify Time"),
                                 dataIndex: "gmtModified",
@@ -114,7 +108,6 @@ const PublicCheckpointsFormModal = (props: any) => {
                                 }
                             },
                             {title: t("owner"), dataIndex: "username"},
-
                             {title: t("note"), dataIndex: "note"},
                             {
                                 title: t("status"),
@@ -148,7 +141,7 @@ const PublicCheckpointsFormModal = (props: any) => {
                                                     props.delPublicCheckpoints({
                                                         type: 1,
                                                         checkpoints: [{checkpointId: row.checkpointId}]
-                                                    }).then(()=>{
+                                                    }).then(() => {
                                                         message.success("Delete success")
                                                         updData()
                                                     })
@@ -160,24 +153,27 @@ const PublicCheckpointsFormModal = (props: any) => {
                                                     <DeleteOutlined/>
                                                 </Button>
                                             </Popconfirm>
-                                            {row.status === 0 && (
-                                                <>
+                                            <>
+                                                {row.status !== 1 && (
                                                     <Button
                                                         type={"link"}
                                                         size={"small"}
                                                         onClick={() => upd(row.checkpointId, 1)}
                                                     >
-                                                        Accept
+                                                        {t("Accept")}
                                                     </Button>
+                                                )}
+                                                {row.status !== 2 && (
                                                     <Button
                                                         type={"link"}
                                                         size={"small"}
                                                         onClick={() => upd(row.checkpointId, 2)}
                                                     >
-                                                        Reject
+                                                        {t("Reject")}
                                                     </Button>
-                                                </>
-                                            )}
+                                                )}
+                                            </>
+
                                         </Space>
                                     )
                                 }

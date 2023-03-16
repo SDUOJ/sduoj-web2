@@ -283,13 +283,15 @@ const Summary = (props: any) => {
                             scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
                             sumScore={props.sumScore}
                         />
-                        <JudgeResult
-                            useDownload={true}
-                            title={props.t("publicDataSet")}
-                            data={PublicTestCaseStateList}
-                            scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
-                            sumScore={props.sumScore}
-                        />
+                        {PublicTestCaseStateList.length !== 0 && (
+                            <JudgeResult
+                                useDownload={true}
+                                title={props.t("publicDataSet")}
+                                data={PublicTestCaseStateList}
+                                scoreMod={props.sumScore === undefined ? "disable" : props.scoreMod}
+                                sumScore={props.sumScore}
+                            />
+                        )}
                     </>
                 )}
         </>

@@ -133,7 +133,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                     </div>
                 </>
             )}
-            <div style={{marginTop: "10px"}}>
+            <div style={{marginTop: "12px", marginBottom: "8px"}}>
                 <Space size={25}>
                     {props.SubmitAPI !== undefined && (
                         <Submit
@@ -160,16 +160,17 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                         API={props.SubmissionListAPI}
                         QuerySubmissionAPI={props.QuerySubmissionAPI}
                     />
-                    {props.AddPublicCheckpointsAPI && props.GetPublicCheckpointAPI && (
-                        <PublicCheckpointsFormModal
-                            addPublicCheckpoints={props.AddPublicCheckpointsAPI}
-                            getPublicCheckpoints={props.GetPublicCheckpointAPI}
-                            delPublicCheckpoints={props.DelPublicCheckpointAPI}
-                            updPublicCheckpoints={props.UpdPublicCheckpointAPI}
-                            btnProps={{type: "default"}}
-                            title={problemInfo?.problemTitle}
-                        />
-                    )}
+                    {problemInfo !== undefined && problemInfo.isAccepted !== 0
+                        && props.AddPublicCheckpointsAPI && props.GetPublicCheckpointAPI && (
+                            <PublicCheckpointsFormModal
+                                addPublicCheckpoints={props.AddPublicCheckpointsAPI}
+                                getPublicCheckpoints={props.GetPublicCheckpointAPI}
+                                delPublicCheckpoints={props.DelPublicCheckpointAPI}
+                                updPublicCheckpoints={props.UpdPublicCheckpointAPI}
+                                btnProps={{type: "default"}}
+                                title={problemInfo?.problemTitle}
+                            />
+                        )}
                 </Space>
             </div>
         </div>

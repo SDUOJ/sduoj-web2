@@ -306,5 +306,20 @@
   "exit": "Exit",
   "successfulExit": "Successful exit",
   "exitGroup": "Exit group",
-  "rejudging": "Rejudging"
+  "rejudging": "Rejudging",
+  "public checkpoints": "Public CheckPoints",
+  "Modify Time": "Modify Time",
+  "owner": "Owner",
+  "note": "Note",
+  "Edit checkpoints": "Edit checkpoints",
+  "Checkpoint List": "Checkpoint List",
+  "status": "Status",
+  "Wait": "Wait",
+  "Accept": "Accept",
+  "Reject": "Reject",
+  "InputPreview": "Input preview",
+  "OutputPreview": "Output preview",
+  "publicDataSet": "Public data set",
+  "DownloadFirstRejectCase": "Download First Reject Case",
+  "PublicTestCaseInfo": "Public test case info"
 }

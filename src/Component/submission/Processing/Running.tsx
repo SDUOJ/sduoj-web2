@@ -172,25 +172,29 @@ const Running = (props: any) => {
                 {
                     (RunningState === "-2" || RunningState === "-1") &&     // 已经到达了测试点阶段
                     RunningResult !== "8" && RunningResult !== "5" &&       // 不是编译错误或系统错误
-                    testcaseMod === "show" && TestCaseStateList.length !== 0 && (                             // 测试点设置为可显示
+                    testcaseMod === "show" && (                             // 测试点设置为可显示
                         <>
-                            <div>
-                                <Title level={4}> {props.t("TestCaseInfo")} </Title>
-                                <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
-                                    {TestCaseStateList.map((value: any) => {
-                                        return <TestCase {...value} scoreMod={scoreMod}/>
-                                    })}
-                                </div>
+                            {TestCaseStateList.length !== 0 && (
+                                <div>
+                                    <Title level={4}> {props.t("TestCaseInfo")} </Title>
+                                    <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
+                                        {TestCaseStateList.map((value: any) => {
+                                            return <TestCase {...value} scoreMod={scoreMod}/>
+                                        })}
+                                    </div>
 
-                            </div>
-                            <div style={{marginTop: 30}}>
-                                <Title level={4}> {props.t("PublicTestCaseInfo")} </Title>
-                                <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
-                                    {PublicTestCaseStateList.map((value: any) => {
-                                        return <TestCase {...value} scoreMod={scoreMod}/>
-                                    })}
                                 </div>
-                            </div>
+                            )}
+                            {PublicTestCaseStateList.length !== 0 && (
+                                <div style={{marginTop: 30}}>
+                                    <Title level={4}> {props.t("PublicTestCaseInfo")} </Title>
+                                    <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
+                                        {PublicTestCaseStateList.map((value: any) => {
+                                            return <TestCase {...value} scoreMod={scoreMod}/>
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </>
                     )
                 }

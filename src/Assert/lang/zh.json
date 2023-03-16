@@ -307,5 +307,20 @@
   "exit": "退出",
   "successfulExit": "退出成功",
   "exitGroup": "退出组",
-  "rejudging": "重测"
+  "rejudging": "重测",
+  "public checkpoints": "公共测试点",
+  "Modify Time": "修改时间",
+  "owner": "所有者",
+  "note": "备注",
+  "Edit checkpoints": "编辑测试点",
+  "Checkpoint List": "测试点列表",
+  "status": "状态",
+  "Wait": "等待",
+  "Accept": "接受",
+  "Reject": "驳回",
+  "InputPreview": "输入预览",
+  "OutputPreview": "输出预览",
+  "publicDataSet": "公开数据集",
+  "DownloadFirstRejectCase": "下载首个错误测试点",
+  "PublicTestCaseInfo": "公共测试点信息"
 }

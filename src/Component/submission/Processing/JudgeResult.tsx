@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Button, Card, Col, message, Progress, Row, Space, Tabs} from "antd";
+import {Button, Card, Col, Progress, Row, Space, Tabs} from "antd";
 import {WithTranslation, withTranslation} from "react-i18next";
 import TestCase, {TestCaseProp} from "../TestCase";
 import {displayType, StateList, TestCaseStates} from "../../../Type/ISubmission";
@@ -52,23 +52,24 @@ class JudgeResult extends Component<IJudgeResult, any> {
                 className={"card"}
                 extra={<>
                     {info.firstRejectId.length !== 0 && this.props.useDownload && (
-                        <Button type={"default"} size={"small"} onClick={() => {
+                        <Button type={"dashed"} size={"small"}  danger onClick={() => {
                             mApi.getCheckpointPreview(info.firstRejectId).then((checkpoint: any) => {
-                                message.error("TODO")
-                                // mApi.zipDownload([
-                                //     {
-                                //         id: checkpoint.inputFileId,
-                                //         downloadFilename: checkpoint.inputFilename ?? `${info.firstRejectId}.in`
-                                //     },
-                                //     {
-                                //         id: checkpoint.outputFileId,
-                                //         downloadFilename: checkpoint.outputFilename ?? `${info.firstRejectId}.out`
-                                //     }
-                                // ])
+                                // TODO 先查询积分是否足够，
+                                // 如果足够，直接扣除，并给作者增加积分
+                                mApi.zipDownload([
+                                    {
+                                        id: checkpoint.inputFileId,
+                                        downloadFilename: checkpoint.inputFilename ?? `${info.firstRejectId}.in`
+                                    },
+                                    {
+                                        id: checkpoint.outputFileId,
+                                        downloadFilename: checkpoint.outputFilename ?? `${info.firstRejectId}.out`
+                                    }
+                                ])
                             })
 
                         }}>
-                            {this.props.t("Download")}
+                            {this.props.t("DownloadFirstRejectCase")}
                         </Button>
                     )}
                 </>}
