@@ -182,7 +182,6 @@ const Review = (props: any) => {
                     return cApi.getJudgeList({psid: psid, ...data}).then((res: any) => {
                         if (autoNext === 1 && res.rows.length !== 0 && clickSubmit) {
                             for (let i = 0; i < res.rows.length; i++) {
-                                console.log(i, res.rows[i].hasJudge, res.rows[i])
                                 if (!res.rows[i].hasJudge) {
                                     start_review(res.rows[i])
                                     break
