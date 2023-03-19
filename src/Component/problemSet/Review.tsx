@@ -12,6 +12,7 @@ import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {UserState} from "../../Type/Iuser";
 import SubjectivePreview from "./SubjectivePreview";
+import SwitchX from "../common/Form/Item/SwitchX";
 
 
 const Review = (props: any) => {
@@ -23,13 +24,16 @@ const Review = (props: any) => {
     const [judgeInfo, setJudgeInfo] = useState<any>({});
     const [judgeComment, setJudgeComment] = useState<any>();
     const [vis, setVis] = useState<any>(false);
+    const [autoNext, setAutoNext] = useState<number>(0);
+    const [clickSubmit, setClickSubmit] = useState<boolean>(false);
 
 
     useEffect(() => {
-        setReviewInfo({})
-        setJudgeInfo({})
-        setVis(false)
-    }, [problemSetInfo])
+        if (vis === false) {
+            setReviewInfo({})
+            setJudgeInfo({})
+        }
+    }, [psid, vis])
 
     // console.log("review", reviewInfo)
 
@@ -105,6 +109,40 @@ const Review = (props: any) => {
         }
     }
 
+    const start_review = (rows: any) => {
+        cApi.getJudgeInfo({
+            psid: psid, gid: rows.gid, pid: rows.pid, username: rows.username
+        }).then((res: any) => {
+            for (let i = 0; i < res.judgeConfig.length; i++) {
+                const x = res.judgeConfig[i]
+                x.title = x.name
+                x.key = (i + 1).toString()
+            }
+            res.judgeConfig = {
+                key: "0",
+                score: 100,
+                children: res.judgeConfig
+            }
+            res.pid = rows.pid
+            res.gid = rows.gid
+            if (!isValueEmpty(res.judgeLog)) {
+                let sum = 0
+                let rs: any = {}
+                for (let i = 0; i < res.judgeLog.length; i++) {
+                    let x = res.judgeLog[i]
+                    rs[(i + 1).toString()] = x.jScore
+                    sum += x.jScore
+                }
+                rs["0"] = sum
+                setReviewInfo(rs)
+            }
+            // console.log(res)
+            setJudgeInfo(res)
+            setJudgeComment(res.judgeComment)
+            setVis(true)
+        })
+    }
+
     return (
         <div style={{marginTop: 24}} className={"ListPage"}>
             <TableWithPagination
@@ -134,44 +172,24 @@ const Review = (props: any) => {
                         title: "操作", key: "operator", render: (rows: any) => {
                             return (
                                 <Button type={"link"} onClick={() => {
-                                    cApi.getJudgeInfo({
-                                        psid: psid, gid: rows.gid, pid: rows.pid, username: rows.username
-                                    }).then((res: any) => {
-                                        for (let i = 0; i < res.judgeConfig.length; i++) {
-                                            const x = res.judgeConfig[i]
-                                            x.title = x.name
-                                            x.key = (i + 1).toString()
-                                        }
-                                        res.judgeConfig = {
-                                            key: "0",
-                                            score: 100,
-                                            children: res.judgeConfig
-                                        }
-                                        res.pid = rows.pid
-                                        res.gid = rows.gid
-                                        if (!isValueEmpty(res.judgeLog)) {
-                                            let sum = 0
-                                            let rs: any = {}
-                                            for (let i = 0; i < res.judgeLog.length; i++) {
-                                                let x = res.judgeLog[i]
-                                                rs[(i + 1).toString()] = x.jScore
-                                                sum += x.jScore
-                                            }
-                                            rs["0"] = sum
-                                            setReviewInfo(rs)
-                                        }
-                                        // console.log(res)
-                                        setJudgeInfo(res)
-                                        setJudgeComment(res.judgeComment)
-                                        setVis(true)
-                                    })
+                                    start_review(rows)
                                 }}>开始打分</Button>
                             )
                         }
                     }
                 ]}
                 API={(data: any) => {
-                    return cApi.getJudgeList({psid: psid, ...data}).then((res) => {
+                    return cApi.getJudgeList({psid: psid, ...data}).then((res: any) => {
+                        if (autoNext === 1 && res.rows.length !== 0 && clickSubmit) {
+                            for (let i = 0; i < res.rows.length; i++) {
+                                console.log(i, res.rows[i].hasJudge, res.rows[i])
+                                if (!res.rows[i].hasJudge) {
+                                    start_review(res.rows[i])
+                                    break
+                                }
+                            }
+                        }
+                        setClickSubmit(false)
                         return Promise.resolve(res)
                     })
                 }}
@@ -234,12 +252,17 @@ const Review = (props: any) => {
                                 />
                                 <Form layout={"vertical"} style={{marginBottom: 32}}>
                                     <Form.Item label={"评阅备注"}>
-                                        <Input.TextArea value={judgeComment} onChange={(e)=>{
+                                        <Input.TextArea value={judgeComment} onChange={(e) => {
                                             setJudgeComment(e.target.value)
                                         }}/>
                                     </Form.Item>
                                 </Form>
-
+                                <div style={{marginTop: 12, marginBottom: 12}}>
+                                    <Form.Item label={"自动打开下一个"}>
+                                        <SwitchX value={autoNext} onChange={setAutoNext} ck={"Auto Next"}
+                                                 unck={"Manual Next"}/>
+                                    </Form.Item>
+                                </div>
                                 <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
                                         type="primary" onClick={() => {
                                     if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
@@ -259,6 +282,7 @@ const Review = (props: any) => {
                                         judgeLog: res,
                                         judgeComment: judgeComment
                                     }).then(() => {
+                                        setClickSubmit(true)
                                         setVis(false)
                                         props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
