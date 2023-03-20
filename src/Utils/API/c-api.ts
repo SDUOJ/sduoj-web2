@@ -315,7 +315,20 @@ const cApi = {
     // 删除题目的检查点
     async delPublicCheckpoints(data: any) {
         return request.post("/problem/deleteCheckpoints", data)
-    }
+    },
+
+    // 新增一个公共数据
+    async addPsPublicCheckpoints(data: any) {
+        return request.post("/ps/answer_sheet/pbcp/add", data)
+    },
+    // 列出题目的检查点
+    async getPsPublicCheckpoints(data: any) {
+        return request.post("/ps/answer_sheet/pbcp/get", data)
+    },
+    // 删除题目的检查点
+    async delPsPublicCheckpoints(data: any) {
+        return request.post("/ps/answer_sheet/pbcp/del", data)
+    },
 }
 
 export default cApi;

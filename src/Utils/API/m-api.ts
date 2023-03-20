@@ -381,7 +381,16 @@ const mApi = {
     // 重新排序测试点
     async reArrangeCheckpoints(data: any) {
         return request.post("/manage/problem/rearrangeCheckpoints", data)
+    },
+    // 更新公共数据集测试点信息
+    async updatePsPublicCheckpoints(data: any) {
+        return request.post("/ps/answer_sheet/pbcp/upd", data)
+    },
+    // 重新排序测试点
+    async reArrangePsCheckpoints(data: any) {
+        return request.post("/ps/answer_sheet/pbcp/reArr", data)
     }
+
 
 }
 

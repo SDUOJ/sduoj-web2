@@ -21,6 +21,7 @@ import Reconfirm from "../common/Reconfirm";
 import dealFloat from "../../Utils/dealFloat";
 import {TimeRangeState} from "../../Utils/Time";
 import {isValueEmpty} from "../../Utils/empty";
+import mApi from "../../Utils/API/m-api";
 
 const Problem = (props: any) => {
     const psid = props.match.params.problemSetId
@@ -54,14 +55,14 @@ const Problem = (props: any) => {
         })
     }
     const SubmissionListAPI = (data: any) => {
-        if(!isValueEmpty(props.username)){
+        if (!isValueEmpty(props.username)) {
             return cApi.getProblemSetSubmissionList({
                 ...data,
                 router: {psid: psid, gid: gid, pid: pid},
                 username: props.username,
                 problemSetId: psid
             })
-        }else{
+        } else {
             return Promise.reject("用户未登录")
         }
 
@@ -94,6 +95,36 @@ const Problem = (props: any) => {
     const hasTimer = problemSetInfo !== undefined &&
         psType === 1 && problemSetInfo.config.useSameSE === 1 &&
         parseInt(problemSetInfo.tm_end) > Date.now()
+
+    let publicCheckPointAPI: any = {}
+
+    if (!hasTimer) {
+        publicCheckPointAPI = {
+            AddPublicCheckpointsAPI: (data: any) => {
+                return cApi.addPsPublicCheckpoints({
+                    data: data,
+                    router: {psid: psid, gid: gid, pid: pid},
+                })
+            },
+            GetPublicCheckpointAPI: () => {
+                return cApi.getPsPublicCheckpoints({
+                    router: {psid: psid, gid: gid, pid: pid}
+                })
+            },
+            DelPublicCheckpointAPI: (data: any) => {
+                return cApi.delPsPublicCheckpoints({
+                    data: data,
+                    router: {psid: psid, gid: gid, pid: pid},
+                })
+            },
+            UpdPublicCheckpointAPI: (data: any) => {
+                return mApi.updatePsPublicCheckpoints({
+                    data: data,
+                    router: {psid: psid, gid: gid, pid: pid},
+                })
+            }
+        }
+    }
 
     return (
         <div style={{textAlign: "center", margin: "0 auto"}}>
@@ -153,6 +184,7 @@ const Problem = (props: any) => {
                                                 }}
                                                 SubmissionListAPI={SubmissionListAPI}
                                                 QuerySubmissionAPI={QuerySubmissionAPI}
+                                                {...publicCheckPointAPI}
                                                 scoreMod={"show"}
                                                 testcaseMod={"show"}
                                                 showInfo={false}
