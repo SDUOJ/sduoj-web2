@@ -72,6 +72,19 @@ const ContestMFormManagement = (props: any) => {
                             )
                         }
                     },
+                    {
+                        title: "允许提交",
+                        render: (text: any, rows: any) => {
+                            return (
+                                <ItemSwitch01
+                                    InitValue={1}
+                                    name={["features", rows.type, "allowToSubmit"]}
+                                    ck={"允许"}
+                                    unck={"不允许"}
+                                />
+                            )
+                        }
+                    },
                 ]}
                 dataSource={[{name: "比赛进行中", type: "contestRunning"}, {name: "比赛结束后", type: "contestEnd"}]}
                 pagination={false}
