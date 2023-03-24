@@ -12,6 +12,7 @@ const exportRank = async (psid: any) => {
         const rankInfo = result.data
         let res: any = []
         for (const x of rankInfo) {
+            if (x.username === "sducs" || x.username === "superadmin") continue;
             let obj: any = {
                 "排名": x.rank,
                 "姓名": x.nickname,
