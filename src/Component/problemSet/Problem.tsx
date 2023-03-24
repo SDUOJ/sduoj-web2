@@ -38,6 +38,22 @@ const Problem = (props: any) => {
     const [flag, setFlag] = useState(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
     const [upd, setUpd] = useState(0)
 
+    useEffect(()=>{
+        if(process.env.NODE_ENV !== 'development'){
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+            });
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                }
+            }, false);
+            window.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            }, false);
+        }
+    })
+
     useEffect(() => {
         if (problemSetInfo && flag !== problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
             setFlag(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
