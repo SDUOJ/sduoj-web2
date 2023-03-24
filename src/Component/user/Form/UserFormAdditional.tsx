@@ -15,6 +15,10 @@ class UserFormAdditional extends Component<any, any> {
                     name={["features", "banEmailUpdate"]}
                     label={this.props.t("DisEmailUpd")}
                 />
+                <ItemSwitch
+                    name={["features", "banInfoUpdate"]}
+                    label={this.props.t("DisInfoUpd")}
+                />
             </>
         )
     }

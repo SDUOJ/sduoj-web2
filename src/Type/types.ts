@@ -35,7 +35,8 @@ export interface studentBasic {
     roles: rolesInString[],
     features?: {
         banThirdParty: any,
-        banEmailUpdate: any
+        banEmailUpdate: any,
+        banInfoUpdate: any
     }
 }
 
