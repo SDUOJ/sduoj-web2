@@ -51,6 +51,7 @@
   "passwordDifferent": "两次输入的密码不同！",
   "Dis3pLogin": "禁用第三方登录",
   "DisEmailUpd": "禁止邮箱更新",
+  "DisInfoUpd": "禁止用户信息更新",
   "ChangePass": "修改密码",
   "EditUser": "编辑用户",
   "AddUser": "添加用户",

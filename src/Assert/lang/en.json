@@ -51,6 +51,7 @@
   "passwordDifferent": "The two passwords that you entered do not match!",
   "Dis3pLogin": "Disable Third Part Login",
   "DisEmailUpd": "Disable Email Update",
+  "DisInfoUpd": "Disable Info Update",
   "ChangePass": "Change Password",
   "EditUser": "Edit User",
   "AddUser": "Add User",
