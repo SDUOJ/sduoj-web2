@@ -1,0 +1,13 @@
+@root-entry-name: 'default';
+@import (reference) '~antd/es/style/themes/index.less';
+
+@pro-layout-fixed-header-prefix-cls: ~'@{ant-prefix}-pro-fixed-header';
+
+.@{pro-layout-fixed-header-prefix-cls} {
+  z-index: 9;
+  width: 100%;
+
+  &-action {
+    transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+}
