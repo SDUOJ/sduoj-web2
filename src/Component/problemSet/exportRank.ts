@@ -24,7 +24,7 @@ const exportRank = async (psid: any) => {
             for (const y in x) {
                 if (y.indexOf("-") !== -1) {
                     obj[y + "-分数"] = x[y].s
-                    if (x[y].code !== undefined)
+                    if (isValueEmpty(x[y].code))
                         obj[y + "-代码"] = x[y].code.substr(0, 32766)
 
                 }
