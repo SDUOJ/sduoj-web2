@@ -100,7 +100,7 @@ class CUser extends Component<any, any> {
                                                     <SubmitButton
                                                         API={async () => {
                                                             return this.ref2.current?.validateFields().then((data: any) => {
-                                                                return CApi.updateProfile(data).then((res) => {
+                                                                return CApi.updatePassword(data).then((res) => {
                                                                     this.ref2.current?.resetFields()
                                                                     return Promise.resolve(this.props.t("success"))
                                                                 })

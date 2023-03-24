@@ -35,8 +35,11 @@ const cApi = {
     async getProfile() {
         return request.get("/user/getProfile")
     },
-    async updateProfile(data: profileInfo | updatePassWord) {
+    async updateProfile(data: profileInfo) {
         return request.post('/user/updateProfile', data)
+    },
+    async updatePassword(data: updatePassWord) {
+        return request.post('/user/updatePassword', data)
     },
     async updateEmail(data: any) {
         return request.post("/user/updateEmail", data)
