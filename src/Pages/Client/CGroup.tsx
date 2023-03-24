@@ -1,5 +1,5 @@
 import React from "react";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import {Card, Form, Input, List, Select, Space, Tag, Typography} from "antd";
 import cApi from "Utils/API/c-api"
 import {ClockCircleOutlined, UserOutlined} from "@ant-design/icons";
@@ -84,15 +84,13 @@ const CGroup = (props: any) => {
                                                 </>
                                             }
                                             title={
-                                                <a type={"text"} href={UrlPrefix + "/group/" + item.groupId}>
+                                                <Link to={UrlPrefix + "/group/" + item.groupId}>
                                                     <Typography.Title
                                                         level={5}
                                                         ellipsis={{rows: 1, tooltip: item.title}}
                                                         style={{marginBottom: 0}}
-                                                        onClick={() => {
-                                                            props.history.push(UrlPrefix + "/group/" + item.groupId)
-                                                        }}>{item.title}</Typography.Title>
-                                                </a>
+                                                    >{item.title}</Typography.Title>
+                                                </Link>
                                             }
                                             size={"small"}
                                             className={"GroupListItemCard"}
