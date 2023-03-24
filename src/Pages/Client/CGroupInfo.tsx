@@ -47,14 +47,14 @@ const CGroupInfo = (props: any) => {
                     children: <ProblemSetList groupId={groupId} tag={x}/>
                 })
             }
-            if (label.length !== 0) setPsActiveKey(label[0])
+            const act2 = keyValueData_ps
+            if (label.length !== 0) {
+                if (act2 !== undefined) setPsActiveKey(act2)
+                else setPsActiveKey(label[0])
+            }
             setPsTabItems(tb)
             setPsSum(res.sum);
         })
-
-        const act2 = keyValueData_ps
-        if (act2 !== undefined)
-            setPsActiveKey(act2)
 
     }, [groupId])
 
