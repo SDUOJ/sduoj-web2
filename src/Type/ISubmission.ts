@@ -53,8 +53,12 @@ export const StateList =
 
 export const langMap: any = {
     "C++11": "cpp",
+    "C++14": "cpp",
+    "C++17": "cpp",
+    "C++20": "cpp",
     "C11": "c",
     "Java8": "java",
+    "Java11": "java",
     "Python3": "python",
     "cpp11": "cpp"
 }
