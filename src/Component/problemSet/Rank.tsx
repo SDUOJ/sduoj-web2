@@ -121,6 +121,7 @@ const Rank = (props: any) => {
                                             type: 2,
                                             username: row.username,
                                             router: {psid: problemSetId, gid: x.index, pid: y.index},
+                                            router_submission: {psid: problemSetId, gid: -1, pid: -1},
                                             proName: `题组${x.index + 1} - ${x.name}`
                                         })
                                     }
@@ -215,7 +216,10 @@ const Rank = (props: any) => {
                             })
                         }}
                         QuerySubmissionAPI={async (submissionId: string) => {
-                            return cApi.getProblemSetSubmissionInfo({...ModalInfo.router, submissionId: submissionId})
+                            return cApi.getProblemSetSubmissionInfo({
+                                ...ModalInfo.router_submission,
+                                submissionId: submissionId
+                            })
                         }}
                     />
                 )}
