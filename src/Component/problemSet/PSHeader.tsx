@@ -1,5 +1,5 @@
-import {withRouter} from "react-router-dom";
-import {Card, Segmented} from "antd";
+import {Link, withRouter} from "react-router-dom";
+import {Button, Card, Segmented, Space} from "antd";
 import {isValueEmpty} from "../../Utils/empty";
 import MarkdownText from "../../Utils/MarkdownText";
 import React, {Dispatch, useEffect, useState} from "react";
@@ -9,6 +9,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {UserState} from "../../Type/Iuser";
 import PSTakePicture from "./PSTakePicture";
+import {LeftOutlined} from "@ant-design/icons";
 
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
@@ -71,11 +72,19 @@ const PSHeader = (props: any) => {
         <>
             {problemSetInfo !== undefined && (
                 <>
-                    <Card style={{marginTop: 25}} extra={
-                        <div style={{marginTop: 12}}>
-                            {/*<PSTakePicture/>*/}
-                        </div>
-                    }>
+                    <Card
+                        style={{marginTop: 25}}
+                        extra={
+                            <div style={{marginTop: 12}}>
+                                {/*<PSTakePicture/>*/}
+                            </div>
+                        }
+                        title={<>
+                            <Link to={UrlPrefix + `/group/${problemSetInfo.groupId}`}>
+                                <Button size={"small"} icon={<LeftOutlined/>}> 返回 </Button>
+                            </Link>
+                        </>}
+                    >
                         {problemSetInfo.config.useSameSE === 1 && (
                             <>
                                 <div style={{textAlign: "center"}}>
