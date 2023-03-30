@@ -40,7 +40,7 @@ const BodyChecker = (props: any) => {
             }else if(!isValueEmpty(initData.checkerConfig?.source)){
                 setSelectValue(initData.checkerConfig.source)
             }else{
-                setSelectValue(null);
+                setSelectValue("");
             }
         }
     }, [props.initData])
