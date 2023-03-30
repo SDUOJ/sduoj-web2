@@ -37,8 +37,10 @@ const BodyChecker = (props: any) => {
                 setSelectValue("@")
                 setSource(initData.checkerConfig.source)
                 setSpj(initData.checkerConfig.spj)
-            }else{
+            }else if(!isValueEmpty(initData.checkerConfig?.source)){
                 setSelectValue(initData.checkerConfig.source)
+            }else{
+                setSelectValue(null);
             }
         }
     }, [props.initData])
