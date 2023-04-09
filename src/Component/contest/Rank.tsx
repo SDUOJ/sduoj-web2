@@ -70,21 +70,26 @@ const Rank = (props: any) => {
                 const official = value.official
 
                 const convertValue = (value: any, proId: number) => {
-                    let color = "", score = undefined, minTim: any = undefined, className = ""
-                    if (value.length !== 0 && parseInt(value[0]) !== 0) {
+                    let color = "", score = 0, minTim: any = undefined, className = ""
+                    let tries = 0
+                    if (value.length !== 0) {
+                        // 已经有结果的情况
                         score = value[1]
                         sumScore += value[1] * problemInfo[proId].problemWeight
 
-                        color = "orange"
+                        if (contestInfo.features.mode === "acm") color = "red"
+                        else color = "orange"
+
                         if (value[2] === 1) color = "green"
                         if (value[1] === 0) color = "red"
 
                         // 统计数据
                         summaryInfo[`user_submit_${proId}`] += 1
+                        tries = value[3]
 
                         if (value[2] === 1) {
                             summaryInfo[`user_ac_${proId}`] += 1
-                            if (official === true) {
+                            if (official === true && parseInt(value[0]) !== 0) {
                                 summaryInfo[`first_ac_${proId}`] = Math.min(
                                     summaryInfo[`first_ac_${proId}`],
                                     parseInt(value[0])
@@ -92,22 +97,30 @@ const Rank = (props: any) => {
                             }
                             className = "accepted"
                             penalty += 20 * value[3]
-                            minTim = parseInt(value[0])
+                            if (parseInt(value[0]) !== 0) minTim = parseInt(value[0])
                             penalty += getDiffSecond(contestInfo.gmtStart, minTim) / 60
                             ACNumber += 1
-                        } else className = "rejected"
-                    }
-                    cell[`${proId + 1}`] = {
-                        color: color,
-                        score: score,
-                        minTime: minTim,
-                        tries: value[3] + (value[2] === 1),
-                        className: className
+
+                        } else if (value[4] !== 0) {
+                            className = "pending"
+                            tries -= value[4]
+                        } else {
+                            className = "rejected"
+                        }
+
+                        cell[`${proId + 1}`] = {
+                            color: color,
+                            score: score,
+                            minTime: minTim,
+                            tries: tries,
+                            pending: value[4],
+                            className: className
+                        }
                     }
                 }
 
                 if (value.submissions === null) {
-                    value.problemResults.map((value: any, index: number) => convertValue(value, index))
+                    value.problemResults.map((val: any, index: number) => convertValue(val, index))
                 } else {
                     const sliderTime = Math.max(props.sliderTime, parseInt(contestInfo.gmtStart))
 
@@ -126,7 +139,8 @@ const Rank = (props: any) => {
                                 score: -1,
                                 result: 0,
                                 submission: 0,
-                                submissionBeforeAC: 0
+                                submissionBeforeAC: 0,
+                                pending: 0
                             }
                         // 取最大的分数，分数相同，取最时间小的
                         const obj = proSet[proId]
@@ -140,6 +154,9 @@ const Rank = (props: any) => {
                             obj.score = sbm[2]
                             obj.result = sbm[3]
                         }
+                        // 统计当前没有结果的提交数量
+                        if (sbm[3] < 1) obj.pending += 1
+                        // 统计 AC 之前的提交数量
                         if (obj.result !== 1)
                             obj.submissionBeforeAC += 1
                         obj.submission += 1
@@ -150,8 +167,8 @@ const Rank = (props: any) => {
                             proSet[x].time.toString(),
                             proSet[x].score,
                             proSet[x].result,
-                            proSet[x].submissionBeforeAC,
-                            0
+                            proSet[x].submissionBeforeAC + (proSet[x].result === 1 ? 1 : 0),
+                            proSet[x].pending
                         ], parseInt(x) - 1)
                     }
                 }
@@ -301,7 +318,24 @@ const Rank = (props: any) => {
                                             &nbsp;&nbsp;
                                         </div>
                                     )}
-                                    <div>{SData.tries} {SData.tries === 1 ? "try" : "tries"}</div>
+                                    <div>
+                                        <span>
+                                            {SData.tries !== 0 && (
+                                                <span>{SData.tries}</span>
+                                            )}
+                                            {SData.pending !== 0 && (
+                                                <span>
+                                                    {SData.tries !== 0 && (
+                                                        <span>+</span>
+                                                    )}
+                                                    {SData.pending}
+                                                </span>
+                                            )}
+                                            &nbsp;{SData.tries + SData.pending <= 1 ? "try" : "tries"}
+                                        </span>
+
+
+                                    </div>
                                 </div>
                             )}
                         </div>
