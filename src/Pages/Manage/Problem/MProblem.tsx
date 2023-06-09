@@ -36,7 +36,12 @@ class MProblem extends Component<any, any> {
             if (value.judgeTemplates === null) value.judgeTemplates = []
             if (value.functionTemplates !== undefined) {
                 const functionTemplates: any = {}
-                for (const x of value.functionTemplates) functionTemplates[x.judgeTemplateId] = {...x}
+                for (const x of value.functionTemplates) {
+                    for(let y in x){
+                        if(x[y] === null) x[y] = ""
+                    }
+                    functionTemplates[x.judgeTemplateId] = {...x}
+                }
                 value.functionTemplates = functionTemplates
             }
             return value

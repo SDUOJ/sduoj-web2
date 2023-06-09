@@ -7,7 +7,7 @@ import {python} from '@codemirror/lang-python';
 
 
 interface ICodeEditor {
-    lang: "c" | "cpp" | "java" | "sql" | "python"
+    lang: "c" | "cpp" | "java" | "sql" | "python" | "text"
     code?: string
     value?: string
     className?: string
@@ -22,10 +22,15 @@ const langMap = {
     c: cpp,
     java: java,
     sql: sql,
-    python: python
+    python: python,
 }
 
 const CodeEditor = (props: ICodeEditor) => {
+
+    let extensions: any = []
+    if (props.lang !== "text") {
+        extensions = [(langMap[props.lang])()]
+    }
 
     return (
         <>
@@ -35,15 +40,13 @@ const CodeEditor = (props: ICodeEditor) => {
                 readOnly={props.readOnly ?? false}
                 theme={githubLight}
                 autoFocus={true}
-                extensions={[
-                    (langMap[props.lang])()
-                ]}
+                extensions={extensions}
                 basicSetup={{
                     lineNumbers: true,
                     autocompletion: true,
                     syntaxHighlighting: true,
                     tabSize: 4,
-                    completionKeymap:true,
+                    completionKeymap: true,
                     lintKeymap: true,
                     foldKeymap: true,
                     searchKeymap: true,
