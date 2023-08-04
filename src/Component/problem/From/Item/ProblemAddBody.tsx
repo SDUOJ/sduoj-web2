@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Popconfirm, Popover, Space} from "antd";
-import {CloseOutlined, EditOutlined, MenuOutlined, PlusOutlined, SortAscendingOutlined} from "@ant-design/icons"
+import {CheckOutlined, CloseOutlined, MenuOutlined, PlusOutlined, SwapOutlined} from "@ant-design/icons"
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
@@ -261,16 +261,15 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
     const SortColumnItem: ProColumns[] = [
         {
-            title:
-                <Button type="text"
-                        key="operator"
-                        onClick={() => {
-                            setSortSwitch(!sortSwitch)
-                        }}
-                        icon={sortSwitch ? <EditOutlined/> : <SortAscendingOutlined/>}
-                        disabled={!props.editable}
-                />
-            ,
+            title: <Button
+                type="text"
+                key="operator"
+                onClick={() => {
+                    setSortSwitch(!sortSwitch)
+                }}
+                icon={sortSwitch ? <CheckOutlined /> : <SwapOutlined />}
+                disabled={!props.editable}
+            />,
             dataIndex: 'sort',
             width: 50,
             className: "drag-visable",
@@ -282,20 +281,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ]
     const IdColumnItem: ProColumns[] = [
         {
-            title: <Button
-                type="text"
-                onClick={() => {
-                    let nData = props.initNewLine(TableData, keyMapping)
-                    if (nData[keyMapping["ProblemCode"]] !== undefined) {
-                        getProblemInfo(nData[keyMapping["ProblemCode"]]).then(() => {
-                            getProblemDescriptionInfo(nData[keyMapping["ProblemCode"]])
-                        })
-                    }
-                    actionRef.current?.addEditRecord?.(nData, {newRecordType: "dataSource", recordKey: Date.now()});
-                }}
-                icon={<PlusOutlined/>}
-                disabled={sortSwitch || !props.editable}
-            />,
+            title: "ID",
             dataIndex: 'id',
             valueType: "index",
             width: 50,
@@ -385,7 +371,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ]
     const ProblemScoreColumnItem: ProColumns[] = [
         {
-            title: "题目分数",
+            title: "权重",
             dataIndex: keyMapping['ProblemScore'],
             valueType: "digit",
             width: 140,
@@ -495,6 +481,22 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
                         },
                     } : undefined
                 }
+            />
+            <Button
+                type="dashed"
+                block
+                onClick={() => {
+                    let nData = props.initNewLine(TableData, keyMapping)
+                    if (nData[keyMapping["ProblemCode"]] !== undefined) {
+                        getProblemInfo(nData[keyMapping["ProblemCode"]]).then(() => {
+                            getProblemDescriptionInfo(nData[keyMapping["ProblemCode"]])
+                        })
+                    }
+                    actionRef.current?.addEditRecord?.(nData, {newRecordType: "dataSource", recordKey: Date.now()});
+                }}
+                icon={<PlusOutlined/>}
+                disabled={sortSwitch || !props.editable}
+                style={{display: (sortSwitch || !props.editable) ? "none": undefined}}
             />
         </>
     );
