@@ -10,7 +10,7 @@ const ContestMFormManagement = (props: any) => {
     return (
         <div style={{width: 1100}}>
             <Form.Item label={"封榜时间(分钟)"} name={["features", "frozenTime"]}
-                       initialValue={0} required help={"比赛的最后多少分钟封榜"}>
+                       initialValue={0} required tooltip={"比赛的最后多少分钟封榜"}>
                 <InputNumber/>
             </Form.Item>
             <Table
@@ -90,16 +90,35 @@ const ContestMFormManagement = (props: any) => {
                 pagination={false}
                 size={"small"}
             />
-            <Form.Item name={"participants"} label={"参赛者"} help={"使用 TAB '\\t', 空格 ' ', 换行 '\\n' 或 逗号 ',' 分隔用户名"}>
+            <Form.Item
+                name={"participants"}
+                label={
+                    <>
+                        参赛者&nbsp;
+                        <span style={{color: "grey", fontSize: 10}}>
+                            使用 TAB '\t', 空格 ' ', 换行 '\n' 或 逗号 ',' 分隔用户名
+                        </span>
+                    </>
+                }
+            >
                 <TextArea rows={6}/>
             </Form.Item>
-            <Form.Item name={"unofficialParticipants"} label={"非正式参赛者"}
-                       help={"使用 TAB '\\t', 空格 ' ', 换行 '\\n' 或 逗号 ',' 分隔用户名"}>
+            <Form.Item
+                name={"unofficialParticipants"}
+                label={
+                    <>
+                        非正式参赛者&nbsp;
+                        <span style={{color: "grey", fontSize: 10}}>
+                            使用 TAB '\t', 空格 ' ', 换行 '\n' 或 逗号 ',' 分隔用户名
+                        </span>
+                    </>
+                }
+            >
                 <TextArea rows={6}/>
             </Form.Item>
             <ItemSelectGroup name={"groupId"} label={"管理组"} formName={"ContestForm"}/>
             <ItemSelectGroup name={"participatingGroups"} label={"参赛组"} mode={"multiple"}
-                             help={"参赛组中的参赛者不需要输入密码"} formName={"ContestForm"}/>
+                             tooltip={"参赛组中的参赛者不需要输入密码"} formName={"ContestForm"}/>
         </div>
     )
 }
