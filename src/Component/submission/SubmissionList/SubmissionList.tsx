@@ -15,6 +15,7 @@ import {TableState} from "../../../Type/ITable";
 import {ck, isValueEmpty} from "../../../Utils/empty";
 import {UserState} from "../../../Type/Iuser";
 import judgeAuth from "../../../Utils/judgeAhtu";
+import ModalSubmissionList from "./ModalSubmissionList";
 
 const SubmissionList = (props: any) => {
 
@@ -311,11 +312,25 @@ const SubmissionList = (props: any) => {
                         </Button>
                     </Space>
                 }
+                actions={[
+                    <div>
+                        {props.lessInfo && props.isLogin && (
+                            <ModalSubmissionList
+                                btnProps={{type: "text", block: true}}
+                                btnText={props.t("ShowAllInformation")}
+                                name={"Pro-SubmissionList-" + props.name}
+                                API={props.API}
+                                QuerySubmissionAPI={props.QuerySubmissionAPI}
+                            />
+                        )}
+                    </div>
+                ]}
             >
                 <TableWithSelection
                     disableSelection={props.lessInfo || !judgeAuth(props.roles, ["admin", "superadmin"])}
                     defaultPageSize={props.lessInfo ? 5 : undefined}
                     showSizeChanger={props.lessInfo ? false : undefined}
+                    pagination={props.lessInfo ? false : undefined}
                     columns={props.lessInfo ? columns : columnsAll}
                     getForm={props.useForm === true ? getForm : undefined}
                     name={props.name}
@@ -356,7 +371,8 @@ const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
     return {
         tableData: TState.tableData,
-        roles: UState.userInfo?.roles
+        roles: UState.userInfo?.roles,
+        isLogin: UState.isLogin,
     }
 }
 

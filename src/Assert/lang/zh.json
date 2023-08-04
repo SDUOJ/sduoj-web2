@@ -324,5 +324,6 @@
   "publicDataSet": "公开数据集",
   "DownloadFirstRejectCase": "下载首个错误测试点",
   "PublicTestCaseInfo": "公共测试点信息",
-  "new email": "新邮箱"
+  "new email": "新邮箱",
+  "ShowAllInformation": "显示全部信息"
 }

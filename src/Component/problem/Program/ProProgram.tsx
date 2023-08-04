@@ -153,13 +153,13 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                             FuncTemplates={problemInfo?.functionTemplates}
                         />
                     )}
-                    <ModalSubmissionList
-                        btnProps={{type: "default", disabled: !props.isLogin}}
-                        btnText={props.t("records")}
-                        name={"Pro-SubmissionList-" + props.name}
-                        API={props.SubmissionListAPI}
-                        QuerySubmissionAPI={props.QuerySubmissionAPI}
-                    />
+                    {/*<ModalSubmissionList*/}
+                    {/*    btnProps={{type: "default", disabled: !props.isLogin}}*/}
+                    {/*    btnText={props.t("records")}*/}
+                    {/*    name={"Pro-SubmissionList-" + props.name}*/}
+                    {/*    API={props.SubmissionListAPI}*/}
+                    {/*    QuerySubmissionAPI={props.QuerySubmissionAPI}*/}
+                    {/*/>*/}
                     {problemInfo !== undefined && problemInfo.isAccepted !== 0
                         && props.AddPublicCheckpointsAPI && props.GetPublicCheckpointAPI && (
                             <PublicCheckpointsFormModal
