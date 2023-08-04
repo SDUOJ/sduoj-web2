@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/Assert/css/MContest.css"],"names":[],"mappings":"AAAA,4CACI,eACJ,CAEA,6BACI,kBACJ","file":"26.591f9f38.chunk.css","sourcesContent":[".ContestMFormManagementTable .ant-form-item{\n    margin-bottom: 0;\n}\n\n.ContestMFormManagementTable{\n    margin-bottom: 24px;\n}"]}
