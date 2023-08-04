@@ -286,6 +286,32 @@ const Review = (props: any) => {
                                         props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
                                 }}> 提交分数 </Button>
+                                <Button
+                                    disabled={
+                                        judgeInfo.judgeLock_username !== props.username ||
+                                        Object.keys(reviewInfo).length !== 0
+                                    } block={true} style={{marginTop: 12}}
+                                    type="ghost" danger={true} onClick={() => {
+                                    let res = []
+                                    for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
+                                        let x = judgeInfo.judgeConfig.children[i]
+                                        res.push({name: x.name, score: x.score, jScore: x.score})
+                                    }
+                                    cApi.updateJudgeInfo({
+                                        psid: psid,
+                                        gid: judgeInfo.gid,
+                                        pid: judgeInfo.pid,
+                                        username: judgeInfo.username,
+                                        judgeLog: res,
+                                        judgeComment: judgeComment
+                                    }).then(() => {
+                                        setClickSubmit(true)
+                                        setVis(false)
+                                        props.addTableVersion("problemSetSubjectiveJudgeList")
+                                    })
+                                }}>
+                                    设为<span style={{fontWeight: "bolder"}}>满分</span>并提交分数
+                                </Button>
                                 {judgeInfo.judgeLock_username === props.username && (
                                     <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
                                         cApi.updateJudgeInfo({
