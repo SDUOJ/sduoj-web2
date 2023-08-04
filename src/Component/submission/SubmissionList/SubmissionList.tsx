@@ -1,5 +1,5 @@
 import {withTranslation} from "react-i18next";
-import {Button, Card, Form, Input, message, Select, Space} from "antd";
+import {Button, Card, Form, Input, message, Select, Space, Tooltip} from "antd";
 import {SyncJudging} from "../SyncJudging";
 import cApi from "../../../Utils/API/c-api";
 import {ReloadOutlined} from "@ant-design/icons";
@@ -123,7 +123,11 @@ const SubmissionList = (props: any) => {
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
-                return moment(text).fromNow();
+                return (
+                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment(text).fromNow()}</span>
+                    </Tooltip>
+                )
             }
         }
     ]
@@ -216,7 +220,11 @@ const SubmissionList = (props: any) => {
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
-                return moment(text).fromNow();
+                return (
+                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment(text).fromNow()}</span>
+                    </Tooltip>
+                )
             }
         }
     ]
