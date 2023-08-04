@@ -11,6 +11,7 @@ import {withRouter} from "react-router";
 import {isValueEmpty} from "../../../Utils/empty";
 import TemplateMForm from "../../judgeTemplate/Form/TemplateMForm";
 import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
+import FormExtraInfo from "../../common/Form/FormExtraInfo";
 
 const FormJudgeType = (props: any) => {
     const [JudgeType, setJudgeType] = useState(0);
@@ -22,7 +23,7 @@ const FormJudgeType = (props: any) => {
     const [useFuncTemplate, setUseFuncTemplate] = useState<boolean>(false)
     const [selectedJudgeTemplate, setSelectJudgeTemplate] = useState<number[]>([])
 
-    const [rowSelection, setRowSelection] = useState<any>([])
+    const [rowSelection, setRowSelection] = useState<any>(undefined)
     const [AdvancedJT, setAdvancedJT] = useState<any>([])
 
     useEffect(() => {
@@ -244,29 +245,15 @@ const FormJudgeType = (props: any) => {
 
                     )}
                     <Form.Item name={"judgeTemplates"} hidden>
-                        <JudgeTemplateRowSelected rowSelection={rowSelection} setRowSelection={setRowSelection}/>
+                        <FormExtraInfo
+                            v={rowSelection}
+                            setV={setRowSelection}
+                            eqs={(a: any, b: any) => JSON.stringify(a) === JSON.stringify(b)}
+                        />
                     </Form.Item>
                 </>
             )}
         </>
-    )
-}
-
-const JudgeTemplateRowSelected = (props: any) => {
-    const {value, onChange} = props
-
-    useEffect(() => {
-        if (props.rowSelection !== undefined && JSON.stringify(value) !== JSON.stringify(props.rowSelection))
-            onChange(props.rowSelection)
-    }, [props.rowSelection])
-
-    useEffect(() => {
-        if (value !== undefined && JSON.stringify(value) !== JSON.stringify(props.rowSelection))
-            props.setRowSelection(value)
-    }, [value])
-
-    return (
-        <></>
     )
 }
 
