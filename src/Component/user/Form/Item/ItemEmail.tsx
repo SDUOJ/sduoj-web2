@@ -4,7 +4,7 @@ import {withTranslation} from "react-i18next";
 import CApi from "Utils/API/c-api"
 import ItemCaptcha from "./ItemCaptcha";
 
-export interface ItemEmailProps{
+export interface ItemEmailProps {
     needVerify: boolean
     editable: boolean
     getEmail: any
@@ -70,22 +70,24 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                             setCaptcha={setCaptcha}
                         />
                     </Modal>
-                    <Form.Item name="email" label={props.t("email")}
-                               rules={[
-                                   {type: 'email', message: props.t('emailError'),},
-                                   {required: true},
-                                   ({getFieldValue}) => ({
-                                       validator(_, value) {
-                                           return CApi.isExist({email: value}).then((data: any) => {
-                                               if (data === false) return Promise.resolve()
-                                               else if (data === true) return Promise.reject("邮箱已存在")
-                                               return Promise.reject("检验失败")
-                                           }).catch((e: any) => {
-                                               return Promise.reject(e)
-                                           })
-                                       },
-                                   }),
-                               ]}>
+                    <Form.Item
+                        name="email"
+                        label={props.t("new email")}
+                        rules={[
+                            {type: 'email', message: props.t('emailError'),},
+                            {required: true},
+                            ({getFieldValue}) => ({
+                                validator(_, value) {
+                                    return CApi.isExist({email: value}).then((data: any) => {
+                                        if (data === false) return Promise.resolve()
+                                        else if (data === true) return Promise.reject("邮箱已存在")
+                                        return Promise.reject("检验失败")
+                                    }).catch((e: any) => {
+                                        return Promise.reject(e)
+                                    })
+                                },
+                            }),
+                        ]}>
                         <Input
                             disabled={props.editable === false || canSend > 0}
                             bordered={props.editable !== false}
