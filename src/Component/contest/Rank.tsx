@@ -10,12 +10,15 @@ import {getDiffSecond, TimeDiff, TimeRangeState} from "../../Utils/Time";
 import {ReactComponent as Champion} from "Assert/img/champion.svg"
 import Icon, {FileTextOutlined, TeamOutlined} from "@ant-design/icons";
 import SubmissionList from "../submission/SubmissionList/SubmissionList";
+import {isValueEmpty} from "../../Utils/empty";
+import {HeartOutlined, HeartFilled} from '@ant-design/icons';
+
 
 const Rank = (props: any) => {
     const contestId = props.match.params.contestId
     const contestInfo = props.ContestInfo[contestId]
     const [rankInfo, setRankInfo] = useState<any>()
-    const [data, setData] = useState()
+    const [data, setData] = useState<any>()
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
     const [SummaryInfo, setSummaryInfo] = useState<any>({})
     const [lastSliderTime, setLastSliderTime] = useState<number>(Date.now())
@@ -24,6 +27,21 @@ const Rank = (props: any) => {
     const [sbl_user, setSbl_user] = useState<string>("");
     const [sbl_pro, setSbl_pro] = useState<string>("");
 
+    const [storedValue, setStoredValue] = useState<string[]>([]);
+
+    useEffect(() => {
+        let value: any = window.localStorage.getItem(`contest-like-${contestId}`);
+        if (!isValueEmpty(value)) value = JSON.parse(value)
+        else value = []
+        setStoredValue(value);
+    }, []);
+
+    const storeValue = (value: string[]) => {
+        if (value.length !== 0) {
+            window.localStorage.setItem(`contest-like-${contestId}`, JSON.stringify(value));
+        }
+        setStoredValue(value);
+    };
 
     useEffect(() => {
         // console.log("00--------------000000000000", contestInfo)
@@ -236,10 +254,20 @@ const Rank = (props: any) => {
         title: "参赛人",
         width: 150,
         render: (text: any, row: any) => {
+            let like = storedValue.includes(row.username);
             return (
                 <div style={{paddingLeft: 10, paddingRight: 10}}>
                     <span style={{float: "left", marginTop: 10}}>
-                        {/*TODO::like*/}
+                        {like && (
+                            <HeartFilled style={{color: 'red'}} onClick={() => {
+                                storeValue(storedValue.filter(x => x !== row.username))
+                            }}/>
+                        )}
+                        {!like && (
+                            <HeartOutlined onClick={() => {
+                                storeValue([...storedValue, row.username])
+                            }}/>
+                        )}
                     </span>
                     <span style={{float: "right", textAlign: "right"}}>
                         <div style={{fontWeight: "bold"}}>{row.username}</div>
@@ -280,7 +308,11 @@ const Rank = (props: any) => {
                             <span style={{fontWeight: "bold"}}>
                                 {String.fromCharCode('A'.charCodeAt(0) + parseInt(x.problemCode) - 1)}
                             </span>
-                            {/* TODO 气球颜色 */}
+                            {!isValueEmpty(x.problemColor) && (
+                                <span style={{paddingLeft: 4}}>
+                                    <span className={"circle"} style={{backgroundColor: x.problemColor}}/>
+                                </span>
+                            )}
                         </div>
                         <div style={{color: "grey", fontSize: 12}}>
                             {x.acceptNum} / {x.submitNum}
@@ -292,11 +324,13 @@ const Rank = (props: any) => {
                     const SData = row.Cell[x.problemCode]
                     if (SData === undefined) return <></>
                     return (
-                        <div onClick={() => {
-                            setSbl_user(row.username)
-                            setSbl_pro(x.problemCode)
-                            setModalVis(true)
-                        }}>
+                        <div
+                            style={{cursor: 'pointer'}}
+                            onClick={() => {
+                                setSbl_user(row.username)
+                                setSbl_pro(x.problemCode)
+                                setModalVis(true)
+                            }}>
                             {contestInfo.features.mode === "ioi" && (
                                 <span style={{
                                     fontWeight: "bold",
@@ -348,6 +382,22 @@ const Rank = (props: any) => {
             props.setMinWidth(tableWidth)
     }
 
+    // 创建一个新的 dataWithLike 数组
+    let dataWithLike: any = [];
+    // 保存 like 元素的索引
+    let lastLikeIndex = -1;
+    if (data !== undefined) {
+        for (let i = 0; i < data.length; i++) {
+            let dataItem = data[i];
+            if (storedValue.includes(dataItem.username)) {
+                dataWithLike.push(dataItem);
+                lastLikeIndex = dataWithLike.length - 1;  // 更新 lastLikeIndex
+            }
+        }
+        dataWithLike = [...dataWithLike, ...data]
+    }
+
+
     return (
         <>
             <Modal
@@ -380,9 +430,16 @@ const Rank = (props: any) => {
                 style={{width: tableWidth, minWidth: tableWidth}}
                 pagination={false}
                 bordered={true}
-                dataSource={data}
+                dataSource={dataWithLike}
                 rowClassName={(row, index) => {
-                    return "rowBase"
+                    let className = 'rowBase';
+                    if (index === lastLikeIndex) {
+                        className += ' rowLikeLast';
+                    }
+                    if (storedValue.includes(row.username)) {
+                        className += ' rowLike';
+                    }
+                    return className;
                 }}
                 columns={problemColumns}
                 summary={() => (
