@@ -320,7 +320,7 @@ const SubmissionList = (props: any) => {
                         </Button>
                     </Space>
                 }
-                actions={[
+                actions={(props.lessInfo && props.isLogin) ? [
                     <div>
                         {props.lessInfo && props.isLogin && (
                             <ModalSubmissionList
@@ -332,7 +332,7 @@ const SubmissionList = (props: any) => {
                             />
                         )}
                     </div>
-                ]}
+                ] : undefined}
             >
                 <TableWithSelection
                     disableSelection={props.lessInfo || !judgeAuth(props.roles, ["admin", "superadmin"])}
