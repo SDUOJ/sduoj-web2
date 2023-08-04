@@ -90,7 +90,7 @@ const SubmissionList = (props: any) => {
             key: "result",
             render: (text: any, record: any) => {
                 return (
-                    <div onClick={() => {
+                    <div style={{cursor: 'pointer'}} onClick={() => {
                         showSubmission(record)
                     }}>
                         <TestCase
@@ -162,15 +162,21 @@ const SubmissionList = (props: any) => {
             key: "result",
             width: 170,
             render: (text: any, record: any) => {
-                return <TestCase
-                    type={"text"}
-                    caseType={StateList.indexOf(SubmissionMap[text])}
-                    append={
-                        text === "-2" ?
-                            "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")" :
-                            ""
-                    }
-                />
+                return (
+                    <div style={{cursor: 'pointer'}} onClick={() => {
+                        showSubmission(record)
+                    }}>
+                        <TestCase
+                            type={"text"}
+                            caseType={StateList.indexOf(SubmissionMap[text])}
+                            append={
+                                text === "-2" ?
+                                    "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")" :
+                                    ""
+                            }
+                        />
+                    </div>
+                )
             }
         },
         {
