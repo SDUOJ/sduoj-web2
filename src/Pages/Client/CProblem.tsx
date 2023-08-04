@@ -39,6 +39,7 @@ class CProblem extends Component<any, any> {
                                         title: this.props.t("problemCode"),
                                         dataIndex: "problemCode",
                                         key: "problemCode",
+                                        width: "120px",
                                         render: (text: string) => {
                                             let ps = text.split("-")
                                             return <>
@@ -50,6 +51,7 @@ class CProblem extends Component<any, any> {
                                         title: this.props.t("title"),
                                         dataIndex: "problemTitle",
                                         key: "problemTitle",
+                                        width: "300px",
                                         render: (text: string, row: any) => {
                                             return <>
                                                 <Space size={3}>
@@ -75,12 +77,14 @@ class CProblem extends Component<any, any> {
                                     {
                                         title: this.props.t("source"),
                                         dataIndex: "source",
-                                        key: "source"
+                                        key: "source",
+                                        width: "450px",
                                     },
                                     {
                                         title: this.props.t("acceptNumber"),
                                         dataIndex: "acceptNum",
-                                        key: "acceptNum"
+                                        key: "acceptNum",
+                                        width: "120px",
                                     },
                                 ]}
                                 size={"small"}
