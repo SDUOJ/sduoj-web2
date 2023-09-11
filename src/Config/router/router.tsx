@@ -33,6 +33,7 @@ const routerCLayoutData: any = [
     ["resetpass", true],
     ["test", false],
     ["hws", false],
+    ["studentMutualEvaluation", true]
 ]
 let routerCLayout: IBaseRouter[] = []
 let num = 100;

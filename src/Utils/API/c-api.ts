@@ -332,6 +332,20 @@ const cApi = {
     async delPsPublicCheckpoints(data: any) {
         return request.post("/ps/answer_sheet/pbcp/del", data)
     },
+
+
+    // 查询互评列表
+    async getSMEList(data: any) {
+        return request.get("/sme/", data)
+    },
+    // 提交互评结果
+    async submitSME(data: any) {
+        return request.post("/sme/", data)
+    },
+    // 查看互评结果
+    async getSMEResult(data: any) {
+        return request.get("/sme/result", data)
+    }
 }
 
 export default cApi;
