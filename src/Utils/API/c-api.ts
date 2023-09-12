@@ -344,7 +344,7 @@ const cApi = {
     },
     // 查看互评结果
     async getSMEResult(data: any) {
-        return request.get("/sme/result", data)
+        return request.get("/sme/results/", data)
     }
 }
 

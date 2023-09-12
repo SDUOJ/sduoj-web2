@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import Title from "antd/es/typography/Title";
 import {useSelector} from "react-redux";
 import CApi from "../../Utils/API/c-api";
-import {Radio, Table, Button, message} from 'antd';
+import {Radio, Table, Button, message, Row, Col} from 'antd';
+import * as XLSX from 'xlsx';
 
 const CStudentMutualEvaluation = () => {
     const isLogin = useSelector((state: any) => {
@@ -20,6 +21,9 @@ const CStudentMutualEvaluation = () => {
         中等: 0,
         差: 0,
     });
+    const [is_admin, set_is_admin] = useState<boolean>(false)
+    const [vote_status, set_vote_status] = useState<any>()
+    const [results, set_results] = useState<any>()
 
     const listUpd = () => {
         CApi.getSMEList({}).then((res: any) => {
@@ -43,11 +47,36 @@ const CStudentMutualEvaluation = () => {
         })
     }
 
+    const getRes = () => {
+        CApi.getSMEResult({}).then((res: any) => {
+            set_is_admin(res.admin)
+            if (res.admin) {
+                set_vote_status(res.vote_status)
+                set_results(res.results)
+            }
+        })
+    }
+
     useEffect(() => {
         if (isLogin) {
             listUpd()
+            getRes()
         }
     }, [isLogin])
+
+    const exportToExcel = () => {
+        const ws = XLSX.utils.json_to_sheet([
+            ...Object.keys(vote_status).map((studentId) => ({
+                studentId,
+                status: vote_status[studentId],
+                ...results[studentId],
+            })),
+        ]);
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'results.xlsx');
+    };
 
     const handleRadioChange = (studentId: string, value: string) => {
         const prevValue = evaluations[studentId];
@@ -72,6 +101,7 @@ const CStudentMutualEvaluation = () => {
             } else {
                 message.success("投票成功")
                 listUpd()
+                getRes()
             }
         })
     };
@@ -107,33 +137,35 @@ const CStudentMutualEvaluation = () => {
 
     return (
         <>
-            <div
-                style={{
-                    position: "fixed",
-                    right: "20px",
-                    top: "30%",
-                    background: "#f9f9f9",
-                    padding: "20px",
-                    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.1)",
-                }}
-            >
-                <Title level={5}>评价统计</Title>
-                <p>优秀: {gradeCounts["优秀"]}</p>
-                <p>良好: {gradeCounts["良好"]}</p>
-                <p>中等: {gradeCounts["中等"]}</p>
-                <p>差: {gradeCounts["差"]}</p>
-            </div>
+            {isLogin && (
+                <div
+                    style={{
+                        position: "fixed",
+                        right: "20px",
+                        top: "30%",
+                        background: "#f9f9f9",
+                        padding: "20px",
+                        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.1)",
+                    }}
+                >
+                    <Title level={5}>评价统计</Title>
+                    <p>优秀: {gradeCounts["优秀"]}</p>
+                    <p>良好: {gradeCounts["良好"]}</p>
+                    <p>中等: {gradeCounts["中等"]}</p>
+                    <p>差: {gradeCounts["差"]}</p>
+                </div>
+            )}
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <Title> 22级学硕互评 </Title>
                 {!isLogin && (
-                    <Title level={5}> 您未登录，请在右上角使用统一身份认证登录或注册 </Title>
+                    <Title level={5}> 您未登录，请在右上角使用【SDU统一身份认证】登录 </Title>
                 )}
                 {isDisabled && (
                     <Title level={5}> 您已投票，您可以查看您的投票，但是不能再次编辑 </Title>
                 )}
                 {isLogin && (
                     <>
-                        <Title level={5}> 姓名：{userInfo.nickname}，学号：{userInfo.username} </Title>
+                        <Title level={5}> 姓名：{userInfo?.nickname}，学号：{userInfo?.username} </Title>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div style={{maxWidth: 1200}}>
                                 <Table columns={columns} dataSource={data} rowKey="student_id" pagination={false}/>
@@ -143,6 +175,65 @@ const CStudentMutualEvaluation = () => {
                                 </Button>
                             </div>
                         </div>
+                        {is_admin && results && vote_status && (
+                            <>
+                                <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
+                                    <div style={{maxWidth: 1200}}>
+                                        <Title level={5}>投票状态和评价结果</Title>
+                                        <Button type="primary" onClick={exportToExcel}
+                                                style={{marginTop: 24, marginBottom: 24}}>
+                                            导出为 Excel
+                                        </Button>
+                                        <Table
+                                            dataSource={Object.keys(vote_status).map((studentId) => ({
+                                                studentId,
+                                                status: vote_status[studentId],
+                                                ...results[studentId]
+                                            }))}
+                                            pagination={false}
+                                            columns={[
+                                                {title: '学号', dataIndex: 'studentId', key: 'studentId'},
+                                                {
+                                                    title: '状态',
+                                                    dataIndex: 'status',
+                                                    key: 'status',
+                                                    filters: [
+                                                        {text: '已投票', value: '已投票'},
+                                                        {text: '未投票', value: '未投票'},
+                                                    ],
+                                                    onFilter: (value, record) => record.status.includes(value),
+                                                },
+                                                {
+                                                    title: '优秀',
+                                                    dataIndex: '优秀',
+                                                    key: '优秀',
+                                                    sorter: (a, b) => a.优秀 - b.优秀
+                                                },
+                                                {
+                                                    title: '良好',
+                                                    dataIndex: '良好',
+                                                    key: '良好',
+                                                    sorter: (a, b) => a.良好 - b.良好
+                                                },
+                                                {
+                                                    title: '中等',
+                                                    dataIndex: '中等',
+                                                    key: '中等',
+                                                    sorter: (a, b) => a.中等 - b.中等
+                                                },
+                                                {
+                                                    title: '差',
+                                                    dataIndex: '差',
+                                                    key: '差',
+                                                    sorter: (a, b) => a.差 - b.差
+                                                },
+                                            ]}
+                                            rowKey="studentId"
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </>
                 )}
             </div>
