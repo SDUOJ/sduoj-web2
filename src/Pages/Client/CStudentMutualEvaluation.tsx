@@ -12,15 +12,16 @@ const CStudentMutualEvaluation = () => {
     const userInfo = useSelector((state: any) => {
         return state.UserReducer.userInfo
     })
-    const [data, setData] = useState([]);
-    const [evaluations, setEvaluations] = useState<any>({});
-    const [isDisabled, setIsDisabled] = useState(false);
-    const [gradeCounts, setGradeCounts] = useState<{ [key: string]: number }>({
+    const initGradeCounts = {
         优秀: 0,
         良好: 0,
         中等: 0,
         差: 0,
-    });
+    }
+    const [data, setData] = useState([]);
+    const [evaluations, setEvaluations] = useState<any>({});
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [gradeCounts, setGradeCounts] = useState<{ [key: string]: number }>(initGradeCounts);
     const [is_admin, set_is_admin] = useState<boolean>(false)
     const [vote_status, set_vote_status] = useState<any>()
     const [results, set_results] = useState<any>()
@@ -102,6 +103,7 @@ const CStudentMutualEvaluation = () => {
                 message.success("投票成功")
                 listUpd()
                 getRes()
+                setGradeCounts(initGradeCounts)
             }
         })
     };
