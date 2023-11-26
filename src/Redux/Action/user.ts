@@ -23,16 +23,6 @@ export function testLoginTodo() {
     }
 }
 
-export function userLoginTodo(data: loginInfo) {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        CApi.login(data).then((r:any) => {
-            CApi.getProfile().then((resData: any)=>{
-                dispatch({type: "userLogin"})
-                dispatch({type: "setUserInfo", data: resData})
-            })
-        })
-    }
-}
 
 export function userLogoutTodo() {
     return (dispatch: Dispatch<any>, getState: any) => {

@@ -53,7 +53,8 @@ const Register = (props: any) => {
         >
             <ItemUsername ExistCheck={true} editable={props.token === undefined}/>
             <ItemPassword/>
-            <ItemEmail needVerify={true} getEmail={() => {
+            <ItemEmail emailVerifyType={props.token !== undefined ? "thirdPartyRegisterOrBinding" : "register"}
+                       needVerify={true} getEmail={() => {
                 return form.validateFields(["email"]).then((data: any) => {
                     return Promise.resolve(data.email)
                 }).catch(() => Promise.reject())

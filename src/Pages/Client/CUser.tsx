@@ -147,13 +147,16 @@ class CUser extends Component<any, any> {
                                                     />
                                                 </Col>
                                                 <Col offset={1} span={11}>
-                                                    <ItemEmail needVerify={true} getEmail={async () => {
-                                                        return this.ref3.current?.validateFields(["email"]).then((data: any) => {
-                                                            return Promise.resolve(data.email)
-                                                        }).catch(() => {
-                                                            return Promise.reject()
-                                                        })
-                                                    }}/>
+                                                    <ItemEmail
+                                                        needVerify={true} emailVerifyType={"updateEmail"}
+                                                        getEmail={async () => {
+                                                            return this.ref3.current?.validateFields(["email"]).then((data: any) => {
+                                                                return Promise.resolve(data.email)
+                                                            }).catch(() => {
+                                                                return Promise.reject()
+                                                            })
+                                                        }}
+                                                    />
                                                 </Col>
                                             </Row>
                                         </Form>

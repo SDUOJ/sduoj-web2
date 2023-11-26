@@ -160,10 +160,13 @@ export type profileInfo = {
     studentId: number
 }
 
+export type emailType = "login" | "register" | "thirdPartyRegisterOrBinding" | "updateEmail"
+
 export type verificationEmail = {
     email: string,
     captcha: string,
-    captchaId: string
+    captchaId: string,
+    event: emailType
 }
 
 export type updatePassWord = {

@@ -3,11 +3,16 @@ import React, {useEffect, useState} from "react";
 import {withTranslation} from "react-i18next";
 import CApi from "Utils/API/c-api"
 import ItemCaptcha from "./ItemCaptcha";
+import {emailType} from "../../../../Type/types";
 
 export interface ItemEmailProps {
     needVerify: boolean
     editable: boolean
     getEmail: any
+    emailVerifyType: emailType  // 邮箱验证类型
+    checkExist?: boolean        // 是否检查邮箱是否存在
+    emailTitle?: string         // 标题
+    onPressEnter?: any
 }
 
 const ItemEmail = (props: ItemEmailProps & any) => {
@@ -54,7 +59,8 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                             CApi.sendVerificationEmail({
                                 email: email,
                                 captcha: captcha,
-                                captchaId: imgId
+                                captchaId: imgId,
+                                event: props.emailVerifyType
                             }).then((res) => {
                                 message.success("验证码已发送至您的邮箱")
                                 setCanSend(60);
@@ -72,12 +78,13 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                     </Modal>
                     <Form.Item
                         name="email"
-                        label={props.t("new email")}
+                        label={props.emailTitle ?? props.t("new email")}
                         rules={[
                             {type: 'email', message: props.t('emailError'),},
                             {required: true},
                             ({getFieldValue}) => ({
                                 validator(_, value) {
+                                    if (props.checkExist === false) return Promise.resolve()
                                     return CApi.isExist({email: value}).then((data: any) => {
                                         if (data === false) return Promise.resolve()
                                         else if (data === true) return Promise.reject("邮箱已存在")
@@ -91,6 +98,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                         <Input
                             disabled={props.editable === false || canSend > 0}
                             bordered={props.editable !== false}
+                            onPressEnter={props.onPressEnter}
                             addonAfter={
                                 <Button
                                     type={"text"}
@@ -110,7 +118,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                     </Form.Item>
                     <Form.Item name="emailCode" label={props.t("emailCode")}
                                rules={[{required: true}]}>
-                        <Input/>
+                        <Input onPressEnter={props.onPressEnter}/>
                     </Form.Item>
                 </>
             )}

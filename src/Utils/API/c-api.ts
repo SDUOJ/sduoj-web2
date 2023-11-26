@@ -23,6 +23,9 @@ const cApi = {
     async login(data: loginInfo) {
         return request.post('/user/login', data)
     },
+    async emailLogin(data: { email: string, emailCode: string }) {
+        return request.post('/user/emailLogin', data)
+    },
     async logout() {
         return request.get('/user/logout')
     },
