@@ -93,12 +93,12 @@ export const routerC: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import("../../Component/problemSet/Public"))
     },
-    {
-        id: 7361,
-        path: UrlPrefix + "/studentMutualEvaluation",
-        exact: true,
-        component: lazy(() => import("../../Pages/Client/CStudentMutualEvaluation"))
-    },
+    // {
+    //     id: 7361,
+    //     path: UrlPrefix + "/studentMutualEvaluation",
+    //     exact: true,
+    //     component: lazy(() => import("../../Pages/Client/CStudentMutualEvaluation"))
+    // },
     // {
     //     id: 7359,
     //     path: UrlPrefix + "/hws",
