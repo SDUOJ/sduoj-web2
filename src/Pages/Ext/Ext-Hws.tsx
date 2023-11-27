@@ -89,7 +89,7 @@ const ExtHws = (props: any) => {
     }
     return (
         <>
-            <LoginCheck/>
+            <LoginCheck jump={true}/>
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                     <Card title={"文件提交组件"} extra={

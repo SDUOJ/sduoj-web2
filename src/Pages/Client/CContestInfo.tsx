@@ -33,7 +33,7 @@ const CContestInfo = (props: any) => {
     }
     return (
         <>
-            <LoginCheck/>
+            <LoginCheck jump={true}/>
             <div style={minWidth <= 1500 ? {textAlign: "center", margin: "0 auto"} : undefined}>
                 <div style={minWidth <= 1500 ? {
                     textAlign: "left",

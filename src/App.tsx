@@ -11,6 +11,7 @@ import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
 import SubmissionModal from "./Component/submission/Processing/ModalProcessing";
+import RequirePassChange from "./Component/common/RequirePassChange";
 
 
 const App = (props: any) => {
@@ -23,6 +24,8 @@ const App = (props: any) => {
             <Router>
                 {/*提交详情窗体*/}
                 <SubmissionModal/>
+                {/*密码修改提示*/}
+                <RequirePassChange/>
                 <Suspense fallback={<Loading/>}>
                     {
                         routerLayout.map((r) => {

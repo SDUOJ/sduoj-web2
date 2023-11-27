@@ -39,7 +39,7 @@ class MLayout extends Component<any, any> {
         }
         return (
             <>
-                <LoginCheck/>
+                <LoginCheck jump={true}/>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
                     <Sider theme="dark" style={{position: 'fixed', zIndex: 50, height: '100vh', overflow: "auto"}}>
                         <div className="logo">

@@ -1,41 +1,29 @@
 import {withRouter} from "react-router-dom";
-import {Dispatch, useEffect} from "react";
-import {connect} from "react-redux";
+import React, {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
-import {UserState} from "../../Type/Iuser";
 import cApi from "Utils/API/c-api"
 import {UrlPrefix} from "../../Config/constValue";
 
 const LoginCheck = (props: any) => {
 
-    useEffect(()=>{
-        if(props.isLogin === false){
-            cApi.getProfile().then((res: any)=>{
-                props.setUserInfo({type: "setUserInfo", data: res})
-                props.userLogin({type: "userLogin"})
-            }).catch(()=>{
-                props.history.replace(UrlPrefix + "/login?to=" + props.location.pathname)
+    const dispatch = useDispatch()
+    const isLogin = useSelector((state: any) => state.UserReducer.isLogin)
+
+    useEffect(() => {
+        if (isLogin === false) {
+            cApi.getProfile().then((res: any) => {
+                dispatch({type: "setUserInfo", data: res})
+                dispatch({type: "userLogin"})
+            }).catch(() => {
+                props.jump && props.history.replace(UrlPrefix + "/login?to=" + props.location.pathname)
             })
         }
-    }, [props.isLogin])
+    }, [isLogin])
 
     return (
         <></>
     )
 }
 
-
-const mapStateToProps = (state: any) => {
-    const State: UserState = state.UserReducer
-    return {isLogin: State.isLogin}
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    setUserInfo: (data: any) => dispatch(data),
-    userLogin: (data: any) => dispatch(data)
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(withRouter(LoginCheck)))
+export default withTranslation()(withRouter(LoginCheck))

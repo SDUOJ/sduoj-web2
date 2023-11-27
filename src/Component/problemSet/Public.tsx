@@ -34,7 +34,7 @@ const Public = (props: any) => {
 
     return (
         <>
-            <LoginCheck/>
+            <LoginCheck jump={true}/>
             <Result
                 className={"Ewait"}
                 icon={<></>}

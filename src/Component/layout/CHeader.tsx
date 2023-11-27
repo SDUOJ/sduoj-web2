@@ -8,7 +8,7 @@ import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {testLoginTodo, userLogoutTodo} from "../../Redux/Action/user";
+import {userLogoutTodo} from "../../Redux/Action/user";
 import UserAvatar from "../user/Avatar";
 import judgeAuth from "../../Utils/judgeAhtu";
 import {routerC_M} from "../../Config/router/routerC";
@@ -171,7 +171,6 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo()),
     userLogout: () => dispatch(userLogoutTodo()),
 })
 

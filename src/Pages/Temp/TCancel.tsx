@@ -15,7 +15,7 @@ const TCancel = (props: any) => {
     return (
         <div style={{textAlign: "center", margin: "0 auto"}}>
             <div style={{textAlign: "left", maxWidth: "400px", margin: "0 auto"}}>
-                <LoginCheck/>
+                <LoginCheck jump={true}/>
                 <div style={{textAlign: "center", margin: 24}}>
                     <Title level={3}> 比赛提交取消 </Title>
                 </div>

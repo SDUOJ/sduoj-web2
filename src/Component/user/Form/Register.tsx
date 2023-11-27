@@ -7,7 +7,7 @@ import React, {useEffect} from "react";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
 import {withRouter} from "react-router-dom";
-import {UrlPrefix} from "../../../Config/constValue";
+import {useDispatch} from "react-redux";
 
 
 const Register = (props: any) => {
@@ -17,6 +17,8 @@ const Register = (props: any) => {
         if (props.token !== undefined)
             form.setFieldsValue({username: props.username})
     }, [props, form])
+
+    const dispatch = useDispatch()
 
     return (
         <ModalForm<any>
@@ -34,17 +36,15 @@ const Register = (props: any) => {
                 if (props.token !== undefined) {
                     Object.assign(values, {token: props.token})
                     return CApi.thirdPartyRegister(values).then((res: any) => {
-                        CApi.login(values).then(() => {
-                            props.history.push(UrlPrefix + "/home")
-                        })
+                        dispatch({type: "userLogin"})
+                        dispatch({type: "setUserInfo", data: res})
                         message.success('注册成功');
                         return true;
                     })
                 } else {
                     return CApi.register(values).then((res: any) => {
-                        CApi.login(values).then(() => {
-                            props.history.push(UrlPrefix + "/home")
-                        })
+                        dispatch({type: "userLogin"})
+                        dispatch({type: "setUserInfo", data: res})
                         message.success('注册成功');
                         return true;
                     })

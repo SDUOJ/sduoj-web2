@@ -7,10 +7,10 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import FooterSDU from "./FooterSDU";
 import CHeader from "./CHeader";
-import {testLoginTodo} from "../../Redux/Action/user";
 import {routerC} from "../../Config/router/routerC";
 import {ContestState} from "../../Redux/Action/contest";
 import {UrlPrefix} from "../../Config/constValue";
+import LoginCheck from "../common/LoginCheck";
 
 const {Content} = Layout;
 
@@ -20,7 +20,6 @@ class MLayout extends Component<any, any> {
         if (this.props.location.pathname === UrlPrefix || this.props.location.pathname === UrlPrefix + '/') {
             this.props.history.push(UrlPrefix + "/home");
         }
-        this.props.testLogin()
     }
 
     render() {
@@ -32,6 +31,7 @@ class MLayout extends Component<any, any> {
 
         return (
             <>
+                <LoginCheck/>
                 <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1300px"}}>
                     <Layout style={{minWidth: minWidth}}>
                         <CHeader/>
@@ -67,9 +67,7 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,
