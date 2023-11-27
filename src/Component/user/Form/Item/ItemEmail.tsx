@@ -80,15 +80,18 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                         name="email"
                         label={props.emailTitle ?? props.t("new email")}
                         rules={[
-                            {type: 'email', message: props.t('emailError'),},
                             {required: true},
                             ({getFieldValue}) => ({
                                 validator(_, value) {
+                                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                    if (!emailRegex.test(value)) {
+                                        return Promise.reject(props.t('emailError'));
+                                    }
                                     if (props.checkExist === false) return Promise.resolve()
                                     return CApi.isExist({email: value}).then((data: any) => {
                                         if (data === false) return Promise.resolve()
-                                        else if (data === true) return Promise.reject("邮箱已存在")
-                                        return Promise.reject("检验失败")
+                                        else if (data === true) return Promise.reject(props.t("邮箱已存在"))
+                                        return Promise.reject(props.t("检验失败"))
                                     }).catch((e: any) => {
                                         return Promise.reject(e)
                                     })
