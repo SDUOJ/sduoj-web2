@@ -59,7 +59,8 @@ export const langMap: any = {
     "C11": "c",
     "Java8": "java",
     "Java11": "java",
-    "Python3": "python",
+    "Python3.6": "python",
+    "Python3.11": "python",
     "cpp11": "cpp"
 }
 
