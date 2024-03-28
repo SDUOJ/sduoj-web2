@@ -8,7 +8,7 @@ const baseUrl = apiAddress().CLIENT_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 30000,
+    timeout: 1000 * 60 * 5, // 超时时间改为 5 分钟
 })
 service.defaults.withCredentials = true
 
