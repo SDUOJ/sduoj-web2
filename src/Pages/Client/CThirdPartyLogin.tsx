@@ -6,7 +6,6 @@ import {withRouter} from "react-router";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import CApi from "../../Utils/API/c-api";
 import SDU_Logo from "../../Assert/img/sdu-logo.jpg";
-import {testLoginTodo} from "../../Redux/Action/user";
 import Register from "../../Component/user/Form/Register";
 import Binding from "../../Component/user/Form/Binding";
 import {UrlPrefix} from "../../Config/constValue";
@@ -113,9 +112,7 @@ const mapStateToProps = (state: any) => {
     return {}
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

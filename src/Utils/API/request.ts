@@ -8,7 +8,7 @@ const baseUrl = apiAddress().CLIENT_SERVER + '/api'
 
 const service = axios.create({
     baseURL: baseUrl,
-    timeout: 30000,
+    timeout: 1000 * 60 * 5, // 超时时间改为 5 分钟
 })
 service.defaults.withCredentials = true
 
@@ -39,7 +39,6 @@ const messageDisabledList = [
 ]
 
 const dealResponse = async (resp: any, url: string) => {
-
     try {
         const response = await resp;
         localStorage.setItem('server-time', response.data.timestamp)
@@ -62,6 +61,15 @@ const dealResponse = async (resp: any, url: string) => {
             return Promise.reject("服务器不可达")
         }
         switch (response.data.code) {
+            case 401:
+                if (messageDisabledList.indexOf(url) === -1) {
+                    let pos = window.location.href.indexOf(UrlPrefix)
+                    let to = window.location.href.substring(pos).split("?")[0]
+                    if (to !== "/login")
+                        window.location.replace(UrlPrefix + "/login?to=" + to)
+                    message.error(response.data.message);
+                }
+                return Promise.reject(response.data.message)
             default:
                 if (messageDisabledList.indexOf(url) === -1)
                     message.error(response.data.message);

@@ -3,7 +3,6 @@ import UserAvatarBack from "../user/UserAvatarBack";
 import {Button, Layout} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {UserState} from "../../Type/Iuser";
-import {testLoginTodo} from "../../Redux/Action/user";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -47,9 +46,7 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

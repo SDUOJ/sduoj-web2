@@ -257,14 +257,14 @@ const TableWithPagination = (props: any) => {
                         columns={props.columns}
                         rowSelection={props.rowSelection}
                         dataSource={tableData}
-                        pagination={{
+                        pagination={props.pagination ?? {
                             onChange: (page, pageSize) => {
                                 getInfo(page, pageSize)
                             },
                             current: PageNow,
                             pageSize: PageSize,
                             total: total,
-                            hideOnSinglePage: true,
+                            hideOnSinglePage: false,
                             showQuickJumper: true,
                             showLessItems: true,
                             showSizeChanger: ck(props.showSizeChanger, true),

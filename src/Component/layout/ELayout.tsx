@@ -7,9 +7,9 @@ import {withTranslation} from "react-i18next";
 import EHeader from "./EHeader";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import {testLoginTodo} from "../../Redux/Action/user";
 import {routerE} from "../../Config/router/routerE";
 import {UrlPrefix} from "../../Config/constValue";
+import LoginCheck from "../common/LoginCheck";
 
 
 const {Footer, Content} = Layout;
@@ -23,12 +23,12 @@ class ELayout extends Component<any, any> {
         ) && routerE.length !== 0) {
             this.props.history.push(getRouterPath(routerE, 2));
         }
-        this.props.testLogin()
     }
 
     render() {
         return (
             <>
+                <LoginCheck jump={true}/>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
                     <Layout style={{minWidth: 500}}>
                         <EHeader/>
@@ -62,9 +62,7 @@ const mapStateToProps = (state: any) => {
     return {}
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,

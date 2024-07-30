@@ -1,61 +1,33 @@
-import React, {Component, Dispatch} from "react";
-import {message} from "antd";
-import {connect} from "react-redux";
+import React, {useEffect} from "react";
+import {useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {UserState} from "../../Type/Iuser";
-import {testLoginTodo} from "../../Redux/Action/user";
 import Login from "../../Component/user/Login";
 import {getUrlParams} from "../../Utils/getUrlParams";
 import {UrlPrefix} from "../../Config/constValue";
+import {message} from "antd";
 
 
-class CLogin extends Component<any, any> {
+const CLogin = (props: any) => {
 
-    testLogin = ()=>{
-        if (this.props.isLogin) {
-            let to = getUrlParams(this.props.location.search).to
-            if (to === undefined) this.props.history.replace(UrlPrefix + "/home")
+    const isLogin = useSelector((state: any) => state.UserReducer.isLogin)
+
+    useEffect(() => {
+        if (isLogin === true) {
+            let to = getUrlParams(props.location.search).to
+            if (to === undefined) props.history.replace(UrlPrefix + "/home")
             else {
-                this.props.history.replace(to)
-                message.success(this.props.t("loginSuccessfully"))
+                props.history.replace(to)
+                message.success(props.t("loginSuccessfully"))
             }
         }
-    }
+    }, [isLogin])
 
-    componentDidMount() {
-        this.testLogin()
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        this.testLogin()
-    }
-
-    render() {
-        return (
-            <>
-                <Login/>
-            </>
-        )
-    }
+    return (
+        <>
+            <Login/>
+        </>
+    )
 }
 
-
-const mapStateToProps = (state: any) => {
-    const UState: UserState = state.UserReducer
-    return {
-        isLogin: UState.isLogin,
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(CLogin)
-    ))
+export default withTranslation()(withRouter(CLogin))

@@ -7,7 +7,7 @@ import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
-import {userGetProfileTodo, userLogoutTodo} from "../../Redux/Action/user";
+import {userLogoutTodo} from "../../Redux/Action/user";
 import ExamOver from "../exam/ExamOver";
 
 const {Header} = Layout;
@@ -76,7 +76,6 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     userLogout: () => dispatch(userLogoutTodo()),
-    getProfile: () => dispatch(userGetProfileTodo()),
 })
 
 export default connect(

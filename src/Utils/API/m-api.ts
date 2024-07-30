@@ -29,10 +29,12 @@ const mApi = {
     async getContestListByGroupId(params: query) {
         return request.get('/contest/list', params)
     },
-
     /* 通过组号获取组内学生 */
     async getStudentListByGroupId(params: groupListQuery) {
         return request.get('/group/query', params)
+    },
+    async thirdPartyUnbinding(params: { thirdParty: string, username: string }) {
+        return request.get('/manage/user/thirdPartyUnbinding', params)
     },
     // 查询用户列表
     async getUserList(params: userListQuery) {

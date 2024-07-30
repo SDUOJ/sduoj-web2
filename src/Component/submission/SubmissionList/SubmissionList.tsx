@@ -1,5 +1,5 @@
 import {withTranslation} from "react-i18next";
-import {Button, Card, Form, Input, message, Select, Space} from "antd";
+import {Button, Card, Form, Input, message, Select, Space, Tooltip} from "antd";
 import {SyncJudging} from "../SyncJudging";
 import cApi from "../../../Utils/API/c-api";
 import {ReloadOutlined} from "@ant-design/icons";
@@ -15,6 +15,7 @@ import {TableState} from "../../../Type/ITable";
 import {ck, isValueEmpty} from "../../../Utils/empty";
 import {UserState} from "../../../Type/Iuser";
 import judgeAuth from "../../../Utils/judgeAhtu";
+import ModalSubmissionList from "./ModalSubmissionList";
 
 const SubmissionList = (props: any) => {
 
@@ -90,7 +91,7 @@ const SubmissionList = (props: any) => {
             key: "result",
             render: (text: any, record: any) => {
                 return (
-                    <div onClick={() => {
+                    <div style={{cursor: 'pointer'}} onClick={() => {
                         showSubmission(record)
                     }}>
                         <TestCase
@@ -122,7 +123,11 @@ const SubmissionList = (props: any) => {
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
-                return moment(text).fromNow();
+                return (
+                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment(text).fromNow()}</span>
+                    </Tooltip>
+                )
             }
         }
     ]
@@ -162,15 +167,21 @@ const SubmissionList = (props: any) => {
             key: "result",
             width: 170,
             render: (text: any, record: any) => {
-                return <TestCase
-                    type={"text"}
-                    caseType={StateList.indexOf(SubmissionMap[text])}
-                    append={
-                        text === "-2" ?
-                            "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")" :
-                            ""
-                    }
-                />
+                return (
+                    <div style={{cursor: 'pointer'}} onClick={() => {
+                        showSubmission(record)
+                    }}>
+                        <TestCase
+                            type={"text"}
+                            caseType={StateList.indexOf(SubmissionMap[text])}
+                            append={
+                                text === "-2" ?
+                                    "(" + record.RunningStep + "/" + (record.checkpointNum + record.publicCheckpointNum) + ")" :
+                                    ""
+                            }
+                        />
+                    </div>
+                )
             }
         },
         {
@@ -209,7 +220,11 @@ const SubmissionList = (props: any) => {
             dataIndex: "submitTime",
             key: "submitTime",
             render: (text: any) => {
-                return moment(text).fromNow();
+                return (
+                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment(text).fromNow()}</span>
+                    </Tooltip>
+                )
             }
         }
     ]
@@ -305,11 +320,25 @@ const SubmissionList = (props: any) => {
                         </Button>
                     </Space>
                 }
+                actions={(props.lessInfo && props.isLogin) ? [
+                    <div>
+                        {props.lessInfo && props.isLogin && (
+                            <ModalSubmissionList
+                                btnProps={{type: "text", block: true}}
+                                btnText={props.t("ShowAllInformation")}
+                                name={"Pro-SubmissionList-" + props.name}
+                                API={props.API}
+                                QuerySubmissionAPI={props.QuerySubmissionAPI}
+                            />
+                        )}
+                    </div>
+                ] : undefined}
             >
                 <TableWithSelection
                     disableSelection={props.lessInfo || !judgeAuth(props.roles, ["admin", "superadmin"])}
                     defaultPageSize={props.lessInfo ? 5 : undefined}
                     showSizeChanger={props.lessInfo ? false : undefined}
+                    pagination={props.lessInfo ? false : undefined}
                     columns={props.lessInfo ? columns : columnsAll}
                     getForm={props.useForm === true ? getForm : undefined}
                     name={props.name}
@@ -350,7 +379,8 @@ const mapStateToProps = (state: any) => {
     const UState: UserState = state.UserReducer
     return {
         tableData: TState.tableData,
-        roles: UState.userInfo?.roles
+        roles: UState.userInfo?.roles,
+        isLogin: UState.isLogin,
     }
 }
 

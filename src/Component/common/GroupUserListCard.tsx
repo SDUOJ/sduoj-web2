@@ -1,8 +1,10 @@
 import Search from "antd/es/input/Search";
-import {Card, List} from "antd";
+import {Card, List, Space} from "antd";
 import UserAvatar from "../user/Avatar";
 import {isValueEmpty} from "../../Utils/empty";
 import React, {useState} from "react";
+import {useTranslation} from "react-i18next";
+import "./GroupUserListCard.css"
 
 const GroupUserListCard = (props: any) => {
 
@@ -10,23 +12,24 @@ const GroupUserListCard = (props: any) => {
     const [pageNow, setPageNow] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(24)
 
+    const {t} = useTranslation()
+
     return (
         <>
             <Card
                 bordered={false}
                 extra={
-                    <>
+                    <Space>
+                        <div>{t("search")}:</div>
                         <Search
                             key={"search"}
-                            placeholder={""}
                             onSearch={(text) => {
                                 setSearchKey(text)
                                 setPageNow(1)
                             }}
-                            enterButton
-                            style={{width: 300, paddingTop: 8}}
+                            style={{width: 300}}
                         />
-                    </>
+                    </Space>
                 }
             >
                 <List
@@ -35,10 +38,16 @@ const GroupUserListCard = (props: any) => {
                     renderItem={(item: any) => {
                         return (
                             <List.Item.Meta
-                                style={{padding: 12}}
+                                style={{
+                                    padding: 8,
+                                    margin: 6,
+                                    boxShadow: '0 0 3px rgba(0, 0, 0, 0.3)',
+                                    borderRadius: '10px'
+                                }}
                                 title={item.username}
                                 avatar={<UserAvatar email={item.email}/>}
                                 description={item.nickname}
+                                className={"group-user-list"}
                             />
                         )
                     }}

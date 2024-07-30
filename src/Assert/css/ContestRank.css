@@ -4,6 +4,23 @@
     margin: 0 auto;
 }
 
+.rowLikeLast {
+    position: relative;
+}
+
+.rowLikeLast::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-bottom: 3px solid black;
+}
+
+.rowLike {
+    background: rgb(255, 255, 224);
+}
+
 .rowBase .ant-table-cell {
     padding: 2px;
 }

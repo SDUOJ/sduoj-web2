@@ -11,6 +11,7 @@ import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
 import {UrlPrefix} from "../../Config/constValue";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {useTranslation} from "react-i18next";
+import Search from "antd/es/input/Search";
 
 const CGroup = (props: any) => {
 
@@ -40,9 +41,11 @@ const CGroup = (props: any) => {
                                 return (
                                     <Space size={30}>
                                         <Form.Item label={t("Search")} name={"title"}>
-                                            <Input onPressEnter={() => {
-                                                onFinish()
-                                            }}/>
+                                            <Search
+                                                onSearch={() => {
+                                                    onFinish()
+                                                }}
+                                            />
                                         </Form.Item>
                                         <Form.Item label={t("Classification")} name={"isParticipating"}>
                                             <Select onChange={onFinish} style={{width: 80}}

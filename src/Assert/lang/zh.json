@@ -39,6 +39,7 @@
   "superadmin": "超级管理员",
   "admin": "管理员",
   "searchUser": "搜索用户",
+  "search": "搜索",
   "profile": "资料",
   "AdditionalConfiguration": "额外配置",
   "phone": "手机号",
@@ -323,5 +324,7 @@
   "OutputPreview": "输出预览",
   "publicDataSet": "公开数据集",
   "DownloadFirstRejectCase": "下载首个错误测试点",
-  "PublicTestCaseInfo": "公共测试点信息"
+  "PublicTestCaseInfo": "公共测试点信息",
+  "new email": "新邮箱",
+  "ShowAllInformation": "显示全部信息"
 }

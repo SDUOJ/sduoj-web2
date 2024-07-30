@@ -23,6 +23,9 @@ const cApi = {
     async login(data: loginInfo) {
         return request.post('/user/login', data)
     },
+    async emailLogin(data: { email: string, emailCode: string }) {
+        return request.post('/user/emailLogin', data)
+    },
     async logout() {
         return request.get('/user/logout')
     },
@@ -332,6 +335,20 @@ const cApi = {
     async delPsPublicCheckpoints(data: any) {
         return request.post("/ps/answer_sheet/pbcp/del", data)
     },
+
+
+    // 查询互评列表
+    async getSMEList(data: any) {
+        return request.get("/sme/", data)
+    },
+    // 提交互评结果
+    async submitSME(data: any) {
+        return request.post("/sme/", data)
+    },
+    // 查看互评结果
+    async getSMEResult(data: any) {
+        return request.get("/sme/results/", data)
+    }
 }
 
 export default cApi;

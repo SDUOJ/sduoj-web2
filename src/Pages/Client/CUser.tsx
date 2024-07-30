@@ -5,7 +5,6 @@ import Avatar from "../../Component/user/Avatar";
 import ItemEmail from "../../Component/user/Form/Item/ItemEmail";
 import ItemUsername from "../../Component/user/Form/Item/ItemUsername";
 import {UserState} from "../../Type/Iuser";
-import {testLoginTodo} from "../../Redux/Action/user";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import ItemNickname from "../../Component/user/Form/Item/ItemNickname";
@@ -64,7 +63,9 @@ class CUser extends Component<any, any> {
                                                         API={async () => {
                                                             return this.ref1.current?.validateFields().then((data: any) => {
                                                                 return CApi.updateProfile(data).then((res) => {
-                                                                    this.props.testLogin()
+                                                                    CApi.getProfile().then((res: any) => {
+                                                                        this.props.setUserInfo(res)
+                                                                    })
                                                                     return Promise.resolve(this.props.t("success"))
                                                                 })
                                                             }).catch((e: any) => {
@@ -147,13 +148,16 @@ class CUser extends Component<any, any> {
                                                     />
                                                 </Col>
                                                 <Col offset={1} span={11}>
-                                                    <ItemEmail needVerify={true} getEmail={async () => {
-                                                        return this.ref3.current?.validateFields(["email"]).then((data: any) => {
-                                                            return Promise.resolve(data.email)
-                                                        }).catch(() => {
-                                                            return Promise.reject()
-                                                        })
-                                                    }}/>
+                                                    <ItemEmail
+                                                        needVerify={true} emailVerifyType={"updateEmail"}
+                                                        getEmail={async () => {
+                                                            return this.ref3.current?.validateFields(["email"]).then((data: any) => {
+                                                                return Promise.resolve(data.email)
+                                                            }).catch(() => {
+                                                                return Promise.reject()
+                                                            })
+                                                        }}
+                                                    />
                                                 </Col>
                                             </Row>
                                         </Form>
@@ -190,8 +194,10 @@ class CUser extends Component<any, any> {
                                                                 confirm={this.props.userInfo.sduId}
                                                                 API={() => {
                                                                     CApi.thirdPartyUnbinding({thirdParty: "SDUCAS"}).then((res: any) => {
+                                                                        CApi.getProfile().then((res: any) => {
+                                                                            this.props.setUserInfo(res)
+                                                                        })
                                                                         message.success(this.props.t("unwindingSuccessful"))
-                                                                        this.props.testLogin()
                                                                     })
                                                                 }}
                                                             />
@@ -221,7 +227,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
+    setUserInfo: (data: any) => dispatch({type: "setUserInfo", data: data}),
 })
 
 export default connect(

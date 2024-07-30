@@ -7,7 +7,6 @@ import Title from "antd/es/typography/Title";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {UserState} from "../../Type/Iuser";
-import {testLoginTodo} from "../../Redux/Action/user";
 import cApi from "Utils/API/c-api"
 import eApi from "Utils/API/e-api"
 import TextEllipsis from "../../Component/common/TextEllipsis";
@@ -540,9 +539,7 @@ const mapStateToProps = (state: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    testLogin: () => dispatch(testLoginTodo())
-})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 
 export default connect(
     mapStateToProps,
