@@ -34,8 +34,10 @@ the https certificate for your local project.
     mkcert -install
     mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem "localhost"
     ```
+    Change the start in package.json to "start": "cross-env HTTPS=true SSL_CRT_FILE=./.cert/cert.pem   SSL_KEY_FILE=./.cert/key.pem node scripts/start.js".
+    Then,modify './src/utils/API/apiAddress.js' http to https in devlopment environment.
 
-2. Install a proxy server for nginx, modify its configuration file,
+3. Install a proxy server for nginx, modify its configuration file,
 listen on ``8889`` as the SSL port, and forward routes ``\api`` to ``localhost:8080``.
     ```
     server {
@@ -56,7 +58,7 @@ listen on ``8889`` as the SSL port, and forward routes ``\api`` to ``localhost:8
         }
     }
     ```
-3. Run:
+4. Run:
 
 ```shell
 start nginx
