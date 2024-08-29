@@ -5,15 +5,28 @@ import {router_ProblemSet} from "../../Config/router/routerC";
 import React, {Dispatch, Suspense, useEffect, useState} from "react";
 import LoginCheck from "../common/LoginCheck";
 import {ContestState} from "../../Redux/Action/contest";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {WaterMark} from "@ant-design/pro-layout";
 import {UserState} from "../../Type/Iuser";
+import ScreenshotComponent from "../../Component/screenrecord/screenrecord";
+
 
 
 const PSLayout = (props: any) => {
     // const path = props.location.pathname
     let minWidth = 500
+
+    const problemSetId = props.match.params.problemSetId;
+    const userInfo = useSelector((state: any) => state.UserReducer?.userInfo);
+    const token = generateToken(userInfo.userid);
+
+    const screenshotComponentProps = {
+        bs_id: parseInt(problemSetId, 10),
+        u_name: userInfo.username,
+        u_id: parseInt(userInfo.userId, 10),
+        token: token
+    };
 
     const [pageWidth, setPageWidth] = useState<number>(document.querySelector('body')?.clientWidth as number)
 
@@ -71,6 +84,7 @@ const PSLayout = (props: any) => {
                     >
                         {content}
                     </WaterMark>
+                    <ScreenshotComponent {...screenshotComponentProps} />
                 </div>
             </div>
         </>
@@ -92,3 +106,10 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(withTranslation()(withRouter(PSLayout)))
+
+
+function generateToken(username: string) {
+    const date = new Date();
+    const formattedDate = date.toISOString().replace(/[-:.TZ]/g, '').substring(0, 14);
+    return `${username}#${formattedDate}`;
+}

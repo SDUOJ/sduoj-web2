@@ -16,7 +16,7 @@ import {
 } from '../../Type/types'
 import {SubmissionQueryType} from "../../Type/IManage";
 
-import request from "./request";
+import request from "./request_test";
 import {IAddCodesToHub} from "../../Type/IAnti-cheating";
 
 const mApi = {
@@ -394,71 +394,16 @@ const mApi = {
     },
 
     //获取比赛列表
-    async getPSList() {
-        //return request.get("/screen_record/getPSList");
-        return {
-            data: [
-                {
-                    psid: 1,
-                    name: "录屏1",
-                    description: "这是一个屏幕录制文件的描述",
-                    tm_start: "2023-04-01 12:00:00",
-                    tm_end: "2023-04-01 13:00:00",
-                    groupId: 101,
-                    tag: "测试"
-                },
-                {
-                    psid: 2,
-                    name: "录屏2",
-                    description: "这是第二个屏幕录制文件的描述",
-                    tm_start: "2023-04-02 14:00:00",
-                    tm_end: "2023-04-02 15:00:00",
-                    groupId: 102,
-                    tag: "演示"
-                },
-                {
-                    psid: 3,
-                    name: "录屏3",
-                    description: "这是第三个屏幕录制文件的描述",
-                    tm_start: "2023-04-03 16:00:00",
-                    tm_end: "2023-04-03 17:00:00",
-                    groupId: 103,
-                    tag: "培训"
-            }
-        ]
-    };
+    async getPSList(){
+        return request.get("/screen_record/getPSList");
     },
     //获取视频列表
     async getVideoList(data: any){
-        //return request.get("/screen_record/getVideoList", data)
-        return {
-        code: 200, // 状态码，200表示成功
-        message: "获取视频列表成功", // 信息描述
-        data: [
-            {
-                u_id: 1, // 视频唯一标识
-                u_name: "用户1的视频", // 视频名称
-                start_time: "2024-08-13 10:00:00", // 开始时间
-                modify_time: "2024-08-13 10:30:00" // 修改时间
-            },
-            {
-                u_id: 2,
-                u_name: "用户2的视频",
-                start_time: "2024-08-13 10:10:00",
-                modify_time: "2024-08-13 10:40:00"
-            },
-            {
-                u_id: 3,
-                u_name: "用户3的视频",
-                start_time: "2024-08-13 10:20:00",
-                modify_time: "2024-08-13 10:50:00"
-            }
-        ]
-    };
+        return request.get("/screen_record/getVideoList", data)
     },
     //获取视频
     async getVideo(data: any) {
-        return request.get("/screen_record/getVideoList", data)
+        return request.get("/screen_record/getVideo", data)
     },
     //创建锁定
     async createLockVideo(data: any) {
@@ -467,11 +412,8 @@ const mApi = {
     //删除记录
     async deleteVideo(data: any) {
         return request.get("/screen_record/deleteVideo", data)
-    },
-    //删除所有
-    async deleteAll(data: any) {
-        return request.get("/screen_record/deleteAll", data)
     }
+
 }
 
 export default mApi;
