@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import cApi from "Utils/API/capi_test";
+import cApi from "Utils/API/c-api";
 
 const ScreenshotComponent = ({
     bs_id,

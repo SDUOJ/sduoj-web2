@@ -1,50 +1,43 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import React, {Component} from "react";
+import {withRouter} from "react-router-dom";
 import cApi from "../../Utils/API/c-api";
-import { Button, Card, Col, Row, Space } from "antd";
-import { ClockCircleOutlined } from "@ant-design/icons";
+import {Button, Card, Col, Row, Space} from "antd";
+import {ClockCircleOutlined} from "@ant-design/icons";
 import Countdown from "antd/lib/statistic/Countdown";
-import { isValueEmpty } from "../../Utils/empty";
+import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
-import { UrlPrefix } from "../../Config/constValue";
-import { withTranslation } from "react-i18next";
+import {UrlPrefix} from "../../Config/constValue";
+import {withTranslation} from "react-i18next";
+
 
 class CContest extends Component<any, any> {
+
     constructor(props: any, context: any) {
         super(props, context);
         this.state = {
             upComing: undefined
-        };
-        this.getUpComing();
+        }
+        this.getUpComing()
     }
 
     getUpComing = () => {
-        cApi.getUpcomingContest({ groupId: undefined }).then((res: any) => {
+        cApi.getUpcomingContest({groupId: undefined}).then((res: any) => {
             this.setState({
                 upComing: res
-            });
-        });
+            })
+        })
     }
 
     render() {
-        // Define the props for ScreenshotComponent
-        // const screenshotComponentProps = {
-        //     bs_type: 1,
-        //     bs_id: 123,
-        //     //u_name: userInfo.username,
-        //     //u_id: parseInt(userInfo.userId, 10),
-        //     u_name: "小刚",
-        //     u_id: 20222,
-        //     token: "token",
-        // };
-
         return (
             <>
-                <div style={{ textAlign: "center", margin: "0 auto" }}>
-                    <div style={{ textAlign: "left", maxWidth: "1500px", margin: "0 auto" }}>
+                <div style={{textAlign: "center", margin: "0 auto"}}>
+                    <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                         <Row gutter={20}>
                             <Col span={17}>
-                                <ContestList />
+
+                                <ContestList/>
+
                             </Col>
                             <Col span={7}>
                                 {!isValueEmpty(this.state.upComing) && (
@@ -61,7 +54,7 @@ class CContest extends Component<any, any> {
                                         </div>
                                         <div>
                                             <Space>
-                                                <ClockCircleOutlined />
+                                                <ClockCircleOutlined/>
                                                 <Countdown
                                                     className={"contestTimer"}
                                                     value={parseInt(this.state.upComing.gmtStart)}
@@ -81,4 +74,4 @@ class CContest extends Component<any, any> {
     }
 }
 
-export default withTranslation()(withRouter(CContest));
+export default withTranslation()(withRouter(CContest))

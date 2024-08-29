@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, message, Modal, Space, Table } from 'antd';
-import mApi from "Utils/API/mapi_test";
+import mApi from "Utils/API/m-api";
 
 interface VideoListProps {
   psid: number;

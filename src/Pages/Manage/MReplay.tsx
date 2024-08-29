@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, Space, Tag, Table } from "antd";
-import mApi from "../../Utils/API/mapi_test";
+import mApi from "../../Utils/API/m-api";
 import { withTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import UserListButton from "../../Component/screenrecord/UserListButton";
@@ -23,6 +23,7 @@ class MReplay extends Component<any, any> {
     fetchData = (params = {}) => {
         this.setState({ loading: true });
         mApi.getPSList().then((data) => {
+            console.log(data);
             this.setState({
                 dataSource: data,
                 pagination: {
@@ -37,6 +38,10 @@ class MReplay extends Component<any, any> {
             current: pagination.current,
             pageSize: pagination.pageSize,
         });
+    };
+
+    handleRefresh = () => {
+        this.fetchData();
     };
 
     render() {
@@ -95,7 +100,7 @@ class MReplay extends Component<any, any> {
                 render: (text: any, rows: any) => {
                     return (
                         <Space size={3}>
-                            <UserListButton psid={rows.psid}  token={rows.token}/>
+                            <UserListButton psid={rows.psid}  token={rows.token}  onRefresh={this.handleRefresh}/>
                         </Space>
                     );
                 }
