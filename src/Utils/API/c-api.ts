@@ -356,7 +356,7 @@ const cApi = {
     },
 
     async addRecord(data: any){
-        return request.post("screen_record/addFrame", data)
+        return request.post("screen_record/addRecord", data)
     }
 }
 

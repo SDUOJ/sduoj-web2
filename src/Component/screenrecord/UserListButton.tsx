@@ -30,21 +30,10 @@ const UserListButton: React.FC<VideoListProps> = ({ psid, onRefresh}) => {
     }
   };
 
-  const handleDownload = async (record: any) => {
+   const handleDownload = async (record: any) => {
   try {
-    const response = await fetch(`http://api2.test.sduoj.com:8000/screen_record/getVideo?token=${encodeURIComponent(record.token)}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const blob:any = await mApi.getVideo(record.token)
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch video, status: ${response.status}`);
-    }
-
-    const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
