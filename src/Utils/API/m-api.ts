@@ -391,9 +391,27 @@ const mApi = {
     // 重新排序测试点
     async reArrangePsCheckpoints(data: any) {
         return request.post("/ps/answer_sheet/pbcp/reArr", data)
+    },
+
+    //获取比赛列表
+    async getPSList() {
+        return request.get("/screen_record/getPSList");
+    },
+    //获取视频列表
+    async getVideoList(data: any) {
+        return request.get("/screen_record/getVideoList", data)
+    },
+    //删除记录
+    async deleteVideo(data: any) {
+        return request.get("/screen_record/deleteVideo", data)
+    },
+    //删除所有
+    async deleteAll(data: any) {
+        return request.get("/screen_record/deleteAll", data)
+    },
+    async getVideo(data: any) {
+       return request.getVideo("/screen_record/getVideo", data)
     }
-
-
 }
 
 export default mApi;

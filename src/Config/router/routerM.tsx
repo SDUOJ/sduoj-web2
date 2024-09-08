@@ -9,7 +9,8 @@ import {
     NotificationOutlined,
     ReconciliationOutlined,
     UsergroupAddOutlined,
-    UserOutlined
+    UserOutlined,
+    VideoCameraOutlined
 } from "@ant-design/icons";
 
 import {lazy} from "react";
@@ -219,4 +220,12 @@ export const routerM: IRouter[] = [
     //         },
     //     ]
     // }
+    {
+        id: 10,
+        path: UrlPrefix + "/manage/replay",
+        title_i18n: "录屏回放",
+        exact: true,
+        icon: <VideoCameraOutlined/>,
+        component: lazy(() => import('../../Pages/Manage/MReplay'))
+    },
 ]
