@@ -1,54 +1,73 @@
 import { useEffect } from 'react';
 import cApi from "Utils/API/c-api";
-import html2canvas from 'html2canvas';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 const ScreenshotComponent = (props: any) => {
     const userInfo = useSelector((state: any) => state.UserReducer?.userInfo);
 
-    const bs_id = props.match.params.problemSetId
-    const u_name = userInfo.username
-    const u_id = parseInt(userInfo.userId, 10)
-    const token = generateToken(userInfo.userid)
+    const bs_id = props.match.params.problemSetId;
+    const u_name = userInfo.username;
+    const u_id = parseInt(userInfo.userId, 10);
+    const token = generateToken(userInfo.userid);
 
     useEffect(() => {
-        const takeScreenshot = async () => {
+        let mediaRecorder: MediaRecorder;
+        let recordedBlobs: Blob[] = [];
+
+        const startRecording = async () => {
             try {
-                // 使用html2canvas来截取屏幕
-                const element = document.body; // 你可以根据需要选择不同的元素
-                const canvas = await html2canvas(element, { scale: window.devicePixelRatio });
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                mediaRecorder = new MediaRecorder(displayStream, { mimeType: 'video/webm' });
 
-                canvas.toBlob(async (blob) => {
-                    if (blob) {
-                        const formData = new FormData();
-                        formData.append('token', token);
-                        formData.append('pic', blob, 'screenshot.jpg');
-
-                        const data: any = await cApi.addFrame(formData);
-                        console.log(data);
-                        if (data === "无此视频记录") {
-                            const recordData = {
-                                bs_id,
-                                u_name,
-                                u_id,
-                                token,
-                            };
-                            await cApi.addRecord(recordData);
-                            await cApi.addFrame(formData);
-                        }
-                        else if (data === "视频正在导出") {
-                            console.log('视频正在导出');
-                        }
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        recordedBlobs.push(event.data);
                     }
-                }, 'image/jpeg');
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+                    const formData = new FormData();
+                    formData.append('token', token);
+                    formData.append('video', blob, 'recordedVideo.webm');
+
+                    const data: any = await cApi.addFrame(formData);
+                    console.log(data);
+                    if (data === "无此视频记录") {
+                        const recordData = {
+                            bs_id,
+                            u_name,
+                            u_id,
+                            token,
+                        };
+                        await cApi.addRecord(recordData);
+                        await cApi.addFrame(formData);
+                    } else if (data === "视频正在导出") {
+                        console.log('视频正在导出');
+                    }
+                };
+
+                mediaRecorder.start(1000); // Collect data in chunks every 1000ms
             } catch (error) {
                 console.error('Error capturing screen:', error);
             }
         };
 
-        const intervalId = setInterval(takeScreenshot, 5000);
+        startRecording();
 
-        return () => clearInterval(intervalId);
+        const intervalId = setInterval(() => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                startRecording(); // Restart the recording
+            }
+        }, 5000);
+
+        return () => {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+            }
+            clearInterval(intervalId);
+        };
     }, [bs_id, u_name, u_id, token]);
 
     return null;
