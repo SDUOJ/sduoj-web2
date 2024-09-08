@@ -47,7 +47,7 @@ const ScreenshotComponent = (props: any) => {
                     }
                 };
 
-                mediaRecorder.start(1000); // Collect data in chunks every 1000ms
+                mediaRecorder.start(1000);
             } catch (error) {
                 console.error('Error capturing screen:', error);
             }
@@ -60,7 +60,7 @@ const ScreenshotComponent = (props: any) => {
                 mediaRecorder.stop();
                 startRecording(); // Restart the recording
             }
-        }, 5000);
+        }, 10000);
 
         return () => {
             if (mediaRecorder) {
