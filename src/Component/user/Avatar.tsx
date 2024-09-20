@@ -3,6 +3,7 @@ import md5 from "js-md5";
 import React from "react";
 import {Avatar} from "antd";
 import {AvatarSize} from "antd/es/avatar/SizeContext";
+import {isValueEmpty} from "../../Utils/empty";
 
 
 interface IUserAvatar {
@@ -12,23 +13,25 @@ interface IUserAvatar {
 }
 
 const UserAvatar = (props: IUserAvatar) => {
-    if (props.email !== undefined && props.email !== null) {
+    if (!isValueEmpty(props.email)) {
+        let avatarUrl = `https://cravatar.cn/avatar/${md5(props.email as string)}?d=identicon`;
         return (
             <Avatar
+                src={avatarUrl}
                 shape={props.shape}
-                src={"https://cravatar.cn/avatar/" + md5(props.email) +
-                (typeof props.size === "number" ? "?s=" + props.size : "") +
-                (typeof props.size === "number" ? "&d=identicon": "?d=identicon")
-                }
-                alt={"头像"}
                 size={props.size}
             />
         )
     } else {
         return (
-            <Avatar icon={<UserOutlined/>}/>
+            <Avatar
+                icon={<UserOutlined/>}
+                shape={props.shape}
+                size={props.size}
+            />
         )
     }
 }
+
 
 export default UserAvatar
