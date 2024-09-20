@@ -33,7 +33,7 @@ const SubmissionList = (props: any) => {
 
         const submissionIdHex = data[0]
         const submissionVersion = data[1]
-        const checkpointType = data[2]
+        // const checkpointType = data[2]
         const checkpointIndex = data[3]
         const checkpointId = data[4]
         const judgeResult = data[5]
@@ -44,29 +44,44 @@ const SubmissionList = (props: any) => {
         let dt = dataSource
         const Index = dt.findIndex((value: any) => value.submissionId === submissionIdHex)
         if (Index === -1) return
+
+        // 信息如果不存在，初始化信息
+        if (isValueEmpty(dt[Index].cur_cpt)) {
+            dt[Index].cur_cpt = new Set();
+        }
+
+        // 当 checkpointIndex < 0 时，表示同步运行状态
+        // -4: Queueing, -3: Compiling, -2: Judging, -1: End
         if (checkpointIndex < 0) {
             dt[Index].result = checkpointIndex.toString()
+            // 结束时，填写评测信息
             if (checkpointIndex === -1) {
+                localStorage.setItem(`submissionVersion:${submissionIdHex}`, `${submissionVersion}`)
                 dt[Index].result = judgeResult
                 dt[Index].score = judgeScore
                 dt[Index].usedTime = usedTime
                 dt[Index].usedMemory = usedMemory
             }
-            // 检查还有没有未更新完的
+            // 扫描全部评测，检查还有没有未更新完的
             let runningNumber = 0
             for (const x of dt) if (parseInt(x.result) <= 0) runningNumber += 1
             if (runningNumber === 0) setWebSocketOpen(false)
-        } else {
-            let nowID = 0
-            if (checkpointType === 0) {
-                nowID = checkpointIndex + 1
-            } else if (checkpointType === 1) {
-                nowID = dt[Index].checkpointNum + checkpointIndex + 1
-            }
-            if (dt[Index].RunningStep < nowID) {
-                dt[Index].RunningStep = nowID
-                dt[Index].score += judgeScore
-            }
+        } else { // 否则表示同步评测点信息
+            dt[Index].cur_cpt.add(checkpointId)
+            dt[Index].RunningStep = dt[Index].cur_cpt.size
+            dt[Index].score += judgeScore
+
+            // 老版本的评测点信息同步
+            // let nowID = 0
+            // if (checkpointType === 0) {
+            //     nowID = checkpointIndex + 1
+            // } else if (checkpointType === 1) {
+            //     nowID = dt[Index].checkpointNum + checkpointIndex + 1
+            // }
+            // if (dt[Index].RunningStep < nowID) {
+            //     dt[Index].RunningStep = nowID
+            //     dt[Index].score += judgeScore
+            // }
         }
         props.setDataSource(dt, props.name)
     }

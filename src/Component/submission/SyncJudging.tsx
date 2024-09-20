@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import apiAddress from "../../Utils/API/apiAddress";
+import {isValueEmpty} from "../../Utils/empty";
 
 export interface IWebSocket {
     queryList: string[]
@@ -18,7 +19,20 @@ export const SyncJudging = (props: IWebSocket) => {
             if (lastMessage.data.length > 2) {
                 const data = JSON.parse(lastMessage.data)
                 if (data instanceof Array && data[0] instanceof Array) {
-                    for (const x of data) props.dataHandle(x)
+                    // 记录每个评测记录的最高版本
+                    const versionMap = new Map<string, number>()
+                    for (const x of data) {
+                        versionMap.set(x[0], versionMap.has(x[0]) ? Math.max(versionMap.get(x[0])!, x[1]) : x[1])
+                    }
+                    // 仅更新最新版本的评测记录
+                    for (const x of data) {
+                        if (x[1] === versionMap.get(x[0])){
+                            let vers = localStorage.getItem(`submissionVersion:${x[0]}`)
+                            if (isValueEmpty(vers) || x[1] > parseInt(vers!)) {
+                                props.dataHandle(x)
+                            }
+                        }
+                    }
                 } else {
                     props.dataHandle(JSON.parse(data))
                 }

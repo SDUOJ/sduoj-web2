@@ -151,7 +151,7 @@ const Processing = (props: IProcessingProp & any) => {
         const submissionVersion = data[1]
         const checkpointType = data[2]
         const checkpointIndex = data[3]
-        const checkpointId = data[4]
+        // const checkpointId = data[4]
         const judgeResult = data[5]
         const judgeScore = data[6]
         const usedTime = data[7]
@@ -164,6 +164,7 @@ const Processing = (props: IProcessingProp & any) => {
             setRunningState(checkpointIndex.toString())
             // -1 表示评测结束
             if (checkpointIndex === -1) {
+                localStorage.setItem(`submissionVersion:${submissionIdHex}`, `${submissionVersion}`)
                 getSubmissionInfo()
                 setWebSocketOpen(false)
             }
