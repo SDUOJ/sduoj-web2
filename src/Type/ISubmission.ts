@@ -1,3 +1,5 @@
+import {JudgeTemplate} from "./IProblem";
+
 export type TestCaseType =
     "Pending" | "Running" | "Accepted" |
     "WrongAnswer" | "TimeLimitExceeded" | "MemoryLimitExceeded" |
@@ -51,17 +53,38 @@ export const StateList =
         "PresentationError", "SystemError", "Queueing", "Compiling", "Judging", "End", "Cancelled"]
 
 
-export const langMap: any = {
-    "C++11": "cpp",
-    "C++14": "cpp",
-    "C++17": "cpp",
-    "C++20": "cpp",
-    "C11": "c",
-    "Java8": "java",
-    "Java11": "java",
-    "Python3.6": "python",
-    "Python3.11": "python",
-    "cpp11": "cpp"
+// export const langMap: any = {
+//     "C++11": "cpp",
+//     "C++14": "cpp",
+//     "C++17": "cpp",
+//     "C++20": "cpp",
+//     "C11": "c",
+//     "Java8": "java",
+//     "Java11": "java",
+//     "Python3.6": "python",
+//     "Python3.11": "python",
+//     "cpp11": "cpp"
+// }
+
+export const ext2lang: any = {
+    "cpp": "cpp", ".cpp": "cpp",
+    "cc": "cpp", ".cc": "cpp",
+    "c++": "cpp", ".c++": "cpp",
+    "c": "c", ".c": "c",
+    "java": "java", ".java": "java",
+    "py": "python", ".py": "python",
+    "py3": "python", ".py3": "python",
+    "py2": "python", ".py2": "python",
+}
+
+export const fileExtList2Lang: any = (extList: string[]) => {
+    // 找到第一个合法的语言
+    for (let ext of extList) {
+        if (ext2lang[ext]) {
+            return ext2lang[ext]
+        }
+    }
+    return "cpp"
 }
 
 export interface checkPointType {
@@ -69,6 +92,14 @@ export interface checkPointType {
     Score: number
     Time: number
     Memory: number
+}
+
+export interface JudgeTemplateType {
+    id: string
+    type: number
+    title: string
+    comment: string
+    acceptFileExtensions: string[]
 }
 
 export interface submissionInfoType {
@@ -88,6 +119,7 @@ export interface submissionInfoType {
     judgeTemplateId: string
     judgeTemplateTitle: string
     judgeTemplateType: number
+    judgeTemplate: JudgeTemplateType
     problemCode: string
     problemId: string
     problemTitle: string
@@ -139,5 +171,5 @@ export interface SubmissionState {
     TopSubmissionId?: string
     TopSubmissionInfo?: TopSubmissionInfoType
     SubmissionModalVis: boolean
-    submissionListInfo: {[key: string]: any}
+    submissionListInfo: { [key: string]: any }
 }

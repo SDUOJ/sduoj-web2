@@ -6,7 +6,7 @@ import {TestCaseProp} from "../TestCase";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {
-    langMap,
+    fileExtList2Lang,
     RunningResultType,
     RunningStateType,
     StateList,
@@ -229,7 +229,7 @@ const Processing = (props: IProcessingProp & any) => {
             content: (
                 <>
                     {!isValueEmpty(sf?.code) && sf?.judgeTemplateTitle !== undefined && (
-                        <CodeHighlight code={sf?.code} lang={langMap[sf.judgeTemplateTitle]}/>
+                        <CodeHighlight code={sf?.code} lang={fileExtList2Lang(sf.judgeTemplate.acceptFileExtensions)}/>
                     )}
                     {isValueEmpty(sf?.zipFileId) && isValueEmpty(sf?.code) && (
                         props.t("codeIsNotPublic")
