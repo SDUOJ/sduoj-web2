@@ -1,8 +1,12 @@
-export default function deepClone(obj: any) {
+export default function deepClone(obj: any, hash = new WeakMap()) {
     const _toString = Object.prototype.toString;
     // null, undefined, non-object, function
     if (!obj || typeof obj !== 'object') {
         return obj;
+    }
+    // Handle circular reference
+    if (hash.has(obj)) {
+        return hash.get(obj);
     }
     // DOM Node
     if (obj.nodeType && 'cloneNode' in obj) {
@@ -28,8 +32,12 @@ export default function deepClone(obj: any) {
     }
     let result = Array.isArray(obj) ? [] :
         obj.constructor ? new obj.constructor() : {};
+
+    hash.set(obj, result);
     for (const key in obj) {
-        result[key] = deepClone(obj[key]);
+        if (obj.hasOwnProperty(key)) {
+            result[key] = deepClone(obj[key], hash);
+        }
     }
     return result;
 }
