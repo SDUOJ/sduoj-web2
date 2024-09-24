@@ -35,7 +35,7 @@ const SubmissionList = (props: any) => {
         const submissionVersion = data[1]
         // const checkpointType = data[2]
         const checkpointIndex = data[3]
-        const checkpointId = data[4]
+        // const checkpointId = data[4]
         const judgeResult = data[5]
         const judgeScore = data[6]
         const usedTime = data[7]
@@ -67,7 +67,7 @@ const SubmissionList = (props: any) => {
             for (const x of dt) if (parseInt(x.result) <= 0) runningNumber += 1
             if (runningNumber === 0) setWebSocketOpen(false)
         } else { // 否则表示同步评测点信息
-            dt[Index].cur_cpt.add(checkpointId)
+            dt[Index].cur_cpt.add(checkpointIndex)
             dt[Index].RunningStep = dt[Index].cur_cpt.size
             dt[Index].score += judgeScore
 
