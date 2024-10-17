@@ -348,6 +348,15 @@ const cApi = {
     // 查看互评结果
     async getSMEResult(data: any) {
         return request.get("/sme/results/", data)
+    },
+
+    //录屏相关
+    async addFrame(data: any){
+        return request.post("screen_record/addFrame", data)
+    },
+
+    async addRecord(data: any){
+        return request.post("screen_record/addRecord", data)
     }
 }
 

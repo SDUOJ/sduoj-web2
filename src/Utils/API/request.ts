@@ -31,6 +31,20 @@ const getZipFile: any = async (url: string, data: object, config?: AxiosRequestC
     return Promise.resolve()
 }
 
+const getVideo = async (url:string, data: any) => {
+    const response = await fetch(baseUrl + url + `?token=${encodeURIComponent(data)}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.blob();
+}
+
 
 const messageDisabledList = [
     "/user/getProfile",
@@ -93,6 +107,7 @@ const post: Post | GetError = async (url: string, data: object, config?: AxiosRe
 const request = {
     get,
     post,
-    getZipFile
+    getZipFile,
+    getVideo
 }
 export default request;
