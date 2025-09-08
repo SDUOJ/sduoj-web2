@@ -149,9 +149,16 @@ module.exports = function (webpackEnv) {
         },
         {
           loader: require.resolve(preProcessor),
-          options: {
-            sourceMap: true,
-          },
+          options:
+            preProcessor === 'sass-loader'
+              ? {
+                  // Use dart-sass explicitly instead of deprecated node-sass
+                  implementation: require('sass'),
+                  sourceMap: true,
+                }
+              : {
+                  sourceMap: true,
+                },
         }
       );
     }
