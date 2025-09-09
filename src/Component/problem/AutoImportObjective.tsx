@@ -118,17 +118,16 @@ const AutoImportObjective = () => {
                                 };
 
                                 const run = async () => {
-                                    let i = -1
-                                    for (const x of submitProData) {
-                                        i += 1
-                                        if (uploadState[i] === 2) continue
-                                        await mApi.createChoiceProblem(x).then((resData) => {
-                                            uploadState[i] = 2
-                                            setUploadState(deepClone(uploadState))
-                                        }).catch(() => {
-                                            uploadState[i] = 0
-                                            setUploadState(deepClone(uploadState))
-                                        })
+                                    for (let idx = 0; idx < submitProData.length; idx++) {
+                                        if (uploadState[idx] === 2) continue
+                                        const payload = submitProData[idx]
+                                        try {
+                                            await mApi.createChoiceProblem(payload)
+                                            uploadState[idx] = 2
+                                        } catch (e) {
+                                            uploadState[idx] = 0
+                                        }
+                                        setUploadState(deepClone(uploadState))
                                         await waitTime(200)
                                     }
                                     setCanSubmitAll(true)

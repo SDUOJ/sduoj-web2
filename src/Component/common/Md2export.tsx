@@ -67,7 +67,7 @@ const MD2export = (props: any) => {
 
             <Modal
                 title={props.t("markdownText")}
-                visible={vis}
+                open={vis}
                 footer={false}
                 width={1200}
                 onCancel={() => {

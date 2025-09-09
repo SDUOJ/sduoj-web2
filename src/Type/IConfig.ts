@@ -1,4 +1,4 @@
-import {Locale} from "antd/lib/locale-provider";
+import { Locale } from 'antd/es/locale';
 
 // 选择合适的工作模式方便前端相关组件的复用
 

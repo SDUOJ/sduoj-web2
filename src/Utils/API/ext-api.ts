@@ -1,6 +1,6 @@
 import request from "./request";
 
-export default {
+const extApi = {
     // 课程相关接口
     createCourse: async (data: any) => {
         return request.post('/hws/course/add', data);
@@ -53,3 +53,5 @@ export default {
     }
 
 }
+
+export default extApi

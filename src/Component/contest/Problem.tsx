@@ -105,7 +105,7 @@ const Problem = (props: any) => {
                                         key: "ID",
                                         title: "ID",
                                         dataIndex: "problemCode",
-                                        render: (text) => {
+                                        render: (text: string) => {
                                             return String.fromCharCode('A'.charCodeAt(0) + parseInt(text) - 1)
                                         }
                                     },
@@ -113,7 +113,7 @@ const Problem = (props: any) => {
                                         key: "title",
                                         title: props.t("title"),
                                         dataIndex: "problemTitle",
-                                        render: (text, row) => {
+                                        render: (text: string, row: any) => {
                                             return (
                                                 <>
                                                     {!isValueEmpty(row.problemColor) && (
@@ -130,7 +130,7 @@ const Problem = (props: any) => {
                                     {
                                         key: "AC_Submits",
                                         title: "通过 / 提交",
-                                        render: (text, row) => {
+                                        render: (_text: any, row: any) => {
                                             return (
                                                 <>
                                                     {row.acceptNum} / {row.submitNum}

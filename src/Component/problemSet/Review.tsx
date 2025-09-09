@@ -225,7 +225,7 @@ const Review = (props: any) => {
             <Modal
                 title={"主观题评分"}
                 width={1400}
-                visible={vis}
+                open={vis}
                 maskClosable={false}
                 onCancel={() => {
                     setVis(false)
@@ -290,8 +290,13 @@ const Review = (props: any) => {
                                     disabled={
                                         judgeInfo.judgeLock_username !== props.username ||
                                         Object.keys(reviewInfo).length !== 0
-                                    } block={true} style={{marginTop: 12}}
-                                    type="ghost" danger={true} onClick={() => {
+                                    }
+                                    block={true}
+                                    style={{marginTop: 12}}
+                                    type="default"
+                                    ghost
+                                    danger
+                                    onClick={() => {
                                     let res = []
                                     for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
                                         let x = judgeInfo.judgeConfig.children[i]

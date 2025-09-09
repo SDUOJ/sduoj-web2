@@ -1,11 +1,6 @@
-@import "~antd/dist/antd.css";
+/* antd v5 uses CSS-in-JS; global reset is imported in index.tsx */
 @import "~vditor/dist/index.css";
-@import "~@ant-design/pro-form/dist/form.min.css";
-@import '~@ant-design/pro-table/dist/table.min.css';
-@import '~@ant-design/pro-layout/dist/layout.min.css';
-@import "~@ant-design/pro-card/dist/card.min.css";
-@import "~@ant-design/pro-list/dist/list.min.css";
-@import "~@ant-design/pro-descriptions/dist/descriptions.min.css";
+/* ProComponents v5 合并为 @ant-design/pro-components，且 antd v5 使用 CSS-in-JS，无需单独引入这些 CSS */
 
 
 .logo {

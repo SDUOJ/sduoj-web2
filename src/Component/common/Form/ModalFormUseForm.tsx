@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Button, Form, message, Modal} from "antd";
-import {ButtonType} from "antd/lib/button/button";
+import type { ButtonProps } from 'antd';
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {ck, isValueEmpty} from "../../../Utils/empty";
 import {useForm} from "antd/es/form/Form";
@@ -42,7 +42,7 @@ const ModalForm = (props: ModalFormProps & any) => {
     const [current, setCurrent] = useState<number>(0)
     const [submitting, setSubmitting] = useState<boolean>(false);
 
-    const BtnTypeMap: { [key: string]: ButtonType } = {
+    const BtnTypeMap: { [key: string]: ButtonProps['type'] } = {
         create: "primary",
         update: "link",
         fork: "link",
@@ -184,7 +184,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     destroyOnClose={true}
                     title={props.title}
                     className={props.className}
-                    visible={formVis}
+                    open={formVis}
                     maskClosable={false}
                     onCancel={() => {
                         props.onClose && props.onClose()
@@ -228,7 +228,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                                 destroyOnClose={true}
                                 title={props.title}
                                 className={props.className}
-                                visible={formVis}
+                                open={formVis}
                                 maskClosable={false}
                                 width={props.width ?? 1200}
                                 style={{minWidth: props.width}}

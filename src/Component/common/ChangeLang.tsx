@@ -6,7 +6,7 @@ import {language, languageMap} from "../../Config/i18n";
 import {connect} from "react-redux";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../../Redux/Action/config";
-import {Locale} from "antd/lib/locale-provider";
+import { Locale } from 'antd/es/locale';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import {initLanguage} from "../../Utils/initLanguage";

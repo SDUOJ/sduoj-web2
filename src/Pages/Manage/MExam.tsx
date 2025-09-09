@@ -10,12 +10,6 @@ import {UrlPrefix} from "../../Config/constValue";
 
 class MExam extends Component<any, any> {
 
-
-    constructor(props: any, context: any) {
-        super(props, context);
-
-    }
-
     componentDidMount() {
         if (!this.props.isLogin) {
             this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)

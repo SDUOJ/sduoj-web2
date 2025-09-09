@@ -1,7 +1,7 @@
 import React, {Dispatch, Suspense} from 'react';
 
 import './App.css';
-import 'antd/dist/antd.css';
+
 import './Config/i18n'
 import {ConfigProvider} from "antd";
 import "vditor/src/assets/less/index.less";

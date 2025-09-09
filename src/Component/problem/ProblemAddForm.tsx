@@ -345,7 +345,7 @@ const ProblemAddForm = (props: any) => {
         <>
             <EditableProTable<examProblemType>
                 value={proListData}
-                onChange={setProListData}
+                onChange={(value) => setProListData([...value])}
                 columns={columns}
                 rowKey={"id"}
                 recordCreatorProps={false}

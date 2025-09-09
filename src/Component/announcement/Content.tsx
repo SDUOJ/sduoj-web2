@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Comment, Tooltip} from 'antd';
+import { Tooltip } from 'antd';
+import { Comment } from '@ant-design/compatible';
 import moment from 'moment';
 // import {DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";

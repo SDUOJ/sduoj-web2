@@ -2,8 +2,34 @@ declare module "*.svg";
 
 declare module "*.png";
 
+type TWYSISYGToolbar =
+    "table"
+    | "code-block"
+    | "heading"
+    | "link-ref"
+    | "a"
+    | "image"
+    | "footnotes-block"
+    | "footnotes-ref"
+    | "vditor-toc"
+    | "blockquote"
+    | "li"
+    | "block"
+
 interface Window {
     VditorI18n: ITips;
+    hljs: {
+        listLanguages(): string[];
+        highlight(text: string, options: {
+            language?: string,
+            ignoreIllegals: boolean
+        }): {
+            value: string
+        };
+        getLanguage(text: string): {
+            name: string
+        };
+    };
 }
 
 interface IObject {
@@ -114,7 +140,7 @@ declare class Lute {
 
     public static New(): Lute;
 
-    public static EscapeHTMLStr(html:string): string;
+    public static EscapeHTMLStr(html: string): string;
 
     public static GetHeadingID(node: ILuteNode): string;
 
@@ -154,6 +180,8 @@ declare class Lute {
 
     public SetMark(enable: boolean): void;
 
+    public SetGFMAutoLink(enable: boolean): void;
+
     public SetSanitize(enable: boolean): void;
 
     public SetHeadingAnchor(enable: boolean): void;
@@ -176,9 +204,15 @@ declare class Lute {
 
     public SetVditorMathBlockPreview(enable: boolean): void;
 
+    public SetSub(enable: boolean): void;
+
+    public SetSup(enable: boolean): void;
+
     public PutEmojis(emojis: IObject): void;
 
     public GetEmojis(): IObject;
+
+    public IsValidLinkDest(link: string): boolean;
 
     // debugger md
     public RenderEChartsJSON(text: string): string;
@@ -317,10 +351,16 @@ interface ITips {
 }
 
 interface II18n {
+    de_DE: ITips;
     en_US: ITips;
+    es_ES: ITips;
+    fr_FR: ITips;
     ja_JP: ITips;
     ko_KR: ITips;
+    pt_BR: ITips;
     ru_RU: ITips;
+    sv_SE: ITips;
+    vi_VN: ITips;
     zh_CN: ITips;
     zh_TW: ITips;
 }
@@ -343,6 +383,10 @@ interface IUpload {
     max?: number;
     /** 剪切板中包含图片地址时，使用此 url 重新上传 */
     linkToImgUrl?: string;
+
+    /** 剪切板中包含图片地址时，使用此方法进行自定义 */
+    renderLinkDest?(vditor: IVditor, node: ILuteNode, entering: boolean): [string, number];
+
     /** CORS 上传验证，头为 X-Upload-Token */
     token?: string;
     /** 文件上传类型，同 [input accept](https://www.w3schools.com/tags/att_input_accept.asp) */
@@ -352,7 +396,7 @@ interface IUpload {
     /** 请求头设置 */
     headers?: IObject;
     /** 额外请求参数 */
-    extraData?: { [key: string]: string | Blob };
+    extraData?: {[key: string]: string | Blob};
     /** 是否允许多文件上传。默认值：true */
     multiple?: boolean;
     /** 上传字段名。默认值：file[] */
@@ -376,6 +420,12 @@ interface IUpload {
     /** 自定义上传，当发生错误时返回错误信息 */
     handler?(files: File[]): string | null | Promise<string> | Promise<null>;
 
+    //将dataUrl上传到服务器，并返回获取数据的url
+    handleDataUrl?(dataUrl: string): string | Promise<string>;
+
+    /** 将图片的 base64 转换为链接 */
+    base64ToLink?(responseText: string): string;
+
     /** 对服务端返回的数据进行转换，以满足内置的数据结构 */
     format?(files: File[], responseText: string): string;
 
@@ -384,6 +434,9 @@ interface IUpload {
 
     /** 将上传的文件处理后再返回  */
     file?(files: File[]): File[] | Promise<File[]>;
+
+    /** 取消正在上传的文件  */
+    cancel?(files: File[]): void;
 
     /** 图片地址上传后的回调  */
     linkToImgCallback?(responseText: string): void;
@@ -418,12 +471,19 @@ interface IMenuItem {
 
 /** @link https://ld246.com/article/1549638745630#options-preview-hljs */
 interface IHljs {
+    /** 代码块没有指定语言时，使用此值。默认值: "" */
+    defaultLang?: string;
     /** 是否启用行号。默认值: false */
     lineNumber?: boolean;
     /** 代码风格，可选值参见 [Chroma](https://xyproto.github.io/splash/docs/longer/all.html)。 默认值: 'github' */
     style?: string;
     /** 是否启用代码高亮。默认值: true */
     enable?: boolean;
+    /** 自定义指定语言: CODE_LANGUAGES */
+    langs?: string[];
+
+    /** 渲染右上角菜单按钮 */
+    renderMenu?(element: HTMLElement, menuElement: HTMLElement): void;
 }
 
 /** @link https://ld246.com/article/1549638745630#options-preview-math */
@@ -434,6 +494,8 @@ interface IMath {
     macros?: object;
     /** 数学公式渲染引擎。默认值: 'KaTeX' */
     engine?: "KaTeX" | "MathJax";
+    /** 数学公式渲染引擎为 MathJax 时传入的参数 */
+    mathJaxOptions?: any;
 }
 
 /** @link https://ld246.com/article/1549638745630#options-preview-markdown */
@@ -462,6 +524,8 @@ interface IMarkdownConfig {
     listStyle?: boolean;
     /** 支持 mark 标记 */
     mark?: boolean;
+    /** 支持自动链接 */
+    gfmAutoLink?: boolean;
 }
 
 /** @link https://ld246.com/article/1549638745630#options-preview */
@@ -484,12 +548,19 @@ interface IPreview {
     theme?: IPreviewTheme;
     /** @link https://ld246.com/article/1549638745630#options-preview-actions  */
     actions?: Array<IPreviewAction | IPreviewActionCustom>;
+    render?: IPreviewRender;
 
     /** 预览回调 */
     parse?(element: HTMLElement): void;
 
     /** 渲染之前回调 */
     transform?(html: string): string;
+}
+
+interface IPreviewRender {
+    media?: {
+        enable?: boolean;
+    };
 }
 
 type IPreviewAction = "desktop" | "tablet" | "mobile" | "mp-wechat" | "zhihu";
@@ -525,6 +596,7 @@ interface IPreviewOptions {
     renderers?: ILuteRender;
     theme?: IPreviewTheme;
     icon?: "ant" | "material" | undefined;
+    render?: IPreviewRender;
 
     transform?(html: string): string;
 
@@ -555,6 +627,40 @@ interface IHint {
     /** 表情图片地址。默认值: 'https://unpkg.com/vditor@${VDITOR_VERSION}/dist/images/emoji' */
     emojiPath?: string;
     extend?: IHintExtend[];
+}
+
+/** @link https://ld246.com/article/1549638745630#options-toolbarConfig */
+interface IToolbarConfig {
+    /** 是否隐藏工具栏。默认值: false */
+    hide?: boolean;
+    /** 是否固定工具栏。默认值: false */
+    pin?: boolean;
+}
+
+/** @link https://ld246.com/article/1549638745630#options-comment */
+interface IComment {
+    /** 是否启用评论模式。默认值: false */
+    enable: boolean;
+
+    /** 添加评论回调 */
+    add?(id: string, text: string, commentsData: ICommentsData[]): void;
+
+    /** 删除评论回调 */
+    remove?(ids: string[]): void;
+
+    /** 滚动回调 */
+    scroll?(top: number): void;
+
+    /** 文档修改时，适配评论高度 */
+    adjustTop?(commentsData: ICommentsData[]): void;
+}
+
+/** @link https://ld246.com/article/1549638745630#options-outline */
+interface IOutline {
+    /** 初始化是否展现大纲。默认值: false */
+    enable: boolean;
+    /** 大纲位置：'left', 'right'。默认值: 'left' */
+    position: "left" | "right";
 }
 
 interface IResize {
@@ -592,6 +698,7 @@ interface IOptions {
     i18n?: ITips;
     /** @link https://ld246.com/article/1549638745630#options-fullscreen */
     fullscreen?: {
+        /** 全屏层级。默认值: 90 */
         index: number;
     };
     /** @link https://ld246.com/article/1549638745630#options-toolbar */
@@ -600,40 +707,64 @@ interface IOptions {
     resize?: IResize;
     /** @link https://ld246.com/article/1549638745630#options-counter */
     counter?: {
+        /** 是否启用计数器。默认值: false */
         enable: boolean;
+        /** 允许输入的最大值 */
         max?: number;
+        /** 统计类型。默认值: 'markdown' */
         type?: "markdown" | "text";
+        /** 字数统计回调。 */
         after?(length: number, counter: {
+            /** 是否启用计数器。默认值: false */
             enable: boolean;
+            /** 允许输入的最大值 */
             max?: number;
+            /** 统计类型。默认值: 'markdown' */
             type?: "markdown" | "text"
         }): void
     };
     /** @link https://ld246.com/article/1549638745630#options-cache */
     cache?: {
+        /** 缓存 key，第一个参数为元素且启用缓存时必填 */
         id?: string;
+        /** 是否使用 localStorage 进行缓存。默认值: true */
         enable?: boolean;
+        /** 缓存后的回调 */
         after?(markdown: string): void;
     };
-    /** 编辑模式。默认值: 'wysiwyg' */
+    /** 编辑模式。默认值: 'wysiwyg'
+     *
+     * wysiwyg: 所见即所得
+     *
+     * ir: 即时渲染
+     *
+     * sv: 分屏预览
+     */
     mode?: "wysiwyg" | "sv" | "ir";
     /** @link https://ld246.com/article/1549638745630#options-preview */
     preview?: IPreview;
+    /** @link https://ld246.com/article/1549638745630#options-link */
+    link?: {
+        /** 是否打开链接地址。默认值: true */
+        isOpen?: boolean;
+        /** 点击链接事件 */
+        click?: (bom: Element) => void;
+    },
+    /** @link https://ld246.com/article/1549638745630#options-image */
+    image?: {
+        /** 是否预览图片。默认值: true */
+        isPreview?: boolean;
+        /** 图片预览处理 */
+        preview?: (bom: Element) => void;
+    },
     /** @link https://ld246.com/article/1549638745630#options-hint */
     hint?: IHint;
     /** @link https://ld246.com/article/1549638745630#options-toolbarConfig */
-    toolbarConfig?: {
-        hide?: boolean,
-        pin?: boolean,
-    };
-    /** 评论 */
-    comment?: {
-        enable: boolean
-        add?(id: string, text: string, commentsData: ICommentsData[]): void
-        remove?(ids: string[]): void;
-        scroll?(top: number): void;
-        adjustTop?(commentsData: ICommentsData[]): void;
-    };
+    toolbarConfig?: IToolbarConfig;
+    /** 评论
+     * @link https://ld246.com/article/1549638745630#options-comment
+     */
+    comment?: IComment;
     /** 主题。默认值: 'classic' */
     theme?: "classic" | "dark";
     /** 图标。默认值: 'ant' */
@@ -647,10 +778,11 @@ interface IOptions {
     /** tab 键操作字符串，支持 \t 及任意字符串 */
     tab?: string;
     /** @link https://ld246.com/article/1549638745630#options-outline */
-    outline?: {
-        enable: boolean,
-        position: "left" | "right",
-    };
+    outline?: IOutline;
+    customRenders?: {
+        language: string,
+        render: (element: HTMLElement, vditor: IVditor) => void
+    }[],
 
     /** 编辑器异步渲染完成后的回调方法 */
     after?(): void;
@@ -664,6 +796,9 @@ interface IOptions {
     /** 失焦后触发 */
     blur?(value: string): void;
 
+    /** 按下键盘触发 */
+    keydown?(event: KeyboardEvent): void;
+
     /** `esc` 按下后触发 */
     esc?(value: string): void;
 
@@ -672,6 +807,12 @@ interface IOptions {
 
     /** 编辑器中选中文字后触发 */
     select?(value: string): void;
+
+    /** 编辑器中未选中文字后触发 */
+    unSelect?(): void;
+
+    /** 对 wysiwyg 模式下的工具栏进行自定义 */
+    customWysiwygToolbar?(type: TWYSISYGToolbar, element: HTMLElement): void
 }
 
 interface IEChart {
@@ -693,14 +834,16 @@ interface IVditor {
     outline: {
         element: HTMLElement,
         render(vditor: IVditor): string,
-        toggle(vditor: IVditor, show?: boolean): void,
+        toggle(vditor: IVditor, show?: boolean, focus?: boolean): void,
     };
     toolbar?: {
-        elements?: { [key: string]: HTMLElement },
+        elements?: {[key: string]: HTMLElement},
         element?: HTMLElement,
+        updateConfig(vditor: IVditor, options: IToolbarConfig): void,
     };
     preview?: {
-        element: HTMLElement
+        element: HTMLElement,
+        previewElement: HTMLElement,
         render(vditor: IVditor, value?: string): void,
     };
     counter?: {
@@ -728,6 +871,7 @@ interface IVditor {
         element: HTMLElement
         isUploading: boolean
         range: Range,
+        xhr?: XMLHttpRequest,
     };
     undo?: {
         clearStack(vditor: IVditor): void,

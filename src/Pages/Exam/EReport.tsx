@@ -138,7 +138,7 @@ const EReport = (props: any) => {
                     )}
                     <Modal
                         title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 作答详情`}
-                        visible={objectVis}
+                        open={objectVis}
                         width={800}
                         onCancel={() => {
                             setObjectVis(false)
@@ -165,7 +165,7 @@ const EReport = (props: any) => {
                     </Modal>
                     <Modal
                         title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 认定代码`}
-                        visible={codeVis}
+                        open={codeVis}
                         width={1000}
                         onCancel={() => {
                             setCodeVis(false)
@@ -182,7 +182,7 @@ const EReport = (props: any) => {
                     </Modal>
                     <Modal
                         title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 题目详情`}
-                        visible={programVis}
+                        open={programVis}
                         width={1300}
                         onCancel={() => {
                             setProgramVis(false)

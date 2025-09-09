@@ -18,7 +18,7 @@ const Announcement = (props: any) => {
         <>
             <Modal
                 title={props.t("AnnouncementDetails") + " (" + showTitle + ")"}
-                visible={show}
+                open={show}
                 onCancel={() => {
                     setShow( false)
                 }}

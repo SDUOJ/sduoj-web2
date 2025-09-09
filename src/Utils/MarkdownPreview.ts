@@ -12,14 +12,17 @@ export function MarkdownPreview(code: string | null | undefined, id: string) {
     // 针对原本 $ 换行的公式，加以修正
     code = code?.replaceAll(/\$\n(.*)\n\$/g, "$ $1 $")
     const config = {
-        mode: "light",
+        mode: "both",
         cdn: host + "/vditor",
         emojiPath: host + "/vditor/dist/images/emoji",
         theme: {
+            current: "light",
             path: host + "/vditor/dist/css/content-theme"
         },
         hljs: {
-            lineNumber: false
+            style: "github",
+            defaultLang: "plaintext",
+            lineNumber: true
         },
         markdown: {
             toc: true,

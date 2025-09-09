@@ -85,13 +85,7 @@ const Editor = (props: EditorProps & any) => {
                 "quote", "line", "code", "inline-code", "insert-before", "insert-after", "|",
                 "upload", "table", "|",
                 "undo", "redo", "|",
-                "outline", "fullscreen", "edit-mode",
-                {
-                    name: "more",
-                    toolbar: [
-                        "code-theme", "content-theme", "export", "help"
-                    ]
-                },
+                "outline", "fullscreen", "export",
                 "|",
                 {
                     hotkey: "⌘-S",

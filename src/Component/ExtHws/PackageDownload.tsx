@@ -1,4 +1,6 @@
 import {Button, Form, Input, Modal, Transfer} from "antd";
+import type { Key } from 'antd/es/table/interface';
+import type { TransferDirection } from 'antd/es/transfer';
 import {useEffect, useState} from "react";
 import {DownloadOutlined, LoadingOutlined} from "@ant-design/icons";
 import mApi from "../../Utils/API/m-api";
@@ -9,8 +11,8 @@ const PackageDownload = (props: any) => {
     const [download, setDownload] = useState<any>(null)
     const [ban, setBan] = useState<any>(false)
 
-    const [targetKeys, setTargetKeys] = useState<string[]>([]);
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    const [targetKeys, setTargetKeys] = useState<Key[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
     const [splitChar, setSplitChar] = useState<string>("-")
     const [appendV, setAppendV] = useState<string>("")
     const [packageNum, setPackageNum] = useState<number>(50)
@@ -29,12 +31,12 @@ const PackageDownload = (props: any) => {
             let filenameSet: any = []
             for (const x of props.submitInfo) {
                 let downloadFilename = ""
-                if (targetKeys.indexOf("1") != -1) downloadFilename += x["username"] + splitChar
-                if (targetKeys.indexOf("2") != -1) downloadFilename += x["real_name"] + splitChar
-                if (targetKeys.indexOf("3") != -1) downloadFilename += x["create_time"] + splitChar
-                if (targetKeys.indexOf("4") != -1)
+                if (targetKeys.indexOf("1") !== -1) downloadFilename += x["username"] + splitChar
+                if (targetKeys.indexOf("2") !== -1) downloadFilename += x["real_name"] + splitChar
+                if (targetKeys.indexOf("3") !== -1) downloadFilename += x["create_time"] + splitChar
+                if (targetKeys.indexOf("4") !== -1)
                     downloadFilename += unix2Time(parseInt(x["create_time"])).replaceAll(":", "-").replaceAll(" ", "-") + "."
-                if (targetKeys.indexOf("5") != -1) {
+                if (targetKeys.indexOf("5") !== -1) {
                     const before = parseInt(x["create_time"]) <= parseInt(props.deadline)
                     if (before) downloadFilename += "按时" + splitChar
                     else downloadFilename += "延时" + splitChar
@@ -45,11 +47,11 @@ const PackageDownload = (props: any) => {
                         downloadFilename += item.title + splitChar
                     }
                 }
-                if (targetKeys.indexOf("6") != -1) {
+                if (targetKeys.indexOf("6") !== -1) {
                     downloadFilename += x['file_name']
                 } else {
                     let s = x['file_name'].split(".")
-                    if (splitChar != ".") {
+                    if (splitChar !== ".") {
                         downloadFilename = downloadFilename.slice(0, downloadFilename.length - splitChar.length)
                         downloadFilename += "."
                     }
@@ -60,7 +62,7 @@ const PackageDownload = (props: any) => {
                 for (const fn of filenameSet) {
                     if (fn.indexOf(downloadFilename) !== -1) cnt += 1
                 }
-                if (cnt != 0) {
+                if (cnt !== 0) {
                     let t = downloadFilename.split(".")
                     downloadFilename += "-" + cnt + "." + t[t.length - 1]
                 }
@@ -77,11 +79,11 @@ const PackageDownload = (props: any) => {
         }
     }, [targetKeys, splitChar])
 
-    const onChange = (nextTargetKeys: string[]) => {
+    const onChange = (nextTargetKeys: Key[], direction: TransferDirection, moveKeys: Key[]) => {
         setTargetKeys(nextTargetKeys)
     };
 
-    const onSelectChange = (sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
+    const onSelectChange = (sourceSelectedKeys: Key[], targetSelectedKeys: Key[]) => {
         setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
     };
 
@@ -93,7 +95,7 @@ const PackageDownload = (props: any) => {
                     }}> 打包下载 </Button>
             <Modal
                 title={"设定文件名"}
-                visible={vis}
+                open={vis}
                 width={800}
                 onCancel={() => {
                     setVis(false)

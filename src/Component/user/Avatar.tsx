@@ -2,13 +2,12 @@ import {UserOutlined} from "@ant-design/icons";
 import md5 from "js-md5";
 import React from "react";
 import {Avatar} from "antd";
-import {AvatarSize} from "antd/es/avatar/SizeContext";
 import {isValueEmpty} from "../../Utils/empty";
 
 
 interface IUserAvatar {
     email?: string | null
-    size?: AvatarSize
+    size?: number | "small" | "default" | "large"
     shape?: 'circle' | 'square'
 }
 

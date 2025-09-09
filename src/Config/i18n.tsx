@@ -1,10 +1,12 @@
 import i18n from "i18next";
 import {initReactI18next} from 'react-i18next';
-import enUS from 'antd/lib/locale/en_US';
-import zhCN from 'antd/lib/locale/zh_CN';
-import {Locale} from "antd/lib/locale-provider";
+import enUS from 'antd/es/locale/en_US';
+import zhCN from 'antd/es/locale/zh_CN';
+import { Locale } from 'antd/es/locale';
 import {initLanguage} from "../Utils/initLanguage";
-import moment from "moment/moment";
+import enJson from "../Assert/lang/en.json";
+import zhJson from "../Assert/lang/zh.json";
+import moment from "moment";
 
 interface ILanguage {
     id: string
@@ -43,12 +45,8 @@ i18n.use(initReactI18next) //init i18next
     .init({
         //引入资源文件
         resources: {
-            en: {
-                translation: require("../Assert/lang/en.json"),
-            },
-            zh: {
-                translation: require("../Assert/lang/zh.json"),
-            }
+            en: { translation: enJson },
+            zh: { translation: zhJson },
         },
         //选择默认语言，选择内容为上述配置中的key，即en/zh
         lng: defLang,

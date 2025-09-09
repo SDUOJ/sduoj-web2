@@ -1,4 +1,4 @@
-import {Locale} from "antd/lib/locale-provider";
+import { Locale } from 'antd/es/locale';
 import "./common"
 import {clearRedux} from "./common";
 

@@ -1,11 +1,11 @@
 import {Component} from "react";
 import {Button, message} from "antd";
 import XLSX from "xlsx";
-import {ButtonType} from "antd/lib/button/button";
+import type { ButtonProps } from 'antd';
 
 interface IButtonText {
     ButtonText: any
-    ButtonType: ButtonType
+    ButtonType: ButtonProps['type']
     ButtonProps?: any
     fileName: string
     colMap?: any
