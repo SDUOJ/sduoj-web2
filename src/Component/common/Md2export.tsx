@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {ConfigState} from "../../Type/IConfig";
+import apiAddress from "../../Utils/API/apiAddress";
 import {isValueEmpty} from "../../Utils/empty";
 import {Button, Modal} from "antd";
 
@@ -18,17 +19,13 @@ const MD2export = (props: any) => {
             mode: "ir",
             placeholder: "",
             lang: props.langCode,
-            cdn: process.env.NODE_ENV === 'development' ?
-                "http://oj.cs.sdu.edu.cn:3000/vditor" :
-                "https://oj.qd.sdu.edu.cn/vditor",
+            cdn: apiAddress().FRONT_SERVER + "/vditor",
             outline: {
                 enable: true,
                 position: 'left',
             },
             hint: {
-                emojiPath: process.env.NODE_ENV === 'development' ?
-                    "http://oj.cs.sdu.edu.cn:3000/vditor/dist/images/emoji" :
-                    "https://oj.qd.sdu.edu.cn/vditor/dist/images/emoji"
+                emojiPath: apiAddress().FRONT_SERVER + "/vditor/dist/images/emoji"
             },
             preview: {
                 delay: 500,

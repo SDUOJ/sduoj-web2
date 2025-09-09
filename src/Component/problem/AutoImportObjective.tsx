@@ -159,7 +159,7 @@ const AutoImportObjective = () => {
                     </p>
                 </Dragger>
                 <div style={{textAlign: "right", marginTop: "10px", marginBottom: "20px"}}>
-                    <a href={"https://oj.qd.sdu.edu.cn/api/filesys/download/262337552520937533/AutoImportObjective.xlsx"}>示例文件下载</a>
+                    <a href={require("../../Utils/API/apiAddress").default().CLIENT_SERVER + "/api/filesys/download/262337552520937533/AutoImportObjective.xlsx"}>示例文件下载</a>
                 </div>
                 <Table
                     size={"small"}
