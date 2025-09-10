@@ -4,6 +4,7 @@ import {useSelector} from "react-redux";
 import CApi from "../../Utils/API/c-api";
 import {Radio, Table, Button, message, Row, Col} from 'antd';
 import * as XLSX from 'xlsx';
+import {useTranslation} from "react-i18next";
 
 const CStudentMutualEvaluation = () => {
     const isLogin = useSelector((state: any) => {
@@ -25,6 +26,7 @@ const CStudentMutualEvaluation = () => {
     const [is_admin, set_is_admin] = useState<boolean>(false)
     const [vote_status, set_vote_status] = useState<any>()
     const [results, set_results] = useState<any>()
+    const {t} = useTranslation();
 
     const listUpd = () => {
         CApi.getSMEList({}).then((res: any) => {
@@ -97,10 +99,10 @@ const CStudentMutualEvaluation = () => {
             if (res.error !== undefined) {
                 message.error(res.error)
                 if (res.not_evaluated !== undefined) {
-                    message.info(res.not_evaluated.toString() + " 未投票")
+                    message.info(t('notVotedCount', {count: res.not_evaluated}))
                 }
             } else {
-                message.success("投票成功")
+                message.success(t('voteSuccess'))
                 listUpd()
                 getRes()
                 setGradeCounts(initGradeCounts)
@@ -110,17 +112,17 @@ const CStudentMutualEvaluation = () => {
 
     const columns = [
         {
-            title: "学号",
+            title: t('studentNumber'),
             dataIndex: "student_id",
             key: "student_id",
         },
         {
-            title: "姓名",
+            title: t('name'),
             dataIndex: "name",
             key: "name",
         },
         {
-            title: "评价",
+            title: t('evaluation'),
             key: "evaluation",
             render: (_: any, record: any) => (
                 <Radio.Group
@@ -128,10 +130,10 @@ const CStudentMutualEvaluation = () => {
                     value={evaluations[record.student_id]}
                     disabled={isDisabled}  // 根据状态变量来决定是否禁用 Radio
                 >
-                    <Radio value="优秀">优秀</Radio>
-                    <Radio value="良好">良好</Radio>
-                    <Radio value="中等">中等</Radio>
-                    <Radio value="差">差</Radio>
+                    <Radio value="优秀">{t('grade.excellent')}</Radio>
+                    <Radio value="良好">{t('grade.good')}</Radio>
+                    <Radio value="中等">{t('grade.medium')}</Radio>
+                    <Radio value="差">{t('grade.poor')}</Radio>
                 </Radio.Group>
             ),
         },
@@ -150,30 +152,30 @@ const CStudentMutualEvaluation = () => {
                         boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.1)",
                     }}
                 >
-                    <Title level={5}>评价统计</Title>
-                    <p>优秀: {gradeCounts["优秀"]}</p>
-                    <p>良好: {gradeCounts["良好"]}</p>
-                    <p>中等: {gradeCounts["中等"]}</p>
-                    <p>差: {gradeCounts["差"]}</p>
+                    <Title level={5}>{t('evaluationStats')}</Title>
+                    <p>{t('grade.excellent')}: {gradeCounts["优秀"]}</p>
+                    <p>{t('grade.good')}: {gradeCounts["良好"]}</p>
+                    <p>{t('grade.medium')}: {gradeCounts["中等"]}</p>
+                    <p>{t('grade.poor')}: {gradeCounts["差"]}</p>
                 </div>
             )}
             <div style={{textAlign: "center", margin: "0 auto"}}>
-                <Title> 22级学硕互评 </Title>
+                <Title> {t('smeTitle')} </Title>
                 {!isLogin && (
-                    <Title level={5}> 您未登录，请在右上角使用【SDU统一身份认证】登录 </Title>
+                    <Title level={5}> {t('smePleaseLoginCAS')} </Title>
                 )}
                 {isDisabled && (
-                    <Title level={5}> 您已投票，您可以查看您的投票，但是不能再次编辑 </Title>
+                    <Title level={5}> {t('smeAlreadyVoted')} </Title>
                 )}
                 {isLogin && (
                     <>
-                        <Title level={5}> 姓名：{userInfo?.nickname}，学号：{userInfo?.username} </Title>
+                        <Title level={5}> {t('nameLabel')}{userInfo?.nickname}，{t('studentNumberLabel')}{userInfo?.username} </Title>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div style={{maxWidth: 1200}}>
                                 <Table columns={columns} dataSource={data} rowKey="student_id" pagination={false}/>
                                 <Button type="primary" onClick={handleSubmit} style={{marginTop: 24}}
                                         disabled={isDisabled}>
-                                    提交评价
+                                    {t('submitEvaluation')}
                                 </Button>
                             </div>
                         </div>
@@ -181,10 +183,10 @@ const CStudentMutualEvaluation = () => {
                             <>
                                 <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
                                     <div style={{maxWidth: 1200}}>
-                                        <Title level={5}>投票状态和评价结果</Title>
+                                        <Title level={5}>{t('voteStatusAndResults')}</Title>
                                         <Button type="primary" onClick={exportToExcel}
                                                 style={{marginTop: 24, marginBottom: 24}}>
-                                            导出为 Excel
+                                            {t('exportAsExcel')}
                                         </Button>
                                         <Table
                                             dataSource={Object.keys(vote_status).map((studentId) => ({
@@ -194,37 +196,37 @@ const CStudentMutualEvaluation = () => {
                                             }))}
                                             pagination={false}
                                             columns={[
-                                                {title: '学号', dataIndex: 'studentId', key: 'studentId'},
+                                                {title: t('studentNumber'), dataIndex: 'studentId', key: 'studentId'},
                                                 {
-                                                    title: '状态',
+                                                    title: t('status'),
                                                     dataIndex: 'status',
                                                     key: 'status',
                                                     filters: [
-                                                        {text: '已投票', value: '已投票'},
-                                                        {text: '未投票', value: '未投票'},
+                                                        {text: t('voted'), value: '已投票'},
+                                                        {text: t('notVoted'), value: '未投票'},
                                                     ],
                                                     onFilter: (value, record) => record.status.includes(value),
                                                 },
                                                 {
-                                                    title: '优秀',
+                                                    title: t('grade.excellent'),
                                                     dataIndex: '优秀',
                                                     key: '优秀',
                                                     sorter: (a, b) => a.优秀 - b.优秀
                                                 },
                                                 {
-                                                    title: '良好',
+                                                    title: t('grade.good'),
                                                     dataIndex: '良好',
                                                     key: '良好',
                                                     sorter: (a, b) => a.良好 - b.良好
                                                 },
                                                 {
-                                                    title: '中等',
+                                                    title: t('grade.medium'),
                                                     dataIndex: '中等',
                                                     key: '中等',
                                                     sorter: (a, b) => a.中等 - b.中等
                                                 },
                                                 {
-                                                    title: '差',
+                                                    title: t('grade.poor'),
                                                     dataIndex: '差',
                                                     key: '差',
                                                     sorter: (a, b) => a.差 - b.差

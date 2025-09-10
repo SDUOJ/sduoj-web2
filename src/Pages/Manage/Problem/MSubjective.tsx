@@ -15,15 +15,15 @@ const MSubjective = (props: any) => {
     const SubjectiveForm = [
         {
             component: <SubjectiveBase/>,
-            label: "基本信息"
+            label: props.t("BasicInformation")
         },
         {
             component:
                 <>
-                    <ItemEditor label={"题目内容"} name={"description"} id={"ItemEditor-description"}/>
-                    <ItemEditor label={"题目答案"} name={"answer"} id={"ItemEditor-answer"}/>
+            <ItemEditor label={props.t("problemDescription")} name={"description"} id={"ItemEditor-description"}/>
+            <ItemEditor label={props.t("answer")} name={"answer"} id={"ItemEditor-answer"}/>
                 </>,
-            label: "内容与答案"
+    label: props.t("ContentAndAnswer")
         },
         {
             component:
@@ -32,9 +32,9 @@ const MSubjective = (props: any) => {
                     {/*    <ReviewStrategy/>*/}
                     {/*</Form.Item>*/}
 
-                    <ItemCodeEditor label={"评分策略"} name={"scoreStrategy"} initialValue={scoreModeDefault}/>
+            <ItemCodeEditor label={props.t("ScoringStrategy")} name={"scoreStrategy"} initialValue={scoreModeDefault}/>
                 </>,
-            label: "题目评分"
+    label: props.t("ProblemScoring")
         },
 
     ]
@@ -42,19 +42,19 @@ const MSubjective = (props: any) => {
 
     const colData: any[] = [
         {
-            title: "ID",
+                title: "ID",
             dataIndex: "id",
             width: 64,
             responsive: ["lg", "sm", "xs"]
         },
         {
-            title: "题号",
+                title: props.t("problemCode"),
             dataIndex: "code",
             width: "auto",
             responsive: ["lg", "sm", "xs"],
         },
         {
-            title: "标题",
+                title: props.t("title"),
             dataIndex: "title",
             width: "auto",
             responsive: ["lg", "sm", "xs"],
@@ -74,7 +74,7 @@ const MSubjective = (props: any) => {
                         <ModalFormUseForm
                             TableName={"SubjectiveList"}
                             width={900}
-                            title={"编辑(" + rows.code + ")"}
+                            title={props.t("EditWithName", {name: rows.code})}
                             type={"update"}
                             subForm={SubjectiveForm}
                             formName={"SubjectiveForm"}
@@ -91,7 +91,7 @@ const MSubjective = (props: any) => {
                         <ModalFormUseForm
                             TableName={"SubjectiveList"}
                             width={900}
-                            title={"新建主观题(克隆自" + rows.code + ")"}
+                            title={props.t("CreateSubjectiveFrom", {name: rows.code})}
                             type={"fork"}
                             subForm={SubjectiveForm}
                             formName={"SubjectiveForm"}
@@ -115,13 +115,13 @@ const MSubjective = (props: any) => {
             <Card
                 size={"small"}
                 bordered={true}
-                title={"主观题列表"}
+                title={props.t("SubjectiveProblemList")}
                 extra={
                     <Space>
                         <ModalFormUseForm
                             TableName={"SubjectiveList"}
                             width={900}
-                            title={"新建主观题"}
+                            title={props.t("CreateSubjective")}
                             type={"create"}
                             subForm={SubjectiveForm}
                             dataSubmitter={(value: any) => {

@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
 import {UrlPrefix} from "../../Config/constValue";
 import cApi from "Utils/API/c-api";
+import {useTranslation} from "react-i18next";
 
 const TimeError = (props: any) => {
 
@@ -29,6 +30,7 @@ const TimeError = (props: any) => {
         update()
     }, [])
 
+    const {t} = useTranslation();
     return (
         <div className={"page-center"}>
             {
@@ -37,12 +39,12 @@ const TimeError = (props: any) => {
                         return (
                             <Result
                                 status="success"
-                                title="您的系统时间与服务器时间误差在容许范围之内。"
+                title={t("timeOkTitle")}
                                 subTitle={
                                     <>
-                                        <span>系统时间：{unix2Time(sysTime)}</span> <br/>
-                                        <span>服务器时间：{unix2Time(serTime)}</span> <br/>
-                                        <span>时间相差：{TimeDiff(Math.min(sysTime, serTime), Math.max(sysTime, serTime))}</span>
+                    <span>{t('systemTime')}{unix2Time(sysTime)}</span> <br/>
+                    <span>{t('serverTime')}{unix2Time(serTime)}</span> <br/>
+                    <span>{t('timeDiff')}{TimeDiff(Math.min(sysTime, serTime), Math.max(sysTime, serTime))}</span>
                                     </>
                                 }
                                 extra={
@@ -53,7 +55,7 @@ const TimeError = (props: any) => {
                                             props.history.replace(UrlPrefix + "/home")
                                         }}
                                     >
-                                        返回主页
+                    {t("backToHome")}
                                     </Button>
                                 }
                             />
@@ -62,12 +64,12 @@ const TimeError = (props: any) => {
                         return (
                             <Result
                                 status="warning"
-                                title="您的系统时间有误，这会影响 SDUOJ 系统的工作，请您更正当前系统时间。"
+                title={t("timeErrorTitle")}
                                 subTitle={
                                     <>
-                                        <span>系统时间：{unix2Time(sysTime)}</span> <br/>
-                                        <span>服务器时间：{unix2Time(serTime)}</span> <br/>
-                                        <span>时间相差：{TimeDiff(Math.min(sysTime, serTime), Math.max(sysTime, serTime))}</span>
+                    <span>{t('systemTime')}{unix2Time(sysTime)}</span> <br/>
+                    <span>{t('serverTime')}{unix2Time(serTime)}</span> <br/>
+                    <span>{t('timeDiff')}{TimeDiff(Math.min(sysTime, serTime), Math.max(sysTime, serTime))}</span>
                                     </>
                                 }
                                 extra={
@@ -80,7 +82,7 @@ const TimeError = (props: any) => {
                                             })
                                         }}
                                     >
-                                        点击重试
+                    {t("clickRetry")}
                                     </Button>
                                 }
                             />

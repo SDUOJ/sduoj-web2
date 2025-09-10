@@ -1,13 +1,15 @@
 import {Button, Result} from "antd";
 import {withRouter} from "react-router-dom";
 import {UrlPrefix} from "../../Config/constValue";
+import {useTranslation} from "react-i18next";
 
 const BrowserVersionError = (props: any) => {
+    const {t} = useTranslation();
     return (
         <div className={"page-center"}>
             <Result
                 status="error"
-                title="您使用的浏览器版本过低，请点击下方链接安装新版浏览器。"
+                title={t("browserTooOldTitle")}
                 subTitle={
                     <>
                         <span><a href={"https://www.microsoft.com/zh-cn/edge"}>Microsoft Edge (85+)</a></span> <br/>
@@ -24,7 +26,7 @@ const BrowserVersionError = (props: any) => {
                             props.history.replace(UrlPrefix + "/home")
                         }}
                     >
-                        返回主页
+                        {t("backToHome")}
                     </Button>
                 }
             />

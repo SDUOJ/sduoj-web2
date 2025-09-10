@@ -106,8 +106,8 @@ const MUser = (props: any) => {
                             title={rows.username}
                             type={"update"}
                             subForm={[
-                                {component: <UserFormProfile editUsername={false}/>, label: "基本信息"},
-                                {component: <UserFormAdditional/>, label: "附加信息"},
+                                {component: <UserFormProfile editUsername={false}/>, label: props.t("BasicInformation")},
+                                {component: <UserFormAdditional/>, label: props.t("AdditionalConfiguration")},
                             ]}
                             initData={rows}
                             updateAppendProps={{userId: rows.userId}}
@@ -125,12 +125,12 @@ const MUser = (props: any) => {
                                         <Menu>
                                             <Menu.Item key="1">
                                                 <ModalFormUseForm
-                                                    btnName={"修改密码"}
+                                                    btnName={props.t("ChangePass")}
                                                     btnIcon={false}
                                                     btnType={"link"}
                                                     title={rows.username}
                                                     subForm={[
-                                                        {component: <ItemPassword/>, label: "密码"},
+                                                        {component: <ItemPassword/>, label: props.t("password")},
                                                     ]}
                                                     updateAppendProps={{username: rows.username}}
                                                     dataSubmitter={(value: any) => mApi.updateUserPasswd(value)}
@@ -151,7 +151,7 @@ const MUser = (props: any) => {
                                                             <Button type={"link"} style={{
                                                                 paddingLeft: 5,
                                                                 paddingRight: 5
-                                                            }}>解绑SDUCAS</Button>
+                                                            }}>{props.t("unbindSdusForUnifiedAuthentication")}</Button>
                                                         }
                                                     />
                                                 </Menu.Item>
@@ -181,15 +181,15 @@ const MUser = (props: any) => {
                     <Space>
                         <ButtonWithSelection
                             type={"export"}
-                            ButtonText={"批量导出"}
-                            fileName={"用户列表导出_" + Date.now()}
+                            ButtonText={props.t("exportBatch")}
+                            fileName={`${props.t("userList")}_${Date.now()}`}
                             rowKey={"userId"}
                             tableName={"UserList"}
                         />
                         {judgeAuth(props.roles, ['superadmin']) && (
                             <ButtonWithSelection
                                 type={"delete"}
-                                ButtonText={"批量删除"}
+                                ButtonText={props.t("deleteBatch")}
                                 rowKey={"userId"}
                                 deleteKey={"username"}
                                 tableName={"UserList"}
@@ -201,14 +201,14 @@ const MUser = (props: any) => {
                         <ModalFormUseForm
                             TableName={"UserList"}
                             width={600}
-                            title={"新建用户"}
+                            title={props.t("AddUser")}
                             type={"create"}
                             subForm={[
                                 {
                                     component: <UserFormProfile editUsername={true} needPassword={true}/>,
-                                    label: "基本信息"
+                                    label: props.t("BasicInformation")
                                 },
-                                {component: <UserFormAdditional/>, label: "附加信息"},
+                                {component: <UserFormAdditional/>, label: props.t("AdditionalConfiguration")},
                             ]}
                             dataSubmitter={(value: any) => {
                                 value.features.banThirdParty = (value.features.banThirdParty ? 1 : 0)

@@ -1,4 +1,4 @@
-import {withTranslation} from "react-i18next";
+import {withTranslation, useTranslation} from "react-i18next";
 import {Form, message} from "antd";
 import ItemText from "../../Component/common/Form/Item/ItemText";
 import {useForm} from "antd/es/form/Form";
@@ -9,6 +9,7 @@ import cApi from "Utils/API/c-api"
 import LoginCheck from "../../Component/common/LoginCheck";
 
 const TCancel = (props: any) => {
+    const {t} = useTranslation()
 
     const [form] = useForm()
 
@@ -17,31 +18,31 @@ const TCancel = (props: any) => {
             <div style={{textAlign: "left", maxWidth: "400px", margin: "0 auto"}}>
                 <LoginCheck jump={true}/>
                 <div style={{textAlign: "center", margin: 24}}>
-                    <Title level={3}> 比赛提交取消 </Title>
+                    <Title level={3}> {t("ContestSubmissionCancel")} </Title>
                 </div>
                 <div style={{paddingTop: 24, paddingBottom: 24}}>
-                    1. 只能撤销自己的提交  <br/>
-                    2. 只有比赛结束后才能取消提交  <br/>
-                    3. 只有 IOI 赛制的比赛可以取消提交  <br/>
+                    1. {t("OnlyRevokeOwnSubmission")}  <br/>
+                    2. {t("OnlyAfterContestEnd")}  <br/>
+                    3. {t("OnlyIOIContestCancelable")}  <br/>
                 </div>
             <Form form={form} layout={"vertical"}>
-                <ItemText name={"contestId"} label={"比赛ID（URL中的数字，例如：175）"}/>
-                <ItemText name={"submissionId"} label={"提交ID（例如：225a5a7cb018012）"}/>
+                <ItemText name={"contestId"} label={t("ContestIdHint")}/>
+                <ItemText name={"submissionId"} label={t("SubmissionIdHint")}/>
                 <Reconfirm
                     btnProps={{type: "primary", block: true}}
                     beforeCheck={async () =>{
                         return form.validateFields()
                     }}
-                    btnText={"提交"}
-                    confirm={"我确定取消"}
-                    todo={"取消当前提交"}
+                    btnText={t("Submit")}
+                    confirm={t("ICertainToCancel")}
+                    todo={t("CancelCurrentSubmission")}
                     API={()=>{
                         form.validateFields().then((value:any)=>{
                             cApi.invalidateContestSubmission({
                                 submissionId: value.submissionId,
                                 contestId: value.contestId,
                             }).then(()=>{
-                                message.success("取消成功")
+                                message.success(t("CancelSuccess"))
                                 form.resetFields()
                             })
                         })

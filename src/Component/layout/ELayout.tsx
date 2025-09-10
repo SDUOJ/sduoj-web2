@@ -48,7 +48,7 @@ class ELayout extends Component<any, any> {
                             </div>
                         </Content>
                         <Footer style={{textAlign: 'center'}}>
-                            若遇到限流问题，请稍后刷新页面即可。 考试结束后，试卷会自动提交。 若主动交卷，则试卷将被锁定，无法再次改动。
+                            {this.props.t('ExamFooterNotice')}
                         </Footer>
                         {/*<FooterSDU/>*/}
                     </Layout>

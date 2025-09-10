@@ -3,13 +3,14 @@ import React, {useState} from "react";
 import Dragger from "antd/lib/upload/Dragger";
 import {DownloadOutlined, InboxOutlined, LoadingOutlined} from "@ant-design/icons";
 import {fileUpload} from "../../Utils/fileUpload";
+import {withTranslation} from "react-i18next";
 
 
 const ItemUploadFileMulti = (props: any) => {
     return (
         <>
             <Form.Item
-                label={props.label ?? "上传文件"}
+                label={props.label ?? props.t("UploadFile")}
                 name={props.name}
                 rules={[{required: props.required}]}
             >
@@ -63,9 +64,9 @@ const UploadPro = (props: any) => {
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined/>
                 </p>
-                <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+                <p className="ant-upload-text">{props.t("UploadDragAreaText")}</p>
                 <p className="ant-upload-hint">
-                    请上传一个或多个文件，单个文件的文件名为：学号.姓名.上传时间戳.文件名.zip
+                    {props.t("UploadExtHwsPresetHint")}
                 </p>
             </Dragger>
             <Button
@@ -79,11 +80,10 @@ const UploadPro = (props: any) => {
                 }}
                 icon={ban ? <LoadingOutlined/> : <DownloadOutlined/>}
             >
-                {ban ? "上传中" : "上传文件"}
+                {ban ? props.t("Uploading") : props.t("UploadFile")}
             </Button>
         </>
     )
 }
 
-
-export default ItemUploadFileMulti
+export default withTranslation()(ItemUploadFileMulti)

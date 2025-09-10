@@ -101,8 +101,8 @@ const TSummary = (props: any) => {
         <>
             <Result
                 icon={<Image src={logo} width={"180px"} preview={false}/>}
-                title="2022年程序设计思维与实践 SDUOJ 客观成绩汇总（89分）"
-                subTitle={"以下成绩为未查重成绩，仅供参考，若有异常，请联系助教处理"}
+                title={props.t("TSummaryTitle")}
+                subTitle={props.t("TSummarySubTitle")}
             />
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{paddingBottom: 50, paddingTop: 50}}>
@@ -110,8 +110,7 @@ const TSummary = (props: any) => {
                         if (data !== undefined) {
                             let sum = score1 + score2 + score3 + score4 + score5
                             return (
-                                <Title level={4}>客观成绩汇总（<span
-                                    style={{color: "red"}}>{sum}分</span>/89分）</Title>
+                                <Title level={4}>{props.t("ObjectiveScoreSummaryProgress", {sum: sum})}</Title>
                             )
                         }
                     })()}
@@ -128,8 +127,7 @@ const TSummary = (props: any) => {
                                     })
                                     if(sum !== score1) setScore1(sum)
                                     return (
-                                        <Title level={3}>每周作业题（<span
-                                            style={{color: "red"}}>{sum}分</span>/15分=1*15）</Title>
+                                        <Title level={3}>{props.t("WeeklyHomeworkTitle", {sum: sum})}</Title>
                                     )
                                 }
                             })()}
@@ -154,7 +152,7 @@ const TSummary = (props: any) => {
                                                                 props.history.push(UrlPrefix + `/contest/${contestId}`)
                                                             }}
                                                         >
-                                                            跳转到比赛
+                                                            {props.t("GoToContest")}
                                                         </Button>
                                                     </Space>
                                                 </>}
@@ -164,25 +162,25 @@ const TSummary = (props: any) => {
                                                     size={"small"}
                                                     columns={[
                                                         {
-                                                            title: "题目名",
+                                                            title: props.t("title"),
                                                             dataIndex: "problemTitle",
                                                             width: 100,
                                                             render: (text) => {
                                                                 return <TextEllipsis text={text}/>
                                                             }
                                                         },
-                                                        {title: "分数", dataIndex: "score"},
-                                                        {title: "权重", dataIndex: "weight"},
+                                                        {title: props.t("score"), dataIndex: "score"},
+                                                        {title: props.t("Weight"), dataIndex: "weight"},
                                                         {
-                                                            title: "认定提交编号",
+                                                            title: props.t("SubmissionId"),
                                                             dataIndex: "submissionId",
                                                             render: (text: string) => {
-                                                                if (text === "0") return "无有效提交"
+                                                                if (text === "0") return props.t("NoValidSubmission")
                                                                 return text
                                                             }
                                                         },
                                                         {
-                                                            title: "提交时间",
+                                                            title: props.t("submissionTime"),
                                                             dataIndex: "submitTime",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -190,7 +188,7 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "延期折扣",
+                                                            title: props.t("TimeoutDiscount"),
                                                             dataIndex: "timeoutRatio",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -198,10 +196,10 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "代码查重",
+                                                            title: props.t("CodeDuplication"),
                                                             dataIndex: "",
                                                             render: () => {
-                                                                return "未查重"
+                                                                return props.t("NotChecked")
                                                             }
                                                         },
                                                     ]}
@@ -223,8 +221,7 @@ const TSummary = (props: any) => {
                                     })
                                     if(sum !== score2) setScore2(sum)
                                     return (
-                                        <Title level={3}>CSP模测（<span
-                                            style={{color: "red"}}>{sum}分</span>/20分=4*5）</Title>
+                                        <Title level={3}>{props.t("CSPMockTitle", {sum: sum})}</Title>
                                     )
                                 }
                             })()}
@@ -251,7 +248,7 @@ const TSummary = (props: any) => {
                                                                 props.history.push(UrlPrefix + "/exam/report/" + examId)
                                                             }}
                                                         >
-                                                            跳转到考试报告
+                                                            {props.t("GoToExamReport")}
                                                         </Button>
                                                     </Space>
                                                 </>}
@@ -276,8 +273,7 @@ const TSummary = (props: any) => {
                                     })
                                     if(sum !== score3) setScore3(sum)
                                     return (
-                                        <Title level={3}>每月T3练习（<span
-                                            style={{color: "red"}}>{sum}分</span>/8分=2*4）</Title>
+                                        <Title level={3}>{props.t("MonthlyT3PracticeTitle", {sum: sum})}</Title>
                                     )
                                 }
                             })()}
@@ -302,7 +298,7 @@ const TSummary = (props: any) => {
                                                                 props.history.push(UrlPrefix + `/contest/${contestId}`)
                                                             }}
                                                         >
-                                                            跳转到比赛
+                                                            {props.t("GoToContest")}
                                                         </Button>
                                                     </Space>
                                                 </>}
@@ -312,25 +308,25 @@ const TSummary = (props: any) => {
                                                     size={"small"}
                                                     columns={[
                                                         {
-                                                            title: "题目名",
+                                                            title: props.t("title"),
                                                             dataIndex: "problemTitle",
                                                             width: 100,
                                                             render: (text) => {
                                                                 return <TextEllipsis text={text}/>
                                                             }
                                                         },
-                                                        {title: "分数", dataIndex: "score"},
-                                                        {title: "权重", dataIndex: "weight"},
+                                                        {title: props.t("score"), dataIndex: "score"},
+                                                        {title: props.t("Weight"), dataIndex: "weight"},
                                                         {
-                                                            title: "认定提交编号",
+                                                            title: props.t("SubmissionId"),
                                                             dataIndex: "submissionId",
                                                             render: (text: string) => {
-                                                                if (text === "0") return "无有效提交"
+                                                                if (text === "0") return props.t("NoValidSubmission")
                                                                 return text
                                                             }
                                                         },
                                                         {
-                                                            title: "提交时间",
+                                                            title: props.t("submissionTime"),
                                                             dataIndex: "submitTime",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -338,7 +334,7 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "延期折扣",
+                                                            title: props.t("TimeoutDiscount"),
                                                             dataIndex: "timeoutRatio",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -346,10 +342,10 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "代码查重",
+                                                            title: props.t("CodeDuplication"),
                                                             dataIndex: "",
                                                             render: () => {
-                                                                return "未查重"
+                                                                return props.t("NotChecked")
                                                             }
                                                         },
                                                     ]}
@@ -386,8 +382,7 @@ const TSummary = (props: any) => {
                                     })
                                     if(sum !== score4) setScore4(sum)
                                     return (
-                                        <Title level={3}>T3模测（<span
-                                            style={{color: "red"}}>{sum}分</span>/6分=2*3）</Title>
+                                        <Title level={3}>{props.t("T3MockTitle", {sum: sum})}</Title>
                                     )
                                 }
                             })()}
@@ -429,7 +424,7 @@ const TSummary = (props: any) => {
                                                                 props.history.push(UrlPrefix + "/exam/report/" + examId)
                                                             }}
                                                         >
-                                                            跳转到考试报告
+                                                            {props.t("GoToExamReport")}
                                                         </Button>
                                                         <Button
                                                             type={"primary"}
@@ -439,7 +434,7 @@ const TSummary = (props: any) => {
                                                                 props.history.push(UrlPrefix + "/contest/" + contestId)
                                                             }}
                                                         >
-                                                            跳转到比赛
+                                                            {props.t("GoToContest")}
                                                         </Button>
                                                     </Space>
                                                 </>}
@@ -449,26 +444,26 @@ const TSummary = (props: any) => {
                                                     size={"small"}
                                                     columns={[
                                                         {
-                                                            title: "题目名",
+                                                            title: props.t("title"),
                                                             dataIndex: "problemTitle",
                                                             width: 100,
                                                             render: (text) => {
                                                                 return <TextEllipsis text={text}/>
                                                             }
                                                         },
-                                                        {title: "最终分数", dataIndex: "finalScore"},
-                                                        {title: "考场分数", dataIndex: "examScore"},
-                                                        {title: "补题分数", dataIndex: "score"},
+                                                        {title: props.t("FinalScore"), dataIndex: "finalScore"},
+                                                        {title: props.t("ExamScore"), dataIndex: "examScore"},
+                                                        {title: props.t("PracticeScore"), dataIndex: "score"},
                                                         {
-                                                            title: "补题认定提交编号",
+                                                            title: props.t("PracticeSubmissionId"),
                                                             dataIndex: "submissionId",
                                                             render: (text: string) => {
-                                                                if (text === "0") return "无有效提交"
+                                                                if (text === "0") return props.t("NoValidSubmission")
                                                                 return text
                                                             }
                                                         },
                                                         {
-                                                            title: "补题提交时间",
+                                                            title: props.t("PracticeSubmitTime"),
                                                             dataIndex: "submitTime",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -476,7 +471,7 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "补题延期折扣",
+                                                            title: props.t("PracticeTimeoutDiscount"),
                                                             dataIndex: "timeoutRatio",
                                                             render: (text: any, row: any) => {
                                                                 if (row.submissionId === "0") return ""
@@ -484,10 +479,10 @@ const TSummary = (props: any) => {
                                                             }
                                                         },
                                                         {
-                                                            title: "补题代码查重",
+                                                            title: props.t("PracticeCodeDuplication"),
                                                             dataIndex: "",
                                                             render: () => {
-                                                                return "未查重"
+                                                                return props.t("NotChecked")
                                                             }
                                                         },
                                                     ]}
@@ -507,23 +502,22 @@ const TSummary = (props: any) => {
 
                                     if(sum !== score5) setScore5(sum)
                                     return (
-                                        <Title level={3}>期末考试（<span
-                                            style={{color: "red"}}>{sum}分</span>/40分）</Title>
+                                        <Title level={3}>{props.t("FinalExamTitle", {sum: sum})}</Title>
                                     )
                                 }
                             })()}
                         </>} key="5">
-                            只显示分数
+                            {props.t("ScoresOnly")}
                         </Panel>
                     </Collapse>
                 </div>
                 <div style={{paddingBottom: 100, paddingTop: 100}}>
-                    <Title level={4}>非客观成绩说明（11分）</Title>
-                    <Title level={5}>考勤（3分）</Title>
-                    满分：线上上课，线下实验，所有考勤中，缺勤（包括请假但没有提交假条）3次（包含）以内<br/>
-                    缺勤超过3次，超出的每次扣除0.5分考勤成绩，扣完为止<br/><br/>
-                    <Title level={5}>实验报告（8分）</Title>
-                    根据书写内容，由助教进行打分，每次报告分值比例会根据当次报告的内容进行调整，满分 8 分<br/>
+                    <Title level={4}>{props.t("NonObjectiveScoreExplanationTitle")}</Title>
+                    <Title level={5}>{props.t("AttendanceTitle")}</Title>
+                    {props.t("AttendanceFullScoreRule")}<br/>
+                    {props.t("AttendanceDeductionRule")}<br/><br/>
+                    <Title level={5}>{props.t("LabReportTitle")}</Title>
+                    {props.t("LabReportDesc")}<br/>
                 </div>
             </div>
         </>

@@ -64,7 +64,7 @@ const MProblemSet = (props: any) => {
 
     const tableColumns: any = [
         {
-            title: '题组编号',
+            title: props.t('ProblemGroupId'),
             dataIndex: 'gid',
             editable: true,
             valueType: 'select',
@@ -74,7 +74,7 @@ const MProblemSet = (props: any) => {
             width: "240px"
         },
         {
-            title: '题组别名',
+            title: props.t('ProblemGroupAlias'),
             dataIndex: 'name',
             editable: true,
             valueType: 'text',
@@ -82,7 +82,7 @@ const MProblemSet = (props: any) => {
 
         },
         {
-            title: '分值',
+            title: props.t('Score'),
             dataIndex: 'score',
             editable: true,
             valueType: 'digit',
@@ -92,7 +92,7 @@ const MProblemSet = (props: any) => {
 
     if (useGlobalTime !== 1) {
         tableColumns.push({
-            title: "时间配置",
+            title: props.t("TimeSetting"),
             dataIndex: "answer",
             editable: true,
             renderFormItem: () => <TimeSettingX/>
@@ -100,7 +100,7 @@ const MProblemSet = (props: any) => {
     }
 
     tableColumns.push({
-        title: '操作',
+        title: props.t('operator'),
         valueType: 'option',
         render: () => {
             return null;
@@ -118,38 +118,38 @@ const MProblemSet = (props: any) => {
 
                 <Row gutter={24}>
                     <Col span={12}>
-                        <Form.Item label={"题单模式"} required>
+        <Form.Item label={props.t("ProblemSetMode")} required>
                             <Select options={[
-                                {value: 0, label: "练习模式"},
-                                {value: 1, label: "考试模式"},
+            {value: 0, label: props.t("PracticeMode")},
+            {value: 1, label: props.t("ExamMode")},
                             ]} onChange={setType} value={type}/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <ItemText name={"tag"} label={"标签"} help={"例如：作业、实验、练习，用于在 group 分类显示"}/>
+                    <ItemText name={"tag"} label={props.t("Tag")} help={props.t("TagHelp")}/>
                     </Col>
                 </Row>
                 <ItemSelectGroup
-                    label={"管理组"}
+                    label={props.t("ManagementGroup")}
                     name={"manageGroupId"}
                     formName={"ProblemSetForm"}
                 />
                 <Row gutter={24}>
                     <Col span={16}>
                         <ItemSelectGroup
-                            label={"作答组"}
+                        label={props.t("AnswerGroup")}
                             name={"groupId"}
                             formName={"ProblemSetForm"} required={true}/>
                     </Col>
                     <Col span={8}>
-                        <Form.Item name={"global_score"} label={"组内分数"} help={"该题组在课程中的成绩"}>
+                    <Form.Item name={"global_score"} label={props.t("GroupScore")} help={props.t("GroupScoreHelp")}>
                             <InputNumber/>
                         </Form.Item>
                     </Col>
                 </Row>
-                <ItemEditor name={"description"} label={"题单描述"}/>
+                <ItemEditor name={"description"} label={props.t("ProblemSetDescription")}/>
             </>,
-            label: "基本信息"
+            label: props.t("BasicInformation")
         },
         {
             component: <>
@@ -166,7 +166,7 @@ const MProblemSet = (props: any) => {
                     {/*</Col>*/}
                     <Col span={18}>
                         {useGlobalTime === 1 && (
-                            <ItemTimeRange label="起止时间" required={true} startName={"tm_start"} endName={"tm_end"}/>
+                            <ItemTimeRange label={props.t("TimeRange")} required={true} startName={"tm_start"} endName={"tm_end"}/>
                         )}
                     </Col>
                 </Row>
@@ -175,22 +175,22 @@ const MProblemSet = (props: any) => {
                         <Form.Item name={["config", "showReport"]} hidden>
                             <FormExtraInfo v={useReport} setV={setUseReport} eqs={(a: any, b: any) => a === b}/>
                         </Form.Item>
-                        <Form.Item label={"开启总结报告"}>
-                            <SwitchX ck={"是"} unck={"否"} value={useReport} onChange={setUseReport}/>
+                        <Form.Item label={props.t("EnableSummaryReport")}>
+                            <SwitchX ck={props.t("Yes")} unck={props.t("No")} value={useReport} onChange={setUseReport}/>
                         </Form.Item>
                     </Col>
                     {useReport === 1 && (
                         <>
                             <Col span={6}>
-                                <ItemSwitch01 label={"客观题答案"} ck={"显示"} unck={"隐藏"} required={true}
+                                <ItemSwitch01 label={props.t("ObjectiveAnswer")} ck={props.t("Show")} unck={props.t("Hide")} required={true}
                                               name={["config", "showObjectiveAnswer"]}/>
                             </Col>
                             <Col span={6}>
-                                <ItemSwitch01 label={"主观题答案"} ck={"显示"} unck={"隐藏"} required={true}
+                                <ItemSwitch01 label={props.t("SubjectiveAnswer")} ck={props.t("Show")} unck={props.t("Hide")} required={true}
                                               name={["config", "showSubjectiveAnswer"]}/>
                             </Col>
                             <Col span={6}>
-                                <ItemSwitch01 label={"主观题评测细节"} ck={"显示"} unck={"隐藏"} required={true}
+                                <ItemSwitch01 label={props.t("SubjectiveJudgeLog")} ck={props.t("Show")} unck={props.t("Hide")} required={true}
                                               name={["config", "showSubjectiveJudgeLog"]}
                                 />
                             </Col>
@@ -203,19 +203,19 @@ const MProblemSet = (props: any) => {
                         <Form.Item name={["config", "usePractice"]} hidden>
                             <FormExtraInfo v={usePractice} setV={setUsePractice} eqs={(a: any, b: any) => a === b}/>
                         </Form.Item>
-                        <Form.Item label={"赛后补题"}>
-                            <SwitchX ck={"开"} unck={"关"} value={usePractice} onChange={setUsePractice}/>
+                        <Form.Item label={props.t("AfterContestPractice")}>
+                            <SwitchX ck={props.t("On")} unck={props.t("Off")} value={usePractice} onChange={setUsePractice}/>
                         </Form.Item>
                         {usePractice === 1 && (
                             <>
                                 <Form.Item
                                     name={["config", "practiceScoreCalculate"]}
-                                    label={"补题分数公式"}
-                                    help={"两个变量：e，p 表示限时成绩与练习成绩，书写 python 表达式计算"}
+                                    label={props.t("PracticeScoreFormula")}
+                                    help={props.t("PracticeScoreFormulaHelp")}
                                 >
                                     <Input/>
                                 </Form.Item>
-                                <ItemTimeSetting name={["config", "practiceTimeSetting"]} label={"补题时间设置"}/>
+                                <ItemTimeSetting name={["config", "practiceTimeSetting"]} label={props.t("PracticeTimeSetting")}/>
                             </>
 
                         )}
@@ -225,26 +225,26 @@ const MProblemSet = (props: any) => {
                     <Col span={8}>
                         <ItemSwitch01
                             name={["config", "showScoreInRunning"]}
-                            label={"限时中显示分值"} ck={"是"} unck={"否"} required={true}/>
+                            label={props.t("ShowScoreInRunning")} ck={props.t("Yes")} unck={props.t("No")} required={true}/>
                     </Col>
                     <Col span={8}>
                         <ItemSwitch01
                             name={["config", "showProgramScoreInRunning"]}
-                            label={"限时中显示编程题得分"} ck={"是"} unck={"否"} required={true}/>
+                            label={props.t("ShowProgramScoreInRunning")} ck={props.t("Yes")} unck={props.t("No")} required={true}/>
                     </Col>
                     <Col span={8}>
                         <ItemSwitch01
                             name={["config", "mergerSubjectiveGroup"]}
-                            label={"合并批阅主观题"} ck={"是"} unck={"否"} required={true}/>
+                            label={props.t("MergeSubjectiveGroup")} ck={props.t("Yes")} unck={props.t("No")} required={true}/>
                     </Col>
                 </Row>
 
             </>,
-            label: "配置选项"
+            label: props.t("Management")
         },
         {
             component: <>
-                <Form.Item name={"groupInfo"} label={"题组配置"}>
+                <Form.Item name={"groupInfo"} label={props.t("ProblemGroupSetting")}>
                     <CellEditTable
                         columns={tableColumns}
                         rowKey={"id"}
@@ -259,14 +259,14 @@ const MProblemSet = (props: any) => {
                                             id: Date.now()
                                         }, {newRecordType: "dataSource"});
                                     }}
-                                >{"新增题组"}</Button>
+                                >{props.t("AddProblemGroup")}</Button>
                             ]
                         }}
                         rowButton={() => []}
                     />
                 </Form.Item>
             </>,
-            label: "题组列表"
+            label: props.t("ProblemGroupList")
         }
     ]
 
@@ -279,25 +279,25 @@ const MProblemSet = (props: any) => {
             responsive: ["lg", "sm", "xs"]
         },
         {
-            title: "标题",
+            title: props.t("title"),
             dataIndex: "name",
             width: "auto",
             responsive: ["lg", "sm", "xs"],
         },
         {
-            title: "标签",
+            title: props.t("Tag"),
             dataIndex: "tag",
             width: "auto",
             responsive: ["lg", "sm"],
         },
         {
-            title: "类型",
+            title: props.t("Type"),
             dataIndex: "type",
             width: "auto",
             responsive: ["lg", "sm"],
             render: (tp: number) => {
-                if (tp === 0) return "练习"
-                if (tp === 1) return "考试"
+                if (tp === 0) return props.t("Practice")
+                if (tp === 1) return props.t("Exam")
             }
         },
         // {
@@ -332,7 +332,7 @@ const MProblemSet = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemSetList"}
                             width={1200}
-                            title={"编辑(" + rows.name + ")"}
+                            title={props.t("EditWithName", {name: rows.name})}
                             type={"update"}
                             subForm={ProblemSetForm}
                             formName={"ProblemSetForm"}
@@ -354,7 +354,7 @@ const MProblemSet = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemSetList"}
                             width={1200}
-                            title={"新建题单(克隆自" + rows.name + ")"}
+                            title={props.t("CreateProblemSetFrom", {name: rows.name})}
                             type={"fork"}
                             subForm={ProblemSetForm}
                             formName={"ProblemSetForm"}
@@ -380,16 +380,16 @@ const MProblemSet = (props: any) => {
 
     return (
         <div style={{marginTop: -20, overflow: "hidden"}}>
-            <Card
+                <Card
                 size={"small"}
                 bordered={true}
-                title={"主观题列表"}
+                title={props.t("ProblemSetList")}
                 extra={
                     <Space>
                         <ModalFormUseForm
                             TableName={"ProblemSetList"}
                             width={1200}
-                            title={"新建题单"}
+                            title={props.t("CreateProblemSet")}
                             type={"create"}
                             subForm={ProblemSetForm}
                             initData={{

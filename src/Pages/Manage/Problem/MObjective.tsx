@@ -29,7 +29,7 @@ class MObjective extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={true}
-                    title={"客观题列表"}
+                    title={this.props.t("ObjectiveProblemList")}
                     extra={
                         <Space>
                             <ObjectiveForm isDataLoad={true} type={"create"}/>

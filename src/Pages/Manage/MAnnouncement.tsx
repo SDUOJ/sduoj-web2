@@ -17,11 +17,11 @@ class MAnnouncement extends Component<any, any> {
 
     render() {
 
-        const Form = (
+    const Form = (
             <>
                 <ItemTop/>
-                <ItemTitle/>
-                <ItemEditor label={"公告内容"} name={"text"}/>
+        <ItemTitle/>
+    <ItemEditor label={this.props.t("AnnouncementContent")} name={"text"}/>
             </>
         )
 
@@ -80,7 +80,7 @@ class MAnnouncement extends Component<any, any> {
                         <Space size={3}>
                             <ModalFormUseForm
                                 TableName={"Announcement"}
-                                title={"编辑 - " + rows.title}
+                                title={this.props.t("EditWithName", {name: rows.title})}
                                 type={"update"}
                                 width={1100}
                                 subForm={[{component: Form}]}
@@ -108,12 +108,12 @@ class MAnnouncement extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={true}
-                    title={"公告列表"}
+                    title={this.props.t("AnnouncementList")}
                     extra={
                         <>
                             <ModalFormUseForm
                                 TableName={"Announcement"}
-                                title={"新建"}
+                                title={this.props.t("create")}
                                 type={"create"}
                                 width={1100}
                                 subForm={[{component: Form}]}

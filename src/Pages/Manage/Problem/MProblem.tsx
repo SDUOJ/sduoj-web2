@@ -51,31 +51,31 @@ class MProblem extends Component<any, any> {
             {
                 component: (
                     <>
-                        <ItemTitle name={"problemTitle"} label={"题目标题"}/>
-                        <ItemSwitch name={"isPublic"} label={"公开"}/>
-                        <ItemText name={"source"} label={"来源"} required={false}/>
-                        <ItemSelectGroup name={"managerGroups"} label={"管理组"}
+                        <ItemTitle name={"problemTitle"} label={this.props.t("title")}/>
+                        <ItemSwitch name={"isPublic"} label={this.props.t("public")}/>
+                        <ItemText name={"source"} label={this.props.t("source")} required={false}/>
+                        <ItemSelectGroup name={"managerGroups"} label={this.props.t("ManagementGroup")}
                                          mode={"multiple"} formName={"ProblemInfo"}/>
                     </>
                 ),
-                label: "基本信息"
+        label: this.props.t("BasicInformation")
             },
             {
                 component: (
                     <>
-                        <ItemText name={"timeLimit"} label={"时间限制"} addonAfter={"ms"}
+            <ItemText name={"timeLimit"} label={this.props.t("TimeLimit")} addonAfter={"ms"}
                                   initialValue={1000}/>
-                        <ItemText name={"memoryLimit"} label={"空间限制"} addonAfter={"KB"}
+            <ItemText name={"memoryLimit"} label={this.props.t("MemoryLimit")} addonAfter={"KB"}
                                   initialValue={256 * 1024}/>
-                        <ItemText name={"outputLimit"} label={"输出限制"} addonAfter={"KB"}
+            <ItemText name={"outputLimit"} label={this.props.t("OutputLimit")} addonAfter={"KB"}
                                   initialValue={100 * 1024}/>
                     </>
                 ),
-                label: "评测限制"
+    label: this.props.t("JudgeLimit")
             },
             {
                 component: <FormJudgeType/>,
-                label: "评测方式"
+    label: this.props.t("JudgeMethod")
             },
         ]
 
@@ -87,19 +87,19 @@ class MProblem extends Component<any, any> {
                 responsive: ["lg", "sm"]
             },
             {
-                title: "题号",
+                title: this.props.t("problemCode"),
                 dataIndex: "problemCode",
                 width: "auto",
                 responsive: ["lg", "sm", "xs"]
             },
             {
-                title: "标题",
+                title: this.props.t("title"),
                 dataIndex: "problemTitle",
                 width: "auto",
                 responsive: ["lg", "sm", "xs"],
             },
             {
-                title: "时间限制",
+                title: this.props.t("TimeLimit"),
                 dataIndex: "timeLimit",
                 width: "auto",
                 responsive: ["lg", "sm"],
@@ -108,7 +108,7 @@ class MProblem extends Component<any, any> {
                 }
             },
             {
-                title: "内存限制",
+                title: this.props.t("MemoryLimit"),
                 dataIndex: "memoryLimit",
                 width: "auto",
                 responsive: ["lg", "sm"],
@@ -117,7 +117,7 @@ class MProblem extends Component<any, any> {
                 }
             },
             {
-                title: "AC/提交",
+                title: "AC/Submit",
                 width: "auto",
                 responsive: ["lg"],
                 render: (text: string, row: any) => {
@@ -125,13 +125,13 @@ class MProblem extends Component<any, any> {
                 }
             },
             {
-                title: "来源",
+                title: this.props.t("source"),
                 dataIndex: "source",
                 width: "auto",
                 responsive: ["lg"],
             },
             {
-                title: "作者",
+                title: this.props.t("Owner"),
                 dataIndex: "username",
                 width: "auto",
                 responsive: ["lg"],
@@ -165,7 +165,7 @@ class MProblem extends Component<any, any> {
                             <ModalFormUseForm
                                 TableName={"ProblemList"}
                                 width={600}
-                                title={"新建题目(克隆自" + rows.problemCode + ")"}
+                                title={this.props.t("CreateProblemFrom", {name: rows.problemCode})}
                                 type={"fork"}
                                 formName={"ProblemInfo"}
                                 subForm={ProblemForm}
@@ -198,12 +198,12 @@ class MProblem extends Component<any, any> {
 
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
-                <Card size={"small"} bordered={true} title={"题目列表"} extra={
+                <Card size={"small"} bordered={true} title={this.props.t("ProblemList")} extra={
                     <>
                         <ModalFormUseForm
                             TableName={"ProblemList"}
                             width={600}
-                            title={"新建题目"}
+                            title={this.props.t("CreateProblem")}
                             type={"create"}
                             subForm={ProblemForm}
                             dataSubmitter={(value: any) => {

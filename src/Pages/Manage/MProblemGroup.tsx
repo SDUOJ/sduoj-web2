@@ -100,7 +100,7 @@ const MProblemGroup = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemGroupList"}
                             width={1200}
-                            title={"编辑(" + rows.name + ")"}
+                            title={props.t("EditWithName", {name: rows.name})}
                             type={"update"}
                             subForm={ProblemGroupEditForm(rows.type, rows.gid)}
                             formName={"ProblemGroupForm"}
@@ -117,7 +117,7 @@ const MProblemGroup = (props: any) => {
                         <ModalFormUseForm
                             TableName={"ProblemGroupList"}
                             width={1200}
-                            title={"新建题组(克隆自" + rows.name + ")"}
+                            title={props.t("CreateProblemGroupFrom", {name: rows.name})}
                             type={"fork"}
                             subForm={ProblemGroupForm}
                             formName={"ProblemGroupForm"}
@@ -150,7 +150,7 @@ const MProblemGroup = (props: any) => {
                             <ModalFormUseForm
                                 TableName={"ProblemGroupList"}
                                 width={1200}
-                                title={"新建题组"}
+                                title={props.t("CreateProblemGroup")}
                                 type={"create"}
                                 subForm={ProblemGroupForm}
                                 formName={"ProblemGroupForm"}
