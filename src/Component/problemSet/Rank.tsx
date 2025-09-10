@@ -26,18 +26,21 @@ const Rank = (props: any) => {
     const [ModalVis, setModalVis] = useState<boolean>(false);
     const [ModalInfo, setModalInfo] = useState<any>({});
 
+    // antd v5: message.loading 不再返回关闭函数，这里封装一个通用的显示/隐藏方法
+    const showLoading = (key: string, content: string) => {
+        message.loading({key, content, duration: 0});
+        return () => message.destroy(key);
+    }
+
     useEffect(() => {
         if (rankInfo === undefined) {
-            const hied = message.loading({
-                content: props.t("RankLoadingHint"),
-                duration: 0,
-            })
+            const hide = showLoading("RankLoadingHint", props.t("RankLoadingHint"))
             cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
                 setRankInfo(res.data)
                 setLastUpdate(res.lastUpdate)
                 setProblemSetInfo(res.info)
             }).finally(() => {
-                hied()
+                hide()
             })
         }
     }, [rankInfo, setRankInfo])
@@ -83,10 +86,7 @@ const Rank = (props: any) => {
                                     setModalVis(true)
                                     let tp = problemSetInfo.groupInfo[x.index].type;
                                     if (tp === 0 || tp === 1) {
-                                        const hied = message.loading({
-                                            content: props.t("Loading"),
-                                            duration: 0,
-                                        })
+                                        const hide = showLoading("ProblemSetPreviewLoading", props.t("Loading"))
                                         cApi.getProblemSetProPreview({
                                             psid: problemSetId,
                                             gid: x.index,
@@ -113,7 +113,7 @@ const Rank = (props: any) => {
                                                 })
                                             }
                                         }).finally(() => {
-                                            hied()
+                                            hide()
                                         })
 
                                     } else if (tp === 2) {
@@ -185,7 +185,8 @@ const Rank = (props: any) => {
                 width={1250}
                 open={ModalVis}
                 footer={false}
-                destroyOnHidden={true}
+                // antd v5 使用 destroyOnClose 取代自定义的 destroyOnHidden
+                destroyOnClose={true}
                 onCancel={() => {
                     setModalVis(false)
                 }}

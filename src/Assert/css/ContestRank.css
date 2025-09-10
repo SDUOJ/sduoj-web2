@@ -64,3 +64,21 @@
 .pending {
     background-color: #66f;
 }
+
+/* antd v5 默认表格 padding 变大，这里进一步紧凑化 Rank 表格 */
+.RankTable .ant-table-thead > tr > th,
+.RankTable .ant-table-tbody > tr > td {
+    padding: 2px 2px !important; /* 减小垂直间距，水平保持适度 */
+    /* line-height: 1.2; 避免高度被默认行高拉大 */
+}
+
+/* 分数列等数字类内容再稍微加粗对齐 */
+.RankTable .center {
+    display: inline-block;
+    width: 100%;
+}
+
+/* 强制表头居中，避免被 antd 主题或列自定义覆盖 */
+.RankTable .ant-table-thead > tr > th {
+    text-align: center !important;
+}
