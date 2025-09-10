@@ -148,10 +148,10 @@ const Review = (props: any) => {
             <TableWithPagination
                 name={"problemSetSubjectiveJudgeList"}
                 columns={[
-                    {title: "题目名", dataIndex: "name", key: "name"},
-                    {title: "用户名", dataIndex: "username", key: "username"},
+                    {title: props.t("problemName"), dataIndex: "name", key: "name"},
+                    {title: props.t("username"), dataIndex: "username", key: "username"},
                     {
-                        title: "提交时间",
+                        title: props.t("submissionTime"),
                         dataIndex: "tm_answer_submit",
                         key: "tm_answer_submit",
                         render: (text: any) => {
@@ -159,21 +159,21 @@ const Review = (props: any) => {
                         }
                     },
                     {
-                        title: "批阅状态",
+                        title: props.t("status"),
                         dataIndex: "hasJudge",
                         key: "hasJudge",
                         render: (text: any) => {
-                            if (text) return "已批阅"
-                            else return "未批阅"
+                            if (text) return props.t("Reviewed")
+                            else return props.t("NotReviewed")
                         }
                     },
-                    {title: "批阅人", dataIndex: "judgeLock", key: "judgeLock"},
+                    {title: props.t("Reviewer"), dataIndex: "judgeLock", key: "judgeLock"},
                     {
-                        title: "操作", key: "operator", render: (rows: any) => {
+                        title: props.t("operator"), key: "operator", render: (rows: any) => {
                             return (
                                 <Button type={"link"} onClick={() => {
                                     start_review(rows)
-                                }}>开始打分</Button>
+                                }}>{props.t("StartGrading")}</Button>
                             )
                         }
                     }
@@ -196,21 +196,21 @@ const Review = (props: any) => {
                 getForm={(onFinish: any) => {
                     return (
                         <Space size={30}>
-                            <Form.Item label={"用户名"} name={"username"}>
+                            <Form.Item label={props.t("username")} name={"username"}>
                                 <Input onPressEnter={() => {
                                     onFinish()
                                 }}/>
                             </Form.Item>
-                            <Form.Item label={"批阅人"} name={"judgeLock"}>
+                            <Form.Item label={props.t("Reviewer")} name={"judgeLock"}>
                                 <Input onPressEnter={() => {
                                     onFinish()
                                 }}/>
                             </Form.Item>
-                            <Form.Item label={"批阅状态"} name={"hasJudge"}>
+                            <Form.Item label={props.t("status")} name={"hasJudge"}>
                                 <Select onChange={onFinish} style={{width: 120}} allowClear
-                                        options={[{value: 0, label: "未批阅"}, {value: 1, label: "已批阅"}]}/>
+                                        options={[{value: 0, label: props.t("NotReviewed")}, {value: 1, label: props.t("Reviewed")}]} />
                             </Form.Item>
-                            <Form.Item label={"题目"} name={"proStr"}>
+                            <Form.Item label={props.t("Problem")} name={"proStr"}>
                                 <Select onChange={onFinish} style={{width: 240}} allowClear options={options}/>
                             </Form.Item>
                         </Space>
@@ -219,11 +219,11 @@ const Review = (props: any) => {
                 useFormBtn={false}
             />
             <div style={{marginTop: 12, float: "right"}}>
-                <span>提示：如果对主观题进行了批阅，会导致学生无法再次提交，请确定作答完成后再进行批阅</span>
+                <span>{props.t("SubjectiveReviewTip")}</span>
             </div>
 
             <Modal
-                title={"主观题评分"}
+                title={props.t("SubjectiveScoring")}
                 width={1400}
                 open={vis}
                 maskClosable={false}
@@ -242,7 +242,7 @@ const Review = (props: any) => {
                         />
                     </Col>
                     <Col span={10}>
-                        <Card className={"scorePane"} title={"分数面板"}>
+                        <Card className={"scorePane"} title={props.t("ScorePanel")}>
                             <div>
                                 <ScoreMode
                                     reviewInfo={reviewInfo}
@@ -250,22 +250,22 @@ const Review = (props: any) => {
                                     scoreModeInfo={judgeInfo.judgeConfig}
                                 />
                                 <Form layout={"vertical"} style={{marginBottom: 32}}>
-                                    <Form.Item label={"评阅备注"}>
+                                    <Form.Item label={props.t("ReviewNote")}>
                                         <Input.TextArea value={judgeComment} onChange={(e) => {
                                             setJudgeComment(e.target.value)
                                         }}/>
                                     </Form.Item>
                                 </Form>
                                 <div style={{marginTop: 12, marginBottom: 12}}>
-                                    <Form.Item label={"自动打开下一个"}>
-                                        <SwitchX value={autoNext} onChange={setAutoNext} ck={"Auto Next"}
-                                                 unck={"Manual Next"}/>
+                                    <Form.Item label={props.t("AutoOpenNext")}>
+                                        <SwitchX value={autoNext} onChange={setAutoNext} ck={props.t("AutoNext")}
+                                                 unck={props.t("ManualNext")}/>
                                     </Form.Item>
                                 </div>
                                 <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
                                         type="primary" onClick={() => {
                                     if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
-                                        message.error("分数不完整")
+                                        message.error(props.t("IncompleteScores"))
                                         return
                                     }
                                     let res = []
@@ -285,7 +285,7 @@ const Review = (props: any) => {
                                         setVis(false)
                                         props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
-                                }}> 提交分数 </Button>
+                                }}> {props.t("SubmitScores")} </Button>
                                 <Button
                                     disabled={
                                         judgeInfo.judgeLock_username !== props.username ||
@@ -315,7 +315,7 @@ const Review = (props: any) => {
                                         props.addTableVersion("problemSetSubjectiveJudgeList")
                                     })
                                 }}>
-                                    设为<span style={{fontWeight: "bolder"}}>满分</span>并提交分数
+                                    {props.t("SetTo")}<span style={{fontWeight: "bolder"}}> {props.t("FullScore")} </span>{props.t("AndSubmitScores")}
                                 </Button>
                                 {judgeInfo.judgeLock_username === props.username && (
                                     <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
@@ -330,7 +330,7 @@ const Review = (props: any) => {
                                             setVis(false)
                                             props.addTableVersion("problemSetSubjectiveJudgeList")
                                         })
-                                    }}>取消评测</Button>
+                                    }}>{props.t("CancelReview")}</Button>
                                 )}
                             </div>
                         </Card>

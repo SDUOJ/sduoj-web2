@@ -45,12 +45,12 @@ const ObjectiveForm = (props: any) => {
             }
         },
         {
-            title: props.t("content"),
+        title: props.t("content"),
             dataIndex: 'content',
             valueType: 'text',
             formItemProps: (form, {rowIndex}) => {
                 return {
-                    rules: [{required: true, message: '此项为必填项'}, {type: "string", min: 1, max: 250}]
+            rules: [{required: true, message: props.t('fieldRequired')}, {type: "string", min: 1, max: 250}]
                 };
             },
             editable: () => {
@@ -75,11 +75,11 @@ const ObjectiveForm = (props: any) => {
 
     return (
         <>
-            <Form.Item label={"类型"} name={"type"} rules={[{required: true}]}>
+        <Form.Item label={props.t("Type")} name={"type"} rules={[{required: true}]}>
                 <Radio.Group disabled={props.type === "update"}>
-                    <Radio value={0}>单选</Radio>
-                    <Radio value={1}>多选</Radio>
-                    <Radio value={2}>不定项</Radio>
+            <Radio value={0}>{props.t("SingleChoice")}</Radio>
+            <Radio value={1}>{props.t("MultipleChoice")}</Radio>
+            <Radio value={2}>{props.t("IndefiniteChoice")}</Radio>
                 </Radio.Group>
             </Form.Item>
             <ProFormTextArea width="xl" name={["content", "description"]} label={props.t("ProblemContent")}
@@ -89,7 +89,7 @@ const ObjectiveForm = (props: any) => {
                     v={choiceData} setV={setChoiceData} eqs={equ}
                 />
             </Form.Item>
-            <Form.Item label={"选项"}>
+            <Form.Item label={props.t("choice")}> 
                 <CellEditTable
                     columns={columns}
                     rowKey={"id"}

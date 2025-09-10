@@ -10,19 +10,19 @@ const ProblemSetGroup = (props: any) => {
     const [type, setType] = useState<any>("")
     return (
         <>
-            <ItemTitle label={"标题"}/>
+            <ItemTitle label={props.t("title")}/>
             <Form.Item hidden name={""}>
                 <FormExtraInfo v={type} setV={setType} eqs={(a: any, b: any) => a === b}/>
             </Form.Item>
-            <ItemTimeRange label={"题单时间"}/>
+        <ItemTimeRange label={props.t("TimeRange")}/>
 
-            <Form.Item label={"题组类型"}>
+        <Form.Item label={props.t("ProblemType")}>
                 <Select value={type} onChange={(value, option) => {
                     setType(value)
                 }}>
-                    <Select.Option value={"objective"}>客观题</Select.Option>
-                    <Select.Option value={"subjective"}>主观题</Select.Option>
-                    <Select.Option value={"program"}>编程题</Select.Option>
+            <Select.Option value={"objective"}>{props.t("ObjectiveQuestions")}</Select.Option>
+            <Select.Option value={"subjective"}>{props.t("SubjectiveQuestions")}</Select.Option>
+            <Select.Option value={"program"}>{props.t("ProgrammingQuestions")}</Select.Option>
                 </Select>
             </Form.Item>
 
@@ -32,7 +32,7 @@ const ProblemSetGroup = (props: any) => {
                 problemType={"program"}
             />
 
-            <Form.Item label={"延迟设定"}>
+            <Form.Item label={props.t("PracticeTimeSetting")}>
 
             </Form.Item>
         </>

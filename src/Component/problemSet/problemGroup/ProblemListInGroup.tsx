@@ -21,13 +21,13 @@ const ProblemListInGroup = (props: any) => {
         {
             title: 'ID',
             dataIndex: 'pid',
-            tooltip: '题目ID',
+            tooltip: props.t('problemCode'),
             editable: false,
             width: "50px"
         },
         {
-            title: '内容预览',
-            tooltip: '仅展示前80字，题目全部内容可以点击编辑查看',
+            title: props.t('ContentPreview'),
+            tooltip: props.t('ContentPreviewTooltip'),
             readonly: true,
             editable: false,
             render: (rows: any) => {
@@ -36,7 +36,7 @@ const ProblemListInGroup = (props: any) => {
             }
         },
         {
-            title: '分数',
+            title: props.t('Score'),
             dataIndex: 'score',
             editable: true,
             valueType: 'digit'
@@ -44,25 +44,25 @@ const ProblemListInGroup = (props: any) => {
     ]
     if (props.type !== 0) {
         tableColumns.push({
-            title: '查重系数',
+            title: props.t('AntiCheatingRate'),
             dataIndex: 'antiCheatingRate',
             editable: true,
-            tooltip: '不填即为不查重，查重系数应在 0.4 - 1 之间',
+            tooltip: props.t('AntiCheatingRateTooltip'),
             valueType: 'digit'
         })
     }
     if (props.type === 2) {
         tableColumns.push({
-            title: '限制提交数',
+            title: props.t('SubmitLimit'),
             dataIndex: 'submitLimit',
             editable: true,
-            tooltip: '不填即为不限制提交',
+            tooltip: props.t('SubmitLimitTooltip'),
             valueType: 'digit'
         })
     }
 
     tableColumns.push({
-        title: '操作',
+        title: props.t('operator'),
         valueType: 'option',
         render: () => {
             return null;
@@ -75,7 +75,7 @@ const ProblemListInGroup = (props: any) => {
             {props.type === 2 && (
                 <ItemProblemAdd
                     name={"problemInfo"}
-                    label={"题目列表"}
+                    label={props.t('ProblemList')}
                     editable={true}
                     problemType={"program"}
                     useSubmitLimit={true}
@@ -105,7 +105,7 @@ const ProblemListInGroup = (props: any) => {
                 />
             )}
             {props.type !== 2 && (
-                <Form.Item name={"problemInfo"} label={"题目列表"}>
+                <Form.Item name={"problemInfo"} label={props.t('ProblemList')}>
                     <CellEditTable
                         columns={tableColumns}
                         rowKey={"pid"}
@@ -117,7 +117,7 @@ const ProblemListInGroup = (props: any) => {
                                     type={"create"}
                                     btnProps={{block: true}}
                                     btnType={"dashed"}
-                                    title={"新建客观题"}
+                                    title={props.t('CreateObjectiveProblem')}
                                     subForm={[{component: <ObjectiveForm type={"create"}/>, label: ""}]}
                                     formName={"ProblemObjectForm"}
                                     dataSubmitter={(value: any) => {
@@ -137,10 +137,10 @@ const ProblemListInGroup = (props: any) => {
                                     type={"create"}
                                     btnProps={{block: true}}
                                     btnType={"dashed"}
-                                    title={"新建主观题"}
+                                    title={props.t('CreateSubjectiveProblem')}
                                     subForm={[
-                                        {component: <SubjectiveForm type={"create"}/>, label: "基本信息"},
-                                        {component: <SubjectiveConfigForm/>, label: "评测信息"}
+                                        {component: <SubjectiveForm type={"create"}/>, label: props.t('BasicInformation')},
+                                        {component: <SubjectiveConfigForm/>, label: props.t('JudgeInformation')}
                                     ]}
                                     formName={"ProblemSubjectForm"}
                                     dataSubmitter={(value: any) => {
@@ -161,7 +161,7 @@ const ProblemListInGroup = (props: any) => {
                                     <ModalFormUseForm
                                         width={900}
                                         type={"update"}
-                                        title={"编辑"}
+                                        title={props.t('Edit')}
                                         subForm={[{component: <ObjectiveForm type={"update"}/>, label: ""}]}
                                         formName={"ProblemObjectForm"}
                                         updateAppendProps={{gid: props.gid, pid: row.pid}}
@@ -196,8 +196,8 @@ const ProblemListInGroup = (props: any) => {
                                         type={"update"}
                                         title={"编辑"}
                                         subForm={[
-                                            {component: <SubjectiveForm type={"update"}/>, label: "基本信息"},
-                                            {component: <SubjectiveConfigForm/>, label: "评测信息"}
+                                            {component: <SubjectiveForm type={"update"}/>, label: props.t('BasicInformation')},
+                                            {component: <SubjectiveConfigForm/>, label: props.t('JudgeInformation')}
                                         ]}
                                         formName={"ProblemSubjectForm"}
                                         updateAppendProps={{gid: props.gid, pid: row.pid}}

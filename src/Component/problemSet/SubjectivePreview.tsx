@@ -1,9 +1,11 @@
+import {useTranslation} from "react-i18next";
 import {Button, Card} from "antd";
 import Title from "antd/es/typography/Title";
 import MarkdownText from "../../Utils/MarkdownText";
 import React, {useEffect, useState} from "react";
 
 const SubjectivePreview = (props: any) => {
+    const {t} = useTranslation();
     const [mxLength, setMxLength] = useState<any>(240);
     const [show, setShow] = useState<boolean>(false);
 
@@ -16,7 +18,7 @@ const SubjectivePreview = (props: any) => {
         <>
             <div>
                 <Card
-                    title={<Title level={5}> 原问题 </Title>}
+                    title={<Title level={5}> {t("OriginalProblem")} </Title>}
                     style={{marginTop: 24}}
                     extra={<Button type={"default"} onClick={() => {
                         if (mxLength === 998244353) {
@@ -24,7 +26,7 @@ const SubjectivePreview = (props: any) => {
                         } else {
                             setMxLength(998244353)
                         }
-                    }}>{mxLength === 998244353 ? "收齐全文" : "展开全文"}</Button>}
+                    }}>{mxLength === 998244353 ? t("CollapseFullText") : t("ExpandFullText")}</Button>}
                 >
                     <MarkdownText
                         id={"proDescription"}
@@ -34,12 +36,12 @@ const SubjectivePreview = (props: any) => {
             </div>
             <Card
                 title={
-                    <Title level={5}> 学生答案 </Title>
+                    <Title level={5}> {t("StudentAnswer")} </Title>
                 }
                 style={{marginTop: 24}}
                 extra={<Button type={"default"} onClick={() => {
                     setShow(!show)
-                }}>{show ? "显示渲染" : "显示原文"}</Button>}
+                }}>{show ? t("ShowRendered") : t("ShowRaw")}</Button>}
             >
                 {show && (
                     <pre>

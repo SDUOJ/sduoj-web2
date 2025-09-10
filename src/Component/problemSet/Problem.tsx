@@ -60,9 +60,9 @@ const Problem = (props: any) => {
     }, [psid, pid, gid, problemSetInfo])
 
     const getTypeText = () => {
-        if (proType === 0) return "单选题"
-        if (proType === 1) return "多选题"
-        if (proType === 2) return "不定项"
+        if (proType === 0) return props.t("SingleChoice")
+        if (proType === 1) return props.t("MultipleChoice")
+        if (proType === 2) return props.t("IndefiniteChoice")
     }
 
     const GetProblemInfoAPI = () => {
@@ -79,7 +79,7 @@ const Problem = (props: any) => {
                 problemSetId: psid
             })
         } else {
-            return Promise.reject("用户未登录")
+            return Promise.reject(props.t("PleaseLogin"))
         }
 
     }
@@ -245,19 +245,19 @@ const Problem = (props: any) => {
                         <div>
                             {hasTimer && (
                                 <>
-                                    <Reconfirm
+                    <Reconfirm
                                         btnProps={{block: true, danger: true, type: "primary"}}
-                                        btnText={"交卷"}
+                    btnText={props.t("SubmitPaper")}
                                         confirm={props.username}
                                         API={() => {
                                             cApi.finishProblemSet(
                                                 {router: {psid: psid, gid: 0, pid: 0}}
                                             ).then(() => {
-                                                message.success("交卷成功")
+                        message.success(props.t("examSubmittedSuccess"))
                                                 props.history.replace(UrlPrefix + "/problemSetPublic/" + psid)
                                             })
                                         }}
-                                        todo={"交卷"}
+                    todo={props.t("SubmitPaper")}
                                     />
                                     <div style={{marginTop: 24}}>
                                         <Timer

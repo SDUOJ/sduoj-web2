@@ -1,5 +1,6 @@
 import {Button, message, Modal, Switch} from "antd";
 import React, {Dispatch, useState} from "react";
+import {useTranslation} from "react-i18next";
 import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
 import ModalFormUseForm from "../common/Form/ModalFormUseForm";
@@ -10,6 +11,7 @@ import ItemEditor from "../common/Form/Item/ItemEditor";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
 
 const ProDescriptions = (props: any) => {
+    const { t } = useTranslation();
     const [vis, setVis] = useState<boolean>(false)
     const tableName = `ProDescriptions-${props.problemCode}`
     const [defaultDescriptionId, setDefaultDescriptionId] = useState(props.defaultDescriptionId)
@@ -19,20 +21,20 @@ const ProDescriptions = (props: any) => {
             <ItemTitle/>
             <ItemSwitch
                 name={"isPublic"}
-                label={"公开性"}
-                ck={"公开"}
-                unck={"不公开"}
+                label={t('PublicStatus')}
+                ck={t('Public')}
+                unck={t('Private')}
             />
             <ItemEditor
                 name={"markdownDescription"}
-                label={"题面"}
+                label={t('ProblemDescription')}
             />
         </>
     )
 
     return (
         <>
-            <Button type={"link"} size={"small"} onClick={() => setVis(true)}> 题目描述 </Button>
+            <Button type={"link"} size={"small"} onClick={() => setVis(true)}> {t('ProblemDescriptions')} </Button>
             <Modal
                 title={`${props.problemCode} ${props.title}`}
                 onCancel={() => setVis(false)}
@@ -44,7 +46,7 @@ const ProDescriptions = (props: any) => {
                         <ModalFormUseForm
                             TableName={tableName}
                             width={1200}
-                            title={`${props.problemCode} 新建描述`}
+                            title={`${props.problemCode} ${t('CreateDescription')}`}
                             type={"create"}
                             subForm={[{
                                 component: DescriptionForm,
@@ -64,14 +66,14 @@ const ProDescriptions = (props: any) => {
                     size={"small"}
                     columns={[
                         {title: "ID", dataIndex: "id"},
-                        {title: "题目", dataIndex: "title"},
+                        {title: t('Title'), dataIndex: "title"},
                         {
-                            title: "公开性", dataIndex: "isPublic", render: (text: any, row: any) => {
+                            title: t('PublicStatus'), dataIndex: "isPublic", render: (text: any, row: any) => {
                                 return (
                                     <Switch
                                         checked={text === 1}
-                                        checkedChildren={"公开"}
-                                        unCheckedChildren={"不公开"}
+                                        checkedChildren={t('Public')}
+                                        unCheckedChildren={t('Private')}
                                         onChange={(checked, event) => {
                                             mApi.updateDescription({
                                                 id: row.id,
@@ -85,20 +87,20 @@ const ProDescriptions = (props: any) => {
                             }
                         },
                         {
-                            title: "默认题面", dataIndex: "id", render: (text: any) => {
+                            title: t('DefaultDescription'), dataIndex: "id", render: (text: any) => {
                                 // console.log(text, defaultDescriptionId, text === defaultDescriptionId)
                                 return (
                                     <Switch
                                         checked={text === defaultDescriptionId}
-                                        checkedChildren={"是"}
-                                        unCheckedChildren={"否"}
+                                        checkedChildren={t('YesSimple')}
+                                        unCheckedChildren={t('NoSimple')}
                                         onChange={(checked, event) => {
                                             if(defaultDescriptionId !== text){
                                                 mApi.updateProblemInfo({
                                                     problemCode: props.problemCode,
                                                     defaultDescriptionId: parseInt(text)
                                                 }).then((res) => {
-                                                    message.success("成功")
+                                                    message.success(t('Success'))
                                                     setDefaultDescriptionId(text)
                                                 })
                                             }
@@ -107,10 +109,10 @@ const ProDescriptions = (props: any) => {
                                 )
                             }
                         },
-                        {title: "投票", dataIndex: "voteNum"},
-                        {title: "作者", dataIndex: "username"},
+                        {title: t('Vote'), dataIndex: "voteNum"},
+                        {title: t('Author'), dataIndex: "username"},
                         {
-                            title: "操作", render: (text: any, row: any) => {
+                            title: t('operator'), render: (text: any, row: any) => {
                                 return <>
                                     <ModalFormUseForm
                                         TableName={tableName}

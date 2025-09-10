@@ -1,9 +1,11 @@
 import {withRouter} from "react-router";
 import {useEffect, useState} from "react";
 import {Badge, message, Modal} from "antd";
+import {useTranslation} from "react-i18next";
 import {data} from "browserslist";
 
 const PSTakePicture = (props: any) => {
+    const { t } = useTranslation()
     const problemSetId = props.match.params.problemSetId
     const [stream, setStream] = useState<any>()
     const [state, setState] = useState<number>(-1)
@@ -25,7 +27,7 @@ const PSTakePicture = (props: any) => {
 
     const showError = () => {
         setState(2)
-        message.error("监考程序异常，请在10s内刷新页面")
+        message.error(t("proctorErrorToast"))
     }
 
     const check = () => {
@@ -69,24 +71,24 @@ const PSTakePicture = (props: any) => {
         <>
             <Modal
                 visible={state === 2}
-                title={"您的监考运行出错"}
+                title={t("proctorModalTitle")}
                 footer={false}
                 maskClosable={false}
                 closable={false}
             >
                 <div>
-                    目前您的监考程序以掉线，您必须在 10s 内刷新页面，并重新连接监考程序，否则会被标记作弊。
+                    {t("proctorModalBody")}
                 </div>
 
             </Modal>
             {state === 0 && (
-                <Badge color={"orange"} text={"未连接"}/>
+                <Badge color={"orange"} text={t("notConnected")}/>
             )}
             {state === 1 && (
-                <Badge color={"green"} text={"正在屏幕录制"}/>
+                <Badge color={"green"} text={t("screenRecording")}/>
             )}
             {state === 2 && (
-                <Badge color={"red"} text={"连接失败"}/>
+                <Badge color={"red"} text={t("connectionFailed")}/>
             )}
         </>
     )

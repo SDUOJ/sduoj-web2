@@ -195,7 +195,7 @@ const ProblemAddForm = (props: any) => {
             }
         },
         {
-            title: "题目编号",
+            title: props.t("ProblemCode"),
             dataIndex: 'ProblemCode',
             width: 200,
             formItemProps: (form, {rowIndex}) => {
@@ -222,10 +222,10 @@ const ProblemAddForm = (props: any) => {
                                                 if (resData === null) return Promise.reject()
                                                 else {
                                                     if (resData.isMulti === 1 && props.type === "single") {
-                                                        return Promise.reject("单选题组不能录入多选题")
+                                                        return Promise.reject(props.t("SingleGroupCantUseMulti"))
                                                     }
                                                     if (resData.isMulti === 0 && props.type === "multi") {
-                                                        return Promise.reject("多选题组不能录入单选题")
+                                                        return Promise.reject(props.t("MultiGroupCantUseSingle"))
                                                     }
                                                     let str = ""
                                                     const pro = typeof resData.description === "string" ? JSON.parse(resData.description) : resData.description
@@ -256,11 +256,11 @@ const ProblemAddForm = (props: any) => {
         }]
     const ObjectiveColumns: ProColumns<examProblemType>[] = [
         {
-            title: "题目内容",
+            title: props.t("ProblemContentLabel"),
             dataIndex: 'ProblemDescription',
             formItemProps: (form, {rowIndex}) => {
                 return {
-                    rules: [{required: true, message: '此项为必填项'}]
+                    rules: [{required: true, message: props.t('fieldRequired')}]
                 };
             },
             editable: () => {
@@ -274,7 +274,7 @@ const ProblemAddForm = (props: any) => {
         }]
     const programColumns: ProColumns<examProblemType>[] = [
         {
-            title: "题目别名",
+            title: props.t("ProblemAlias"),
             dataIndex: 'ProblemAlias',
             formItemProps: (form, {rowIndex}) => {
                 return {
@@ -286,13 +286,13 @@ const ProblemAddForm = (props: any) => {
             }
         },
         {
-            title: "题目描述",
+            title: props.t("ProblemDescription"),
             dataIndex: 'ProblemDescription',
             valueType: "select",
             valueEnum: (row) => getValueEnum(row.ProblemCode),
             formItemProps: (form, {rowIndex}) => {
                 return {
-                    rules: [{required: true, message: '此项为必填项'}, {type: "string", min: 1, max: 60}]
+                    rules: [{required: true, message: props.t('fieldRequired')}, {type: "string", min: 1, max: 60}]
                 };
             },
             editable: () => {
@@ -300,7 +300,7 @@ const ProblemAddForm = (props: any) => {
             }
         },
         {
-            title: "提交次数限制",
+            title: props.t("SubmitLimit"),
             dataIndex: "ProblemSubmitNumber",
             editable: () => {
                 return true
@@ -309,13 +309,13 @@ const ProblemAddForm = (props: any) => {
     ]
     const baseBColumns: ProColumns<examProblemType>[] = [
         {
-            title: "题目分数",
+            title: props.t("ProblemScore"),
             dataIndex: 'ProblemScore',
             valueType: "digit",
             width: 140,
             formItemProps: (form, {rowIndex}) => {
                 return {
-                    rules: [{required: true, message: '此项为必填项'}, {type: "number", min: 0, max: 100}]
+                    rules: [{required: true, message: props.t('fieldRequired')}, {type: "number", min: 0, max: 100}]
                 };
             },
             editable: () => {

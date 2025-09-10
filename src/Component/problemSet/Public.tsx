@@ -27,8 +27,8 @@ const Public = (props: any) => {
 
     const getStartText = () => {
         if (info === undefined) return ""
-        if (info.finish === 1) return "已交卷"
-        if (info.tm_end < Date.now()) return "已结束"
+        if (info.finish === 1) return props.t("submitted")
+        if (info.tm_end < Date.now()) return props.t("ended")
         return props.t("StartAnswering")
     }
 
@@ -51,7 +51,7 @@ const Public = (props: any) => {
                                         />
                                     )}
                                     {State === "running" && (
-                                        <Timer name={"距离结束"}
+                                        <Timer name={props.t("timeToEnd")}
                                                deadline={info?.tm_end}
                                         />
                                     )}

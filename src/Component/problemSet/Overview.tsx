@@ -41,32 +41,32 @@ const Overview = (props: any) => {
                     pagination={false}
                     dataSource={(() => {
                         const getTime = (t: any) => {
-                            return isValueEmpty(t) ? "未提交" : unix2Time(t)
+                            return isValueEmpty(t) ? props.t("NotSubmitted") : unix2Time(t)
                         }
                         if (detailInfo?.proType !== 2)
                             return [
-                                {key: "得分", value: detailInfo?.score},
-                                {key: "分值", value: detailInfo?.point},
-                                {key: "权重", value: detailInfo?.weight},
+                                {key: props.t("Score"), value: detailInfo?.score},
+                                {key: props.t("PointValue"), value: detailInfo?.point},
+                                {key: props.t("Weight"), value: detailInfo?.weight},
                                 {
-                                    key: "提交时间",
+                                    key: props.t("submissionTime"),
                                     value: getTime(detailInfo?.submit_time)
                                 },
                             ]
                         else {
                             const AL = [
-                                {key: "限时提交", value: detailInfo?.e_id},
-                                {key: "限时权重", value: detailInfo?.e_weight},
-                                {key: "限时提交时间", value: getTime(detailInfo?.e_submit_time)},
+                                {key: props.t("TimedSubmission"), value: detailInfo?.e_id},
+                                {key: props.t("TimedWeight"), value: detailInfo?.e_weight},
+                                {key: props.t("TimedSubmitTime"), value: getTime(detailInfo?.e_submit_time)},
                             ]
                             const BL = [
-                                {key: "补题提交", value: detailInfo?.p_id},
-                                {key: "补题权重", value: detailInfo?.p_weight},
-                                {key: "补题提交时间", value: getTime(detailInfo?.p_submit_time)},
+                                {key: props.t("PracticeSubmission"), value: detailInfo?.p_id},
+                                {key: props.t("PracticeWeight"), value: detailInfo?.p_weight},
+                                {key: props.t("PracticeSubmitTime"), value: getTime(detailInfo?.p_submit_time)},
                             ]
                             let ML = [
-                                {key: "得分", value: detailInfo?.score},
-                                {key: "分值", value: detailInfo?.point},
+                                {key: props.t("Score"), value: detailInfo?.score},
+                                {key: props.t("PointValue"), value: detailInfo?.point},
                             ]
                             if (detailInfo?.type === "sameTimeAndPractice") {
                                 ML = ML.concat(AL)
@@ -128,14 +128,15 @@ const Overview = (props: any) => {
                         if (value.type === 2) {
                             programCol.push({
                                 key: "Result",
-                                title: "评测结果",
+                                title: props.t("JudgeResult"),
                                 width: "auto",
                                 render: (text: any, row: any) => {
                                     return (
                                         <Space size={24}>
                                             {row.e_status && (
                                                 <Space size={0}>
-                                                    限时：<TestCase
+                                                    {props.t("TimedSubmission")}:
+                                                    <TestCase
                                                         type={"text"}
                                                         caseType={StateList.indexOf(SubmissionMap[row.e_status])}
                                                     />
@@ -143,7 +144,8 @@ const Overview = (props: any) => {
                                             )}
                                             {row.p_status && (
                                                 <Space size={0}>
-                                                    补题：<TestCase
+                                                    {props.t("PracticeSubmission")}:
+                                                    <TestCase
                                                     type={"text"}
                                                     caseType={StateList.indexOf(SubmissionMap[row.p_status])}
                                                 />
@@ -163,11 +165,11 @@ const Overview = (props: any) => {
                                         title={() => {
                                             if (problemSetInfo.config.showScoreInRunning === 0) {
                                                 return (<>
-                                                    题组{value.index + 1} {value.name}
+                                                    {props.t("problemGroup")}{value.index + 1} {value.name}
                                                 </>)
                                             } else {
                                                 return (<>
-                                                    题组{value.index + 1} {value.name} {`(${dealFloat(value.point)}分)`}
+                                                    {props.t("problemGroup")}{value.index + 1} {value.name} {`(${dealFloat(value.point)}${props.t(value.point === 1 ? "point" : "points")})`}
                                                 </>)
                                             }
                                         }}
@@ -196,23 +198,23 @@ const Overview = (props: any) => {
                                                     if (value.type === 1) {
                                                         if (text) {
                                                             if (row.hasJudge === false && row.judgeLock === null) {
-                                                                return "已提交 - 未批阅"
+                                                                return `${props.t("Submitted")} - ${props.t("NotReviewed")}`
                                                             } else if (row.hasJudge === false && row.judgeLock !== null) {
-                                                                return "已提交 - 正在批阅"
+                                                                return `${props.t("Submitted")} - ${props.t("Reviewing")}`
                                                             } else if (row.hasJudge === true) {
-                                                                return "已提交 - 已批阅"
-                                                            } else return "已提交"
-                                                        } else return "未提交"
+                                                                return `${props.t("Submitted")} - ${props.t("Reviewed")}`
+                                                            } else return props.t("Submitted")
+                                                        } else return props.t("NotSubmitted")
                                                     } else {
-                                                        if (text) return "已提交"
-                                                        else return "未提交"
+                                                        if (text) return props.t("Submitted")
+                                                        else return props.t("NotSubmitted")
                                                     }
                                                 }
                                             },
                                             ...programCol,
                                             {
                                                 key: "Point",
-                                                title: "分数与详情",
+                                                title: props.t("ScoreAndDetails"),
                                                 width: "auto",
                                                 dataIndex: "point",
                                                 render: (text, row) => {
@@ -278,6 +280,7 @@ interface TimeCardProps {
 }
 
 const TimeCard = (props: TimeCardProps) => {
+    const {t} = require('react-i18next').useTranslation();
     const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
     const update = () => {
         setNowSliderTime(Date.now())
@@ -292,31 +295,31 @@ const TimeCard = (props: TimeCardProps) => {
             <Card bordered={props.bordered}>
                 <div className={"center"}>
                     <div style={{float: "left"}}>
-                        <div style={{fontWeight: "bold"}}>开始时间：</div>
+                        <div style={{fontWeight: "bold"}}>{t("StartTimeLabel")}</div>
                         {unix2Time(props.start)}
                     </div>
                     <span>
                         {timeState === "wait" && (
                             <span style={{color: "blue"}}>
                                 <Space>
-                                    距离开始还有：
+                                    {t("TimeUntilStart")}
                                     <Countdown
                                         className={"contestHeaderTimer"}
                                         value={props.start}
-                                        format="H 时 m 分 s 秒"
+                                        format={t("TimeFormat")}
                                     />
                                 </Space>
                             </span>
                         )}
                         {timeState === "running" && (
-                            <span style={{color: "red"}}>进行中</span>
+                            <span style={{color: "red"}}>{t("running")}</span>
                         )}
                         {timeState === "end" && (
-                            <span style={{color: "green"}}>已结束</span>
+                            <span style={{color: "green"}}>{t("ended")}</span>
                         )}
                                                 </span>
                     <div style={{float: "right"}}>
-                        <div style={{fontWeight: "bold"}}>结束时间：</div>
+                        <div style={{fontWeight: "bold"}}>{t("EndTimeLabel")}</div>
                         {unix2Time(props.end)}
                     </div>
                 </div>
@@ -344,7 +347,7 @@ const TimeCard = (props: TimeCardProps) => {
                         <Col span={8}>
                             {timeState === "running" && (
                                 <span style={{float: "left"}}>
-                                    <span style={{fontWeight: "bold"}}>当前折扣：</span>
+                                    <span style={{fontWeight: "bold"}}>{t("CurrentDiscount")}</span>
                                     {(() => {
                                         for (let i = 0; i < props.timeSetting.length; i++) {
                                             let x = props.timeSetting[i]
@@ -362,7 +365,7 @@ const TimeCard = (props: TimeCardProps) => {
                         <Col span={8}>
                             {timeState === "running" && (
                                 <span style={{float: "right"}}>
-                                    <span style={{fontWeight: "bold"}}>折扣剩余：</span>
+                                    <span style={{fontWeight: "bold"}}>{t("DiscountRemaining")}</span>
                                     {(() => {
                                         for (let i = 0; i < props.timeSetting.length; i++) {
                                             let x = props.timeSetting[i]

@@ -4,7 +4,7 @@ import {CheckOutlined, CloseOutlined, MenuOutlined, PlusOutlined, SwapOutlined} 
 import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {genNumberList} from "../../../../Type/IManage";
 import mApi from "Utils/API/m-api"
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -37,6 +37,7 @@ interface ProblemAddBodyType {
 }
 
 const ProblemAddBody = (props: ProblemAddBodyType & any) => {
+    const { t } = useTranslation();
 
     // 可编辑表格的操作引用
     const actionRef = useRef<ActionType>();
@@ -191,12 +192,12 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
             } else
                 return Promise.resolve()
 
-        } else return Promise.reject("题号格式错误")
+    } else return Promise.reject(t("ProblemCodeFormatError"))
     }
 
     const getProblemInfo = async (problemCode: string) => {
         // console.log("getProblemInfo", TableData, problemCode, rowID)
-        if (problemCode === undefined) return Promise.reject("此项为必填项")
+    if (problemCode === undefined) return Promise.reject(t("fieldRequired"))
         if (strMatch(problemCode) !== null) {
             // Cache 命中直接返回
             if (problemInfoCache[problemCode] !== undefined) {
@@ -213,7 +214,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
                 switch (ProblemType) {
                     case "program":
                         return mApi.getProblem({problemCode: problemCode}).then((resData: any) => {
-                            if (resData === null) return Promise.reject("题目不存在")
+                            if (resData === null) return Promise.reject(t("ProblemNotExist"))
                             else {
                                 problemInfoCache[problemCode] = {
                                     [keyMapping["ProblemAlias"]]: resData.problemTitle,
@@ -228,10 +229,10 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
                     case "single":
                     case "multi":
                         return mApi.getChoiceProblem({problemCode: problemCode}).then((resData: any) => {
-                            if (resData === null) return Promise.reject("题目不存在")
+                            if (resData === null) return Promise.reject(t("ProblemNotExist"))
                             else {
-                                if (resData.isMulti === 1 && ProblemType === "single") return Promise.reject("单选题组不能录入多选题")
-                                if (resData.isMulti === 0 && ProblemType === "multi") return Promise.reject("多选题组不能录入单选题")
+                                if (resData.isMulti === 1 && ProblemType === "single") return Promise.reject(t("SingleGroupCantUseMulti"))
+                                if (resData.isMulti === 0 && ProblemType === "multi") return Promise.reject(t("MultiGroupCantUseSingle"))
 
                                 let str = ""
                                 const pro = typeof resData.description === "string" ? JSON.parse(resData.description) : resData.description
@@ -294,7 +295,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
         }]
     const ProblemCodeColumnItem: ProColumns[] = [
         {
-            title: "题目编号",
+            title: t("ProblemCodeLabel"),
             dataIndex: keyMapping["ProblemCode"],
             width: 200,
             formItemProps: (form, {rowIndex}) => {
@@ -317,7 +318,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ]
     const ObjectiveProblemPreviewColumnItem: ProColumns[] = [
         {
-            title: "题目预览",
+            title: t("ProblemPreview"),
             dataIndex: keyMapping["ProblemPreview"],
             editable: () => {
                 return false
@@ -332,7 +333,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
         }]
     const ProgramingProblemInfoColumnItem: ProColumns[] = [
         {
-            title: "题目别名",
+            title: t("ProblemAliasLabel"),
             dataIndex: keyMapping["ProblemAlias"],
             formItemProps: (form, {rowIndex}) => {
                 return {
@@ -344,7 +345,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
             }
         },
         {
-            title: "题目描述",
+            title: t("ProblemDescriptionLabel"),
             dataIndex: keyMapping["defaultDescriptionId"],
             valueType: "select",
             valueEnum: (row) => row.DescriptionInfo,
@@ -360,7 +361,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ]
     const ProblemSubmitLimitColumnItem: ProColumns[] = [
         {
-            title: "提交次数限制",
+            title: t("SubmitLimitTimes"),
             dataIndex: keyMapping["ProblemSubmitNumber"],
             valueType: "digit",
             width: 140,
@@ -371,7 +372,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ]
     const ProblemScoreColumnItem: ProColumns[] = [
         {
-            title: "权重",
+            title: t("ProblemWeight"),
             dataIndex: keyMapping['ProblemScore'],
             valueType: "digit",
             width: 140,
@@ -387,9 +388,9 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ];
     const ProblemAntiCheatColumnItem: ProColumns[] = [
         {
-            title: "查重率",
+            title: t("DuplicateRate"),
             dataIndex: keyMapping['antiCheatingRate'],
-            tooltip: '不填即为不查重，查重系数应在 0.4 - 1 之间',
+            tooltip: t('DuplicateRateTooltip'),
             valueType: "digit",
             width: 140,
             editable: () => {
@@ -399,14 +400,14 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     ];
     const ProblemColorColumnItem: ProColumns[] = [
         {
-            title: "气球颜色",
+            title: t("BalloonColor"),
             dataIndex: keyMapping['problemColor'],
             width: 140,
             renderFormItem: () => <ColorPickerBody/>,
         }]
     const OperatorColumnItem: ProColumns<examProblemType>[] = [
         {
-            title: props.t("operator"),
+            title: t("operator"),
             valueType: 'option',
             width: 80,
             render: (text, record, _, action) => [],
@@ -448,16 +449,16 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
                     actionRender: (row: any, config: any, defDom: any) => {
                         return [
                             <Popconfirm
-                                title={props.t("deleteConfirm")}
+                                title={t("deleteConfirm")}
                                 onConfirm={() => {
                                     const data = TableData.filter((value: any) => value.id !== row.id)
                                     setTableData(data)
                                     setEditableRowKeys(genNumberList(data))
                                 }}
-                                okText={props.t("yes")}
-                                cancelText={props.t("no")}
+                                okText={t("yes")}
+                                cancelText={t("no")}
                             >
-                                <Button type={"link"} size={"small"}> {props.t("delete")} </Button>
+                                <Button type={"link"} size={"small"}> {t("delete")} </Button>
                             </Popconfirm>
                         ]
                     },
@@ -545,4 +546,4 @@ const ColorPickerBody = ({value, onChange}: any) => {
     )
 }
 
-export default withTranslation()(ProblemAddBody)
+export default ProblemAddBody

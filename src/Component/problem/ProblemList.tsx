@@ -1,13 +1,14 @@
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Table} from "antd";
 import mApi from "../../Utils/API/m-api";
 import ObjectiveForm from "./ObjectiveForm";
+import {useTranslation} from "react-i18next";
 
 
 const ProblemList = (props: any) => {
+    const { t } = useTranslation();
 
     const [total, setTotal] = useState<number>(0)
     const [objectiveProList, setObjectiveProList] = useState()
@@ -34,30 +35,30 @@ const ProblemList = (props: any) => {
 
     let columnsObjective: any[] = [
         {
-            title: '题号',
+            title: t('ProblemCode'),
             dataIndex: 'problemCode',
             key: 'id',
         },
         {
-            title: '标题',
+            title: t('Title'),
             dataIndex: 'problemTitle',
             key: 'problemTitle',
         },
         {
-            title: '题目类型',
+            title: t('ProblemType'),
             dataIndex: "isMulti",
             key: 'startTime',
             render: (value: number) => {
-                return value === 1 ? "多选题" : "单选题"
+                return value === 1 ? t('MultipleChoice') : t('SingleChoice')
             },
         },
         {
-            title: '创建人',
+            title: t('Creator'),
             dataIndex: 'username',
             key: 'username',
         },
         {
-            title: '操作',
+            title: t('operator'),
             key: 'operator',
             render: (value: number, record: any) => {
                 if (props.type === "objective")
@@ -98,7 +99,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(ProblemList)
-    ))
+)(withRouter(ProblemList))

@@ -4,7 +4,7 @@ import mApi from "Utils/API/m-api"
 import {connect} from "react-redux";
 import {TableState} from "../../Type/ITable";
 import TableRowDeleteButton from "../common/Table/TableRowDeleteButton";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {unix2Time} from "../../Utils/Time";
 import TextEllipsis from "../common/TextEllipsis";
 import TableWithSelection from "../common/Table/TableWithSelection";
@@ -24,6 +24,7 @@ const ProCheckPoints = (props: any) => {
     const [sumScore, setSumScore] = useState<number>(0)
     const name = `ProCheckPoints-${props.problemCode}`
 
+    const { t } = useTranslation();
     const [form] = useForm();
 
     // 维护当前总分
@@ -118,29 +119,29 @@ const ProCheckPoints = (props: any) => {
     const tableColumns = () => [
         {title: "ID", dataIndex: "checkpointId"},
         {
-            title: "输入预览", dataIndex: "inputPreview", render: (text: string) => {
+            title: t("InputPreview"), dataIndex: "inputPreview", render: (text: string) => {
                 return <TextEllipsis text={text}/>
             }
         },
         {
-            title: "输出预览", dataIndex: "outputPreview", render: (text: any) => {
+            title: t("OutputPreview"), dataIndex: "outputPreview", render: (text: any) => {
                 text = text.replace(/^\s+|\s+$/g, '')
                 return <TextEllipsis text={text}/>
             }
         },
         {
-            title: "输入/输出文件名", render: (text: any, row: any) => {
+            title: t("IOFilename"), render: (text: any, row: any) => {
                 if (row.inputFilename === null && row.outputFilename === null) return ""
                 return `${row.inputFilename ?? ""}/${row.outputFilename ?? ""}`
             }
         },
         {
-            title: "上传时间", dataIndex: "gmtCreate", render: (text: any, row: any) => {
+            title: t("UploadTime"), dataIndex: "gmtCreate", render: (text: any, row: any) => {
                 return unix2Time(row.gmtCreate)
             }
         },
         {
-            title: `分数`,
+            title: t("Score"),
             dataIndex: "checkpointScore",
             shouldCellUpdate: (record: any, prevRecord: any) => {
                 return false
@@ -154,7 +155,7 @@ const ProCheckPoints = (props: any) => {
             }
         },
         {
-            title: "操作", render: (text: any, row: any) => {
+            title: t("operator"), render: (text: any, row: any) => {
                 return <>
                     <Button type={"link"} onClick={() => {
                         mApi.zipDownload([
@@ -183,7 +184,7 @@ const ProCheckPoints = (props: any) => {
             }
         },
         {
-            title: "样例点",
+            title: t("SampleCheckpoint"),
             width: 120,
             render: (text: any, row: any) => {
                 const caseIndex = row.caseIndex
@@ -199,7 +200,7 @@ const ProCheckPoints = (props: any) => {
 
     return (
         <>
-            <Button type={"link"} size={"small"} onClick={() => setVis(true)}> {props.t("Checkpoint")} </Button>
+            <Button type={"link"} size={"small"} onClick={() => setVis(true)}> {t("Checkpoint")} </Button>
             <Modal
                 title={`${props.problemCode} ${props.title}`}
                 onCancel={() => setVis(false)}
@@ -208,7 +209,7 @@ const ProCheckPoints = (props: any) => {
                 width={1200}
                 footer={
                     <>
-                        <Button onClick={() => setVis(false)}>取消</Button>
+                        <Button onClick={() => setVis(false)}>{t("Cancel")}</Button>
                         <Button type={"primary"} onClick={() => {
                             form.validateFields().then((res) => {
                                 let checkpoints: any = []
@@ -230,11 +231,11 @@ const ProCheckPoints = (props: any) => {
                                     checkpoints: checkpoints,
                                     checkpointCases: checkPointCases
                                 }).then((res) => {
-                                    message.success("成功")
+                                    message.success(t("success"))
                                     setVis(false)
                                 })
                             })
-                        }}> 保存 </Button>
+                        }}>{t("Save")}</Button>
                     </>
                 }
             >
@@ -285,18 +286,18 @@ const ProCheckPoints = (props: any) => {
                                         message.error(e)
                                     });
                                 }}
-                            >批量下载</Button>
+                            >{t("BatchDownload")}</Button>
                             <ButtonWithSelection
                                 type={"delete"}
-                                ButtonText={"批量删除"}
+                                ButtonText={t("deleteBatch")}
                                 rowKey={"checkpointId"}
                                 tableName={name}
                             />
                             <ModalFormUseForm
-                                btnName={"上传"}
+                                btnName={t("upload")}
                                 btnIcon={false}
                                 btnType={"default"}
-                                title={"新增测试点"}
+                                title={t("addCheckpoint")}
                                 subForm={[
                                     {component: <FormCheckPointsUpload/>, label: ""},
                                 ]}
@@ -323,7 +324,7 @@ const ProCheckPoints = (props: any) => {
                     </div>
                     <div style={{float: "right"}}>
                         <Form layout={"horizontal"}>
-                            <Form.Item label={"总分"} style={{width: 250}} className={"mgb0"}>
+                            <Form.Item label={t("TotalScoreShort")} style={{width: 250}} className={"mgb0"}>
                                 <Space>
                                     <Input value={sumScore} onChange={(e) => {
                                         try {
@@ -340,7 +341,7 @@ const ProCheckPoints = (props: any) => {
                                             formData[x] = score + (cnt > len - lftS ? 1 : 0)
                                         }
                                         form.setFieldsValue(formData)
-                                    }}>{"平均分配"}</Button>
+                                    }}>{t("AverageDistribute")}</Button>
                                 </Space>
                             </Form.Item>
                         </Form>
@@ -367,4 +368,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(ProCheckPoints))
+)(ProCheckPoints)

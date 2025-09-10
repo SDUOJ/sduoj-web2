@@ -1,27 +1,29 @@
 import {Form, Select} from "antd";
+import {useTranslation} from "react-i18next";
 import {NEWLINE_CONVERT, NEWLINE_CONVERT_INDEX} from "../../../Config/constValue";
 import TextArea from "antd/es/input/TextArea";
 
 const UploadForm = () => {
 
     const {Option} = Select;
+    const { t } = useTranslation()
 
     return (
         <>
-            <Form.Item name={"mode"} label={"行末处理"} initialValue={NEWLINE_CONVERT_INDEX.DOS2UNIX}>
+            <Form.Item name={"mode"} label={t("newlineHandling")} initialValue={NEWLINE_CONVERT_INDEX.DOS2UNIX}>
                 <Select style={{width: 260}} bordered={true}>
                     {Object.keys(NEWLINE_CONVERT).map((index) => {
                         return <Option value={index}>{NEWLINE_CONVERT[index].description}</Option>
                     })}
                 </Select>
             </Form.Item>
-            <Form.Item label={"输入数据"} name={"input"}>
+            <Form.Item label={t("inputData")} name={"input"}>
                 <TextArea rows={4}/>
             </Form.Item>
-            <Form.Item label={"输出数据"} name={"output"}>
+            <Form.Item label={t("outputData")} name={"output"}>
                 <TextArea rows={4}/>
             </Form.Item>
-            <Form.Item label={"注"} name={"note"}>
+            <Form.Item label={t("noteShort")} name={"note"}>
                 <TextArea rows={4}/>
             </Form.Item>
         </>

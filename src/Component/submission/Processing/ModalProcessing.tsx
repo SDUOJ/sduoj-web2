@@ -25,7 +25,7 @@ const ModalProcessing = (props: any) => {
                 <Button key="back" onClick={() => {
                     props.setSubmissionModalVis(false)
                 }}>
-                    关闭
+                    {t("close")}
                 </Button>
             ]}
         >

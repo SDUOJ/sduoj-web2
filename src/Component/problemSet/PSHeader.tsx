@@ -24,27 +24,27 @@ const PSHeader = (props: any) => {
 
     const menuData = [
         {
-            name: "总览",
+            name: props.t("Overview"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/overview",
             re: /\/problemSet\/.*\/overview/g
         },
         {
-            name: "题目",
+            name: props.t("Problem"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/problem/0/0",
             re: /\/problemSet\/.*\/problem/g
         },
         {
-            name: "评阅",
+            name: props.t("Review"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/review",
             re: /\/problemSet\/.*\/review/g
         },
         {
-            name: "榜单",
+            name: props.t("Rank"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/rank",
             re: /\/problemSet\/.*\/rank/g
         },
         {
-            name: "提交列表",
+            name: props.t("SubmissionList"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/submission",
             re: /\/problemSet\/.*\/submission/g
         },
@@ -52,9 +52,9 @@ const PSHeader = (props: any) => {
 
     const [nowKey, setNowKey] = useState<any>()
 
-    const menuList: any = ["总览", "题目"]
+    const menuList: any = [props.t("Overview"), props.t("Problem")]
     if (problemSetInfo?.isAdmin === true)
-        menuList.push('评阅', "提交列表", "榜单")
+        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("Rank"))
 
 
     useEffect(() => {
@@ -81,7 +81,7 @@ const PSHeader = (props: any) => {
                         }
                         title={<>
                             <Link to={UrlPrefix + `/group/${problemSetInfo.groupId}`}>
-                                <Button size={"small"} icon={<LeftOutlined/>}> 返回 </Button>
+                                <Button size={"small"} icon={<LeftOutlined/>}> {props.t("Return")} </Button>
                             </Link>
                         </>}
                     >

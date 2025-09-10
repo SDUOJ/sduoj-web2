@@ -58,9 +58,9 @@ const Running = (props: any) => {
     return (
         <>
             <Steps>
-                <Step status={getRunningState("-4")} title="Queueing" icon={getRunningIcon("-4")}/>
-                <Step status={getRunningState("-3")} title="Compiling" icon={getRunningIcon("-3")}/>
-                <Step status={getRunningState("-2")} title="Judging" icon={getRunningIcon("-2")}/>
+                <Step status={getRunningState("-4")} title={props.t("Queueing")} icon={getRunningIcon("-4")}/>
+                <Step status={getRunningState("-3")} title={props.t("Compiling")} icon={getRunningIcon("-3")}/>
+                <Step status={getRunningState("-2")} title={props.t("judging")} icon={getRunningIcon("-2")}/>
             </Steps>
 
             {/*

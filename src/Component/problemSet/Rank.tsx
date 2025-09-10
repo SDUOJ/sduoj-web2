@@ -29,7 +29,7 @@ const Rank = (props: any) => {
     useEffect(() => {
         if (rankInfo === undefined) {
             const hied = message.loading({
-                content: "榜单信息内容较多，请耐心等待",
+                content: props.t("RankLoadingHint"),
                 duration: 0,
             })
             cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
@@ -49,14 +49,14 @@ const Rank = (props: any) => {
     if (problemSetInfo !== undefined) {
         for (const x of problemSetInfo.groupInfo) {
             const getTp = () => {
-                if (x.type === 0) return "客观题"
-                if (x.type === 1) return "主观题"
-                if (x.type === 2) return "编程题"
+                if (x.type === 0) return props.t("ObjectiveQuestions")
+                if (x.type === 1) return props.t("SubjectiveQuestions")
+                if (x.type === 2) return props.t("ProgrammingQuestions")
             }
             const col: any = {
                 title: <>
-                    <div>{`题组${x.index + 1} - ${x.name}`}</div>
-                    <div>{`${getTp()}`}</div>
+                    <div>{props.t("ProblemGroup")}{x.index + 1} - {x.name}</div>
+                    <div>{getTp()}</div>
                 </>,
                 children: []
             }
@@ -66,7 +66,7 @@ const Rank = (props: any) => {
                         <div className={"ProHeader"}>
                             <div>
                                 <span style={{fontWeight: "bold"}}>
-                                    题目 {y.index + 1}
+                                    {props.t("Problem")} {y.index + 1}
                                 </span>
                             </div>
                         </div>
@@ -84,7 +84,7 @@ const Rank = (props: any) => {
                                     let tp = problemSetInfo.groupInfo[x.index].type;
                                     if (tp === 0 || tp === 1) {
                                         const hied = message.loading({
-                                            content: "加载中",
+                                            content: props.t("Loading"),
                                             duration: 0,
                                         })
                                         cApi.getProblemSetProPreview({
@@ -122,7 +122,7 @@ const Rank = (props: any) => {
                                             username: row.username,
                                             router: {psid: problemSetId, gid: x.index, pid: y.index},
                                             router_submission: {psid: problemSetId, gid: -1, pid: -1},
-                                            proName: `题组${x.index + 1} - ${x.name}`
+                                            proName: `${props.t("ProblemGroup")}${x.index + 1} - ${x.name}`
                                         })
                                     }
                                 }}>
@@ -146,29 +146,29 @@ const Rank = (props: any) => {
 
     if (problemSetInfo?.type === 1) {
         stateColum.push({
-            title: "状态",
+            title: props.t("Status"),
             width: 150,
             render: (text: any, row: any) => {
                 return (
                     <div style={{paddingLeft: 10, paddingRight: 10}}>
                         <span style={{float: "left"}}>
                             {row.finish === 1 && (
-                                <Popover content={<>{unix2Time(row.finish_time)}</>} title="交卷时间">
-                                    <Tag color={"red"}>交卷</Tag>
+                                <Popover content={<>{unix2Time(row.finish_time)}</>} title={props.t("FinishTimeLabel")}>
+                                    <Tag color={"red"}>{props.t("SubmittedPaper")}</Tag>
                                 </Popover>
                             )}
                         </span>
                         <span style={{float: "right", textAlign: "right"}}>
                             {row.ips?.length <= 1 && (
-                                <Tag color={"green"}>Ip正常</Tag>
+                                <Tag color={"green"}>{props.t("IPNormal")}</Tag>
                             )}
                             {row.ips?.length > 1 && (
                                 <Popover
                                     content={
                                         <>{row.ips?.map((ip: string) => <div>{ip}</div>)}</>
                                     }
-                                    title="使用Ip">
-                                    <Tag color={"orange"}>Ip异常</Tag>
+                                    title={props.t("IPsUsedLabel")}>
+                                    <Tag color={"orange"}>{props.t("IPAbnormal")}</Tag>
                                 </Popover>
                             )}
                         </span>
@@ -205,7 +205,7 @@ const Rank = (props: any) => {
                 )}
                 {ModalInfo.type === 2 && (
                     <SubmissionList
-                        btnText={"记录-" + ModalInfo.username + "-" + ModalInfo.proName}
+                        btnText={props.t("RecordPrefix") + ModalInfo.username + "-" + ModalInfo.proName}
                         name={"Contest-Rank-SubmissionList-" + ModalInfo.username + "-" + ModalInfo.proName}
                         API={async (data: any) => {
                             return cApi.getProblemSetSubmissionList({

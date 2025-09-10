@@ -5,9 +5,10 @@ import Dragger from "antd/lib/upload/Dragger";
 import XLSX from "xlsx";
 import mApi from "../../Utils/API/m-api";
 import deepClone from "Utils/deepClone";
+import {withTranslation} from "react-i18next";
 
 
-const AutoImportObjective = () => {
+const AutoImportObjective = (props: any) => {
     const [modalVis, setModalVis] = useState<boolean>(false);
     const [proData, setProData] = useState([]);
     const [submitProData, setSubmitProData] = useState([]);
@@ -30,7 +31,7 @@ const AutoImportObjective = () => {
                         data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
                     }
                 }
-                message.success('上传成功！')
+                message.success(props.t('UploadSuccess'))
                 let pd: any = []
                 let show: any = []
                 let us: any = []
@@ -57,7 +58,7 @@ const AutoImportObjective = () => {
                     })
                     show.push({
                         problemTitle: data[i].problemTitle,
-                        isMulti: data[i].isMulti === 0 ? "单选题" : "多选题",
+                        isMulti: data[i].isMulti === 0 ? props.t('SingleChoice') : props.t('MultipleChoice'),
                         description: data[i].content + "\n" + cp,
                         answer: data[i].answer,
                         managerGroups: data[i].managerGroups === undefined ? [] : data[i].managerGroups
@@ -68,7 +69,7 @@ const AutoImportObjective = () => {
                 setSubmitProData(pd)
                 setUploadState(us)
             } catch (e) {
-                message.error('文件类型不正确！');
+                message.error(props.t('FileTypeIncorrect'));
             }
         };
     }
@@ -87,22 +88,22 @@ const AutoImportObjective = () => {
                     setModalVis(true)
                 }}
             >
-                <PlusOutlined/> 批量导入
+                <PlusOutlined/> {props.t('BatchImport')}
             </Button>
             <Modal
-                title={"批量导入题目"}
+                title={props.t('BatchImportProblems')}
                 maskClosable={false}
                 visible={modalVis}
                 onCancel={close}
                 width={1600}
                 footer={
                     <Space>
-                        <Button type={"default"} onClick={close}> 取消 </Button>
+                        <Button type={"default"} onClick={close}> {props.t('Cancel')} </Button>
                         <Button
                             type={"primary"}
                             onClick={() => {
                                 if (submitProData.length === 0) {
-                                    message.error("未加载题目信息")
+                                    message.error(props.t('ProblemInfoNotLoaded'))
                                     return
                                 }
                                 for (let i = 0; i < uploadState.length; i++) if (uploadState[i] === 0) uploadState[i] = 1
@@ -136,7 +137,7 @@ const AutoImportObjective = () => {
                             }}
                             disabled={!canSubmitAll}
                         >
-                            全部提交
+                            {props.t('SubmitAll')}
                         </Button>
                     </Space>
                 }
@@ -152,13 +153,13 @@ const AutoImportObjective = () => {
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined/>
                     </p>
-                    <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+                    <p className="ant-upload-text">{props.t('UploadDragAreaText')}</p>
                     <p className="ant-upload-hint">
-                        请上传一个 *.xlsx 文件，示例文件在右下方下载
+                        {props.t('UploadExcelHint')}
                     </p>
                 </Dragger>
                 <div style={{textAlign: "right", marginTop: "10px", marginBottom: "20px"}}>
-                    <a href={require("../../Utils/API/apiAddress").default().CLIENT_SERVER + "/api/filesys/download/262337552520937533/AutoImportObjective.xlsx"}>示例文件下载</a>
+                    <a href={require("../../Utils/API/apiAddress").default().CLIENT_SERVER + "/api/filesys/download/262337552520937533/AutoImportObjective.xlsx"}>{props.t('ExampleFileDownload')}</a>
                 </div>
                 <Table
                     size={"small"}
@@ -167,30 +168,30 @@ const AutoImportObjective = () => {
                     }}
                     columns={[
                         {
-                            title: "题目名",
+                            title: props.t('problemName'),
                             dataIndex: "problemTitle",
                             key: "problemTitle"
                         }, {
-                            title: "题目类型",
+                            title: props.t('ProblemType'),
                             dataIndex: "isMulti",
                             key: "isMulti"
                         }, {
-                            title: "题目内容",
+                            title: props.t('ProblemContentLabel'),
                             dataIndex: "description",
                             key: "description",
                             render: (text) => {
                                 return <pre>{text}</pre>
                             }
                         }, {
-                            title: "答案",
+                            title: props.t('answer'),
                             dataIndex: "answer",
                             key: "answer",
                         }, {
-                            title: "管理组编号",
+                            title: props.t('ManagerGroupIds'),
                             dataIndex: "managerGroups",
                             key: "managerGroups"
                         }, {
-                            title: "上传",
+                            title: props.t('Upload'),
                             key: "isUpload",
                             render: (text, record, index) => {
                                 if (uploadState[index] === 0)
@@ -199,22 +200,22 @@ const AutoImportObjective = () => {
                                             uploadState[index] = 1
                                             setUploadState(deepClone(uploadState))
                                             mApi.createChoiceProblem(submitProData[index]).then((resData) => {
-                                                message.success("提交成功")
+                                                message.success(props.t('SubmitSuccess'))
                                                 uploadState[index] = 2
                                                 setUploadState(deepClone(uploadState))
                                             }).catch(() => {
-                                                message.success("提交失败")
+                                                message.success(props.t('SubmitFailed'))
                                                 uploadState[index] = 0
                                                 setUploadState(deepClone(uploadState))
                                             })
                                         }}>
-                                            提交
+                                            {props.t('Submit')}
                                         </Button>
                                     )
                                 if (uploadState[index] === 1)
-                                    return <><SyncOutlined spin/> 提交中 </>
+                                    return <><SyncOutlined spin/> {props.t('Submitting')} </>
                                 if (uploadState[index] === 2)
-                                    return <span style={{color: "green"}}> 已创建 </span>
+                                    return <span style={{color: "green"}}> {props.t('Created')} </span>
                             }
                         }
                     ]}
@@ -225,4 +226,4 @@ const AutoImportObjective = () => {
     )
 }
 
-export default AutoImportObjective
+export default withTranslation()(AutoImportObjective)

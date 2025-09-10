@@ -6,7 +6,7 @@ import ItemSwitch from "../../common/Form/Item/ItemSwitch";
 import ItemCodeEditor from "../../common/Form/Item/ItemCodeEditor";
 import {ManageState} from "../../../Type/IManage";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {isValueEmpty} from "../../../Utils/empty";
 import TemplateMForm from "../../judgeTemplate/Form/TemplateMForm";
@@ -14,6 +14,7 @@ import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
 
 const FormJudgeType = (props: any) => {
+    const { t } = useTranslation();
     const [JudgeType, setJudgeType] = useState(0);
     const onChange = (e: any) => {
         setJudgeType(e.target.value);
@@ -88,18 +89,18 @@ const FormJudgeType = (props: any) => {
 
     return (
         <>
-            <Form.Item label={"类型"} required>
+        <Form.Item label={t("Type")} required>
                 <Radio.Group onChange={onChange} value={JudgeType}>
-                    <Radio value={0}>IO模式</Radio>
-                    <Radio value={2}>高级模式</Radio>
+            <Radio value={0}>{t('IOMode')}</Radio>
+            <Radio value={2}>{t('AdvancedMode')}</Radio>
                 </Radio.Group>
             </Form.Item>
             {(JudgeType === 0) && (
                 <>
                     <Form.Item
-                        label={"语言"}
+                        label={t('Language')}
                         name={"judgeTemplates"}
-                        rules={[{required: true, message: "未设置语言"}]}
+                        rules={[{required: true, message: t('LanguageNotSet')}]} 
                     >
                         <Select mode={"multiple"} value={selectedJudgeTemplate} onChange={setSelectJudgeTemplate}>
                             {judgeTemplateInfo !== undefined && judgeTemplateInfo.map((value: any) => {
@@ -109,12 +110,12 @@ const FormJudgeType = (props: any) => {
                     </Form.Item>
 
                     <div style={{marginBottom: 20}}>
-                        函数模板<br/>
+                        {t('FunctionTemplate')}<br/>
                         <Switch
                             checked={useFuncTemplate}
                             onChange={setUseFuncTemplate}
-                            checkedChildren={"使用"}
-                            unCheckedChildren={"不使用"}
+                            checkedChildren={t('Use')}
+                            unCheckedChildren={t('NotUse')}
                         />
                     </div>
                     {useFuncTemplate && (
@@ -131,14 +132,14 @@ const FormJudgeType = (props: any) => {
                                         <Collapse.Panel header={templateName} key={value} forceRender={true}>
                                             <ItemSwitch
                                                 name={["functionTemplates", value, "isShowFunctionTemplate"]}
-                                                label={"模板代码可见性"} InitValue={true}
-                                                ck={"显示"} unck={"不显示"}
+                                                label={t('TemplateCodeVisibility')} InitValue={true}
+                                                ck={t('Show')} unck={t('Hide')}
                                             />
                                             <ItemCodeEditor
-                                                label={"模板代码"} lang={"text"}
+                                                label={t('TemplateCode')} lang={"text"}
                                                 name={["functionTemplates", value, "functionTemplate"]}/>
                                             <ItemCodeEditor
-                                                label={"初始化代码"} lang={"text"}
+                                                label={t('InitialCode')} lang={"text"}
                                                 name={["functionTemplates", value, "initialTemplate"]}/>
                                             <Form.Item
                                                 name={["functionTemplates", value, "judgeTemplateId"]}
@@ -156,7 +157,7 @@ const FormJudgeType = (props: any) => {
             )}
             {JudgeType === 0 && (
                 <>
-                    <Form.Item label={"比较器"} name={"checkerConfig"} required>
+                    <Form.Item label={t('Comparator')} name={"checkerConfig"} required>
                         <BodyChecker/>
                     </Form.Item>
                 </>
@@ -164,7 +165,7 @@ const FormJudgeType = (props: any) => {
             {JudgeType === 2 && (
                 <>
                     {props.initData["ProblemInfo"]?.problemCode === undefined && (
-                        "高级评测模板需要在创建后进行添加"
+                        t('AdvancedJudgeTemplateHint')
                     )}
                     {props.initData["ProblemInfo"]?.problemCode !== undefined && (
                         <>
@@ -180,10 +181,10 @@ const FormJudgeType = (props: any) => {
                                 rowKey={"id"}
                                 columns={[
                                     {title: "ID", dataIndex: "id"},
-                                    {title: "标题", dataIndex: "title"},
-                                    {title: "注释", dataIndex: "comment"},
+                                    {title: t('Title'), dataIndex: "title"},
+                                    {title: t('Comment'), dataIndex: "comment"},
                                     {
-                                        title: "操作", render: (text: any, rows: any) => {
+                                        title: t('operator'), render: (text: any, rows: any) => {
                                             return <Space size={3}>
                                                 <ModalFormUseForm
                                                     width={600}
@@ -203,7 +204,7 @@ const FormJudgeType = (props: any) => {
                                                 />
                                                 <ModalFormUseForm
                                                     width={600}
-                                                    title={"新建模板(克隆自" + rows.title + ")"}
+                                                    title={t('CreateTemplateClone', {title: rows.title})}
                                                     type={"fork"}
                                                     subForm={[{component: <TemplateMForm/>, label: ""}]}
                                                     dataLoader={async () => {
@@ -229,7 +230,7 @@ const FormJudgeType = (props: any) => {
                                 <ModalFormUseForm
                                     btnProps={{size: "small"}}
                                     width={600}
-                                    title={"新建模板"}
+                                    title={t('CreateTemplate')}
                                     type={"create"}
                                     subForm={[{component: <TemplateMForm/>, label: ""}]}
                                     afterSubmit={updateAdvanced}
@@ -270,6 +271,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(
-    withTranslation()(withRouter(FormJudgeType))
-)
+)(withRouter(FormJudgeType))

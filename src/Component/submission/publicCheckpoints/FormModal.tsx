@@ -66,10 +66,10 @@ const PublicCheckpointsFormModal = (props: any) => {
                     size={"small"}
                     extra={<>
                         <ModalFormUseForm
-                            btnName={"上传"}
+                            btnName={t("upload")}
                             btnIcon={false}
                             btnType={"default"}
-                            title={"新增测试点"}
+                            title={t("addCheckpoint")}
                             subForm={[
                                 {component: <UploadForm/>, label: ""},
                             ]}

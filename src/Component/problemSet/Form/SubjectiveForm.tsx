@@ -11,28 +11,28 @@ const SubjectiveForm = (props: any) => {
     const [typeData, setTypeData] = useState<any>()
     const tableColumns = [
         {
-            title: '文件名称',
+            title: props.t('fileName'),
             dataIndex: 'name',
             editable: true,
             valueType: 'text'
         },
         {
-            title: '文件大小上限（MB）',
+            title: props.t('fileSizeLimitMB'),
             dataIndex: 'maxSizeMB',
             editable: true,
             valueType: 'digit'
         },
         {
-            title: "文件类型",
+            title: props.t("fileType"),
             dataIndex: "fileType",
-            tooltip: '绿色表示可以预览，红色表示暂不支持',
+            tooltip: props.t('fileTypeTooltip'),
             editable: true,
             valueType: 'select',
             valueEnum: {
-                pdf: {text: 'PDF 文档', status: 'Success'},
-                docx: {text: 'Word 文档 (docx)', status: 'Error'},
-                doc: {text: 'Word 文档 (doc)', status: 'Error'},
-                zip: {text: '压缩文档 (zip)', status: 'Error'},
+                pdf: {text: props.t('pdfDocument'), status: 'Success'},
+                docx: {text: props.t('wordDocx'), status: 'Error'},
+                doc: {text: props.t('wordDoc'), status: 'Error'},
+                zip: {text: props.t('zipArchive'), status: 'Error'},
             }
         }
     ]
@@ -44,16 +44,16 @@ const SubjectiveForm = (props: any) => {
                 />
             </Form.Item>
 
-            <Form.Item label={"类型"} rules={[{required: true}]}>
+        <Form.Item label={props.t("Type")} rules={[{required: true}]}> 
                 <Radio.Group disabled={props.type === "update"} value={typeData} onChange={setTypeData}>
-                    <Radio value={0}>文件作答</Radio>
-                    <Radio value={1}>文本作答</Radio>
+            <Radio value={0}>{props.t('fileAnswer')}</Radio>
+            <Radio value={1}>{props.t('textAnswer')}</Radio>
                 </Radio.Group>
             </Form.Item>
 
             {typeData === 0 && (
                 <>
-                    <Form.Item name={["config", "fileList"]} label={"提交文件清单"}>
+                    <Form.Item name={["config", "fileList"]} label={props.t("submitFileList")}>
                         <CellEditTable
                             columns={tableColumns}
                             rowKey={"id"}
@@ -68,7 +68,7 @@ const SubjectiveForm = (props: any) => {
                                                 id: Date.now()
                                             }, {newRecordType: "dataSource"});
                                         }}
-                                    >{"新增提交文件"}</Button>
+                                    >{props.t('addSubmitFile')}</Button>
                                 ]
                             }}
                             rowButton={(row: any, value: any, onChange: any) => {
@@ -81,13 +81,13 @@ const SubjectiveForm = (props: any) => {
 
             {typeData === 1 && (
                 <>
-                    <Form.Item name={["config", "maxCount"]} label={"最大字数限制"}>
+                    <Form.Item name={["config", "maxCount"]} label={props.t("maxWordCountLimit")}>
                         <InputNumber min={1} max={65535}/>
                     </Form.Item>
                 </>
             )}
 
-            <ItemEditor label={"题目描述"} name={"description"}/>
+            <ItemEditor label={props.t("ProblemDescription")} name={"description"}/>
         </>
     )
 }
