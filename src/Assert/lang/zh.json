@@ -182,7 +182,6 @@
   "OnTestCase": "在测试点",
   "Status": "状态",
   "Rank": "排行",
-  "Register": "注册",
   "codeAntiCheating": "代码反作弊",
   "codeRepository": "代码仓库",
   "codeAntiCheatingTask": "查重任务",
@@ -246,6 +245,9 @@
   "unbindSdusForUnifiedAuthentication": "解除 SDU 统一身份认证绑定",
   "unbinding": "解绑",
   "unwindingSuccessful": "解除成功",
+  "updateBatch": "批量修改",
+  "weakPasswordPrompt": "您当前的密码较弱，为了保护您的账号安全，请立即更改密码。",
+  "dataLoaderNotDefined": "未定义数据加载器",
   "problemDescription": "题目描述",
   "problemDetails": "题目详情",
   "recentlySubmitted": "最近提交",
@@ -306,6 +308,7 @@
   "contestRules": "赛制",
   "end": "结束",
   "running": "进行中",
+  "ended": "已结束",
   "exit": "退出",
   "successfulExit": "退出成功",
   "exitGroup": "退出组",
@@ -327,4 +330,428 @@
   "PublicTestCaseInfo": "公共测试点信息",
   "new email": "新邮箱",
   "ShowAllInformation": "显示全部信息"
+  ,
+  "IOFilename": "输入/输出文件名",
+  "UploadTime": "上传时间",
+  "SampleCheckpoint": "样例点",
+  "TotalScoreShort": "总分",
+  "AverageDistribute": "平均分配",
+  "editorPlaceholder": "支持 Markdown，支持 KaTex 公式\n表格插入一行：Ctrl+'+' \n表格插入一列：Ctrl+Shift+'+'",
+  "Save": "保存",
+  "fileNameTooLong": "文件名大于 {{max}} 字符",
+  "fileUploadSuccess": "文件上传成功",
+  "fileNameLabel": "文件名：",
+  "clickToCopy": "点击复制：",
+  "purePath": "纯路径",
+  "mdLink": "MD链接",
+  "mdImage": "MD图片",
+  "htmlLink": "HTML链接",
+  "htmlImage": "HTML图片"
+  ,
+  "ProblemNav": "题目导航",
+  "AcceptedSlashSubmitted": "通过 / 提交",
+  "StartTimeLabel": "开始时间：",
+  "EndTimeLabel": "结束时间：",
+  "ElapsedTime": "已用时间：",
+  "TimeUntilStart": "距离开始还有：",
+  "TimeLeftLabel": "剩余时间：",
+  "HistoryReplay": "历史回放",
+  "Enabled": "启用",
+  "Disabled": "关闭",
+  "AfterContestSubmission": "赛后提交",
+  "ResultExportSuffix": "_结果导出",
+  "Participant": "参赛人",
+  "try": "次",
+  "tries": "次",
+  "RecordPrefix": "记录-",
+  "AcceptedUsersSlashSubmittedUsers": "通过用户/提交用户",
+  "FirstAccepted": "最早通过",
+  "examSubmittedSuccess": "试卷已提交成功",
+  "pleaseLeaveOrderlyAndWaitForResults": "请有序离场并耐心等待考试成绩",
+  "returnToExamList": "返回考试列表",
+  "browserTooOldTitle": "您使用的浏览器版本过低，请点击下方链接安装新版浏览器。",
+  "backToHome": "返回主页",
+  "timeOkTitle": "您的系统时间与服务器时间误差在容许范围之内。",
+  "systemTime": "系统时间：",
+  "serverTime": "服务器时间：",
+  "timeDiff": "时间相差：",
+  "timeErrorTitle": "您的系统时间有误，这会影响 SDUOJ 系统的工作，请您更正当前系统时间。",
+  "clickRetry": "点击重试",
+  "siteUnderConstruction": "新版网站建设中...",
+  "devsWentToPetCats": "开发人员跑去吸猫了，临走前他们完成了以下功能",
+  "backToOldVersion": "返回老版",
+  "examSystem": "考试系统",
+  "adminConsole": "管理端"
+  ,
+  "ContestPassword": "比赛密码",
+  "IsPublic": "是否公开",
+  "anyoneCanJoin": "任何人可以加入",
+  "problemsPublicButSubmissionRequiresPassword": "题目公开，但提交需要密码",
+  "passwordRequiredToJoin": "加入需要密码",
+  "ContestTimeRange": "比赛起止时间",
+  "ContestAnnouncement": "比赛公告",
+  "RegisterSuccess": "注册成功",
+  "Register": "注册",
+  "notVotedCount": "{{count}} 未投票",
+  "voteSuccess": "投票成功",
+  "studentNumber": "学号",
+  "name": "姓名",
+  "evaluation": "评价",
+  "grade": {"excellent": "优秀", "good": "良好", "medium": "中等", "poor": "差"},
+  "evaluationStats": "评价统计",
+  "smeTitle": "22级学硕互评",
+  "smePleaseLoginCAS": "您未登录，请在右上角使用【SDU统一身份认证】登录",
+  "smeAlreadyVoted": "您已投票，您可以查看您的投票，但是不能再次编辑",
+  "nameLabel": "姓名：",
+  "studentNumberLabel": "学号：",
+  "submitEvaluation": "提交评价",
+  "voteStatusAndResults": "投票状态和评价结果",
+  "exportAsExcel": "导出为 Excel",
+  "voted": "已投票",
+  "notVoted": "未投票",
+  "Openness": "开放性",
+  "openness": {"public": "公开", "protected": "保护", "apply": "申请", "private": "私有"},
+  "MemberCount": "成员数量",
+  "memberManagement": "成员管理",
+  "membersInGroup": "组 {{title}} 的成员 (Group ID:{{id}})",
+  "groupList": "用户组列表",
+  "createGroup": "新建用户组",
+  "ProblemGroupId": "题组编号",
+  "ProblemGroupAlias": "题组别名",
+  "TimeSetting": "时间配置",
+  "ProblemSetMode": "题单模式",
+  "PracticeMode": "练习模式",
+  "ExamMode": "考试模式",
+  "Tag": "标签",
+  "TagHelp": "例如：作业、实验、练习，用于在 group 分类显示",
+  "AnswerGroup": "作答组",
+  "GroupScore": "组内分数",
+  "GroupScoreHelp": "该题组在课程中的成绩",
+  "ProblemSetDescription": "题单描述",
+  "TimeRange": "起止时间",
+  "EnableSummaryReport": "开启总结报告",
+  "Yes": "是",
+  "No": "否",
+  "ObjectiveAnswer": "客观题答案",
+  "SubjectiveAnswer": "主观题答案",
+  "SubjectiveJudgeLog": "主观题评测细节",
+  "Show": "显示",
+  "Hide": "隐藏",
+  "AfterContestPractice": "赛后补题",
+  "On": "开",
+  "Off": "关",
+  "PracticeScoreFormula": "补题分数公式",
+  "PracticeScoreFormulaHelp": "两个变量：e,p 表示限时成绩与练习成绩，书写 python 表达式计算",
+  "PracticeTimeSetting": "补题时间设置",
+  "ShowScoreInRunning": "限时中显示分值",
+  "ShowProgramScoreInRunning": "限时中显示编程题得分",
+  "MergeSubjectiveGroup": "合并批阅主观题",
+  "ProblemGroupSetting": "题组配置",
+  "AddProblemGroup": "新增题组",
+  "Type": "类型",
+  "Practice": "练习",
+  "Exam": "考试",
+  "EditWithName": "编辑({{name}})",
+  "CreateProblemSetFrom": "新建题单(克隆自{{name}})",
+  "ProblemSetList": "题单列表",
+  "CreateProblemSet": "新建题单",
+  "Management": "管理",
+  "Duration": "持续时间",
+  "CreateContestFrom": "新建比赛 - (克隆自{{name}})",
+  "CreateContest": "新建比赛",
+  "AnnouncementContent": "公告内容",
+  "AnnouncementList": "公告列表",
+  "CreateTemplateFrom": "新建模板(克隆自{{name}})",
+  "CreateTemplate": "新建模板",
+  "examList": "考试列表",
+  "CreateProblemGroup": "新建题组",
+  "CreateProblemGroupFrom": "新建题组(克隆自{{name}})",
+  "ObjectiveProblemList": "客观题列表",
+  "SubjectiveProblemList": "主观题列表",
+  "CreateSubjective": "新建主观题",
+  "CreateSubjectiveFrom": "新建主观题(克隆自{{name}})",
+  "JudgeLimit": "评测限制",
+  "JudgeMethod": "评测方式",
+  "OutputLimit": "输出限制",
+  "CreateProblem": "新建题目",
+  "CreateProblemFrom": "新建题目(克隆自{{name}})",
+  "ContentAndAnswer": "内容与答案",
+  "ScoringStrategy": "评分策略",
+  "ProblemScoring": "题目评分",
+  "public": "公开"
+  ,"CollectName": "收集名"
+  ,"SubmitUserGroup": "提交用户组"
+  ,"CollectDescription": "收集描述"
+  ,"FileSubmitComponent": "文件提交组件"
+  ,"NewCollect": "新增收集"
+  ,"Creator": "创建者"
+  ,"ProblemCode": "题号"
+  ,"Title": "标题"
+  ,"IOMode": "IO模式"
+  ,"AdvancedMode": "高级模式"
+  ,"Language": "语言"
+  ,"LanguageNotSet": "未设置语言"
+  ,"FunctionTemplate": "函数模板"
+  ,"Use": "使用"
+  ,"NotUse": "不使用"
+  ,"TemplateCodeVisibility": "模板代码可见性"
+  ,"TemplateCode": "模板代码"
+  ,"InitialCode": "初始化代码"
+  ,"Comparator": "比较器"
+  ,"AdvancedJudgeTemplateHint": "高级评测模板需要在创建后进行添加"
+  ,"Comment": "注释"
+    ,"ProblemCodeLabel": "题目编号"
+    ,"ProblemAliasLabel": "题目别名"
+    ,"ProblemDescriptionLabel": "题目描述"
+    ,"ProblemPreview": "题目预览"
+    ,"ProblemWeight": "权重"
+    ,"BalloonColor": "气球颜色"
+    ,"SubmitLimitTimes": "提交次数限制"
+    ,"DuplicateRate": "查重率"
+    ,"DuplicateRateTooltip": "不填即为不查重，查重系数应在 0.4 - 1 之间"
+    ,"ProblemCodeFormatError": "题号格式错误"
+    ,"ProblemNotExist": "题目不存在"
+  ,"CreateTemplateClone": "新建模板(克隆自{{title}})"
+  ,"PublicStatus": "公开性"
+  ,"Public": "公开"
+  ,"Private": "不公开"
+  ,"ProblemDescription": "题面"
+  ,"ProblemDescriptions": "题目描述"
+  ,"CreateDescription": "新建描述"
+  ,"DefaultDescription": "默认题面"
+  ,"YesSimple": "是"
+  ,"NoSimple": "否"
+  ,"Vote": "投票"
+  ,"Author": "作者"
+  ,"Success": "成功"
+  ,"FormIncomplete": "表单不完整"
+  ,"OperationConfirm": "操作确认"
+  ,"IConfirmToDo": "我确定要{{todo}}"
+  ,"AreYouSureToDo": "您确定要{{todo}}吗？"
+  ,"PleaseInputToConfirm": "请输入"
+  ,"ToConfirm": "进行确认"
+  ,"AreYouSureToOperate": "您确定要进行操作吗？"
+  ,"CollectItemName": "收集项名"
+  ,"CollectItemTag": "收集项标签"
+  ,"Deadline": "截止时间"
+  ,"FileSuffix": "文件后缀"
+  ,"FileSizeLimit": "文件大小限制"
+  ,"DetailPreviewWithName": "{{name}} 详情预览"
+  ,"TimeLeft": "剩余时间"
+  ,"MinuteShort": "分"
+  ,"Finished": "已结束"
+  ,"MySubmission": "我的提交"
+  ,"SubmitTime": "提交时间"
+  ,"NotSubmitted": "未提交"
+  ,"Submitted": "已提交"
+  ,"Delayed": "延期"
+  ,"SubmitFile": "提交文件"
+  ,"Withdraw": "撤回"
+  ,"WithdrawSuccess": "撤回成功"
+  ,"WithdrawSubmit": "撤回提交"
+  ,"Move": "转移"
+  ,"CloneMove": "克隆转移"
+  ,"AdminOperation": "管理员操作"
+  ,"DeleteSubmit": "删除提交"
+  ,"NewCollectItem": "新增收集项"
+  ,"PresetSubmit": "预设提交"
+  ,"UploadFirstThenSubmit": "请先点击 上传文件 按钮，然后再提交"
+  ,"CollectInstruction": "收集说明"
+  ,"CollectItemList": "收集项列表"
+  ,"HistorySubmitList": "历史提交列表"
+  ,"ContestSubmissionCancel": "比赛提交取消"
+  ,"OnlyRevokeOwnSubmission": "只能撤销自己的提交"
+  ,"OnlyAfterContestEnd": "只有比赛结束后才能取消提交"
+  ,"OnlyIOIContestCancelable": "只有 IOI 赛制的比赛可以取消提交"
+  ,"ContestIdHint": "比赛ID（URL中的数字，例如：175）"
+  ,"SubmissionIdHint": "提交ID（例如：225a5a7cb018012）"
+  ,"ICertainToCancel": "我确定取消"
+  ,"CancelCurrentSubmission": "取消当前提交"
+  ,"CancelSuccess": "取消成功"
+  ,"ExamTitle": "《计算导论与程序设计》期末考试"
+  ,"TempSave": "暂存"
+  ,"SubmitPaper": "交卷"
+  ,"ExamFooterBrand": "山东大学计算机科学与技术学院 ©2020-2021"
+  ,"BatchDownload": "打包下载"
+  ,"UploadAcceptHintMulti": "请上传一个或多个 {{nameList}} 文件"
+  ,"UploadExtHwsPresetHint": "请上传一个或多个文件，单个文件的文件名为：学号.姓名.上传时间戳.文件名.zip"
+  ,"Uploading": "上传中"
+  ,"SetTime": "设置时间"
+  ,"TimeSettingTitle": "时间设定"
+  ,"Weight": "权重"
+  ,"AddTime": "新增时间"
+  ,"ExistingFile": "已有文件："
+  ,"Download": "下载"
+  ,"UploadDragAreaText": "单击或拖动文件到此区域进行上传"
+  ,"UploadAcceptHint": "请上传一个 {{nameList}} 文件"
+  ,"FileTooLargeMB": "文件过大，最大 {{max}} MB"
+    ,"TSummaryTitle": "2022年程序设计思维与实践 SDUOJ 客观成绩汇总（89分）"
+    ,"TSummarySubTitle": "以下成绩为未查重成绩，仅供参考，若有异常，请联系助教处理"
+    ,"ObjectiveScoreSummaryProgress": "客观成绩汇总（{{sum}}/89）"
+    ,"WeeklyHomeworkTitle": "每周作业题（{{sum}}/15=1*15）"
+    ,"GoToContest": "跳转到比赛"
+    ,"SubmissionId": "认定提交编号"
+    ,"NoValidSubmission": "无有效提交"
+    ,"TimeoutDiscount": "延期折扣"
+    ,"CodeDuplication": "代码查重"
+    ,"NotChecked": "未查重"
+    ,"CSPMockTitle": "CSP模测（{{sum}}/20=4*5）"
+    ,"GoToExamReport": "跳转到考试报告"
+    ,"MonthlyT3PracticeTitle": "每月T3练习（{{sum}}/8=2*4）"
+    ,"FinalScore": "最终分数"
+    ,"ExamScore": "考场分数"
+    ,"PracticeScore": "补题分数"
+    ,"PracticeSubmissionId": "补题认定提交编号"
+    ,"PracticeSubmitTime": "补题提交时间"
+    ,"PracticeTimeoutDiscount": "补题延期折扣"
+    ,"PracticeCodeDuplication": "补题代码查重"
+    ,"T3MockTitle": "T3模测（{{sum}}/6=2*3）"
+    ,"FinalExamTitle": "期末考试（{{sum}}/40）"
+    ,"ScoresOnly": "只显示分数"
+    ,"NonObjectiveScoreExplanationTitle": "非客观成绩说明（11分）"
+    ,"AttendanceTitle": "考勤（3分）"
+    ,"AttendanceFullScoreRule": "满分：线上上课，线下实验，所有考勤中，缺勤（包括请假但没有提交假条）3次（包含）以内"
+    ,"AttendanceDeductionRule": "缺勤超过3次，超出的每次扣除0.5分考勤成绩，扣完为止"
+    ,"LabReportTitle": "实验报告（8分）"
+    ,"LabReportDesc": "根据书写内容，由助教进行打分，每次报告分值比例会根据当次报告的内容进行调整，满分8分。"
+  ,"proctorErrorToast": "监考程序异常，请在10s内刷新页面"
+  ,"proctorModalTitle": "监考运行出错"
+  ,"proctorModalBody": "目前您的监考程序已掉线，您必须在 10s 内刷新页面，并重新连接监考程序，否则会被标记作弊。"
+  ,"notConnected": "未连接"
+  ,"screenRecording": "正在屏幕录制"
+  ,"connectionFailed": "连接失败"
+  ,"newlineHandling": "行末处理"
+  ,"inputData": "输入数据"
+  ,"outputData": "输出数据"
+  ,"noteShort": "注"
+  ,"addCheckpoint": "新增测试点"
+  ,"fieldRequired": "此项为必填项"
+  ,"IndefiniteChoice": "不定项"
+  ,"fileName": "文件名称"
+  ,"fileSizeLimitMB": "文件大小上限（MB）"
+  ,"fileType": "文件类型"
+  ,"fileTypeTooltip": "绿色表示可以预览，红色表示暂不支持"
+  ,"pdfDocument": "PDF 文档"
+  ,"wordDocx": "Word 文档 (docx)"
+  ,"wordDoc": "Word 文档 (doc)"
+  ,"zipArchive": "压缩文档 (zip)"
+  ,"fileAnswer": "文件作答"
+  ,"textAnswer": "文本作答"
+  ,"submitFileList": "提交文件清单"
+  ,"addSubmitFile": "新增提交文件"
+  ,"maxWordCountLimit": "最大字数限制",
+  "close": "关闭",
+  "Reviewed": "已批阅",
+  "NotReviewed": "未批阅",
+  "Reviewer": "批阅人",
+  "StartGrading": "开始打分",
+  "SubjectiveReviewTip": "提示：如果对主观题进行了批阅，会导致学生无法再次提交，请确定作答完成后再进行批阅",
+  "SubjectiveScoring": "主观题评分",
+  "ScorePanel": "分数面板",
+  "ReviewNote": "评阅备注",
+  "AutoOpenNext": "自动打开下一个",
+  "AutoNext": "自动下一题",
+  "ManualNext": "手动下一题",
+  "IncompleteScores": "分数不完整",
+  "SubmitScores": "提交分数",
+  "SetTo": "设为",
+  "FullScore": "满分",
+  "AndSubmitScores": "并提交分数",
+  "CancelReview": "取消评测",
+  "OriginalProblem": "原问题",
+  "StudentAnswer": "学生答案",
+  "ShowRendered": "显示渲染",
+  "ShowRaw": "显示原文",
+  "CollapseFullText": "收齐全文",
+  "ExpandFullText": "展开全文",
+  "Review": "评阅",
+  "SubmissionList": "提交列表"
+  ,"PointValue": "分值"
+  ,"TimedSubmission": "限时提交"
+  ,"TimedWeight": "限时权重"
+  ,"TimedSubmitTime": "限时提交时间"
+  ,"PracticeSubmission": "补题提交"
+  ,"PracticeWeight": "补题权重"
+  ,"ScoreAndDetails": "分数与详情"
+  ,"Reviewing": "正在批阅"
+  ,"CurrentDiscount": "当前折扣："
+  ,"DiscountRemaining": "折扣剩余："
+  ,"ContentPreview": "内容预览"
+  ,"ContentPreviewTooltip": "仅展示前80字，完整内容请点击编辑查看"
+  ,"AntiCheatingRate": "查重系数"
+  ,"AntiCheatingRateTooltip": "不填为不查重；范围 0.4 - 1"
+  ,"SubmitLimit": "限制提交数"
+  ,"SubmitLimitTooltip": "不填表示不限制提交次数"
+  ,"CreateObjectiveProblem": "新建客观题"
+  ,"CreateSubjectiveProblem": "新建主观题"
+  ,"JudgeInformation": "评测信息"
+  ,"GroupDescriptionLabel": "描述"
+  ,"OpenPublicOption": "公开：任何人可以加入"
+  ,"OpenApplyOption": "申请：需要管理员同意"
+  ,"OpenPrivateOption": "私有：不允许加入"
+  ,"GroupAnnouncement": "组公告"
+  ,"Agree": "同意"
+  ,"Transfer": "转让"
+  ,"Remove": "移除"
+  ,"ApplyingUsers": "申请用户"
+  ,"AcceptAll": "全部同意"
+  ,"RejectAll": "全部拒绝"
+  ,"UserListLabel": "用户列表"
+  ,"ShellScript": "shell脚本"
+  ,"ZipResourceFile": "ZIP资源文件"
+  ,"PleaseSearchAndSelectGroup": "请查询并选择组"
+  ,"SingleGroupCantUseMulti": "单选题组不能录入多选题"
+  ,"MultiGroupCantUseSingle": "多选题组不能录入单选题"
+  ,"ProblemContentLabel": "题目内容"
+  ,"ProblemAlias": "题目别名"
+  ,"ProblemScore": "题目分数"
+  ,"UploadSuccess": "上传成功"
+  ,"FileTypeIncorrect": "文件类型不正确"
+  ,"BatchImport": "批量导入"
+  ,"BatchImportProblems": "批量导入题目"
+  ,"Cancel": "取消"
+  ,"ProblemInfoNotLoaded": "未加载题目信息"
+  ,"SubmitAll": "全部提交"
+  ,"UploadExcelHint": "请上传一个 *.xlsx 文件，示例文件在右下方下载"
+  ,"ExampleFileDownload": "示例文件下载"
+  ,"ManagerGroupIds": "管理组编号"
+  ,"SubmitSuccess": "提交成功"
+  ,"SubmitFailed": "提交失败"
+  ,"Submitting": "提交中"
+  ,"Created": "已创建"
+  ,"Queueing": "排队"
+  ,"SubmitExamConfirm": "交卷后将无法继续作答，你确定要交卷吗？"
+  ,"ConfirmSubmitPaper": "确定交卷"
+  ,"RankLoadingHint": "榜单信息内容较多，请耐心等待"
+  ,"FinishTimeLabel": "交卷时间"
+  ,"SubmittedPaper": "交卷"
+  ,"IPNormal": "IP正常"
+  ,"IPAbnormal": "IP异常"
+  ,"IPsUsedLabel": "使用IP"
+  ,"ExamFooterNotice": "若遇到限流问题，请稍后刷新页面即可。 考试结束后，试卷会自动提交。 若主动交卷，则试卷将被锁定，无法再次改动。"
+  ,"AddCode": "添加代码"
+  ,"IsReferenceCode": "是否为参考代码"
+  ,"CodeRepositoryTab": "代码仓库"
+  ,"ProblemBankSubmissionTab": "题库提交"
+  ,"ContestId": "比赛ID"
+  ,"RecognitionParam": "认定参数"
+  ,"ExamRecognitionCodeTab": "考试认定代码"
+  ,"ExamId": "考试ID"
+  ,"SplitUsernamesHint": "使用 TAB(制表符)、空格、换行 或 逗号 分隔多个用户名"
+  ,"PleaseInputExamTitle": "请输入考试标题"
+  ,"ScoreDisplayMode": "提交页面分数显示模式"
+  ,"PartialShow": "部分显示"
+  ,"CheckpointDisplayMode": "测试点显示模式"
+  ,"ExamReportAfterExam": "考试后成绩报告"
+  ,"ExamTimeRange": "考试起止时间"
+  ,"ExamTimeRangeHint": "考试起止时间无法在考试开始后修改"
+  ,"ExamDuration": "考试时长"
+  ,"UserLogin": "用户登录"
+  ,"SDUOJSystem": "山东大学在线评测系统"
+  ,"AccountPassword": "账号密码"
+  ,"EmailVerifyCode": "邮箱验证码"
+  ,"UnifiedIdentity": "统一身份认证"
+  ,"PleaseInputUsername": "请输入用户名"
+  ,"PleaseInputPassword": "请输入密码"
+  ,"ForgotPassword": "忘记密码"
 }

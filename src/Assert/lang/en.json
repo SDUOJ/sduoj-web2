@@ -245,6 +245,9 @@
   "unbindSdusForUnifiedAuthentication": "Unbind SDUs for Unified Authentication",
   "unbinding": "Unbinding",
   "unwindingSuccessful": "Unwinding successful",
+  "updateBatch": "Batch Update",
+  "weakPasswordPrompt": "Your current password is weak. To protect your account security, please change the password immediately.",
+  "dataLoaderNotDefined": "Data loader not defined",
   "problemDescription": "Problem Description",
   "problemDetails": "Problem Details",
   "recentlySubmitted": "Recent Submissions",
@@ -326,4 +329,453 @@
   "PublicTestCaseInfo": "Public test case info",
   "new email": "New Email",
   "ShowAllInformation": "Show All Information"
+  ,
+  "IOFilename": "Input/Output Filename",
+  "UploadTime": "Upload Time",
+  "SampleCheckpoint": "Sample Case",
+  "TotalScoreShort": "Total Score",
+  "AverageDistribute": "Average Distribute",
+  "editorPlaceholder": "Support Markdown, support KaTeX formulas\nInsert a row: Ctrl+'+' \nInsert a column: Ctrl+Shift+'+'",
+  "Save": "Save",
+  "fileNameTooLong": "File name exceeds {{max}} characters",
+  "fileUploadSuccess": "File upload successful",
+  "fileNameLabel": "File name:",
+  "clickToCopy": "Click to copy:",
+  "purePath": "Pure path",
+  "mdLink": "MD link",
+  "mdImage": "MD image",
+  "htmlLink": "HTML link",
+  "htmlImage": "HTML image"
+  ,
+  "examSubmittedSuccess": "Exam submitted successfully",
+  "ProblemNav": "Problem Navigation",
+  "AcceptedSlashSubmitted": "Accepted / Submitted",
+  "StartTimeLabel": "Start time: ",
+  "EndTimeLabel": "End time: ",
+  "ElapsedTime": "Elapsed: ",
+  "TimeUntilStart": "Time until start:",
+  "TimeLeftLabel": "Time left: ",
+  "HistoryReplay": "History replay",
+  "Enabled": "On",
+  "Disabled": "Off",
+  "AfterContestSubmission": "After-contest submission",
+  "ResultExportSuffix": "_Result_Export",
+  "pleaseLeaveOrderlyAndWaitForResults": "Please leave orderly and wait patiently for the exam results",
+  "returnToExamList": "Return to exam list",
+  "browserTooOldTitle": "Your browser version is too low. Please click the links below to install a newer browser.",
+  "backToHome": "Back to Home",
+  "timeOkTitle": "Your system time deviation from server time is within the allowed range.",
+  "systemTime": "System time: ",
+  "serverTime": "Server time: ",
+  "timeDiff": "Time difference: ",
+  "timeErrorTitle": "Your system time is incorrect, which affects SDUOJ. Please correct your system time.",
+  "clickRetry": "Click to retry",
+  "siteUnderConstruction": "The new website is under construction...",
+  "devsWentToPetCats": "Developers went to pet cats. Before leaving, they completed the following functions",
+  "backToOldVersion": "Back to old version",
+  "examSystem": "Exam System",
+  "adminConsole": "Admin Console"
+  ,
+  "ContestPassword": "Contest password",
+  "RegisterSuccess": "Registration successful",
+  "Register": "Register",
+  "Participant": "Participant",
+  "try": "try",
+  "tries": "tries",
+  "RecordPrefix": "Record-",
+  "AcceptedUsersSlashSubmittedUsers": "Accepted Users / Submitted Users",
+  "FirstAccepted": "First Accepted",
+  "IsPublic": "Public",
+  "anyoneCanJoin": "Anyone can join",
+  "openness": {"public": "Public", "protected": "Protected", "apply": "Apply", "private": "Private"},
+  "problemsPublicButSubmissionRequiresPassword": "Problems are public, but submission requires password",
+  "passwordRequiredToJoin": "Password required to join",
+  "ContestTimeRange": "Contest Time Range",
+  "ContestAnnouncement": "Contest Announcement",
+  "queuingForExamPaper": "Queuing to distribute exam papers, please do not refresh and wait a few seconds",
+  "submitted": "Submitted",
+  "ended": "Ended",
+  "timeToEnd": "Time to end",
+  "notVotedCount": "{{count}} not voted",
+  "voteSuccess": "Vote succeeded",
+  "studentNumber": "Student ID",
+  "name": "Name",
+  "evaluation": "Evaluation",
+  "grade": {"excellent": "Excellent", "good": "Good", "medium": "Medium", "poor": "Poor"},
+  "evaluationStats": "Evaluation statistics",
+  "smeTitle": "Class of 2022 Master's Mutual Evaluation",
+  "smePleaseLoginCAS": "You are not logged in. Please use [SDU Unified Identity Authentication] in the upper right corner to log in",
+  "smeAlreadyVoted": "You have already voted. You can view your vote but cannot edit it again",
+  "nameLabel": "Name: ",
+  "studentNumberLabel": "Student ID: ",
+  "submitEvaluation": "Submit evaluation",
+  "voteStatusAndResults": "Vote status and evaluation results",
+  "exportAsExcel": "Export as Excel",
+  "voted": "Voted",
+  "notVoted": "Not voted",
+  "examReport": "Exam Report",
+  "answerDetails": "Answer details",
+  "recognizedCode": "Recognized code",
+  "totalScoreLabel": "Total score: ",
+  "details": "Details",
+  "Openness": "Openness",
+  "MemberCount": "Member Count",
+  "memberManagement": "Member Management",
+  "membersInGroup": "Members in {{title}}(Group ID:{{id}})",
+  "groupList": "Group List",
+  "createGroup": "Create Group",
+  "ProblemGroupId": "Problem Group ID",
+  "ProblemGroupAlias": "Problem Group Alias",
+  "TimeSetting": "Time Setting",
+  "ProblemSetMode": "Problem Set Mode",
+  "PracticeMode": "Practice Mode",
+  "ExamMode": "Exam Mode",
+  "Tag": "Tag",
+  "TagHelp": "For example: homework, experiment, practice, used for grouping display",
+  "AnswerGroup": "Answer Group",
+  "GroupScore": "Group Score",
+  "GroupScoreHelp": "The score of this problem group in the course",
+  "ProblemSetDescription": "Problem Set Description",
+  "TimeRange": "Time Range",
+  "EnableSummaryReport": "Enable Summary Report",
+  "Yes": "Yes",
+  "No": "No",
+  "ObjectiveAnswer": "Objective Answer",
+  "SubjectiveAnswer": "Subjective Answer",
+  "SubjectiveJudgeLog": "Subjective Judge Log",
+  "Show": "Show",
+  "Hide": "Hide",
+  "AfterContestPractice": "After-contest Practice",
+  "On": "On",
+  "Off": "Off",
+  "PracticeScoreFormula": "Practice Score Formula",
+  "PracticeScoreFormulaHelp": "Two variables: e, p represent timed score and practice score, write python expression to calculate",
+  "PracticeTimeSetting": "Practice Time Setting",
+  "ShowScoreInRunning": "Show score during running",
+  "ShowProgramScoreInRunning": "Show programming score during running",
+  "MergeSubjectiveGroup": "Merge subjective group grading",
+  "ProblemGroupSetting": "Problem Group Setting",
+  "AddProblemGroup": "Add Problem Group",
+  "Type": "Type",
+  "Practice": "Practice",
+  "Exam": "Exam",
+  "EditWithName": "Edit({{name}})",
+  "CreateProblemSetFrom": "Create problem set (clone from {{name}})",
+  "ProblemSetList": "Problem Set List",
+  "CreateProblemSet": "Create Problem Set",
+  "Management": "Management",
+  "Duration": "Duration",
+  "CreateContestFrom": "Create contest - (clone from {{name}})",
+  "CreateContest": "Create Contest",
+  "AnnouncementContent": "Announcement Content",
+  "AnnouncementList": "Announcement List",
+  "CreateTemplateFrom": "Create template (clone from {{name}})",
+  "CreateTemplate": "Create Template",
+  "examList": "Exam List",
+  "CreateProblemGroup": "Create Problem Group",
+  "CreateProblemGroupFrom": "Create Problem Group (Clone from {{name}})",
+  "ObjectiveProblemList": "Objective Problems",
+  "SubjectiveProblemList": "Subjective Problems",
+  "CreateSubjective": "Create Subjective Problem",
+  "CreateSubjectiveFrom": "Create Subjective Problem (Clone from {{name}})",
+  "JudgeLimit": "Judge Limits",
+  "JudgeMethod": "Judge Method",
+  "OutputLimit": "Output Limit",
+  "CreateProblem": "Create Problem",
+  "CreateProblemFrom": "Create Problem (Clone from {{name}})",
+  "ContentAndAnswer": "Content & Answer",
+  "ScoringStrategy": "Scoring Strategy",
+  "ProblemScoring": "Problem Scoring",
+  "public": "Public"
+  ,"CollectName": "Collection Name"
+  ,"SubmitUserGroup": "Submit User Group"
+  ,"CollectDescription": "Collection Description"
+  ,"FileSubmitComponent": "File Submit Module"
+  ,"NewCollect": "New Collection"
+  ,"Creator": "Creator"
+  ,"ProblemCode": "Problem Code"
+  ,"Title": "Title"
+  ,"IOMode": "IO Mode"
+  ,"AdvancedMode": "Advanced Mode"
+  ,"Language": "Language"
+  ,"LanguageNotSet": "Language not set"
+  ,"FunctionTemplate": "Function Template"
+  ,"Use": "Use"
+  ,"NotUse": "Not Use"
+  ,"TemplateCodeVisibility": "Template Code Visibility"
+  ,"TemplateCode": "Template Code"
+  ,"InitialCode": "Initial Code"
+  ,"Comparator": "Comparator"
+  ,"AdvancedJudgeTemplateHint": "Advanced judge templates need to be added after creation"
+  ,"Comment": "Comment"
+  ,"ProblemCodeLabel": "Problem Code"
+  ,"ProblemAliasLabel": "Problem Alias"
+  ,"ProblemDescriptionLabel": "Problem Description"
+  ,"ProblemPreview": "Problem Preview"
+  ,"ProblemWeight": "Weight"
+  ,"BalloonColor": "Balloon Color"
+  ,"SubmitLimitTimes": "Submit Limit"
+  ,"DuplicateRate": "Duplicate Rate"
+  ,"DuplicateRateTooltip": "Leave blank to disable; range 0.4 - 1"
+  ,"ProblemCodeFormatError": "Invalid problem code format"
+  ,"ProblemNotExist": "Problem does not exist"
+  ,"CreateTemplateClone": "Create Template (Clone from {{title}})"
+  ,"PublicStatus": "Public Status"
+  ,"Public": "Public"
+  ,"Private": "Private"
+  ,"ProblemDescription": "Problem Description"
+  ,"ProblemDescriptions": "Problem Descriptions"
+  ,"CreateDescription": "Create Description"
+  ,"DefaultDescription": "Default Description"
+  ,"YesSimple": "Yes"
+  ,"NoSimple": "No"
+  ,"Vote": "Vote"
+  ,"Author": "Author"
+  ,"Success": "Success"
+  ,"FormIncomplete": "Form incomplete"
+  ,"OperationConfirm": "Operation Confirm"
+  ,"IConfirmToDo": "I confirm to {{todo}}"
+  ,"AreYouSureToDo": "Are you sure to {{todo}}?"
+  ,"PleaseInputToConfirm": "Please input"
+  ,"ToConfirm": "to confirm"
+  ,"AreYouSureToOperate": "Are you sure to operate?"
+  ,"CollectItemName": "Item Name"
+  ,"CollectItemTag": "Item Tag"
+  ,"Deadline": "Deadline"
+  ,"FileSuffix": "File Suffix"
+  ,"FileSizeLimit": "File Size Limit"
+  ,"DetailPreviewWithName": "{{name}} Details Preview"
+  ,"TimeLeft": "Time Left"
+  ,"MinuteShort": "min"
+  ,"Finished": "Finished"
+  ,"MySubmission": "My Submission"
+  ,"SubmitTime": "Submit Time"
+  ,"NotSubmitted": "Not Submitted"
+  ,"Submitted": "Submitted"
+  ,"Delayed": "Delayed"
+  ,"SubmitFile": "Submit File"
+  ,"Withdraw": "Withdraw"
+  ,"WithdrawSuccess": "Withdrawn Successfully"
+  ,"WithdrawSubmit": "Withdraw Submission"
+  ,"Move": "Move"
+  ,"CloneMove": "Clone & Move"
+  ,"AdminOperation": "Admin Operations"
+  ,"DeleteSubmit": "Delete Submission"
+  ,"NewCollectItem": "New Item"
+  ,"PresetSubmit": "Preset Submit"
+  ,"UploadFirstThenSubmit": "Please click Upload first, then submit"
+  ,"CollectInstruction": "Instructions"
+  ,"CollectItemList": "Item List"
+  ,"HistorySubmitList": "History Submissions"
+  ,"ContestSubmissionCancel": "Contest Submission Cancellation"
+  ,"OnlyRevokeOwnSubmission": "You can only revoke your own submission"
+  ,"OnlyAfterContestEnd": "You can cancel only after the contest ends"
+  ,"OnlyIOIContestCancelable": "Only IOI contests can cancel submissions"
+  ,"ContestIdHint": "Contest ID (number in URL, e.g., 175)"
+  ,"SubmissionIdHint": "Submission ID (e.g., 225a5a7cb018012)"
+  ,"ICertainToCancel": "I confirm to cancel"
+  ,"CancelCurrentSubmission": "Cancel current submission"
+  ,"CancelSuccess": "Cancelled successfully"
+  ,"ExamTitle": "Final Exam: Introduction to Computing and Programming"
+  ,"TempSave": "Save Draft"
+  ,"SubmitPaper": "Submit"
+  ,"ExamFooterBrand": "School of Computer Science and Technology, SDU ©2020-2021"
+  ,"BatchDownload": "Batch Download"
+  ,"UploadAcceptHintMulti": "Please upload one or more {{nameList}} files"
+  ,"UploadExtHwsPresetHint": "Please upload one or more files, each named: studentId.name.timestamp.filename.zip"
+  ,"SetTime": "Set Time"
+  ,"TimeSettingTitle": "Time Setting"
+  ,"Weight": "Weight"
+  ,"AddTime": "Add Time"
+  ,"ExistingFile": "Existing file:"
+  ,"Download": "Download"
+  ,"UploadDragAreaText": "Click or drag file to this area to upload"
+  ,"UploadAcceptHint": "Please upload a {{nameList}} file"
+  ,"FileTooLargeMB": "File is too large, max {{max}} MB"
+    ,"TSummaryTitle": "2022 Programming Thinking & Practice SDUOJ Objective Score Summary (89 points)"
+    ,"TSummarySubTitle": "The following scores are unchecked for duplication and are for reference only. If there are any issues, please contact the TA."
+  ,"FrozenTimeMinutes": "Frozen time (minutes)"
+  ,"FrozenTimeTooltip": "Freeze the rank in the last N minutes of the contest"
+  ,"ContestParams": "Contest Parameters"
+  ,"DisplayPeerSubmission": "Display others' submissions"
+  ,"DisplayRank": "Display rank"
+  ,"DisplayJudgeScore": "Display judge score"
+  ,"DisplayCheckpointResult": "Display checkpoint info"
+  ,"AllowToSubmit": "Allow to submit"
+  ,"Allow": "Allow"
+  ,"Disallow": "Disallow"
+  ,"ContestRunning": "During contest"
+  ,"ContestEnd": "After contest"
+  ,"ParticipantsLabel": "Participants"
+  ,"UnofficialParticipants": "Unofficial participants"
+  ,"SplitUsernamesHint": "Use TAB '\t', space ' ', newline '\n' or comma ',' to split usernames"
+  ,"ParticipatingGroups": "Participating Groups"
+  ,"ParticipantsNoPasswordHint": "Participants in participating groups do not need a password"
+    ,"ObjectiveScoreSummaryProgress": "Objective score summary ({{sum}}/89)"
+    ,"WeeklyHomeworkTitle": "Weekly assignments ({{sum}}/15 = 1*15)"
+    ,"GoToContest": "Go to contest"
+    ,"SubmissionId": "Submission ID"
+    ,"NoValidSubmission": "No valid submission"
+    ,"TimeoutDiscount": "Timeout discount"
+    ,"CodeDuplication": "Code duplication"
+    ,"NotChecked": "Not checked"
+    ,"CSPMockTitle": "CSP mock exam ({{sum}}/20 = 4*5)"
+    ,"GoToExamReport": "Go to exam report"
+    ,"MonthlyT3PracticeTitle": "Monthly T3 practice ({{sum}}/8 = 2*4)"
+    ,"FinalScore": "Final score"
+    ,"ExamScore": "Exam score"
+    ,"PracticeScore": "Practice score"
+    ,"PracticeSubmissionId": "Practice submission ID"
+    ,"PracticeSubmitTime": "Practice submit time"
+    ,"PracticeTimeoutDiscount": "Practice timeout discount"
+    ,"PracticeCodeDuplication": "Practice code duplication"
+    ,"T3MockTitle": "T3 mock exam ({{sum}}/6 = 2*3)"
+    ,"FinalExamTitle": "Final exam ({{sum}}/40)"
+    ,"ScoresOnly": "Scores only"
+    ,"NonObjectiveScoreExplanationTitle": "Non-objective score explanation (11 points)"
+    ,"AttendanceTitle": "Attendance (3 points)"
+    ,"AttendanceFullScoreRule": "Full score: Online class, offline lab. Within 3 absences (including leave without submitting a leave note) across all attendances."
+    ,"AttendanceDeductionRule": "If absences exceed 3, 0.5 points will be deducted for each additional absence until the attendance score is deducted to zero."
+    ,"LabReportTitle": "Lab report (8 points)"
+    ,"LabReportDesc": "According to the written content, the TA will grade. The ratio of each report score will be adjusted according to the content of that report, with a full score of 8 points."
+  ,"proctorErrorToast": "Proctoring error, please refresh the page within 10s"
+  ,"proctorModalTitle": "Proctoring error"
+  ,"proctorModalBody": "Your proctoring program is offline. You must refresh the page within 10s and reconnect, otherwise you will be marked as cheating."
+  ,"notConnected": "Not connected"
+  ,"screenRecording": "Screen recording"
+  ,"connectionFailed": "Connection failed"
+  ,"newlineHandling": "End-of-line handling"
+  ,"inputData": "Input data"
+  ,"outputData": "Output data"
+  ,"noteShort": "Note"
+  ,"addCheckpoint": "Add checkpoint"
+  ,"fieldRequired": "This field is required"
+  ,"IndefiniteChoice": "Indefinite Choice"
+  ,"fileName": "File name"
+  ,"fileSizeLimitMB": "Max file size (MB)"
+  ,"fileType": "File type"
+  ,"fileTypeTooltip": "Green means preview available, red means not supported"
+  ,"pdfDocument": "PDF document"
+  ,"wordDocx": "Word document (docx)"
+  ,"wordDoc": "Word document (doc)"
+  ,"zipArchive": "ZIP archive"
+  ,"fileAnswer": "File answer"
+  ,"textAnswer": "Text answer"
+  ,"submitFileList": "Submit file list"
+  ,"addSubmitFile": "Add submit file"
+  ,"maxWordCountLimit": "Max word count limit",
+  "close": "Close",
+  "Reviewed": "Reviewed",
+  "NotReviewed": "Not reviewed",
+  "Reviewer": "Reviewer",
+  "StartGrading": "Start grading",
+  "SubjectiveReviewTip": "Tip: Once a subjective problem is reviewed, students cannot resubmit. Please review only after confirming the answer is complete.",
+  "SubjectiveScoring": "Subjective Scoring",
+  "ScorePanel": "Score Panel",
+  "ReviewNote": "Review note",
+  "AutoOpenNext": "Auto open next",
+  "AutoNext": "Auto Next",
+  "ManualNext": "Manual Next",
+  "IncompleteScores": "Incomplete scores",
+  "SubmitScores": "Submit scores",
+  "SetTo": "Set to",
+  "FullScore": "full score",
+  "AndSubmitScores": "and submit scores",
+  "CancelReview": "Cancel review",
+  "OriginalProblem": "Original Problem",
+  "StudentAnswer": "Student Answer",
+  "ShowRendered": "Show rendered",
+  "ShowRaw": "Show raw",
+  "CollapseFullText": "Collapse",
+  "ExpandFullText": "Expand",
+  "Review": "Review",
+  "SubmissionList": "Submission List"
+  ,"PointValue": "Point Value"
+  ,"TimedSubmission": "Timed submission ID"
+  ,"TimedWeight": "Timed weight"
+  ,"TimedSubmitTime": "Timed submit time"
+  ,"PracticeSubmission": "Practice submission ID"
+  ,"PracticeWeight": "Practice weight"
+  ,"ScoreAndDetails": "Score & Details"
+  ,"Reviewing": "Reviewing"
+  ,"CurrentDiscount": "Current discount:"
+  ,"DiscountRemaining": "Discount remaining:"
+  ,"ContentPreview": "Content Preview"
+  ,"ContentPreviewTooltip": "Only first 80 chars shown, click edit to view full content"
+  ,"AntiCheatingRate": "Duplication coefficient"
+  ,"AntiCheatingRateTooltip": "Leave blank to disable; should be between 0.4 and 1"
+  ,"SubmitLimit": "Submit limit"
+  ,"SubmitLimitTooltip": "Leave blank for no limit"
+  ,"CreateObjectiveProblem": "Create Objective Problem"
+  ,"CreateSubjectiveProblem": "Create Subjective Problem"
+  ,"JudgeInformation": "Judging Information"
+  ,"GroupDescriptionLabel": "Description"
+  ,"OpenPublicOption": "Public: Anyone can join"
+  ,"OpenApplyOption": "Apply: Admin approval required"
+  ,"OpenPrivateOption": "Private: Joining not allowed"
+  ,"GroupAnnouncement": "Group Announcement"
+  ,"Agree": "Approve"
+  ,"Transfer": "Transfer"
+  ,"Remove": "Remove"
+  ,"ApplyingUsers": "Applying Users"
+  ,"AcceptAll": "Accept All"
+  ,"RejectAll": "Reject All"
+  ,"UserListLabel": "Member List"
+  ,"ShellScript": "Shell Script"
+  ,"ZipResourceFile": "ZIP Resource File"
+  ,"PleaseSearchAndSelectGroup": "Search and select group"
+  ,"SingleGroupCantUseMulti": "Single-choice group cannot include multi-choice problem"
+  ,"MultiGroupCantUseSingle": "Multi-choice group cannot include single-choice problem"
+  ,"ProblemContentLabel": "Problem Content"
+  ,"ProblemAlias": "Problem Alias"
+  ,"ProblemScore": "Problem Score"
+  ,"UploadSuccess": "Upload success"
+  ,"FileTypeIncorrect": "Incorrect file type"
+  ,"BatchImport": "Batch Import"
+  ,"BatchImportProblems": "Batch Import Problems"
+  ,"Cancel": "Cancel"
+  ,"ProblemInfoNotLoaded": "Problem info not loaded"
+  ,"SubmitAll": "Submit All"
+  ,"UploadExcelHint": "Please upload one *.xlsx file; example file can be downloaded at bottom-right"
+  ,"ExampleFileDownload": "Download example file"
+  ,"ManagerGroupIds": "Manager Group IDs"
+  ,"Uploading": "Uploading"
+  ,"SubmitSuccess": "Submit success"
+  ,"SubmitFailed": "Submit failed"
+  ,"Submitting": "Submitting"
+  ,"Created": "Created"
+  ,"Queueing": "Queueing"
+  ,"SubmitExamConfirm": "After submission you cannot continue answering. Are you sure to submit?"
+  ,"ConfirmSubmitPaper": "Confirm submit"
+  ,"RankLoadingHint": "Ranking data is large, please wait patiently"
+  ,"FinishTimeLabel": "Submission time"
+  ,"SubmittedPaper": "Submitted"
+  ,"IPNormal": "IP normal"
+  ,"IPAbnormal": "IP abnormal"
+  ,"IPsUsedLabel": "IPs used"
+  ,"ExamFooterNotice": "If rate limited, please refresh later. The exam paper will auto submit when the exam ends. If you submit manually, the paper will be locked and cannot be modified again."
+  ,"AddCode": "Add Code"
+  ,"IsReferenceCode": "Is reference code"
+  ,"CodeRepositoryTab": "Code Repository"
+  ,"ProblemBankSubmissionTab": "Problem Bank Submissions"
+  ,"ContestId": "Contest ID"
+  ,"RecognitionParam": "Recognition Param"
+  ,"ExamRecognitionCodeTab": "Exam Recognition Code"
+  ,"ExamId": "Exam ID"
+  ,"PleaseInputExamTitle": "Please input exam title"
+  ,"ScoreDisplayMode": "Score display mode on submit page"
+  ,"PartialShow": "Partial Show"
+  ,"CheckpointDisplayMode": "Checkpoint display mode"
+  ,"ExamReportAfterExam": "Report after exam"
+  ,"ExamTimeRange": "Exam time range"
+  ,"ExamTimeRangeHint": "Exam time range cannot be modified after start"
+  ,"ExamDuration": "Exam Duration"
+  ,"UserLogin": "User Login"
+  ,"SDUOJSystem": "SDUOJ Online Judge"
+  ,"AccountPassword": "Account & Password"
+  ,"EmailVerifyCode": "Email Verification"
+  ,"UnifiedIdentity": "Unified Identity"
+  ,"PleaseInputUsername": "Please input username"
+  ,"PleaseInputPassword": "Please input password"
+  ,"ForgotPassword": "Forgot Password"
 }
