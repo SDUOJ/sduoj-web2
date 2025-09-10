@@ -677,7 +677,7 @@
   ,"CurrentDiscount": "当前折扣："
   ,"DiscountRemaining": "折扣剩余："
   ,"ContentPreview": "内容预览"
-  ,"ContentPreviewTooltip": "仅展示前80字，完整内容请点击编辑查看"
+  ,"ContentPreviewTooltip": "仅展示前55字，完整内容请点击编辑查看"
   ,"AntiCheatingRate": "查重系数"
   ,"AntiCheatingRateTooltip": "不填为不查重；范围 0.4 - 1"
   ,"SubmitLimit": "限制提交数"

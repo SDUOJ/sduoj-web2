@@ -32,7 +32,8 @@ const ProblemListInGroup = (props: any) => {
             editable: false,
             render: (rows: any) => {
                 if (rows.detail === undefined) rows.detail = {preview: rows.preview}
-                return rows.detail.preview
+                const text = rows.detail.preview || ''
+                return text.length > 55 ? text.slice(0, 55) : text
             }
         },
         {

@@ -701,7 +701,7 @@
   ,"CurrentDiscount": "Current discount:"
   ,"DiscountRemaining": "Discount remaining:"
   ,"ContentPreview": "Content Preview"
-  ,"ContentPreviewTooltip": "Only first 80 chars shown, click edit to view full content"
+  ,"ContentPreviewTooltip": "Only first 55 chars shown, click edit to view full content"
   ,"AntiCheatingRate": "Duplication coefficient"
   ,"AntiCheatingRateTooltip": "Leave blank to disable; should be between 0.4 and 1"
   ,"SubmitLimit": "Submit limit"
