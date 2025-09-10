@@ -66,7 +66,7 @@ const CGroupInfo = (props: any) => {
                     <div>
                         <Card
                             title={
-                                <Title level={2}>{groupInfo?.title}
+                                <Title level={2} style={{marginTop: '0.5em'}}>{groupInfo?.title}
                                     <span style={{color: "grey"}}> (Group ID: {groupInfo?.groupId})</span>
                                 </Title>
                             }
