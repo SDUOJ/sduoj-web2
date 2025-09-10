@@ -661,6 +661,7 @@
   ,"zipArchive": "ZIP archive"
   ,"fileAnswer": "File answer"
   ,"textAnswer": "Text answer"
+  ,"acceptanceAnswer": "Acceptance"
   ,"submitFileList": "Submit file list"
   ,"addSubmitFile": "Add submit file"
   ,"maxWordCountLimit": "Max word count limit",
@@ -708,6 +709,9 @@
   ,"SubmitLimitTooltip": "Leave blank for no limit"
   ,"CreateObjectiveProblem": "Create Objective Problem"
   ,"CreateSubjectiveProblem": "Create Subjective Problem"
+  ,"reviewQueue": "Review Queue"
+  ,"reviewQueueTooltip": "Configure optional review queues for this problem; leave blank for direct manual review without queuing"
+  ,"reviewQueuePlaceholder": "Type a queue name and press Enter"
   ,"JudgeInformation": "Judging Information"
   ,"GroupDescriptionLabel": "Description"
   ,"OpenPublicOption": "Public: Anyone can join"

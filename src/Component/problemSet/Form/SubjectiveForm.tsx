@@ -1,5 +1,5 @@
 import {withTranslation} from "react-i18next";
-import {Button, Form, InputNumber, Radio} from "antd";
+import {Button, Form, InputNumber, Radio, Select} from "antd";
 import React, {useState} from "react";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
 import ItemEditor from "../../common/Form/Item/ItemEditor";
@@ -48,6 +48,7 @@ const SubjectiveForm = (props: any) => {
                 <Radio.Group disabled={props.type === "update"} value={typeData} onChange={setTypeData}>
             <Radio value={0}>{props.t('fileAnswer')}</Radio>
             <Radio value={1}>{props.t('textAnswer')}</Radio>
+            <Radio value={2}>{props.t('acceptanceAnswer')}</Radio>
                 </Radio.Group>
             </Form.Item>
 
@@ -83,6 +84,17 @@ const SubjectiveForm = (props: any) => {
                 <>
                     <Form.Item name={["config", "maxCount"]} label={props.t("maxWordCountLimit")}>
                         <InputNumber min={1} max={65535}/>
+                    </Form.Item>
+                </>
+            )}
+
+            {typeData === 2 && (
+                <>
+                    <Form.Item name={["config", "review_queue"]} label={props.t("reviewQueue")} tooltip={props.t("reviewQueueTooltip")}> 
+                        <Select
+                            mode="tags"
+                            placeholder={props.t("reviewQueuePlaceholder")}
+                        />
                     </Form.Item>
                 </>
             )}

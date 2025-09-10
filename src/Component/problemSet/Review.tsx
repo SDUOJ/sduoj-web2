@@ -26,6 +26,7 @@ const Review = (props: any) => {
     const [vis, setVis] = useState<any>(false);
     const [autoNext, setAutoNext] = useState<number>(0);
     const [clickSubmit, setClickSubmit] = useState<boolean>(false);
+    const [queueOptions, setQueueOptions] = useState<any[]>([]); // 验收队列下拉选项
 
 
     useEffect(() => {
@@ -150,6 +151,7 @@ const Review = (props: any) => {
                 columns={[
                     {title: props.t("problemName"), dataIndex: "name", key: "name"},
                     {title: props.t("username"), dataIndex: "username", key: "username"},
+                    {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
                     {
                         title: props.t("submissionTime"),
                         dataIndex: "tm_answer_submit",
@@ -200,6 +202,30 @@ const Review = (props: any) => {
                                 <Input onPressEnter={() => {
                                     onFinish()
                                 }}/>
+                            </Form.Item>
+                            <Form.Item label={'队列'} name={'review_queue'}>
+                                <Select
+                                    allowClear
+                                    style={{width:160}}
+                                    placeholder={'全部'}
+                                    onChange={onFinish}
+                                    onDropdownVisibleChange={(open)=>{
+                                        if(open){
+                                            // 动态获取（30s缓存）
+                                            const cache:any = (window as any)._ps_acceptance_queue_cache
+                                            if(cache && cache.psid===psid && Date.now()-cache.ts<30000){
+                                                setQueueOptions(cache.data.map((q:string)=>({label:q,value:q})))
+                                            }else{
+                                                cApi.getAcceptanceQueueList({psid}).then((qs:any)=>{
+                                                    const opts = qs.map((q:string)=>({label:q,value:q}))
+                                                    setQueueOptions(opts)
+                                                    ;(window as any)._ps_acceptance_queue_cache={psid, data:qs, ts:Date.now()}
+                                                })
+                                            }
+                                        }
+                                    }}
+                                    options={queueOptions}
+                                />
                             </Form.Item>
                             <Form.Item label={props.t("Reviewer")} name={"judgeLock"}>
                                 <Input onPressEnter={() => {

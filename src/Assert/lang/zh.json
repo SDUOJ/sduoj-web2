@@ -637,6 +637,7 @@
   ,"zipArchive": "压缩文档 (zip)"
   ,"fileAnswer": "文件作答"
   ,"textAnswer": "文本作答"
+  ,"acceptanceAnswer": "验收题"
   ,"submitFileList": "提交文件清单"
   ,"addSubmitFile": "新增提交文件"
   ,"maxWordCountLimit": "最大字数限制",
@@ -684,6 +685,9 @@
   ,"SubmitLimitTooltip": "不填表示不限制提交次数"
   ,"CreateObjectiveProblem": "新建客观题"
   ,"CreateSubjectiveProblem": "新建主观题"
+  ,"reviewQueue": "验收队列"
+  ,"reviewQueueTooltip": "配置该题可供选择的验收队列，留空表示无需排队直接进入人工验收流程"
+  ,"reviewQueuePlaceholder": "输入或选择验收队列名称，回车确认"
   ,"JudgeInformation": "评测信息"
   ,"GroupDescriptionLabel": "描述"
   ,"OpenPublicOption": "公开：任何人可以加入"

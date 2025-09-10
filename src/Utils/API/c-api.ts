@@ -280,6 +280,20 @@ const cApi = {
     async getJudgeList(data: any) {
         return request.post("/ps/judge/list", data)
     },
+    // 查询题单内所有验收题可用队列（去重排序）缓存30s
+    async getAcceptanceQueueList(data: { psid: number }) {
+        // 简单前端缓存（模块级变量）
+        if ((cApi as any)._acceptanceQueueCache) {
+            const cache = (cApi as any)._acceptanceQueueCache
+            if (cache.psid === data.psid && (Date.now() - cache.ts) < 30000) {
+                return Promise.resolve(cache.data)
+            }
+        }
+        return request.post('/ps/answer_sheet/acceptanceQueueList', data).then((res: any) => {
+            ;(cApi as any)._acceptanceQueueCache = {psid: data.psid, data: res, ts: Date.now()}
+            return res
+        })
+    },
     // 获取评阅信息
     async getJudgeInfo(data: any) {
         return request.post("/ps/judge/info", data)
