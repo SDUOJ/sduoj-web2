@@ -46,7 +46,7 @@ const GroupMember = (props: any) => {
             "userId": data.userId
         }
         const hied = message.loading({
-            content: "加载中",
+            content: props.t("Loading"),
             duration: 0,
         })
         MApi.updateGroup(d).then(() => {
@@ -158,11 +158,11 @@ const GroupMember = (props: any) => {
                     <Space>
                         <YesNoOperConfirm
                             onConfirm={() => setUserStatus([rows], 2)}
-                            content={<Button type="link" size={"small"}>同意</Button>}
+                            content={<Button type="link" size={"small"}>{props.t("Agree")}</Button>}
                         />
                         <YesNoOperConfirm
                             onConfirm={() => setUserStatus([rows], 3)}
-                            content={<Button type="link" size={"small"}>拒绝</Button>}
+                            content={<Button type="link" size={"small"}>{props.t("Reject")}</Button>}
                         />
                     </Space>
                 )
@@ -182,11 +182,11 @@ const GroupMember = (props: any) => {
                             <>
                                 <YesNoOperConfirm
                                     onConfirm={() => transferGroupLeader(rows)}
-                                    content={<Button type="link" size={"small"}>转让</Button>}
+                                    content={<Button type="link" size={"small"}>{props.t("Transfer")}</Button>}
                                 />
                                 <YesNoOperConfirm
                                     onConfirm={() => setUserStatus([rows], 3)}
-                                    content={<Button type="link" size={"small"}>移除</Button>}
+                                    content={<Button type="link" size={"small"}>{props.t("Remove")}</Button>}
                                 />
                             </>
                         )}
@@ -215,15 +215,15 @@ const GroupMember = (props: any) => {
                 footer={false}
             >
                 <Space wrap>
-                    <div>申请用户({applyData !== undefined ? applyData.length : 0})</div>
+                    <div>{props.t("ApplyingUsers")}({applyData !== undefined ? applyData.length : 0})</div>
                     <YesNoOperConfirm
                         onConfirm={() => setUserStatus(applyData, 2)}
-                        content={<Button type="primary" size={"small"}>Accept All</Button>}
+                        content={<Button type="primary" size={"small"}>{props.t("AcceptAll")}</Button>}
                         disabled={applyData.length === 0}
                     />
                     <YesNoOperConfirm
                         onConfirm={() => setUserStatus(applyData, 3)}
-                        content={<Button type="primary" danger size={"small"}>Reject All</Button>}
+                        content={<Button type="primary" danger size={"small"}>{props.t("RejectAll")}</Button>}
                         disabled={applyData.length === 0}
                     />
 
@@ -235,7 +235,7 @@ const GroupMember = (props: any) => {
                         scroll={{y: 200}}
                     />
 
-                    <div>用户列表({memberData.length})</div>
+                    <div>{props.t("UserListLabel")}({memberData.length})</div>
                     {/*<Button type="primary" size={"small"} ></Button>*/}
                     {/*<Button type="primary" danger size={"small"} >Reject All</Button>*/}
 
@@ -247,11 +247,11 @@ const GroupMember = (props: any) => {
                         value={addUserValue}
                         cols={180}
                         rows={4}
-                        placeholder={"将用户名用空格' ',TAB'\\t',换行'\\n'或逗号','分隔"}
+                        placeholder={props.t("SplitUsernamesHint")}
                     />
 
                     <Button type={"primary"} size={"small"} onClick={addUser}>
-                        添加用户
+                        {props.t("AddUser")}
                     </Button>
 
                     <Table

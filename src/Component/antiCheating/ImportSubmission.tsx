@@ -1,5 +1,5 @@
 import {Button, Form, Modal, Tabs} from "antd";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import React, {useState} from "react";
 import {useForm} from "antd/es/form/Form";
 import {PlusOutlined} from "@ant-design/icons";
@@ -10,6 +10,7 @@ import SubmissionList from "../submission/SubmissionList/SubmissionList";
 import cApi from "../../Utils/API/c-api";
 
 const ImportSubmission = (props: any) => {
+    const { t } = useTranslation();
 
     const [vis, setVis] = useState<any>()
     const [form] = useForm()
@@ -24,31 +25,31 @@ const ImportSubmission = (props: any) => {
                 onClick={() => {
                     setVis(true)
                 }}
-            >{props.t("添加代码")}</Button>
+            >{t("AddCode")}</Button>
 
             <Modal
-                title={"添加代码"}
+                title={t("AddCode")}
                 visible={vis}
                 destroyOnClose={true}
                 width={1400}
                 onCancel={() => {
                     setVis(false)
                 }}
-                okText={"提交"}
+        okText={t("Submit")}
             >
                 <Form form={form} layout={"vertical"}>
                     <ItemSwitch
                         name={"isReference"}
-                        label={"是否为参考代码"}
-                        ck={"是"}
-                        unck={"否"}
+            label={t("IsReferenceCode")}
+            ck={t("YesSimple")}
+            unck={t("NoSimple")}
                     />
 
                     <Tabs defaultActiveKey="1">
-                        <TabPane tab="代码仓库" key="1">
+            <TabPane tab={t("CodeRepositoryTab") } key="1">
                             <CodeHubList/>
                         </TabPane>
-                        <TabPane tab="题库提交" key="2">
+            <TabPane tab={t("ProblemBankSubmissionTab")} key="2">
                             <SubmissionList
                                 name={"SelectSubmission"}
                                 useForm={true}
@@ -66,14 +67,14 @@ const ImportSubmission = (props: any) => {
                                 }}
                             />
                         </TabPane>
-                        <TabPane tab="比赛" key="3">
-                            <ItemText label={"比赛ID"} name={"contestId"}/>
-                            <ItemText label={"题目编号"} name={"problemId"}/>
-                            <ItemText label={"认定参数"} name={"problemId"}/>
+                        <TabPane tab={t("Contest") } key="3">
+                            <ItemText label={t("ContestId")} name={"contestId"}/>
+                            <ItemText label={t("ProblemCodeLabel")} name={"problemId"}/>
+                            <ItemText label={t("RecognitionParam")} name={"problemId"}/>
                         </TabPane>
-                        <TabPane tab="考试认定代码" key="4">
-                            <ItemText label={"考试ID"} name={"examId"}/>
-                            <ItemText label={"题目编号"} name={"problemId"}/>
+                        <TabPane tab={t("ExamRecognitionCodeTab")} key="4">
+                            <ItemText label={t("ExamId")} name={"examId"}/>
+                            <ItemText label={t("ProblemCodeLabel")} name={"problemId"}/>
                         </TabPane>
                     </Tabs>
 
@@ -83,4 +84,4 @@ const ImportSubmission = (props: any) => {
     )
 }
 
-export default withTranslation()(ImportSubmission)
+export default ImportSubmission

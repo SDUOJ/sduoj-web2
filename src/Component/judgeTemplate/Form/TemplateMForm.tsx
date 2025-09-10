@@ -9,19 +9,19 @@ const TemplateMForm = (props: any) => {
     return (
         <>
             <ItemTitle/>
-            <ItemText label={"备注"} name={"comment"} required={false}/>
-            <Form.Item label={"文件后缀"} name={"acceptFileExtensions"} required>
+            <ItemText label={props.t("note")} name={"comment"} required={false}/>
+            <Form.Item label={props.t("FileSuffix")} name={"acceptFileExtensions"} required>
                 <Select mode="tags" style={{ width: '100%' }} />
             </Form.Item>
             <ItemCodeEditor
-                label={"shell脚本"}
+                label={props.t("ShellScript")}
                 name={"shellScript"}
                 lang={"cpp"}
                 className={"JudgeTemplateCodeEditor"}
                 rules={[{required: true}]}
             />
             <ItemUpload
-                label={"ZIP资源文件"}
+                label={props.t("ZipResourceFile")}
                 name={"zipFileId"}
                 required={false}
                 accept={".zip"}

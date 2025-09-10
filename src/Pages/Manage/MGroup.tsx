@@ -30,13 +30,13 @@ class MGroup extends Component<any, any> {
                 responsive: ["lg", "sm", "xs"],
             },
             {
-                title: "描述",
+                title: this.props.t("Description"),
                 dataIndex: "description",
                 width: "auto",
                 responsive: ["lg", "sm"],
             },
             {
-                title: "创建时间",
+                title: this.props.t("CreateTime"),
                 dataIndex: "gmtCreate",
                 width: "170px",
                 responsive: ["lg"],
@@ -45,7 +45,7 @@ class MGroup extends Component<any, any> {
                 }
             },
             {
-                title: "组长",
+                title: this.props.t("Owner"),
                 width: "auto",
                 responsive: ["lg"],
                 render: (text: any, row: any) => {
@@ -53,16 +53,21 @@ class MGroup extends Component<any, any> {
                 }
             },
             {
-                title: "开放性",
+                title: this.props.t("Openness"),
                 dataIndex: "openness",
                 width: "auto",
                 responsive: ["lg"],
                 render: (text: any) => {
-                    return ["公开", "申请", "私有"][text]
+                    const map = [
+                        this.props.t("openness.public"),
+                        this.props.t("openness.apply"),
+                        this.props.t("openness.private")
+                    ]
+                    return map[text]
                 }
             },
             {
-                title: "成员数量",
+                title: this.props.t("MemberCount"),
                 width: "auto",
                 dataIndex: "memberNum",
                 responsive: ["lg"]
@@ -88,10 +93,10 @@ class MGroup extends Component<any, any> {
                                 }}
                             />
                             <GroupMember
-                                btnName={"成员管理"}
+                                btnName={this.props.t("memberManagement")}
                                 btnType={"link"}
                                 width={1200}
-                                title={"Members in " + rows.title + "(Group ID:" + rows.groupId + ")"}
+                                title={this.props.t("membersInGroup", {title: rows.title, id: rows.groupId})}
                                 initData={rows}
                                 groupId={rows.groupId}
                             />
@@ -113,13 +118,13 @@ class MGroup extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={true}
-                    title={"用户组列表"}
+                    title={this.props.t("groupList")}
                     extra={
                         <Space>
                             <ModalFormUseForm
                                 TableName={"GroupList"}
                                 width={1200}
-                                title={"新建用户组"}
+                                title={this.props.t("createGroup")}
                                 type={"create"}
                                 subForm={[
                                     {component: <GroupFormProfile/>, label: ""}

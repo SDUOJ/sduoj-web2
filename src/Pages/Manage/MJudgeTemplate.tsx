@@ -85,7 +85,7 @@ const MJudgeTemplate = (props: any) => {
                     <ModalFormUseForm
                         TableName={`TemplateList-${type}`}
                         width={600}
-                        title={"新建模板(克隆自" + rows.title + ")"}
+                        title={props.t("CreateTemplateFrom", {name: rows.title})}
                         type={"fork"}
                         subForm={[
                             {
@@ -112,13 +112,13 @@ const MJudgeTemplate = (props: any) => {
             <Card
                 size={"small"}
                 bordered={true}
-                title={type === "io" ? "基础IO模板" : "高阶评测模板"}
+                title={type === "io" ? props.t("ioTemplate") : props.t("advancedTemplate")}
                 extra={
                     <>
                         <ModalFormUseForm
                             TableName={`TemplateList-${type}`}
                             width={600}
-                            title={"新建模板"}
+                            title={props.t("CreateTemplate")}
                             type={"create"}
                             subForm={[
                                 {

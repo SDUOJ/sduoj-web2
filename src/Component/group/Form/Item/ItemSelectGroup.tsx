@@ -42,11 +42,11 @@ const ItemSelectGroup = (props: any) => {
     }, [props.manageInitData])
 
     return (
-        <Form.Item label={props.label} name={props.name} help={props.help} required={props.required}>
+    <Form.Item label={props.label} name={props.name} help={props.help} required={props.required}>
             <Select
                 mode={props.mode} // "multiple"
                 showSearch
-                placeholder="请查询并选择组"
+        placeholder={props.t("PleaseSearchAndSelectGroup")}
                 onSearch={(value) => onSearch(value)}
             >
                 {

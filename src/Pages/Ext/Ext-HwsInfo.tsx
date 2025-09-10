@@ -23,24 +23,26 @@ import ItemUploadUser from "../../Component/common/Form/Item/ItemUploadUser";
 import ItemUploadFileMulti from "../../Component/ExtHws/ItemUploadFileMulti";
 import MoveModal from "../../Component/ExtHws/MoveModal";
 import LoginCheck from "../../Component/common/LoginCheck";
+import {useTranslation} from "react-i18next";
 
 
 const ExtHwsInfo = (props: any) => {
     const cid = props.match.params.cid
+    const {t} = useTranslation()
     const [data, setData] = useState<any>(null)
 
     let form = (
         <>
-            <ItemText name={"name"} label={"收集项名"} required={true}/>
-            <ItemText name={"tag"} label={"收集项标签"} required={true}/>
-            <ItemTime name={"deadline"} label={"截止时间"} required={true}/>
-            <Form.Item name={"submit_type"} label={"文件后缀"} required>
+            <ItemText name={"name"} label={t("CollectItemName")} required={true}/>
+            <ItemText name={"tag"} label={t("CollectItemTag")} required={true}/>
+            <ItemTime name={"deadline"} label={t("Deadline")} required={true}/>
+            <Form.Item name={"submit_type"} label={t("FileSuffix")} required>
                 <Select mode="tags" style={{width: '100%'}}/>
             </Form.Item>
-            <Form.Item name={"submit_max_size_MB"} label={"文件大小限制"} required>
+            <Form.Item name={"submit_max_size_MB"} label={t("FileSizeLimit")} required>
                 <InputNumber addonAfter="MB"/>
             </Form.Item>
-            <ItemEditor name={"description"} label={"收集描述"}/>
+            <ItemEditor name={"description"} label={t("CollectDescription")}/>
         </>
     )
 
@@ -61,7 +63,7 @@ const ExtHwsInfo = (props: any) => {
             responsive: ["lg", "sm", "xs"]
         },
         {
-            title: "收集项名",
+            title: t("CollectItemName"),
             dataIndex: "name",
             width: "auto",
             responsive: ["lg", "sm", "xs"],
@@ -70,7 +72,7 @@ const ExtHwsInfo = (props: any) => {
                     <ModalMarkdown
                         id={"Ext-HwsInfo-des-hw-" + rows.hid}
                         text={rows.description}
-                        title={rows.name + " 详情预览"}
+                        title={t("DetailPreviewWithName", {name: rows.name})}
                         btnText={text}
                     />
                 </>
@@ -78,7 +80,7 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "创建时间",
+            title: t("CreateTime"),
             dataIndex: "create_time",
             width: "auto",
             responsive: ["lg", "sm"],
@@ -87,7 +89,7 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "截止时间",
+            title: t("Deadline"),
             dataIndex: "deadline",
             width: "auto",
             responsive: ["lg", "sm"],
@@ -96,27 +98,27 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "剩余时间",
+            title: t("TimeLeft"),
             dataIndex: "deadline",
             width: "auto",
             responsive: ["lg", "sm"],
             render: (text: string) => {
                 if(Date.now() <= parseInt(text)){
-                    return TimeDiff(Date.now(), parseInt(text)).split("分")[0] + "分"
+            return TimeDiff(Date.now(), parseInt(text)).split(t("MinuteShort"))[0] + t("MinuteShort")
                 } else{
-                    return "已结束"
+            return t("Finished")
                 }
             }
         },
         {
-            title: "标签",
+        title: t("Tag"),
             dataIndex: "tag",
             width: "auto",
             filters: [],
             responsive: ["lg"],
         },
         {
-            title: "我的提交",
+        title: t("MySubmission"),
             width: "auto",
             render: (text: any, rows: any) => {
                 if (rows.file_id !== null) {
@@ -130,17 +132,17 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "提交时间",
+            title: t("SubmitTime"),
             width: "auto",
             dataIndex: "submit_time",
             render: (text: any, rows: any) => {
                 if (text === null) {
-                    return <Tag color={"red"}> 未提交 </Tag>
+                    return <Tag color={"red"}> {t("NotSubmitted")} </Tag>
                 } else {
                     const before = parseInt(text) <= parseInt(rows.deadline)
                     return <>
-                        {before && (<Tag color={"green"}>已提交</Tag>)}
-                        {!before && (<Tag color={"orange"}>延期</Tag>)}
+                        {before && (<Tag color={"green"}>{t("Submitted")}</Tag>)}
+                        {!before && (<Tag color={"orange"}>{t("Delayed")}</Tag>)}
                         {unix2Time(parseInt(text))}
                     </>
                 }
@@ -148,7 +150,7 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "操作",
+            title: t("operator"),
             width: "auto",
             render: (text: any, rows: any) => {
                 let accept = "", num = 0
@@ -167,14 +169,14 @@ const ExtHwsInfo = (props: any) => {
                                 btnType={"link"}
                                 btnProps={{size: "small"}}
                                 btnIcon={false}
-                                btnName={"提交"}
+                btnName={t("Submit")}
                                 title={rows.name}
                                 type={"create"}
                                 subForm={[
                                     {
                                         component: <>
                                             <ItemUploadUser
-                                                label={"提交文件"}
+                        label={t("SubmitFile")}
                                                 name={"file_id"}
                                                 filenameKey={"file_name"}
                                                 required={false}
@@ -182,7 +184,7 @@ const ExtHwsInfo = (props: any) => {
                                                 max_size={rows.submit_max_size_MB}
                                             />
                                         </>,
-                                        label: "基本信息"
+                    label: t("BasicInformation")
                                     }
                                 ]}
                                 dataSubmitter={(value: any) => {
@@ -196,15 +198,15 @@ const ExtHwsInfo = (props: any) => {
                             <>
                                 <Reconfirm
                                     btnProps={{type: "link", size: "small"}}
-                                    btnText={"撤回"}
+                    btnText={t("Withdraw")}
                                     confirm={props.username}
                                     API={() => {
                                         extApi.hwCancelSubmit({sid: rows.sid}).then((res) => {
-                                            message.success("撤回成功")
+                        message.success(t("WithdrawSuccess"))
                                             props.addTableVersion("Ext-hwsHomeworkList")
                                         })
                                     }}
-                                    todo={`撤回提交 ${rows.file_name} `}
+                    todo={`${t("WithdrawSubmit")} ${rows.file_name} `}
                                 />
                             </>
                         )}
@@ -222,7 +224,7 @@ const ExtHwsInfo = (props: any) => {
             responsive: ["lg", "sm", "xs"]
         },
         {
-            title: "我的提交",
+            title: t("MySubmission"),
             width: "auto",
             render: (text: any, rows: any) => {
                 if (rows.file_id !== null) {
@@ -235,7 +237,7 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "提交时间",
+        title: t("SubmitTime"),
             width: "auto",
             dataIndex: "create_time",
             render: (text: any, rows: any) => {
@@ -243,12 +245,12 @@ const ExtHwsInfo = (props: any) => {
             }
         },
         {
-            title: "操作",
+        title: t("operator"),
             width: "150px",
             render: (text: any, rows: any) => {
                 return <Space size={16}>
-                    <MoveModal cid={cid} btnText={"转移"} sid={rows.sid} clone={false}/>
-                    <MoveModal cid={cid} btnText={"克隆转移"} sid={rows.sid} clone={true}/>
+            <MoveModal cid={cid} btnText={t("Move")} sid={rows.sid} clone={false}/>
+            <MoveModal cid={cid} btnText={t("CloneMove")} sid={rows.sid} clone={true}/>
                 </Space>
             }
 
@@ -257,7 +259,7 @@ const ExtHwsInfo = (props: any) => {
 
     if (judgeAuth(props.roles, ["admin"])) {
         colData.push({
-            title: "管理员操作",
+            title: t("AdminOperation"),
             width: "150px",
             render: (text: any, rows: any) => {
                 return (
@@ -265,7 +267,7 @@ const ExtHwsInfo = (props: any) => {
                         <ModalFormUseForm
                             TableName={"Ext-hwsHomeworkList"}
                             width={1200}
-                            title={"编辑(" + rows.name + ")"}
+                title={t("EditWithName", {name: rows.name})}
                             type={"update"}
                             subForm={[{component: form, label: ""}]}
                             formName={"Ext-hwsCourseList-Form"}
@@ -279,7 +281,7 @@ const ExtHwsInfo = (props: any) => {
                         />
                         <SubmitInfo
                             groupId={data?.groupId} hid={rows.hid} deadline={rows.deadline}
-                            filename={rows.name + "_打包下载_" + Date.now().toString()}
+                            filename={`${rows.name}_${t("BatchDownload")}_${Date.now().toString()}`}
                         />
                     </Space>
 
@@ -287,22 +289,22 @@ const ExtHwsInfo = (props: any) => {
             }
         })
         colDataPre.push({
-            title: "管理员操作",
+        title: t("AdminOperation"),
             width: "150px",
             render: (text: any, rows: any) => {
                 return (
                     <Space size={3}>
                         <Reconfirm
                             btnProps={{type: "link", size: "small"}}
-                            btnText={"删除"}
+                btnText={t("delete")}
                             confirm={props.username}
                             API={() => {
                                 extApi.hwDeleteSubmit({sid: rows.sid}).then((res) => {
-                                    message.success("删除成功")
+                    message.success(t("deleteSuccess"))
                                     props.addTableVersion("Ext-hwsHomeworkList-pre")
                                 })
                             }}
-                            todo={`删除提交 ${rows.file_name} `}
+                todo={`${t("DeleteSubmit")} ${rows.file_name} `}
                         />
                     </Space>
 
@@ -332,7 +334,7 @@ const ExtHwsInfo = (props: any) => {
                                                 <ModalFormUseForm
                                                     TableName={"Ext-hwsHomeworkList"}
                                                     width={1200}
-                                                    title={"新增收集项"}
+                            title={t("NewCollectItem")}
                                                     type={"create"}
                                                     subForm={[{component: form, label: ""}]}
                                                     dataSubmitter={(value: any) => {
@@ -348,25 +350,25 @@ const ExtHwsInfo = (props: any) => {
                                                 btnType={"default"}
                                                 btnProps={{icon: <UploadOutlined/>}}
                                                 btnIcon={false}
-                                                btnName={"预设提交"}
-                                                title={"预设提交"}
+                        btnName={t("PresetSubmit")}
+                        title={t("PresetSubmit")}
                                                 type={"create"}
                                                 subForm={[
                                                     {
                                                         component: <>
                                                             <ItemUploadFileMulti
-                                                                label={"提交文件"}
+                                label={t("SubmitFile")}
                                                                 name={"data"}
                                                                 required={false}
                                                                 cid={cid}
                                                             />
                                                         </>,
-                                                        label: "基本信息"
+                            label: t("BasicInformation")
                                                     }
                                                 ]}
                                                 dataSubmitter={(value: any) => {
                                                     if (value.length === 0) {
-                                                        return Promise.reject("请先点击 上传文件 按钮，然后再提交")
+                            return Promise.reject(t("UploadFirstThenSubmit"))
                                                     }
                                                     return extApi.hwPreSubmit(value)
                                                 }}
@@ -377,11 +379,11 @@ const ExtHwsInfo = (props: any) => {
                                     {!isValueEmpty(data.description)
                                         && !isValueEmpty(data.description.trim()) && (
                                             <>
-                                                <Title level={4}> 收集说明 </Title>
+                        <Title level={4}> {t("CollectInstruction")} </Title>
                                                 <MarkdownText id={"ExtHwsInfo-description"} text={data?.description}/>
                                             </>
                                         )}
-                                    <Title level={4} style={{marginTop: 24}}> 收集项列表 </Title>
+                    <Title level={4} style={{marginTop: 24}}> {t("CollectItemList")} </Title>
                                     <TableWithPagination
                                         name={"Ext-hwsHomeworkList"}
                                         columns={colData}
@@ -390,7 +392,7 @@ const ExtHwsInfo = (props: any) => {
                                         }}
                                         size={"small"}
                                     />
-                                    <Title level={4} style={{marginTop: 24}}> 历史提交列表 </Title>
+                    <Title level={4} style={{marginTop: 24}}> {t("HistorySubmitList")} </Title>
                                     <TableWithPagination
                                         name={"Ext-hwsHomeworkList-pre"}
                                         columns={colDataPre}

@@ -10,15 +10,15 @@ const GroupFormProfile = (props: any) => {
     return (
         <>
             <ItemTitle/>
-            <ItemText name="description" label={"描述"}/>
-            <Form.Item name="openness" label={"开放性"} required>
+        <ItemText name="description" label={props.t("GroupDescriptionLabel")}/>
+        <Form.Item name="openness" label={props.t("Openness")} required>
                 <Radio.Group>
-                    <Radio value={0}>公开：任何人可以加入</Radio>
-                    <Radio value={1}>申请：需要管理员同意</Radio>
-                    <Radio value={2}>私有：不允许加入</Radio>
+            <Radio value={0}>{props.t("OpenPublicOption")}</Radio>
+            <Radio value={1}>{props.t("OpenApplyOption")}</Radio>
+            <Radio value={2}>{props.t("OpenPrivateOption")}</Radio>
                 </Radio.Group>
             </Form.Item>
-            <ItemEditor label={"组公告"} name="markdown"/>
+        <ItemEditor label={props.t("GroupAnnouncement")} name="markdown"/>
         </>
     )
 }

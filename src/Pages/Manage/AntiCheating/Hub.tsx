@@ -15,13 +15,13 @@ const Hub = (props: any) => {
             <Card
                 size={"small"}
                 bordered={true}
-                title={props.t("代码仓库列表")}
+                title={props.t("codeRepository")}
                 extra={
                     <Space>
                         {judgeAuth(props.roles, ['admin']) && (
                             <ButtonWithSelection
                                 type={"delete"}
-                                ButtonText={"批量删除"}
+                                ButtonText={props.t("deleteBatch")}
                                 rowKey={"userId"}
                                 deleteKey={"username"}
                                 tableName={"UserList"}
@@ -33,14 +33,14 @@ const Hub = (props: any) => {
                         <ModalFormUseForm
                             TableName={"UserList"}
                             width={600}
-                            title={"新建用户"}
+                            title={props.t("AddUser")}
                             type={"create"}
                             subForm={[
                                 {
                                     component: <UserFormProfile editUsername={true} needPassword={true}/>,
-                                    label: "基本信息"
+                                    label: props.t("BasicInformation")
                                 },
-                                {component: <UserFormAdditional/>, label: "附加信息"},
+                                {component: <UserFormAdditional/>, label: props.t("AdditionalConfiguration")},
                             ]}
                             dataSubmitter={(value: any) => {
                                 value.features.banThirdParty = (value.features.banThirdParty ? 1 : 0)

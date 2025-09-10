@@ -29,7 +29,7 @@ export const routerM: IRouter[] = [
         id: 11,
         path: UrlPrefix + "/manage/problem/program",
         exact: true,
-        title_i18n: "题目",
+    title_i18n: "problem",
         icon: <ContainerOutlined />,
         component: lazy(() => import('../../Pages/Manage/Problem/MProblem'))
     },

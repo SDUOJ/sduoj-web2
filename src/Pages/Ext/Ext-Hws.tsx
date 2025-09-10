@@ -12,16 +12,18 @@ import ItemEditor from "../../Component/common/Form/Item/ItemEditor";
 import TableWithPagination from "../../Component/common/Table/TableWithPagination";
 import {unix2Time} from "../../Utils/Time";
 import {withRouter} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import {UrlPrefix} from "../../Config/constValue";
 
 const ExtHws = (props: any) => {
+    const {t} = useTranslation()
 
     let form = (
         <>
-            <ItemText name={"name"} label={"收集名"}/>
-            <ItemSelectGroup name={"groupId"} label={"提交用户组"}/>
-            <ItemSelectGroup name={"manageGroupId"} label={"管理组"}/>
-            <ItemEditor name={"description"} label={"收集描述"}/>
+            <ItemText name={"name"} label={t("CollectName")}/>
+            <ItemSelectGroup name={"groupId"} label={t("SubmitUserGroup")}/>
+            <ItemSelectGroup name={"manageGroupId"} label={t("ManageGroup")}/>
+            <ItemEditor name={"description"} label={t("CollectDescription")}/>
         </>
     )
     let colData: any[] = [
@@ -32,7 +34,7 @@ const ExtHws = (props: any) => {
             responsive: ["lg", "sm", "xs"]
         },
         {
-            title: "收集名",
+            title: t("CollectName"),
             dataIndex: "name",
             width: "auto",
             responsive: ["lg", "sm", "xs"],
@@ -46,7 +48,7 @@ const ExtHws = (props: any) => {
             }
         },
         {
-            title: "创建时间",
+            title: t("CreateTime"),
             dataIndex: "create_time",
             width: "auto",
             responsive: ["lg", "sm"],
@@ -55,7 +57,7 @@ const ExtHws = (props: any) => {
             }
         },
         {
-            title: "创建者",
+            title: t("Creator"),
             dataIndex: "username",
             width: "auto",
             responsive: ["lg"],
@@ -63,7 +65,7 @@ const ExtHws = (props: any) => {
     ]
     if (judgeAuth(props.roles, ["admin"])) {
         colData.push({
-            title: "操作",
+            title: t("operator"),
             width: "150px",
             render: (text: any, rows: any) => {
                 return (
@@ -71,7 +73,7 @@ const ExtHws = (props: any) => {
                         <ModalFormUseForm
                             TableName={"Ext-hwsCourseList"}
                             width={1200}
-                            title={"编辑(" + rows.name + ")"}
+                            title={t("EditWithName", {name: rows.name})}
                             type={"update"}
                             subForm={[{component: form, label: ""}]}
                             formName={"Ext-hwsCourseList-Form"}
@@ -92,13 +94,13 @@ const ExtHws = (props: any) => {
             <LoginCheck jump={true}/>
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
-                    <Card title={"文件提交组件"} extra={
+                    <Card title={t("FileSubmitComponent")} extra={
                         <>
                             {judgeAuth(props.roles, ["admin"]) && (
                                 <ModalFormUseForm
                                     TableName={"Ext-hwsCourseList"}
                                     width={1200}
-                                    title={"新增收集"}
+                                    title={t("NewCollect")}
                                     type={"create"}
                                     subForm={[{component: form, label: ""}]}
                                     dataSubmitter={(value: any) => {

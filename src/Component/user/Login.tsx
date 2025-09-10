@@ -3,7 +3,7 @@ import {Button, Card, Space, Tabs} from "antd";
 import {LoginForm, ProFormInstance, ProFormText} from "@ant-design/pro-form";
 import {LockOutlined, UserOutlined,} from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from "./ThirdPartyLoginSDUCAS";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {connect, useDispatch} from "react-redux";
 import {withRouter} from "react-router";
 import {loginInfo} from "../../Type/types";
@@ -16,10 +16,10 @@ type LoginType = 'SDUCAS' | 'account' | "email";
 
 
 const Login = (props: any) => {
+    const { t } = useTranslation();
 
     const formRef = useRef<ProFormInstance>()
     const [loginType, setLoginType] = useState<LoginType>("SDUCAS")
-    const {t} = props
     const dispatch = useDispatch()
     const afterLogin = (data: loginInfo) => {
         dispatch({type: "userLogin"})
@@ -46,8 +46,8 @@ const Login = (props: any) => {
             <LoginForm
                 formRef={formRef}
                 logo={Logo}
-                title={t("用户登录")}
-                subTitle={t("山东大学在线评测系统")}
+                title={t("UserLogin", {defaultValue: t("Login")})}
+                subTitle={t("SDUOJSystem", {defaultValue: "SDUOJ"})}
                 actions={
                     <></>
                 }
@@ -57,7 +57,7 @@ const Login = (props: any) => {
                         if (loginType === 'account' || loginType === 'email') {
                             return <Button type={"primary"} block onClick={() => {
                                 loginType === 'account' ? passwordLogin() : emailLogin()
-                            }}> {props.t("Login")} </Button>
+                            }}> {t("Login")} </Button>
                         } else {
                             return <ThirdPartyLoginSDUCAS/>
                         }
@@ -65,9 +65,9 @@ const Login = (props: any) => {
                 }}
             >
                 <Tabs activeKey={loginType} onChange={(activeKey) => setLoginType(activeKey as LoginType)}>
-                    <Tabs.TabPane key={'account'} tab={t('账号密码')}/>
-                    <Tabs.TabPane key={'email'} tab={t('邮箱验证码')}/>
-                    <Tabs.TabPane key={'SDUCAS'} tab={t('统一身份认证')}/>
+                    <Tabs.TabPane key={'account'} tab={t('AccountPassword', {defaultValue: t('Login')})}/>
+                    <Tabs.TabPane key={'email'} tab={t('EmailVerifyCode', {defaultValue: t('emailCode')})}/>
+                    <Tabs.TabPane key={'SDUCAS'} tab={t('UnifiedIdentity', {defaultValue: 'CAS'})}/>
                 </Tabs>
                 {loginType === 'account' && (
                     <>
@@ -78,8 +78,8 @@ const Login = (props: any) => {
                                 prefix: <UserOutlined className={'prefixIcon'}/>,
                                 onPressEnter: () => passwordLogin()
                             }}
-                            placeholder={t('请输入用户名')}
-                            rules={[{required: true, message: t('请输入用户名!'),},]}
+                            placeholder={t('PleaseInputUsername', {defaultValue: t('usernameEmpty')})}
+                            rules={[{required: true, message: t('PleaseInputUsername', {defaultValue: t('usernameEmpty')})},]}
 
                         />
                         <ProFormText.Password
@@ -89,15 +89,15 @@ const Login = (props: any) => {
                                 prefix: <LockOutlined className={'prefixIcon'}/>,
                                 onPressEnter: () => passwordLogin()
                             }}
-                            placeholder={t('请输入密码')}
-                            rules={[{required: true, message: t('请输入密码！'),},]}
+                            placeholder={t('PleaseInputPassword', {defaultValue: t('passwordEmpty')})}
+                            rules={[{required: true, message: t('PleaseInputPassword', {defaultValue: t('passwordEmpty')})},]}
                         />
                     </>
                 )}
                 {loginType === 'email' && (
                     <>
                         <ItemEmail
-                            emailVerifyType={"login"} needVerify={true} checkExist={false} emailTitle={t("邮箱")}
+                            emailVerifyType={"login"} needVerify={true} checkExist={false} emailTitle={t("email")}
                             onPressEnter={() => {
                                 emailLogin()
                             }}
@@ -114,7 +114,7 @@ const Login = (props: any) => {
                     }}>
                         <Space size={3}>
                             {/*<Register button={<Button type={"link"} size={"small"}>注册</Button>}/>*/}
-                            <ForgetPass button={<Button type={"link"} size={"small"}>{t("忘记密码")}</Button>}/>
+                            <ForgetPass button={<Button type={"link"} size={"small"}>{t("ForgotPassword", {defaultValue: t("ChangePass")})}</Button>}/>
                         </Space>
                     </div>
                 )}
@@ -132,7 +132,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(Login)
-    ))
+)(withRouter(Login))
