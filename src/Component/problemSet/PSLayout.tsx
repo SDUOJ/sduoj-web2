@@ -23,6 +23,35 @@ const PSLayout = (props: any) => {
             window.removeEventListener('resize', handleResize)
         }
     },)
+
+    // 禁用右键菜单与 F12（以及常见调试快捷键）
+    useEffect(() => {
+        if (process.env.NODE_ENV === 'development') return; // 开发环境不屏蔽
+
+        const blockContextMenu = (e: Event) => {
+            e.preventDefault();
+        };
+        const blockKey = (e: KeyboardEvent) => {
+            // F12 或 Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (常见 devtools)
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key))
+            ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+
+        document.addEventListener('contextmenu', blockContextMenu);
+        window.addEventListener('contextmenu', blockContextMenu);
+        window.addEventListener('keydown', blockKey, true);
+
+        return () => {
+            document.removeEventListener('contextmenu', blockContextMenu);
+            window.removeEventListener('contextmenu', blockContextMenu);
+            window.removeEventListener('keydown', blockKey, true);
+        };
+    }, []);
     const handleResize = (e: any) => {
         setPageWidth(e.target.innerWidth)
     }
