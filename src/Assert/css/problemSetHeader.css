@@ -1,0 +1,34 @@
+/* ProblemSet Header Tabs 高亮增强 */
+.ps-header-tabs { margin-top:12px; }
+
+.ps-header-tabs .ant-tabs-nav { margin:0 0 8px 0; }
+
+.ps-header-tabs .ant-tabs-tab {
+    padding: 6px 20px;
+    font-size:14px;
+    transition: background-color .25s, color .25s, box-shadow .25s;
+    border-radius: 6px;
+}
+
+.ps-header-tabs .ant-tabs-tab:not(.ant-tabs-tab-active):hover {
+    background: rgba(22,119,255,0.08);
+    color:#1677ff;
+}
+
+.ps-header-tabs .ant-tabs-tab-active {
+    background:#e6f4ff;
+    font-weight:600;
+    box-shadow:0 0 0 2px rgba(22,119,255,0.15);
+}
+
+.ps-header-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { color:#1677ff; }
+
+.ps-header-tabs .ant-tabs-ink-bar {
+    background:#1677ff;
+    height:3px;
+    border-radius:2px;
+}
+
+@media (max-width: 768px) {
+    .ps-header-tabs .ant-tabs-tab { padding:4px 12px; font-size:13px; }
+}

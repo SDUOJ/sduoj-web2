@@ -1,5 +1,5 @@
 import {Link, withRouter} from "react-router-dom";
-import {Button, Card, Segmented, Space} from "antd";
+import {Button, Card, Tabs} from "antd";
 import {isValueEmpty} from "../../Utils/empty";
 import MarkdownText from "../../Utils/MarkdownText";
 import React, {Dispatch, useEffect, useState} from "react";
@@ -10,6 +10,7 @@ import {withTranslation} from "react-i18next";
 import {UserState} from "../../Type/Iuser";
 import PSTakePicture from "./PSTakePicture";
 import {LeftOutlined} from "@ant-design/icons";
+import "../../Assert/css/problemSetHeader.css";
 
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
@@ -100,18 +101,22 @@ const PSHeader = (props: any) => {
                                               text={problemSetInfo.description.trim()}/>
                             )}
                     </Card>
-                    <Segmented
-                        block
-                        options={menuList}
-                        value={nowKey}
-                        onChange={(value) => {
-                            menuData.map((item) => {
-                                if (item.name === value)
-                                    props.history.push(item.link)
-                                return undefined
+                    <Tabs
+                        className={'ps-header-tabs'}
+                        activeKey={nowKey}
+                        onChange={(activeKey) => {
+                            menuData.forEach(item => {
+                                if (item.name === activeKey) props.history.push(item.link)
                             })
                         }}
-
+                        items={menuData
+                            .filter(m => menuList.includes(m.name))
+                            .map(m => ({
+                                key: m.name,
+                                label: m.name
+                            }))}
+                        animated
+                        destroyOnHidden={false}
                     />
                 </>
             )}

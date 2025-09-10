@@ -12,7 +12,7 @@ export const appTheme: ThemeConfig = {
     // 标题常用前景色（定时器标题等）
     colorTextHeading: '#282c34',
     // 提升全局弹出层基准 z-index（覆盖 message 等弹出层）
-    zIndexPopupBase: 3000,
+    // zIndexPopupBase: 3000,
   },
   components: {
     Card: {
