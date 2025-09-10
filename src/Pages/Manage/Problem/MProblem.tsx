@@ -198,7 +198,7 @@ class MProblem extends Component<any, any> {
 
         return (
             <div style={{marginTop: -20, overflow: "hidden"}}>
-                <Card size={"small"} bordered={true} title={this.props.t("ProblemList")} extra={
+                <Card size={"small"} variant="outlined" title={this.props.t("ProblemList")} extra={
                     <>
                         <ModalFormUseForm
                             TableName={"ProblemList"}

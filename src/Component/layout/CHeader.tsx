@@ -1,16 +1,15 @@
 import React, {Component, Dispatch} from "react";
-import {Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
+import {Button, Layout, Menu, message, Space} from "antd";
 import ChangeLang from "../common/ChangeLang";
 import {Link} from "react-router-dom";
-import {DownOutlined, LogoutOutlined, RightOutlined, UserOutlined} from "@ant-design/icons";
+// icons moved into UserAccountDropdown
 import logo from "../../Assert/img/logo.png";
 import {UserState} from "../../Type/Iuser";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {userLogoutTodo} from "../../Redux/Action/user";
-import UserAvatar from "../user/Avatar";
-import judgeAuth from "../../Utils/judgeAhtu";
+import UserAccountDropdown from './UserAccountDropdown';
 import {routerC_M} from "../../Config/router/routerC";
 import {UrlPrefix} from "../../Config/constValue";
 
@@ -49,30 +48,23 @@ class CHeader extends Component<any, any> {
 
     render() {
         return (
-            <Header className="site-layout-sub-header-background"
-                    style={{position: 'fixed', zIndex: 1, width: '100%', display: "flex", justifyContent: "space-between"}}>
-                <div className="logo" style={{flex: "125px 0 0", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
-                    <img src={logo} style={{width: "125px", height: '30px'}}
-                         alt={"SDUOJ-logo"}/>
+        <Header className="site-layout-sub-header-background"
+            style={{position: 'fixed', zIndex: 1, width: '100%', display: "flex", justifyContent: "space-between", alignItems: 'center', height: 64, padding: '0 20px'}}>
+                <div className="logo" style={{flex: "125px 0 0", display:'flex', alignItems:'center'}} key={"logo"}>
+                    <img src={logo} style={{width: 125, height: 30}}
+                         alt={"SDUOJ-logo"} />
                 </div>
                 <div style={{minWidth: 0, flex: "auto"}}>
                     <Menu
                         mode="horizontal"
-                        theme={"light"}
+                        theme="light"
                         selectedKeys={[this.state.selectedKey]}
-                        style={{}}
-                    >
-                        {
-                            routerC_M.map((r, i) => {
-                                return (
-                                    <Menu.Item key={r.id} icon={r.icon}>
-                                        <Link to={r.path}>{this.props.t(r.title_i18n)}</Link>
-                                    </Menu.Item>
-                                )
-
-                            })
-                        }
-                    </Menu>
+                        items={routerC_M.map((r:any) => ({
+                            key: r.id,
+                            icon: r.icon,
+                            label: <Link to={r.path}>{this.props.t(r.title_i18n)}</Link>
+                        }))}
+                    />
                 </div>
                 <div style={{flex: "0"}} key={"operator"}>
                     <Space size={30}>
@@ -81,76 +73,30 @@ class CHeader extends Component<any, any> {
                         {/*    window.location.reload()*/}
                         {/*}}>返回老版</Button>*/}
                         <ChangeLang/>
-                        {
-                            [''].map(() => {
-                                if (this.props.isLogin) {
-                                    return (
-                                        <Dropdown overlay={
-                                            <Menu>
-                                                {
-                                                    this.props.roles !== undefined &&
-                                                    judgeAuth(this.props.roles, ["admin", "superadmin"]) &&
-                                                    (
-                                                        <Menu.Item
-                                                            key="0"
-                                                            icon={<RightOutlined />}
-                                                            onClick={() => {
-                                                                this.props.history.push(UrlPrefix + "/manage")
-                                                            }}
-                                                        >
-                                                            {this.props.t("toManage")}
-                                                        </Menu.Item>
-                                                    )
-                                                }
-                                                <Menu.Item
-                                                    key="1"
-                                                    icon={<UserOutlined/>}
-                                                    onClick={() => {
-                                                        this.props.history.push(UrlPrefix + "/user")
-                                                    }}
-                                                >
-                                                    {this.props.t("Profile")}
-                                                </Menu.Item>
-                                                <Menu.Item
-                                                    key="2"
-                                                    icon={<LogoutOutlined/>}
-                                                    onClick={()=>{
-                                                        this.props.userLogout()
-                                                        setTimeout(()=>{
-                                                            this.props.history.push(UrlPrefix + "/home")
-                                                        }, 200)
-                                                        message.info("已退出登录")
-                                                    }}
-                                                >
-                                                    {this.props.t("Logout")}
-                                                </Menu.Item>
-                                            </Menu>
-                                        }>
-                                            <Button type="text" size={"large"}>
-                                                <Space>
-                                                    <div style={{marginTop: -10}}>
-                                                        <UserAvatar email={this.props.email}/>
-                                                        <Divider type="vertical"/>
-                                                        {this.props.username}
-                                                    </div>
-                                                    <DownOutlined style={{fontSize: 10, marginBottom: 20}}/>
-                                                </Space>
-                                            </Button>
-                                        </Dropdown>
-                                    )
-                                } else {
-                                    return (
-                                        <>
-                                            <Space>
-                                                <Button type={"text"} onClick={()=>{
-                                                    this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
-                                                }}>登录 / 注册</Button>
-                                            </Space>
-                                        </>
-                                    )
-                                }
-                            })
-                        }
+                                                {this.props.isLogin ? (
+                                                    <UserAccountDropdown
+                                                        isLogin={true}
+                                                        mode="console"
+                                                        username={this.props.username}
+                                                        email={this.props.email}
+                                                        roles={this.props.roles}
+                                                        onToManage={() => this.props.history.push(UrlPrefix + "/manage")}
+                                                        onToProfile={() => this.props.history.push(UrlPrefix + "/user")}
+                                                        onLogout={() => {
+                                                            this.props.userLogout();
+                                                            setTimeout(() => {
+                                                                this.props.history.push(UrlPrefix + "/home")
+                                                            }, 200);
+                                                            message.info(this.props.t('LogoutSuccess', {defaultValue: this.props.t('Logout')}));
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Space>
+                                                        <Button type={"text"} onClick={() => {
+                                                            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
+                                                        }}>{this.props.t('LoginOrRegister', {defaultValue: this.props.t('Login') + ' / ' + this.props.t('Register')})}</Button>
+                                                    </Space>
+                                                )}
                     </Space>
                 </div>
             </Header>

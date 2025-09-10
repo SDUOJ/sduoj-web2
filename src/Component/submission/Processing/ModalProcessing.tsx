@@ -15,8 +15,8 @@ const ModalProcessing = (props: any) => {
                 t("submissionDetails") +
                 (props.title !== undefined ? "(" + props.title + ")" : "")
             }
-            destroyOnClose={true}
-            visible={props.submissionModalVis}
+            destroyOnHidden={true}
+            open={props.submissionModalVis}
             onCancel={() => props.setSubmissionModalVis(false)}
             width={1200}
             zIndex={2000}

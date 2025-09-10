@@ -210,7 +210,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             {/*})}*/}
             {ProgramHeader}
             {/*题目主干*/}
-            <Card bordered={false} className={"problemBody"}>
+            <Card variant="borderless" className={"problemBody"}>
                 {props.showMdExport && (
                     <div style={{right: "24px", position: "absolute"}}>
                         <MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription}/>
@@ -220,7 +220,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             </Card>
             {/*测试用例*/}
             {testCase !== undefined && testCase.length !== 0 && (
-                <Card bordered={false} title={props.t("SampleTestCase")} style={{marginTop: "5px"}}>
+                <Card variant="borderless" title={props.t("SampleTestCase")} style={{marginTop: "5px"}}>
                     <SampleTestCase testCase={testCase}/>
                 </Card>
             )}

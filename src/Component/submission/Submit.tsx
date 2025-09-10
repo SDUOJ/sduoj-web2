@@ -114,8 +114,8 @@ const Submit = (props: SubmitPropsType & any) => {
             )}
 
             <Modal title={props.title}
-                   visible={SubmitModalVis}
-                   destroyOnClose={true}
+                   open={SubmitModalVis}
+                   destroyOnHidden={true}
                    onCancel={() => {
                        setSubmitModalVis(false)
                    }}

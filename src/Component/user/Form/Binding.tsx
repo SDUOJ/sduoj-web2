@@ -20,7 +20,7 @@ const Binding = (props: any) => {
             autoFocusFirstInput
             modalProps={{
                 maskClosable: false,
-                destroyOnClose: true,
+                destroyOnHidden: true,
                 width: 500,
                 okText: "提交"
             }}

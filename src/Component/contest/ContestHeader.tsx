@@ -155,25 +155,23 @@ const ContestHeader = (props: any) => {
                 <Col span={10}>
                     <Menu
                         mode="horizontal"
-                        theme={"light"}
+                        theme="light"
                         style={{border: 0}}
                         selectedKeys={[selectedKey]}
-                    >
-                        {menuData.map((value) => {
-                            if (timeState === "wait" && value.name !== "Register") return
-                            if (isPractice && value.name === "Register") return
-                            if (openness === "private" && isPractice === false && value.name !== "Register") return
-                            return (
-                                <Menu.Item key={value.name} onClick={() => {
-                                    setSelectedKey(value.name)
-                                    props.history.push(value.link)
-                                }}
-                                >
-                                    {props.t(value.name)}
-                                </Menu.Item>
-                            )
-                        })}
-                    </Menu>
+                        items={menuData.filter(value => {
+                            if (timeState === "wait" && value.name !== "Register") return false
+                            if (isPractice && value.name === "Register") return false
+                            if (openness === "private" && isPractice === false && value.name !== "Register") return false
+                            return true
+                        }).map(value => ({
+                            key: value.name,
+                            label: props.t(value.name),
+                            onClick: () => {
+                                setSelectedKey(value.name)
+                                props.history.push(value.link)
+                            }
+                        }))}
+                    />
                 </Col>
                 <Col span={14}>
                     {contestInfo !== undefined && (

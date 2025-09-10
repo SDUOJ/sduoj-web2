@@ -22,10 +22,10 @@ const MGroupInfo = (props: any) => {
         <>
             <Button type={"link"} onClick={() => setVis(true)}>题组</Button>
             <Modal
-                visible={vis}
+                open={vis}
                 onCancel={() => setVis(false)}
                 width={1200}
-                destroyOnClose={true}
+                destroyOnHidden={true}
             >
                 <Card
                     title={`题单 ${props.problemSetTitle} 的题组`}

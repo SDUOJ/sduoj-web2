@@ -33,7 +33,7 @@ const TimeSettingX = (props: any) => {
 
             <Modal
                 title={props.title ?? props.t("TimeSettingTitle")}
-                visible={open}
+                open={open}
                 maskClosable={false}
                 onCancel={() => {
                     setOpen(false)
@@ -42,7 +42,7 @@ const TimeSettingX = (props: any) => {
                     onChange(form.getFieldsValue().data)
                     setOpen(false)
                 }}
-                destroyOnClose={true}
+                destroyOnHidden={true}
             >
                 <Form
                     form={form}

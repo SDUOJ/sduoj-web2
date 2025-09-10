@@ -232,7 +232,7 @@ const Review = (props: any) => {
                     props.addTableVersion("problemSetSubjectiveJudgeList")
                 }}
                 footer={false}
-                destroyOnClose={true}
+                destroyOnHidden={true}
             >
                 <Row gutter={24}>
                     <Col span={14}>

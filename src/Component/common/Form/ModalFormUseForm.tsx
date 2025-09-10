@@ -182,7 +182,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 <Modal
                     width={props.width}
                     style={{minWidth: props.width}}
-                    destroyOnClose={true}
+                    destroyOnHidden={true}
                     title={props.title}
                     className={props.className}
                     open={formVis}
@@ -226,7 +226,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     stepsFormRender={(dom, submitter) => {
                         return (
                             <Modal
-                                destroyOnClose={true}
+                                destroyOnHidden={true}
                                 title={props.title}
                                 className={props.className}
                                 open={formVis}

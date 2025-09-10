@@ -19,7 +19,7 @@ const ModalSubmissionList = (props: any) => {
             </Button>
             <Modal
                 width={1250}
-                visible={ModalVis}
+                open={ModalVis}
                 footer={false}
                 onCancel={() => {
                     setModalVis(false)

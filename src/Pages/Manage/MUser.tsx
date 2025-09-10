@@ -121,10 +121,11 @@ const MUser = (props: any) => {
                         {judgeAuth(props.roles, ['superadmin']) && (
                             <>
                                 <Dropdown
-                                    overlay={
-                                        <Menu>
-                                            <Menu.Item key="1">
-                                                <ModalFormUseForm
+                                    menu={{
+                                        items: [
+                                            {
+                                                key: 'changePass',
+                                                label: <ModalFormUseForm
                                                     btnName={props.t("ChangePass")}
                                                     btnIcon={false}
                                                     btnType={"link"}
@@ -135,29 +136,23 @@ const MUser = (props: any) => {
                                                     updateAppendProps={{username: rows.username}}
                                                     dataSubmitter={(value: any) => mApi.updateUserPasswd(value)}
                                                 />
-                                            </Menu.Item>
-                                            {rows.sduId && (
-                                                <Menu.Item key="2">
-                                                    <YesNoOperConfirm
-                                                        onConfirm={() => {
-                                                            return mApi.thirdPartyUnbinding({
-                                                                thirdParty: "SDUCAS",
-                                                                username: rows.username
-                                                            }).then(() => {
-                                                                dispatch({type: "addTableVersion", name: "UserList"})
-                                                            })
-                                                        }}
-                                                        content={
-                                                            <Button type={"link"} style={{
-                                                                paddingLeft: 5,
-                                                                paddingRight: 5
-                                                            }}>{props.t("unbindSdusForUnifiedAuthentication")}</Button>
-                                                        }
-                                                    />
-                                                </Menu.Item>
-                                            )}
-                                        </Menu>
-                                    }
+                                            },
+                                            ...(rows.sduId ? [{
+                                                key: 'unbind',
+                                                label: <YesNoOperConfirm
+                                                    onConfirm={() => {
+                                                        return mApi.thirdPartyUnbinding({
+                                                            thirdParty: "SDUCAS",
+                                                            username: rows.username
+                                                        }).then(() => {
+                                                            dispatch({type: "addTableVersion", name: "UserList"})
+                                                        })
+                                                    }}
+                                                    content={<Button type={"link"} style={{paddingLeft:5,paddingRight:5}}>{props.t("unbindSdusForUnifiedAuthentication")}</Button>}
+                                                />
+                                            }] : [])
+                                        ]
+                                    }}
                                 >
                                     <Button type="link">
                                         {props.t("more")}
@@ -175,7 +170,7 @@ const MUser = (props: any) => {
         <div style={{marginTop: -20, overflow: "hidden"}}>
             <Card
                 size={"small"}
-                bordered={true}
+                variant="outlined"
                 title={props.t("userList")}
                 extra={
                     <Space>

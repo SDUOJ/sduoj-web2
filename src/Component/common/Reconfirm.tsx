@@ -36,7 +36,7 @@ const Reconfirm = (props: ReconfirmProps) => {
                 }}>{props.btnText}</Button>
             <Modal
                 title={t('OperationConfirm')}
-                visible={modalVis}
+                open={modalVis}
                 className={"Reconfirm-Modal"}
                 onCancel={() => {
                     setModalVis(false)

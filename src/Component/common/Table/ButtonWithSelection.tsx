@@ -40,7 +40,7 @@ const ButtonWithSelection = (props: any) => {
                 content={msgList[props.type].popover.content}
                 title={msgList[props.type].popover.title}
                 // visible={!isSelected() && MouseIn}
-                visible={false}
+                open={false}
             >
                 <div
                     onMouseEnter={() => {

@@ -151,7 +151,7 @@ const TableWithPagination = (props: any) => {
             {props.useList && (
                 <Card
                     title={props.title}
-                    bordered={true}
+                    variant="outlined"
                     size={"default"}
                     className={props.cardProps ?? "zeroBodyPaddingLeft"}
                     extra={
@@ -216,7 +216,7 @@ const TableWithPagination = (props: any) => {
             )}
             {!props.useList && (
                 <Card
-                    bordered={false}
+                    variant="borderless"
                     size={"small"}
                     extra={
                         (props.search === true || props.getForm !== undefined) && (

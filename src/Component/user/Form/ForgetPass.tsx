@@ -14,16 +14,16 @@ const ForgetPass = (props: any) => {
 
     return (
         <ModalForm<any>
-            title="找回密码"
+            title={props.t('RetrievePasswordTitle', {defaultValue: props.t('ForgotPassword')})}
             trigger={
                 props.button
             }
             autoFocusFirstInput
             modalProps={{
                 maskClosable: false,
-                destroyOnClose: true,
+                destroyOnHidden: true,
                 width: 500,
-                okText: "发送"
+                okText: props.t('Send', {defaultValue: 'Send'})
             }}
             onFinish={async (values) => {
                 let data: any = {
@@ -33,7 +33,7 @@ const ForgetPass = (props: any) => {
                 if (active === "1") data.username = values.username
                 if (active === "2") data.email = values.email
                 return CApi.forgetPassword(data).then(()=>{
-                    message.success('修改密码的链接已发送至您的邮箱');
+                    message.success(props.t('PasswordResetLinkSent', {defaultValue: props.t('Success')}));
                     return true
                 })
             }}
@@ -41,10 +41,10 @@ const ForgetPass = (props: any) => {
             <Tabs
                 onChange={setActive}
                 activeKey={active}>
-                <Tabs.TabPane tab="用户名" key="1">
+                <Tabs.TabPane tab={props.t('UsernameTab', {defaultValue: props.t('username')})} key="1">
                     <ItemUsername notRequired={active !== "1"}/>
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="邮箱" key="2">
+                <Tabs.TabPane tab={props.t('EmailTab', {defaultValue: props.t('email')})} key="2">
                     <ItemEmail needVerify={false} notCheck={active !== "2"}/>
                 </Tabs.TabPane>
             </Tabs>

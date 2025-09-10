@@ -21,7 +21,7 @@ const RequirePassChange = (props: any) => {
     return (
         <Modal
             title={t("ChangePass")}
-            visible={passChange}
+            open={passChange}
             // closable={false}
             maskClosable={false}
             onCancel={() => {

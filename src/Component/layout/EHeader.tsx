@@ -1,87 +1,65 @@
-import React, {Dispatch} from "react";
-import {Button, Divider, Dropdown, Layout, Menu, message, Space} from "antd";
-import ChangeLang from "../common/ChangeLang";
-import {DownOutlined, LogoutOutlined} from "@ant-design/icons";
-import logo from "../../Assert/img/logo.png";
-import {UserState} from "../../Type/Iuser";
-import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router";
-import {userLogoutTodo} from "../../Redux/Action/user";
-import ExamOver from "../exam/ExamOver";
+import React, {Dispatch} from 'react';
+import {Layout, message} from 'antd';
+import ChangeLang from '../common/ChangeLang';
+import logo from '../../Assert/img/logo.png';
+import {UserState} from '../../Type/Iuser';
+import {connect} from 'react-redux';
+import {withTranslation} from 'react-i18next';
+import {withRouter} from 'react-router';
+import {userLogoutTodo} from '../../Redux/Action/user';
+import ExamOver from '../exam/ExamOver';
+import UserAccountDropdown from './UserAccountDropdown';
 
 const {Header} = Layout;
 
 const EHeader = (props: any) => {
-
-    // const dispatch = useDispatch()
     return (
-        <Header className="site-layout-sub-header-background" style={{minWidth: 550}}>
-            <div className="logo" style={{float: "left", marginTop: "-5px", marginLeft: "-10px"}} key={"logo"}>
-                <img src={logo} style={{width: "125px", height: '30px'}}
-                     alt={"SDUOJ-logo"}/>
+        <Header
+            className="site-layout-sub-header-background"
+            style={{
+                minWidth: 550,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 20px',
+                height: 64,
+            }}
+        >
+            <div className="logo" style={{display: 'flex', alignItems: 'center'}}>
+                <img src={logo} style={{width: 125, height: 30}} alt="SDUOJ-logo"/>
             </div>
-            <div style={{float: "right"}} key={"operator"}>
-                {props.location.pathname.match(/\/exam\/running\//) !== null && (
-                    <ExamOver key={"ExamOver"}/>
-                )}
+            <div style={{display: 'flex', alignItems: 'center', gap: 24}}>
+                {props.location.pathname.match(/\/exam\/running\//) !== null && <ExamOver/>}
                 <ChangeLang/>
-                {
-                    [''].map(() => {
-                        if (props.isLogin) {
-                            return (
-                                <Dropdown overlay={
-                                    <Menu onClick={() => {
-                                        props.userLogout()
-                                        message.info("已退出登录")
-                                    }}>
-                                        <Menu.Item key="1" icon={<LogoutOutlined/>}>
-                                            {props.t("Logout")}
-                                        </Menu.Item>
-                                    </Menu>
-                                }>
-                                    <Button type="text" size={"large"}>
-                                        <Space>
-                                            <div style={{marginTop: -10}}>
-                                                {props.realName}
-                                                <Divider type="vertical"/>
-                                                {props.sduId}
-                                            </div>
-                                            <DownOutlined style={{fontSize: 10, marginBottom: 20}}/>
-                                        </Space>
-                                    </Button>
-                                </Dropdown>
-                            )
-                        }
-                        return undefined
-                    })
-                }
+                <UserAccountDropdown
+                    isLogin={props.isLogin}
+                    mode="exam"
+                    realName={props.realName}
+                    sduId={props.sduId}
+                    onLogout={() => {
+                        props.userLogout();
+                        message.info(props.t('LogoutSuccess', {defaultValue: props.t('Logout')}));
+                    }}
+                />
             </div>
         </Header>
-    )
-
-}
+    );
+};
 
 
 const mapStateToProps = (state: any) => {
-    const UState: UserState = state.UserReducer
-    const realName = UState.userInfo?.realName
-    const sduId = UState.userInfo?.sduId
+    const UState: UserState = state.UserReducer;
+    const realName = UState.userInfo?.realName;
+    const sduId = UState.userInfo?.sduId;
     return {
         isLogin: UState.isLogin,
-        realName: (realName === undefined || realName === null) ? UState.userInfo?.nickname : UState.userInfo?.realName,
-        sduId: (sduId === undefined || sduId === null) ? UState.userInfo?.studentId : UState.userInfo?.sduId,
-    }
-}
+        realName: realName ?? UState.userInfo?.nickname,
+        sduId: sduId ?? UState.userInfo?.studentId,
+    };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     userLogout: () => dispatch(userLogoutTodo()),
-})
+});
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(EHeader)
-    ))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(EHeader)));

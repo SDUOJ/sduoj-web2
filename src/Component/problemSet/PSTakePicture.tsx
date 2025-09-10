@@ -70,7 +70,7 @@ const PSTakePicture = (props: any) => {
     return (
         <>
             <Modal
-                visible={state === 2}
+                open={state === 2}
                 title={t("proctorModalTitle")}
                 footer={false}
                 maskClosable={false}

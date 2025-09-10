@@ -205,8 +205,8 @@ const GroupMember = (props: any) => {
                 {props.btnName}
             </Button>
             <Modal
-                visible={vis}
-                destroyOnClose={true}
+                open={vis}
+                destroyOnHidden={true}
                 title={props.title}
                 width={1200}
                 onCancel={() => {

@@ -12,7 +12,7 @@ const ItemRoles = (props: any) => {
         >
             <Select mode="multiple" allowClear
                     disabled={props.editable === false}
-                    bordered={props.editable}
+                    variant={props.editable ? "outlined" : "borderless"}
             >
                 <Select.Option value={"user"}>{props.t("user")}</Select.Option>
                 <Select.Option value={"admin"}>{props.t("admin")}</Select.Option>

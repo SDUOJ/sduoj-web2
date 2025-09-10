@@ -34,7 +34,7 @@ const ItemUsername = (props: any) => {
             hasFeedback>
             <Input
                 disabled={props.editable === false}
-                bordered={props.editable}
+                variant={props.editable ? "outlined" : "borderless"}
             />
         </Form.Item>
     )

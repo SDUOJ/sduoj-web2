@@ -44,7 +44,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                            hasFeedback>
                     <Input
                         disabled={props.editable === false}
-                        bordered={props.editable !== false}
+                        variant={props.editable !== false ? "outlined" : "borderless"}
                     />
                 </Form.Item>
             )}
@@ -52,9 +52,9 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                 <>
                     <Modal
                         title={"人机身份认证"}
-                        visible={modalVis}
+                        open={modalVis}
                         maskClosable={false}
-                        destroyOnClose={true}
+                        destroyOnHidden={true}
                         onOk={() => {
                             CApi.sendVerificationEmail({
                                 email: email,
@@ -62,7 +62,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                                 captchaId: imgId,
                                 event: props.emailVerifyType
                             }).then((res) => {
-                                message.success("验证码已发送至您的邮箱")
+                                message.success(props.t('VerificationCodeSent', {defaultValue: props.t('Success')}))
                                 setCanSend(60);
                                 setModalVis(false)
                             })
@@ -100,7 +100,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                         ]}>
                         <Input
                             disabled={props.editable === false || canSend > 0}
-                            bordered={props.editable !== false}
+                            variant={props.editable !== false ? "outlined" : "borderless"}
                             onPressEnter={props.onPressEnter}
                             addonAfter={
                                 <Button

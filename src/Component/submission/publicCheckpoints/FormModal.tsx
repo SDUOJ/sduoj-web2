@@ -52,10 +52,10 @@ const PublicCheckpointsFormModal = (props: any) => {
             <Modal
                 width={1200}
                 title={t("Edit checkpoints") + "-" + props.title}
-                destroyOnClose={true}
+                destroyOnHidden={true}
                 maskClosable={false}
                 footer={false}
-                visible={vis}
+                open={vis}
                 onCancel={() => {
                     setVis(false)
                 }}

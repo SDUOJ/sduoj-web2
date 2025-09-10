@@ -25,7 +25,7 @@ const MoveModal = (props: any) => {
             <Modal
                 title={props.btnText}
                 width={600}
-                visible={vis}
+                open={vis}
                 onCancel={() => {
                     setVis(false)
                 }}

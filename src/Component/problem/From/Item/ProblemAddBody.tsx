@@ -520,9 +520,9 @@ const ColorPickerBody = ({value, onChange}: any) => {
                     onChange(v.hex)
                     setOpen(false)
                 }}/>}
-                trigger="click"
-                visible={open}
-                onVisibleChange={setOpen}
+                    trigger="click"
+                    open={open}
+                    onOpenChange={setOpen}
             >
                 <div style={{
                     background: value,

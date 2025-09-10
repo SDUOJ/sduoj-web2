@@ -11,7 +11,7 @@ const UploadForm = () => {
     return (
         <>
             <Form.Item name={"mode"} label={t("newlineHandling")} initialValue={NEWLINE_CONVERT_INDEX.DOS2UNIX}>
-                <Select style={{width: 260}} bordered={true}>
+                <Select style={{width: 260}} variant={"outlined"}>
                     {Object.keys(NEWLINE_CONVERT).map((index) => {
                         return <Option value={index}>{NEWLINE_CONVERT[index].description}</Option>
                     })}

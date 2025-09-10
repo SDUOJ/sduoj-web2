@@ -93,7 +93,7 @@ const AutoImportObjective = (props: any) => {
             <Modal
                 title={props.t('BatchImportProblems')}
                 maskClosable={false}
-                visible={modalVis}
+                open={modalVis}
                 onCancel={close}
                 width={1600}
                 footer={

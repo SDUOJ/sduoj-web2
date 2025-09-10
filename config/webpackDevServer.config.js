@@ -38,7 +38,9 @@ module.exports = function (proxy, allowedHost) {
     // Silence WebpackDevServer's own logs since they're generally not useful.
     // It will still show compile warnings and errors with this setting.
     client: {
-      logging: 'none',
+      // 之前为了减少噪音设置为 'none'，现在需要显示警告 => 使用 'warn'
+      logging: 'warn',
+      // overlay 单独关闭（我们使用 error overlay 中间件），如需浏览器层覆盖可改为 { errors: true, warnings: true }
       overlay: false,
     },
     // By default WebpackDevServer serves physical files from current directory

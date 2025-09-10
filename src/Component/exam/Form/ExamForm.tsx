@@ -150,7 +150,7 @@ const ExamForm = (props: any) => {
             <Modal
                 title={props.type === "create" ? "新建考试" : props.title}
                 className={"exam-form"}
-                visible={examFormVis}
+                open={examFormVis}
                 maskClosable={false}
                 onCancel={() => {
                     setExamFormVis(false)

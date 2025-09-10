@@ -7,6 +7,7 @@ import React, {useEffect} from "react";
 import {useForm} from "antd/es/form/Form";
 import CApi from "Utils/API/c-api"
 import {withRouter} from "react-router-dom";
+import {withTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
 
 
@@ -22,14 +23,14 @@ const Register = (props: any) => {
 
     return (
         <ModalForm<any>
-            title={props.token !== undefined ? "注册并绑定" : "用户注册"}
+            title={props.token !== undefined ? props.t('RegisterAndBindTitle', {defaultValue: props.t('Register')}) : props.t('UserRegisterTitle', {defaultValue: props.t('Register')})}
             trigger={props.button}
             autoFocusFirstInput
             modalProps={{
                 maskClosable: false,
-                destroyOnClose: true,
+                destroyOnHidden: true,
                 width: 500,
-                okText: "提交"
+                okText: props.t('Submit', {defaultValue: 'Submit'})
             }}
             form={form}
             onFinish={async (values) => {
@@ -38,14 +39,14 @@ const Register = (props: any) => {
                     return CApi.thirdPartyRegister(values).then((res: any) => {
                         dispatch({type: "userLogin"})
                         dispatch({type: "setUserInfo", data: res})
-                        message.success('注册成功');
+                        message.success(props.t('RegisterSuccess', {defaultValue: props.t('Success')}));
                         return true;
                     })
                 } else {
                     return CApi.register(values).then((res: any) => {
                         dispatch({type: "userLogin"})
                         dispatch({type: "setUserInfo", data: res})
-                        message.success('注册成功');
+                        message.success(props.t('RegisterSuccess', {defaultValue: props.t('Success')}));
                         return true;
                     })
                 }
@@ -63,4 +64,5 @@ const Register = (props: any) => {
     )
 }
 
-export default withRouter(Register)
+// HOC 顺序调整避免类型不兼容，同时用 any 断言规避复杂交叉类型报错
+export default withTranslation()(withRouter(Register as any) as any)

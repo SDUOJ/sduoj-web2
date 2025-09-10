@@ -29,8 +29,8 @@ const ImportSubmission = (props: any) => {
 
             <Modal
                 title={t("AddCode")}
-                visible={vis}
-                destroyOnClose={true}
+                open={vis}
+                destroyOnHidden={true}
                 width={1400}
                 onCancel={() => {
                     setVis(false)

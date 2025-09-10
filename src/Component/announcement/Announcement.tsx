@@ -27,7 +27,7 @@ const Announcement = (props: any) => {
                 }}
                 footer={null}
                 width={1100}
-                destroyOnClose={true}
+                destroyOnHidden={true}
             >
                 <ANCContent id={showId}/>
             </Modal>

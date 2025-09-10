@@ -46,7 +46,7 @@ class ChangeLang extends Component<any, any> {
             <>
                 <Space>
                     <img src={lang} alt={'lang'} width={20}/>
-                    <Select onChange={this.changeLang} defaultValue={this.defLang} bordered={false}
+                    <Select onChange={this.changeLang} defaultValue={this.defLang} variant={"borderless"}
                             style={{marginLeft: -15}}>
                         {
                             language.map((r, i) => {

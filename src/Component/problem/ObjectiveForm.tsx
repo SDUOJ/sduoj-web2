@@ -152,8 +152,8 @@ const ObjectiveForm = (props: any) => {
     return (
         <>
             <ModalForm
-                visible={modalVis}
-                onVisibleChange={setModalVis}
+                open={modalVis}
+                onOpenChange={setModalVis}
                 title={props.type === "create" ? "新建" : props.title}
                 formRef={formRef}
                 initialValues={initData}

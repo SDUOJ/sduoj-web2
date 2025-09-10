@@ -31,23 +31,12 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
         setSelectedKey(select)
     }, [props.location.pathname])
 
-    const geneMenu = (menuList: any[]) => {
-        return menuList.map((r, i) => {
-            if (r.children === undefined) {
-                return (
-                    <Menu.Item key={r.id} icon={r.icon}>
-                        <Link to={r.path}>{props.t(r.title_i18n)}</Link>
-                    </Menu.Item>
-                )
-            } else {
-                return (
-                    <Menu.SubMenu title={props.t(r.title_i18n)} icon={r.icon} key={r.id}>
-                        {geneMenu(r.children)}
-                    </Menu.SubMenu>
-                )
-            }
-        })
-    }
+    const buildItems = (menuList: any[]): any[] => menuList.map(r => ({
+        key: r.id,
+        icon: r.icon,
+        label: r.children === undefined ? <Link to={r.path}>{props.t(r.title_i18n)}</Link> : props.t(r.title_i18n),
+        children: r.children ? buildItems(r.children) : undefined
+    }));
 
     return (
         <>
@@ -61,9 +50,8 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
                     }}
                     mode="inline"
                     theme="dark"
-                >
-                    {geneMenu(routerM)}
-                </Menu>
+                    items={buildItems(routerM)}
+                />
             </div>
         </>
     )

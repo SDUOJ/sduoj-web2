@@ -29,7 +29,7 @@ const Overview = (props: any) => {
     return (
         <>
             <Modal
-                visible={vis}
+                open={vis}
                 footer={false}
                 onOk={() => setVis(false)}
                 onCancel={() => setVis(false)}

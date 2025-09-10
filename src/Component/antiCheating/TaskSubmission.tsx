@@ -19,8 +19,8 @@ const TaskSubmission = (props: any) => {
             >{props.t("任务代码")}</Button>
             <Modal
                 title={"查重任务代码"}
-                visible={vis}
-                destroyOnClose={true}
+                open={vis}
+                destroyOnHidden={true}
                 width={1300}
                 onCancel={() => {
                     setVis(false)

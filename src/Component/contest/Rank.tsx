@@ -402,9 +402,9 @@ const Rank = (props: any) => {
         <>
             <Modal
                 width={1250}
-                visible={ModalVis}
+                open={ModalVis}
                 footer={false}
-                destroyOnClose={true}
+                destroyOnHidden={true}
                 onCancel={() => {
                     setModalVis(false)
                 }}

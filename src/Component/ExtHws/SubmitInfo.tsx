@@ -61,7 +61,7 @@ const SubmitInfo = (props: any) => {
             }}> 提交详情 </Button>
             <Modal
                 title={props.title}
-                visible={vis}
+                open={vis}
                 onCancel={() => {
                     setVis(false)
                 }}

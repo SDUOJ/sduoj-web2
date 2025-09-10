@@ -11,12 +11,12 @@ const ModalMarkdown = (props: any) => {
             }}> {props.btnText} </Button>
             <Modal
                 title={props.title}
-                visible={vis}
+                open={vis}
                 onCancel={() => {
                     setVis(false)
                 }}
                 footer={false}
-                destroyOnClose={true}
+                destroyOnHidden={true}
                 width={1200}
             >
                 <MarkdownText id={props.id} text={props.text}/>

@@ -38,8 +38,8 @@ const ProDescriptions = (props: any) => {
             <Modal
                 title={`${props.problemCode} ${props.title}`}
                 onCancel={() => setVis(false)}
-                visible={vis}
-                destroyOnClose={true}
+                open={vis}
+                destroyOnHidden={true}
                 width={1200}
                 footer={
                     <>

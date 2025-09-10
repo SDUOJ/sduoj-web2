@@ -12,7 +12,7 @@ const JoinGroupBtn = (props: any) => {
         <>
             <Popconfirm
                 title={`你确定要申请加入${props.groupName}吗？`}
-                visible={visible}
+                open={visible}
                 onConfirm={()=>{
                     cApi.joinGroupApply({groupId: props.groupId}).then(()=>{
                         setVisible(false);
