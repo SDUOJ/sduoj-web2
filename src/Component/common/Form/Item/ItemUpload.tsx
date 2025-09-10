@@ -21,7 +21,7 @@ const ItemUpload = (props: ItemUploadPropsType & any) => {
 
     return (
         <>
-            <Form.Item label={props.label ?? "上传文件"} name={props.name} rules={[{required: props.required}]}>
+            <Form.Item label={props.label ?? props.t("UploadFile")} name={props.name} rules={[{required: props.required}]}> 
                 <UploadFile {...props}/>
             </Form.Item>
         </>
@@ -54,16 +54,16 @@ const UploadFile = (props: any) => {
         <>
             {!isValueEmpty(value) && (
                 <div style={{marginBottom: 24}}>
-                    <div> 已有文件： </div>
+                    <div> {props.t("ExistingFile")} </div>
                     <Space>
                         {filename}
                         <Button size={"small"} onClick={() => {
                             const path = apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value + "/" + filename
                             window.open(path)
-                        }}>下载</Button>
+                        }}>{props.t("Download")}</Button>
                         <Button danger size={"small"} onClick={() => {
                             onChange(null)
-                        }}>删除</Button>
+                        }}>{props.t("delete")}</Button>
                     </Space>
 
                 </div>
@@ -79,9 +79,9 @@ const UploadFile = (props: any) => {
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined/>
                 </p>
-                <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+                <p className="ant-upload-text">{props.t("UploadDragAreaText")}</p>
                 <p className="ant-upload-hint">
-                    请上传一个 {nameList} 文件
+                    {props.t("UploadAcceptHint", {nameList: nameList.join(', ')})}
                 </p>
             </Dragger>
         </>

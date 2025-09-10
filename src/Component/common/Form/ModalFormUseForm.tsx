@@ -1,6 +1,6 @@
 import React, {Dispatch, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Button, Form, message, Modal} from "antd";
 import type { ButtonProps } from 'antd';
@@ -34,6 +34,7 @@ interface ModalFormProps {
 }
 
 const ModalForm = (props: ModalFormProps & any) => {
+    const { t } = useTranslation();
 
     const [form] = useForm()
     const formMapRef = useRef<React.MutableRefObject<ProFormInstance<any> | undefined>[]>([]);
@@ -55,12 +56,12 @@ const ModalForm = (props: ModalFormProps & any) => {
             // 若初始化信息为空，则调用数据加载器进行异步数据加载
             if (props.initData === undefined) {
                 const hied = message.loading({
-                    content: "加载中",
+                    content: t("Loading"),
                     duration: 0,
                 })
                 if (props.dataLoader === undefined) {
                     hied()
-                    message.error("未定义数据加载器")
+                    message.error(t("dataLoaderNotDefined"))
                     return
                 }
                 props.dataLoader && props.dataLoader().then((data: any) => {
@@ -126,7 +127,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                 props.afterSubmit && props.afterSubmit(res)
                 props.onClose && props.onClose()
                 setFormVis(false)
-                message.success("成功")
+                message.success(t("success"))
             }).finally(() => {
                 setSubmitting(false);
             })
@@ -138,7 +139,7 @@ const ModalForm = (props: ModalFormProps & any) => {
             form.validateFields().then((value) => {
                 submit(value)
             }).catch(() => {
-                message.error('表单不完整')
+                message.error(t('FormIncomplete'))
             })
         } else submit(values)
     }
@@ -167,13 +168,13 @@ const ModalForm = (props: ModalFormProps & any) => {
                         return props.btnName
                     switch (props.type) {
                         case "create":
-                            return props.t("create")
+                            return t("create")
                         case "update":
-                            return props.t("Edit")
+                            return t("Edit")
                         case "fork":
-                            return "克隆"
+                            return t("Fork")
                         default:
-                            return "批量修改"
+                            return t("updateBatch")
                     }
                 })()}
             </Button>
@@ -192,7 +193,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                     }}
                     footer={[
                         <Button type="primary" key="submit" onClick={submitData} loading={submitting}>
-                            {props.t("Submit")}
+                            {t("Submit")}
                         </Button>
                     ]}
                 >
@@ -276,6 +277,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(
-    withRouter(ModalForm)
-))
+)(withRouter(ModalForm))

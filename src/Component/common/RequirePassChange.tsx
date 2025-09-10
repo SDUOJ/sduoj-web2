@@ -4,9 +4,10 @@ import {Form, Modal} from "antd";
 import ItemPassword from "../user/Form/Item/ItemPassword";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const RequirePassChange = (props: any) => {
+    const { t } = useTranslation();
     const [form] = Form.useForm()
     const requirePasswordChange = useSelector((state: any) => state.UserReducer.userInfo?.features?.requirePasswordChange)
     const [passChange, setPassChange] = useState(false)
@@ -19,7 +20,7 @@ const RequirePassChange = (props: any) => {
 
     return (
         <Modal
-            title={props.t("更改密码")}
+            title={t("ChangePass")}
             visible={passChange}
             // closable={false}
             maskClosable={false}
@@ -33,18 +34,18 @@ const RequirePassChange = (props: any) => {
                             return CApi.updatePassword(data).then((res) => {
                                 form.resetFields()
                                 setPassChange(false)
-                                return Promise.resolve(props.t("success"))
+                return Promise.resolve(t("success"))
                             })
                         }).catch((e: any) => {
                             return Promise.reject(e)
                         })
                     }}
                     btnProps={{type: "default"}}
-                    btnText={props.t("update")}
+            btnText={t("update")}
                 />
             }
         >
-            <p>{props.t("您当前的密码较弱，为了保护您的账号安全，请立即更改密码。")}</p>
+        <p>{t("weakPasswordPrompt")}</p>
             <Form
                 form={form}
                 layout={"vertical"}
@@ -55,6 +56,5 @@ const RequirePassChange = (props: any) => {
         </Modal>
     )
 }
-
-export default withTranslation()(RequirePassChange)
+export default RequirePassChange
 

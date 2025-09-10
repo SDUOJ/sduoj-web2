@@ -4,6 +4,7 @@ import {Button, Form, InputNumber, Modal, Space} from "antd";
 import {unix2Time} from "../../../../Utils/Time";
 import ItemTimeRange from "./ItemTimeRange";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {withTranslation} from "react-i18next";
 
 const TimeSettingX = (props: any) => {
     const {value, onChange} = props
@@ -26,12 +27,12 @@ const TimeSettingX = (props: any) => {
                         setOpen(true)
                     }}
                 >
-                    设置时间
+                    {props.t("SetTime")}
                 </Button>
             </Space>
 
             <Modal
-                title={props.title ?? "时间设定"}
+                title={props.title ?? props.t("TimeSettingTitle")}
                 visible={open}
                 maskClosable={false}
                 onCancel={() => {
@@ -55,14 +56,14 @@ const TimeSettingX = (props: any) => {
                                     <Space key={key} style={{display: 'flex', marginBottom: 8}} align="baseline">
                                         <ItemTimeRange startName={[name, "tm_start"]} endName={[name, "tm_end"]}/>
                                         <Form.Item name={[name, "weight"]}>
-                                            <InputNumber placeholder={"权重"}/>
+                                            <InputNumber placeholder={props.t("Weight")}/>
                                         </Form.Item>
                                         <MinusCircleOutlined onClick={() => remove(name)}/>
                                     </Space>
                                 ))}
                                 <Form.Item>
                                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
-                                        新增时间
+                                        {props.t("AddTime")}
                                     </Button>
                                 </Form.Item>
                             </>
@@ -75,4 +76,4 @@ const TimeSettingX = (props: any) => {
 
 }
 
-export default TimeSettingX;
+export default withTranslation()(TimeSettingX);

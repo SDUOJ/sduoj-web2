@@ -1,4 +1,3 @@
-import {withTranslation} from "react-i18next";
 import {Typography} from "antd";
 import React from "react";
 
@@ -14,4 +13,4 @@ const TextEllipsis = (props: any) => {
     )
 }
 
-export default withTranslation()(TextEllipsis)
+export default TextEllipsis

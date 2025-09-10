@@ -18,7 +18,7 @@ const ItemUploadMulti = (props: ItemUploadPropsType & any) => {
     return (
         <>
             <Form.Item
-                label={props.label ?? "上传文件"}
+                label={props.label ?? props.t("UploadFile")}
                 name={props.name}
                 rules={[{required: props.required}]}
             >
@@ -62,9 +62,9 @@ const UploadPro = (props: any)=>{
                 <p className="ant-upload-drag-icon">
                     <InboxOutlined/>
                 </p>
-                <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+                <p className="ant-upload-text">{props.t("UploadDragAreaText")}</p>
                 <p className="ant-upload-hint">
-                    请上传一个或多个 {nameListStr} 文件
+                    {props.t("UploadAcceptHintMulti", {nameList: nameListStr})}
                 </p>
             </Dragger>
         </>

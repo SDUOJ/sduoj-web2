@@ -1,14 +1,15 @@
 import {Popconfirm} from "antd";
 import React from "react";
-import {withTranslation} from "react-i18next";
+import {withTranslation, useTranslation} from "react-i18next";
 
 const YesNoOperConfirm = (props: any) => {
+    const { t } = useTranslation();
     return (
         <Popconfirm
-            title={"您确定要进行操作吗？"}
+            title={t('AreYouSureToOperate')}
             onConfirm={props.onConfirm}
-            okText={props.t("yes")}
-            cancelText={props.t("no")}
+            okText={t("yes")}
+            cancelText={t("no")}
             disabled={props.disabled}
         >
             {props.content}

@@ -27,7 +27,7 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                                         </Space>
                                         <Countdown
                                             value={this.props.deadline}
-                                            format="H 时 m 分 s 秒"
+                                            format={this.props.t("TimeFormat")}
                                             onFinish={this.props.onFinish}
                                         />
                                     </Space>
@@ -37,7 +37,7 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                             return (
                                 <Card>
                                     <Countdown title={this.props.name} value={this.props.deadline}
-                                               format="H 时 m 分 s 秒"
+                                               format={this.props.t("TimeFormat")}
                                                onFinish={this.props.onFinish}
                                     />
                                 </Card>

@@ -19,7 +19,7 @@ const ItemUpload = (props: ItemUploadPropsType & any) => {
     const [filename, setFilename] = useState<string>("")
     return (
         <>
-            <Form.Item label={props.label ?? "上传文件"} name={props.name} rules={[{required: props.required}]}>
+            <Form.Item label={props.label ?? props.t("UploadFile")} name={props.name} rules={[{required: props.required}]}> 
                 <UploadFile {...props} setFilename={setFilename}/>
             </Form.Item>
             <Form.Item name={props.filenameKey} hidden>
@@ -47,8 +47,8 @@ const UploadFile = (props: any) => {
     }
     const upload = async (file: any) => {
         if(file.size > props.max_size * 1024 * 1024){
-            message.error("文件过大，不应超过" + props.max_size + "MB")
-            return Promise.reject("文件过大")
+            message.error(props.t("FileTooLargeMB", {max: props.max_size}))
+            return Promise.reject("file too large")
         }
         setFilename(file.name)
         props.setFilename(file.name)
@@ -63,7 +63,7 @@ const UploadFile = (props: any) => {
                         {filename}
                         <Button danger size={"small"} onClick={() => {
                             onChange(null)
-                        }}>删除</Button>
+                        }}>{props.t("delete")}</Button>
                     </Space>
                 </div>
             )}
@@ -79,9 +79,9 @@ const UploadFile = (props: any) => {
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined/>
                     </p>
-                    <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+                    <p className="ant-upload-text">{props.t("UploadDragAreaText")}</p>
                     <p className="ant-upload-hint">
-                        请上传一个 {nameList} 文件
+                        {props.t("UploadAcceptHint", {nameList: nameList.join(', ')})}
                     </p>
                 </Dragger>
             )}

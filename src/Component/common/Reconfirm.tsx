@@ -1,4 +1,4 @@
-import {withTranslation} from "react-i18next";
+import {withTranslation, useTranslation} from "react-i18next";
 import {Alert, Button, Input, message, Modal} from "antd";
 import {useState} from "react";
 import "Assert/css/Reconfirm.css"
@@ -10,9 +10,11 @@ interface ReconfirmProps{
     API: any
     todo: string
     beforeCheck?: any
+    t?: any
 }
 
 const Reconfirm = (props: ReconfirmProps) => {
+    const { t } = useTranslation();
 
     const [modalVis, setModalVis] = useState<boolean>(false)
     const [value, setValue] = useState<string>("")
@@ -26,14 +28,14 @@ const Reconfirm = (props: ReconfirmProps) => {
                         props.beforeCheck().then(()=>{
                             setModalVis(true)
                         }).catch(()=>{
-                            message.error("表单不完整")
+                            message.error(t('FormIncomplete'))
                         })
                     }else{
                         setModalVis(true)
                     }
                 }}>{props.btnText}</Button>
             <Modal
-                title={"操作确认"}
+                title={t('OperationConfirm')}
                 visible={modalVis}
                 className={"Reconfirm-Modal"}
                 onCancel={() => {
@@ -49,12 +51,12 @@ const Reconfirm = (props: ReconfirmProps) => {
                             setValue("")
                             setModalVis(false)
                         }}
-                    > 我确定要{props.todo} </Button>
+                    > {t('IConfirmToDo', {todo: props.todo})} </Button>
                 ]}
             >
-                <Alert message={<span style={{fontWeight: "bold"}}>您确定要{props.todo}吗？</span>} type="warning" showIcon style={{marginBottom: 10}}/>
+                <Alert message={<span style={{fontWeight: "bold"}}>{t('AreYouSureToDo', {todo: props.todo})}</span>} type="warning" showIcon style={{marginBottom: 10}}/>
                 <div className={"Reconfirm-Modal-Input"}>
-                    请输入 <span style={{fontWeight: "bold"}}>{props.confirm}</span> 进行确认。
+                    {t('PleaseInputToConfirm')} <span style={{fontWeight: "bold"}}>{props.confirm}</span> {t('ToConfirm')}。
                     <Input
                         value={value}
                         onChange={(e) => {

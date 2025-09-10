@@ -1,18 +1,19 @@
 import {Popconfirm} from "antd";
 import React from "react";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const DeleteConfirm = (props: any) => {
+    const { t } = useTranslation();
     return (
         <Popconfirm
-            title={props.t("deleteConfirm")}
+            title={t("deleteConfirm")}
             onConfirm={props.onConfirm}
-            okText={props.t("yes")}
-            cancelText={props.t("no")}
+            okText={t("yes")}
+            cancelText={t("no")}
         >
             {props.content}
         </Popconfirm>
     )
 }
 
-export default withTranslation()(DeleteConfirm)
+export default DeleteConfirm

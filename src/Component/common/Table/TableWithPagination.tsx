@@ -3,7 +3,7 @@ import React, {Dispatch, useEffect, useState} from "react";
 import {defaultPageSize} from "../../../Config/constValue";
 import {UserState} from "../../../Type/Iuser";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import Search from "antd/es/input/Search";
 import {TableState} from "../../../Type/ITable";
@@ -29,6 +29,7 @@ export interface TableWithPaginationProps {
 }
 
 const TableWithPagination = (props: any) => {
+    const { t } = useTranslation();
     const [total, setTotal] = useState<number>(0)                   // 项的总数
     const [tableData, setTableDataX] = useState()                            // 表格核心数据
     const [loading, setLoading] = useState(true)                    // 表格的加载状态
@@ -159,7 +160,7 @@ const TableWithPagination = (props: any) => {
                                 {props.search === true && (
                                     <Search
                                         key={"search"}
-                                        placeholder={props.t("searchUser")}
+                                        placeholder={t("searchUser")}
                                         onSearch={(text) => {
                                             setSearchText(text)
                                             setPageNow(1)
@@ -176,10 +177,10 @@ const TableWithPagination = (props: any) => {
                                         {props.useFormBtn && (
                                             <Space style={{marginLeft: "30px"}} size={20}>
                                                 <Button type="primary" onClick={onFinish}>
-                                                    筛选
+                                                    {t("filtering")}
                                                 </Button>
                                                 <Button htmlType="button" onClick={onReset}>
-                                                    重置
+                                                    {t("Reset")}
                                                 </Button>
                                             </Space>
                                         )}
@@ -223,7 +224,7 @@ const TableWithPagination = (props: any) => {
                                 {props.search === true && (
                                     <Search
                                         key={"search"}
-                                        placeholder={"搜索"}
+                                        placeholder={t("Search")}
                                         onSearch={(text) => {
                                             setSearchText(text)
                                             setPageNow(1)
@@ -238,10 +239,10 @@ const TableWithPagination = (props: any) => {
                                         {props.getForm(onFinish)}
                                         <Space style={{marginLeft: "30px"}} size={20}>
                                             <Button type="primary" onClick={onFinish}>
-                                                {props.t("filtering")}
+                                                {t("filtering")}
                                             </Button>
                                             <Button htmlType="button" onClick={onReset}>
-                                                {props.t("Reset")}
+                                                {t("Reset")}
                                             </Button>
                                         </Space>
                                     </Form>
@@ -300,7 +301,5 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(
-    withRouter(TableWithPagination)
-))
+)(withRouter(TableWithPagination))
 

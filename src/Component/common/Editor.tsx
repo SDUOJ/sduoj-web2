@@ -19,21 +19,22 @@ export interface EditorProps {
 
 const CopiedButton = (props: any) => {
 
-    const rds = Date.now().toString()
     const {t} = useTranslation();
+    // generate a stable, unique class not tied to translated text
+    const uid = `copy-${Math.random().toString(36).slice(2, 10)}`
 
-    const clipboard = new ClipboardJS("." + props.btnText + rds, {
+    const clipboard = new ClipboardJS("." + uid, {
         text(elem: Element): string {
             return props.text
         }
     })
-    clipboard.on('success', function (e) {
+    clipboard.on('success', function () {
         message.success(t("ReplicationSuccess"))
     });
 
     return (
         <Button
-            className={props.btnText + rds}
+            className={uid}
             size={"small"}
         >
             {props.btnText}
@@ -47,13 +48,14 @@ const Editor = (props: EditorProps & any) => {
 
     const [vditors, setVditors] = useState<any>(undefined)
     const [finishRender, setFinishRender] = useState(false)
+    const {t} = useTranslation();
 
 
     const setEditor = () => {
         const vditor0 = new Vditor(props.id ?? "vditor", {
             height: props.height === undefined ? 800 : props.height,
             mode: "ir", //及时渲染模式
-            placeholder: "支持 Markdown，支持 KaTex 公式\n表格插入一行：Ctrl+'+' \n表格插入一列：Ctrl+Shift+'+'",
+            placeholder: t("editorPlaceholder"),
             lang: props.langCode,
             cdn: host + "/vditor",
             outline: {
@@ -91,7 +93,7 @@ const Editor = (props: EditorProps & any) => {
                     hotkey: "⌘-S",
                     name: "save",
                     tipPosition: "s",
-                    tip: "保存",
+                    tip: t("Save"),
                     className: "right",
                     icon: `<img style="height: 16px" src='https://img.58cdn.com.cn/escstatic/docs/imgUpload/idocs/save.svg' alt="save"/>`,
                     click() {
@@ -117,8 +119,9 @@ const Editor = (props: EditorProps & any) => {
                 },
                 handler(files: File[]): any {
                     if (files[0].name.length > 64) {
-                        message.error("文件名大于 64 字符")
-                        return Promise.reject("文件名大于 64 字符")
+                        const msg = t("fileNameTooLong", {max: 64})
+                        message.error(msg)
+                        return Promise.reject(msg)
                     }
 
                     function callback(value: any) {
@@ -149,23 +152,23 @@ const Editor = (props: EditorProps & any) => {
                         }
                         document.execCommand("insertHTML", false, text);
                         notification.open({
-                            message: '文件上传成功',
+                            message: t('fileUploadSuccess'),
                             description: (
                                 <>
-                                    <span>文件名：{name}</span><br/>
+                                    <span>{t('fileNameLabel')}{name}</span><br/>
                                     {/*<span>文件地址：{path}</span><br/>*/}
                                     <Space>
-                                        点击复制：
-                                        <CopiedButton text={path} btnText={"纯路径"}/>
-                                        <CopiedButton text={`[${name}](${path})`} btnText={"MD链接"}/>
-                                        <CopiedButton text={`![${name}](${path})`} btnText={"MD图片"}/>
+                                        {t('clickToCopy')}
+                                        <CopiedButton text={path} btnText={t('purePath')}/>
+                                        <CopiedButton text={`[${name}](${path})`} btnText={t('mdLink')}/>
+                                        <CopiedButton text={`![${name}](${path})`} btnText={t('mdImage')}/>
                                     </Space><br/>
                                     <Space>
                                         <CopiedButton text={`<a href="${path}">${name}</a>`}
-                                                      btnText={"HTML链接"}/>
+                                                      btnText={t('htmlLink')}/>
                                         <CopiedButton
                                             text={`<img src="${path}" alt="${name}" style="zoom:100%;" />`}
-                                            btnText={"HTML图片"}/>
+                                            btnText={t('htmlImage')}/>
                                     </Space>
                                 </>
                             ),

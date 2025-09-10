@@ -1,6 +1,6 @@
 import React, {Dispatch} from "react";
 import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import {Button, Popconfirm} from "antd";
 import {DeleteOutlined} from "@ant-design/icons"
@@ -8,6 +8,7 @@ import {TableState} from "../../../Type/ITable";
 import {ck} from "../../../Utils/empty";
 
 const TableRowDeleteButton = (props: any) => {
+    const { t } = useTranslation();
 
     const selectedRowKeys = ck(props.tableData[props.tableName]?.selectedRowKeys, [])
     const dataSource = ck(props.tableData[props.tableName]?.dataSource, [])
@@ -40,12 +41,12 @@ const TableRowDeleteButton = (props: any) => {
 
     return (
         <Popconfirm
-            title={props.t("deleteConfirm")}
+            title={t("deleteConfirm")}
             onConfirm={wk}
-            okText={props.t("yes")}
-            cancelText={props.t("no")}
+            okText={t("yes")}
+            cancelText={t("no")}
         >
-            <Button {...Props} {...props.btnProps}> {props.btnText ?? props.t("delete")} </Button>
+            <Button {...Props} {...props.btnProps}> {props.btnText ?? t("delete")} </Button>
         </Popconfirm>
     )
 }
@@ -68,6 +69,5 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(
-    withTranslation()(
-        withRouter(TableRowDeleteButton)
-    ))
+    withRouter(TableRowDeleteButton)
+)
