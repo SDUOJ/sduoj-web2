@@ -1,4 +1,5 @@
 import cApi from "../../Utils/API/c-api";
+import "../../Assert/css/ContestList.css";
 import {Divider, Form, List, Select, Space, Tag} from "antd";
 import moment from "moment";
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
@@ -20,9 +21,10 @@ const ContestList = (props: any) => {
 
     return (
         <>
-            <div className={"ListPage"}>
+            <div className={"ListPage ContestListWrap"}>
                 <TableWithPagination
                     useList={true}
+                    listCardBordered={true}
                     title={props.t("contestList")}
                     API={async (data: any) => {
                         return cApi.getContestList({...data, ...props.apiProp})
@@ -67,11 +69,11 @@ const ContestList = (props: any) => {
                             >
                                 <List.Item.Meta
                                     avatar={
-                                        <div style={{}}>
+                                        <div>
                                             <div style={{textAlign: "center", fontSize: "30px"}}>
                                                 {moment(parseInt(item.gmtStart)).format("DD")}
                                             </div>
-                                            <div style={{color: "#aaa"}}>
+                                            <div style={{color: "#aaa", fontSize: "12px", textAlign: "center"}}>
                                                 {moment(parseInt(item.gmtStart)).format("YYYY-MM")}
                                             </div>
                                         </div>
@@ -93,28 +95,13 @@ const ContestList = (props: any) => {
                                     description={
                                         <Space size={10}>
                                             {item.features.mode === "acm" && (
-                                                <span style={{
-                                                    backgroundColor: "#3676b6",
-                                                    color: "#fff",
-                                                    padding: "0 10px",
-                                                    borderRadius: ".75rem"
-                                                }}>ACM</span>
+                                                <span className="ContestModeTag" style={{backgroundColor: "#3676b6"}}>ACM</span>
                                             )}
                                             {item.features.mode === "ioi" && (
-                                                <span style={{
-                                                    backgroundColor: "#ea517f",
-                                                    color: "#fff",
-                                                    padding: "0 10px",
-                                                    borderRadius: ".75rem"
-                                                }}>IOI</span>
+                                                <span className="ContestModeTag" style={{backgroundColor: "#ea517f"}}>IOI</span>
                                             )}
                                             {item.features.mode === "oi" && (
-                                                <span style={{
-                                                    backgroundColor: "#f8df72",
-                                                    color: "#fff",
-                                                    padding: "0 10px",
-                                                    borderRadius: ".75rem"
-                                                }}>OI</span>
+                                                <span className="ContestModeTag" style={{backgroundColor: "#f8df72", color: '#222'}}>OI</span>
                                             )}
                                             <Divider type={"vertical"}/>
                                             <span>{moment(parseInt(item.gmtStart)).format("HH:mm:ss")}</span>

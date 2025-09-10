@@ -26,6 +26,13 @@ export interface TableWithPaginationProps {
     rowKey?: any              // 作为 key 记录的值
     rowSelection?: any        // 可选列的相关配置
 
+    /** （新增）列表模式下是否需要显示卡片边框；默认 false（原先预期无边框） */
+    listCardBordered?: boolean
+    /** （新增）列表模式下卡片附加 className（原 cardProps 命名不准确，保留兼容） */
+    cardClassName?: string
+    /** （新增）列表模式下卡片 style */
+    cardStyle?: React.CSSProperties
+
 }
 
 const TableWithPagination = (props: any) => {
@@ -151,9 +158,18 @@ const TableWithPagination = (props: any) => {
             {props.useList && (
                 <Card
                     title={props.title}
-                    variant="outlined"
+                    // 默认无边框，若需要显示边框通过 listCardBordered 设为 true
+                    bordered={props.listCardBordered ?? false}
+                    variant={props.listCardBordered ? 'outlined' : 'borderless'}
                     size={"default"}
-                    className={props.cardProps ?? "zeroBodyPaddingLeft"}
+                    className={props.cardClassName ?? (typeof props.cardProps === 'string' ? props.cardProps : "zeroBodyPaddingLeft")}
+                    style={props.cardStyle ?? (typeof props.cardProps === 'object' ? props.cardProps : undefined)}
+                    styles={{
+                        header: { background: 'transparent', boxShadow: 'none' },
+                        body:   { background: 'transparent', boxShadow: 'none', paddingTop: 0 }
+                    }}
+                    bodyStyle={{ boxShadow: 'none' }}
+                    headStyle={{ background: 'transparent' }}
                     extra={
                         (props.search === true || props.getForm !== undefined) && (
                             <>
@@ -218,6 +234,13 @@ const TableWithPagination = (props: any) => {
                 <Card
                     variant="borderless"
                     size={"small"}
+                    bordered={false}
+                    styles={{
+                        header: { background: 'transparent', boxShadow: 'none' },
+                        body:   { background: 'transparent', boxShadow: 'none', paddingTop: 0 }
+                    }}
+                    bodyStyle={{ boxShadow: 'none' }}
+                    headStyle={{ background: 'transparent' }}
                     extra={
                         (props.search === true || props.getForm !== undefined) && (
                             <>

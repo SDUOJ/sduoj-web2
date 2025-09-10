@@ -1,0 +1,118 @@
+/* 比赛列表行的垂直对齐优化 */
+/* 统一行高与上下留白（全局 ListPage 抹掉了 padding，这里单独恢复） */
+.ContestListWrap .ant-list-item {
+  display: flex;
+  align-items: center;            /* 行内元素垂直居中 */
+  padding-top: 12px;                 /* 进一步减小上下留白 */
+}
+
+.ContestListWrap .ant-list-item-meta {
+  align-items: center;             /* 头像 + 文本垂直居中 */
+  min-height: 36px;                /* 进一步减小最小高度 */
+}
+
+.ContestListWrap .ant-list-item-meta-avatar {
+  display: flex;
+  align-items: center;             /* 头像区域垂直居中 */
+  justify-content: center;         /* 水平居中 */
+  height: 100%;
+  width: 54px;                     /* 固定宽度，数字两位居中（含 03 / 14 / 25） */
+  flex-shrink: 0;
+}
+
+/* 日期块内部上下居中，年月在同一行显示 */
+.ContestListWrap .ant-list-item-meta-avatar > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;         /* 整体相对父容器垂直居中 */
+  align-items: center;             /* 水平居中 */
+  line-height: 1;                  /* 去除额外行高 */
+  height: 100%;
+  width: 100%;
+}
+
+/* 调整大号日期数字的行高防止顶部偏移 */
+.ContestListWrap .ant-list-item-meta-avatar > div > div:first-child {
+  line-height: 1;                  /* 大号日期数字紧凑 */
+  margin-bottom: 1px;              /* 减小与月份的间距 */
+  font-weight: 500;
+}
+
+/* 使标题+描述块整体垂直居中（Meta 内部 text 区域） */
+.ContestListWrap .ant-list-item-meta-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;                          /* 完全消除标题与描述的间距 */
+}
+
+/* 标题区：主标题 + 图标保持单行垂直居中 */
+.ContestListWrap .ant-list-item-meta-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  margin: 0 0 -2px 0;              /* 负 margin 让标题向上移动，更贴近描述 */
+  line-height: 1.2;
+}
+
+/* 描述行：使用 flex 将多个字段在一行等距排布 */
+.ContestListWrap .ant-list-item-meta-description {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  margin-top: 1px;                /* 向上移动，与标题更贴近 */
+  line-height: 1.2;
+  margin-left: 0;
+}
+
+/* 自定义分隔竖线（替代 Divider 垂直方向默认高度偏差） */
+.ContestListWrap .ant-list-item-meta-description .ant-divider-vertical {
+  margin: 0 4px;
+  height: 14px;
+  border-inline-start: 1px solid #e5e5e5;
+  top: 0;
+}
+
+/* Mode 标签（ACM / IOI / OI）视觉统一 */
+.ContestListWrap .ContestModeTag {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* 运行中 / 结束 / 私有 的 antd Tag 紧凑化 */
+.ContestListWrap .ant-tag {
+  line-height: 18px;
+  height: 20px;
+  padding-inline: 8px;
+  margin-inline-end: 0;
+  font-size: 12px;
+}
+
+/* 行 hover 提示 */
+.ContestListWrap .ant-list-item:hover {
+  background: #fafafa;
+}
+
+/* 去掉多余的底部分割线（若 antd 默认有）仅保留细线 */
+/* .ContestListWrap .ant-list-item {
+  border-bottom: 1px solid #f0f0f0;
+} */
+/* .ContestListWrap .ant-list-items > .ant-list-item:last-child {
+  border-bottom: none;
+} */
+
+/* 取消默认的 margin-block-end，减少底部空白 */
+.ContestListWrap .ant-list-item-meta-title,
+.ContestListWrap .ant-list-item-meta-description {
+  margin-block-end: 0 !important;
+}

@@ -1,7 +1,5 @@
 
-.checkedCard{
-
-}
+/* .checkedCard 已未使用，移除空规则 */
 
 .flex-box {
     display: flex;
@@ -23,9 +21,8 @@
     font-weight: bold;
 }
 
-.scorePane .ant-card-small > .ant-card-head > .ant-card-head-wrapper > .ant-card-head-title {
-    padding: 0;
-}
+
+/* 已迁移：使用 <Card headStyle={{padding:0}} size="small" /> 取代深层 DOM 链条覆盖 */
 
 .scorePane{
     min-height: 840px;

@@ -30,7 +30,7 @@ const CGroup = (props: any) => {
                     <div className={"GroupPage"}>
                         <TableWithPagination
                             useList={true}
-                            cardProps={{}}
+                            listCardBordered={false}
                             name={"GroupList"}
                             title={t("group")}
                             API={cApi.getGroupList}
@@ -67,6 +67,10 @@ const CGroup = (props: any) => {
                                         key={item.groupId}
                                     >
                                         <Card
+                                            styles={{
+                                                body: {paddingBottom: 0},
+                                            }}
+                                            style={{borderRadius: 12}}
                                             extra={
                                                 <>
                                                     {item.status === 1 && (

@@ -242,7 +242,12 @@ const Review = (props: any) => {
                         />
                     </Col>
                     <Col span={10}>
-                        <Card className={"scorePane"} title={props.t("ScorePanel")}>
+                        <Card
+                            className={"scorePane"}
+                            size="small"
+                            title={props.t("ScorePanel")}
+                            headStyle={{padding: 0}}
+                        >
                             <div>
                                 <ScoreMode
                                     reviewInfo={reviewInfo}

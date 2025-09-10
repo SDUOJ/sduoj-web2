@@ -97,9 +97,7 @@
     text-align: center;
 }
 
-.ant-card-bordered {
-    border: 1px solid #dcdee2;
-}
+/* 全局 .ant-card-bordered 边框改由 theme.components.Card.colorBorderSecondary 控制 */
 
 .ant-layout-header {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -487,17 +485,9 @@ h5.TestCase-text {
     min-height: 100px;
 }
 
-.ant-message {
-    z-index: 3000;
-}
+/* .ant-message z-index 由 theme.token.zIndexPopupBase 控制 */
 
-.ant-card-small > .ant-card-head > .ant-card-head-wrapper > .ant-card-extra {
-    padding: 0;
-}
-
-.ant-card-extra {
-    padding: 0;
-}
+/* 已移除对 .ant-card-extra 的深层结构覆盖；请在具体 <Card extra> 内容中使用内联样式或 headStyle 控制间距 */
 
 .problemBody .ant-card-body {
     padding-top: 0;
@@ -602,18 +592,7 @@ h5.TestCase-text {
     background: transparent;
 }
 
-.GroupListItemCard .ant-card-body {
-    padding-bottom: 0;
-}
-
-.GroupListItemCard.ant-card-bordered {
-    border: 1px solid #dcdee2;
-    border-radius: 12px;
-}
-
-.GroupListItemCard .ant-card-actions {
-    border-radius: 12px;
-}
+/* GroupListItemCard 样式迁移到组件 props (styles/body & style.borderRadius) */
 
 .GroupPage .ant-card-head {
     border-bottom: 0;
@@ -625,4 +604,18 @@ h5.TestCase-text {
 
 .GroupPage .ant-list-pagination {
     margin-top: 12px;
+}
+
+/* 全局统一去除 Card 阴影；若个别需要阴影可在组件 style 中单独添加 boxShadow */
+.ant-card,
+.ant-card-hoverable,
+.ant-card-hoverable:hover,
+.ant-card-bordered,
+.ant-card-bordered:hover {
+    box-shadow: none !important;
+}
+
+/* 覆盖代码高亮背景 */
+.hljs {
+    background: #f8f8f8 !important;
 }

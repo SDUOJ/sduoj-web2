@@ -4,6 +4,7 @@ import './App.css';
 
 import './Config/i18n'
 import {ConfigProvider} from "antd";
+import {appTheme} from './Config/theme';
 import "vditor/src/assets/less/index.less";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
@@ -19,7 +20,7 @@ const App = (props: any) => {
 
     return (
         // antd 全局化配置  国际化参数
-        <ConfigProvider locale={props.local}>
+    <ConfigProvider locale={props.local} theme={appTheme}>
             {/*顶级路由*/}
             <Router>
                 {/*提交详情窗体*/}
