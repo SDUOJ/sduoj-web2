@@ -1,7 +1,7 @@
 import React, {Dispatch, useEffect, useState} from "react";
 import {Col, DatePicker, Form, FormInstance, Input, Radio, Row, Skeleton} from "antd";
 import {InfoCircleOutlined} from "@ant-design/icons"
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import Meta from "antd/lib/card/Meta";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
@@ -13,6 +13,7 @@ import Editor from "../../common/Editor";
 const {RangePicker} = DatePicker;
 
 const ExamBaseForm = (props: any) => {
+    const { t } = useTranslation();
     // 页面表单的操作引用
     const formRef: React.RefObject<FormInstance<any>> = props.getRef();
 
@@ -42,25 +43,25 @@ const ExamBaseForm = (props: any) => {
                 >
                     <Form.Item
                         name="examTitle"
-                        label="标题"
-                        rules={[{required: true}]}
+                        label={t("title")}
+                        rules={[{required: true, message: t("fieldRequired")} ]}
                     >
-                        <Input placeholder="请输入考试标题"/>
+                        <Input placeholder={t("PleaseInputExamTitle", {defaultValue: t("title")})}/>
                     </Form.Item>
                     <Row gutter={10}>
                         <Col span={6}>
                             <Form.Item
                                 name="scoreMod"
-                                label="提交页面分数显示模式"
-                                rules={[{required: true}]}
+                                label={t("ScoreDisplayMode")}
+                                rules={[{required: true, message: t("fieldRequired")} ]}
                             >
                                 <Radio.Group
                                     optionType="button"
                                     buttonStyle="solid"
                                     options={[
-                                        {label: '显示', value: "show"},
-                                        {label: '部分显示', value: "partial"},
-                                        {label: '不显示', value: "disable"},
+                                        {label: t('Show'), value: "show"},
+                                        {label: t('PartialShow'), value: "partial"},
+                                        {label: t('Hide'), value: "disable"},
                                     ]}
                                 />
                             </Form.Item>
@@ -68,16 +69,16 @@ const ExamBaseForm = (props: any) => {
                         <Col span={6}>
                             <Form.Item
                                 name="caseMod"
-                                label="测试点显示模式"
-                                rules={[{required: true}]}
+                                label={t("CheckpointDisplayMode")}
+                                rules={[{required: true, message: t("fieldRequired")} ]}
                             >
                                 <Radio.Group
                                     optionType="button"
                                     buttonStyle="solid"
                                     options={[
-                                        {label: '显示', value: "show"},
-                                        {label: '部分显示', value: "partial"},
-                                        {label: '不显示', value: "disable"},
+                                        {label: t('Show'), value: "show"},
+                                        {label: t('PartialShow'), value: "partial"},
+                                        {label: t('Hide'), value: "disable"},
                                     ]}
                                 />
                             </Form.Item>
@@ -85,15 +86,15 @@ const ExamBaseForm = (props: any) => {
                         <Col span={6}>
                             <Form.Item
                                 name="openReport"
-                                label="考试后成绩报告"
-                                rules={[{required: true}]}
+                                label={t("ExamReportAfterExam")}
+                                rules={[{required: true, message: t("fieldRequired")} ]}
                             >
                                 <Radio.Group
                                     optionType="button"
                                     buttonStyle="solid"
                                     options={[
-                                        {label: '开启', value: 1},
-                                        {label: '关闭', value: 0}
+                                        {label: t('Enabled'), value: 1},
+                                        {label: t('Disabled'), value: 0}
                                     ]}
                                 />
                             </Form.Item>
@@ -104,9 +105,9 @@ const ExamBaseForm = (props: any) => {
                         <Col span={11}>
                             <Form.Item
                                 name="examStartEndTime"
-                                label="考试起止时间"
-                                rules={[{type: 'array' as const, required: true}]}
-                                tooltip={{title: '考试起止时间无法在考试开始后修改', icon: <InfoCircleOutlined/>}}
+                                label={t("ExamTimeRange")}
+                                rules={[{type: 'array' as const, required: true, message: t("fieldRequired")} ]}
+                                tooltip={{title: t('ExamTimeRangeHint'), icon: <InfoCircleOutlined/>}}
                             >
                                 <RangePicker
                                     showTime={{minuteStep: 5, secondStep: 30}}
@@ -116,7 +117,7 @@ const ExamBaseForm = (props: any) => {
                             </Form.Item>
                         </Col>
                         <Col span={11} offset={1}>
-                            <Meta title={"考试时长"} description={
+                            <Meta title={t("ExamDuration") } description={
                                 [''].map(() => {
                                     if (examTime?.length === 2) {
                                         return TimeDiff(examTime[0].unix() * 1000, examTime[1].unix() * 1000)
@@ -129,8 +130,8 @@ const ExamBaseForm = (props: any) => {
 
                     <Form.Item
                         name="examDescription"
-                        label="描述"
-                        rules={[{required: true}]}
+                        label={t("Description")}
+                        rules={[{required: true, message: t("fieldRequired")} ]}
                     >
                         <Editor height={400}/>
                     </Form.Item>
@@ -150,4 +151,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withTranslation()(withRouter(ExamBaseForm)))
+)(withRouter(ExamBaseForm))

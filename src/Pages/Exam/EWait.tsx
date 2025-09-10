@@ -11,16 +11,18 @@ import {isValueEmpty} from "../../Utils/empty";
 import {UrlPrefix} from "../../Config/constValue";
 import {getDescription} from "../../Component/exam/ExamUtils";
 import MarkdownText from "../../Utils/MarkdownText";
+import {useTranslation} from "react-i18next";
 
 const {Meta} = Card;
 
 const EWait = (props: any) => {
     const [ExamStart, setExamStartX] = useState<boolean>(false)
     const [examState, setExamState] = useState<any>()
+    const {t} = useTranslation();
 
     const setExamStart = (data: boolean) => {
         if (data !== ExamStart) {
-            message.info("正在排队发卷，请勿刷新，并耐心等待几秒")
+            message.info(t("queuingForExamPaper"))
             setTimeout(() => {
                 setExamStartX(data)
                 props.history.push(UrlPrefix + "/exam/running/" + props.match.params.eid + "/0/0")
@@ -31,9 +33,9 @@ const EWait = (props: any) => {
     const examInfo = useExamInfo(props.match.params.eid)
 
     const getExamStartText = () => {
-        if (examInfo === undefined) return ""
-        if (examInfo.userIsSubmit === 1) return "已交卷"
-        if (examInfo.endTime < Date.now()) return "已结束"
+    if (examInfo === undefined) return ""
+    if (examInfo.userIsSubmit === 1) return t("submitted")
+    if (examInfo.endTime < Date.now()) return t("ended")
         return props.t("StartAnswering")
     }
 
@@ -67,7 +69,7 @@ const EWait = (props: any) => {
                         props.history.push(UrlPrefix + "/exam/report/" + props.match.params.eid)
                     }}
                 >
-                    报告
+                    {t("examReport")}
                 </Button>
             )
         }
@@ -92,7 +94,7 @@ const EWait = (props: any) => {
                                         />
                                     )}
                                     {examState === "running" && (
-                                        <Timer name={"距离结束"}
+                                        <Timer name={t("timeToEnd")}
                                                deadline={examInfo?.endTime}
                                         />
                                     )}

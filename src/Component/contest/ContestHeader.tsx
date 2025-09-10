@@ -77,7 +77,7 @@ const ContestHeader = (props: any) => {
                     <Card style={{marginTop: 25}}>
                         <div className={"center"}>
                             <span style={{float: "left"}}>
-                                <span style={{fontWeight: "bold"}}>开始时间：</span>
+                                <span style={{fontWeight: "bold"}}>{props.t("StartTimeLabel")}</span>
                                 {unix2Time(contestInfo.gmtStart)}
                             </span>
                             <span style={{fontWeight: "bold", fontSize: "1.75rem"}}>
@@ -90,7 +90,7 @@ const ContestHeader = (props: any) => {
                                 )}
                             </span>
                             <span style={{float: "right"}}>
-                                <span style={{fontWeight: "bold"}}>结束时间：</span>
+                                <span style={{fontWeight: "bold"}}>{props.t("EndTimeLabel")}</span>
                                 {unix2Time(contestInfo.gmtEnd)}
                             </span>
                         </div>
@@ -112,7 +112,7 @@ const ContestHeader = (props: any) => {
                                 <Col span={8}>
                                     {timeState === "running" && (
                                         <span style={{float: "left"}}>
-                                    <span style={{fontWeight: "bold"}}>已用时间：</span>
+                                    <span style={{fontWeight: "bold"}}>{props.t("ElapsedTime")}</span>
                                     <DTime type={"before"} time={contestInfo.gmtStart}/>
                                 </span>
                                     )}
@@ -121,26 +121,26 @@ const ContestHeader = (props: any) => {
                                     {timeState === "wait" && (
                                         <span style={{color: "blue"}}>
                                     <Space>
-                                        距离开始还有：
+                                        {props.t("TimeUntilStart")} 
                                         <Countdown
                                             className={"contestHeaderTimer"}
                                             value={parseInt(contestInfo.gmtStart)}
-                                            format="H 时 m 分 s 秒"
+                                            format={props.t("TimeFormat")}
                                         />
                                     </Space>
                                 </span>
                                     )}
                                     {timeState === "running" && (
-                                        <span style={{color: "red"}}>进行中</span>
+                                <span style={{color: "red"}}>{props.t("running")}</span>
                                     )}
                                     {timeState === "end" && (
-                                        <span style={{color: "green"}}>已结束</span>
+                                <span style={{color: "green"}}>{props.t("ended")}</span>
                                     )}
                                 </Col>
                                 <Col span={8}>
                                     {timeState === "running" && (
                                         <span style={{float: "right"}}>
-                                    <span style={{fontWeight: "bold"}}>剩余时间：</span>
+                                    <span style={{fontWeight: "bold"}}>{props.t("TimeLeftLabel")}</span>
                                     <DTime type={"after"} time={contestInfo.gmtEnd}/>
                                 </span>
                                     )}
@@ -192,12 +192,12 @@ const ContestHeader = (props: any) => {
                             )}
                             {props.allowSliderMove === true && selectedKey === "Rank" && (
                                 <>
-                                    历史回放
+                                    {props.t("HistoryReplay")}
                                     <Switch
                                         checked={props.openSliderMove}
                                         onChange={props.setOpenSliderMove}
-                                        checkedChildren={"启用"}
-                                        unCheckedChildren={"关闭"}
+                                        checkedChildren={props.t("Enabled")}
+                                        unCheckedChildren={props.t("Disabled")}
                                     />
                                     <Divider type={"vertical"}/>
                                 </>
@@ -205,12 +205,12 @@ const ContestHeader = (props: any) => {
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
                                 timeState === "end" && selectedKey === "Rank" && (
                                     <>
-                                        赛后提交
+                                        {props.t("AfterContestSubmission")}
                                         <Switch
                                             checked={props.afterContestSubmission}
                                             onChange={props.setAfterContestSubmission}
-                                            checkedChildren={"显示"}
-                                            unCheckedChildren={"不显示"}
+                                            checkedChildren={props.t("Show")}
+                                            unCheckedChildren={props.t("Hide")}
                                         />
                                         <Divider type={"vertical"}/>
                                     </>
@@ -220,10 +220,10 @@ const ContestHeader = (props: any) => {
                                     <>
                                         <ExportExcel
                                             ButtonProps={{size: "small"}}
-                                            ButtonText={"导出"}
+                                            ButtonText={props.t("export")}
                                             ButtonType={"link"}
                                             getJson={() => exportRank(props.exportData)}
-                                            fileName={contestInfo.contestTitle + "_" + Date.now() + "_结果导出"}
+                                            fileName={contestInfo.contestTitle + "_" + Date.now() + props.t("ResultExportSuffix")}
                                         />
                                         <Divider type={"vertical"}/>
                                     </>

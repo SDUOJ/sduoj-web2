@@ -22,7 +22,7 @@ const Register = (props: any) => {
                         {contestInfoX.features.openness !== "public" && (
                             <>
                                 <Form layout={"vertical"} form={form}>
-                                    <Form.Item label={"比赛密码"} name={"password"}>
+                                    <Form.Item label={props.t("ContestPassword")} name={"password"}>
                                         <Input required/>
                                     </Form.Item>
                                 </Form>
@@ -33,25 +33,25 @@ const Register = (props: any) => {
                                                 contestId: contestId,
                                                 password: value.password
                                             }).then(() => {
-                                                message.success("注册成功")
+                                                message.success(props.t("RegisterSuccess"))
                                                 props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
                                                 window.location.reload()
                                             })
                                         })
-                                    }}>注册</Button>
+                                    }}>{props.t("Register")}</Button>
                                 </div>
                             </>
                         )}
                         {contestInfoX.features.openness === "public" && (
                             <>
                                 <div style={{width: "50%", textAlign: "center", margin: "0 auto"}}>
-                                    <Button type={"primary"} block onClick={() => {
+                    <Button type={"primary"} block onClick={() => {
                                         cApi.participateContest({contestId: contestId}).then(() => {
-                                            message.success("注册成功")
+                        message.success(props.t("RegisterSuccess"))
                                             props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
                                             window.location.reload()
                                         })
-                                    }}>注册</Button>
+                    }}>{props.t("Register")}</Button>
                                 </div>
                             </>
                         )}

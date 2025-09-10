@@ -17,6 +17,7 @@ import {isValueEmpty} from "../../Utils/empty";
 import Choice from "../../Component/problem/Objective/Choice";
 import CodeHighlight from "../../Component/common/CodeHighlight";
 import ProProgram from "../../Component/problem/Program/ProProgram";
+import {useTranslation} from "react-i18next";
 
 const EReport = (props: any) => {
     const eid = props.match.params.eid ?? props.eid
@@ -30,6 +31,7 @@ const EReport = (props: any) => {
     const [programVis, setProgramVis] = useState<boolean>(false)
     const [topInfo, setTopInfo] = useState<any[]>([eid, "", ""])
     const [proData, setProData] = useState<any>()
+    const {t} = useTranslation();
 
     const problemList = useSelector((state: any) => {
         return state.ExamReducer.examProListInfo[eid]
@@ -111,15 +113,15 @@ const EReport = (props: any) => {
                     {props.eid === undefined && (
                         <Result
                             className={"Ewait"}
-                            icon={<Title level={2}> 考试报告 </Title>}
+                            icon={<Title level={2}> {t('examReport')} </Title>}
                             title={examInfo?.title}
                             extra={
                                 <div className={"Ewait-content"}>
                                     <Card
                                         className={"exam-wait-card"}
                                     >
-                                        <Title level={4}> 学号： {examRes?.username}</Title>
-                                        <Title level={4}> 姓名： {examRes?.nickname}</Title>
+                                        <Title level={4}> {t('studentNumberLabel')} {examRes?.username}</Title>
+                                        <Title level={4}> {t('nameLabel')} {examRes?.nickname}</Title>
                                         <List
                                             size="small"
                                             dataSource={getDescription(examInfo).split('\n').filter((value: string) => value !== "")}
@@ -137,7 +139,7 @@ const EReport = (props: any) => {
                         />
                     )}
                     <Modal
-                        title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 作答详情`}
+                        title={`${t('problemGroup')}${topInfo[1] + 1} - ${topInfo[2] + 1} ${t('answerDetails')}`}
                         open={objectVis}
                         width={800}
                         onCancel={() => {
@@ -164,7 +166,7 @@ const EReport = (props: any) => {
                         })()}
                     </Modal>
                     <Modal
-                        title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 认定代码`}
+                        title={`${t('problemGroup')}${topInfo[1] + 1} - ${topInfo[2] + 1} ${t('recognizedCode')}`}
                         open={codeVis}
                         width={1000}
                         onCancel={() => {
@@ -181,7 +183,7 @@ const EReport = (props: any) => {
                         )}
                     </Modal>
                     <Modal
-                        title={`题组${topInfo[1] + 1} - ${topInfo[2] + 1} 题目详情`}
+                        title={`${t('problemGroup')}${topInfo[1] + 1} - ${topInfo[2] + 1} ${t('problemDetails')}`}
                         open={programVis}
                         width={1300}
                         onCancel={() => {
@@ -229,8 +231,8 @@ const EReport = (props: any) => {
                         myScore !== undefined && (
                             <>
                                 {props.eid === undefined && (<>
-                                    <Title level={4}> 总成绩： {myScore['all']} / {score['all']}</Title>
-                                    <Title level={4}> 明细 </Title>
+                                    <Title level={4}> {t('totalScoreLabel')} {myScore['all']} / {score['all']}</Title>
+                                    <Title level={4}> {t('details')} </Title>
                                 </>)}
                                 {examRes.problemGroupResult.map((groupData: any) => {
                                     const title = problemList[`${eid}_${groupData.groupIndex}`].title
@@ -247,7 +249,7 @@ const EReport = (props: any) => {
                                     const groupName = `${eid}_${groupData.groupIndex}`
                                     return (
                                         <Card
-                                            title={`题组${groupData.groupIndex + 1} - ${title} (${myScore[groupName]} / ${score[groupName]})`}
+                                            title={`${t('problemGroup')}${groupData.groupIndex + 1} - ${title} (${myScore[groupName]} / ${score[groupName]})`}
                                             bordered={false}>
                                             <List
                                                 dataSource={data}
@@ -262,7 +264,7 @@ const EReport = (props: any) => {
                                                                         <Button type={"link"} onClick={() => {
                                                                             setTopInfo([eid, groupData.groupIndex, item.id])
                                                                             setObjectVis(true)
-                                                                        }}>详情</Button>,
+                                                                        }}>{t('details')}</Button>,
                                                                     ]
                                                                 }
                                                                 if (type === "Program") {
@@ -273,11 +275,11 @@ const EReport = (props: any) => {
                                                                                     setCodeVis(true)
                                                                                 }}
                                                                                 disabled={isValueEmpty(item.code)}
-                                                                        > 认定代码 </Button>,
+                                                                        > {t('recognizedCode')} </Button>,
                                                                         <Button type={"link"} onClick={() => {
                                                                             setTopInfo([eid, groupData.groupIndex, item.id])
                                                                             setProgramVis(true)
-                                                                        }}>详情</Button>
+                                                                        }}>{t('details')}</Button>
                                                                     ]
                                                                 }
                                                             })()}

@@ -28,7 +28,7 @@ class MExam extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={true}
-                    title={"考试列表"}
+                    title={this.props.t("examList")}
                     extra={[
                         <ExamForm type={"create"}/>
                     ]}

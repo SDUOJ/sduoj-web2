@@ -12,8 +12,8 @@ const EFinish = (props: any) => {
         <>
             <Result
                 status="success"
-                title="试卷已提交成功"
-                subTitle="请有序离场并耐心等待考试成绩"
+                title={props.t("examSubmittedSuccess")}
+                subTitle={props.t("pleaseLeaveOrderlyAndWaitForResults")}
                 extra={
                     <Button
                         type="primary"
@@ -22,7 +22,7 @@ const EFinish = (props: any) => {
                             props.history.push(getRouterPath(routerE, 2));
                         }}
                     >
-                        返回考试列表
+                        {props.t("returnToExamList")}
                     </Button>
                 }
             />

@@ -94,7 +94,7 @@ const Problem = (props: any) => {
                         />
                     </div>
                     <div style={{marginTop: 25}}>
-                        <Card title={"题目导航"} className={"smallBodyPadding"}>
+                        <Card title={props.t("ProblemNav")} className={"smallBodyPadding"}>
                             <Table
                                 size={"small"}
                                 dataSource={contestInfo?.problems}
@@ -129,7 +129,7 @@ const Problem = (props: any) => {
                                     },
                                     {
                                         key: "AC_Submits",
-                                        title: "通过 / 提交",
+                                        title: props.t("AcceptedSlashSubmitted"),
                                         render: (_text: any, row: any) => {
                                             return (
                                                 <>

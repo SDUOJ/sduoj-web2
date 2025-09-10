@@ -244,14 +244,14 @@ const Rank = (props: any) => {
     }, [rankInfo, props.afterContestSubmission, props.sliderTime])
 
     const problemColumns: any = [{
-        title: "排名",
+        title: props.t("Rank"),
         dataIndex: "rank",
         width: 80,
         render: (text: any) => {
             return <span className={"center"}> {text} </span>
         }
     }, {
-        title: "参赛人",
+        title: props.t("Participant"),
         width: 150,
         render: (text: any, row: any) => {
             let like = storedValue.includes(row.username);
@@ -277,7 +277,7 @@ const Rank = (props: any) => {
             )
         }
     }, {
-        title: "分数",
+        title: props.t("Score"),
         width: 100,
         render: (text: any, row: any) => {
             return (
@@ -365,7 +365,7 @@ const Rank = (props: any) => {
                                                     {SData.pending}
                                                 </span>
                                             )}
-                                            &nbsp;{SData.tries + SData.pending <= 1 ? "try" : "tries"}
+                                            &nbsp;{SData.tries + SData.pending <= 1 ? props.t("try") : props.t("tries")}
                                         </span>
 
 
@@ -410,7 +410,7 @@ const Rank = (props: any) => {
                 }}
             >
                 <SubmissionList
-                    btnText={"记录-" + sbl_user + "-" + sbl_pro}
+                    btnText={props.t("RecordPrefix") + sbl_user + "-" + sbl_pro}
                     name={"Contest-Rank-SubmissionList-" + sbl_user + "-" + sbl_pro}
                     API={async (data: any) => {
                         return cApi.getContestSubmissionList({
@@ -447,11 +447,11 @@ const Rank = (props: any) => {
                         <Table.Summary.Row className={"RankSummary"}>
                             <Table.Summary.Cell index={0} colSpan={2}>
                                 <Space size={50}>
-                                    总结
+                                    {props.t("Summary")}
                                     <div style={{textAlign: "left", fontSize: 12}}>
-                                        <div><FileTextOutlined/> 通过数/提交数</div>
-                                        <div><TeamOutlined/> 通过用户/提交用户</div>
-                                        <div><Icon component={Champion}/> 最早通过</div>
+                                        <div><FileTextOutlined/> {props.t("AcceptedSlashSubmitted")}</div>
+                                        <div><TeamOutlined/> {props.t("AcceptedUsersSlashSubmittedUsers")}</div>
+                                        <div><Icon component={Champion}/> {props.t("FirstAccepted")}</div>
                                     </div>
                                 </Space>
                             </Table.Summary.Cell>

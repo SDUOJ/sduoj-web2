@@ -51,7 +51,7 @@ const Overview = (props: any) => {
                             },
                             {
                                 key: "AC_Submits",
-                                title: "通过 / 提交",
+                                title: props.t("AcceptedSlashSubmitted"),
                                 render: (_text: any, row: any) => {
                                     return (
                                         <>

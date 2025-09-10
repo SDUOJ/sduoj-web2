@@ -9,84 +9,84 @@ import ItemSwitch01 from "../../common/Form/Item/ItemSwitch01";
 const ContestMFormManagement = (props: any) => {
     return (
         <div style={{width: 1100}}>
-            <Form.Item label={"封榜时间(分钟)"} name={["features", "frozenTime"]}
-                       initialValue={0} required tooltip={"比赛的最后多少分钟封榜"}>
+            <Form.Item label={props.t("FrozenTimeMinutes")} name={["features", "frozenTime"]}
+                       initialValue={0} required tooltip={props.t("FrozenTimeTooltip") }>
                 <InputNumber/>
             </Form.Item>
             <Table
                 className={"ContestMFormManagementTable"}
                 title={() => {
-                    return "比赛参数";
+                    return props.t("ContestParams");
                 }}
                 columns={[
                     {title: "", dataIndex: "name"},
                     {
-                        title: "显示他人提交",
+                        title: props.t("DisplayPeerSubmission"),
                         render: (text: any, rows: any) => {
                             return (
                                 <ItemSwitch01
                                     InitValue={1}
                                     name={["features", rows.type, "displayPeerSubmission"]}
-                                    ck={"显示"}
-                                    unck={"不显示"}
+                                    ck={props.t("Show")}
+                                    unck={props.t("Hide")}
                                 />
                             )
                         }
                     },
                     {
-                        title: "显示排行榜",
+                        title: props.t("DisplayRank"),
                         render: (text: any, rows: any) => {
                             return (
                                 <ItemSwitch01
                                     InitValue={1}
                                     name={["features", rows.type, "displayRank"]}
-                                    ck={"显示"}
-                                    unck={"不显示"}
+                                    ck={props.t("Show")}
+                                    unck={props.t("Hide")}
                                 />
                             )
                         }
                     },
                     {
-                        title: "显示评测分数",
+                        title: props.t("DisplayJudgeScore"),
                         render: (text: any, rows: any) => {
                             return (
                                 <ItemSwitch01
                                     InitValue={1}
                                     name={["features", rows.type, "displayJudgeScore"]}
-                                    ck={"显示"}
-                                    unck={"不显示"}
+                                    ck={props.t("Show")}
+                                    unck={props.t("Hide")}
                                 />
                             )
                         }
                     },
                     {
-                        title: "显示测试点信息",
+                        title: props.t("DisplayCheckpointResult"),
                         render: (text: any, rows: any) => {
                             return (
                                 <ItemSwitch01
                                     InitValue={1}
                                     name={["features", rows.type, "displayCheckpointResult"]}
-                                    ck={"显示"}
-                                    unck={"不显示"}
+                                    ck={props.t("Show")}
+                                    unck={props.t("Hide")}
                                 />
                             )
                         }
                     },
                     {
-                        title: "允许提交",
+                        title: props.t("AllowToSubmit"),
                         render: (text: any, rows: any) => {
                             return (
                                 <ItemSwitch01
                                     InitValue={1}
                                     name={["features", rows.type, "allowToSubmit"]}
-                                    ck={"允许"}
-                                    unck={"不允许"}
+                                    ck={props.t("Allow")}
+                                    unck={props.t("Disallow")}
                                 />
                             )
                         }
                     },
                 ]}
-                dataSource={[{name: "比赛进行中", type: "contestRunning"}, {name: "比赛结束后", type: "contestEnd"}]}
+                dataSource={[{name: props.t("ContestRunning"), type: "contestRunning"}, {name: props.t("ContestEnd"), type: "contestEnd"}]}
                 pagination={false}
                 size={"small"}
             />
@@ -94,9 +94,9 @@ const ContestMFormManagement = (props: any) => {
                 name={"participants"}
                 label={
                     <>
-                        参赛者&nbsp;
+                        {props.t("ParticipantsLabel")} &nbsp;
                         <span style={{color: "grey", fontSize: 10}}>
-                            使用 TAB '\t', 空格 ' ', 换行 '\n' 或 逗号 ',' 分隔用户名
+                            {props.t("SplitUsernamesHint")}
                         </span>
                     </>
                 }
@@ -107,18 +107,18 @@ const ContestMFormManagement = (props: any) => {
                 name={"unofficialParticipants"}
                 label={
                     <>
-                        非正式参赛者&nbsp;
+                        {props.t("UnofficialParticipants")} &nbsp;
                         <span style={{color: "grey", fontSize: 10}}>
-                            使用 TAB '\t', 空格 ' ', 换行 '\n' 或 逗号 ',' 分隔用户名
+                            {props.t("SplitUsernamesHint")}
                         </span>
                     </>
                 }
             >
                 <TextArea rows={6}/>
             </Form.Item>
-            <ItemSelectGroup name={"groupId"} label={"管理组"} formName={"ContestForm"}/>
-            <ItemSelectGroup name={"participatingGroups"} label={"参赛组"} mode={"multiple"}
-                             tooltip={"参赛组中的参赛者不需要输入密码"} formName={"ContestForm"}/>
+            <ItemSelectGroup name={"groupId"} label={props.t("ManagementGroup")} formName={"ContestForm"}/>
+            <ItemSelectGroup name={"participatingGroups"} label={props.t("ParticipatingGroups")} mode={"multiple"}
+                             tooltip={props.t("ParticipantsNoPasswordHint")} formName={"ContestForm"}/>
         </div>
     )
 }

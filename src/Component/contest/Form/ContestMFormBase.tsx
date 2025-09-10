@@ -17,7 +17,7 @@ const ContestMFormBase = (props: any) => {
             <ItemTitle name={"contestTitle"}/>
             <Row>
                 <Col span={5}>
-                    <Form.Item label={"模式"} name={["features", "mode"]} required>
+                    <Form.Item label={props.t("Mode")} name={["features", "mode"]} required>
                         <Radio.Group>
                             <Radio value={"acm"}> ACM </Radio>
                             <Radio value={"oi"}> OI </Radio>
@@ -26,32 +26,32 @@ const ContestMFormBase = (props: any) => {
                     </Form.Item>
                 </Col>
                 <Col span={3}>
-                    <ItemSwitch01 name={"isPublic"} label={"是否公开"} ck={"是"} unck={"否"}/>
+                    <ItemSwitch01 name={"isPublic"} label={props.t("IsPublic")} ck={props.t("Yes")} unck={props.t("No")}/>
                 </Col>
                 <Col span={8}>
-                    <Form.Item label={"开放性"} required>
+                    <Form.Item label={props.t("Openness")} required>
                         <Select style={{width: 310}} value={openness} onChange={(value, option) => {
                             setOpenness(value)
                         }}>
-                            <Select.Option value={"public"}> 公开：任何人可以加入 </Select.Option>
-                            <Select.Option value={"protected"}> 保护：题目是公开的，但是提交需要密码 </Select.Option>
-                            <Select.Option value={"private"}> 私有：需要密码才能加入 </Select.Option>
+                            <Select.Option value={"public"}>{props.t("openness.public")}: {props.t("anyoneCanJoin")}</Select.Option>
+                            <Select.Option value={"protected"}>{props.t("openness.protected")}: {props.t("problemsPublicButSubmissionRequiresPassword")}</Select.Option>
+                            <Select.Option value={"private"}>{props.t("openness.private")}: {props.t("passwordRequiredToJoin")}</Select.Option>
                         </Select>
                     </Form.Item>
                 </Col>
                 <Col span={8}>
                     {openness !== "public" && (
-                        <ItemText name={"password"} label={"比赛密码"} required={true}/>
+                        <ItemText name={"password"} label={props.t("ContestPassword")} required={true}/>
                     )}
 
                 </Col>
             </Row>
             <Row>
                 <Col span={11}>
-                    <ItemTimeRange label="比赛起止时间" required={true}/>
+                    <ItemTimeRange label={props.t("ContestTimeRange")} required={true}/>
                 </Col>
                 <Col span={12}>
-                    <ItemText name={"source"} label={"来源"} required={false}/>
+                    <ItemText name={"source"} label={props.t("source")} required={false}/>
                 </Col>
             </Row>
 
@@ -59,7 +59,7 @@ const ContestMFormBase = (props: any) => {
                 <FormExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
 
-            <ItemEditor name={"markdownDescription"} label={"比赛公告"}/>
+            <ItemEditor name={"markdownDescription"} label={props.t("ContestAnnouncement")}/>
         </div>
     )
 

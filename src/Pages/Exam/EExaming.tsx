@@ -3,6 +3,7 @@ import {Button, Layout} from "antd";
 import { PageContainer } from '@ant-design/pro-components';
 import ExamRun from "../../Component/exam/ExamRun";
 import ChangeLang from "../../Component/common/ChangeLang";
+import {withTranslation} from "react-i18next";
 
 interface IUserInfo {
     name: string                        // 姓名
@@ -11,7 +12,7 @@ interface IUserInfo {
     IDNumber?: string                   // 身份证号
 }
 
-export default class EExaming extends Component<any, any> {
+class EExaming extends Component<any, any> {
 
 
     render() {
@@ -19,12 +20,12 @@ export default class EExaming extends Component<any, any> {
                         <div className={"exam-container"}>
                                 <PageContainer
                                         header={{
-                                            title: '《计算导论与程序设计》期末考试',
+                                            title: this.props.t?.('ExamTitle'),
                                             extra: [
                                                 <ChangeLang key="lang"/>,
-                                                <Button key="2">暂存</Button>,
+                                                <Button key="2">{this.props.t?.('TempSave')}</Button>,
                                                 <Button key="1" type="primary" danger>
-                                                    交卷
+                                                    {this.props.t?.('SubmitPaper')}
                                                 </Button>,
                                             ],
                                         }}
@@ -32,8 +33,10 @@ export default class EExaming extends Component<any, any> {
                                 >
                                         <ExamRun/>
                                 </PageContainer>
-                                <Layout.Footer style={{textAlign: 'center'}}>山东大学计算机科学与技术学院 ©2020-2021</Layout.Footer>
+                                <Layout.Footer style={{textAlign: 'center'}}>{this.props.t?.('ExamFooterBrand')}</Layout.Footer>
                         </div>
         )
     }
 }
+
+export default withTranslation()(EExaming)

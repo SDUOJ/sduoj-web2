@@ -17,9 +17,9 @@ class MContest extends Component<any, any> {
     render() {
 
         let ProblemSubForm = [
-            {component: <ContestMFormBase/>, label: "基本信息"},
-            {component: <ContestMFormManagement/>, label: "管理"},
-            {component: <ContestMFormProblem/>, label: "题目"},
+            {component: <ContestMFormBase/>, label: this.props.t("BasicInformation")},
+            {component: <ContestMFormManagement/>, label: this.props.t("Management")},
+            {component: <ContestMFormProblem/>, label: this.props.t("Problem")},
         ]
 
         const getValue = (v: any[]) => {
@@ -86,7 +86,7 @@ class MContest extends Component<any, any> {
                             {text}
                             {row.features.openness === "private" && (<LockOutlined style={{color: "red"}}/>)}
                             {row.features.openness === "protected" && (<LockOutlined style={{color: "orange"}}/>)}
-                            {row.isPublic === 0 && (<Tag color={"red"}>私有</Tag>)}
+                            {row.isPublic === 0 && (<Tag color={"red"}>{this.props.t("private")}</Tag>)}
                         </Space>
                     )
                 }
@@ -101,7 +101,7 @@ class MContest extends Component<any, any> {
                 }
             },
             {
-                title: "持续时间",
+                title: this.props.t("Duration"),
                 width: "auto",
                 responsive: ["lg", "sm"],
                 render: (text: string, rows: any) => {
@@ -143,11 +143,11 @@ class MContest extends Component<any, any> {
                 width: "150px",
                 render: (text: any, rows: any) => {
                     return (
-                        <Space size={3}>
+            <Space size={3}>
                             <ModalFormUseForm
                                 TableName={"ContestList"}
                                 width={1200}
-                                title={"编辑(" + rows.contestTitle + ")"}
+                title={this.props.t("EditWithName", {name: rows.contestTitle})}
                                 type={"update"}
                                 subForm={ProblemSubForm}
                                 formName={"ContestForm"}
@@ -160,7 +160,7 @@ class MContest extends Component<any, any> {
                             <ModalFormUseForm
                                 TableName={"ContestList"}
                                 width={1200}
-                                title={"新建比赛 - (克隆自" + rows.contestTitle + ")"}
+                title={this.props.t("CreateContestFrom", {name: rows.contestTitle})}
                                 type={"fork"}
                                 subForm={ProblemSubForm}
                                 formName={"ContestForm"}
@@ -181,13 +181,13 @@ class MContest extends Component<any, any> {
                 <Card
                     size={"small"}
                     bordered={true}
-                    title={"比赛列表"}
+                    title={this.props.t("contestList")}
                     extra={
                         <>
                             <ModalFormUseForm
                                 TableName={"ContestList"}
                                 width={1200}
-                                title={"新建比赛"}
+                                title={this.props.t("CreateContest")}
                                 type={"create"}
                                 subForm={ProblemSubForm}
                                 formName={"ContestForm"}

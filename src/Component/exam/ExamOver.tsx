@@ -14,7 +14,7 @@ const ExamOver = (props: any) => {
         <>
             <Popconfirm
                 okType={"primary"}
-                title="交卷后将无法继续作答，你确定要交卷吗？"
+                title={props.t("SubmitExamConfirm")}
                 onConfirm={() => {
                     setDisabled(true)
                     const urls = props.location.pathname.split('/')
@@ -30,8 +30,8 @@ const ExamOver = (props: any) => {
                         setDisabled(false)
                     })
                 }}
-                okText="确定交卷"
-                cancelText="取消"
+                okText={props.t("ConfirmSubmitPaper")}
+                cancelText={props.t("Cancel")}
                 disabled={disabled}
             >
                 <Button
@@ -40,7 +40,7 @@ const ExamOver = (props: any) => {
                     type={"primary"}
                     disabled={disabled}
                 >
-                    交卷
+                    {props.t("SubmitPaper")}
                 </Button>
             </Popconfirm>
         </>
