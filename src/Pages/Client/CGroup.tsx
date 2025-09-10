@@ -30,7 +30,8 @@ const CGroup = (props: any) => {
                     <div className={"GroupPage"}>
                         <TableWithPagination
                             useList={true}
-                            listCardBordered={false}
+                            // 需求: 保留 Group 页面外层列表卡片边框
+                            listCardBordered={true}
                             name={"GroupList"}
                             title={t("group")}
                             API={cApi.getGroupList}
@@ -67,6 +68,8 @@ const CGroup = (props: any) => {
                                         key={item.groupId}
                                     >
                                         <Card
+                                            bordered
+                                            variant="outlined"
                                             styles={{
                                                 body: {paddingBottom: 0},
                                             }}

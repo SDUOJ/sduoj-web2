@@ -606,6 +606,28 @@ h5.TestCase-text {
     margin-top: 12px;
 }
 
+/* ========== Group Page Card 边框 & 圆角修复 ==========
+   1. 保留列表外层卡片与内部单元卡片边框
+   2. 修复内部单元卡片底部左/右角边框缺失（actions 区域未继承圆角导致视觉缺口）
+*/
+.GroupPage .ant-list-item .ant-card.ant-card-bordered {
+    border: 1px solid var(--ant-color-border, #d9d9d9);
+    border-radius: 12px;
+    overflow: hidden; /* 确保子元素不溢出截断圆角 */
+}
+
+.GroupPage .ant-list-item .ant-card .ant-card-actions {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+}
+
+/* 确保 actions 与主体之间的分隔线存在且不盖住两侧竖线 */
+.GroupPage .ant-list-item .ant-card .ant-card-actions > li {
+    /* antd 默认使用 flex:1; 这里不改动布局，只补强边框衔接 */
+    position: relative;
+}
+
 /* 全局统一去除 Card 阴影；若个别需要阴影可在组件 style 中单独添加 boxShadow */
 .ant-card,
 .ant-card-hoverable,

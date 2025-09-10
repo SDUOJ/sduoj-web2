@@ -17,7 +17,8 @@ const GroupUserListCard = (props: any) => {
     return (
         <>
             <Card
-                bordered={false}
+                // bordered={false}
+                variant={"borderless"}
                 extra={
                     <Space>
                         <div>{t("search")}:</div>
@@ -35,26 +36,19 @@ const GroupUserListCard = (props: any) => {
                 <List
                     bordered={false}
                     grid={{gutter: 8, column: 6, lg: 6, xl: 6, md: 4, sm: 4, xs: 2}}
-                    renderItem={(item: any) => {
-                        return (
-                            <List.Item.Meta
-                                style={{
-                                    padding: 8,
-                                    margin: 6,
-                                    boxShadow: '0 0 3px rgba(0, 0, 0, 0.3)',
-                                    borderRadius: '10px'
-                                }}
-                                title={item.username}
-                                avatar={<UserAvatar email={item.email}/>}
-                                description={item.nickname}
-                                className={"group-user-list"}
-                            />
-                        )
-                    }}
                     dataSource={props.members.filter((item: any) => {
                         if (isValueEmpty(searchKey)) return true;
                         return item.username.indexOf(searchKey) !== -1 || item.nickname.indexOf(searchKey) !== -1
                     })}
+                    renderItem={(item: any) => (
+                        <List.Item key={item.username} className={"group-user-list"}>
+                            <List.Item.Meta
+                                avatar={<UserAvatar email={item.email} />}
+                                title={<div className="group-user-name" title={item.username}>{item.username}</div>}
+                                description={<div className="group-user-nickname" title={item.nickname}>{item.nickname}</div>}
+                            />
+                        </List.Item>
+                    )}
                     pagination={{
                         total: props.members.length,
                         size: "small",
@@ -70,8 +64,7 @@ const GroupUserListCard = (props: any) => {
                             setPageSize(pageSize)
                         }
                     }}
-                >
-                </List>
+                />
             </Card>
         </>
     )
