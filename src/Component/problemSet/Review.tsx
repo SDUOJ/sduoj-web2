@@ -126,6 +126,9 @@ const Review = (props: any) => {
             }
             res.pid = rows.pid
             res.gid = rows.gid
+            if (rows.type !== undefined && res.type === undefined) {
+                res.type = rows.type
+            }
             if (!isValueEmpty(res.judgeLog)) {
                 let sum = 0
                 let rs: any = {}
@@ -250,7 +253,7 @@ const Review = (props: any) => {
 
             <Modal
                 title={props.t("SubjectiveScoring")}
-                width={1400}
+                width={judgeInfo?.type === 2 ? 640 : 1400}
                 open={vis}
                 maskClosable={false}
                 onCancel={() => {
@@ -260,113 +263,220 @@ const Review = (props: any) => {
                 footer={false}
                 destroyOnHidden={true}
             >
-                <Row gutter={24}>
-                    <Col span={14}>
-                        <SubjectivePreview
-                            description={judgeInfo?.description}
-                            answer={judgeInfo?.answer}
-                        />
-                    </Col>
-                    <Col span={10}>
-                        <Card
-                            className={"scorePane"}
-                            size="small"
-                            title={props.t("ScorePanel")}
-                            headStyle={{padding: 0}}
-                        >
-                            <div>
-                                <ScoreMode
-                                    reviewInfo={reviewInfo}
-                                    setReviewInfo={setReviewInfo}
-                                    scoreModeInfo={judgeInfo.judgeConfig}
-                                />
-                                <Form layout={"vertical"} style={{marginBottom: 32}}>
-                                    <Form.Item label={props.t("ReviewNote")}>
-                                        <Input.TextArea value={judgeComment} onChange={(e) => {
-                                            setJudgeComment(e.target.value)
-                                        }}/>
-                                    </Form.Item>
-                                </Form>
-                                <div style={{marginTop: 12, marginBottom: 12}}>
-                                    <Form.Item label={props.t("AutoOpenNext")}>
-                                        <SwitchX value={autoNext} onChange={setAutoNext} ck={props.t("AutoNext")}
-                                                 unck={props.t("ManualNext")}/>
-                                    </Form.Item>
-                                </div>
-                                <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
-                                        type="primary" onClick={() => {
-                                    if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
-                                        message.error(props.t("IncompleteScores"))
-                                        return
-                                    }
-                                    let res = []
-                                    for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
-                                        let x = judgeInfo.judgeConfig.children[i]
-                                        res.push({name: x.name, score: x.score, jScore: reviewInfo[i + 1]})
-                                    }
-                                    cApi.updateJudgeInfo({
-                                        psid: psid,
-                                        gid: judgeInfo.gid,
-                                        pid: judgeInfo.pid,
-                                        username: judgeInfo.username,
-                                        judgeLog: res,
-                                        judgeComment: judgeComment
-                                    }).then(() => {
-                                        setClickSubmit(true)
-                                        setVis(false)
-                                        props.addTableVersion("problemSetSubjectiveJudgeList")
-                                    })
-                                }}> {props.t("SubmitScores")} </Button>
-                                <Button
-                                    disabled={
-                                        judgeInfo.judgeLock_username !== props.username ||
-                                        Object.keys(reviewInfo).length !== 0
-                                    }
-                                    block={true}
-                                    style={{marginTop: 12}}
-                                    type="default"
-                                    ghost
-                                    danger
-                                    onClick={() => {
-                                    let res = []
-                                    for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
-                                        let x = judgeInfo.judgeConfig.children[i]
-                                        res.push({name: x.name, score: x.score, jScore: x.score})
-                                    }
-                                    cApi.updateJudgeInfo({
-                                        psid: psid,
-                                        gid: judgeInfo.gid,
-                                        pid: judgeInfo.pid,
-                                        username: judgeInfo.username,
-                                        judgeLog: res,
-                                        judgeComment: judgeComment
-                                    }).then(() => {
-                                        setClickSubmit(true)
-                                        setVis(false)
-                                        props.addTableVersion("problemSetSubjectiveJudgeList")
-                                    })
-                                }}>
-                                    {props.t("SetTo")}<span style={{fontWeight: "bolder"}}> {props.t("FullScore")} </span>{props.t("AndSubmitScores")}
-                                </Button>
-                                {judgeInfo.judgeLock_username === props.username && (
-                                    <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
+                {judgeInfo?.type === 2 && (
+                    // 验收题型：仅展示右侧评分面板
+                    <Row gutter={24}>
+                        <Col span={24}>
+                            <Card
+                                className={"scorePane"}
+                                size="small"
+                                title={props.t("ScorePanel")}
+                                headStyle={{padding: 0}}
+                            >
+                                <div>
+                                    <ScoreMode
+                                        reviewInfo={reviewInfo}
+                                        setReviewInfo={setReviewInfo}
+                                        scoreModeInfo={judgeInfo.judgeConfig}
+                                    />
+                                    <Form layout={"vertical"} style={{marginBottom: 32}}>
+                                        <Form.Item label={props.t("ReviewNote")}>
+                                            <Input.TextArea value={judgeComment} onChange={(e) => {
+                                                setJudgeComment(e.target.value)
+                                            }}/>
+                                        </Form.Item>
+                                    </Form>
+                                    <div style={{marginTop: 12, marginBottom: 12}}>
+                                        <Form.Item label={props.t("AutoOpenNext")}>
+                                            <SwitchX value={autoNext} onChange={setAutoNext} ck={props.t("AutoNext")}
+                                                     unck={props.t("ManualNext")}/>
+                                        </Form.Item>
+                                    </div>
+                                    <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
+                                            type="primary" onClick={() => {
+                                        if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
+                                            message.error(props.t("IncompleteScores"))
+                                            return
+                                        }
+                                        let res = []
+                                        for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
+                                            let x = judgeInfo.judgeConfig.children[i]
+                                            res.push({name: x.name, score: x.score, jScore: reviewInfo[i + 1]})
+                                        }
                                         cApi.updateJudgeInfo({
                                             psid: psid,
                                             gid: judgeInfo.gid,
                                             pid: judgeInfo.pid,
                                             username: judgeInfo.username,
-                                            judgeLog: [],
-                                            cancel: 1
+                                            judgeLog: res,
+                                            judgeComment: judgeComment
                                         }).then(() => {
+                                            setClickSubmit(true)
                                             setVis(false)
                                             props.addTableVersion("problemSetSubjectiveJudgeList")
                                         })
-                                    }}>{props.t("CancelReview")}</Button>
-                                )}
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
+                                    }}> {props.t("SubmitScores")} </Button>
+                                    <Button
+                                        disabled={
+                                            judgeInfo.judgeLock_username !== props.username ||
+                                            Object.keys(reviewInfo).length !== 0
+                                        }
+                                        block={true}
+                                        style={{marginTop: 12}}
+                                        type="default"
+                                        ghost
+                                        danger
+                                        onClick={() => {
+                                        let res = []
+                                        for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
+                                            let x = judgeInfo.judgeConfig.children[i]
+                                            res.push({name: x.name, score: x.score, jScore: x.score})
+                                        }
+                                        cApi.updateJudgeInfo({
+                                            psid: psid,
+                                            gid: judgeInfo.gid,
+                                            pid: judgeInfo.pid,
+                                            username: judgeInfo.username,
+                                            judgeLog: res,
+                                            judgeComment: judgeComment
+                                        }).then(() => {
+                                            setClickSubmit(true)
+                                            setVis(false)
+                                            props.addTableVersion("problemSetSubjectiveJudgeList")
+                                        })
+                                    }}>
+                                        {props.t("SetTo")}<span style={{fontWeight: "bolder"}}> {props.t("FullScore")} </span>{props.t("AndSubmitScores")}
+                                    </Button>
+                                    {judgeInfo.judgeLock_username === props.username && (
+                                        <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
+                                            cApi.updateJudgeInfo({
+                                                psid: psid,
+                                                gid: judgeInfo.gid,
+                                                pid: judgeInfo.pid,
+                                                username: judgeInfo.username,
+                                                judgeLog: [],
+                                                cancel: 1
+                                            }).then(() => {
+                                                setVis(false)
+                                                props.addTableVersion("problemSetSubjectiveJudgeList")
+                                            })
+                                        }}>{props.t("CancelReview")}</Button>
+                                    )}
+                                </div>
+                            </Card>
+                        </Col>
+                    </Row>
+                )}
+                {judgeInfo?.type !== 2 && (
+                    <Row gutter={24}>
+                        <Col span={14}>
+                            <SubjectivePreview
+                                description={judgeInfo?.description}
+                                answer={judgeInfo?.answer}
+                                type={judgeInfo?.type}
+                            />
+                        </Col>
+                        <Col span={10}>
+                            <Card
+                                className={"scorePane"}
+                                size="small"
+                                title={props.t("ScorePanel")}
+                                headStyle={{padding: 0}}
+                            >
+                                <div>
+                                    <ScoreMode
+                                        reviewInfo={reviewInfo}
+                                        setReviewInfo={setReviewInfo}
+                                        scoreModeInfo={judgeInfo.judgeConfig}
+                                    />
+                                    <Form layout={"vertical"} style={{marginBottom: 32}}>
+                                        <Form.Item label={props.t("ReviewNote")}>
+                                            <Input.TextArea value={judgeComment} onChange={(e) => {
+                                                setJudgeComment(e.target.value)
+                                            }}/>
+                                        </Form.Item>
+                                    </Form>
+                                    <div style={{marginTop: 12, marginBottom: 12}}>
+                                        <Form.Item label={props.t("AutoOpenNext")}>
+                                            <SwitchX value={autoNext} onChange={setAutoNext} ck={props.t("AutoNext")}
+                                                     unck={props.t("ManualNext")}/>
+                                        </Form.Item>
+                                    </div>
+                                    <Button disabled={judgeInfo.judgeLock_username !== props.username} block={true}
+                                            type="primary" onClick={() => {
+                                        if (Object.keys(reviewInfo).length < judgeInfo.judgeConfig.children.length + 1) {
+                                            message.error(props.t("IncompleteScores"))
+                                            return
+                                        }
+                                        let res = []
+                                        for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
+                                            let x = judgeInfo.judgeConfig.children[i]
+                                            res.push({name: x.name, score: x.score, jScore: reviewInfo[i + 1]})
+                                        }
+                                        cApi.updateJudgeInfo({
+                                            psid: psid,
+                                            gid: judgeInfo.gid,
+                                            pid: judgeInfo.pid,
+                                            username: judgeInfo.username,
+                                            judgeLog: res,
+                                            judgeComment: judgeComment
+                                        }).then(() => {
+                                            setClickSubmit(true)
+                                            setVis(false)
+                                            props.addTableVersion("problemSetSubjectiveJudgeList")
+                                        })
+                                    }}> {props.t("SubmitScores")} </Button>
+                                    <Button
+                                        disabled={
+                                            judgeInfo.judgeLock_username !== props.username ||
+                                            Object.keys(reviewInfo).length !== 0
+                                        }
+                                        block={true}
+                                        style={{marginTop: 12}}
+                                        type="default"
+                                        ghost
+                                        danger
+                                        onClick={() => {
+                                        let res = []
+                                        for (let i = 0; i < judgeInfo.judgeConfig.children.length; i++) {
+                                            let x = judgeInfo.judgeConfig.children[i]
+                                            res.push({name: x.name, score: x.score, jScore: x.score})
+                                        }
+                                        cApi.updateJudgeInfo({
+                                            psid: psid,
+                                            gid: judgeInfo.gid,
+                                            pid: judgeInfo.pid,
+                                            username: judgeInfo.username,
+                                            judgeLog: res,
+                                            judgeComment: judgeComment
+                                        }).then(() => {
+                                            setClickSubmit(true)
+                                            setVis(false)
+                                            props.addTableVersion("problemSetSubjectiveJudgeList")
+                                        })
+                                    }}>
+                                        {props.t("SetTo")}<span style={{fontWeight: "bolder"}}> {props.t("FullScore")} </span>{props.t("AndSubmitScores")}
+                                    </Button>
+                                    {judgeInfo.judgeLock_username === props.username && (
+                                        <Button danger block type={"primary"} style={{marginTop: 12}} onClick={() => {
+                                            cApi.updateJudgeInfo({
+                                                psid: psid,
+                                                gid: judgeInfo.gid,
+                                                pid: judgeInfo.pid,
+                                                username: judgeInfo.username,
+                                                judgeLog: [],
+                                                cancel: 1
+                                            }).then(() => {
+                                                setVis(false)
+                                                props.addTableVersion("problemSetSubjectiveJudgeList")
+                                            })
+                                        }}>{props.t("CancelReview")}</Button>
+                                    )}
+                                </div>
+                            </Card>
+                        </Col>
+                    </Row>
+                )}
             </Modal>
         </div>
     )
