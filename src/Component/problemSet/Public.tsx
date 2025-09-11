@@ -57,17 +57,16 @@ const Public = (props: any) => {
                                     )}
                                 </>
                             }
+                            // antd Card actions 期望一维 ReactNode[]，之前误用二维数组导致布局异常
                             actions={[
-                                [
-                                    <Button
-                                        type="primary" disabled={State !== "running" || info?.finish === 1}
-                                        onClick={() => {
-                                            props.history.push(UrlPrefix + `/problemSet/${problemSetId}/overview`)
-                                        }}
-                                    >
-                                        {getStartText()}
-                                    </Button>
-                                ]
+                                <Button
+                                    type="primary" disabled={State !== "running" || info?.finish === 1}
+                                    onClick={() => {
+                                        props.history.push(UrlPrefix + `/problemSet/${problemSetId}/overview`)
+                                    }}
+                                >
+                                    {getStartText()}
+                                </Button>
                             ]}
                             className={"exam-wait-card"}
                         >
