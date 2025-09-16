@@ -53,9 +53,9 @@
     "cross-env": "^10",
     "css-loader": "^6",
     "css-minimizer-webpack-plugin": "^7",
+    "dayjs": "^1.11.13",
     "dotenv": "^16",
     "dotenv-expand": "^12",
-    "dayjs": "^1.11.13",
     "eslint": "^8.57",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.22.1",
@@ -215,6 +215,12 @@
     "**/@types/react-dom": "17.0.23"
   },
   "devDependencies": {
+    "image-minimizer-webpack-plugin": "^4.1.4",
+    "imagemin": "^9.0.1",
+    "imagemin-gifsicle": "^7.0.0",
+    "imagemin-jpegtran": "^8.0.0",
+    "imagemin-optipng": "^8.0.0",
+    "imagemin-svgo": "^11.0.1",
     "jest-environment-jsdom": "^29.7",
     "url": "^0.11.4"
   }
