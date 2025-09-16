@@ -15,6 +15,7 @@ const safePostCssParser = require('postcss-safe-parser');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin'); // disabled to allow absolute helper imports
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -245,7 +246,9 @@ module.exports = function (webpackEnv) {
   optimization: {
       minimize: isEnvProduction,
       minimizer: [
-    new TerserPlugin({
+        new TerserPlugin({
+          // Only minify webpack bundles under static/js, skip copied assets like public/vditor/**
+          include: /^(static[\\/]js[\\/])/,
           terserOptions: {
             parse: {
               // We want terser to parse ecma 8 code. However, we don't want it
@@ -287,12 +290,16 @@ module.exports = function (webpackEnv) {
           extractComments: false,
         }),
         new CssMinimizerPlugin({
+          // Only minimize CSS emitted under static/css
+          include: /^(static[\\/]css[\\/])/,
           minimizerOptions: {
             preset: ['default', { discardComments: { removeAll: true } }],
           },
         }),
         // 压缩图片资源，减小 jpg/png/svg 体积
         new ImageMinimizerPlugin({
+          // Only optimize images emitted under static/, skip assets copied to root like vditor/**
+          include: /^(static[\\/])/,
           minimizer: {
             implementation: ImageMinimizerPlugin.imageminMinify,
             options: {
@@ -701,6 +708,22 @@ module.exports = function (webpackEnv) {
           // both options are optional
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
+      // Copy all static assets from public/ to build/ (except index.html which HtmlWebpackPlugin handles)
+      isEnvProduction &&
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: paths.appPublic,
+              to: '.',
+              noErrorOnMissing: true,
+              globOptions: {
+                dot: true,
+                gitignore: false,
+                ignore: ['**/index.html'],
+              },
+            },
+          ],
         }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding

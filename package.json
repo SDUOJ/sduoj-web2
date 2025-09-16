@@ -215,6 +215,7 @@
     "**/@types/react-dom": "17.0.23"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^12",
     "image-minimizer-webpack-plugin": "^4.1.4",
     "imagemin": "^9.0.1",
     "imagemin-gifsicle": "^7.0.0",
