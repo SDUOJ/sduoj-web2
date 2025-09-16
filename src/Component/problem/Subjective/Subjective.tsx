@@ -207,7 +207,7 @@ const Subjective = (props: any) => {
                         {open === false && (
                             <MarkdownText
                                 id={"subjective-content-myAnswer-" + props.key_o}
-                                text={isValueEmpty(segments[0]) ? "<div style='text-align: center; font-weight: bold'>未作答</div>" : segments.map((s,i)=>`<p><b>[${i+1}]</b></p>\n${s}`).join('\n\n')}
+                                text={isValueEmpty(segments[0]) ? "<div style='text-align: center; font-weight: bold'>未作答</div>" : segments.map((s,i)=>`${s}`).join('\n\n')}
                             />
                         )}
                         {open === true && (
