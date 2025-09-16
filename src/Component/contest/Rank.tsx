@@ -473,7 +473,7 @@ const Rank = (props: any) => {
                                                     {parseInt(contestInfo.gmtEnd) + 1 !== SummaryInfo[`first_ac_${i}`] && (
                                                         <div>
                                                             <Icon component={Champion}/>
-                                                            <Typography.Text ellipsis={{
+                                                            <Typography.Text translate={"no"} ellipsis={{
                                                                 tooltip: TimeDiff(contestInfo.gmtStart, SummaryInfo[`first_ac_${i}`], "d", "h", "m", "s"),
                                                             }} style={{width: 50}}>
                                                                 {TimeDiff(contestInfo.gmtStart, SummaryInfo[`first_ac_${i}`], "d", "h", "m", "s")}

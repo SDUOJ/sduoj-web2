@@ -68,7 +68,6 @@ const CGroup = (props: any) => {
                                         key={item.groupId}
                                     >
                                         <Card
-                                            bordered
                                             variant="outlined"
                                             styles={{
                                                 body: {paddingBottom: 0},
@@ -96,6 +95,7 @@ const CGroup = (props: any) => {
                                             title={
                                                 <Link to={UrlPrefix + "/group/" + item.groupId}>
                                                     <Typography.Title
+                                                        translate="no"
                                                         level={5}
                                                         ellipsis={{rows: 1, tooltip: item.title}}
                                                         style={{marginBottom: 0}}
@@ -123,6 +123,7 @@ const CGroup = (props: any) => {
                                                         <div>{t("creator:")}{item.owner.username}</div>
                                                         <div>
                                                             <Typography.Paragraph
+                                                                translate="no"
                                                                 ellipsis={{
                                                                     rows: 2,
                                                                     expandable: true,
