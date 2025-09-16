@@ -1,6 +1,5 @@
 import {Component} from "react";
 import {Button, message} from "antd";
-import XLSX from "xlsx";
 import type { ButtonProps } from 'antd';
 
 interface IButtonText {
@@ -15,7 +14,8 @@ interface IButtonText {
 
 class ExportExcel extends Component<IButtonText, any> {
 
-    handleExportAll = (colMap: any, nowData: any, fileName: string) => {
+    handleExportAll = async (colMap: any, nowData: any, fileName: string) => {
+        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
         const json = nowData.map((item: any) => {
             return Object.keys(item).reduce((newData: any, key) => {
                 newData[colMap[key] || key] = item[key]
@@ -23,13 +23,14 @@ class ExportExcel extends Component<IButtonText, any> {
             }, {})
         });
         // console.log("json", json)
-        const sheet = XLSX.utils.json_to_sheet(json);
-        this.openDownloadDialog(this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
+    const sheet = XLSX.utils.json_to_sheet(json);
+    this.openDownloadDialog(await this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
     }
 
-    handleExportAllJson = (json: any, fileName: string) => {
-        const sheet = XLSX.utils.json_to_sheet(json);
-        this.openDownloadDialog(this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
+    handleExportAllJson = async (json: any, fileName: string) => {
+        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
+    const sheet = XLSX.utils.json_to_sheet(json);
+    this.openDownloadDialog(await this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
     }
 
     openDownloadDialog = (url: any, saveName: any) => {
@@ -48,7 +49,7 @@ class ExportExcel extends Component<IButtonText, any> {
         aLink.dispatchEvent(event);
     }
 
-    sheet2blob = (sheet: any, sheetName: any) => {
+    sheet2blob = async (sheet: any, sheetName: any) => {
         sheetName = sheetName || 'sheet1';
         let workbook: any = {
             SheetNames: [sheetName],
@@ -61,6 +62,7 @@ class ExportExcel extends Component<IButtonText, any> {
             bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
             type: 'binary'
         };
+        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
         let wbout = XLSX.write(workbook, wopts);
 
         // 字符串转ArrayBuffer
@@ -79,10 +81,10 @@ class ExportExcel extends Component<IButtonText, any> {
             <Button
                 type={this.props.ButtonType}
                 {...this.props.ButtonProps}
-                onClick={() => {
+                onClick={async () => {
                     if (this.props.getJson !== undefined) {
-                        this.props.getJson().then((json: any) => {
-                            this.handleExportAllJson(json, this.props.fileName)
+                        this.props.getJson().then(async (json: any) => {
+                            await this.handleExportAllJson(json, this.props.fileName)
                         }).catch((e: any) => {
                             // console.log(e)
                             message.error(e)
@@ -90,7 +92,7 @@ class ExportExcel extends Component<IButtonText, any> {
                     } else {
                         const nowData = this.props.nowData()
                         const colMap = this.props.colMap(nowData)
-                        this.handleExportAll(colMap, nowData, this.props.fileName)
+                        await this.handleExportAll(colMap, nowData, this.props.fileName)
                     }
                 }}
             >

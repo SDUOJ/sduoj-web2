@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Button, message, Modal, Space, Table} from "antd";
 import {InboxOutlined, PlusOutlined, SyncOutlined} from "@ant-design/icons";
 import Dragger from "antd/lib/upload/Dragger";
-import XLSX from "xlsx";
+// 按需动态加载 xlsx，避免进入首包
 import mApi from "../../Utils/API/m-api";
 import deepClone from "Utils/deepClone";
 import {withTranslation} from "react-i18next";
@@ -21,10 +21,11 @@ const AutoImportObjective = (props: any) => {
         // 通过FileReader对象读取文件
         const fileReader = new FileReader();
         fileReader.readAsBinaryString(file); // 以二进制方式打开文件
-        fileReader.onload = (event) => {
+    fileReader.onload = async (event) => {
             try {
                 const {result}: any = event.target;
-                const workbook = XLSX.read(result, {type: 'binary'});
+        const XLSX = (await import('xlsx')).default || (await import('xlsx'));
+        const workbook = XLSX.read(result, {type: 'binary'});
                 let data: any = [];
                 for (const sheet in workbook.Sheets) {
                     if (workbook.Sheets.hasOwnProperty(sheet)) {

@@ -3,7 +3,6 @@ import Title from "antd/es/typography/Title";
 import {useSelector} from "react-redux";
 import CApi from "../../Utils/API/c-api";
 import {Radio, Table, Button, message, Row, Col} from 'antd';
-import * as XLSX from 'xlsx';
 import {useTranslation} from "react-i18next";
 
 const CStudentMutualEvaluation = () => {
@@ -67,7 +66,8 @@ const CStudentMutualEvaluation = () => {
         }
     }, [isLogin])
 
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
+        const XLSX = (await import('xlsx')).default || (await import('xlsx'));
         const ws = XLSX.utils.json_to_sheet([
             ...Object.keys(vote_status).map((studentId) => ({
                 studentId,
