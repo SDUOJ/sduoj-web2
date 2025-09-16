@@ -93,7 +93,11 @@ class CHeader extends Component<any, any> {
                                                 ) : (
                                                     <Space>
                                                         <Button type={"text"} onClick={() => {
-                                                            this.props.history.push(UrlPrefix + "/login?to=" + this.props.location.pathname)
+                                                            const loginPath = UrlPrefix + "/login";
+                                                            const { pathname } = this.props.location;
+                                                            // 当前就在登录页时，不要再次修改重定向地址
+                                                            if (pathname === loginPath) return;
+                                                            this.props.history.push(loginPath + "?to=" + pathname)
                                                         }}>{this.props.t('LoginOrRegister', {defaultValue: this.props.t('Login') + ' / ' + this.props.t('Register')})}</Button>
                                                     </Space>
                                                 )}

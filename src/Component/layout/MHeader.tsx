@@ -60,7 +60,11 @@ class MHeader extends Component<any, any> {
                         />
                     ) : (
                         <Button type="text" onClick={() => {
-                            this.props.history.push(UrlPrefix + '/login?to=' + this.props.location.pathname)
+                            const loginPath = UrlPrefix + '/login';
+                            const { pathname } = this.props.location;
+                            // 如果已经在登录页，则不要修改已有重定向地址（也不再跳转）
+                            if (pathname === loginPath) return;
+                            this.props.history.push(loginPath + '?to=' + pathname);
                         }}>{this.props.t('LoginOrRegister', {defaultValue: this.props.t('Login') + ' / ' + this.props.t('Register')})}</Button>
                     )}
                 </div>
