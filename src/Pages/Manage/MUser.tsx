@@ -15,6 +15,7 @@ import UserFormAdditional from "../../Component/user/Form/UserFormAdditional";
 import mApi from "Utils/API/m-api"
 import ItemPassword from "../../Component/user/Form/Item/ItemPassword";
 import YesNoOperConfirm from "../../Component/common/YesNoOperConfirm";
+import AutoImportUsers from "../../Component/user/AutoImportUsers";
 
 const MUser = (props: any) => {
     const dispatch = useDispatch()
@@ -174,6 +175,7 @@ const MUser = (props: any) => {
                 title={props.t("userList")}
                 extra={
                     <Space>
+                        <AutoImportUsers/>
                         <ButtonWithSelection
                             type={"export"}
                             ButtonText={props.t("exportBatch")}
