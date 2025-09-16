@@ -38,11 +38,12 @@ const Announcement = (props: any) => {
                         {props.t("Announcement")}
                     </Space>
                 }
+                size="small"
                 className={"Announcement-Card"}
             >
                 <TableWithPagination
                     size={"small"}
-                    defaultPageSize={5}
+                    defaultPageSize={10}
                     columns={[
                         {
                             title: "ID",

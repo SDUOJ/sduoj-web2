@@ -241,6 +241,10 @@ const cApi = {
     async getProblemSetInfo(data: any) {
         return request.post("/ps/problem_set/info_c", data)
     },
+    // 获取全局 upcoming 题单（running/upcoming）
+    async getUpcomingProblemSet() {
+        return request.get("/ps/problem_set/upcoming")
+    },
     // 获取单个题目信息
     async getProblemSetProblem(data: any) {
         return request.post("/ps/problem_set/pro_info", data)

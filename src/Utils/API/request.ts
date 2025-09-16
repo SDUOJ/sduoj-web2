@@ -35,7 +35,8 @@ const getZipFile: any = async (url: string, data: object, config?: AxiosRequestC
 const messageDisabledList = [
     "/user/getProfile",
     "/submit/queryACProblem",
-    "/group/my"
+    "/group/my",
+    "/problem_set/upcoming"
 ]
 
 const dealResponse = async (resp: any, url: string) => {
@@ -57,7 +58,9 @@ const dealResponse = async (resp: any, url: string) => {
     } catch (e: any) {
         const response = e.response
         if (response === undefined) {
-            message.error("服务器不可达")
+            // respect silence list for network unreachable as well
+            if (messageDisabledList.indexOf(url) === -1)
+                message.error("服务器不可达")
             return Promise.reject("服务器不可达")
         }
         switch (response.data.code) {

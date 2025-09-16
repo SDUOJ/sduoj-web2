@@ -13,6 +13,7 @@
 
 # misc
 .idea
+.vscode
 .cert
 .DS_Store
 .env.local
