@@ -55,6 +55,7 @@
     "css-minimizer-webpack-plugin": "^7",
     "dotenv": "^16",
     "dotenv-expand": "^12",
+    "dayjs": "^1.11.13",
     "eslint": "^8.57",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.22.1",
