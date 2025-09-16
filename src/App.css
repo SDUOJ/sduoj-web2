@@ -1,5 +1,4 @@
 /* antd v5 uses CSS-in-JS; global reset is imported in index.tsx */
-@import "~vditor/dist/index.css";
 /* ProComponents v5 合并为 @ant-design/pro-components，且 antd v5 使用 CSS-in-JS，无需单独引入这些 CSS */
 
 

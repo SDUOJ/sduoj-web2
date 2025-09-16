@@ -10,6 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -31,42 +32,37 @@ try {
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const postcssNormalize = require('postcss-normalize');
+// NOTE: stray insertions removed; real configuration lives in module.exports below
 
-const appPackageJson = require(paths.appPackageJson);
-
-// Source maps are resource heavy and can cause out of memory issue for large source files.
+// ===== Missing constants restored (aligned with CRA ejected config) =====
+// Whether to generate source map in production
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
-const webpackDevClientEntry = require.resolve(
-  'react-dev-utils/webpackHotDevClient'
-);
-  const reactRefreshOverlayEntry = require.resolve(
-  'react-dev-utils/refreshOverlayInterop'
-);
-
-// Some apps do not need the benefits of saving a web request, so not inlining the chunk
-// makes for a smoother build process.
-const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
-
-// 不再在开发环境把 ESLint 错误降级为 warning，保持原始错误输出
-const emitErrorsAsWarnings = false; // process.env.ESLINT_NO_DEV_ERRORS === 'true';
-const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
-
+// Inline image limit for url-loader
 const imageInlineSizeLimit = parseInt(
-  process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
+  process.env.IMAGE_INLINE_SIZE_LIMIT || '10000',
+  10
 );
 
-// Check if TypeScript is setup
-const useTypeScript = fs.existsSync(paths.appTsConfig);
-
-// Get the path to the uncompiled service worker (if it exists).
-const swSrc = paths.swSrc;
-
-// style files regexes
+// CSS regexps
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+// TypeScript presence
+const useTypeScript = fs.existsSync(paths.appTsConfig);
+
+// Optionally disable ESLint plugin via env
+const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
+
+// Dev client entry used in development
+const webpackDevClientEntry = require.resolve(
+  'react-dev-utils/webpackHotDevClient'
+);
+
+// Service worker source path
+const swSrc = paths.swSrc;
 
 const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
@@ -215,6 +211,8 @@ module.exports = function (webpackEnv) {
       path: isEnvProduction ? paths.appBuild : undefined,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
+      // Clean the output directory before emit to avoid stale files (like old source maps)
+      clean: true,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
       filename: isEnvProduction
@@ -293,6 +291,34 @@ module.exports = function (webpackEnv) {
             preset: ['default', { discardComments: { removeAll: true } }],
           },
         }),
+        // 压缩图片资源，减小 jpg/png/svg 体积
+        new ImageMinimizerPlugin({
+          minimizer: {
+            implementation: ImageMinimizerPlugin.imageminMinify,
+            options: {
+              plugins: [
+                ['gifsicle', { interlaced: true }],
+                ['jpegtran', { progressive: true }],
+                ['optipng', { optimizationLevel: 5 }],
+                [
+                  'svgo',
+                  {
+                    plugins: [
+                      {
+                        name: 'preset-default',
+                        params: {
+                          overrides: {
+                            removeViewBox: false,
+                          },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              ],
+            },
+          },
+        }),
       ],
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
@@ -300,6 +326,46 @@ module.exports = function (webpackEnv) {
       splitChunks: {
         chunks: 'all',
         name: false,
+        minSize: 30 * 1024,
+        maxSize: 300 * 1024,
+        cacheGroups: {
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: 'react-vendor',
+            chunks: 'all',
+            priority: 30,
+          },
+          antd: {
+            test: /[\\/]node_modules[\\/]antd[\\/]/,
+            name: 'antd-vendor',
+            chunks: 'all',
+            priority: 25,
+          },
+          codemirror: {
+            test: /[\\/]node_modules[\\/](?:@uiw|@codemirror|codemirror)[\\/]/,
+            name: 'codemirror-vendor',
+            chunks: 'all',
+            priority: 20,
+          },
+          vditor: {
+            test: /[\\/]node_modules[\\/]vditor[\\/]/,
+            name: 'vditor-vendor',
+            chunks: 'all',
+            priority: 20,
+          },
+          xlsx: {
+            test: /[\\/]node_modules[\\/]xlsx[\\/]/,
+            name: 'xlsx-vendor',
+            chunks: 'all',
+            priority: 20,
+          },
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 10,
+          },
+        },
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
@@ -724,6 +790,9 @@ module.exports = function (webpackEnv) {
     // 恢复性能提示（之前关闭会屏蔽大资源警告）
     performance: {
       hints: 'warning'
+      ,assetFilter: (assetFilename) => {
+       return assetFilename.endsWith('.js') || assetFilename.endsWith('.css');
+     },
     },
     stats: {
       errorDetails: true,

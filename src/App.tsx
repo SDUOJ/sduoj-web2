@@ -1,18 +1,17 @@
-import React, {Dispatch, Suspense} from 'react';
+import React, {Dispatch, Suspense, lazy} from 'react';
 
 import './App.css';
 
 import './Config/i18n'
 import {ConfigProvider} from "antd";
 import {appTheme} from './Config/theme';
-import "vditor/src/assets/less/index.less";
 import {connect} from "react-redux";
 import {ConfigState} from "./Type/IConfig";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
-import SubmissionModal from "./Component/submission/Processing/ModalProcessing";
-import RequirePassChange from "./Component/common/RequirePassChange";
+const SubmissionModal = lazy(() => import('./Component/submission/Processing/ModalProcessing'));
+const RequirePassChange = lazy(() => import('./Component/common/RequirePassChange'));
 
 
 const App = (props: any) => {
@@ -23,10 +22,11 @@ const App = (props: any) => {
     <ConfigProvider locale={props.local} theme={appTheme}>
             {/*顶级路由*/}
             <Router>
-                {/*提交详情窗体*/}
-                <SubmissionModal/>
-                {/*密码修改提示*/}
-                <RequirePassChange/>
+                {/* 提交详情窗体 / 密码修改提示 懒加载，避免首屏引入 */}
+                <Suspense fallback={null}>
+                    <SubmissionModal/>
+                    <RequirePassChange/>
+                </Suspense>
                 <Suspense fallback={<Loading/>}>
                     {
                         routerLayout.map((r) => {

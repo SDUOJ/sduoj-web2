@@ -11,8 +11,9 @@ class CHome extends Component<any, any> {
         return (
             <>
                 <div style={{textAlign: "center", margin: "0 auto"}}>
-                    <Image src={BK1}
+              <Image src={BK1}
                            preview={false}
+                  loading="lazy"
                            style={{maxWidth: "1500px", boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.3)"}}/>
                     <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                         <Row style={{marginTop: "25px"}}>

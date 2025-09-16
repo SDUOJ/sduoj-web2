@@ -1,3 +1,5 @@
+// 全局引入 markdown 预览所需样式（仅在预览工具中引入，避免全局污染）
+import 'vditor/dist/index.css'
 // @ts-ignore
 import VditorPreview from 'vditor/dist/method.min'
 import {isValueEmpty} from "./empty";

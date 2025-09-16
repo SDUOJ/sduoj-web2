@@ -1,4 +1,6 @@
 import {Dispatch, useEffect, useState} from "react";
+// 按需引入 vditor 样式，避免主入口全局引入
+import 'vditor/dist/index.css';
 import Vditor from "vditor";
 import {fileUpload} from "../../Utils/fileUpload";
 import {Button, message, notification, Space} from "antd";
