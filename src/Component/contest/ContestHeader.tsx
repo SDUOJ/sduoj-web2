@@ -4,7 +4,7 @@ import {Alert, Card, Col, Divider, Menu, Row, Slider, Space, Switch} from "antd"
 import React, {Dispatch, useEffect, useState} from "react";
 import getContestInfo from "./API/getContestInfo";
 import {TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
-import Countdown from "antd/lib/statistic/Countdown";
+import AntdTimer from "../../Utils/AntdTimer";
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
 import {ContestState, setAfterContestSubmission} from "../../Redux/Action/contest";
 import {connect} from "react-redux";
@@ -122,7 +122,7 @@ const ContestHeader = (props: any) => {
                                         <span style={{color: "blue"}}>
                                     <Space>
                                         {props.t("TimeUntilStart")} 
-                                        <Countdown
+                                        <AntdTimer
                                             className={"contestHeaderTimer"}
                                             value={parseInt(contestInfo.gmtStart)}
                                             format={props.t("TimeFormat")}

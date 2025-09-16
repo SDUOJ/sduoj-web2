@@ -9,6 +9,7 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {WaterMark} from "@ant-design/pro-layout";
 import {UserState} from "../../Type/Iuser";
+import ErrorBoundary from "../../Utils/ErrorBoundary";
 
 
 const PSLayout = (props: any) => {
@@ -61,18 +62,14 @@ const PSLayout = (props: any) => {
     }
 
     const content = (
-        <>
+        <ErrorBoundary>
             <PSHeader/>
             <Suspense fallback={<Loading/>}>
-                {router_ProblemSet.map(({id, path, exact, component}) => {
-                    return (
-                        <Route
-                            key={id} path={path} exact={exact}
-                            component={component}/>
-                    )
-                })}
+                {router_ProblemSet.map(({id, path, exact, component}) => (
+                    <Route key={id} path={path} exact={exact} component={component}/>
+                ))}
             </Suspense>
-        </>
+        </ErrorBoundary>
     )
 
     return (

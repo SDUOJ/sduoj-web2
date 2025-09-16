@@ -3,7 +3,7 @@ import {withRouter} from "react-router-dom";
 import cApi from "../../Utils/API/c-api";
 import {Button, Card, Col, Row, Space} from "antd";
 import {ClockCircleOutlined} from "@ant-design/icons";
-import Countdown from "antd/lib/statistic/Countdown";
+import AntdTimer from "../../Utils/AntdTimer";
 import {isValueEmpty} from "../../Utils/empty";
 import ContestList from "../../Component/contest/ContestList";
 import {UrlPrefix} from "../../Config/constValue";
@@ -55,7 +55,7 @@ class CContest extends Component<any, any> {
                                         <div>
                                             <Space>
                                                 <ClockCircleOutlined/>
-                                                <Countdown
+                                                <AntdTimer
                                                     className={"contestTimer"}
                                                     value={parseInt(this.state.upComing.gmtStart)}
                                                     format={this.props.t("TimeFormat")}

@@ -12,8 +12,7 @@ import {ReactComponent as Memory} from "Assert/img/memory.svg"
 import {ReactComponent as RE} from "Assert/img/bomb.svg"
 import {ReactComponent as OLE} from "Assert/img/output.svg"
 import {withTranslation, WithTranslation} from "react-i18next";
-import Title from "antd/lib/typography/Title";
-import Text from "antd/lib/typography/Text";
+import {Typography} from "antd";
 import {displayType, StateList, TestCaseStates} from "../../Type/ISubmission";
 import {ck} from "../../Utils/empty";
 
@@ -180,9 +179,9 @@ class TestCase extends Component<ITestCaseProp, any> {
                 {
                     this.props.caseTime !== undefined && (
                         <>
-                            <Text strong>
+                            <Typography.Text strong>
                                 {this.props.t("Time")}
-                            </Text> : {this.props.caseTime} ms
+                            </Typography.Text> : {this.props.caseTime} ms
                         </>
                     )
                 }
@@ -190,9 +189,9 @@ class TestCase extends Component<ITestCaseProp, any> {
                     this.props.caseMemory !== undefined && (
                         <>
                             <br/>
-                            <Text strong>
+                            <Typography.Text strong>
                                 {this.props.t("Memory")}
-                            </Text> : {Math.floor(this.props.caseMemory / 1024)} MB
+                            </Typography.Text> : {Math.floor(this.props.caseMemory / 1024)} MB
                         </>
                     )
                 }
@@ -200,9 +199,9 @@ class TestCase extends Component<ITestCaseProp, any> {
                     this.props.caseScore !== undefined && this.props.scoreMod === "show" && (
                         <>
                             <br/>
-                            <Text strong>
+                            <Typography.Text strong>
                                 {this.props.t("Score")}
-                            </Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0}
+                            </Typography.Text> : {this.props.caseType === TestCaseStates.Accepted ? this.props.caseScore : 0}
                         </>
                     )
                 }
@@ -244,13 +243,13 @@ class TestCase extends Component<ITestCaseProp, any> {
 
                         case "text":
                             return (
-                                <Title
+                                <Typography.Title
                                     level={ck(this.props.textLevel, 5)}
                                     type={CaseList[type].type}
                                     className={"TestCase-text"}
                                 >
                                     {CaseList[type].textAll + (this.props.append !== undefined ? this.props.append : "")}
-                                </Title>
+                                </Typography.Title>
                             )
                         case "index":
                             return (

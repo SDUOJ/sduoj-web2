@@ -1,6 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Button, Card, Col, Modal, Row, Slider, Space, Table} from "antd";
+import {Button, Card, Col, Modal, Row, Slider, Space, Table, Statistic} from "antd";
+import AntdTimer from "../../Utils/AntdTimer";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {UrlPrefix} from "../../Config/constValue";
@@ -8,7 +9,7 @@ import {ProblemSetState} from "../../Redux/Action/problemSet";
 import "Assert/css/problemSet.css"
 import {TimeRangeState, unix2Time} from "../../Utils/Time";
 import DTime from "../common/DTime";
-import Countdown from "antd/lib/statistic/Countdown";
+// antd v5: use Statistic.Countdown instead of deep import
 import {UserState} from "../../Type/Iuser";
 import useProblemSetInfo from "./API/getProblemSetInfo";
 import {isValueEmpty} from "../../Utils/empty";
@@ -303,7 +304,7 @@ const TimeCard = (props: TimeCardProps) => {
                             <span style={{color: "blue"}}>
                                 <Space>
                                     {t("TimeUntilStart")}
-                                    <Countdown
+                                    <AntdTimer
                                         className={"contestHeaderTimer"}
                                         value={props.start}
                                         format={t("TimeFormat")}

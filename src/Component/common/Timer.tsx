@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import Countdown from "antd/lib/statistic/Countdown";
 import {Card, Space} from "antd";
+import AntdTimer from "../../Utils/AntdTimer";
 import {ClockCircleOutlined} from "@ant-design/icons"
 import {WithTranslation, withTranslation} from "react-i18next";
 
@@ -25,7 +25,7 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                                             <ClockCircleOutlined/>
                                             {this.props.t("Countdown")} :
                                         </Space>
-                                        <Countdown
+                                        <AntdTimer
                                             value={this.props.deadline}
                                             format={this.props.t("TimeFormat")}
                                             onFinish={this.props.onFinish}
@@ -36,7 +36,7 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                         } else {
                             return (
                                 <Card>
-                                    <Countdown title={this.props.name} value={this.props.deadline}
+                                    <AntdTimer title={this.props.name} value={this.props.deadline}
                                                format={this.props.t("TimeFormat")}
                                                onFinish={this.props.onFinish}
                                     />
