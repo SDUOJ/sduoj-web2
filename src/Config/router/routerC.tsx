@@ -133,6 +133,12 @@ export const router_ProblemSet: IBaseRouter[] = [
         component: lazy(() => import("../../Component/problemSet/Rank"))
     },
     {
+        id: 151,
+        path: UrlPrefix + "/problemSet/:problemSetId/monitor",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/Monitor"))
+    },
+    {
         id: 16,
         path: UrlPrefix + "/problemSet/:problemSetId/review",
         exact: true,

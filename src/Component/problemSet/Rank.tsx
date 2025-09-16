@@ -1,6 +1,6 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
-import {Badge, message, Modal, Popover, Table, Tag} from "antd";
+import {Badge, message, Modal, Table} from "antd";
 import {ContestState} from "../../Redux/Action/contest";
 import React, {Dispatch, useEffect, useState} from "react";
 import {connect} from "react-redux";
@@ -43,7 +43,13 @@ const Rank = (props: any) => {
                 hide()
             })
         }
-    }, [rankInfo, setRankInfo])
+    }, [problemSetId, props.t, rankInfo])
+
+    useEffect(() => {
+        setRankInfo(undefined)
+        setProblemSetInfo(undefined)
+        setLastUpdate(undefined)
+    }, [problemSetId])
 
     const problemColumns = []
     let tableWidth = 330
@@ -142,43 +148,6 @@ const Rank = (props: any) => {
             props.setMinWidth(tableWidth)
     }
 
-    const stateColum: any = []
-
-    if (problemSetInfo?.type === 1) {
-        stateColum.push({
-            title: props.t("Status"),
-            width: 150,
-            render: (text: any, row: any) => {
-                return (
-                    <div style={{paddingLeft: 10, paddingRight: 10}}>
-                        <span style={{float: "left"}}>
-                            {row.finish === 1 && (
-                                <Popover content={<>{unix2Time(row.finish_time)}</>} title={props.t("FinishTimeLabel")}>
-                                    <Tag color={"red"}>{props.t("SubmittedPaper")}</Tag>
-                                </Popover>
-                            )}
-                        </span>
-                        <span style={{float: "right", textAlign: "right"}}>
-                            {row.ips?.length <= 1 && (
-                                <Tag color={"green"}>{props.t("IPNormal")}</Tag>
-                            )}
-                            {row.ips?.length > 1 && (
-                                <Popover
-                                    content={
-                                        <>{row.ips?.map((ip: string) => <div>{ip}</div>)}</>
-                                    }
-                                    title={props.t("IPsUsedLabel")}>
-                                    <Tag color={"orange"}>{props.t("IPAbnormal")}</Tag>
-                                </Popover>
-                            )}
-                        </span>
-                    </div>
-                )
-            }
-        })
-        tableWidth += 150
-    }
-
     return (
         <div style={{marginTop: 24}}>
             <Modal
@@ -243,7 +212,8 @@ const Rank = (props: any) => {
                 style={{width: tableWidth, minWidth: tableWidth}}
                 pagination={false}
                 bordered={true}
-                dataSource={rankInfo}
+                dataSource={rankInfo ?? []}
+                rowKey={(row: any) => row.username}
                 rowClassName={() => {
                     return "rowBase"
                 }}
@@ -270,7 +240,6 @@ const Rank = (props: any) => {
                             )
                         }
                     },
-                    ...stateColum,
                     {
                         title: "总分",
                         width: 100,

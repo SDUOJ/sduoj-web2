@@ -45,6 +45,11 @@ const PSHeader = (props: any) => {
             re: /\/problemSet\/.*\/rank/g
         },
         {
+            name: props.t("RankMonitorTab"),
+            link: UrlPrefix + "/problemSet/" + problemSetId + "/monitor",
+            re: /\/problemSet\/.*\/monitor/g
+        },
+        {
             name: props.t("SubmissionList"),
             link: UrlPrefix + "/problemSet/" + problemSetId + "/submission",
             re: /\/problemSet\/.*\/submission/g
@@ -55,7 +60,7 @@ const PSHeader = (props: any) => {
 
     const menuList: any = [props.t("Overview"), props.t("Problem")]
     if (problemSetInfo?.isAdmin === true)
-        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("Rank"))
+        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("Rank"), props.t("RankMonitorTab"))
 
 
     useEffect(() => {
