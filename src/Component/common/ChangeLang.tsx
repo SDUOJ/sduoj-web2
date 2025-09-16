@@ -7,8 +7,8 @@ import {connect} from "react-redux";
 import {ConfigState} from "../../Type/IConfig";
 import {ConfigAction} from "../../Redux/Action/config";
 import { Locale } from 'antd/es/locale';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 import {initLanguage} from "../../Utils/initLanguage";
 
 
@@ -36,8 +36,8 @@ class ChangeLang extends Component<any, any> {
         const id = language.findIndex((item) => {
             return item.id === value
         })
-        this.props.ChangeLanguage(languageMap[value], language[id].code)
-        moment.locale(language[id].time);
+    this.props.ChangeLanguage(languageMap[value], language[id].code)
+    dayjs.locale(language[id].time);
         localStorage.setItem('language', language[id].code)
     }
 

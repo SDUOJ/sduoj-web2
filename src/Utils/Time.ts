@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 
 export function TimeRangeState(start: number | string, end: number | string) {
@@ -12,8 +12,8 @@ export function TimeRangeState(start: number | string, end: number | string) {
 export function getDiffSecond(start: number | string, end: number | string) {
     if (typeof start === "string") start = parseInt(start)
     if (typeof end === "string") end = parseInt(end)
-    const Start: any = moment(start)
-    const End: any = moment(end)
+    const Start: any = dayjs(start)
+    const End: any = dayjs(end)
     return End.diff(Start, "second")
 }
 
@@ -36,10 +36,10 @@ export function TimeDiff(start: number | string, end: number | string, d: string
 
 export function unix2Time(time: number | string) {
     if (typeof time === "string") time = parseInt(time)
-    return moment(time).format('YYYY-MM-DD HH:mm:ss')
+    return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
 export function unix2Date(time: number | string) {
     if (typeof time === "string") time = parseInt(time)
-    return moment(time).format('YYYY-MM-DD')
+    return dayjs(time).format('YYYY-MM-DD')
 }

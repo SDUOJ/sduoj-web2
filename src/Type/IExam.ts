@@ -1,7 +1,7 @@
 import {ProContent, ProType} from "./IProblem";
 import React from "react";
-import moment from "moment";
 import {displayType} from "./ISubmission";
+import {Dayjs} from "dayjs";
 
 // 用于 M端 考试信息
 export interface SExamManageInfo {
@@ -103,7 +103,7 @@ export interface examProblemGroupType {
     id: React.Key
     ProblemGroupName?: string                   // 题组名
     ProblemGroupType?: problemGroupProType      // 题组题型        【select】
-    ProblemGroupStartEndTime?: moment.Moment[]  // 题组开始时间     【Date】
+    ProblemGroupStartEndTime?: Dayjs[]          // 题组开始时间     【Date】
     ProblemGroupPremise?: React.Key             // 题组开始先决条件  【select】
     ProblemGroupSumScore?: number               // 题组总分数
 }
@@ -115,7 +115,7 @@ export interface examUserType {
 
 export interface examBasicType {
     examTitle: string,
-    examStartEndTime: moment.Moment[],
+    examStartEndTime: Dayjs[],
     examDescription: string,
     scoreMod?: displayType,
     caseMod?: displayType,

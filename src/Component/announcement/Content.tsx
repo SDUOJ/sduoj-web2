@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import { Tooltip } from 'antd';
 import { Comment } from '@ant-design/compatible';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 // import {DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined} from '@ant-design/icons';
 import {withTranslation} from "react-i18next";
 import UserAvatar from "../user/Avatar";
 import CApi from "Utils/API/c-api"
 import MarkdownText from "../../Utils/MarkdownText";
+
+dayjs.extend(relativeTime);
 
 const ANCContent = (props: any) => {
 
@@ -86,8 +89,8 @@ const ANCContent = (props: any) => {
                     <MarkdownText id={"markdownPreview"} text={text}/>
                 }
                 datetime={
-                    <Tooltip title={moment(time).format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment(time).fromNow()}</span>
+                    <Tooltip title={dayjs(time).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{dayjs(time).fromNow()}</span>
                     </Tooltip>
                 }
             />

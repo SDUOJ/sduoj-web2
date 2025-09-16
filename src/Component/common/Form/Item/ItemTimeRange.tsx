@@ -3,16 +3,17 @@ import {DatePicker, Form} from "antd";
 import React, {useEffect, useState} from "react";
 import FormExtraInfo from "../FormExtraInfo";
 import {isValueEmpty} from "../../../../Utils/empty";
-import moment from "moment";
+import dayjs, {Dayjs} from "dayjs";
 
 const ItemTimeRange = (props: any) =>{
-    const [timeRange, setTimeRange] = useState<any>()
-    const [timeRange1, setTimeRange1] = useState<any>()
-    const [timeRange2, setTimeRange2] = useState<any>()
+    const [timeRange, setTimeRange] = useState<[Dayjs, Dayjs] | null>()
+    const [timeRange1, setTimeRange1] = useState<Dayjs | null>()
+    const [timeRange2, setTimeRange2] = useState<Dayjs | null>()
     const {RangePicker} = DatePicker;
 
     useEffect(() => {
-        setTimeRange([timeRange1, timeRange2])
+        if (timeRange1 && timeRange2) setTimeRange([timeRange1, timeRange2])
+        else setTimeRange(null)
     }, [timeRange1, timeRange2])
 
     return (
@@ -24,22 +25,22 @@ const ItemTimeRange = (props: any) =>{
                 <RangePicker
                     showTime={{minuteStep: 5, secondStep: 30}}
                     format={"YYYY-MM-DD HH:mm:ss"}
-                    value={timeRange}
-                    onChange={(v: any) => {
-                        setTimeRange(v)
-                        setTimeRange1(v[0])
-                        setTimeRange2(v[1])
+                    value={timeRange as any}
+                    onChange={(v) => {
+                        setTimeRange(v as any)
+                        setTimeRange1(v?.[0] ?? null)
+                        setTimeRange2(v?.[1] ?? null)
                     }}
                 />
             </Form.Item>
             <Form.Item name={props.startName ?? "gmtStart"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1.unix() * 1000} setV={(v: any) => {
-                    setTimeRange1(moment(parseInt(v)))
+                <FormExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1?.valueOf()} setV={(v: any) => {
+                    setTimeRange1(dayjs(parseInt(v)))
                 }} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
             <Form.Item name={props.endName ?? "gmtEnd"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2.unix() * 1000} setV={(v: any) => {
-                    setTimeRange2(moment(parseInt(v)))
+                <FormExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2?.valueOf()} setV={(v: any) => {
+                    setTimeRange2(dayjs(parseInt(v)))
                 }} eqs={(a: string, b: string) => a === b}/>
             </Form.Item>
         </>

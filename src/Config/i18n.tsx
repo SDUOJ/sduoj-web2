@@ -6,7 +6,9 @@ import { Locale } from 'antd/es/locale';
 import {initLanguage} from "../Utils/initLanguage";
 import enJson from "../Assert/lang/en.json";
 import zhJson from "../Assert/lang/zh.json";
-import moment from "moment";
+import dayjs from "dayjs";
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
 
 interface ILanguage {
     id: string
@@ -39,7 +41,7 @@ const defLang = initLanguage();
 const id_ = language.findIndex((item) => {
     return item.id === defLang
 })
-moment.locale(language[id_].time);
+dayjs.locale(language[id_].time);
 
 i18n.use(initReactI18next) //init i18next
     .init({

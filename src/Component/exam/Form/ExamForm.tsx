@@ -2,7 +2,7 @@ import React, {Dispatch, useState} from "react";
 import {Button, FormInstance, message, Modal, Tabs} from "antd";
 import {PlusOutlined,} from "@ant-design/icons"
 import {withTranslation} from "react-i18next";
-import moment from "moment";
+import dayjs from "dayjs";
 import {connect} from "react-redux";
 import ExamBaseForm from "./ExamBaseForm";
 import ExamMemberForm from "./ExamMemberForm";
@@ -73,7 +73,7 @@ const ExamForm = (props: any) => {
                                 if (resData !== null) {
                                     setBaseInit({
                                         examTitle: resData.examTitle,
-                                        examStartEndTime: [moment(parseInt(resData.gmtStart)), moment(parseInt(resData.gmtEnd))],
+                                        examStartEndTime: [dayjs(parseInt(resData.gmtStart)), dayjs(parseInt(resData.gmtEnd))],
                                         examDescription: resData.description,
                                         scoreMod: resData.features === null ? "show" : resData.features.scoreMod,
                                         caseMod: resData.features === null ? "show" : resData.features.caseMod,
@@ -120,7 +120,7 @@ const ExamForm = (props: any) => {
                                             ProblemGroupType: ProGroupTypeStF[x.type],
                                             ProblemGroupSumScore: score,
                                             ProblemGroupPremise: x.previous,
-                                            ProblemGroupStartEndTime: [moment(parseInt(x.groupStart)), moment(parseInt(x.groupEnd))],
+                                            ProblemGroupStartEndTime: [dayjs(parseInt(x.groupStart)), dayjs(parseInt(x.groupEnd))],
                                         })
                                         proList.push({
                                             groupId: x.index,
@@ -202,11 +202,11 @@ const ExamForm = (props: any) => {
                                     type: ProGroupTypeFtS[x.ProblemGroupType as string],
                                     problems: proListX,
                                     groupStart: x.ProblemGroupStartEndTime === undefined
-                                        ? base.examStartEndTime[0].unix() * 1000
-                                        : x.ProblemGroupStartEndTime[0].unix() * 1000,
+                                        ? base.examStartEndTime[0].valueOf()
+                                        : x.ProblemGroupStartEndTime[0].valueOf(),
                                     groupEnd: x.ProblemGroupStartEndTime === undefined
-                                        ? base.examStartEndTime[1].unix() * 1000
-                                        : x.ProblemGroupStartEndTime[1].unix() * 1000,
+                                        ? base.examStartEndTime[1].valueOf()
+                                        : x.ProblemGroupStartEndTime[1].valueOf(),
                                     previous: x.ProblemGroupPremise === undefined
                                         ? 0 : x.ProblemGroupPremise,
                                 })
@@ -214,8 +214,8 @@ const ExamForm = (props: any) => {
 
                             const formData: any = {
                                 examTitle: base.examTitle,
-                                gmtStart: base.examStartEndTime[0].unix() * 1000,
-                                gmtEnd: base.examStartEndTime[1].unix() * 1000,
+                                gmtStart: base.examStartEndTime[0].valueOf(),
+                                gmtEnd: base.examStartEndTime[1].valueOf(),
                                 description: base.examDescription,
                                 features:{
                                     scoreMod: base.scoreMod,

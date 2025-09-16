@@ -1,7 +1,7 @@
 import cApi from "../../Utils/API/c-api";
 import "../../Assert/css/ContestList.css";
 import {Divider, Form, List, Select, Space, Tag} from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import {ClockCircleOutlined, LockFilled, TeamOutlined} from "@ant-design/icons";
 import {TimeDiff, TimeRangeState} from "../../Utils/Time";
 import React, {useEffect, useState} from "react";
@@ -71,10 +71,10 @@ const ContestList = (props: any) => {
                                     avatar={
                                         <div>
                                             <div style={{textAlign: "center", fontSize: "30px"}}>
-                                                {moment(parseInt(item.gmtStart)).format("DD")}
+                                                {dayjs(parseInt(item.gmtStart)).format("DD")}
                                             </div>
                                             <div style={{color: "#aaa", fontSize: "12px", textAlign: "center"}}>
-                                                {moment(parseInt(item.gmtStart)).format("YYYY-MM")}
+                                                {dayjs(parseInt(item.gmtStart)).format("YYYY-MM")}
                                             </div>
                                         </div>
                                     }
@@ -104,7 +104,7 @@ const ContestList = (props: any) => {
                                                 <span className="ContestModeTag" style={{backgroundColor: "#f8df72", color: '#222'}}>OI</span>
                                             )}
                                             <Divider type={"vertical"}/>
-                                            <span>{moment(parseInt(item.gmtStart)).format("HH:mm:ss")}</span>
+                                            <span>{dayjs(parseInt(item.gmtStart)).format("HH:mm:ss")}</span>
                                             <Divider type={"vertical"}/>
                                             <span><ClockCircleOutlined/> {TimeDiff(item.gmtStart, item.gmtEnd)}</span>
                                             <Divider type={"vertical"}/>

@@ -6,7 +6,8 @@ import {ReloadOutlined} from "@ant-design/icons";
 import {RunningResultList, StateList, SubmissionMap, TopSubmissionInfoType} from "../../../Type/ISubmission";
 import TestCase from "../TestCase";
 import React, {Dispatch, useState} from "react";
-import moment from "moment";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import TableWithSelection from "../../common/Table/TableWithSelection";
 import ReJudge from "../Func/ReJudge";
 import {connect} from "react-redux";
@@ -16,6 +17,8 @@ import {ck, isValueEmpty} from "../../../Utils/empty";
 import {UserState} from "../../../Type/Iuser";
 import judgeAuth from "../../../Utils/judgeAhtu";
 import ModalSubmissionList from "./ModalSubmissionList";
+
+dayjs.extend(relativeTime);
 
 const SubmissionList = (props: any) => {
 
@@ -139,8 +142,8 @@ const SubmissionList = (props: any) => {
             key: "submitTime",
             render: (text: any) => {
                 return (
-                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment(text).fromNow()}</span>
+                    <Tooltip title={dayjs(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{dayjs(text).fromNow()}</span>
                     </Tooltip>
                 )
             }
@@ -236,8 +239,8 @@ const SubmissionList = (props: any) => {
             key: "submitTime",
             render: (text: any) => {
                 return (
-                    <Tooltip title={moment(text).format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment(text).fromNow()}</span>
+                    <Tooltip title={dayjs(text).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{dayjs(text).fromNow()}</span>
                     </Tooltip>
                 )
             }

@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import Meta from "antd/lib/card/Meta";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import moment from "moment";
+import dayjs, {Dayjs} from "dayjs";
 import {TimeDiff} from "../../../Utils/Time";
 import {examBasicType} from "../../../Type/IExam";
 import Editor from "../../common/Editor";
@@ -19,7 +19,7 @@ const ExamBaseForm = (props: any) => {
 
     // === State ===
     // 考试描述
-    const [examTime, setExamTime] = useState<moment.Moment[]>();
+    const [examTime, setExamTime] = useState<Dayjs[]>();
 
     useEffect(() => {
         if (props.initData !== undefined) {
@@ -120,7 +120,7 @@ const ExamBaseForm = (props: any) => {
                             <Meta title={t("ExamDuration") } description={
                                 [''].map(() => {
                                     if (examTime?.length === 2) {
-                                        return TimeDiff(examTime[0].unix() * 1000, examTime[1].unix() * 1000)
+                                        return TimeDiff(examTime[0].valueOf(), examTime[1].valueOf())
                                     }
                                     return undefined
                                 })
