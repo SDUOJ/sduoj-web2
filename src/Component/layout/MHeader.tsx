@@ -20,14 +20,14 @@ class MHeader extends Component<any, any> {
                     minWidth: 550,
                     position: 'fixed',
                     top: 0,
-                    left: 0,
-                    right: 0,
-                    width: '100%',
+                    left: 200,
+                    width: 'calc(100% - 200px)',
                     display: 'flex',
                     alignItems: 'center',
                     height: 64,
                     padding: '0 20px',
-                    boxSizing: 'border-box'
+                    boxSizing: 'border-box',
+                    zIndex: 100
                 }}
             >
                 <div style={{flex: 1}}/>
