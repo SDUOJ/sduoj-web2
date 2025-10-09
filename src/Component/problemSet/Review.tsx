@@ -154,7 +154,7 @@ const Review = (props: any) => {
                 columns={[
                     {title: props.t("problemName"), dataIndex: "name", key: "name"},
                     {title: props.t("username"), dataIndex: "username", key: "username"},
-                    {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
+                    {title: props.t("nickname"), dataIndex: "nickname", key: "nickname"},
                     {
                         title: props.t("submissionTime"),
                         dataIndex: "tm_answer_submit",
@@ -199,20 +199,22 @@ const Review = (props: any) => {
                 }}
                 size={"small"}
                 getForm={(onFinish: any) => {
+                    const itemWidth = 130;
                     return (
-                        <Space size={30}>
+                        <Space size={8} wrap>
                             <Form.Item label={props.t("username")} name={"username"}>
                                 <Input onPressEnter={() => {
-                                    onFinish()
-                                }}/>
+                                        onFinish()
+                                    }}
+                                    style={{width: itemWidth}}
+                                />
                             </Form.Item>
-                            <Form.Item label={'队列'} name={'review_queue'}>
+                            <Form.Item label={props.t("reviewQueue")} name={"review_queue"}>
                                 <Select
                                     allowClear
-                                    style={{width:160}}
-                                    placeholder={'全部'}
+                                    style={{width: itemWidth}}
                                     onChange={onFinish}
-                                    onDropdownVisibleChange={(open)=>{
+                                    onOpenChange={(open)=>{
                                         if(open){
                                             // 动态获取（30s缓存）
                                             const cache:any = (window as any)._ps_acceptance_queue_cache
@@ -232,20 +234,21 @@ const Review = (props: any) => {
                             </Form.Item>
                             <Form.Item label={props.t("Reviewer")} name={"judgeLock"}>
                                 <Input onPressEnter={() => {
-                                    onFinish()
-                                }}/>
+                                        onFinish()
+                                    }}
+                                    style={{width: itemWidth}}
+                                />
                             </Form.Item>
                             <Form.Item label={props.t("status")} name={"hasJudge"}>
-                                <Select onChange={onFinish} style={{width: 120}} allowClear
+                                <Select onChange={onFinish} style={{width: itemWidth}} allowClear
                                         options={[{value: 0, label: props.t("NotReviewed")}, {value: 1, label: props.t("Reviewed")}]} />
                             </Form.Item>
                             <Form.Item label={props.t("Problem")} name={"proStr"}>
-                                <Select onChange={onFinish} style={{width: 240}} allowClear options={options}/>
+                                <Select onChange={onFinish} style={{width: 180}} allowClear options={options}/>
                             </Form.Item>
                         </Space>
                     )
                 }}
-                useFormBtn={false}
             />
             <div style={{marginTop: 12, float: "right"}}>
                 <span>{props.t("SubjectiveReviewTip")}</span>

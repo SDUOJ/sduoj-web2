@@ -189,17 +189,17 @@ const TableWithPagination = (props: any) => {
                                 )}
                                 {props.getForm !== undefined && (
                                     <Form form={form}>
-                                        {props.getForm(onFinish)}
-                                        {props.useFormBtn && (
-                                            <Space style={{marginLeft: "30px"}} size={20}>
-                                                <Button type="primary" onClick={onFinish}>
-                                                    {t("filtering")}
-                                                </Button>
-                                                <Button htmlType="button" onClick={onReset}>
-                                                    {t("Reset")}
-                                                </Button>
-                                            </Space>
-                                        )}
+                                            {props.getForm(onFinish)}
+                                            {props.useFormBtn && (
+                                                <Space size={8}>
+                                                    <Button type="primary" onClick={onFinish}>
+                                                        {t("filtering")}
+                                                    </Button>
+                                                    <Button htmlType="button" onClick={onReset}>
+                                                        {t("Reset")}
+                                                    </Button>
+                                                </Space>
+                                            )}
                                     </Form>
                                 )}
                             </>
@@ -258,15 +258,19 @@ const TableWithPagination = (props: any) => {
                                     />
                                 )}
                                 {props.getForm !== undefined && (
-                                    <Form form={form}>
-                                        {props.getForm(onFinish)}
-                                        <Space style={{marginLeft: "30px"}} size={20}>
-                                            <Button type="primary" onClick={onFinish}>
-                                                {t("filtering")}
-                                            </Button>
-                                            <Button htmlType="button" onClick={onReset}>
-                                                {t("Reset")}
-                                            </Button>
+                                    <Form form={form} layout="inline" className="table-filter-form">
+                                        <Space size={20} wrap align="center">
+                                            {props.getForm(onFinish)}
+                                            {(props.useFormBtn ?? true) && (
+                                                <Space size={12}>
+                                                    <Button type="primary" onClick={onFinish}>
+                                                        {t("filtering")}
+                                                    </Button>
+                                                    <Button htmlType="button" onClick={onReset}>
+                                                        {t("Reset")}
+                                                    </Button>
+                                                </Space>
+                                            )}
                                         </Space>
                                     </Form>
                                 )}
@@ -325,4 +329,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(withRouter(TableWithPagination))
-
