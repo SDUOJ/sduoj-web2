@@ -1,0 +1,11 @@
+.ps-late-permission-banner {
+    position: sticky;
+    top: 0;
+    z-index: 550;
+    margin: 12px 0 18px;
+}
+
+.ps-late-permission-banner .ant-alert {
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}

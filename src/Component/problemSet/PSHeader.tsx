@@ -11,6 +11,7 @@ import {UserState} from "../../Type/Iuser";
 import PSTakePicture from "./PSTakePicture";
 import {LeftOutlined} from "@ant-design/icons";
 import "../../Assert/css/problemSetHeader.css";
+import LatePermissionNotice from "./LatePermissionNotice";
 
 const PSHeader = (props: any) => {
     const problemSetId = props.match.params.problemSetId
@@ -54,13 +55,18 @@ const PSHeader = (props: any) => {
             link: UrlPrefix + "/problemSet/" + problemSetId + "/submission",
             re: /\/problemSet\/.*\/submission/g
         },
+        {
+            name: props.t("LatePermission"),
+            link: UrlPrefix + "/problemSet/" + problemSetId + "/late",
+            re: /\/problemSet\/.*\/late/g
+        },
     ]
 
     const [nowKey, setNowKey] = useState<any>()
 
     const menuList: any = [props.t("Overview"), props.t("Problem")]
     if (problemSetInfo?.isAdmin === true)
-        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("Rank"), props.t("RankMonitorTab"))
+        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("LatePermission"), props.t("Rank"), props.t("RankMonitorTab"))
 
 
     useEffect(() => {
@@ -123,6 +129,7 @@ const PSHeader = (props: any) => {
                         animated
                         destroyOnHidden={false}
                     />
+                    <LatePermissionNotice latePermission={problemSetInfo?.latePermission}/>
                 </>
             )}
         </>

@@ -326,6 +326,15 @@ const cApi = {
     async getProblemSetPublic(data: any) {
         return request.post("/ps/problem_set/public", data)
     },
+    async listProblemSetLatePermissions(data: { psid: number, page: { pageSize: number, pageNow: number }, username?: string }) {
+        return request.post("/ps/problem_set/late/list", data)
+    },
+    async addProblemSetLatePermission(data: { psid: number, username: string, duration_minute: number, discount: number, note?: string }) {
+        return request.post("/ps/problem_set/late/add", data)
+    },
+    async updateProblemSetLatePermission(data: { psid: number, id: number, duration_minute?: number, discount?: number, is_active?: boolean, note?: string }) {
+        return request.post("/ps/problem_set/late/update", data)
+    },
 
     //   ---- 公共数据集 -----
     // 新增一个公共数据

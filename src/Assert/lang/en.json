@@ -30,6 +30,7 @@
   "selectedAll": "Selected all",
   "invert": "Invert",
   "clear": "Clear",
+  "PleaseEnter": "Please enter ",
   "deleteBatch": "Batch deletion",
   "chooseToDelete": "Please select the item to be deleted on the leftmost side of the table.",
   "student_id": "Student ID",
@@ -38,6 +39,7 @@
   "roles": "Authority",
   "superadmin": "SuperAdmin",
   "admin": "Admin",
+  "noPermission": "You do not have permission to access this page",
   "searchUser": "search user",
   "search": "Search",
   "profile": "Profile",
@@ -691,6 +693,25 @@
   "ExpandFullText": "Expand",
   "Review": "Review",
   "SubmissionList": "Submission List"
+  ,"LatePermission": "Late Permission"
+  ,"LatePermissionDuration": "Grace duration (minutes)"
+  ,"LatePermissionDiscount": "Discount"
+  ,"LatePermissionStart": "First used at"
+  ,"LatePermissionExpire": "Expire time"
+  ,"LatePermissionGrantedBy": "Granted by"
+  ,"LatePermissionEnabled": "Enabled"
+  ,"LatePermissionAdd": "Grant Late Permission"
+  ,"LatePermissionEdit": "Edit Late Permission"
+  ,"LatePermissionNotUsed": "Not used yet"
+  ,"LatePermissionDurationHelp": "Minutes of late access counted from first use."
+  ,"LatePermissionDiscountHelp": "Applied to all submissions during late window, value between 0 and 1."
+  ,"LatePermissionBannerTitle": "Late submission discount ×{{discount}} ({{percent}})"
+  ,"LatePermissionBannerActive": "Active window: {{start}} → {{expire}}"
+  ,"LatePermissionBannerPending": "Window not started yet. You will have {{duration}} minutes once activated."
+  ,"LatePermissionBannerExpired": "Window expired at {{expire}}"
+  ,"LatePermissionBannerDuration": "Total duration: {{duration}} minutes"
+  ,"LatePermissionBannerRemaining": "Time remaining: {{minutes}} minute(s)"
+  ,"LatePermissionBannerNoExpire": "Expiration time pending"
   ,"PointValue": "Point Value"
   ,"TimedSubmission": "Timed submission ID"
   ,"TimedWeight": "Timed weight"

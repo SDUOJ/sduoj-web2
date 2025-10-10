@@ -3,6 +3,7 @@ import cApi from "../../Utils/API/c-api";
 import {Button} from "antd";
 import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
+import {UrlPrefix} from "../../Config/constValue";
 
 const ProblemSetList = (props: any) => {
     return (
@@ -15,7 +16,7 @@ const ProblemSetList = (props: any) => {
                     {
                         title: props.t("title"), dataIndex: "name", render: (v: any, r: any) => {
                             return <Button type={"text"} size={"small"} onClick={() => {
-                                props.history.push(`/v2/problemSet/${r.psid}`)
+                                props.history.push(`${UrlPrefix}/problemSet/${r.psid}/overview`)
                             }}>
                                 {v}
                             </Button>

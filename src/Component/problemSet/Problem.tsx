@@ -34,6 +34,7 @@ const Problem = (props: any) => {
     const groupType = problemSetInfo?.groupInfo[gid].type
     const proType = problemSetInfo?.groupInfo[gid].problemInfo[pid].type
     const score = problemSetInfo?.groupInfo[gid].problemInfo[pid].point
+    const latePermission = problemSetInfo?.latePermission
 
     const [flag, setFlag] = useState(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
     const [upd, setUpd] = useState(0)
@@ -214,7 +215,7 @@ const Problem = (props: any) => {
                                                 onAnswerM={submitAPI}
                                                 getAS={getAs}
                                                 key_o={`sbjective-${psid}-${gid}-${pid}`}
-                                                finish={timeState_running === "end"}
+                                                finish={timeState_running === "end" && isValueEmpty(latePermission)}
                                             />
                                         )
                                     case 0:

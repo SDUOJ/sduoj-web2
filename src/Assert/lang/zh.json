@@ -30,6 +30,7 @@
   "selectedAll": "全选",
   "invert": "反选",
   "clear": "清空",
+  "PleaseEnter": "请输入",
   "deleteBatch": "批量删除",
   "chooseToDelete": "请在表格中最左侧选择要删除的项目（只适用于当前页的选择）",
   "student_id": "学生ID",
@@ -38,6 +39,7 @@
   "roles": "权限",
   "superadmin": "超级管理员",
   "admin": "管理员",
+  "noPermission": "您没有访问该页面的权限",
   "searchUser": "搜索用户",
   "search": "搜索",
   "profile": "资料",
@@ -669,6 +671,25 @@
   "ExpandFullText": "展开全文",
   "Review": "评阅",
   "SubmissionList": "提交列表"
+  ,"LatePermission": "补交权限"
+  ,"LatePermissionDuration": "补交时长（分钟）"
+  ,"LatePermissionDiscount": "折扣"
+  ,"LatePermissionStart": "首次使用时间"
+  ,"LatePermissionExpire": "到期时间"
+  ,"LatePermissionGrantedBy": "授予人"
+  ,"LatePermissionEnabled": "启用状态"
+  ,"LatePermissionAdd": "新增补交权限"
+  ,"LatePermissionEdit": "编辑补交权限"
+  ,"LatePermissionNotUsed": "尚未使用"
+  ,"LatePermissionDurationHelp": "学生第一次使用补交权限开始计时，单位为分钟。"
+  ,"LatePermissionDiscountHelp": "补交期间所有提交都会套用折扣，范围 0-1。"
+  ,"LatePermissionBannerTitle": "补交折扣 ×{{discount}}（{{percent}}）"
+  ,"LatePermissionBannerActive": "生效时间：{{start}} → {{expire}}"
+  ,"LatePermissionBannerPending": "尚未激活，使用后可持续 {{duration}} 分钟。"
+  ,"LatePermissionBannerExpired": "补交窗口已于 {{expire}} 结束"
+  ,"LatePermissionBannerDuration": "总时长：{{duration}} 分钟"
+  ,"LatePermissionBannerRemaining": "剩余时间：{{minutes}} 分钟"
+  ,"LatePermissionBannerNoExpire": "到期时间待定"
   ,"PointValue": "分值"
   ,"TimedSubmission": "限时提交"
   ,"TimedWeight": "限时权重"
