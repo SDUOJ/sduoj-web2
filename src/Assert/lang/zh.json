@@ -644,6 +644,20 @@
   ,"acceptanceAnswer": "验收题"
   ,"submitFileList": "提交文件清单"
   ,"addSubmitFile": "新增提交文件"
+  ,"SubjectiveExport": "主观题导出"
+  ,"SubjectiveExportTitle": "主观题附件批量下载"
+  ,"SubjectiveExportDescription": "请选择需要导出的文件型主观题"
+  ,"SubjectiveExportEmpty": "当前题单没有文件型主观题"
+  ,"SubjectiveExportDownload": "批量下载"
+  ,"SubjectiveExportSuccess": "下载开始，请留意浏览器下载"
+  ,"SubjectiveExportFailed": "导出失败，请稍后重试"
+  ,"RankUpdateNotice": "榜单更新有大约1分钟的延迟，上次更新时间：{{time}}"
+  ,"RankUpdateTimePending": "--"
+  ,"RankExportScoreButton": "导出成绩"
+  ,"RankExportFilenameSuffix": "结果导出"
+  ,"RankColumnRanking": "排名"
+  ,"RankColumnParticipant": "参赛人"
+  ,"RankColumnTotalScore": "总分"
   ,"maxWordCountLimit": "最大字数限制",
   "close": "关闭",
   "Reviewed": "已批阅",

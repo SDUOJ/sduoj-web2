@@ -666,6 +666,20 @@
   ,"acceptanceAnswer": "Acceptance"
   ,"submitFileList": "Submit file list"
   ,"addSubmitFile": "Add submit file"
+  ,"SubjectiveExport": "Export subjective attachments"
+  ,"SubjectiveExportTitle": "Batch download subjective attachments"
+  ,"SubjectiveExportDescription": "Choose a file-type subjective problem to export submissions."
+  ,"SubjectiveExportEmpty": "This problem set has no file-type subjective problems."
+  ,"SubjectiveExportDownload": "Batch download"
+  ,"SubjectiveExportSuccess": "Download started. Please check your browser."
+  ,"SubjectiveExportFailed": "Export failed. Please try again later."
+  ,"RankUpdateNotice": "Rank updates have about a 1 minute delay. Last update: {{time}}"
+  ,"RankUpdateTimePending": "--"
+  ,"RankExportScoreButton": "Export scores"
+  ,"RankExportFilenameSuffix": "score_export"
+  ,"RankColumnRanking": "Rank"
+  ,"RankColumnParticipant": "Participant"
+  ,"RankColumnTotalScore": "Total score"
   ,"maxWordCountLimit": "Max word count limit",
   "close": "Close",
   "Reviewed": "Reviewed",

@@ -275,6 +275,10 @@ const cApi = {
     async getProblemSetSubmissionInfo(data: any) {
         return request.post("/ps/answer_sheet/submissionInfo", data)
     },
+    // 导出主观题（文件题）附件
+    async exportProblemSetSubjectiveZip(data: { router: { psid: number, gid: number, pid: number } }, filename?: string) {
+        return request.getZipFile("/ps/answer_sheet/subjective/exportZip", data, {}, filename)
+    },
     // 题单交卷
     async finishProblemSet(data: any) {
         return request.post("/ps/answer_sheet/finish", data)
