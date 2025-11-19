@@ -133,6 +133,8 @@ const AutoTask = (props: any) => {
     const [taskDetail, setTaskDetail] = useState<any>(null);
     const [rerunLoadingId, setRerunLoadingId] = useState<string | null>(null);
     const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [batchRerunLoading, setBatchRerunLoading] = useState<boolean>(false);
 
     const fetchOptions = useCallback(() => {
         if (!psid) return;
@@ -188,6 +190,10 @@ const AutoTask = (props: any) => {
     useEffect(() => {
         loadTasks(1, pagination.pageSize);
     }, [loadTasks]);
+
+    useEffect(() => {
+        setSelectedRowKeys(prev => prev.filter(key => taskList.some(task => task.id === key)));
+    }, [taskList]);
 
     const statusTag = useCallback((status?: string) => {
         const map: Record<string, { color: string, text: string }> = {
@@ -264,12 +270,49 @@ const AutoTask = (props: any) => {
             if (taskDetail?.id === taskId) {
                 closeDetail();
             }
+            setSelectedRowKeys(prev => prev.filter(key => key !== taskId));
         } catch (error) {
             message.error(t("failed"));
         } finally {
             setDeleteLoadingId(prev => (prev === taskId ? null : prev));
         }
     }, [closeDetail, loadTasks, pagination.current, pagination.pageSize, t, taskDetail]);
+
+    const handleBatchRerun = useCallback(async () => {
+        const runnableTasks = selectedRowKeys
+            .map(key => taskList.find(task => task.id === key))
+            .filter((task): task is AutoTaskRecord => Boolean(task) && canRerun(task));
+        if (runnableTasks.length === 0) {
+            message.info(t("AutoTaskBatchRerunEmpty"));
+            return;
+        }
+        setBatchRerunLoading(true);
+        try {
+            const results = await Promise.allSettled(
+                runnableTasks.map(task => cApi.rerunProblemSetAutoTask(task.id))
+            );
+            const successCount = results.filter(res => res.status === "fulfilled").length;
+            const failedCount = results.length - successCount;
+            if (successCount > 0) {
+                message.success(t("AutoTaskBatchRerunSuccess", {count: successCount}));
+            }
+            if (failedCount > 0) {
+                message.warning(t("AutoTaskBatchRerunPartial", {success: successCount, failed: failedCount}));
+            }
+            setSelectedRowKeys([]);
+            loadTasks(pagination.current, pagination.pageSize);
+        } catch (error) {
+            message.error(t("failed"));
+        } finally {
+            setBatchRerunLoading(false);
+        }
+    }, [canRerun, loadTasks, pagination.current, pagination.pageSize, selectedRowKeys, t, taskList]);
+
+    const hasRunnableSelection = useMemo(() => {
+        if (selectedRowKeys.length === 0) return false;
+        const keySet = new Set(selectedRowKeys);
+        return taskList.some(task => keySet.has(task.id) && canRerun(task));
+    }, [canRerun, selectedRowKeys, taskList]);
 
     const columns: ColumnsType<AutoTaskRecord> = useMemo(() => [
         {
@@ -627,9 +670,19 @@ const AutoTask = (props: any) => {
                     <Card
                         title={t("AutoTaskListTitle")}
                         extra={
-                            <Button icon={<ReloadOutlined/>} onClick={() => loadTasks(pagination.current, pagination.pageSize)} loading={listLoading}>
-                                {t("AutoTaskRefresh")}
-                            </Button>
+                            <Space>
+                                <Button
+                                    type="primary"
+                                    disabled={!hasRunnableSelection || batchRerunLoading}
+                                    loading={batchRerunLoading}
+                                    onClick={handleBatchRerun}
+                                >
+                                    {t("AutoTaskBatchRerun")}
+                                </Button>
+                                <Button icon={<ReloadOutlined/>} onClick={() => loadTasks(pagination.current, pagination.pageSize)} loading={listLoading}>
+                                    {t("AutoTaskRefresh")}
+                                </Button>
+                            </Space>
                         }
                     >
                         <Space wrap style={{marginBottom: 16}}>
@@ -677,6 +730,13 @@ const AutoTask = (props: any) => {
                             columns={columns}
                             dataSource={taskList}
                             loading={listLoading}
+                            rowSelection={{
+                                selectedRowKeys,
+                                onChange: (keys) => setSelectedRowKeys(keys),
+                                getCheckboxProps: (record: AutoTaskRecord) => ({
+                                    disabled: !canRerun(record)
+                                })
+                            }}
                             scroll={{x: 1000}}
                             pagination={{
                                 current: pagination.current,
