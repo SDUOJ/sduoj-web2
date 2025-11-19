@@ -60,13 +60,18 @@ const PSHeader = (props: any) => {
             link: UrlPrefix + "/problemSet/" + problemSetId + "/late",
             re: /\/problemSet\/.*\/late/g
         },
+        {
+            name: props.t("AutoTaskTab"),
+            link: UrlPrefix + "/problemSet/" + problemSetId + "/auto-task",
+            re: /\/problemSet\/.*\/auto-task/g
+        },
     ]
 
     const [nowKey, setNowKey] = useState<any>()
 
     const menuList: any = [props.t("Overview"), props.t("Problem")]
     if (problemSetInfo?.isAdmin === true)
-        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("LatePermission"), props.t("Rank"), props.t("RankMonitorTab"))
+        menuList.push(props.t("Review"), props.t("SubmissionList"), props.t("LatePermission"), props.t("AutoTaskTab"), props.t("Rank"), props.t("RankMonitorTab"))
 
 
     useEffect(() => {

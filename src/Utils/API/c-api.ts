@@ -330,6 +330,38 @@ const cApi = {
     async getProblemSetPublic(data: any) {
         return request.post("/ps/problem_set/public", data)
     },
+    // 自动化任务 - 创建主观题评阅任务
+    async createProblemSetSubjectiveAutoTasks(data: {
+        tasks: Array<{
+            psid: number,
+            gid: number,
+            pid: number,
+            username: string,
+            programmingProblems?: Array<{ gid: number, pid: number }>
+        }>
+    }) {
+        return request.post("/ps/auto-task/subjective/review", data)
+    },
+    // 自动化任务 - 查询题单任务列表
+    async listProblemSetAutoTasks(data: { psid: number, pageNow: number, pageSize: number, status?: string, taskType?: string, username?: string }) {
+        return request.post("/ps/auto-task/list", data)
+    },
+    // 自动化任务 - 任务详情
+    async getProblemSetAutoTaskDetail(taskId: string) {
+        return request.get(`/ps/auto-task/detail/${taskId}`)
+    },
+    // 自动化任务 - 主观题/学生选项
+    async getProblemSetAutoTaskOptions(psid: number) {
+        return request.get(`/ps/auto-task/subjective/options/${psid}`)
+    },
+    // 自动化任务 - 重新执行任务
+    async rerunProblemSetAutoTask(taskId: string) {
+        return request.post(`/ps/auto-task/rerun/${taskId}`, {})
+    },
+    // 自动化任务 - 删除任务
+    async deleteProblemSetAutoTask(taskId: string) {
+        return request.post(`/ps/auto-task/task/${taskId}/delete`, {})
+    },
     async listProblemSetLatePermissions(data: { psid: number, page: { pageSize: number, pageNow: number }, username?: string }) {
         return request.post("/ps/problem_set/late/list", data)
     },

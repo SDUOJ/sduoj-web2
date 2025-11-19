@@ -156,6 +156,12 @@ export const router_ProblemSet: IBaseRouter[] = [
         exact: true,
         component: lazy(() => import("../../Component/problemSet/LatePermission"))
     },
+    {
+        id: 19,
+        path: UrlPrefix + "/problemSet/:problemSetId/auto-task",
+        exact: true,
+        component: lazy(() => import("../../Component/problemSet/AutoTask"))
+    },
 ]
 
 export const routerC_Contest_M: IRouter[] = [
