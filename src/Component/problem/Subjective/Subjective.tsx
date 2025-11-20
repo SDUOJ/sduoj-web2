@@ -33,9 +33,26 @@ const Subjective = (props: any) => {
         return 1
     }
 
+    const normalizeToArray = (value: any) => {
+        if (Array.isArray(value)) return value
+        if (typeof value === "string") {
+            try {
+                const parsed = JSON.parse(value)
+                if (Array.isArray(parsed)) return parsed
+                if (parsed && typeof parsed === "object") return [parsed]
+            } catch (e) {
+                // ignore parse error
+            }
+        }
+        if (value && typeof value === "object") return [value]
+        return []
+    }
+
     const updateAnswerSheet = () => {
         return props.getAS().then((res: any) => {
             if (res.answer_m === null || res.answer_m === undefined) res.answer_m = [""]
+            res.judgeLog = normalizeToArray(res.judgeLog)
+            res.judgeConfig = normalizeToArray(res.judgeConfig)
             const st = detectSubType(res, props.problemInfo)
             setSubType(st)
             if (st === 1) {
