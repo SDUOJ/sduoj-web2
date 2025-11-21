@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {withRouter} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {
@@ -27,6 +27,7 @@ import cApi from "../../Utils/API/c-api";
 import useProblemSetInfo from "./API/getProblemSetInfo";
 import Loading from "../../Utils/Loading";
 import {TimeDiff, unix2Time} from "../../Utils/Time";
+import {MarkdownPreview} from "../../Utils/MarkdownPreview";
 
 interface SubjectiveOption {
     gid: number;
@@ -101,6 +102,27 @@ const pickUniqueStrings = (value: unknown): string[] => {
     if (!Array.isArray(value)) return [];
     const filtered = value.filter((item): item is string => typeof item === "string");
     return Array.from(new Set(filtered));
+};
+
+const LogMarkdownViewer = ({content}: { content: string }) => {
+    const containerIdRef = useRef(`auto-task-log-${Math.random().toString(36).slice(2, 10)}`);
+
+    useEffect(() => {
+        MarkdownPreview(content || "-", containerIdRef.current);
+    }, [content]);
+
+    return (
+        <div
+            id={containerIdRef.current}
+            style={{
+                background: "#f8f8f8",
+                padding: "8px 12px",
+                borderRadius: 4,
+                maxHeight: 260,
+                overflow: "auto"
+            }}
+        />
+    );
 };
 
 const AutoTask = (props: any) => {
@@ -533,23 +555,21 @@ const AutoTask = (props: any) => {
 
     const renderLogContent = (content: string) => {
         const parsed = safeJsonParse(content);
-        if (parsed === undefined) {
-            return <Typography.Text style={{whiteSpace: "pre-wrap"}}>{content || "-"}</Typography.Text>;
+        if (parsed !== undefined && typeof parsed !== "string") {
+            return (
+                <pre style={{
+                    background: "#f8f8f8",
+                    padding: "8px 12px",
+                    borderRadius: 4,
+                    maxHeight: 260,
+                    overflow: "auto"
+                }}>
+                    {JSON.stringify(parsed, null, 2)}
+                </pre>
+            );
         }
-        if (typeof parsed === "string") {
-            return <Typography.Text style={{whiteSpace: "pre-wrap"}}>{parsed}</Typography.Text>;
-        }
-        return (
-            <pre style={{
-                background: "#f8f8f8",
-                padding: "8px 12px",
-                borderRadius: 4,
-                maxHeight: 260,
-                overflow: "auto"
-            }}>
-                {JSON.stringify(parsed, null, 2)}
-            </pre>
-        );
+        const markdownText = typeof parsed === "string" ? parsed : (content || "-");
+        return <LogMarkdownViewer content={markdownText}/>;
     };
 
     if (problemSetInfo === undefined) {
