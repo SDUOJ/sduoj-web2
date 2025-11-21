@@ -23,6 +23,11 @@ const SubjectiveConfigForm = (props: any) => {
             dataIndex: "answer",
             editable: true,
             valueType: 'textarea'
+        },
+        {
+            title: "操作",
+            valueType: "option",
+            width: 60
         }
     ]
     return (
@@ -45,9 +50,7 @@ const SubjectiveConfigForm = (props: any) => {
                             >{"新增得分项"}</Button>
                         ]
                     }}
-                    rowButton={(row: any, value: any, onChange: any) => {
-                        return []
-                    }}
+                    rowButton={() => []}
                 />
             </Form.Item>
         </>
