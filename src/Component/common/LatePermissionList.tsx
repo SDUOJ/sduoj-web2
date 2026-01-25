@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {withTranslation, WithTranslation} from "react-i18next";
 import {
     Button,
+    DatePicker,
     Form,
     Input,
     InputNumber,
@@ -18,6 +19,7 @@ import {unix2Time} from "../../Utils/Time";
 import TableWithPagination from "../common/Table/TableWithPagination";
 import {connect} from "react-redux";
 import {Dispatch} from "react";
+import dayjs from "dayjs";
 
 interface GrantUserInfo {
     username?: string;
@@ -137,7 +139,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
         form.resetFields();
         form.setFieldsValue({
             username: "",
-            duration_minute: 60,
+            expire_time: null,
             discount: 1,
             enabled: true,
             note: "",
@@ -147,9 +149,10 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
 
     const openEditModal = useCallback((record: LatePermissionRecord) => {
         setEditingRecord(record);
+        const expireTime = record.expire_time ? dayjs.unix(record.expire_time / 1000) : null;
         form.setFieldsValue({
             username: record.username,
-            duration_minute: record.duration_minute,
+            expire_time: expireTime,
             discount: record.discount,
             enabled: record.is_active ?? record.enabled ?? true,
             note: record.note,
@@ -199,11 +202,12 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
             const values = await form.validateFields();
             setModalSubmitting(true);
             const permissionId = editingRecord?.permission_id ?? editingRecord?.id;
+            const expireTime = values.expire_time ? values.expire_time.valueOf() : undefined;
             if (permissionId !== undefined) {
                 await cApi.updateProblemSetLatePermission({
                     psid: targetPsid,
                     id: permissionId,
-                    duration_minute: values.duration_minute,
+                    expire_time: expireTime,
                     discount: values.discount,
                     is_active: values.enabled,
                     note: values.note,
@@ -212,7 +216,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
                 await cApi.addProblemSetLatePermission({
                     psid: targetPsid,
                     username: values.username,
-                    duration_minute: values.duration_minute,
+                    expire_time: expireTime,
                     discount: values.discount,
                     note: values.note,
                 });
@@ -455,22 +459,26 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
                         <Form.Item
                             label={t("Username")}
                             name={"username"}
-                            rules={[{required: true, message: t("PleaseEnter") + t("Username")}]}
+                            rules={[{required: true, message: t("usernameEmpty")}]}
                         >
                             <Input disabled={!!editingRecord}/>
                         </Form.Item>
                         <Form.Item
-                            label={t("LatePermissionDuration")}
-                            name={"duration_minute"}
-                            rules={[{required: true, message: t("PleaseEnter") + t("LatePermissionDuration")}]}
-                            extra={t("LatePermissionDurationHelp")}
+                            label={t("LatePermissionExpire")}
+                            name={"expire_time"}
+                            rules={[{required: true, message: t("pleaseSelectExpireTime")}]}
                         >
-                            <InputNumber min={1} precision={0} style={{width: "100%"}}/>
+                            <DatePicker
+                                showTime
+                                format="YYYY-MM-DD HH:mm:ss"
+                                style={{width: "100%"}}
+                                placeholder={t("pleaseSelectExpireTime")}
+                            />
                         </Form.Item>
                         <Form.Item
                             label={t("LatePermissionDiscount")}
                             name={"discount"}
-                            rules={[{required: true, message: t("PleaseEnter") + t("LatePermissionDiscount")}]}
+                            rules={[{required: true, message: t("pleaseEnterDiscount")}]}
                             extra={t("LatePermissionDiscountHelp")}
                         >
                             <InputNumber min={0} max={1} step={0.05} style={{width: "100%"}}/>

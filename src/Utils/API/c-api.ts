@@ -369,13 +369,13 @@ const cApi = {
     async listProblemSetLatePermissions(data: { psid: number, page: { pageSize: number, pageNow: number }, username?: string }) {
         return request.post("/ps/problem_set/late/list", data)
     },
-    async addProblemSetLatePermission(data: { psid: number, username: string, duration_minute: number, discount: number, note?: string }) {
+    async addProblemSetLatePermission(data: { psid: number, username: string, expire_time: number, discount: number, note?: string }) {
         return request.post("/ps/problem_set/late/add", data)
     },
-    async updateProblemSetLatePermission(data: { psid: number, id: number, duration_minute?: number, discount?: number, is_active?: boolean, note?: string }) {
+    async updateProblemSetLatePermission(data: { psid: number, id: number, expire_time?: number, discount?: number, is_active?: boolean, note?: string }) {
         return request.post("/ps/problem_set/late/update", data)
     },
-    async batchAddProblemSetLatePermission(data: { groupId: number, psids: number[], username: string, duration_minute: number, discount: number, note?: string }) {
+    async batchAddProblemSetLatePermission(data: { groupId: number, psids: number[], username: string, expire_time: number, discount: number, note?: string }) {
         return request.post("/ps/problem_set/late/batch_add", data)
     },
 

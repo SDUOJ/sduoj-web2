@@ -718,6 +718,8 @@
   ,"LatePermissionNotUsed": "尚未使用"
   ,"LatePermissionDurationHelp": "学生第一次使用补交权限开始计时，单位为分钟。"
   ,"LatePermissionDiscountHelp": "补交期间所有提交都会套用折扣，范围 0-1。"
+  ,"pleaseSelectExpireTime": "请选择到期时间"
+  ,"pleaseEnterDiscount": "请输入折扣"
   ,"LatePermissionBannerTitle": "补交折扣 ×{{discount}}（{{percent}}）"
   ,"LatePermissionBannerActive": "生效时间：{{start}} → {{expire}}"
   ,"LatePermissionBannerPending": "尚未激活，使用后可持续 {{duration}} 分钟。"

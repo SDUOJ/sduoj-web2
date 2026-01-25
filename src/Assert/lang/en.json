@@ -740,6 +740,8 @@
   ,"LatePermissionNotUsed": "Not used yet"
   ,"LatePermissionDurationHelp": "Minutes of late access counted from first use."
   ,"LatePermissionDiscountHelp": "Applied to all submissions during late window, value between 0 and 1."
+  ,"pleaseSelectExpireTime": "Please select expire time"
+  ,"pleaseEnterDiscount": "Please enter discount"
   ,"LatePermissionBannerTitle": "Late submission discount ×{{discount}} ({{percent}})"
   ,"LatePermissionBannerActive": "Active window: {{start}} → {{expire}}"
   ,"LatePermissionBannerPending": "Window not started yet. You will have {{duration}} minutes once activated."

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Modal, Form, Input, InputNumber, message, Transfer, Tag } from "antd";
+import { Card, Button, Modal, Form, Input, InputNumber, message, Transfer, Tag, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import type { TransferProps } from "antd";
@@ -103,11 +103,12 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
                 return;
             }
             
+            const expireTime = values.expire_time ? values.expire_time.valueOf() : undefined;
             const res: any = await cApi.batchAddProblemSetLatePermission({
                 groupId,
                 psids,
                 username: values.username,
-                duration_minute: values.duration_minute,
+                expire_time: expireTime,
                 discount: values.discount,
                 note: values.note || ""
             });
@@ -247,17 +248,17 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
                     </Form.Item>
 
                     <Form.Item
-                        name="duration_minute"
-                        label={t("durationMinute")}
+                        name="expire_time"
+                        label={t("LatePermissionExpire")}
                         rules={[
-                            { required: true, message: t("PleaseEnter") + t("durationMinute") },
-                            { type: 'number', min: 1, message: t("Must be a positive number") }
+                            { required: true, message: t("PleaseSelect") + t("LatePermissionExpire") }
                         ]}
                     >
-                        <InputNumber
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm:ss"
                             style={{ width: '100%' }}
-                            placeholder={t("PleaseEnter") + t("durationMinute")}
-                            min={1}
+                            placeholder={t("PleaseSelect") + t("LatePermissionExpire")}
                         />
                     </Form.Item>
 
