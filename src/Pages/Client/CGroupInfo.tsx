@@ -9,9 +9,11 @@ import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
 import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
 import {connect} from "react-redux";
 import {CommonState} from "../../Redux/Action/common";
+import {UserState} from "../../Type/Iuser";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
 import ProblemSetList from "../../Component/problemSet/ProblemSetList";
 import ProblemSetSummary from "../../Component/problemSet/ProblemSetSummary";
+import CourseManagement from "../../Component/group/CourseManagement";
 import {useTranslation} from "react-i18next";
 import MarkdownText from "../../Utils/MarkdownText";
 
@@ -25,6 +27,7 @@ const CGroupInfo = (props: any) => {
     const [psTabItems, setPsTabItems] = useState<any>()
     const {t} = useTranslation()
 
+    const isAdmin = props.userInfo?.roles?.some((role: any) => role === "admin" || role === "superadmin") || false;
 
     useEffect(() => {
         const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
@@ -132,6 +135,11 @@ const CGroupInfo = (props: any) => {
                                         <GroupUserListCard members={groupInfo.members}/>
                                     )}
                                 </Tabs.TabPane>
+                                {isAdmin && (
+                                    <Tabs.TabPane tab={t("courseManagement")} key="courseManagement">
+                                        <CourseManagement groupId={groupId}/>
+                                    </Tabs.TabPane>
+                                )}
                             </Tabs>
                         </Card>
                     </div>
@@ -143,8 +151,10 @@ const CGroupInfo = (props: any) => {
 
 const mapStateToProps = (state: any) => {
     const State: CommonState = state.CommonReducer
+    const UState: UserState = state.UserReducer
     return {
-        keyValueData: State.keyValueData
+        keyValueData: State.keyValueData,
+        userInfo: UState.userInfo
     }
 }
 

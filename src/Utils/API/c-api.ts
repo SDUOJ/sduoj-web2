@@ -326,6 +326,10 @@ const cApi = {
     async getProblemSetList(data: any) {
         return request.post("/ps/problem_set/search", data)
     },
+    // 获取题目组下所有题单（按标签组织）
+    async getProblemSetListByGroup(data: { groupId: number }) {
+        return request.post("/ps/problem_set/list_by_group", data)
+    },
     // 获取题单公开信息
     async getProblemSetPublic(data: any) {
         return request.post("/ps/problem_set/public", data)
@@ -370,6 +374,9 @@ const cApi = {
     },
     async updateProblemSetLatePermission(data: { psid: number, id: number, duration_minute?: number, discount?: number, is_active?: boolean, note?: string }) {
         return request.post("/ps/problem_set/late/update", data)
+    },
+    async batchAddProblemSetLatePermission(data: { groupId: number, psids: number[], username: string, duration_minute: number, discount: number, note?: string }) {
+        return request.post("/ps/problem_set/late/batch_add", data)
     },
 
     //   ---- 公共数据集 -----
