@@ -11,6 +11,7 @@ import {connect} from "react-redux";
 import {CommonState} from "../../Redux/Action/common";
 import GroupUserListCard from "../../Component/common/GroupUserListCard";
 import ProblemSetList from "../../Component/problemSet/ProblemSetList";
+import ProblemSetSummary from "../../Component/problemSet/ProblemSetSummary";
 import {useTranslation} from "react-i18next";
 import MarkdownText from "../../Utils/MarkdownText";
 
@@ -122,6 +123,9 @@ const CGroupInfo = (props: any) => {
                                         apiProp={{groupId: groupId}}
                                         useGroup={false}
                                     />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab={t("report")} key="report">
+                                    <ProblemSetSummary groupId={groupId} />
                                 </Tabs.TabPane>
                                 <Tabs.TabPane tab={t("user")} key={"member"}>
                                     {groupInfo !== undefined && (

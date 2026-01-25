@@ -411,6 +411,10 @@ const cApi = {
     // 查看互评结果
     async getSMEResult(data: any) {
         return request.get("/sme/results/", data)
+    },
+    // 获取个人/组内题单汇总分析
+    async getPersonalTagSummary(data: { groupId: number, username?: string, force?: boolean }) {
+        return request.post<any>("/ps/summary/personal_tag_summary", data)
     }
 }
 

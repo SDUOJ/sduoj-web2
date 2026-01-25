@@ -154,6 +154,13 @@
   "Contest": "Contest",
   "Group": "Group",
   "Announcement": "Announcements",
+  "report": "Report",
+  "searchByUsername": "Search Username",
+  "showAll": "Show All",
+  "placeholderUsername": "Please enter username",
+  "Weight": "Weight",
+  "Correctness": "Correctness",
+  "Point": "Point",
   "Exam System": "Exam System",
   "Profile": "Profile",
   "Verify": "Verify",
@@ -396,6 +403,20 @@
   "ContestAnnouncement": "Contest Announcement",
   "queuingForExamPaper": "Queuing to distribute exam papers, please do not refresh and wait a few seconds",
   "submitted": "Submitted",
+  "hasAnswer": "Submitted",
+  "Submission Rate": "Submission Rate",
+  "Score Rate": "Score Rate",
+  "Max Score": "Max Score",
+  "Actual Score": "Actual Score",
+  "Not Submitted": "Not Submitted",
+  "Problem Set": "Problem Set",
+  "Tag Classification": "Tag Classification",
+  "Problem Set Submission Rate": "Problem Set Submission Rate",
+  "Problem Set Score Rate": "Problem Set Score Rate",
+  "Tag Details": "Tag Details",
+  "Score Rate by Tag": "Score Rate by Tag",
+  "Submission Rate by Tag": "Submission Rate by Tag",
+  "Tag Count": "Tag Count",
   "ended": "Ended",
   "timeToEnd": "Time to end",
   "notVotedCount": "{{count}} not voted",
@@ -907,4 +928,23 @@
   ,"QuickEntry": "Quick Entry"
   ,"quickEntry": "Quick Entry"
   ,"upcoming": "Upcoming"
+  ,"Overview": "Overview"
+  ,"Problem Set Details": "Problem Set Details"
+  ,"Problem Details": "Problem Details"
+  ,"Tag Classification": "Tag Overview"
+  ,"Problem Set Submission Rate": "PS Submission Rate"
+  ,"Problem Set Score Rate": "PS Score Rate"
+  ,"Total Score": "Total Score"
+  ,"Total Submission Rate": "Total Submission Rate"
+  ,"Score Rate": "Score Rate"
+  ,"Submission Rate": "Submission Rate"
+  ,"Tag Count": "Tag Count"
+  ,"Problem Set": "Problem Set"
+  ,"Tag": "Tag"
+  ,"Weight": "Weight"
+  ,"Correctness": "Correctness"
+  ,"Point": "Point"
+  ,"searchByUsername": "Search User"
+  ,"showAll": "Show All"
+  ,"placeholderUsername": "Username"
 }

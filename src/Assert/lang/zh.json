@@ -155,6 +155,13 @@
   "Contest": "比赛",
   "Group": "用户组",
   "Announcement": "公告",
+  "report": "报告",
+  "searchByUsername": "查询用户名",
+  "showAll": "显示全部",
+  "placeholderUsername": "请输入用户名",
+  "Weight": "权重",
+  "Correctness": "正确率",
+  "Point": "原始分",
   "Exam System": "考试系统",
   "Profile": "用户信息",
   "Verify": "验证",
@@ -371,6 +378,20 @@
   "FirstAccepted": "最早通过",
   "examSubmittedSuccess": "试卷已提交成功",
   "submitted": "已提交",
+  "hasAnswer": "已作答",
+  "Submission Rate": "提交率",
+  "Score Rate": "得分率",
+  "Max Score": "满分",
+  "Actual Score": "实际得分",
+  "Not Submitted": "未提交",
+  "Problem Set": "题单",
+  "Tag Classification": "标签分类",
+  "Problem Set Submission Rate": "题单提交情况",
+  "Problem Set Score Rate": "题单得分情况",
+  "Tag Details": "标签详情",
+  "Score Rate by Tag": "按标签分类得分",
+  "Submission Rate by Tag": "按标签分交率",
+  "Tag Count": "标签数量",
   "pleaseLeaveOrderlyAndWaitForResults": "请有序离场并耐心等待考试成绩",
   "returnToExamList": "返回考试列表",
   "browserTooOldTitle": "您使用的浏览器版本过低，请点击下方链接安装新版浏览器。",
@@ -885,4 +906,23 @@
   ,"QuickEntry": "快速入口"
   ,"quickEntry": "快速入口"
   ,"upcoming": "即将到来"
+  ,"Overview": "总览"
+  ,"Problem Set Details": "题单详情"
+  ,"Problem Details": "题目详情"
+  ,"Tag Classification": "分类总览"
+  ,"Problem Set Submission Rate": "题单提交比例"
+  ,"Problem Set Score Rate": "题单得分比例"
+  ,"Total Score": "总分"
+  ,"Total Submission Rate": "总提交率"
+  ,"Score Rate": "得分率"
+  ,"Submission Rate": "提交率"
+  ,"Tag Count": "标签总数"
+  ,"Problem Set": "题单"
+  ,"Tag": "标签"
+  ,"Weight": "权重"
+  ,"Correctness": "正确率"
+  ,"Point": "分"
+  ,"searchByUsername": "搜索用户"
+  ,"showAll": "显示全部"
+  ,"placeholderUsername": "用户名"
 }
