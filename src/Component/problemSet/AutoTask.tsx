@@ -234,6 +234,8 @@ const AutoTask = (props: any) => {
         switch (type) {
             case "subjective_review":
                 return t("AutoTaskSubjectiveReview");
+            case "summary_report":
+                return t("AutoTaskSummaryExport");
             case "invalid":
                 return t("AutoTaskTypeInvalid");
             case "unknown":

@@ -364,7 +364,7 @@ const cApi = {
     },
     // 自动化任务 - 删除任务
     async deleteProblemSetAutoTask(taskId: string) {
-        return request.post(`/ps/auto-task/task/${taskId}/delete`, {})
+        return request.post(`/ps/auto-task/delete/${taskId}`, {})
     },
     async listProblemSetLatePermissions(data: { psid: number, page: { pageSize: number, pageNow: number }, username?: string }) {
         return request.post("/ps/problem_set/late/list", data)
@@ -422,6 +422,55 @@ const cApi = {
     // 获取个人/组内题单汇总分析
     async getPersonalTagSummary(data: { groupId: number, username?: string, force?: boolean }) {
         return request.post<any>("/ps/summary/personal_tag_summary", data)
+    },
+
+    // ============ 通用自动任务 API ============
+    // 创建总结报告导出任务
+    async createSummaryExportTask(data: { groupId: number, psids?: number[] }) {
+        return request.post("/ps/auto-task/summary/export", data)
+    },
+    // 查询小组级自动任务列表
+    async listGroupAutoTasks(data: { 
+        groupId: number, 
+        pageNow: number, 
+        pageSize: number, 
+        status?: string, 
+        taskType?: string,
+        username?: string,
+        psid?: number,
+        contestId?: number,
+        problemId?: number
+    }) {
+        return request.post("/ps/auto-task/list", data)
+    },
+    // 获取自动任务详情
+    async getAutoTaskDetail(taskId: string) {
+        return request.get(`/ps/auto-task/detail/${taskId}`)
+    },
+    // 重新执行自动任务
+    async rerunAutoTask(taskId: string) {
+        return request.post(`/ps/auto-task/rerun/${taskId}`, {})
+    },
+    // 删除自动任务
+    async deleteAutoTask(taskId: string) {
+        return request.post(`/auto-task/delete/${taskId}`, {})
+    },
+    // 获取小组的主观题评阅任务选项
+    async getGroupSubjectiveAutoTaskOptions(groupId: number) {
+        return request.get(`/ps/auto-task/subjective/options/${groupId}`)
+    },
+    // 创建小组级主观题评阅任务
+    async createGroupSubjectiveAutoTasks(data: {
+        groupId: number,
+        tasks: Array<{
+            psid: number,
+            gid: number,
+            pid: number,
+            username: string,
+            programmingProblems?: Array<{ gid: number, pid: number }>
+        }>
+    }) {
+        return request.post("/ps/auto-task/subjective/review", data)
     }
 }
 

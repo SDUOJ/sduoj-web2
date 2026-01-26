@@ -2,6 +2,8 @@ import React from "react";
 import { Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 import BatchExtension from "./BatchExtension";
+import SummaryExport from "./SummaryExport/SummaryExport";
+import SubjectiveReview from "./SubjectiveReview/SubjectiveReview";
 
 interface CourseManagementProps {
     groupId: string | number;
@@ -17,7 +19,12 @@ const CourseManagement: React.FC<CourseManagementProps> = ({ groupId }) => {
         {
             key: "courseGradeExport",
             label: t("courseGradeExport"),
-            children: <div style={{ padding: '20px 0' }}>{t("courseGradeExport")}</div>
+            children: <SummaryExport groupId={numericGroupId} />
+        },
+        {
+            key: "subjectiveReview",
+            label: t("subjectiveReview"),
+            children: <SubjectiveReview groupId={numericGroupId} />
         },
         {
             key: "codePlagiarismCheck",
