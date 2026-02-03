@@ -50,6 +50,8 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
     const [subjectiveOptions, setSubjectiveOptions] = useState<SubjectiveOption[]>([]);
     const [programmingOptions, setProgrammingOptions] = useState<ProgrammingOption[]>([]);
     const [studentOptions, setStudentOptions] = useState<string[]>([]);
+    const [problemSetList, setProblemSetList] = useState<{psid: number, name: string}[]>([]);
+    const [selectedPsid, setSelectedPsid] = useState<number | null>(null);
 
     const selectedSubjectiveValues = Form.useWatch("subjectiveProblems", form);
     const hasSubjectSelection = useMemo(() => {
@@ -65,14 +67,40 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
     }, [subjectiveOptions]);
 
     useEffect(() => {
+        cApi.getProblemSetListByGroup({ groupId })
+            .then((res: any) => {
+                const list: {psid: number, name: string}[] = [];
+                if (res && typeof res === 'object') {
+                    Object.values(res).forEach((psList: any) => {
+                        if (Array.isArray(psList)) {
+                            psList.forEach((ps: any) => list.push({ psid: ps.psid, name: ps.name }));
+                        }
+                    });
+                }
+                setProblemSetList(list);
+            });
+    }, [groupId]);
+
+    useEffect(() => {
+        if (selectedPsid === null) {
+            setSubjectiveOptions([]);
+            setProgrammingOptions([]);
+            setStudentOptions([]);
+            return;
+        }
+
         setLoading(true);
-        cApi.getGroupSubjectiveAutoTaskOptions(groupId)
+        cApi.getProblemSetAutoTaskOptions(selectedPsid)
             .then((res: any) => {
                 setSubjectiveOptions((res?.subjectiveProblems || []).map((item: any) => ({
                     ...item,
+                    psid: item.psid ?? selectedPsid,
                     pendingStudents: Array.isArray(item.pendingStudents) ? item.pendingStudents : []
                 })));
-                setProgrammingOptions(res?.programmingProblems || []);
+                setProgrammingOptions((res?.programmingProblems || []).map((item: any) => ({
+                    ...item,
+                    psid: item.psid ?? selectedPsid
+                })));
                 setStudentOptions(res?.students || []);
             })
             .catch(() => {
@@ -84,7 +112,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
             .finally(() => {
                 setLoading(false);
             });
-    }, [groupId, t]);
+    }, [selectedPsid, t]);
 
     const handleSubmit = useCallback(async () => {
         try {
@@ -195,6 +223,22 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
         }));
     }, [studentOptions]);
 
+    const problemSetOptions = useMemo(() => {
+        return problemSetList.map(ps => ({
+            label: `[${ps.psid}] ${ps.name}`,
+            value: ps.psid
+        }));
+    }, [problemSetList]);
+
+    const handlePsChange = (val: number) => {
+        setSelectedPsid(val);
+        form.setFieldsValue({
+            subjectiveProblems: [],
+            students: [],
+            programmingProblems: []
+        });
+    };
+
     return (
         <Form
             layout="vertical"
@@ -206,7 +250,22 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
             }}
         >
             <Row gutter={16}>
-                <Col xs={24} md={10}>
+                <Col xs={24} md={6}>
+                    <Form.Item
+                        label={t("AutoTaskProblemSetSelect")}
+                        required
+                        rules={[{required: true, message: t("AutoTaskProblemSetRequired")}]}
+                    >
+                        <Select
+                            showSearch
+                            placeholder={t("AutoTaskProblemSetSelect")}
+                            options={problemSetOptions}
+                            onChange={handlePsChange}
+                            optionFilterProp="label"
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={8}>
                     <Form.Item
                         label={t("AutoTaskSubjectiveSelect")}
                         name="subjectiveProblems"
@@ -216,6 +275,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
                             mode="multiple"
                             showSearch
                             allowClear
+                            disabled={!selectedPsid}
                             placeholder={t("AutoTaskSubjectiveSelect")}
                             options={subjectSelectOptions}
                             loading={loading}
@@ -224,7 +284,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
                         />
                     </Form.Item>
                 </Col>
-                <Col xs={24} md={8}>
+                <Col xs={24} md={6}>
                     <Form.Item
                         label={
                             <Space size={8}>
@@ -245,6 +305,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
                             mode="multiple"
                             showSearch
                             allowClear
+                            disabled={!selectedPsid}
                             placeholder={t("AutoTaskStudentSelect")}
                             options={studentSelectOptions}
                             loading={loading}
@@ -253,7 +314,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
                         />
                     </Form.Item>
                 </Col>
-                <Col xs={24} md={6}>
+                <Col xs={24} md={4}>
                     <Form.Item
                         label={t("AutoTaskProgrammingSelect")}
                         name="programmingProblems"
@@ -262,6 +323,7 @@ const SubjectiveReviewTrigger: React.FC<SubjectiveReviewTriggerProps> = (props) 
                             mode="multiple"
                             showSearch
                             allowClear
+                            disabled={!selectedPsid}
                             placeholder={t("AutoTaskProgrammingSelect")}
                             options={programSelectOptions}
                             loading={loading}
