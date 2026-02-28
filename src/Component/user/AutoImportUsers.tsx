@@ -77,7 +77,7 @@ const AutoImportUsers = (props: any) => {
       const r = data[i]
       // Skip instruction/example row heuristically
       const content = (r as any)?.username as any
-      if (typeof content === 'string' && content.includes('此行') || typeof content === 'string' && content.includes('样例')) {
+      if ((typeof content === 'string' && content.includes('此行')) || (typeof content === 'string' && content.includes('样例'))) {
         continue
       }
 

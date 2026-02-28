@@ -185,6 +185,31 @@ export const routerM: IRouter[] = [
         icon: <NotificationOutlined/>,
         component: lazy(() => import('../../Pages/Manage/MAnnouncement'))
     },
+    {
+        id: 10,
+        path: UrlPrefix + "/manage/course",
+        title_i18n: "course",
+        exact: false,
+        icon: <ReconciliationOutlined />,
+        children: [
+            {
+                id: 101,
+                path: UrlPrefix + "/manage/course/course",
+                exact: true,
+                title_i18n: "courseManagement",
+                icon: <ReconciliationOutlined />,
+                component: lazy(() => import('../../Pages/Manage/MAutolab'))
+            },
+            {
+                id: 102,
+                path: UrlPrefix + "/manage/course/classroom",
+                exact: true,
+                title_i18n: "classroom",
+                icon: <BuildOutlined />,
+                component: lazy(() => import('../../Pages/Manage/MAutolabClassroom'))
+            }
+        ]
+    },
 
     // {
     //     id: 8,

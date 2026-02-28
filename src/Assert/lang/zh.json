@@ -957,6 +957,7 @@
   ,"codePlagiarismCheck": "代码查重"
   ,"batchExtension": "批量延期"
   ,"externalGradeImport": "外部成绩导入"
+  ,"courseSignManagement": "签到管理"
   ,"latePermissionList": "延期权限列表"
   ,"addBatchLatePermission": "批量添加延期"
   ,"selectProblemSets": "选择题单"
@@ -977,4 +978,6 @@
   ,"update": "更新"
   ,"active": "启用"
   ,"inactive": "停用"
+  ,"classroom": "教室管理"
+  ,"course": "课程"
 }

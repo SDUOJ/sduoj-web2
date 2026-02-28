@@ -14,6 +14,7 @@ import GroupUserListCard from "../../Component/common/GroupUserListCard";
 import ProblemSetList from "../../Component/problemSet/ProblemSetList";
 import ProblemSetSummary from "../../Component/problemSet/ProblemSetSummary";
 import CourseManagement from "../../Component/group/CourseManagement";
+import CourseTab from "../../Component/autolab/CourseTab";
 import {useTranslation} from "react-i18next";
 import MarkdownText from "../../Utils/MarkdownText";
 
@@ -28,6 +29,7 @@ const CGroupInfo = (props: any) => {
     const {t} = useTranslation()
 
     const isAdmin = props.userInfo?.roles?.some((role: any) => role === "admin" || role === "superadmin") || false;
+    const username = props.userInfo?.username;
 
     useEffect(() => {
         const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
@@ -125,6 +127,13 @@ const CGroupInfo = (props: any) => {
                                         name={"GroupInfo-" + groupId + "-ContestList"}
                                         apiProp={{groupId: groupId}}
                                         useGroup={false}
+                                    />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab={t("course")} key="course">
+                                    <CourseTab
+                                        groupId={groupId}
+                                        username={username}
+                                        members={groupInfo?.members ?? []}
                                     />
                                 </Tabs.TabPane>
                                 <Tabs.TabPane tab={t("report")} key="report">

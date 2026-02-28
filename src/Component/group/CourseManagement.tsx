@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import BatchExtension from "./BatchExtension";
 import SummaryExport from "./SummaryExport/SummaryExport";
 import SubjectiveReview from "./SubjectiveReview/SubjectiveReview";
+import CourseSignManagement from "./CourseSignManagement";
 
 interface CourseManagementProps {
     groupId: string | number;
@@ -40,6 +41,11 @@ const CourseManagement: React.FC<CourseManagementProps> = ({ groupId }) => {
             key: "externalGradeImport",
             label: t("externalGradeImport"),
             children: <div style={{ padding: '20px 0' }}>{t("externalGradeImport")}</div>
+        },
+        {
+            key: "courseSignManagement",
+            label: t("courseSignManagement"),
+            children: <CourseSignManagement groupId={numericGroupId} />
         }
     ];
 

@@ -977,6 +977,7 @@
   ,"codePlagiarismCheck": "Code Plagiarism Check"
   ,"batchExtension": "Batch Extension"
   ,"externalGradeImport": "External Grade Import"
+  ,"courseSignManagement": "Attendance Management"
   ,"latePermissionList": "Late Permission List"
   ,"addBatchLatePermission": "Add Batch Late Permission"
   ,"selectProblemSets": "Select Problem Sets"
@@ -997,4 +998,6 @@
   ,"update": "Update"
   ,"active": "Active"
   ,"inactive": "Inactive"
+  ,"classroom": "Classroom"
+  ,"course": "Course"
 }

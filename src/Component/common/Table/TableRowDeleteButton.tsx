@@ -17,6 +17,8 @@ const TableRowDeleteButton = (props: any) => {
         if (props.API !== undefined) {
             props.API(props.data).then((value: any) => {
                 props.addTableVersion(props.name)
+            }).catch(() => {
+                // 请求层已统一弹出错误提示，这里阻断未捕获异常
             })
         } else {
             props.setDataSource(props.tableName, dataSource.filter((it: any) => props.data !== it[props.rowKey]))

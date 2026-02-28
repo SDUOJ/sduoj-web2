@@ -36,6 +36,8 @@
     "@uiw/codemirror-theme-github": "^4.19.9",
     "@uiw/codemirror-theme-solarized": "^4.19.9",
     "@uiw/react-codemirror": "^4.19.9",
+    "@zxing/browser": "^0.1.4",
+    "@zxing/library": "^0.21.3",
     "antd": "^5.24",
     "array-move": "^4.0.0",
     "axios": "^1",
@@ -84,6 +86,7 @@
     "postcss-normalize": "^13",
     "postcss-preset-env": "^10",
     "postcss-safe-parser": "^7",
+    "qrcode.react": "^3.1.0",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
     "react-color": "^2.19.3",
@@ -215,6 +218,7 @@
     "**/@types/react-dom": "17.0.23"
   },
   "devDependencies": {
+    "@types/qrcode.react": "^3.0.2",
     "copy-webpack-plugin": "^12",
     "image-minimizer-webpack-plugin": "^4.1.4",
     "imagemin": "^9.0.1",

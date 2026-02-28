@@ -10,6 +10,7 @@ import {withTranslation} from "react-i18next";
 import {WaterMark} from "@ant-design/pro-layout";
 import {UserState} from "../../Type/Iuser";
 import ErrorBoundary from "../../Utils/ErrorBoundary";
+import QRFloat from "../autolab/QRFloat";
 
 
 const PSLayout = (props: any) => {
@@ -61,6 +62,9 @@ const PSLayout = (props: any) => {
         minWidth = Math.max(500, (props.minWidth ?? 0) + 100)
     }
 
+    const psMatch = props.location.pathname.match(/\/problemSet\/(\d+)/);
+    const problemSetId = psMatch ? psMatch[1] : undefined;
+
     const content = (
         <ErrorBoundary>
             <PSHeader/>
@@ -97,6 +101,9 @@ const PSLayout = (props: any) => {
                     >
                         {content}
                     </WaterMark>
+                    {problemSetId && props.username && (
+                        <QRFloat problemSetId={problemSetId} username={props.username} />
+                    )}
                 </div>
             </div>
         </>
@@ -109,6 +116,7 @@ const mapStateToProps = (state: any) => {
         minWidth: State.minWidth,
         realName: UState.userInfo?.nickname,
         sduId: UState.userInfo?.username,
+        username: UState.userInfo?.username,
     }
 }
 

@@ -128,6 +128,8 @@ const ModalForm = (props: ModalFormProps & any) => {
                 props.onClose && props.onClose()
                 setFormVis(false)
                 message.success(t("success"))
+            }).catch(() => {
+                // 请求层已统一弹出错误提示，这里阻断未捕获异常
             }).finally(() => {
                 setSubmitting(false);
             })
