@@ -167,6 +167,7 @@ const MProblemGroup = (props: any) => {
                         columns={colData}
                         API={MApi.getProblemGroupList}
                         size={"small"}
+                        search={true}
                     />
                 </Card>
             </div>

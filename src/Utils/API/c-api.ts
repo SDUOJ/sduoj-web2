@@ -347,7 +347,7 @@ const cApi = {
         return request.post("/ps/auto-task/subjective/review", data)
     },
     // 自动化任务 - 查询题单任务列表
-    async listProblemSetAutoTasks(data: { psid: number, pageNow: number, pageSize: number, status?: string, taskType?: string, username?: string }) {
+    async listProblemSetAutoTasks(data: { psid: number, pageNow: number, pageSize: number, status?: string, taskType?: string, username?: string, scoreLe?: number }) {
         return request.post("/ps/auto-task/list", data)
     },
     // 自动化任务 - 任务详情
@@ -437,6 +437,7 @@ const cApi = {
         status?: string, 
         taskType?: string,
         username?: string,
+        scoreLe?: number,
         psid?: number,
         contestId?: number,
         problemId?: number

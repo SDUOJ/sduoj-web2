@@ -146,6 +146,17 @@ const ModalForm = (props: ModalFormProps & any) => {
         } else submit(values)
     }
 
+    const getAllStepValues = () => {
+        const mergedValues: {[key: string]: any} = {};
+        formMapRef.current.forEach((formInstanceRef) => {
+            const values = formInstanceRef.current?.getFieldsValue?.(true);
+            if (values && typeof values === "object") {
+                Object.assign(mergedValues, values);
+            }
+        });
+        return mergedValues;
+    };
+
     return (
         <>
             <Button
@@ -247,6 +258,11 @@ const ModalForm = (props: ModalFormProps & any) => {
                     }}
                 >
                     {props.subForm.map((item: any, index: number) => {
+                        const stepComponent = React.isValidElement(item.component)
+                            ? React.cloneElement(item.component as React.ReactElement<any>, {
+                                getAllStepValues
+                            })
+                            : item.component;
                         return (
                             <StepsForm.StepForm
                                 layout={props.layout ?? "vertical"}
@@ -256,7 +272,7 @@ const ModalForm = (props: ModalFormProps & any) => {
                                     return true;
                                 }}
                             >
-                                {item.component}
+                                {stepComponent}
                             </StepsForm.StepForm>
                         )
                     })}

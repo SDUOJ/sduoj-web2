@@ -785,6 +785,8 @@
   ,"AutoTaskProblemId": "题目ID"
   ,"AutoTaskFilterProblemSet": "按题单筛选"
   ,"AutoTaskFilterProblem": "按题目筛选"
+  ,"AutoTaskScore": "得分"
+  ,"AutoTaskFilterScoreLe": "得分 <="
   ,"subjectiveReview": "主观题评阅"
   ,"SummaryExportCreateTitle": "创建总结报告导出任务"
   ,"SummaryExportCreateHelp": "选择要统计的题单，留空则统计全组。系统会自动排除管理组成员、创建者和超级管理员。"

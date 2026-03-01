@@ -8,6 +8,7 @@ import {
     Descriptions,
     Empty,
     Form,
+    InputNumber,
     List,
     Modal,
     Popconfirm,
@@ -52,6 +53,8 @@ interface AutoTaskRecord {
     end_time?: string;
     psid?: number;
     username?: string;
+    autoScore?: number | null;
+    autoFullScore?: number | null;
 }
 
 interface AutoTaskLog {
@@ -143,7 +146,7 @@ const AutoTask = (props: any) => {
 
     const [taskList, setTaskList] = useState<AutoTaskRecord[]>([]);
     const [listLoading, setListLoading] = useState<boolean>(false);
-    const [filters, setFilters] = useState<{ status?: string, taskType?: string, username?: string }>({});
+    const [filters, setFilters] = useState<{ status?: string, taskType?: string, username?: string, scoreLe?: number }>({});
     const [pagination, setPagination] = useState<{ current: number, pageSize: number, total: number }>({
         current: 1,
         pageSize: 20,
@@ -193,7 +196,8 @@ const AutoTask = (props: any) => {
             pageSize: size,
             status: filters.status,
             taskType: filters.taskType,
-            username: filters.username
+            username: filters.username,
+            scoreLe: filters.scoreLe
         }).then((res: any) => {
             setTaskList(res?.rows || []);
             setPagination({
@@ -207,7 +211,7 @@ const AutoTask = (props: any) => {
         }).finally(() => {
             setListLoading(false);
         });
-    }, [filters.status, filters.taskType, filters.username, psid, t]);
+    }, [filters.status, filters.taskType, filters.username, filters.scoreLe, psid, t]);
 
     useEffect(() => {
         loadTasks(1, pagination.pageSize);
@@ -374,6 +378,19 @@ const AutoTask = (props: any) => {
             key: "username",
             width: 160,
             render: (text: string) => text || "-"
+        },
+        {
+            title: t("AutoTaskScore"),
+            dataIndex: "autoScore",
+            key: "autoScore",
+            width: 140,
+            render: (_: any, record) => {
+                const score = record.autoScore;
+                if (score === undefined || score === null) return "-";
+                const full = record.autoFullScore;
+                if (full === undefined || full === null) return `${score}`;
+                return `${score} / ${full}`;
+            }
         },
         {
             title: t("AutoTaskStartedAt"),
@@ -743,6 +760,16 @@ const AutoTask = (props: any) => {
                                 optionFilterProp="label"
                                 onChange={(value) => {
                                     setFilters(prev => ({...prev, username: value || undefined}));
+                                }}
+                            />
+                            <InputNumber
+                                min={0}
+                                precision={2}
+                                style={{width: 220}}
+                                placeholder={t("AutoTaskFilterScoreLe")}
+                                value={filters.scoreLe}
+                                onChange={(value) => {
+                                    setFilters(prev => ({...prev, scoreLe: value == null ? undefined : Number(value)}));
                                 }}
                             />
                         </Space>

@@ -5,6 +5,7 @@ import {
     Card,
     Descriptions,
     Empty,
+    InputNumber,
     List,
     Modal,
     Popconfirm,
@@ -33,6 +34,8 @@ interface AutoTaskRecord {
     groupId?: number;
     contestId?: number;
     problemId?: number;
+    autoScore?: number | null;
+    autoFullScore?: number | null;
 }
 
 interface AutoTaskLog {
@@ -85,6 +88,7 @@ interface AutoTaskFrameworkProps extends WithTranslation {
         username?: boolean;
         psid?: boolean;
         problemId?: boolean;
+        scoreLe?: boolean;
     };
     
     // 列显示配置
@@ -95,6 +99,7 @@ interface AutoTaskFrameworkProps extends WithTranslation {
         username?: boolean;
         psid?: boolean;
         problemId?: boolean;
+        score?: boolean;
         startTime?: boolean;
         duration?: boolean;
         actions?: boolean;
@@ -177,6 +182,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
         username?: string;
         psid?: number;
         problemId?: number;
+        scoreLe?: number;
     }>({});
     const [pagination, setPagination] = useState<{ current: number, pageSize: number, total: number }>({
         current: 1,
@@ -208,6 +214,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                 status: filters.status,
                 taskType: filters.taskType,
                 username: filters.username,
+                scoreLe: filters.scoreLe,
                 psid: filters.psid,
                 problemId: filters.problemId
             })
@@ -217,7 +224,8 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                 pageSize: size,
                 status: filters.status,
                 taskType: filters.taskType,
-                username: filters.username
+                username: filters.username,
+                scoreLe: filters.scoreLe
             });
         
         apiCall.then((res: any) => {
@@ -240,7 +248,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
         }).finally(() => {
             setListLoading(false);
         });
-    }, [filters.status, filters.taskType, filters.username, filters.psid, filters.problemId, groupId, psid, contestId, taskTypeFilter, t]);
+    }, [filters.status, filters.taskType, filters.username, filters.psid, filters.problemId, filters.scoreLe, groupId, psid, contestId, taskTypeFilter, t]);
 
     useEffect(() => {
         loadTasks(1, pagination.pageSize);
@@ -475,6 +483,24 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                 render: (text: string) => text || "-"
             });
         }
+
+        const isSubjectiveReviewScope = Array.isArray(taskTypeFilter) && taskTypeFilter.includes("subjective_review");
+        const showScore = showColumns.score !== undefined ? showColumns.score : isSubjectiveReviewScope;
+        if (showScore) {
+            cols.push({
+                title: t("AutoTaskScore"),
+                dataIndex: "autoScore",
+                key: "autoScore",
+                width: 140,
+                render: (_: any, record) => {
+                    const score = record.autoScore;
+                    if (score === undefined || score === null) return "-";
+                    const full = record.autoFullScore;
+                    if (full === undefined || full === null) return `${score}`;
+                    return `${score} / ${full}`;
+                }
+            });
+        }
         
         // 题目 ID 列
         // 默认策略：如果有明确配置则遵循配置，否则只有在 Group 视图下才显示
@@ -558,7 +584,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
         }
         
         return cols;
-    }, [t, taskTypeLabel, statusTag, canRerun, handleRerun, handleDelete, rerunLoadingId, deleteLoadingId, openDetail, ResultComponent, openResultModal, showColumns, groupId]);
+    }, [t, taskTypeLabel, statusTag, canRerun, handleRerun, handleDelete, rerunLoadingId, deleteLoadingId, openDetail, ResultComponent, openResultModal, showColumns, groupId, taskTypeFilter]);
 
     const typeFilterOptions = useMemo(() => {
         const typeSet = new Set<string>();
@@ -700,6 +726,20 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                                     optionFilterProp="label"
                                     onChange={(value) => {
                                         setFilters(prev => ({...prev, problemId: value || undefined}));
+                                    }}
+                                />
+                            )}
+                            {((showFilters.scoreLe !== undefined)
+                                ? showFilters.scoreLe
+                                : (Array.isArray(taskTypeFilter) && taskTypeFilter.includes("subjective_review"))) && (
+                                <InputNumber
+                                    min={0}
+                                    precision={2}
+                                    style={{width: 220}}
+                                    placeholder={t("AutoTaskFilterScoreLe")}
+                                    value={filters.scoreLe}
+                                    onChange={(value) => {
+                                        setFilters(prev => ({...prev, scoreLe: value == null ? undefined : Number(value)}));
                                     }}
                                 />
                             )}

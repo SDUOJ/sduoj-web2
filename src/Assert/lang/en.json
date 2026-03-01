@@ -805,6 +805,8 @@
   ,"AutoTaskProblemId": "Problem ID"
   ,"AutoTaskFilterProblemSet": "Filter by Problem Set"
   ,"AutoTaskFilterProblem": "Filter by Problem"
+  ,"AutoTaskScore": "Score"
+  ,"AutoTaskFilterScoreLe": "Score <= "
   ,"subjectiveReview": "Subjective Review"
   ,"SummaryExportCreateTitle": "Create Summary Report Export Task"
   ,"SummaryExportCreateHelp": "Select problem sets to include, or leave blank to include all. The system automatically excludes admin group members, creators, and superadmins."

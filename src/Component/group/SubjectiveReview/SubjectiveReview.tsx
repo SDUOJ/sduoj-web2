@@ -59,7 +59,8 @@ const SubjectiveReview: React.FC<SubjectiveReviewProps> = (props) => {
                 taskType: false,
                 username: true,
                 psid: true,
-                problemId: false
+                problemId: false,
+                scoreLe: true
             }}
             showColumns={{
                 taskId: true,
@@ -68,6 +69,7 @@ const SubjectiveReview: React.FC<SubjectiveReviewProps> = (props) => {
                 username: true,
                 psid: true,
                 problemId: false,
+                score: true,
                 startTime: true,
                 duration: true,
                 actions: true
