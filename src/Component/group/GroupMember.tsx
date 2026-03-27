@@ -133,17 +133,20 @@ const GroupMember = (props: any) => {
         {
             title: props.t("username"),
             dataIndex: 'username',
-            width: "auto",
+            width: 180,
+            ellipsis: true,
         },
         {
             title: props.t("nickname"),
             dataIndex: 'nickname',
-            width: "auto",
+            width: 180,
+            ellipsis: true,
         },
         {
             title: props.t("email"),
             dataIndex: 'email',
-            width: "auto",
+            width: 260,
+            ellipsis: true,
         },
     ]
 
@@ -151,7 +154,7 @@ const GroupMember = (props: any) => {
         ...columnsBase,
         {
             title: props.t("operator"),
-            width: "150px",
+            width: 150,
             render: (text: any, rows: any) => {
                 // console.log("rows", rows)
                 return (
@@ -174,7 +177,7 @@ const GroupMember = (props: any) => {
         ...columnsBase,
         {
             title: props.t("operator"),
-            width: "150px",
+            width: 150,
             render: (text: any, rows: any) => {
                 return (
                     <Space>
@@ -197,6 +200,8 @@ const GroupMember = (props: any) => {
         }
     ];
 
+    const removableMemberData = owner ? memberData.filter((v: DataType) => v.userId !== owner.userId) : []
+
     return (
         <>
             <Button type={props.btnType} size={"small"} onClick={() => {
@@ -208,61 +213,79 @@ const GroupMember = (props: any) => {
                 open={vis}
                 destroyOnHidden={true}
                 title={props.title}
-                width={1200}
+                width={props.width || 1200}
                 onCancel={() => {
                     setVis(false)
                 }}
                 footer={false}
             >
-                <Space wrap>
-                    <div>{props.t("ApplyingUsers")}({applyData !== undefined ? applyData.length : 0})</div>
-                    <YesNoOperConfirm
-                        onConfirm={() => setUserStatus(applyData, 2)}
-                        content={<Button type="primary" size={"small"}>{props.t("AcceptAll")}</Button>}
-                        disabled={applyData.length === 0}
-                    />
-                    <YesNoOperConfirm
-                        onConfirm={() => setUserStatus(applyData, 3)}
-                        content={<Button type="primary" danger size={"small"}>{props.t("RejectAll")}</Button>}
-                        disabled={applyData.length === 0}
-                    />
+                <div style={{display: "flex", flexDirection: "column", gap: 16, width: "100%", minWidth: 0}}>
+                    <div style={{width: "100%", minWidth: 0}}>
+                        <Space wrap size={8} style={{marginBottom: 12}}>
+                            <div>{props.t("ApplyingUsers")}({applyData !== undefined ? applyData.length : 0})</div>
+                            <YesNoOperConfirm
+                                onConfirm={() => setUserStatus(applyData, 2)}
+                                content={<Button type="primary" size={"small"}>{props.t("AcceptAll")}</Button>}
+                                disabled={applyData.length === 0}
+                            />
+                            <YesNoOperConfirm
+                                onConfirm={() => setUserStatus(applyData, 3)}
+                                content={<Button type="primary" danger size={"small"}>{props.t("RejectAll")}</Button>}
+                                disabled={applyData.length === 0}
+                            />
+                        </Space>
 
-                    <Table
-                        size={"small"}
-                        columns={ApplyColumns}
-                        dataSource={applyData}
-                        pagination={false}
-                        scroll={{y: 200}}
-                    />
+                        <Table
+                            rowKey={'userId'}
+                            size={"small"}
+                            style={{width: "100%"}}
+                            columns={ApplyColumns}
+                            dataSource={applyData}
+                            pagination={false}
+                            scroll={{y: 200}}
+                        />
+                    </div>
 
-                    <div>{props.t("UserListLabel")}({memberData.length})</div>
-                    {/*<Button type="primary" size={"small"} ></Button>*/}
-                    {/*<Button type="primary" danger size={"small"} >Reject All</Button>*/}
+                    <div style={{width: "100%", minWidth: 0}}>
+                        <div style={{marginBottom: 12}}>{props.t("UserListLabel")}({memberData.length})</div>
 
-                    <TextArea
-                        onChange={(e) => {
-                            addUserData.current = e.currentTarget.value.split(/,|，|\n| |\t/)
-                            setAdduserValue(e.currentTarget.value)
-                        }}
-                        value={addUserValue}
-                        cols={180}
-                        rows={4}
-                        placeholder={props.t("SplitUsernamesHint")}
-                    />
+                        <TextArea
+                            onChange={(e) => {
+                                addUserData.current = e.currentTarget.value.split(/,|，|\n| |\t/)
+                                setAdduserValue(e.currentTarget.value)
+                            }}
+                            value={addUserValue}
+                            rows={4}
+                            style={{width: "100%", marginBottom: 12}}
+                            placeholder={props.t("SplitUsernamesHint")}
+                        />
 
-                    <Button type={"primary"} size={"small"} onClick={addUser}>
-                        {props.t("AddUser")}
-                    </Button>
+                        <Space size={8} style={{marginBottom: 12}}>
+                            <Button type={"primary"} size={"small"} onClick={addUser}>
+                                {props.t("AddUser")}
+                            </Button>
+                            <YesNoOperConfirm
+                                onConfirm={() => setUserStatus(removableMemberData, 3)}
+                                disabled={removableMemberData.length === 0}
+                                content={
+                                    <Button type="primary" danger size={"small"}>
+                                        {props.t("RemoveAll")}
+                                    </Button>
+                                }
+                            />
+                        </Space>
 
-                    <Table
-                        size={"small"}
-                        columns={columns}
-                        dataSource={memberData}
-                        pagination={false}
-                        scroll={{y: 240}}
-                    />
-
-                </Space>
+                        <Table
+                            rowKey={'userId'}
+                            size={"small"}
+                            style={{width: "100%"}}
+                            columns={columns}
+                            dataSource={memberData}
+                            pagination={false}
+                            scroll={{y: 240}}
+                        />
+                    </div>
+                </div>
             </Modal>
         </>
     )
