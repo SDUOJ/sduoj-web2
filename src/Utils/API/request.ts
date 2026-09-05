@@ -1,5 +1,5 @@
 import apiAddress from './apiAddress';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, CanceledError } from 'axios';
 import { Get, Post } from '../../Type/types';
 import { message } from 'antd';
 import { UrlPrefix } from '../../Config/constValue';
@@ -63,6 +63,8 @@ const parseErrorMessage = (payload: any, fallback = '请求失败') => {
   return fallback;
 };
 
+const rejection = (message: string) => Promise.reject(message);
+
 const dealResponse = async (resp: any, url: string) => {
   try {
     const response = await resp;
@@ -70,40 +72,47 @@ const dealResponse = async (resp: any, url: string) => {
     if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
       window.location.replace(UrlPrefix + '/error/time');
       message.error('本地时间异常');
-      return Promise.reject('本地时间异常');
+      return rejection('本地时间异常');
     }
     switch (response.data.code) {
       case 0:
         return response.data.data;
       default:
         message.error(parseErrorMessage(response.data));
-        return Promise.reject(parseErrorMessage(response.data));
+        return rejection(parseErrorMessage(response.data));
     }
-  } catch (e: any) {
-    const response = e.response;
+  } catch (error: unknown) {
+    if (axios.isCancel(error) || error instanceof CanceledError) throw error;
+
+    const response = (error as AxiosError)?.response;
     if (response === undefined) {
       // respect silence list for network unreachable as well
       if (messageDisabledList.indexOf(url) === -1) message.error('服务器不可达');
-      return Promise.reject('服务器不可达');
+      return rejection('服务器不可达');
     }
     if (response.status === 400) {
       const errorMsg = parseErrorMessage(response.data, '请求参数错误');
       message.error(errorMsg);
-      return Promise.reject(errorMsg);
+      return rejection(errorMsg);
     }
-    switch (response.data.code) {
+    const payload: any = response.data;
+    switch (response.status === 401 ? 401 : payload?.code) {
       case 401:
         if (messageDisabledList.indexOf(url) === -1) {
-          let pos = window.location.href.indexOf(UrlPrefix);
-          let to = window.location.href.substring(pos).split('?')[0];
-          if (to !== '/login') window.location.replace(UrlPrefix + '/login?to=' + to);
-          message.error(parseErrorMessage(response.data, '未登录或登录已过期'));
+          const current = new URL(window.location.href);
+          const inApp =
+            current.pathname === UrlPrefix || current.pathname.startsWith(UrlPrefix + '/');
+          const to = inApp ? current.pathname + current.search + current.hash : UrlPrefix;
+          if (current.pathname !== UrlPrefix + '/login') {
+            window.location.replace(`${UrlPrefix}/login?to=${encodeURIComponent(to)}`);
+          }
+          message.error(parseErrorMessage(payload, '未登录或登录已过期'));
         }
-        return Promise.reject(parseErrorMessage(response.data, '未登录或登录已过期'));
+        return rejection(parseErrorMessage(payload, '未登录或登录已过期'));
       default: {
-        const errorMsg = parseErrorMessage(response.data);
+        const errorMsg = parseErrorMessage(payload);
         if (messageDisabledList.indexOf(url) === -1) message.error(errorMsg);
-        return Promise.reject(errorMsg);
+        return rejection(errorMsg);
       }
     }
   }
@@ -113,7 +122,7 @@ const get: Get = async (url: string, params?: object, config?: AxiosRequestConfi
   const error = requestConstraintError(url, config?.params ?? params, 'GET');
   if (error) {
     message.error(error);
-    return Promise.reject(error);
+    return rejection(error);
   }
   return await dealResponse(
     service.get(url, {
@@ -129,7 +138,7 @@ const post: Post = async (url: string, data: object, config?: AxiosRequestConfig
   const error = requestConstraintError(url, data);
   if (error) {
     message.error(error);
-    return Promise.reject(error);
+    return rejection(error);
   }
   return await dealResponse(
     service.post(url, data, {

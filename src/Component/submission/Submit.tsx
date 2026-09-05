@@ -3,7 +3,6 @@ import { Badge, Button, Form, message, Modal, Select, Space, Tooltip, Upload } f
 import { JudgeTemplateAllType } from '../../Type/IProblem';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
-import { Option } from 'antd/lib/mentions';
 import { UploadOutlined } from '@ant-design/icons';
 import CodeEditor from '../common/CodeEditor';
 import { withRouter } from 'react-router-dom';
@@ -124,7 +123,7 @@ const Submit = (props: SubmitPropsType & any) => {
         }}
         width={1200}
         footer={[
-          <Space size={25}>
+          <Space key="actions" size={25}>
             {props.LeftSubmitCount !== undefined && !isNaN(props.LeftSubmitCount) && (
               <div
                 style={{
@@ -176,18 +175,17 @@ const Submit = (props: SubmitPropsType & any) => {
           >
             <Select
               allowClear
+              options={props.JudgeTemplates?.map((template: JudgeTemplateAllType) => ({
+                value: template.id,
+                label: template.title,
+              }))}
               onChange={(value) => {
                 const id = props.JudgeTemplates.findIndex((val: any) => val.id === value);
                 setJudgeTemplateId(id >= 0 ? id : undefined);
               }}
-            >
-              {props.JudgeTemplates !== undefined &&
-                props.JudgeTemplates.map((val: JudgeTemplateAllType) => {
-                  return <Option value={val.id}>{val.title}</Option>;
-                })}
-            </Select>
+            />
           </Form.Item>
-          {[''].map(() => {
+          {(() => {
             const jtId = judgeTemplateId;
             if (
               jtId !== undefined &&
@@ -316,7 +314,7 @@ const Submit = (props: SubmitPropsType & any) => {
               }
             }
             return undefined;
-          })}
+          })()}
         </Form>
       </Modal>
     </>

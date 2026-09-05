@@ -1,35 +1,28 @@
-import CApi from "Utils/API/c-api"
-import {UserInfo} from "../../Type/Iuser";
-import {Dispatch} from "react";
-import {clearRedux} from "./common";
+import CApi from 'Utils/API/c-api';
+import { UserInfo } from '../../Type/Iuser';
+import { Dispatch } from 'redux';
+import { clearRedux } from './common';
 
-export type UserAction =
-    setUserInfo |
-    userLogin |
-    userLogout |
-    clearRedux
-
+export type UserAction = setUserInfo | userLogin | userLogout | clearRedux;
 
 export function userLogoutTodo() {
-    return (dispatch: Dispatch<any>, getState: any) => {
-        CApi.logout().then((resData) => {
-            dispatch({type: "userLogout"})
-            dispatch({type: "clearRedux"})
-        })
-    }
+  return (dispatch: Dispatch<UserAction>): Promise<void> => {
+    return CApi.logout().then(() => {
+      dispatch({ type: 'userLogout' });
+      dispatch({ type: 'clearRedux' });
+    });
+  };
 }
 
 export interface setUserInfo {
-    type: "setUserInfo"
-    data: UserInfo
+  type: 'setUserInfo';
+  data: UserInfo;
 }
 
 export interface userLogin {
-    type: "userLogin"
+  type: 'userLogin';
 }
 
 export interface userLogout {
-    type: "userLogout"
+  type: 'userLogout';
 }
-
-

@@ -1,6 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { message } from 'antd';
 import request, { service } from './request';
+import axios from 'axios';
 
 jest.mock('antd', () => ({ message: { error: jest.fn() } }));
 const adapter = new MockAdapter(service);
@@ -68,6 +69,19 @@ it('rejects server errors', async () => {
   await expect(request.get('/example')).rejects.toBe('Server error');
 });
 
+it('normalizes an empty HTTP error without throwing a secondary TypeError', async () => {
+  adapter.onGet('/example').reply(503);
+  await expect(request.get('/example')).rejects.toBe('请求失败');
+  expect(message.error).toHaveBeenCalledWith('请求失败');
+});
+
+it('preserves request cancellation without showing an unreachable-server error', async () => {
+  const cancellation = new axios.CanceledError('navigation changed');
+  adapter.onGet('/example').reply(() => Promise.reject(cancellation));
+  await expect(request.get('/example')).rejects.toBe(cancellation);
+  expect(message.error).not.toHaveBeenCalled();
+});
+
 it('downloads a ZIP with the requested filename and releases its object URL', async () => {
   adapter.onPost('/zip').reply(200, new Blob(['zip']));
   URL.createObjectURL = jest.fn(() => 'blob:test');
@@ -89,15 +103,34 @@ it('redirects for expired sessions and excessive clock skew', async () => {
   const replace = jest.fn();
   Object.defineProperty(window, 'location', {
     configurable: true,
-    value: { href: 'http://localhost/v2/problem', replace },
+    value: { href: 'http://localhost/v2/problem?tag=a%26b&page=2#results', replace },
   });
   try {
-    adapter.onGet('/example').reply(401, { code: 401 });
+    adapter.onGet('/example').reply(401);
     await expect(request.get('/example')).rejects.toBe('未登录或登录已过期');
-    expect(replace).toHaveBeenCalledWith('/v2/login?to=/v2/problem');
+    expect(replace).toHaveBeenCalledWith(
+      '/v2/login?to=' + encodeURIComponent('/v2/problem?tag=a%26b&page=2#results'),
+    );
     adapter.onGet('/example').reply(200, { code: 0, timestamp: Date.now() - 120000 });
     await expect(request.get('/example')).rejects.toBe('本地时间异常');
     expect(replace).toHaveBeenCalledWith('/v2/error/time');
+  } finally {
+    Object.defineProperty(window, 'location', { configurable: true, value: original });
+  }
+});
+
+it.each([
+  ['http://localhost/unrelated/v2/problem', '/v2/login?to=%2Fv2'],
+  ['http://localhost/v2/login?to=%2Fv2%2Fproblem', undefined],
+])('handles the expired-session return boundary at %s', async (href, destination) => {
+  const original = window.location;
+  const replace = jest.fn();
+  Object.defineProperty(window, 'location', { configurable: true, value: { href, replace } });
+  try {
+    adapter.onGet('/example').reply(401);
+    await expect(request.get('/example')).rejects.toBe('未登录或登录已过期');
+    if (destination) expect(replace).toHaveBeenCalledWith(destination);
+    else expect(replace).not.toHaveBeenCalled();
   } finally {
     Object.defineProperty(window, 'location', { configurable: true, value: original });
   }
