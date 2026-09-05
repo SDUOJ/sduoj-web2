@@ -1,5 +1,8 @@
 # Frontend Follow-up, 2026-09-05
 
+For the subsequent multi-agent scan and current issue status, see
+[FRONTEND_AUDIT.md](FRONTEND_AUDIT.md).
+
 This continues the form-contract and React 18 migration on
 `feature/upgrade-antd-v5`. The separate AI workbench changes are outside this batch.
 
@@ -91,8 +94,9 @@ before the successful production build.
 - This batch is not a complete audit of every Autolab workflow. Continue with
   automatic-task forms, attendance/seat actions, upload failures, and actual
   answering/hand-in flows beyond problem-set browsing.
-- Preserve the recorded mobile failures until the fixed-width layouts are repaired
-  and touch workflows are verified. They are not passing usability tests.
+- The subsequent audit repaired the recorded client login and pagination mobile
+  failures. Mobile administration remains intentionally skipped pending its wider
+  fixed-width and touch-workflow migration; see `FRONTEND_AUDIT.md` A-20 and F-17.
 - Continue reducing historical lint and `any` usage. Whole-repository line coverage
   is only 8.7%; passing migrated-module gates does not imply broad coverage.
 - The full format check also sees concurrent AI workbench/router edits. At this

@@ -1,5 +1,8 @@
 # Frontend Architecture Review
 
+This is the historical baseline review. Current findings and closure status are
+tracked in [FRONTEND_AUDIT.md](FRONTEND_AUDIT.md).
+
 Review date: 2026-09-05. Baseline: `6184af3`, branch `feature/upgrade-antd-v5`.
 This review concerns the existing application, not a replacement implementation.
 The baseline differs substantially from `master` (`635ea48`).
