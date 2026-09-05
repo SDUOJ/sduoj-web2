@@ -1,21 +1,33 @@
-import {Form, Input} from "antd";
-import React from "react";
-import {withTranslation} from "react-i18next";
+import { Form, Input } from 'antd';
+import type { FormItemProps, InputProps } from 'antd';
 
-const ItemText = (props: any) => {
-    return (
-        <>
-            <Form.Item
-                label={props.label}
-                name={props.name}
-                required={props.required ?? true}
-                initialValue={props.initialValue}
-                help={props.help}
-            >
-                <Input addonAfter={props.addonAfter}/>
-            </Form.Item>
-        </>
-    )
+export interface ItemTextProps extends Pick<
+  FormItemProps,
+  'name' | 'label' | 'required' | 'initialValue' | 'help' | 'rules'
+> {
+  addonAfter?: InputProps['addonAfter'];
 }
 
-export default withTranslation()(ItemText)
+const ItemText = ({ required = true, rules = [], addonAfter, ...props }: ItemTextProps) => (
+  <Form.Item
+    {...props}
+    required={required}
+    rules={
+      required
+        ? [
+            {
+              required: true,
+              type: 'string',
+              whitespace: true,
+              transform: (value) => (typeof value === 'number' ? String(value) : value),
+            },
+            ...rules,
+          ]
+        : rules
+    }
+  >
+    <Input addonAfter={addonAfter} />
+  </Form.Item>
+);
+
+export default ItemText;

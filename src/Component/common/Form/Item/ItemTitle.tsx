@@ -1,15 +1,9 @@
-import {Form, Input} from "antd";
-import React from "react";
-import {withTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
+import ItemText, { ItemTextProps } from './ItemText';
 
-const ItemTitle = (props: any) => {
-    return (
-        <>
-            <Form.Item label={props.label ?? props.t("title")} name={props.name ?? "title"} required={true}>
-                <Input/>
-            </Form.Item>
-        </>
-    )
-}
+const ItemTitle = ({ name = 'title', label, ...props }: ItemTextProps) => {
+  const { t } = useTranslation();
+  return <ItemText {...props} name={name} label={label ?? t('title')} />;
+};
 
-export default withTranslation()(ItemTitle)
+export default ItemTitle;
