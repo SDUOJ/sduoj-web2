@@ -1,75 +1,83 @@
-# SDUOJ Front End - React
+# SDUOJ Frontend
 
-This response is a web system that use ``React`` to adapt more services of SDUOJ.
+The existing SDUOJ React application, incrementally modernized on the
+`feature/upgrade-antd-v5` branch. Routes, API payloads and the `/v2` deployment
+prefix are retained. See [the architecture review](docs/FRONTEND_REVIEW.md) for
+findings, constraints and the migration sequence.
 
-This system is still in its early stages and there are still a large number of issues to be resolved.
+## Development
 
-> Warning: This code currently contains a large number of unfixed warnings and has some performance issues, but is believed to be fixed in the future. (2023/02/19)
+Use Node 24 LTS and Yarn Classic 1.22.22. With nvm installed:
 
-
-## Prepare the environment
-
-To build it, you need a version 16.x of ``nodejs``.
-
-To change you nodejs version, we recommend you ues [nvm](https://github.com/nvm-sh/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows).
-
-As the first time you run the code, you need to install modules:
-
-```shell
-npm install -g yarn
-yarn install
-```
-
-## How to run (on windows)
-
-If you want to run it for development, You need to first create 
-the https certificate for your local project.
-
-1.  With ``PowerShell``, in the root of this project:
-    ```shell
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-    Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
-    scoop bucket add extras
-    scoop install mkcert
-    mkcert -install
-    mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem "localhost"
-    ```
-    Change the start in package.json to "start": "cross-env HTTPS=true SSL_CRT_FILE=./.cert/cert.pem   SSL_KEY_FILE=./.cert/key.pem node scripts/start.js".
-    Then,modify './src/utils/API/apiAddress.js' http to https in devlopment environment.
-
-3. Install a proxy server for nginx, modify its configuration file,
-listen on ``8889`` as the SSL port, and forward routes ``\api`` to ``localhost:8080``.
-    ```
-    server {
-        listen       8889 ssl;
-        server_name  localhost;
-    
-        ssl_certificate      /path/to/project_root/.cert/cert.pem;
-        ssl_certificate_key  /path/to/project_root/.cert/key.pem;
-    
-        ssl_session_cache    shared:SSL:1m;
-        ssl_session_timeout  5m;
-    
-        ssl_ciphers  HIGH:!aNULL:!MD5;
-        ssl_prefer_server_ciphers  on;
-    
-        location /api/ {
-            proxy_pass   http://localhost:8080;
-        }
-    }
-    ```
-4. Run:
-
-```shell
-start nginx
+```sh
+nvm install
+nvm use
+npm install --global yarn@1.22.22
+yarn install --frozen-lockfile
 yarn start
 ```
 
-## How to build
+Open `http://localhost:3000/v2/`. A working backend is required for actual
+business operations. Development hosts remain in `src/Utils/API/apiAddress.ts`;
+match your DNS/hosts and gateway setup to those values. Production defaults
+continue to point at the existing SDUOJ domain. Do not use production services
+for automated write tests.
 
-If you want to build a release package, run:
+`yarn build` produces `build/` with the existing `/v2/` asset prefix. Configure
+your reverse proxy to serve the application and return `index.html` for browser
+routes. Vditor assets are also served at `/vditor/`. The old CRA `scripts/start.js`
+and `scripts/build.js` entry points have been retired in favor of Webpack CLI.
+For HTTPS development, terminate TLS at your local reverse proxy and configure
+matching HTTP/WebSocket upstream addresses.
 
-```shell
+## Verification
+
+```sh
+yarn typecheck
+yarn lint
+yarn format:check
+yarn test:unit
+yarn test:coverage
 yarn build
+yarn playwright install chromium firefox webkit
+yarn test:e2e
 ```
-Then you can find all the files in the build directory that can be accessed directly using a proxy server such as nginx.
+
+`yarn check` runs type checking, lint and coverage. `yarn verify` adds a production
+build and browser regression. Browser tests start their own preview server on
+127.0.0.1:4173 and intercept API requests with local fixtures. Unknown API
+requests fail the test. They must not reach live services.
+
+Visual comparisons use reviewed macOS Chromium baselines:
+
+```sh
+yarn test:visual
+yarn test:visual --update-snapshots
+```
+
+Inspect every changed image before committing a new baseline. Linux CI runs
+functional tests and captures screenshots; a separate macOS job compares the
+committed visual baselines. Screenshots, traces and videos are attached on
+failure. Initial baselines characterize this migration; they do not prove exact
+pixel equivalence to the previously unbuildable baseline.
+
+## Current Limits
+
+- The suite establishes unit, transport, component, browser and visual layers;
+  it does not yet cover every business workflow. Whole-source coverage remains
+  visible in `coverage/`, with stronger gates for migrated shared modules.
+- Two mobile interaction tests are recorded as expected failures for the fixed
+  minimum-width layout. They are not successful mobile acceptance tests. A fix
+  must turn them into normal passing tests; an unexpected pass fails the suite.
+- Redux, request handling and form submission have focused regression tests.
+  Real judging, uploads, exams, permissions and camera flows still require a
+  disposable backend and seeded test identities.
+- React 18.3 is a compatibility step. Legacy sortable tables still require
+  replacement and dedicated regression before React 19.
+
+## Contribution Rules
+
+Keep commits scoped to one change: dependency integration, state logic, a feature
+migration, tests, or mechanical formatting. Do not combine an issue batch with
+an architectural rewrite. Preserve the existing UI until tests establish the
+intended behavior. See [contributor guidance](docs/CONTRIBUTING.md).
