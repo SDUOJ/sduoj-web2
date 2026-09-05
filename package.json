@@ -64,9 +64,12 @@
     "test:coverage": "jest --runInBand --coverage",
     "lint": "node scripts/lint.cjs",
     "lint:report": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tools.json",
     "format": "prettier --write .",
-    "format:check": "node scripts/check-format.cjs"
+    "format:check": "node scripts/check-format.cjs",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test:visual": "cross-env VISUAL_REGRESSION=1 playwright test --project chromium --project mobile-chromium --grep visual"
   },
   "browserslist": {
     "production": [
