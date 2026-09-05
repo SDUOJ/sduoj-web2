@@ -134,15 +134,15 @@ version that could not be built successfully.
 
 Keep existing paths while incrementally applying these boundaries:
 
-| Existing area | Responsibility |
-| --- | --- |
-| `Pages` | Route parameters, access requirements, page composition |
-| `Component/<domain>` | Domain UI and its local state |
-| `Component/common` | Reusable UI with explicit props, no hidden domain requests |
-| `Utils/API` | Transport plus domain endpoint adapters; no page component imports |
-| `Redux` | Cross-page client state and deliberately retained caches |
-| `Config` | Deployment, routes, locale and theme configuration |
-| `Type` | Shared contracts; move feature-only types beside their feature later |
+| Existing area        | Responsibility                                                       |
+| -------------------- | -------------------------------------------------------------------- |
+| `Pages`              | Route parameters, access requirements, page composition              |
+| `Component/<domain>` | Domain UI and its local state                                        |
+| `Component/common`   | Reusable UI with explicit props, no hidden domain requests           |
+| `Utils/API`          | Transport plus domain endpoint adapters; no page component imports   |
+| `Redux`              | Cross-page client state and deliberately retained caches             |
+| `Config`             | Deployment, routes, locale and theme configuration                   |
+| `Type`               | Shared contracts; move feature-only types beside their feature later |
 
 New components should prefer functions, typed props and typed Redux hooks.
 Remote data belongs behind a domain API/hook; derived display data should not
@@ -171,15 +171,15 @@ steps. Do not claim completion of later business migrations from these commits.
 
 ## Acceptance Matrix
 
-| Layer | Initial gate | Remaining expansion |
-| --- | --- | --- |
-| Static | All-source typecheck; lint errors fail; legacy warning counts cannot grow | Remove warning baseline per migrated feature; reduce `any` |
-| Unit | Immutable reducers; time and locale boundaries | Data conversion, ranks, export calculations, WebSocket versions |
-| Contract | HTTP envelope, errors, credentials, redirects, downloads | Endpoint DTOs, cancellation, real server contract checks |
-| Component | Modal validation, submit success and retry | Table editing/dragging, Markdown lifecycle, permission states |
-| Browser | Login, return route, problem pagination, empty submissions | Administration, exams, contest, problem sets, uploads and logout |
-| Visual | Reviewed desktop/mobile baselines and actual asset checks | Domain pages, dialogs, long text, multiple locales |
-| Integration | Isolated API fixtures | Disposable backend plus seeded student/admin accounts |
+| Layer       | Initial gate                                                              | Remaining expansion                                              |
+| ----------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Static      | All-source typecheck; lint errors fail; legacy warning counts cannot grow | Remove warning baseline per migrated feature; reduce `any`       |
+| Unit        | Immutable reducers; time and locale boundaries                            | Data conversion, ranks, export calculations, WebSocket versions  |
+| Contract    | HTTP envelope, errors, credentials, redirects, downloads                  | Endpoint DTOs, cancellation, real server contract checks         |
+| Component   | Modal validation, submit success and retry                                | Table editing/dragging, Markdown lifecycle, permission states    |
+| Browser     | Login, return route, problem pagination, empty submissions                | Administration, exams, contest, problem sets, uploads and logout |
+| Visual      | Reviewed desktop/mobile baselines and actual asset checks                 | Domain pages, dialogs, long text, multiple locales               |
+| Integration | Isolated API fixtures                                                     | Disposable backend plus seeded student/admin accounts            |
 
 Full acceptance requires real backend scenarios for submission judging, exam
 timing, administrator permissions, uploads and camera/WebSocket workflows.

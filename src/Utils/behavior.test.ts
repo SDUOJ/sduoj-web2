@@ -1,22 +1,28 @@
-import {initLanguage} from './initLanguage';
+import { initLanguage } from './initLanguage';
 import judgeAuth from './judgeAhtu';
-import {TimeRangeState, TimeDiff, getDiffSecond} from './Time';
+import { TimeRangeState, TimeDiff, getDiffSecond } from './Time';
 
 describe('language selection', () => {
-  it.each([['zh-CN', 'zh'], ['en-US', 'en'], ['fr-FR', 'en'], ['ZH', 'zh']])(
-    'normalizes %s to the supported locale %s',
-    (stored, expected) => {
-      localStorage.setItem('language', stored);
-      expect(initLanguage()).toBe(expected);
-    },
-  );
+  it.each([
+    ['zh-CN', 'zh'],
+    ['en-US', 'en'],
+    ['fr-FR', 'en'],
+    ['ZH', 'zh'],
+  ])('normalizes %s to the supported locale %s', (stored, expected) => {
+    localStorage.setItem('language', stored);
+    expect(initLanguage()).toBe(expected);
+  });
 });
 
 describe('time boundaries', () => {
   beforeEach(() => jest.spyOn(Date, 'now').mockReturnValue(1000));
-  it.each([[1001, 2000, 'wait'], [0, 999, 'end'], [1000, 2000, 'running'], [0, 1000, 'running']])(
-    'classifies the interval %s..%s as %s',
-    (start, end, expected) => expect(TimeRangeState(start, end)).toBe(expected),
+  it.each([
+    [1001, 2000, 'wait'],
+    [0, 999, 'end'],
+    [1000, 2000, 'running'],
+    [0, 1000, 'running'],
+  ])('classifies the interval %s..%s as %s', (start, end, expected) =>
+    expect(TimeRangeState(start, end)).toBe(expected),
   );
   it('accepts serialized timestamps and formats durations', () => {
     expect(TimeRangeState('0', '1000')).toBe('running');
