@@ -104,7 +104,7 @@ function TableWithAllData<Row extends object>({
     if (!sameTable) setRows([]);
     setLoading(true);
     Promise.resolve()
-      .then(() => (active ? load() ?? undefined : undefined))
+      .then(() => (active ? (load() ?? undefined) : undefined))
       .then((data) => {
         if (!active) return;
         const nextRows = transform ? transform(data ?? []) : (data ?? []);

@@ -69,6 +69,8 @@
     "test:unit": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:e2e": "playwright test",
+    "test:local": "playwright test -c playwright.local.config.ts",
+    "validation:snapshot": "node scripts/snapshot-validation-schema.cjs",
     "test:visual": "cross-env VISUAL_REGRESSION=1 playwright test --project chromium --project mobile-chromium --grep visual",
     "test:e2e:update": "playwright test --update-snapshots",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tools.json",
@@ -77,8 +79,7 @@
     "format": "prettier --write .",
     "format:check": "node scripts/check-format.cjs",
     "quality": "yarn format:check && yarn typecheck && yarn lint && yarn test:coverage",
-    "verify": "yarn quality && yarn build && yarn test:e2e",
-    "validation:snapshot": "node scripts/snapshot-validation-schema.cjs"
+    "verify": "yarn quality && yarn build && yarn test:e2e"
   },
   "browserslist": {
     "production": [
