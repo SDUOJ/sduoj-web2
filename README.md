@@ -43,7 +43,7 @@ yarn playwright install chromium firefox webkit
 yarn test:e2e
 ```
 
-`yarn check` runs type checking, lint and coverage. `yarn verify` adds a production
+`yarn quality` runs formatting, type checking, lint and coverage. `yarn verify` adds a production
 build and browser regression. Browser tests start their own preview server on
 127.0.0.1:4173 and intercept API requests with local fixtures. Unknown API
 requests fail the test. They must not reach live services.

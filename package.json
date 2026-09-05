@@ -74,8 +74,8 @@
     "lint:report": "eslint src --ext .ts,.tsx",
     "format": "prettier --write .",
     "format:check": "node scripts/check-format.cjs",
-    "check": "yarn typecheck && yarn lint && yarn test:coverage",
-    "verify": "yarn check && yarn build && yarn test:e2e"
+    "quality": "yarn format:check && yarn typecheck && yarn lint && yarn test:coverage",
+    "verify": "yarn quality && yarn build && yarn test:e2e"
   },
   "browserslist": {
     "production": [

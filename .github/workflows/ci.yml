@@ -16,8 +16,7 @@ jobs:
           node-version-file: .nvmrc
       - run: npm install --global yarn@1.22.22
       - run: yarn install --frozen-lockfile
-      - run: yarn format:check
-      - run: yarn check
+      - run: yarn quality
       - run: yarn build
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
