@@ -5,6 +5,8 @@ import ItemSelectGroup from '../../group/Form/Item/ItemSelectGroup';
 import React from 'react';
 import TextArea from 'antd/es/input/TextArea';
 import ItemSwitch01 from '../../common/Form/Item/ItemSwitch01';
+import { contracts } from '../../../Config/validation/contracts';
+import { constraintRules } from '../../../Config/validation/constraints';
 
 const ContestMFormManagement = (props: any) => {
   return (
@@ -100,6 +102,9 @@ const ContestMFormManagement = (props: any) => {
       />
       <Form.Item
         name={'participants'}
+        rules={constraintRules(contracts.contest.participants, (value) =>
+          typeof value === 'string' ? value.split(/[\t\n, ]/).filter(Boolean) : value,
+        )}
         label={
           <>
             {props.t('ParticipantsLabel')} &nbsp;
@@ -111,6 +116,9 @@ const ContestMFormManagement = (props: any) => {
       </Form.Item>
       <Form.Item
         name={'unofficialParticipants'}
+        rules={constraintRules(contracts.contest.unofficialParticipants, (value) =>
+          typeof value === 'string' ? value.split(/[\t\n, ]/).filter(Boolean) : value,
+        )}
         label={
           <>
             {props.t('UnofficialParticipants')} &nbsp;
@@ -129,6 +137,7 @@ const ContestMFormManagement = (props: any) => {
         name={'participatingGroups'}
         label={props.t('ParticipatingGroups')}
         mode={'multiple'}
+        constraint={contracts.contest.participatingGroups}
         tooltip={props.t('ParticipantsNoPasswordHint')}
         formName={'ContestForm'}
       />

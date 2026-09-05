@@ -1,6 +1,7 @@
 import { withTranslation } from 'react-i18next';
 import ItemText from '../../common/Form/Item/ItemText';
 import ItemTitle from '../../common/Form/Item/ItemTitle';
+import { contracts } from '../../../Config/validation/contracts';
 import { Col, Form, Radio, Row, Select } from 'antd';
 import React, { useState } from 'react';
 import FormExtraInfo from '../../common/Form/FormExtraInfo';
@@ -13,7 +14,7 @@ const ContestMFormBase = (props: any) => {
 
   return (
     <div style={{ width: 1100 }}>
-      <ItemTitle name={'contestTitle'} />
+      <ItemTitle name={'contestTitle'} constraint={contracts.contest.contestTitle} />
       <Row>
         <Col span={5}>
           <Form.Item label={props.t('Mode')} name={['features', 'mode']} required>
@@ -56,7 +57,12 @@ const ContestMFormBase = (props: any) => {
         </Col>
         <Col span={8}>
           {openness !== 'public' && (
-            <ItemText name={'password'} label={props.t('ContestPassword')} required={true} />
+            <ItemText
+              name={'password'}
+              label={props.t('ContestPassword')}
+              required={true}
+              constraint={contracts.contest.password}
+            />
           )}
         </Col>
       </Row>
@@ -65,7 +71,12 @@ const ContestMFormBase = (props: any) => {
           <ItemTimeRange label={props.t('ContestTimeRange')} required={true} />
         </Col>
         <Col span={12}>
-          <ItemText name={'source'} label={props.t('source')} required={false} />
+          <ItemText
+            name={'source'}
+            label={props.t('source')}
+            required={false}
+            constraint={contracts.contest.source}
+          />
         </Col>
       </Row>
 
@@ -73,7 +84,11 @@ const ContestMFormBase = (props: any) => {
         <FormExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b} />
       </Form.Item>
 
-      <ItemEditor name={'markdownDescription'} label={props.t('ContestAnnouncement')} />
+      <ItemEditor
+        name={'markdownDescription'}
+        label={props.t('ContestAnnouncement')}
+        constraint={contracts.contest.markdownDescription}
+      />
     </div>
   );
 };

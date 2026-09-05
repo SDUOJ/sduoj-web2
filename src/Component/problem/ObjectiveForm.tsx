@@ -16,6 +16,8 @@ import { genAnswerList, genEditableList } from '../../Type/IManage';
 import mApi from 'Utils/API/m-api';
 import SelectGroup from '../group/Form/Item/ItemSelectGroup';
 import { groupSelection } from '../../Type/Igroup';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 
 // 可拖拽的排序手柄
 const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
@@ -297,13 +299,18 @@ const ObjectiveForm = (props: any) => {
             </Radio.Group>
           </Form.Item>
 
-          <ProFormText width="xl" name="problemTitle" label={'标题'} rules={[{ required: true }]} />
+          <ProFormText
+            width="xl"
+            name="problemTitle"
+            label={'标题'}
+            rules={constraintRules(contracts.choice.problemTitle)}
+          />
 
           <ProFormTextArea
             width="xl"
             name="content"
             label={props.t('ProblemContent')}
-            rules={[{ required: true }, { type: 'string', min: 5, max: 1000 }]}
+            rules={constraintRules(contracts.choice.content)}
           />
           <EditableProTable<DataSourceType>
             name="choice"

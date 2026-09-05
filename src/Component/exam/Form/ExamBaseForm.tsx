@@ -9,6 +9,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { TimeDiff } from '../../../Utils/Time';
 import { examBasicType } from '../../../Type/IExam';
 import Editor from '../../common/Editor';
+import { contracts } from '../../../Config/validation/contracts';
+import { constraintRules } from '../../../Config/validation/constraints';
 
 const { RangePicker } = DatePicker;
 
@@ -43,8 +45,12 @@ const ExamBaseForm = (props: any) => {
         >
           <Form.Item
             name="examTitle"
+            validateFirst
             label={t('title')}
-            rules={[{ required: true, message: t('fieldRequired') }]}
+            rules={[
+              ...constraintRules(contracts.exam.examTitle),
+              { required: true, message: t('fieldRequired') },
+            ]}
           >
             <Input placeholder={t('PleaseInputExamTitle', { defaultValue: t('title') })} />
           </Form.Item>
@@ -132,8 +138,8 @@ const ExamBaseForm = (props: any) => {
 
           <Form.Item
             name="examDescription"
+            rules={constraintRules(contracts.exam.examDescription)}
             label={t('Description')}
-            rules={[{ required: true, message: t('fieldRequired') }]}
           >
             <Editor height={400} />
           </Form.Item>
