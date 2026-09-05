@@ -1,163 +1,180 @@
-import {Table} from "antd";
-import React, {Dispatch, useEffect, useState} from "react";
-import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router";
-import {TableState} from "../../../Type/ITable";
-import {SizeType} from "antd/lib/config-provider/SizeContext";
-import {ColumnsType} from "antd/lib/table/interface";
-import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
-import {MenuOutlined} from "@ant-design/icons";
-import {arrayMoveImmutable} from "array-move";
+import { Table } from 'antd';
+import type { TableProps } from 'antd';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import type { SortEndHandler } from 'react-sortable-hoc';
+import { MenuOutlined } from '@ant-design/icons';
+import { arrayMoveImmutable } from 'array-move';
+import { useAppDispatch, useAppSelector } from '../../../Redux/Store/hooks';
 
-export interface TableWithPaginationProps {
-    API: any                  // 表格查询数据的接口
-    size: SizeType            // 表格的大小
-    columns: ColumnsType<any> // 表格的列
-    name: string              // 表格名称
-    APIRowsTransForm?: any    // 针对API传输的数据进行转化的函数
-
-    // 面向 可选择的行 开放的接口
-    rowKey?: any              // 作为 key 记录的值
-
+export interface TableWithAllDataProps<Row extends object> extends Omit<
+  TableProps<Row>,
+  'dataSource'
+> {
+  name: string;
+  API: () => Promise<Row[] | null | undefined> | void;
+  APIRowsTransForm?: (rows: Row[]) => Row[];
+  useDrag?: boolean;
+  afterDrag?: (previousRows: Row[], oldIndex: number, newIndex: number) => void;
+  updateTrick?: unknown;
 }
 
-const TableWithAllData = (props: any) => {
-    const [tableData, setTableDataX] = useState([])                            // 表格核心数据
-    const [loading, setLoading] = useState(true)                    // 表格的加载状态
-    const [tableVersion, setTableVersion] = useState<number>(0)     // 表格版本（控制表格刷新）
-    // const [sortSwitch, setSortSwitch] = useState<boolean>(false);           // 操作是否开启排序模式
+const DragContext = createContext<SortEndHandler | undefined>(undefined);
+const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
+const SortableRow = SortableElement((props: React.HTMLAttributes<HTMLTableRowElement>) => (
+  <tr {...props} />
+));
+const SortableBody = SortableContainer((props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+  <tbody {...props} />
+));
 
+function DraggableBody(props: React.HTMLAttributes<HTMLTableSectionElement>) {
+  const onSortEnd = useContext(DragContext);
+  return (
+    <SortableBody
+      {...props}
+      useDragHandle
+      disableAutoscroll
+      helperClass="row-dragging"
+      onSortEnd={onSortEnd}
+    />
+  );
+}
 
-    const setTableData = (data: any) => {
-        setTableDataX(data)
-        // 若有 选中行 的相关配置，传递数据进行更新
-        if (props.setDataSource !== undefined && props.name !== undefined)
-            props.setDataSource(data, props.name)
+function DraggableRow({
+  'data-sort-index': index,
+  ...props
+}: React.HTMLAttributes<HTMLTableRowElement> & { 'data-sort-index'?: number }) {
+  if (index === undefined || index < 0) return <tr {...props} />;
+  return <SortableRow {...props} index={index} />;
+}
+
+const draggableComponents = { body: { wrapper: DraggableBody, row: DraggableRow } };
+
+function TableWithAllData<Row extends object>({
+  name,
+  API,
+  APIRowsTransForm,
+  useDrag = false,
+  afterDrag,
+  updateTrick,
+  columns,
+  onRow,
+  ...tableProps
+}: TableWithAllDataProps<Row>) {
+  const dispatch = useAppDispatch();
+  const entry = useAppSelector((state) => state.TableReduce.tableData[name]);
+  const version = entry?.tableVersion ?? 0;
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
+  const previousName = useRef<string>();
+  const source = useRef({ API, APIRowsTransForm, dataSource: entry?.dataSource });
+
+  // Inline API functions are common in callers; changing their identity is not a refresh request.
+  useLayoutEffect(() => {
+    source.current = { API, APIRowsTransForm, dataSource: entry?.dataSource };
+  }, [API, APIRowsTransForm, entry?.dataSource]);
+
+  useEffect(
+    () => () => {
+      previousName.current = undefined;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const sameTable = previousName.current === name;
+    previousName.current = name;
+    if (sameTable && version < 0) {
+      setRows(source.current.dataSource ?? []);
+      setLoading(false);
+      return;
     }
 
-    const getInfo = () => {
-        setLoading(true)
-        props.API().then((data: any) => {
-            // console.log("data", data)
-            if (data === null) data = []
-            if (props.APIRowsTransForm !== undefined) {
-                setTableData(props.APIRowsTransForm(data))
-            } else setTableData(data)
-            setLoading(false)
-        })
-    }
-
-    useEffect(() => {
-        getInfo()
-    }, [props.name])
-
-    useEffect(() => {
-        // 监听表格的版本变化，当版本变更时更新表格
-        const propsTableVersion = props.tableData[props.name]?.tableVersion
-        if (propsTableVersion !== undefined && tableVersion !== propsTableVersion) {
-            // 如果数据被外部应用更新，则用 redux 中的数据更新当前行
-            if (propsTableVersion < 0) {
-                setTableVersion(-propsTableVersion)
-                setTableDataX(props.tableData[props.name]?.dataSource)
-            } else {
-                // 否则，重新进行请求
-                setTableVersion(propsTableVersion)
-                getInfo()
-            }
-        }
-    }, [props.tableData, tableVersion])
-
-    // === 拖拽排序 ===
-    // 可拖拽的排序手柄
-    const DragHandle = SortableHandle(() => <MenuOutlined style={{cursor: 'grab', color: '#999'}}/>);
-    const SortableItem = SortableElement((props: any) => <tr {...props} />);
-    const XSortableContainer = SortableContainer((props: any) => <tbody {...props} />);
-    // 排序结束后
-    const onSortEnd = ({oldIndex, newIndex}: any) => {
-        // 当前排序是有效的
-        if (oldIndex !== newIndex) {
-            // 移动数组中的元素，并设置到当前的状态
-            setTableData(arrayMoveImmutable(tableData, oldIndex, newIndex))
-            props.afterDrag && props.afterDrag(tableData, oldIndex, newIndex)
-        }
+    let active = true;
+    const { API: load, APIRowsTransForm: transform } = source.current;
+    if (!sameTable) setRows([]);
+    setLoading(true);
+    Promise.resolve()
+      .then(() => (active ? load() ?? undefined : undefined))
+      .then((data) => {
+        if (!active) return;
+        const nextRows = transform ? transform(data ?? []) : (data ?? []);
+        setRows(nextRows);
+        dispatch({ type: 'setDataSource', name, data: nextRows, add: false });
+      })
+      .catch(() => {
+        // The request layer presents errors. Keep existing rows available for a retry.
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
     };
-    const DraggableContainer = (props: any) => {
-        return (
-            <XSortableContainer
-                useDragHandle
-                disableAutoscroll
-                helperClass="row-dragging"
-                onSortEnd={onSortEnd}
-                {...props}
-            />
-        )
-    }
-    const DraggableBodyRow = ({className, style, ...restProps}: any) => {
-        // function findIndex base on Table rowKey props and should always be a right array index
-        const index = tableData.findIndex((x: any) => x[props.rowKey] === restProps['data-row-key']);
-        return <SortableItem index={index} {...restProps} />
-    };
-    const sortColumns: any[] = [
-        {
-            title: "",
-            dataIndex: 'sort',
-            width: 50,
-            className: "drag-visable",
-            render: () => <DragHandle/>,
-        }
-    ]
+  }, [dispatch, name, version]);
 
-    let columns = props.columns;
-    if (props.useDrag) columns = sortColumns.concat(columns)
+  const onSortEnd = useCallback<SortEndHandler>(
+    ({ oldIndex, newIndex }) => {
+      if (
+        oldIndex === newIndex ||
+        oldIndex < 0 ||
+        newIndex < 0 ||
+        oldIndex >= rows.length ||
+        newIndex >= rows.length
+      )
+        return;
+      const nextRows = arrayMoveImmutable(rows, oldIndex, newIndex);
+      setRows(nextRows);
+      dispatch({ type: 'setDataSource', name, data: nextRows, add: false });
+      // Preserve the existing callback contract: consumers receive the previous order and indices.
+      afterDrag?.(rows, oldIndex, newIndex);
+    },
+    [afterDrag, dispatch, name, rows],
+  );
 
-    return (
-        <Table
-            {...props}
-            rowSelection={props.rowSelection}
-            rowKey={props.rowKey}
-            loading={loading}
-            size={props.size}
-            columns={columns}
-            dataSource={tableData}
-            pagination={false}
-            components={{
-                body: {
-                    wrapper: DraggableContainer,
-                    row: DraggableBodyRow,
-                },
-            }}
-        />
-    )
-
-}
-
-const mapStateToProps = (state: any) => {
-    const TState: TableState = state.TableReduce
-    return {
-        tableData: {...TState.tableData}
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    setTableInfo: (name: string, data: any) => dispatch({
-        type: "setTableInfo",
-        name: name,
-        data: data
+  const rowProps = useCallback<NonNullable<TableProps<Row>['onRow']>>(
+    (record, index) => ({
+      ...onRow?.(record, index),
+      'data-sort-index': rows.indexOf(record),
     }),
-    setDataSource: (data: any, name: string) =>
-        dispatch({type: "setDataSource", data: data, name: name, add: false})
-})
+    [onRow, rows],
+  );
 
-export default React.memo(connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(withTranslation()(
-        withRouter(TableWithAllData))), (props: any, nextProps: any) => {
-        return props.columns === nextProps.columns &&
-            (props.rowSelection?.selectedRowKeys.length === nextProps.rowSelection?.selectedRowKeys.length) &&
-            props.tableData === nextProps.tableData &&
-            props.updateTrick ===  nextProps.updateTrick
-    }
-)
+  const allColumns = useDrag
+    ? [
+        {
+          title: '',
+          key: 'sort',
+          width: 50,
+          className: 'drag-visable',
+          render: () => <DragHandle />,
+        },
+        ...(columns ?? []),
+      ]
+    : columns;
 
+  return (
+    <DragContext.Provider value={onSortEnd}>
+      <Table<Row>
+        {...tableProps}
+        loading={loading}
+        columns={allColumns}
+        dataSource={rows}
+        pagination={false}
+        onRow={useDrag ? rowProps : onRow}
+        components={useDrag ? draggableComponents : tableProps.components}
+      />
+    </DragContext.Provider>
+  );
+}
+
+export default TableWithAllData;

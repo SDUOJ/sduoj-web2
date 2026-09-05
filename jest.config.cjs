@@ -10,6 +10,7 @@ module.exports = {
     '\\.(png|jpg|jpeg|gif|svg|ico)$': '<rootDir>/config/jest/assetMock.cjs',
   },
   transform: { '^.+\\.[jt]sx?$': '<rootDir>/config/jest/babelTransform.js' },
+  transformIgnorePatterns: ['/node_modules/(?!array-move/)'],
   clearMocks: true,
   restoreMocks: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/setupTests.ts'],
