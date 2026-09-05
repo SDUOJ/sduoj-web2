@@ -16,6 +16,8 @@ import { useTranslation } from 'react-i18next';
 import type { TransferProps } from 'antd';
 import cApi from '../../Utils/API/c-api';
 import LatePermissionList from '../common/LatePermissionList';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 
 interface BatchExtensionProps {
   groupId: number;
@@ -200,7 +202,7 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
           <Form.Item
             name="username"
             label={t('username')}
-            rules={[{ required: true, message: t('usernameEmpty') }]}
+            rules={constraintRules(contracts.late.username)}
           >
             <Input placeholder={t('placeholderUsername')} />
           </Form.Item>
@@ -264,27 +266,26 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
           <Form.Item
             name="discount"
             label={t('discount')}
-            rules={[
-              { required: true, message: t('PleaseEnter') + t('discount') },
-              { type: 'number', min: 0.01, max: 1, message: t('Value must be between 0.01 and 1') },
-            ]}
+            rules={constraintRules({ ...contracts.late.discount, required: true })}
             initialValue={1}
           >
             <InputNumber
               style={{ width: '100%' }}
               placeholder={t('PleaseEnter') + t('discount')}
-              min={0.01}
+              min={0}
               max={1}
               step={0.01}
             />
           </Form.Item>
 
-          <Form.Item name="note" label={t('note')}>
+          <Form.Item name="note" rules={constraintRules(contracts.late.note)} label={t('note')}>
             <Input.TextArea
               rows={3}
               placeholder={t('PleaseEnter') + t('note')}
-              maxLength={200}
-              showCount
+              showCount={{
+                formatter: ({ value }) =>
+                  `${Array.from(value.trim()).length}/${contracts.late.note.maxCharacters}`,
+              }}
             />
           </Form.Item>
         </Form>

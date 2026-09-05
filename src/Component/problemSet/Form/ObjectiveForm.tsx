@@ -8,6 +8,8 @@ import { genAnswerList } from 'Type/IManage';
 import CellEditTable from '../../common/Table/CellEditTable';
 import equ from '../../../Utils/equ';
 import FormExtraInfo from '../../common/Form/FormExtraInfo';
+import { contracts } from '../../../Config/validation/contracts';
+import { constraintRules } from '../../../Config/validation/constraints';
 
 const initData = {
   choice: [
@@ -86,7 +88,7 @@ const ObjectiveForm = (props: any) => {
         width="xl"
         name={['content', 'description']}
         label={props.t('ProblemContent')}
-        rules={[{ required: true }, { type: 'string', min: 5, max: 1000 }]}
+        rules={constraintRules(contracts.objective.description)}
       />
       <Form.Item name={['content', 'choice']} required hidden>
         <FormExtraInfo v={choiceData} setV={setChoiceData} eqs={equ} />

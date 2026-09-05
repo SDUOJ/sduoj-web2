@@ -5,6 +5,8 @@ import FormExtraInfo from '../../common/Form/FormExtraInfo';
 import ItemEditor from '../../common/Form/Item/ItemEditor';
 import CellEditTable from '../../common/Table/CellEditTable';
 import { PlusOutlined } from '@ant-design/icons';
+import { contracts } from '../../../Config/validation/contracts';
+import { constraintRules } from '../../../Config/validation/constraints';
 
 const SubjectiveForm = (props: any) => {
   const [typeData, setTypeData] = useState<any>();
@@ -84,8 +86,12 @@ const SubjectiveForm = (props: any) => {
 
       {typeData === 1 && (
         <>
-          <Form.Item name={['config', 'maxCount']} label={props.t('maxWordCountLimit')}>
-            <InputNumber min={1} max={65535} />
+          <Form.Item
+            name={['config', 'maxCount']}
+            label={props.t('maxWordCountLimit')}
+            rules={constraintRules(contracts.subjective.maxCount)}
+          >
+            <InputNumber precision={0} />
           </Form.Item>
         </>
       )}
@@ -102,7 +108,11 @@ const SubjectiveForm = (props: any) => {
         </>
       )}
 
-      <ItemEditor label={props.t('ProblemDescription')} name={'description'} />
+      <ItemEditor
+        label={props.t('ProblemDescription')}
+        name={'description'}
+        constraint={contracts.subjective.description}
+      />
     </>
   );
 };

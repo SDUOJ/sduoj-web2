@@ -17,6 +17,8 @@ import type { ColumnsType } from 'antd/es/table';
 import cApi from '../../Utils/API/c-api';
 import { unix2Time } from '../../Utils/Time';
 import TableWithPagination from '../common/Table/TableWithPagination';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 import { connect } from 'react-redux';
 import { Dispatch } from 'react';
 import dayjs from 'dayjs';
@@ -506,7 +508,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
           <Form.Item
             label={t('Username')}
             name={'username'}
-            rules={[{ required: true, message: t('usernameEmpty') }]}
+            rules={constraintRules(contracts.late.username)}
           >
             <Input disabled={!!editingRecord} />
           </Form.Item>
@@ -525,7 +527,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
           <Form.Item
             label={t('LatePermissionDiscount')}
             name={'discount'}
-            rules={[{ required: true, message: t('pleaseEnterDiscount') }]}
+            rules={constraintRules({ ...contracts.late.discount, required: true })}
             extra={t('LatePermissionDiscountHelp')}
           >
             <InputNumber min={0} max={1} step={0.05} style={{ width: '100%' }} />
@@ -538,7 +540,11 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
           >
             <Switch />
           </Form.Item>
-          <Form.Item label={t('noteShort')} name={'note'}>
+          <Form.Item
+            label={t('noteShort')}
+            name={'note'}
+            rules={constraintRules(contracts.late.note)}
+          >
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
