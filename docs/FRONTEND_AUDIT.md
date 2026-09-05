@@ -108,7 +108,7 @@ P2 表示可靠性、契约、体验或维护问题。依赖公告级别与业�
 | 项目                       | 本轮结果                                                                                                             |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | TypeScript / lint / format | Node 24 类型检查通过；0 errors；审计可比范围 warning 168 -> 149；全仓新增/修改文件格式通过                           |
-| Jest / coverage            | 64 suites、320 tests 通过；console error/warn/info 均为 0；lines 24.32%、statements 23.69%                           |
+| Jest / coverage            | 64 suites、321 tests 通过；console error/warn/info 均为 0；lines 24.35%、statements 23.73%                           |
 | 浏览器 / 视觉              | 23 passed、1 个既有管理端移动 skip；桌面三浏览器及移动 Chromium 通过；2 个 Chromium 视觉基线通过                     |
 | 本地真实服务               | 5 个场景通过：服务/代理、真实浏览、隔离账号题单/判题/WebSocket/登出、AI bank 与 AI mock fixture                      |
 | any / non-null / 文件规模  | 可比 332 个生产文件：显式 any 1805 -> 1781，as any 25 -> 24；non-null 3、ts-ignore 2 未增加；全工作区 353 个生产文件 |

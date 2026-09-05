@@ -59,7 +59,7 @@ is migrated or the Vditor version changes.
 
 ## Verification
 
-- Focused shared suite: 11 suites, 44 tests passed (`ModalFormUseForm`, `FormExtraInfo`,
+- Focused shared suite: 11 suites, 45 tests passed (`ModalFormUseForm`, `FormExtraInfo`,
   `TableWithPagination`, `CellEditTable`, `TableWithAllData`, `SortableTable`, and editor
   lifecycle).
 - TypeScript: `tsc --noEmit && tsc -p tsconfig.tools.json` passed.

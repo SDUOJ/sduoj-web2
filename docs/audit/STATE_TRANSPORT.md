@@ -51,7 +51,7 @@ authentication checks, downloads, session redirects, and clock skew.
 ## Verification
 
 - Node 24 TypeScript checks passed.
-- Final shared-worktree Jest: 64 suites, 320 tests passed. The cumulative-frame and
+- Final shared-worktree Jest: 64 suites, 321 tests passed. The cumulative-frame and
   rejudge consumer regressions pass with the pure update suite (2 suites, 6 tests).
 - Lint: 0 errors, 149 tracked legacy warnings in the shared worktree. Excluding the
   parallel AI files, comparable warnings fell from 168 to 149; no baseline was changed.
