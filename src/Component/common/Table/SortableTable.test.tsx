@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Table } from 'antd';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
   DragHandle,
   SortableTableScope,
@@ -65,3 +66,48 @@ it('disables handles when sort mode is off', () => {
     .getAllByRole('button', { name: /sort/i })
     .forEach((handle) => expect(handle).toBeDisabled());
 });
+
+it.each(['Space', 'Escape'])(
+  'supports keyboard sorting and %s while preserving drafts',
+  async (finish) => {
+    render(<Fixture />);
+    const user = userEvent.setup();
+    const rect = jest
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const rows = Array.from(document.querySelectorAll('tr[data-row-key]'));
+        const index = Math.max(rows.indexOf(this), 0);
+        return {
+          x: 0,
+          y: index * 60,
+          top: index * 60,
+          bottom: index * 60 + 50,
+          left: 0,
+          right: 400,
+          width: 400,
+          height: 50,
+          toJSON: () => ({}),
+        };
+      });
+    try {
+      const input = screen.getByLabelText('Draft 0');
+      fireEvent.change(input, { target: { value: 'unsaved' } });
+      const handle = screen.getAllByRole('button', { name: /sort/i })[0];
+      handle.focus();
+      await user.keyboard('[Space]');
+      await waitFor(() => expect(handle).toHaveAttribute('aria-pressed', 'true'));
+      await user.keyboard('[ArrowDown]');
+      await user.keyboard(`[${finish}]`);
+      await waitFor(() =>
+        expect(
+          screen.getAllByRole('textbox').map((node) => node.getAttribute('aria-label')),
+        ).toEqual(finish === 'Space' ? ['Draft 1', 'Draft 0'] : ['Draft 0', 'Draft 1']),
+      );
+      expect(screen.getByLabelText('Draft 0')).toBe(input);
+      expect(input).toHaveValue('unsaved');
+      expect(handle).toHaveFocus();
+    } finally {
+      rect.mockRestore();
+    }
+  },
+);

@@ -43,11 +43,11 @@ export function sortIndices(
 }
 
 const ScopeContext = createContext<readonly string[]>([]);
-type HandleContext = Pick<
+type HandleContextValue = Pick<
   ReturnType<typeof useSortable>,
   'attributes' | 'listeners' | 'setActivatorNodeRef'
 >;
-const HandleContext = createContext<HandleContext | null>(null);
+const HandleContext = createContext<HandleContextValue | null>(null);
 
 export function SortableTableScope({ items, onSortEnd, disabled = false, children }: ScopeProps) {
   const keys = useMemo(() => items.map(String), [items]);
