@@ -9,6 +9,7 @@ import ItemTitle from '../common/Form/Item/ItemTitle';
 import ItemSwitch from '../common/Form/Item/ItemSwitch';
 import ItemEditor from '../common/Form/Item/ItemEditor';
 import TableRowDeleteButton from '../common/Table/TableRowDeleteButton';
+import { contracts } from '../../Config/validation/contracts';
 
 const ProDescriptions = (props: any) => {
   const { t } = useTranslation();
@@ -18,14 +19,18 @@ const ProDescriptions = (props: any) => {
 
   const DescriptionForm = (
     <>
-      <ItemTitle />
+      <ItemTitle constraint={contracts.description.title} />
       <ItemSwitch
         name={'isPublic'}
         label={t('PublicStatus')}
         ck={t('Public')}
         unck={t('Private')}
       />
-      <ItemEditor name={'markdownDescription'} label={t('ProblemDescription')} />
+      <ItemEditor
+        name={'markdownDescription'}
+        constraint={contracts.description.markdownDescription}
+        label={t('ProblemDescription')}
+      />
     </>
   );
 
@@ -63,6 +68,7 @@ const ProDescriptions = (props: any) => {
         }
       >
         <TableWithAllData
+          rowKey="id"
           updateTrick={defaultDescriptionId}
           name={tableName}
           size={'small'}

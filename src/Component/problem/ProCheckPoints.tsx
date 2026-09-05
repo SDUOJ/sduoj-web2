@@ -14,6 +14,8 @@ import { DownloadOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons
 import ButtonWithSelection from '../common/Table/ButtonWithSelection';
 import ModalFormUseForm from '../common/Form/ModalFormUseForm';
 import FormCheckPointsUpload from './From/FormCheckPointsUpload';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 
 function DeleteOutlined() {
   return null;
@@ -157,7 +159,12 @@ const ProCheckPoints = (props: any) => {
       },
       render: (text: any, row: any) => {
         return (
-          <Form.Item name={row.checkpointId} className={'mgb0'} style={{ width: 100 }}>
+          <Form.Item
+            name={row.checkpointId}
+            className={'mgb0'}
+            style={{ width: 100 }}
+            rules={constraintRules(contracts.checkpoint.legacyScore)}
+          >
             <Input />
           </Form.Item>
         );

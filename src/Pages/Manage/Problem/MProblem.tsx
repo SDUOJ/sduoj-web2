@@ -13,6 +13,7 @@ import ItemText from '../../../Component/common/Form/Item/ItemText';
 import FormJudgeType from '../../../Component/problem/From/FormJudgeType';
 import ProDescriptions from '../../../Component/problem/ProDescriptions';
 import ProCheckPoints from '../../../Component/problem/ProCheckPoints';
+import { contracts } from '../../../Config/validation/contracts';
 
 class MProblem extends Component<any, any> {
   render() {
@@ -50,11 +51,21 @@ class MProblem extends Component<any, any> {
       {
         component: (
           <>
-            <ItemTitle name={'problemTitle'} label={this.props.t('title')} />
+            <ItemTitle
+              name={'problemTitle'}
+              label={this.props.t('title')}
+              constraint={contracts.problem.problemTitle}
+            />
             <ItemSwitch name={'isPublic'} label={this.props.t('public')} />
-            <ItemText name={'source'} label={this.props.t('source')} required={false} />
+            <ItemText
+              name={'source'}
+              label={this.props.t('source')}
+              required={false}
+              constraint={contracts.problem.source}
+            />
             <ItemSelectGroup
               name={'managerGroups'}
+              constraint={contracts.problem.managerGroups}
               label={this.props.t('ManagementGroup')}
               mode={'multiple'}
               formName={'ProblemInfo'}
@@ -70,18 +81,21 @@ class MProblem extends Component<any, any> {
               name={'timeLimit'}
               label={this.props.t('TimeLimit')}
               addonAfter={'ms'}
+              constraint={contracts.problem.timeLimit}
               initialValue={1000}
             />
             <ItemText
               name={'memoryLimit'}
               label={this.props.t('MemoryLimit')}
               addonAfter={'KB'}
+              constraint={contracts.problem.memoryLimit}
               initialValue={256 * 1024}
             />
             <ItemText
               name={'outputLimit'}
               label={this.props.t('OutputLimit')}
               addonAfter={'KB'}
+              constraint={contracts.problem.outputLimit}
               initialValue={100 * 1024}
             />
           </>

@@ -10,14 +10,19 @@ import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import ItemTop from '../../Component/announcement/Form/Item/ItemTop';
 import ItemEditor from '../../Component/common/Form/Item/ItemEditor';
 import ItemTitle from '../../Component/common/Form/Item/ItemTitle';
+import { contracts } from '../../Config/validation/contracts';
 
 class MAnnouncement extends Component<any, any> {
   render() {
     const Form = (
       <>
         <ItemTop />
-        <ItemTitle />
-        <ItemEditor label={this.props.t('AnnouncementContent')} name={'text'} />
+        <ItemTitle constraint={contracts.notice.title} />
+        <ItemEditor
+          label={this.props.t('AnnouncementContent')}
+          name={'text'}
+          constraint={contracts.notice.text}
+        />
       </>
     );
 
