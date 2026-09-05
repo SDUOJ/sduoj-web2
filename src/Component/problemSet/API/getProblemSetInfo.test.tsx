@@ -1,0 +1,210 @@
+import React from 'react';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { legacy_createStore as createStore } from 'redux';
+import { rootReducers } from '../../../Redux/Store/rootReducer';
+import cApi from '../../../Utils/API/c-api';
+import useProblemSetInfo from './getProblemSetInfo';
+
+jest.mock('../../../Utils/API/c-api', () => ({
+  __esModule: true,
+  default: { getProblemSetInfo: jest.fn() },
+}));
+
+function Probe({ psid, onError }: { psid: string; onError?: (error: unknown) => void }) {
+  return <div>{useProblemSetInfo(psid, onError)?.name ?? 'loading'}</div>;
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
+
+it('publishes a fresh response for multiple consumers when the session hydrates', async () => {
+  const guest = deferred<{ name: string }>();
+  const authenticated = deferred<{ name: string }>();
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockReturnValueOnce(guest.promise)
+    .mockReturnValueOnce(authenticated.promise);
+  const store = createStore(rootReducers);
+  render(
+    <Provider store={store}>
+      <Probe psid="17" />
+      <Probe psid="17" />
+    </Provider>,
+  );
+  act(() => {
+    store.dispatch({
+      type: 'setUserInfo',
+      data: { userId: '1', username: 'alice', nickname: 'Alice', studentId: '1', roles: ['user'] },
+    });
+    store.dispatch({ type: 'userLogin' });
+  });
+  await act(async () => authenticated.resolve({ name: 'Authenticated set' }));
+  expect(screen.getAllByText('Authenticated set')).toHaveLength(2);
+  await act(async () => guest.resolve({ name: 'Old guest set' }));
+  expect(screen.queryByText('Old guest set')).not.toBeInTheDocument();
+});
+
+it('does not reuse an already cached problem set after the user session changes', async () => {
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockResolvedValueOnce({ name: 'Guest set' })
+    .mockResolvedValueOnce({ name: 'Authenticated set' });
+  const store = createStore(rootReducers);
+  render(
+    <Provider store={store}>
+      <Probe psid="18" />
+      <Probe psid="18" />
+    </Provider>,
+  );
+  expect(await screen.findAllByText('Guest set')).toHaveLength(2);
+
+  act(() => {
+    store.dispatch({
+      type: 'setUserInfo',
+      data: { userId: '1', username: 'alice', nickname: 'Alice', studentId: '1', roles: ['user'] },
+    });
+    store.dispatch({ type: 'userLogin' });
+  });
+
+  expect(await screen.findAllByText('Authenticated set')).toHaveLength(2);
+  expect(screen.queryByText('Guest set')).not.toBeInTheDocument();
+  expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(2);
+});
+
+it('shares a request between consumers and never displays an old problem set after navigation', async () => {
+  const oldRequest = deferred<{ name: string }>();
+  const newRequest = deferred<{ name: string }>();
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockReturnValueOnce(oldRequest.promise)
+    .mockReturnValueOnce(newRequest.promise);
+  const store = createStore(rootReducers);
+  const view = render(
+    <Provider store={store}>
+      <Probe psid="1" />
+      <Probe psid="1" />
+    </Provider>,
+  );
+  expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(1);
+
+  view.rerender(
+    <Provider store={store}>
+      <Probe psid="2" />
+      <Probe psid="2" />
+    </Provider>,
+  );
+  expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(2);
+  oldRequest.resolve({ name: 'Old set' });
+  await Promise.resolve();
+  expect(screen.queryByText('Old set')).not.toBeInTheDocument();
+  newRequest.resolve({ name: 'New set' });
+  expect(await screen.findAllByText('New set')).toHaveLength(2);
+});
+
+it('allows a fresh mount to retry after a failed request', async () => {
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockRejectedValueOnce(new Error('offline'))
+    .mockResolvedValueOnce({ name: 'Recovered' });
+  const store = createStore(rootReducers);
+  const first = render(
+    <Provider store={store}>
+      <Probe psid="3" />
+    </Provider>,
+  );
+  await Promise.resolve();
+  first.unmount();
+  render(
+    <Provider store={store}>
+      <Probe psid="3" />
+    </Provider>,
+  );
+  expect(await screen.findByText('Recovered')).toBeInTheDocument();
+  expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(2);
+});
+
+it('retries a failed id after navigating away and back in the same component', async () => {
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockRejectedValueOnce(new Error('offline'))
+    .mockResolvedValueOnce({ name: 'Other set' })
+    .mockResolvedValueOnce({ name: 'Recovered set' });
+  const store = createStore(rootReducers);
+  const view = render(
+    <Provider store={store}>
+      <Probe psid="19" />
+    </Provider>,
+  );
+  await waitFor(() => expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(1));
+
+  view.rerender(
+    <Provider store={store}>
+      <Probe psid="20" />
+    </Provider>,
+  );
+  expect(await screen.findByText('Other set')).toBeInTheDocument();
+
+  view.rerender(
+    <Provider store={store}>
+      <Probe psid="19" />
+    </Provider>,
+  );
+  expect(await screen.findByText('Recovered set')).toBeInTheDocument();
+  expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(3);
+});
+
+it('does not report an old route failure through its former consumer', async () => {
+  let rejectOld!: (error: Error) => void;
+  const oldRequest = new Promise<never>((_, reject) => {
+    rejectOld = reject;
+  });
+  jest
+    .mocked(cApi.getProblemSetInfo)
+    .mockReturnValueOnce(oldRequest)
+    .mockResolvedValueOnce({ name: 'Current set' });
+  const onError = jest.fn();
+  const store = createStore(rootReducers);
+  const view = render(
+    <Provider store={store}>
+      <Probe psid="4" onError={onError} />
+    </Provider>,
+  );
+  view.rerender(
+    <Provider store={store}>
+      <Probe psid="5" onError={onError} />
+    </Provider>,
+  );
+  rejectOld(new Error('old failure'));
+  expect(await screen.findByText('Current set')).toBeInTheDocument();
+  expect(onError).not.toHaveBeenCalled();
+});
+
+it('does not repopulate cleared state when a logged-out route unmounts', async () => {
+  const request = deferred<{ name: string }>();
+  jest.mocked(cApi.getProblemSetInfo).mockReturnValueOnce(request.promise);
+  const store = createStore(rootReducers);
+  store.dispatch({
+    type: 'setUserInfo',
+    data: { userId: '1', username: 'alice', nickname: 'Alice', studentId: '1', roles: ['user'] },
+  });
+  store.dispatch({ type: 'userLogin' });
+  const view = render(
+    <Provider store={store}>
+      <Probe psid="6" />
+    </Provider>,
+  );
+  act(() => {
+    store.dispatch({ type: 'userLogout' });
+    store.dispatch({ type: 'clearRedux' });
+    view.unmount();
+  });
+  request.resolve({ name: 'Alice data' });
+  await Promise.resolve();
+  expect(store.getState().ProblemSetReducer.problemSetInfo['6']).toBeUndefined();
+});

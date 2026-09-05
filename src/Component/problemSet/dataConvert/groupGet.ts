@@ -1,14 +1,14 @@
 const groupGet = (value: any) => {
-    if (value.type === 2) {
-        let i = 0;
-        for (let x of value.problemInfo) {
-            x.pid = "SDUOJ-" + x.pid
-            x.desId = x.desId.toString()
-            x.id = i++;
-        }
-    }
-    // console.log("afterData", value)
-    return value
-}
+  if (value.type !== 2) return { ...value };
+  return {
+    ...value,
+    problemInfo: value.problemInfo.map((problem: any, id: number) => ({
+      ...problem,
+      pid: 'SDUOJ-' + problem.pid,
+      desId: problem.desId.toString(),
+      id,
+    })),
+  };
+};
 
 export default groupGet;

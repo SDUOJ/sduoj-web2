@@ -1,19 +1,12 @@
-import {isValueEmpty} from "../../../Utils/empty";
+import { isValueEmpty } from '../../../Utils/empty';
 
 const subjectiveGet = (data: any) => {
-    if (!isValueEmpty(data.config.fileList)) {
-        let l = data.config.fileList.length
-        for (let i = 0; i < l; i++) {
-            data.config.fileList[i].id = i
-        }
-    }
-    if (!isValueEmpty(data.config.judgeConfig)) {
-        let l = data.config.judgeConfig.length
-        for (let i = 0; i < l; i++) {
-            data.config.judgeConfig[i].id = i
-        }
-    }
-    return data
-}
+  const config = { ...data.config };
+  if (!isValueEmpty(config.fileList))
+    config.fileList = config.fileList.map((file: any, id: number) => ({ ...file, id }));
+  if (!isValueEmpty(config.judgeConfig))
+    config.judgeConfig = config.judgeConfig.map((judge: any, id: number) => ({ ...judge, id }));
+  return { ...data, config };
+};
 
 export default subjectiveGet;
