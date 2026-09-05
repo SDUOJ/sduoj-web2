@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect, useRef, useState } from 'react';
 // 按需引入 vditor 样式，避免主入口全局引入
 import 'vditor/dist/index.css';
 import Vditor from 'vditor';
@@ -21,22 +21,25 @@ export interface EditorProps {
   id?: any;
 }
 
-const CopiedButton = (props: any) => {
+export const CopiedButton = (props: any) => {
   const { t } = useTranslation();
-  // generate a stable, unique class not tied to translated text
-  const uid = `copy-${Math.random().toString(36).slice(2, 10)}`;
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const textRef = useRef(props.text);
+  textRef.current = props.text;
 
-  const clipboard = new ClipboardJS('.' + uid, {
-    text(elem: Element): string {
-      return props.text;
-    },
-  });
-  clipboard.on('success', function () {
-    message.success(t('ReplicationSuccess'));
-  });
+  useEffect(() => {
+    if (!buttonRef.current) return;
+    const clipboard = new ClipboardJS(buttonRef.current, {
+      text: () => textRef.current,
+    });
+    clipboard.on('success', () => {
+      message.success(t('ReplicationSuccess'));
+    });
+    return () => clipboard.destroy();
+  }, [t]);
 
   return (
-    <Button className={uid} size={'small'}>
+    <Button ref={buttonRef} size={'small'}>
       {props.btnText}
     </Button>
   );
@@ -44,10 +47,12 @@ const CopiedButton = (props: any) => {
 
 // Use unified front server host from apiAddress
 const host = apiAddress().FRONT_SERVER;
-const Editor = (props: EditorProps & any) => {
+export const Editor = (props: EditorProps & any) => {
   const [vditors, setVditors] = useState<any>(undefined);
   const [finishRender, setFinishRender] = useState(false);
   const { t } = useTranslation();
+  const onChangeRef = useRef(props.onChange);
+  onChangeRef.current = props.onChange;
 
   const setEditor = () => {
     const vditor0 = new Vditor(props.id ?? 'vditor', {
@@ -118,7 +123,7 @@ const Editor = (props: EditorProps & any) => {
           className: 'right',
           icon: `<img style="height: 16px" src='https://img.58cdn.com.cn/escstatic/docs/imgUpload/idocs/save.svg' alt="save"/>`,
           click() {
-            props.onChange && props.onChange(vditor0.getValue());
+            onChangeRef.current?.(vditor0.getValue());
           },
         },
       ],
@@ -127,7 +132,7 @@ const Editor = (props: EditorProps & any) => {
         setFinishRender(true);
       },
       blur() {
-        props.onChange && props.onChange(vditor0.getValue());
+        onChangeRef.current?.(vditor0.getValue());
       },
       upload: {
         accept: '*/*',
@@ -227,11 +232,13 @@ const Editor = (props: EditorProps & any) => {
       },
     });
     setVditors(vditor0);
+    return vditor0;
   };
 
   useEffect(() => {
-    // console.log("props.langCode", props.langCode)
-    if (!isValueEmpty(props.langCode)) setEditor();
+    if (isValueEmpty(props.langCode)) return;
+    const editor = setEditor();
+    return () => editor.destroy();
   }, [props.langCode]);
 
   useEffect(() => {

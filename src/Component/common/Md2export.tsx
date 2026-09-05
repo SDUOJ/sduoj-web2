@@ -1,101 +1,109 @@
-import {Dispatch, useEffect, useState} from "react";
-import Vditor from "vditor";
-import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router";
-import {ConfigState} from "../../Type/IConfig";
-import apiAddress from "../../Utils/API/apiAddress";
-import {isValueEmpty} from "../../Utils/empty";
-import {Button, Modal} from "antd";
+import { Dispatch, useEffect, useRef, useState } from 'react';
+import Vditor from 'vditor';
+import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
+import { withRouter } from 'react-router';
+import { ConfigState } from '../../Type/IConfig';
+import apiAddress from '../../Utils/API/apiAddress';
+import { isValueEmpty } from '../../Utils/empty';
+import { Button, Modal } from 'antd';
 
+export const MD2export = (props: any) => {
+  const [vis, setVis] = useState<boolean>(false);
+  const editorRef = useRef<Vditor>();
 
-const MD2export = (props: any) => {
+  const setEditor = () => {
+    const vditor0 = new Vditor(props.id ?? 'vditor-export', {
+      height: props.height === undefined ? 800 : props.height,
+      mode: 'ir',
+      placeholder: '',
+      lang: props.langCode,
+      cdn: apiAddress().FRONT_SERVER + '/vditor',
+      outline: {
+        enable: true,
+        position: 'left',
+      },
+      hint: {
+        emojiPath: apiAddress().FRONT_SERVER + '/vditor/dist/images/emoji',
+      },
+      preview: {
+        delay: 500,
+        hljs: {
+          lineNumber: false,
+        },
+        markdown: {
+          toc: true,
+          mark: true,
+          footnotes: true,
+          autoSpace: true,
+        },
+        math: {
+          inlineDigit: true,
+          engine: 'KaTeX',
+        },
+      },
+      toolbar: ['export'],
+      after() {
+        vditor0.setValue(props.value);
+      },
+      blur() {},
+    });
+    editorRef.current = vditor0;
+    return vditor0;
+  };
 
-    const [vis, setVis] = useState<boolean>(false)
-
-    const setEditor = () => {
-        const vditor0 = new Vditor(props.id ?? "vditor-export", {
-            height: props.height === undefined ? 800 : props.height,
-            mode: "ir",
-            placeholder: "",
-            lang: props.langCode,
-            cdn: apiAddress().FRONT_SERVER + "/vditor",
-            outline: {
-                enable: true,
-                position: 'left',
-            },
-            hint: {
-                emojiPath: apiAddress().FRONT_SERVER + "/vditor/dist/images/emoji"
-            },
-            preview: {
-                delay: 500,
-                hljs: {
-                    lineNumber: false
-                },
-                markdown: {
-                    toc: true,
-                    mark: true,
-                    footnotes: true,
-                    autoSpace: true,
-                },
-                math: {
-                    inlineDigit: true,
-                    engine: 'KaTeX'
-                }
-            },
-            toolbar: [
-                "export",
-            ],
-            after() {
-                vditor0.setValue(props.value)
-            },
-            blur() {
-            },
-        });
+  useEffect(() => {
+    if (!isValueEmpty(props.langCode) && vis) {
+      const editor = setEditor();
+      return () => {
+        editor.destroy();
+        if (editorRef.current === editor) editorRef.current = undefined;
+      };
     }
+  }, [props.langCode, vis]);
 
-    useEffect(() => {
-        if (!isValueEmpty(props.langCode) && vis)
-            setEditor()
-    }, [props.langCode, vis])
+  useEffect(() => {
+    if (vis && editorRef.current && editorRef.current.getValue() !== props.value)
+      editorRef.current.setValue(props.value ?? '');
+  }, [props.value, vis]);
 
-    return (
-        <>
-            <Button type={"link"} onClick={() => {
-                setVis(true)
-            }}> {props.t("markdownText")} </Button>
+  return (
+    <>
+      <Button
+        type={'link'}
+        onClick={() => {
+          setVis(true);
+        }}
+      >
+        {' '}
+        {props.t('markdownText')}{' '}
+      </Button>
 
-            <Modal
-                title={props.t("markdownText")}
-                open={vis}
-                footer={false}
-                width={1200}
-                onCancel={() => {
-                    setVis(false)
-                }}
-            >
-                <div id={props.id ?? "vditor-export"} className="vditor"/>
-            </Modal>
-
-        </>
-    )
-
-
-}
+      <Modal
+        title={props.t('markdownText')}
+        open={vis}
+        footer={false}
+        width={1200}
+        onCancel={() => {
+          setVis(false);
+        }}
+      >
+        <div id={props.id ?? 'vditor-export'} className="vditor" />
+      </Modal>
+    </>
+  );
+};
 
 const mapStateToProps = (state: any) => {
-    const CState: ConfigState = state.ConfigReducer
-    return {
-        langCode: CState.langCode
-    }
-}
+  const CState: ConfigState = state.ConfigReducer;
+  return {
+    langCode: CState.langCode,
+  };
+};
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(MD2export)
-    ))
+  mapStateToProps,
+  mapDispatchToProps,
+)(withTranslation()(withRouter(MD2export)));
