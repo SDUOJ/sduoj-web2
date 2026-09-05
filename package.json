@@ -64,7 +64,9 @@
     "test:coverage": "jest --runInBand --coverage",
     "lint": "node scripts/lint.cjs",
     "lint:report": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "node scripts/check-format.cjs"
   },
   "browserslist": {
     "production": [

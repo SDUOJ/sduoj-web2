@@ -1,0 +1,8 @@
+node_modules/
+build/
+coverage/
+public/vditor/
+yarn.lock
+test-results/
+playwright-report/
+output/
