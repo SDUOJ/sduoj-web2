@@ -11,6 +11,8 @@ import { withRouter } from 'react-router';
 import { ConfigState } from '../../Type/IConfig';
 import apiAddress from '../../Utils/API/apiAddress';
 import { isValueEmpty } from '../../Utils/empty';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintError } from '../../Config/validation/constraints';
 
 export interface EditorProps {
   value: string;
@@ -137,8 +139,9 @@ const Editor = (props: EditorProps & any) => {
             .replaceAll('/\\s/g', '');
         },
         handler(files: File[]): any {
-          if (files[0].name.length > 64) {
-            const msg = t('fileNameTooLong', { max: 64 });
+          const filenameError = constraintError(contracts.file.name, files[0].name);
+          if (filenameError) {
+            const msg = filenameError;
             message.error(msg);
             return Promise.reject(msg);
           }

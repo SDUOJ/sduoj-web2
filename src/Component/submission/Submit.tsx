@@ -10,10 +10,11 @@ import { withRouter } from 'react-router-dom';
 import { TopSubmissionInfoType } from '../../Type/ISubmission';
 import { JudgeTemplate2lang } from '../../Utils/JudgeTemplate2lang';
 import { fileUploadWithoutMD5 } from '../../Utils/fileUpload';
-import { MaxCodeLength } from '../../Config/constValue';
 import { UserState } from '../../Type/Iuser';
 import { functionTemplate } from '../../Type/types';
 import { isValueEmpty } from '../../Utils/empty';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules, constraintError } from '../../Config/validation/constraints';
 
 export interface SubmitPropsType {
   API: any; // API 接口函数
@@ -236,7 +237,11 @@ const Submit = (props: SubmitPropsType & any) => {
                           />
                         </Form.Item>
                       )}
-                      <Form.Item label={props.t('answerCode')} name={'code'}>
+                      <Form.Item
+                        label={props.t('answerCode')}
+                        name={'code'}
+                        rules={constraintRules(contracts.submission.code)}
+                      >
                         <CodeEditor lang={JudgeTemplate2lang(jtId)} />
                       </Form.Item>
                     </>
@@ -258,14 +263,14 @@ const Submit = (props: SubmitPropsType & any) => {
                             fileReader.onload = (event) => {
                               try {
                                 const str = event.target?.result as string;
-                                if (str.length > MaxCodeLength)
-                                  message.error(
-                                    props.t('theNumberOfCharactersInTheUploadedFileExceeds') +
-                                      MaxCodeLength,
-                                  );
+                                const error = constraintError(contracts.submission.code, str);
+                                if (error) {
+                                  message.error(error);
+                                  return;
+                                }
                                 form.setFieldsValue({
                                   ...form.getFieldsValue(),
-                                  code: str.substr(0, MaxCodeLength),
+                                  code: str,
                                 });
                               } catch (e) {
                                 message.error(props.t('fileParsingFailed!'));
@@ -277,7 +282,11 @@ const Submit = (props: SubmitPropsType & any) => {
                         </Upload>
                       </Form.Item>
 
-                      <Form.Item label={props.t('Code')} name={'code'}>
+                      <Form.Item
+                        label={props.t('Code')}
+                        name={'code'}
+                        rules={constraintRules(contracts.submission.code)}
+                      >
                         <CodeEditor lang={JudgeTemplate2lang(jtId)} />
                       </Form.Item>
                     </>

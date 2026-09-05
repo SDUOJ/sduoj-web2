@@ -1,0 +1,57 @@
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { createAppStore } from '../../Redux/Store';
+import Submit from './Submit';
+
+jest.mock('../common/CodeEditor', () => ({
+  __esModule: true,
+  default: (props: any) => (
+    <textarea
+      aria-label="Code source"
+      value={props.value ?? ''}
+      onChange={(event) => props.onChange(event.target.value)}
+    />
+  ),
+}));
+
+async function setup() {
+  localStorage.setItem('SDUOJ-Last-Submit-JT', '1');
+  const store = createAppStore();
+  store.dispatch({ type: 'userLogin' });
+  const view = render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <Submit
+          name="test"
+          title="Program"
+          API={jest.fn()}
+          TopSubmissionInfo={{}}
+          JudgeTemplates={[{ id: '1', title: 'C++', acceptFileExtensions: ['cpp'] }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await userEvent.setup().click(screen.getByRole('button', { name: 'Submit' }));
+  const input = await screen.findByLabelText('Code source');
+  const upload = view.baseElement.querySelector('input[type="file"]') as HTMLInputElement;
+  return { input, upload };
+}
+
+it('imports a complete code file above the former arbitrary 50 KiB cutoff', async () => {
+  const { input, upload } = await setup();
+  const code = 'x'.repeat(60000);
+  await userEvent.setup().upload(upload, new File([code], 'solution.cpp', { type: 'text/plain' }));
+  await waitFor(() => expect(input).toHaveValue(code));
+});
+
+it('rejects UTF-8 overflow without replacing the previous draft', async () => {
+  const { input, upload } = await setup();
+  fireEvent.change(input, { target: { value: 'draft' } });
+  await userEvent
+    .setup()
+    .upload(upload, new File(['中'.repeat(22000)], 'solution.cpp', { type: 'text/plain' }));
+  expect(await screen.findByText(/65535/)).toBeVisible();
+  expect(input).toHaveValue('draft');
+});
