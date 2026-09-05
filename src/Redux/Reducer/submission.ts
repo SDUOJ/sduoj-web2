@@ -7,7 +7,6 @@ const initState: SubmissionState = {
 }
 
 export const SubmissionReducer = (state: SubmissionState = initState, action: SubmissionAction) => {
-    // 此处不做深拷贝，redux无法检测到更新
     let State: SubmissionState = {...state}
     switch (action.type){
         case "setTopSubmission":
@@ -18,10 +17,12 @@ export const SubmissionReducer = (state: SubmissionState = initState, action: Su
             State.SubmissionModalVis = action.data
             break
         case "setSubmissionListInfo":
-            State.submissionListInfo[action.key] = action.data
+            State.submissionListInfo = {...state.submissionListInfo, [action.key]: action.data}
             break
         case "clearRedux":
             return initState;
+        default:
+            return state
     }
     return State
 }

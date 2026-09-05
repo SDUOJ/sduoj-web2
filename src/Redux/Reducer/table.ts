@@ -21,6 +21,7 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
                 tableVersion: 0,
                 tableInfo: {}
             }
+        else State.tableData[name] = {...State.tableData[name]}
     }
 
     switch (action.type) {
@@ -29,11 +30,12 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
             State.tableData[action.name].selectedRowKeys = action.data
             break
 
-        case "addTableVersion":
+        case "addTableVersion": {
             initTableData(action.name)
             const nv = State.tableData[action.name].tableVersion
             State.tableData[action.name].tableVersion = Math.abs(nv) + 1
             break
+        }
 
         case "setDataSource":
             initTableData(action.name)
@@ -54,7 +56,7 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
             };
 
         default:
-
+            return state
     }
     return State
 }

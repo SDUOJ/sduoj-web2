@@ -1,4 +1,3 @@
-import deepClone from "Utils/deepClone";
 import {ManageState} from "../../Type/IManage";
 import {ManageAction} from "../Action/manage";
 
@@ -9,16 +8,17 @@ const initState: ManageState = {
 
 
 export const ManageReducer = (state: ManageState = initState, action: ManageAction) => {
-    // 此处不做深拷贝，redux无法检测到更新
-    let State: ManageState = deepClone(state)
+    let State: ManageState = {...state}
     switch (action.type) {
         case "addManageInitData":
-            State.manageInitData[action.key] = action.data
+            State.manageInitData = {...state.manageInitData, [action.key]: action.data}
             break
         case "clearRedux":
             return {
                 manageInitData: {}
             };
+        default:
+            return state
     }
     return State
 }

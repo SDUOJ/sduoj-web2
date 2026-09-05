@@ -14,7 +14,7 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
     let State = {...state}
     switch (action.type){
         case "setContestInfo":
-            State.contestInfo[action.key] = action.data
+            State.contestInfo = {...state.contestInfo, [action.key]: action.data}
             break
 
         case "setExportData":
@@ -43,8 +43,11 @@ export const ContestReducer = (state: ContestState = initState, action: ContestA
                 afterContestSubmission: false,
                 sliderTime: 0,
                 allowSliderMove: false,
-                openSliderMove: false
+                openSliderMove: false,
+                exportData: []
             };
+        default:
+            return state
     }
     return State
 }

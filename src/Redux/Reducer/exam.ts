@@ -13,7 +13,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
     let State: ExamState = {...state}
     switch (action.type) {
         case "setAnswerSheet":
-            State.examAnswerSheetInfo[action.key] = action.data
+            State.examAnswerSheetInfo = {...state.examAnswerSheetInfo, [action.key]: action.data}
             break
         case "setProLists":
             State.examProListInfo = {
@@ -22,7 +22,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
             }
             break
         case "setExamInfo":
-            State.examInfo[action.key] = action.data
+            State.examInfo = {...state.examInfo, [action.key]: action.data}
             break
         case "clearRedux":
             return {
@@ -31,7 +31,7 @@ export const ExamReducer = (state: ExamState = initState, action: ExamAction) =>
                 examAnswerSheetInfo: {}
             };
         default:
-            break
+            return state
     }
     return State
 }

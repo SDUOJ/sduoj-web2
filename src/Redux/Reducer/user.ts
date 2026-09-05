@@ -1,4 +1,3 @@
-import deepClone from "Utils/deepClone";
 import {UserState} from "../../Type/Iuser";
 import {UserAction} from "../Action/user";
 
@@ -7,8 +6,7 @@ const initState: UserState = {
 }
 
 export const UserReducer = (state: UserState = initState, action: UserAction) => {
-    // 此处不做深拷贝，redux无法检测到更新
-    let State: UserState = deepClone(state)
+    let State: UserState = {...state}
     switch (action.type) {
         case "setUserInfo":
             State.userInfo = action.data
@@ -23,7 +21,7 @@ export const UserReducer = (state: UserState = initState, action: UserAction) =>
             break
 
         default:
-            break
+            return state
     }
     return State
 }
