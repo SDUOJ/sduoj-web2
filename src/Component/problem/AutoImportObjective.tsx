@@ -28,7 +28,7 @@ const AutoImportObjective = (props: any) => {
         const workbook = XLSX.read(result, {type: 'binary'});
                 let data: any = [];
                 for (const sheet in workbook.Sheets) {
-                    if (workbook.Sheets.hasOwnProperty(sheet)) {
+                    if (Object.prototype.hasOwnProperty.call(workbook.Sheets, sheet)) {
                         data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
                     }
                 }

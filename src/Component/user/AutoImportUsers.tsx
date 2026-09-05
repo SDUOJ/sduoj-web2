@@ -34,7 +34,7 @@ type ParsedUser = {
   roles: string[]
 }
 
-const isEmail = (v?: string) => !!v ? /\S+@\S+\.\S+/.test(v) : true
+const isEmail = (v?: string) => v ? /\S+@\S+\.\S+/.test(v) : true
 const isUsername = (v: string) => /^[A-Za-z0-9_]{4,16}$/.test(v)
 const isPassword = (v: string) => typeof v === 'string' && v.length >= 6 && v.length <= 32
 const isPhone = (v?: string) => !v || /^[0-9]{11,16}$/.test(v)
@@ -127,7 +127,7 @@ const AutoImportUsers = (props: any) => {
         const workbook = XLSX.read(result, {type: 'binary'})
         let data: ExcelUserRow[] = []
         for (const sheet in workbook.Sheets) {
-          if (workbook.Sheets.hasOwnProperty(sheet)) {
+          if (Object.prototype.hasOwnProperty.call(workbook.Sheets, sheet)) {
             const part = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]) as ExcelUserRow[]
             data = data.concat(part)
           }

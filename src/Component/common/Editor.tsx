@@ -116,7 +116,7 @@ const Editor = (props: EditorProps & any) => {
                 filename(name) {
                     return name
                         .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, "")
-                        .replaceAll(/[?\\/:|<>*\[\]()$%{}@~]/g, "")
+                        .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, "")
                         .replaceAll("/\\s/g", "");
                 },
                 handler(files: File[]): any {
@@ -130,7 +130,7 @@ const Editor = (props: EditorProps & any) => {
                         let name = files[0] && files[0].name;
                         name = name
                             .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, "")
-                            .replaceAll(/[?\\/:|<>*\[\]()$%{}@~]/g, "")
+                            .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, "")
                             .replaceAll("/\\s/g", "")
 
                         const path = apiAddress().CLIENT_SERVER + "/api/filesys/download/" + value.id + "/" + name

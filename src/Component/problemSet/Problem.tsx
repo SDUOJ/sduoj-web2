@@ -207,7 +207,7 @@ const Problem = (props: any) => {
                                                 showInfo={false}
                                             />
                                         )
-                                    case 1:
+                                    case 1: {
                                         const timeState_running = TimeRangeState(problemSetInfo.tm_start, problemSetInfo.tm_end)
                                         return (
                                             <Subjective
@@ -218,6 +218,7 @@ const Problem = (props: any) => {
                                                 finish={timeState_running === "end" && isValueEmpty(latePermission)}
                                             />
                                         )
+                                    }
                                     case 0:
                                         return (
                                             <Objective

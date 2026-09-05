@@ -61,20 +61,10 @@
     "build": "cross-env NODE_ENV=production PUBLIC_URL=/v2/ webpack --config config/webpack.config.js",
     "test": "jest",
     "test:unit": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "rules": {
-      "react-hooks/exhaustive-deps": "off",
-      "jsx-a11y/anchor-is-valid": "off",
-      "array-callback-return": "off",
-      "no-useless-escape": "off",
-      "@typescript-eslint/no-unused-vars": "off"
-    }
+    "test:coverage": "jest --runInBand --coverage",
+    "lint": "node scripts/lint.cjs",
+    "lint:report": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [

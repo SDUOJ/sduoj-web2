@@ -35,7 +35,7 @@ export default function deepClone(obj: any, hash = new WeakMap()) {
 
     hash.set(obj, result);
     for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
             result[key] = deepClone(obj[key], hash);
         }
     }

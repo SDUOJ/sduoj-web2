@@ -140,7 +140,7 @@ const Subjective = (props: any) => {
                                 {props.problemInfo?.config?.fileList?.map((cfg: any, idx: number) => {
                                     const exist = fileAnswers[idx]
                                     const serverExist = serverFileAnswers[idx]
-                                    const unsaved = !!exist && (!!serverExist ? (exist.fileId !== serverExist.fileId) : true)
+                                    const unsaved = !!exist && (serverExist ? (exist.fileId !== serverExist.fileId) : true)
                                     return (
                                         <div key={idx} style={{marginBottom: 12, border: '1px dashed #ccc', padding: 12, borderRadius: 6}}>
                                             <Space direction="vertical" style={{width: '100%'}}>

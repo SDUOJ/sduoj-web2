@@ -62,8 +62,8 @@ const extractLikelyJsonBlock = (text: string) => {
 const normalizeJsonLikeText = (text: string) => {
     let normalized = text.replace(/^\uFEFF/, "").trim();
     normalized = normalized
-        .replace(/([\{\[,]\s*)[“”]([^“”]+?)[“”]\s*[:：]/g, '$1"$2":')
-        .replace(/([\{\[,]\s*)[‘’]([^‘’]+?)[‘’]\s*[:：]/g, '$1"$2":')
+        .replace(/([{[,]\s*)[“”]([^“”]+?)[“”]\s*[:：]/g, '$1"$2":')
+        .replace(/([{[,]\s*)[‘’]([^‘’]+?)[‘’]\s*[:：]/g, '$1"$2":')
         .replace(/(:\s*)[“]([\s\S]*?)[”](\s*[,}\]])/g, '$1"$2"$3')
         .replace(/(:\s*)[‘]([\s\S]*?)[’](\s*[,}\]])/g, '$1"$2"$3')
         .replace(/(:\s*)'([^'\\]*(?:\\.[^'\\]*)*)'(\s*[,}\]])/g, '$1"$2"$3');
@@ -114,7 +114,7 @@ const parseLooseArrayPayload = (text: string) => {
     const allKeys = Array.from(new Set([...NAME_KEYS, ...SCORE_KEYS, ...ANSWER_KEYS]))
         .map((key) => escapeRegex(key))
         .join("|");
-    const keyRegex = new RegExp(`[\"'“”‘’]?(${allKeys})[\"'“”‘’]?\\s*[:：]`, "gi");
+    const keyRegex = new RegExp(`["'“”‘’]?(${allKeys})["'“”‘’]?\\s*[:：]`, "gi");
 
     const result = objectList.map((objectText: string, index: number) => {
         const keyMatches: Array<{key: string, start: number, end: number}> = [];
