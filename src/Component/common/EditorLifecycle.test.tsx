@@ -1,4 +1,5 @@
 import { act, fireEvent, render } from '@testing-library/react';
+import { message } from 'antd';
 import { buildEditorCacheId, CopiedButton, Editor } from './Editor';
 import { MD2export } from './Md2export';
 
@@ -6,6 +7,10 @@ const instances: Array<{ destroy: jest.Mock; getValue: jest.Mock; setValue: jest
 const options: any[] = [];
 const targets: Array<HTMLElement | string> = [];
 const mockClipboardDestroy = jest.fn();
+
+jest.mock('../../Utils/fileUpload', () => ({
+  fileUpload: jest.fn(),
+}));
 
 jest.mock('vditor', () =>
   jest.fn().mockImplementation((target, config) => {
@@ -31,13 +36,13 @@ jest.mock('clipboard', () =>
     on: jest.fn(),
   })),
 );
-
 beforeEach(() => {
   instances.length = 0;
   options.length = 0;
   targets.length = 0;
   localStorage.clear();
   mockClipboardDestroy.mockClear();
+  jest.spyOn(message, 'error').mockClear();
 });
 
 it('destroys the clipboard listener when a copy button unmounts', () => {
@@ -147,6 +152,26 @@ it('uses the bundled save icon instead of an external image', () => {
   expect(save.icon).toContain('test-asset');
   expect(save.icon).not.toContain('58cdn');
   expect(save.icon).not.toContain('http');
+});
+
+it('reports upload failures instead of leaving an unhandled promise', async () => {
+  const { fileUpload } = jest.requireMock('../../Utils/fileUpload') as {
+    fileUpload: jest.Mock;
+  };
+  fileUpload.mockRejectedValueOnce(new Error('offline'));
+  render(
+    <Editor
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+
+  await act(async () => {
+    await options[0].upload.handler([new File(['x'], 'note.txt')]);
+  });
+  expect(message.error).toHaveBeenCalledWith('File upload failed');
 });
 
 it('destroys the export editor when its modal closes', () => {

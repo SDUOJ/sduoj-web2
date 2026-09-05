@@ -281,7 +281,9 @@ export const Editor = (props: EditorProps & any) => {
             });
           }
 
-          void fileUpload(files, callback).catch(() => undefined);
+          void fileUpload(files, callback).catch(() => {
+            message.error(t('fileUploadFailed', { defaultValue: 'File upload failed' }));
+          });
         },
       },
     });
