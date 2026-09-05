@@ -10,7 +10,11 @@ import {
 import { MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, EditableProTable, ProColumns } from '@ant-design/pro-components';
 import { arrayMoveImmutable } from 'array-move';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import {
+  DragHandle,
+  SortableTableScope,
+  sortableTableComponents,
+} from '../common/Table/SortableTable';
 import { withTranslation } from 'react-i18next';
 import { genAnswerList, genEditableList } from '../../Type/IManage';
 import mApi from 'Utils/API/m-api';
@@ -20,9 +24,6 @@ import { contracts } from '../../Config/validation/contracts';
 import { constraintRules } from '../../Config/validation/constraints';
 
 // 可拖拽的排序手柄
-const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
-const SortableItem = SortableElement((props: any) => <tr {...props} />);
-const XSortableContainer = SortableContainer((props: any) => <tbody {...props} />);
 
 type DataSourceType = {
   id: React.Key;
@@ -68,22 +69,6 @@ const ObjectiveForm = (props: any) => {
       // console.log("onSortEnd", oldIndex, newIndex)
       setFormValue(arrayMoveImmutable(getForm().choice, oldIndex, newIndex));
     }
-  };
-  const DraggableContainer = (props: any) => {
-    return (
-      <XSortableContainer
-        useDragHandle
-        disableAutoscroll
-        helperClass="row-dragging"
-        onSortEnd={onSortEnd}
-        {...props}
-      />
-    );
-  };
-  const DraggableBodyRow = ({ className, style, ...restProps }: any) => {
-    let dataSource = formRef.current?.getFieldsValue().choice;
-    const index = dataSource.findIndex((x: DataSourceType) => x.id === restProps['data-row-key']);
-    return <SortableItem index={index} {...restProps} />;
   };
 
   // 设置当前表单值
@@ -312,50 +297,49 @@ const ObjectiveForm = (props: any) => {
             label={props.t('ProblemContent')}
             rules={constraintRules(contracts.choice.content)}
           />
-          <EditableProTable<DataSourceType>
-            name="choice"
-            columns={columns}
-            rowKey={'id'}
-            recordCreatorProps={false}
-            actionRef={actionRef}
-            editable={{
-              type: 'multiple',
-              editableKeys: sortSwitch ? [] : editableKeys,
-              actionRender: (row: any, config: any, defDom: any) => {
-                return [
-                  <Popconfirm
-                    title={props.t('deleteConfirm')}
-                    onConfirm={() => {
-                      let choice = formRef.current?.getFieldValue('choice');
-                      choice = choice.filter((value: DataSourceType) => value.id !== row.id);
-                      setFormValue(choice);
-                    }}
-                    okText={props.t('yes')}
-                    cancelText={props.t('no')}
-                  >
-                    <Button type={'link'} size={'small'}>
-                      {' '}
-                      {props.t('delete')}{' '}
-                    </Button>
-                  </Popconfirm>,
-                ];
-              },
-              onValuesChange: (record, recordList) => {
-                setFormValue(recordList);
-              },
-              onChange: setEditableRowKeys,
-            }}
-            components={
-              sortSwitch
-                ? {
-                    body: {
-                      wrapper: DraggableContainer,
-                      row: DraggableBodyRow,
-                    },
-                  }
-                : undefined
-            }
-          />
+          <SortableTableScope
+            items={(formRef.current?.getFieldsValue().choice ?? []).map(
+              (row: { id: React.Key }) => row.id,
+            )}
+            disabled={!sortSwitch}
+            onSortEnd={onSortEnd}
+          >
+            <EditableProTable<DataSourceType>
+              name="choice"
+              columns={columns}
+              rowKey={'id'}
+              recordCreatorProps={false}
+              actionRef={actionRef}
+              editable={{
+                type: 'multiple',
+                editableKeys: sortSwitch ? [] : editableKeys,
+                actionRender: (row: any, config: any, defDom: any) => {
+                  return [
+                    <Popconfirm
+                      title={props.t('deleteConfirm')}
+                      onConfirm={() => {
+                        let choice = formRef.current?.getFieldValue('choice');
+                        choice = choice.filter((value: DataSourceType) => value.id !== row.id);
+                        setFormValue(choice);
+                      }}
+                      okText={props.t('yes')}
+                      cancelText={props.t('no')}
+                    >
+                      <Button type={'link'} size={'small'}>
+                        {' '}
+                        {props.t('delete')}{' '}
+                      </Button>
+                    </Popconfirm>,
+                  ];
+                },
+                onValuesChange: (record, recordList) => {
+                  setFormValue(recordList);
+                },
+                onChange: setEditableRowKeys,
+              }}
+              components={sortSwitch ? sortableTableComponents : undefined}
+            />
+          </SortableTableScope>
 
           <Space style={{ marginBottom: '20px' }}>
             <Button

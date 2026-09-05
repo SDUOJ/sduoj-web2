@@ -1,17 +1,7 @@
 import { Table } from 'antd';
 import type { TableProps } from 'antd';
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import type { SortEndHandler } from 'react-sortable-hoc';
-import { MenuOutlined } from '@ant-design/icons';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { DragHandle, SortableTableScope, sortableTableComponents, SortEnd } from './SortableTable';
 import { arrayMoveImmutable } from 'array-move';
 import { useAppDispatch, useAppSelector } from '../../../Redux/Store/hooks';
 
@@ -26,38 +16,6 @@ export interface TableWithAllDataProps<Row extends object> extends Omit<
   afterDrag?: (previousRows: Row[], oldIndex: number, newIndex: number) => void;
   updateTrick?: unknown;
 }
-
-const DragContext = createContext<SortEndHandler | undefined>(undefined);
-const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
-const SortableRow = SortableElement((props: React.HTMLAttributes<HTMLTableRowElement>) => (
-  <tr {...props} />
-));
-const SortableBody = SortableContainer((props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-  <tbody {...props} />
-));
-
-function DraggableBody(props: React.HTMLAttributes<HTMLTableSectionElement>) {
-  const onSortEnd = useContext(DragContext);
-  return (
-    <SortableBody
-      {...props}
-      useDragHandle
-      disableAutoscroll
-      helperClass="row-dragging"
-      onSortEnd={onSortEnd}
-    />
-  );
-}
-
-function DraggableRow({
-  'data-sort-index': index,
-  ...props
-}: React.HTMLAttributes<HTMLTableRowElement> & { 'data-sort-index'?: number }) {
-  if (index === undefined || index < 0) return <tr {...props} />;
-  return <SortableRow {...props} index={index} />;
-}
-
-const draggableComponents = { body: { wrapper: DraggableBody, row: DraggableRow } };
 
 function TableWithAllData<Row extends object>({
   name,
@@ -122,7 +80,7 @@ function TableWithAllData<Row extends object>({
     };
   }, [dispatch, name, version]);
 
-  const onSortEnd = useCallback<SortEndHandler>(
+  const onSortEnd = useCallback<(indices: SortEnd) => void>(
     ({ oldIndex, newIndex }) => {
       if (
         oldIndex === newIndex ||
@@ -141,12 +99,10 @@ function TableWithAllData<Row extends object>({
     [afterDrag, dispatch, name, rows],
   );
 
-  const rowProps = useCallback<NonNullable<TableProps<Row>['onRow']>>(
-    (record, index) => ({
-      ...onRow?.(record, index),
-      'data-sort-index': rows.indexOf(record),
-    }),
-    [onRow, rows],
+  const keys = rows.map((row, index) =>
+    typeof tableProps.rowKey === 'function'
+      ? tableProps.rowKey(row, index)
+      : (row as Record<string, React.Key>)[String(tableProps.rowKey ?? 'key')],
   );
 
   const allColumns = useDrag
@@ -163,17 +119,17 @@ function TableWithAllData<Row extends object>({
     : columns;
 
   return (
-    <DragContext.Provider value={onSortEnd}>
+    <SortableTableScope items={keys} onSortEnd={onSortEnd} disabled={!useDrag}>
       <Table<Row>
         {...tableProps}
         loading={loading}
         columns={allColumns}
         dataSource={rows}
         pagination={false}
-        onRow={useDrag ? rowProps : onRow}
-        components={useDrag ? draggableComponents : tableProps.components}
+        onRow={onRow}
+        components={useDrag ? sortableTableComponents : tableProps.components}
       />
-    </DragContext.Provider>
+    </SortableTableScope>
   );
 }
 

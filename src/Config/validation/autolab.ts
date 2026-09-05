@@ -2,7 +2,7 @@ import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import spec from './autolab.json';
 
-const ajv = new Ajv({ strict: false, allErrors: false, coerceTypes: true });
+export const ajv = new Ajv({ strict: false, allErrors: false, coerceTypes: true });
 addFormats(ajv);
 ajv.addFormat('binary', true);
 ajv.addSchema({ $id: 'urn:sduoj:autolab', components: spec.components });
@@ -21,7 +21,7 @@ const routes = Object.entries(spec.routes).map(([route, schema]) => {
   };
 });
 
-function externalReferences(schema: unknown): unknown {
+export function externalReferences(schema: unknown): unknown {
   if (Array.isArray(schema)) return schema.map(externalReferences);
   if (schema && typeof schema === 'object')
     return Object.fromEntries(
