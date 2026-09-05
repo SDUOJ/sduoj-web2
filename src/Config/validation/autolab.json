@@ -1,0 +1,1207 @@
+{
+  "routes": {
+    "POST /ps/objective/add": { "$ref": "#/components/schemas/objective_base" },
+    "POST /ps/objective/edit": { "$ref": "#/components/schemas/objective_edit" },
+    "POST /ps/objective/info": { "$ref": "#/components/schemas/objective_info" },
+    "POST /ps/answer_sheet/info": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/collect": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/mark": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/answer": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/finish": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/submissionList": { "$ref": "#/components/schemas/submissionListType" },
+    "POST /ps/answer_sheet/submissionInfo": { "$ref": "#/components/schemas/submissionInfo" },
+    "POST /ps/answer_sheet/pbcp/add": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/pbcp/get": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/pbcp/del": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/pbcp/upd": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/answer_sheet/acceptanceQueueList": { "$ref": "#/components/schemas/psidOnlyType" },
+    "POST /ps/answer_sheet/subjective/exportZip": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/problem_set/add": { "$ref": "#/components/schemas/problem_set_base" },
+    "POST /ps/problem_set/edit": { "$ref": "#/components/schemas/problem_set_edit" },
+    "POST /ps/problem_set/info": { "$ref": "#/components/schemas/problem_set_psid" },
+    "POST /ps/problem_set/info_c": { "$ref": "#/components/schemas/problem_set_psid" },
+    "POST /ps/problem_set/list": { "$ref": "#/components/schemas/page" },
+    "POST /ps/problem_set/search": { "$ref": "#/components/schemas/search_list_page" },
+    "POST /ps/problem_set/key": { "$ref": "#/components/schemas/userGroupId" },
+    "POST /ps/problem_set/list_by_group": { "$ref": "#/components/schemas/userGroupId" },
+    "POST /ps/problem_set/pro_info": { "$ref": "#/components/schemas/routerType" },
+    "POST /ps/problem_set/public": { "$ref": "#/components/schemas/problem_set_psid" },
+    "POST /ps/problem_set/late/list": { "$ref": "#/components/schemas/LatePermissionList" },
+    "POST /ps/problem_set/late/add": { "$ref": "#/components/schemas/LatePermissionBase" },
+    "POST /ps/problem_set/late/batch_add": {
+      "$ref": "#/components/schemas/LatePermissionBatchAdd"
+    },
+    "POST /ps/problem_set/late/update": { "$ref": "#/components/schemas/LatePermissionUpdate" },
+    "POST /ps/group/add": { "$ref": "#/components/schemas/problem_group" },
+    "POST /ps/group/edit": { "$ref": "#/components/schemas/problem_group_edit" },
+    "POST /ps/group/list": { "$ref": "#/components/schemas/problem_group_list_page" },
+    "POST /ps/group/info": { "$ref": "#/components/schemas/problem_group_id" },
+    "POST /ps/group/search": { "$ref": "#/components/schemas/searchKey" },
+    "POST /ps/subjective/add": { "$ref": "#/components/schemas/subjective_base" },
+    "POST /ps/subjective/edit": { "$ref": "#/components/schemas/subjective_edit" },
+    "POST /ps/subjective/info": { "$ref": "#/components/schemas/subjective_info" },
+    "POST /ps/judge/add": { "$ref": "#/components/schemas/routerTypeBaseWithJudgeLog" },
+    "POST /ps/judge/list": { "$ref": "#/components/schemas/judgeListType" },
+    "POST /ps/judge/info": { "$ref": "#/components/schemas/routerTypeBaseWithUsername" },
+    "POST /ps/summary/summary": { "$ref": "#/components/schemas/problem_set_summary" },
+    "POST /ps/summary/personal_tag_summary": {
+      "$ref": "#/components/schemas/personal_tag_summary"
+    },
+    "POST /ps/summary/preview": { "$ref": "#/components/schemas/routerTypeBaseWithUsername" },
+    "POST /ps/screen_record/addRecord": { "$ref": "#/components/schemas/newRecord" },
+    "GET /ps/screen_record/getVideoList": {
+      "type": "object",
+      "properties": { "bs_id": { "title": "Bs Id", "type": "integer" } },
+      "required": ["bs_id"]
+    },
+    "GET /ps/screen_record/getVideo": {
+      "type": "object",
+      "properties": { "token": { "title": "Token", "type": "string" } },
+      "required": ["token"]
+    },
+    "GET /ps/screen_record/deleteVideo": {
+      "type": "object",
+      "properties": { "token": { "title": "Token", "type": "string" } },
+      "required": ["token"]
+    },
+    "GET /ps/screen_record/deleteAll": {
+      "type": "object",
+      "properties": { "bs_id": { "title": "Bs Id", "type": "integer" } },
+      "required": ["bs_id"]
+    },
+    "POST /ps/auto-task/subjective/review": {
+      "$ref": "#/components/schemas/SubjectiveTaskRequest"
+    },
+    "POST /ps/auto-task/list": { "$ref": "#/components/schemas/AutoTaskListRequest" },
+    "POST /ps/auto-task/summary/export": { "$ref": "#/components/schemas/SummaryReportRequest" },
+    "POST /ps/auto-task/ai/resources/create": { "$ref": "#/components/schemas/ResourceCreate" },
+    "POST /ps/auto-task/ai/resources/list": { "$ref": "#/components/schemas/PageRequest" },
+    "POST /ps/auto-task/ai/resources/{resource_id}/update": {
+      "$ref": "#/components/schemas/ResourceUpdate"
+    },
+    "POST /ps/auto-task/ai/jobs/create": { "$ref": "#/components/schemas/TaskCreate" },
+    "GET /ps/auto-task/ai/jobs/{task_id}": {
+      "type": "object",
+      "properties": { "after": { "title": "After", "type": "integer", "default": 0 } },
+      "required": []
+    },
+    "POST /ps/auto-task/ai/jobs/list": { "$ref": "#/components/schemas/PageRequest" },
+    "GET /ps/auto-task/ai/jobs/{task_id}/events": {
+      "type": "object",
+      "properties": { "after": { "title": "After", "type": "integer", "default": 0 } },
+      "required": []
+    },
+    "POST /ps/auto-task/ai/jobs/{task_id}/retry": { "$ref": "#/components/schemas/RetryInput" },
+    "POST /ps/auto-task/ai/settings/update": { "$ref": "#/components/schemas/SettingsUpdate" },
+    "POST /ps/auto-task/ai/points/adjust": { "$ref": "#/components/schemas/PointAdjustment" },
+    "GET /ps/auto-task/ai/points/ledger": {
+      "type": "object",
+      "properties": { "offset": { "title": "Offset", "type": "integer", "default": 0 } },
+      "required": []
+    },
+    "POST /ps/auto-task/ai/reviews/{review_id}/update": {
+      "$ref": "#/components/schemas/ReviewUpdate"
+    },
+    "POST /ps/auto-task/ai/interviews/{resource_id}/preflight": {
+      "$ref": "#/components/schemas/InterviewInput"
+    },
+    "POST /ps/auto-task/ai/interviews/{resource_id}/answer": {
+      "$ref": "#/components/schemas/InterviewInput"
+    },
+    "POST /ps/auto-task/ai/interviews/{resource_id}/events": {
+      "$ref": "#/components/schemas/InterviewInput"
+    },
+    "POST /ps/auto-task/ai/grading/{resource_id}/adopt": {
+      "$ref": "#/components/schemas/Approval"
+    },
+    "POST /ps/auto-task/ai/resources/{resource_id}/review": {
+      "$ref": "#/components/schemas/Approval"
+    },
+    "POST /ps/auto-task/ai/questions/{resource_id}/publish": {
+      "$ref": "#/components/schemas/PublishQuestion"
+    },
+    "POST /ps/auto-task/ai/exams/{resource_id}/publish": {
+      "$ref": "#/components/schemas/PublishExam"
+    },
+    "POST /ps/auto-task/ai/tags/upsert": { "$ref": "#/components/schemas/TagInput" },
+    "POST /ps/auto-task/ai/exams/roster/parse": { "$ref": "#/components/schemas/RosterInput" },
+    "POST /ps/course/create": { "$ref": "#/components/schemas/CourseCreateRequest" },
+    "POST /ps/course/list": { "$ref": "#/components/schemas/CourseListRequest" },
+    "POST /ps/course/{course_id}/update": { "$ref": "#/components/schemas/CourseUpdateRequest" },
+    "POST /ps/course/{course_id}/assign-classrooms": {
+      "$ref": "#/components/schemas/ClassroomAssignRequest"
+    },
+    "POST /ps/course/{course_id}/add-ta": { "$ref": "#/components/schemas/TAAddRequest" },
+    "POST /ps/course/{course_id}/ta/bind-students": {
+      "$ref": "#/components/schemas/TAStudentBindRequest"
+    },
+    "POST /ps/course/{course_id}/ta/{ta_id}/update": {
+      "$ref": "#/components/schemas/TAUpdateRequest"
+    },
+    "POST /ps/course/{course_id}/times/add": {
+      "$ref": "#/components/schemas/CourseTimeItemAddRequest"
+    },
+    "POST /ps/course/{course_id}/times/{time_id}/update": {
+      "$ref": "#/components/schemas/CourseTimeItemUpdateRequest"
+    },
+    "POST /ps/course/my/list": { "$ref": "#/components/schemas/UserCourseListRequest" },
+    "POST /ps/schedule/add": { "$ref": "#/components/schemas/ScheduleAddRequest" },
+    "POST /ps/schedule/list": { "$ref": "#/components/schemas/ScheduleListRequest" },
+    "POST /ps/schedule/{schedule_id}/update": {
+      "$ref": "#/components/schemas/ScheduleUpdateRequest"
+    },
+    "POST /ps/seat/{course_id}/assign": { "$ref": "#/components/schemas/SeatAssignRequest" },
+    "POST /ps/seat/auto-assign": { "$ref": "#/components/schemas/AutoAssignRequest" },
+    "POST /ps/attendance/{course_id}/{schedule_id}/init": {
+      "$ref": "#/components/schemas/InitAttendanceRequest"
+    },
+    "POST /ps/attendance/{sg_id}/sign-in": { "$ref": "#/components/schemas/SignInRequest" },
+    "POST /ps/attendance/{sg_id}/record": {
+      "$ref": "#/components/schemas/AttendanceRecordRequest"
+    },
+    "POST /ps/attendance/{sg_id}/token": { "$ref": "#/components/schemas/TokenRequest" },
+    "POST /ps/attendance/verify-token": { "$ref": "#/components/schemas/TokenVerifyRequest" },
+    "POST /ps/attendance/{sg_id}/leave": { "$ref": "#/components/schemas/LeaveRequest" },
+    "POST /ps/attendance/{sg_id}/review-leave": {
+      "$ref": "#/components/schemas/LeaveReviewRequest"
+    },
+    "POST /ps/attendance/{sg_id}/update-mode": {
+      "$ref": "#/components/schemas/SignModeUpdateRequest"
+    },
+    "GET /ps/attendance/student/{username}/records": {
+      "type": "object",
+      "properties": {
+        "course_id": { "title": "Course Id", "type": "integer" },
+        "attendance_tag": { "title": "Attendance Tag", "type": "string" },
+        "pageNow": { "title": "Pagenow", "type": "integer", "default": 1 },
+        "pageSize": { "title": "Pagesize", "type": "integer", "default": 20 }
+      },
+      "required": []
+    },
+    "POST /ps/class/create": { "$ref": "#/components/schemas/ClassroomCreateRequest" },
+    "POST /ps/class/list": { "$ref": "#/components/schemas/ClassroomListRequest" },
+    "POST /ps/class/{c_id}/update": { "$ref": "#/components/schemas/ClassroomUpdateRequest" }
+  },
+  "components": {
+    "schemas": {
+      "Approval": {
+        "type": "object",
+        "required": ["version", "reason"],
+        "properties": {
+          "version": { "type": "integer", "minimum": 1 },
+          "overwrite_manual": { "type": "boolean" },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        }
+      },
+      "AttendanceRecordItem": {
+        "type": "object",
+        "required": ["username", "status"],
+        "properties": {
+          "username": { "type": "string" },
+          "status": { "type": "integer" },
+          "seat_number": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "AttendanceRecordRequest": {
+        "type": "object",
+        "required": ["records"],
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttendanceRecordItem" }
+          }
+        }
+      },
+      "AutoAssignRequest": {
+        "type": "object",
+        "required": ["course_id"],
+        "properties": {
+          "course_id": { "type": "integer" },
+          "usernames": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          },
+          "c_ids": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          }
+        }
+      },
+      "AutoTaskListRequest": {
+        "type": "object",
+        "properties": {
+          "psid": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "groupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "contestId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "problemId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "pageNow": { "type": "integer" },
+          "pageSize": { "type": "integer" },
+          "status": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "taskType": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "scoreLe": { "anyOf": [{ "type": "number" }, { "type": "null" }] }
+        }
+      },
+      "ClassroomAssignRequest": {
+        "type": "object",
+        "required": ["c_ids"],
+        "properties": { "c_ids": { "type": "array", "items": { "type": "integer" } } }
+      },
+      "ClassroomCreateRequest": {
+        "type": "object",
+        "required": ["c_name", "address", "c_seat_num"],
+        "properties": {
+          "c_name": { "type": "string" },
+          "address": { "type": "string" },
+          "c_seat_num": { "type": "integer", "minimum": 1 },
+          "ext_config": { "anyOf": [{ "type": "object" }, { "type": "null" }] }
+        }
+      },
+      "ClassroomListRequest": {
+        "type": "object",
+        "properties": {
+          "pageNow": { "type": "integer", "minimum": 1 },
+          "pageSize": { "type": "integer", "minimum": 1, "maximum": 200 },
+          "keyword": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "ClassroomUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "c_name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "address": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "c_seat_num": { "anyOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+          "ext_config": { "anyOf": [{ "type": "object" }, { "type": "null" }] }
+        }
+      },
+      "CourseCreateRequest": {
+        "type": "object",
+        "required": ["course_name", "group_id", "tag"],
+        "properties": {
+          "course_name": { "type": "string" },
+          "group_id": { "type": "integer" },
+          "tag": { "type": "string" },
+          "c_ids": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          },
+          "manager_groups": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          },
+          "ext_config": { "anyOf": [{ "type": "object" }, { "type": "null" }] }
+        }
+      },
+      "CourseListRequest": {
+        "type": "object",
+        "properties": {
+          "group_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tag": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "page_now": { "type": "integer", "minimum": 1 },
+          "page_size": { "type": "integer", "minimum": 1, "maximum": 100 }
+        }
+      },
+      "CourseTimeItemAddRequest": {
+        "type": "object",
+        "required": ["start_time", "end_time"],
+        "properties": {
+          "start_time": { "type": "string", "format": "date-time" },
+          "end_time": { "type": "string", "format": "date-time" },
+          "auto_create_sign": { "type": "boolean" },
+          "course_content": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_homework": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_materials": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          }
+        }
+      },
+      "CourseTimeItemUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "start_time": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+          },
+          "end_time": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+          },
+          "auto_create_sign": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+          "course_content": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_homework": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_materials": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          }
+        }
+      },
+      "CourseUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "course_name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "group_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tag": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "c_ids": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          },
+          "manager_groups": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          },
+          "ext_config": { "anyOf": [{ "type": "object" }, { "type": "null" }] }
+        }
+      },
+      "FileAnswerType": {
+        "type": "object",
+        "required": ["fileId"],
+        "properties": {
+          "fileId": { "type": "string" },
+          "fileName": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "InitAttendanceRequest": {
+        "type": "object",
+        "required": ["group_id"],
+        "properties": { "group_id": { "type": "integer" } }
+      },
+      "InterviewInput": {
+        "type": "object",
+        "required": ["operation_key"],
+        "properties": {
+          "operation_key": { "type": "string", "minLength": 1, "maxLength": 96 },
+          "sequence": { "type": "integer", "minimum": 0 },
+          "text": { "type": "string", "maxLength": 50000 },
+          "evidence": { "type": "object" }
+        }
+      },
+      "LatePermissionBase": {
+        "type": "object",
+        "required": ["psid", "username", "expire_time", "discount"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "username": { "type": "string" },
+          "expire_time": { "type": "integer" },
+          "discount": { "type": "number" },
+          "note": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "LatePermissionBatchAdd": {
+        "type": "object",
+        "required": ["groupId", "psids", "username", "expire_time", "discount"],
+        "properties": {
+          "groupId": { "type": "integer" },
+          "psids": { "type": "array", "items": { "type": "integer" } },
+          "username": { "type": "string" },
+          "expire_time": { "type": "integer" },
+          "discount": { "type": "number" },
+          "note": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "LatePermissionList": {
+        "type": "object",
+        "required": ["page"],
+        "properties": {
+          "psid": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "groupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "page": { "$ref": "#/components/schemas/page" },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "LatePermissionUpdate": {
+        "type": "object",
+        "required": ["id", "psid"],
+        "properties": {
+          "id": { "type": "integer" },
+          "psid": { "type": "integer" },
+          "expire_time": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "discount": { "anyOf": [{ "type": "number" }, { "type": "null" }] },
+          "is_active": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "note": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "LeaveRequest": {
+        "type": "object",
+        "required": ["leave_message"],
+        "properties": {
+          "leave_message": { "type": "string" },
+          "leave_files": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          }
+        }
+      },
+      "LeaveReviewRequest": {
+        "type": "object",
+        "required": ["username", "approved"],
+        "properties": { "username": { "type": "string" }, "approved": { "type": "boolean" } }
+      },
+      "PageRequest": {
+        "type": "object",
+        "properties": {
+          "pageNow": { "type": "integer", "minimum": 1 },
+          "pageSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "question",
+                  "collection",
+                  "authoring",
+                  "grading",
+                  "plagiarism",
+                  "ide",
+                  "course",
+                  "document",
+                  "conversation",
+                  "interview",
+                  "exam"
+                ]
+              },
+              { "type": "null" }
+            ]
+          },
+          "keyword": { "type": "string", "maxLength": 200 },
+          "status": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "PointAdjustment": {
+        "type": "object",
+        "required": ["subject_id", "amount", "operation_key", "reason"],
+        "properties": {
+          "subject_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "amount": { "type": "number" },
+          "operation_key": { "type": "string", "minLength": 1, "maxLength": 96 },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        }
+      },
+      "ProgrammingProblemRef": {
+        "type": "object",
+        "required": ["gid", "pid"],
+        "properties": { "gid": { "type": "integer" }, "pid": { "type": "integer" } }
+      },
+      "PublishExam": {
+        "type": "object",
+        "required": ["version", "problem_set"],
+        "properties": {
+          "version": { "type": "integer", "minimum": 1 },
+          "problem_set": { "type": "object" },
+          "dry_run": { "type": "boolean" }
+        }
+      },
+      "PublishQuestion": {
+        "type": "object",
+        "required": ["version", "group_id", "score"],
+        "properties": {
+          "version": { "type": "integer", "minimum": 1 },
+          "group_id": { "type": "integer" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 10000 },
+          "correct_labels": { "type": "array", "items": { "type": "string" } },
+          "dry_run": { "type": "boolean" }
+        }
+      },
+      "ResourceCreate": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "question",
+              "collection",
+              "authoring",
+              "grading",
+              "plagiarism",
+              "ide",
+              "course",
+              "document",
+              "conversation",
+              "interview",
+              "exam"
+            ]
+          },
+          "data": { "type": "object" },
+          "course_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "psid": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "parent_id": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "ResourceUpdate": {
+        "type": "object",
+        "required": ["version", "data"],
+        "properties": {
+          "version": { "type": "integer", "minimum": 1 },
+          "data": { "type": "object" }
+        }
+      },
+      "RetryInput": {
+        "type": "object",
+        "required": ["operation_key"],
+        "properties": { "operation_key": { "type": "string", "minLength": 1, "maxLength": 128 } }
+      },
+      "ReviewUpdate": {
+        "type": "object",
+        "required": ["decision", "reason"],
+        "properties": {
+          "decision": { "type": "string", "enum": ["normal", "warning", "violation"] },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        }
+      },
+      "RosterInput": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "text": { "type": "string", "minLength": 1, "maxLength": 1000000 },
+          "course_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "resolve_users": { "type": "boolean" }
+        }
+      },
+      "ScheduleAddRequest": {
+        "type": "object",
+        "required": ["course_id", "sequence", "start_time", "end_time"],
+        "properties": {
+          "course_id": { "type": "integer" },
+          "sequence": { "type": "integer" },
+          "start_time": { "type": "string", "format": "date-time" },
+          "end_time": { "type": "string", "format": "date-time" },
+          "course_content": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_materials": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          },
+          "course_homework": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "sg_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "auto_create_sign": { "type": "boolean" }
+        }
+      },
+      "ScheduleListRequest": {
+        "type": "object",
+        "properties": {
+          "course_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "page_now": { "type": "integer", "minimum": 1 },
+          "page_size": { "type": "integer", "minimum": 1, "maximum": 200 }
+        }
+      },
+      "ScheduleUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "sequence": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "start_time": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+          },
+          "end_time": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+          },
+          "course_content": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "course_materials": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          },
+          "course_homework": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "sg_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "SeatAssignRequest": {
+        "type": "object",
+        "required": ["username", "seat_number"],
+        "properties": {
+          "username": { "type": "string" },
+          "seat_number": { "type": "integer" },
+          "c_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "SettingsUpdate": {
+        "type": "object",
+        "required": ["base_url", "model"],
+        "properties": {
+          "provider": { "type": "string" },
+          "base_url": { "type": "string", "minLength": 1, "maxLength": 2048 },
+          "model": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "reasoning_effort": { "type": "string" },
+          "input_usd_per_million": { "type": "number", "minimum": 0 },
+          "cached_usd_per_million": { "type": "number", "minimum": 0 },
+          "output_usd_per_million": { "type": "number", "minimum": 0 },
+          "max_concurrency": { "type": "integer", "minimum": 1, "maximum": 64 },
+          "per_user_concurrency": { "type": "integer", "minimum": 1, "maximum": 8 },
+          "max_queued_per_user": { "type": "integer", "minimum": 1, "maximum": 10000 },
+          "agent_concurrency": { "type": "integer", "minimum": 1, "maximum": 64 },
+          "sandbox_concurrency": { "type": "integer", "minimum": 1, "maximum": 16 },
+          "document_concurrency": { "type": "integer", "minimum": 1, "maximum": 16 },
+          "max_task_cost_usd": { "type": "number", "maximum": 100, "exclusiveMinimum": 0 },
+          "timeout_seconds": { "type": "integer", "minimum": 10, "maximum": 1800 },
+          "api_key": { "anyOf": [{ "type": "string", "maxLength": 4000 }, { "type": "null" }] }
+        }
+      },
+      "SignInRequest": {
+        "type": "object",
+        "required": ["username", "sign_type"],
+        "properties": { "username": { "type": "string" }, "sign_type": { "type": "integer" } }
+      },
+      "SignModeUpdateRequest": {
+        "type": "object",
+        "required": ["sign_mode"],
+        "properties": { "sign_mode": { "type": "integer" } }
+      },
+      "SubjectiveTaskItem": {
+        "type": "object",
+        "required": ["psid", "gid", "pid", "username"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" },
+          "username": { "type": "string" },
+          "programmingProblems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProgrammingProblemRef" }
+          }
+        }
+      },
+      "SubjectiveTaskRequest": {
+        "type": "object",
+        "required": ["tasks"],
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubjectiveTaskItem" }
+          }
+        }
+      },
+      "SummaryReportRequest": {
+        "type": "object",
+        "required": ["groupId"],
+        "properties": {
+          "groupId": { "type": "integer" },
+          "psids": {
+            "anyOf": [{ "type": "array", "items": { "type": "integer" } }, { "type": "null" }]
+          }
+        }
+      },
+      "TAAddRequest": {
+        "type": "object",
+        "required": ["ta_name"],
+        "properties": {
+          "ta_name": { "type": "string" },
+          "ext_info": { "anyOf": [{ "type": "object" }, { "type": "null" }] },
+          "usernames": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          }
+        }
+      },
+      "TAStudentBindRequest": {
+        "type": "object",
+        "required": ["TA_id", "usernames"],
+        "properties": {
+          "TA_id": { "type": "integer" },
+          "usernames": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "TAUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "ta_name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "ext_info": { "anyOf": [{ "type": "object" }, { "type": "null" }] },
+          "usernames": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          }
+        }
+      },
+      "TagInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "aliases": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "TaskCreate": {
+        "type": "object",
+        "required": ["task_type", "operation_key", "resource_id"],
+        "properties": {
+          "task_type": {
+            "type": "string",
+            "enum": [
+              "question.extract",
+              "question.solve",
+              "question.verify",
+              "question.chat",
+              "authoring.generate",
+              "subjective.grade",
+              "plagiarism.scan",
+              "ide.execute",
+              "ide.tutor",
+              "course.index",
+              "course.ask",
+              "interview.advance",
+              "exam.plan"
+            ]
+          },
+          "operation_key": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "resource_id": { "type": "string", "minLength": 1, "maxLength": 63 },
+          "payload": { "type": "object" }
+        }
+      },
+      "TokenRequest": {
+        "type": "object",
+        "required": ["username"],
+        "properties": { "username": { "type": "string" } }
+      },
+      "TokenVerifyRequest": {
+        "type": "object",
+        "required": ["token"],
+        "properties": {
+          "token": { "type": "string" },
+          "seat_number": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "UserCourseListRequest": {
+        "type": "object",
+        "properties": {
+          "group_id": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "target_username": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "tag": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "page_now": { "type": "integer", "minimum": 1 },
+          "page_size": { "type": "integer", "minimum": 1, "maximum": 100 }
+        }
+      },
+      "checkpointListType": {
+        "type": "object",
+        "required": ["checkpointId"],
+        "properties": {
+          "checkpointId": { "type": "string" },
+          "status": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "note": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "configInfo": {
+        "type": "object",
+        "required": ["name", "score", "answer"],
+        "properties": {
+          "name": { "type": "string" },
+          "score": { "type": "integer" },
+          "answer": { "type": "string" }
+        }
+      },
+      "fileInfo": {
+        "type": "object",
+        "required": ["name", "maxSizeMB", "fileType"],
+        "properties": {
+          "name": { "type": "string" },
+          "maxSizeMB": { "type": "integer" },
+          "fileType": { "type": "string" }
+        }
+      },
+      "groupInfoItem": {
+        "type": "object",
+        "required": ["gid", "name", "score"],
+        "properties": {
+          "gid": { "type": "integer" },
+          "name": { "type": "string" },
+          "score": { "type": "number" },
+          "timeSetting": {
+            "anyOf": [
+              { "type": "array", "items": { "$ref": "#/components/schemas/timeSettingType" } },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "judgeListType": {
+        "type": "object",
+        "required": ["pageSize", "pageNow", "psid"],
+        "properties": {
+          "pageSize": { "type": "integer" },
+          "pageNow": { "type": "integer" },
+          "psid": { "type": "integer" },
+          "proStr": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "gid": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "pid": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "judgeLock": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "hasJudge": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "review_queue": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "judgeLogType": {
+        "type": "object",
+        "required": ["name", "score", "jScore"],
+        "properties": {
+          "name": { "type": "string" },
+          "score": { "type": "integer" },
+          "jScore": { "type": "integer" }
+        }
+      },
+      "newRecord": {
+        "type": "object",
+        "required": ["bs_id", "u_name", "u_id", "token"],
+        "properties": {
+          "bs_id": { "type": "integer" },
+          "u_name": { "type": "string" },
+          "u_id": { "type": "integer" },
+          "token": { "type": "string" }
+        }
+      },
+      "objective_base": {
+        "type": "object",
+        "required": ["type", "content", "answer"],
+        "properties": {
+          "type": { "type": "integer" },
+          "content": { "$ref": "#/components/schemas/objective_content" },
+          "answer": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "objective_content": {
+        "type": "object",
+        "required": ["description", "choice"],
+        "properties": {
+          "description": { "type": "string" },
+          "choice": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "objective_edit": {
+        "type": "object",
+        "required": ["gid", "pid", "type", "content", "answer"],
+        "properties": {
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" },
+          "type": { "type": "integer" },
+          "content": { "$ref": "#/components/schemas/objective_content" },
+          "answer": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "objective_info": {
+        "type": "object",
+        "required": ["gid", "pid"],
+        "properties": { "gid": { "type": "integer" }, "pid": { "type": "integer" } }
+      },
+      "page": {
+        "type": "object",
+        "required": ["pageSize", "pageNow"],
+        "properties": { "pageSize": { "type": "integer" }, "pageNow": { "type": "integer" } }
+      },
+      "personal_tag_summary": {
+        "type": "object",
+        "required": ["groupId"],
+        "properties": {
+          "groupId": { "type": "integer" },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "force": { "type": "boolean" }
+        }
+      },
+      "problem_group": {
+        "type": "object",
+        "required": ["name", "type", "problemInfo"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "integer" },
+          "problemInfo": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/problem_group_info" }
+          },
+          "manageGroupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "problem_group_edit": {
+        "type": "object",
+        "required": ["gid"],
+        "properties": {
+          "gid": { "type": "integer" },
+          "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "type": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "problemInfo": {
+            "anyOf": [
+              { "type": "array", "items": { "$ref": "#/components/schemas/problem_group_info" } },
+              { "type": "null" }
+            ]
+          },
+          "manageGroupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "problem_group_id": {
+        "type": "object",
+        "required": ["gid"],
+        "properties": { "gid": { "type": "integer" } }
+      },
+      "problem_group_info": {
+        "type": "object",
+        "required": ["pid", "score"],
+        "properties": {
+          "pid": { "type": "integer" },
+          "desId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "score": { "type": "integer" },
+          "submitLimit": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "antiCheatingRate": { "anyOf": [{ "type": "number" }, { "type": "null" }] }
+        }
+      },
+      "problem_group_list_page": {
+        "type": "object",
+        "required": ["pageSize", "pageNow"],
+        "properties": {
+          "pageSize": { "type": "integer" },
+          "pageNow": { "type": "integer" },
+          "searchKey": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "title": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "problem_set_base": {
+        "type": "object",
+        "required": ["name", "type", "groupInfo", "config", "groupId", "tag"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "type": { "type": "integer" },
+          "groupInfo": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/groupInfoItem" }
+          },
+          "config": { "$ref": "#/components/schemas/problem_set_config" },
+          "global_score": { "anyOf": [{ "type": "number" }, { "type": "null" }] },
+          "tm_start": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tm_end": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "manageGroupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "groupId": { "type": "integer" },
+          "tag": { "type": "string" }
+        }
+      },
+      "problem_set_config": {
+        "type": "object",
+        "required": [
+          "useSameSE",
+          "showReport",
+          "showScoreInRunning",
+          "showProgramScoreInRunning",
+          "mergerSubjectiveGroup"
+        ],
+        "properties": {
+          "useSameSE": { "type": "integer" },
+          "usePractice": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "practiceScoreCalculate": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "practiceTimeSetting": {
+            "anyOf": [
+              { "type": "array", "items": { "$ref": "#/components/schemas/timeSettingType" } },
+              { "type": "null" }
+            ]
+          },
+          "showReport": { "type": "integer" },
+          "showObjectiveAnswer": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "showSubjectiveAnswer": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "showSubjectiveJudgeLog": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "showScoreInRunning": { "type": "integer" },
+          "showProgramScoreInRunning": { "type": "integer" },
+          "mergerSubjectiveGroup": { "type": "integer" }
+        }
+      },
+      "problem_set_edit": {
+        "type": "object",
+        "required": ["psid"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "type": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "config": {
+            "anyOf": [{ "$ref": "#/components/schemas/problem_set_config" }, { "type": "null" }]
+          },
+          "groupInfo": {
+            "anyOf": [
+              { "type": "array", "items": { "$ref": "#/components/schemas/groupInfoItem" } },
+              { "type": "null" }
+            ]
+          },
+          "global_score": { "anyOf": [{ "type": "number" }, { "type": "null" }] },
+          "tm_start": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tm_end": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "manageGroupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "groupId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "tag": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "problem_set_psid": {
+        "type": "object",
+        "required": ["psid"],
+        "properties": { "psid": { "type": "integer" } }
+      },
+      "problem_set_summary": {
+        "type": "object",
+        "required": ["psid", "code"],
+        "properties": { "psid": { "type": "integer" }, "code": { "type": "integer" } }
+      },
+      "programSubmitType": {
+        "type": "object",
+        "required": ["judgeTemplateId", "problemSetId"],
+        "properties": {
+          "judgeTemplateId": { "type": "integer" },
+          "code": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "zipFileId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "problemSetId": { "type": "integer" },
+          "ipv4": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "psidOnlyType": {
+        "type": "object",
+        "required": ["psid"],
+        "properties": { "psid": { "type": "integer" } }
+      },
+      "publicCheckPointType": {
+        "type": "object",
+        "required": ["checkpoints", "type"],
+        "properties": {
+          "checkpoints": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/checkpointListType" }
+          },
+          "type": { "type": "integer" }
+        }
+      },
+      "routerType": {
+        "type": "object",
+        "required": ["router"],
+        "properties": {
+          "router": { "$ref": "#/components/schemas/routerTypeBase" },
+          "data": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  { "type": "string" },
+                  { "$ref": "#/components/schemas/programSubmitType" },
+                  { "type": "array", "items": { "type": "string" } },
+                  { "$ref": "#/components/schemas/publicCheckPointType" },
+                  { "type": "array", "items": { "$ref": "#/components/schemas/FileAnswerType" } },
+                  { "$ref": "#/components/schemas/FileAnswerType" }
+                ]
+              },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "routerTypeBase": {
+        "type": "object",
+        "required": ["psid", "gid", "pid"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" }
+        }
+      },
+      "routerTypeBaseWithJudgeLog": {
+        "type": "object",
+        "required": ["psid", "gid", "pid", "username", "judgeLog"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" },
+          "username": { "type": "string" },
+          "judgeLog": { "type": "array", "items": { "$ref": "#/components/schemas/judgeLogType" } },
+          "judgeComment": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "cancel": { "anyOf": [{ "type": "integer" }, { "type": "null" }] }
+        }
+      },
+      "routerTypeBaseWithUsername": {
+        "type": "object",
+        "required": ["psid", "gid", "pid", "username"],
+        "properties": {
+          "psid": { "type": "integer" },
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" },
+          "username": { "type": "string" }
+        }
+      },
+      "searchKey": {
+        "type": "object",
+        "required": ["search"],
+        "properties": { "search": { "type": "string" } }
+      },
+      "search_list_page": {
+        "type": "object",
+        "required": ["pageSize", "pageNow", "groupId", "tag"],
+        "properties": {
+          "pageSize": { "type": "integer" },
+          "pageNow": { "type": "integer" },
+          "groupId": { "type": "integer" },
+          "tag": { "type": "string" }
+        }
+      },
+      "subjective_base": {
+        "type": "object",
+        "required": ["type", "config", "description"],
+        "properties": {
+          "type": { "type": "integer" },
+          "config": { "$ref": "#/components/schemas/subjective_config" },
+          "description": { "type": "string" }
+        }
+      },
+      "subjective_config": {
+        "type": "object",
+        "required": ["judgeConfig"],
+        "properties": {
+          "maxCount": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "fileList": {
+            "anyOf": [
+              { "type": "array", "items": { "$ref": "#/components/schemas/fileInfo" } },
+              { "type": "null" }
+            ]
+          },
+          "review_queue": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          },
+          "judgeConfig": { "type": "array", "items": { "$ref": "#/components/schemas/configInfo" } }
+        }
+      },
+      "subjective_edit": {
+        "type": "object",
+        "required": ["gid", "type", "config", "description", "pid"],
+        "properties": {
+          "gid": { "type": "integer" },
+          "type": { "type": "integer" },
+          "config": { "$ref": "#/components/schemas/subjective_config" },
+          "description": { "type": "string" },
+          "pid": { "type": "integer" }
+        }
+      },
+      "subjective_info": {
+        "type": "object",
+        "required": ["gid", "pid"],
+        "properties": { "gid": { "type": "integer" }, "pid": { "type": "integer" } }
+      },
+      "submissionInfo": {
+        "type": "object",
+        "required": ["submissionId", "psid", "gid", "pid"],
+        "properties": {
+          "submissionId": { "type": "string" },
+          "psid": { "type": "integer" },
+          "gid": { "type": "integer" },
+          "pid": { "type": "integer" },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "submissionListType": {
+        "type": "object",
+        "required": ["pageNow", "pageSize", "problemSetId", "router"],
+        "properties": {
+          "pageNow": { "type": "integer" },
+          "pageSize": { "type": "integer" },
+          "problemSetId": { "type": "integer" },
+          "sortBy": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "ascending": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+          "username": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "userId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "problemCode": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+          "problemId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "judgeTemplateId": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "judgeResult": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "problemCodeList": {
+            "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+          },
+          "router": { "$ref": "#/components/schemas/routerTypeBase" },
+          "us": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "timeSettingType": {
+        "type": "object",
+        "required": ["tm_start", "tm_end", "weight"],
+        "properties": {
+          "tm_start": { "type": "integer" },
+          "tm_end": { "type": "integer" },
+          "weight": { "type": "number" }
+        }
+      },
+      "userGroupId": {
+        "type": "object",
+        "required": ["groupId"],
+        "properties": { "groupId": { "type": "integer" } }
+      }
+    }
+  }
+}

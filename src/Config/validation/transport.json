@@ -1,0 +1,7 @@
+{
+  "checkpointUpload": {
+    "source": "dev/DEFAULT_GROUP/problem-service.yml spring.servlet.multipart",
+    "maxFileBytes": 209715200,
+    "maxRequestBytes": 209715200
+  }
+}
