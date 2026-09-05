@@ -132,6 +132,14 @@ export const contracts = {
     remoteParameters: column('oj', 'oj_judge_template', 'jt_remote_parameters'),
   },
   contest: {
+    frozenTime: {
+      kind: 'integer',
+      required: true,
+      min: -2147483648,
+      max: 2147483647,
+      source: 'ContestFeatureDTO.frozenTime Integer @NotNull',
+    } as Constraint,
+    features: column('oj', 'oj_contest', 'ct_features', { kind: 'json' }),
     contestTitle: column('oj', 'oj_contest', 'ct_title', {
       maxUtf16: 60,
       required: true,

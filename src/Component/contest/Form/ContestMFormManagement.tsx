@@ -14,6 +14,7 @@ const ContestMFormManagement = (props: any) => {
       <Form.Item
         label={props.t('FrozenTimeMinutes')}
         name={['features', 'frozenTime']}
+        rules={constraintRules(contracts.contest.frozenTime)}
         initialValue={0}
         required
         tooltip={props.t('FrozenTimeTooltip')}

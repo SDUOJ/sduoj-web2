@@ -13,6 +13,7 @@ it.each([
   ['/manage/group/update', { title: 'a'.repeat(46) }],
   ['/manage/notice/create', { text: 'a'.repeat(20001) }],
   ['/manage/contest/create', { participants: Array(1025).fill('user') }],
+  ['/manage/contest/create', { features: { frozenTime: 2147483648 } }],
   ['/ps/class/create', { c_name: 'a'.repeat(51) }],
   ['/ps/course/1/update', { course_name: 'a'.repeat(101) }],
   ['/ps/problem_set/add', { name: 'a'.repeat(64) }],

@@ -119,7 +119,10 @@ export const requestContracts: RequestContract[] = [
   { match: /^\/manage\/problem\/(create|update)$/, fields: { ...c.problem, ...checkpointFields } },
   { match: /^\/manage\/problem\/(createDescription|updateDescription)$/, fields: c.description },
   { match: /^\/manage\/judgetemplate\/(create|update)$/, fields: c.judgeTemplate },
-  { match: /^\/manage\/contest\/(create|update)$/, fields: c.contest },
+  {
+    match: /^\/manage\/contest\/(create|update)$/,
+    fields: { ...c.contest, 'features.frozenTime': c.contest.frozenTime },
+  },
   { match: /^\/contest\/participate$/, fields: { password: c.contest.password } },
   {
     match: /^\/contest\/(createQuestion|reply)$/,
