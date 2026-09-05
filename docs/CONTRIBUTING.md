@@ -72,3 +72,15 @@ mandatory visual checks requires repository administrator settings.
 A mocked frontend suite cannot validate real service contracts. Before releasing
 exam or grading changes, exercise a disposable backend with separate student,
 administrator and unauthorized accounts, plus reconnect and upload failures.
+
+## Development Server Exposure
+
+`yarn start` listens only on `127.0.0.1` by default. For an intentional LAN test,
+configure both the listen address and the exact Host header accepted from the device:
+
+```sh
+HOST=0.0.0.0 DEV_ALLOWED_HOSTS=192.168.1.20 yarn start
+```
+
+`DEV_ALLOWED_HOSTS` accepts a comma-separated list. The explicit value `all` disables
+Host validation and should only be used on a trusted isolated network.

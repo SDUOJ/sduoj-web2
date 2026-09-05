@@ -81,6 +81,24 @@ module.exports = function (webpackEnv) {
     (typeof webpackEnv === 'string' && webpackEnv) || process.env.NODE_ENV || 'development';
   const isEnvDevelopment = resolvedEnv === 'development';
   const isEnvProduction = resolvedEnv === 'production';
+  const devServerHost = process.env.HOST || '127.0.0.1';
+  const configuredAllowedHosts = process.env.DEV_ALLOWED_HOSTS;
+  const defaultAllowedHosts = ['localhost', '127.0.0.1', 'test.sduoj.com', 'api.test.sduoj.com'];
+  const devServerAllowedHosts =
+    configuredAllowedHosts === 'all'
+      ? 'all'
+      : Array.from(
+          new Set([
+            ...defaultAllowedHosts,
+            ...(devServerHost === '0.0.0.0' || devServerHost === '::' ? [] : [devServerHost]),
+            ...(configuredAllowedHosts
+              ? configuredAllowedHosts
+                  .split(',')
+                  .map((host) => host.trim())
+                  .filter(Boolean)
+              : []),
+          ]),
+        );
 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
@@ -791,6 +809,9 @@ module.exports = function (webpackEnv) {
     ...(isEnvDevelopment
       ? {
           devServer: {
+            client: {
+              overlay: { errors: true, warnings: false },
+            },
             proxy: [
               {
                 context: ['/api', '/ws/submission'],
@@ -800,7 +821,7 @@ module.exports = function (webpackEnv) {
                 cookieDomainRewrite: '',
               },
             ],
-            allowedHosts: 'all',
+            allowedHosts: devServerAllowedHosts,
             compress: true,
             static: {
               directory: paths.appPublic,
@@ -809,7 +830,7 @@ module.exports = function (webpackEnv) {
               serveIndex: false,
             },
             hot: true,
-            host: process.env.HOST || '0.0.0.0',
+            host: devServerHost,
             devMiddleware: {
               publicPath: '/',
             },

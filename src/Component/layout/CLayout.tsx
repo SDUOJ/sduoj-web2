@@ -1,75 +1,42 @@
-import React, {Component, Dispatch, Suspense} from "react";
-import {Layout} from "antd";
-import Loading from "../../Utils/Loading";
-import {Route} from "react-router-dom";
-import {withTranslation} from "react-i18next";
-import {connect} from "react-redux";
-import {withRouter} from "react-router";
-import FooterSDU from "./FooterSDU";
-import CHeader from "./CHeader";
-import {routerC} from "../../Config/router/routerC";
-import {ContestState} from "../../Redux/Action/contest";
-import {UrlPrefix} from "../../Config/constValue";
-import LoginCheck from "../common/LoginCheck";
+import { Suspense, useEffect } from 'react';
+import { Layout } from 'antd';
+import { Route, useHistory, useLocation } from 'react-router-dom';
+import Loading from '../../Utils/Loading';
+import FooterSDU from './FooterSDU';
+import CHeader from './CHeader';
+import { routerC } from '../../Config/router/routerC';
+import { UrlPrefix } from '../../Config/constValue';
+import LoginCheck from '../common/LoginCheck';
+import { useAppSelector } from '../../Redux/Store/hooks';
+import './clientLayout.css';
 
-const {Content} = Layout;
+export default function CLayout() {
+  const history = useHistory();
+  const { pathname } = useLocation();
+  const rankWidth = useAppSelector((state) => state.ContestReducer.minWidth);
+  const isRank = /\/contest\/.*\/rank/.test(pathname);
 
-class MLayout extends Component<any, any> {
+  useEffect(() => {
+    if (pathname === UrlPrefix || pathname === UrlPrefix + '/')
+      history.replace(UrlPrefix + '/home');
+  }, [history, pathname]);
 
-    componentDidMount() {
-        if (this.props.location.pathname === UrlPrefix || this.props.location.pathname === UrlPrefix + '/') {
-            this.props.history.push(UrlPrefix + "/home");
-        }
-    }
-
-    render() {
-
-        let minWidth = 500
-        if (this.props.location.pathname.match(/\/contest\/.*\/rank/g) !== null) {
-            minWidth = Math.max(500, (this.props.minWidth ?? 0) + 100)
-        }
-
-        return (
-            <>
-                <LoginCheck/>
-                <Layout style={{height: "max-content", minHeight: "100%", minWidth: "1300px"}}>
-                    <Layout style={{minWidth: minWidth}}>
-                        <CHeader/>
-                        <Content style={{
-                            backgroundColor: "#ffffff",
-                            paddingTop: 64,
-                            margin: '20px 16px 0',
-                            display: "table",
-                            height: "auto"
-                        }}>
-                            <Suspense fallback={<Loading/>}>
-                                {routerC.map(({id, path, exact, component}) => {
-                                    return (
-                                        <Route
-                                            key={id} path={path} exact={exact}
-                                            component={component}/>
-                                    )
-                                })}
-                            </Suspense>
-                        </Content>
-                        <FooterSDU/>
-                    </Layout>
-                </Layout>
-            </>
-        )
-    }
+  return (
+    <>
+      <LoginCheck />
+      <Layout className="client-layout">
+        <CHeader />
+        <Layout.Content className="client-content">
+          <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
+            <Suspense fallback={<Loading />}>
+              {routerC.map(({ id, path, exact, component }) => (
+                <Route key={id} path={path} exact={exact} component={component} />
+              ))}
+            </Suspense>
+          </div>
+        </Layout.Content>
+        <FooterSDU />
+      </Layout>
+    </>
+  );
 }
-
-const mapStateToProps = (state: any) => {
-    const CState: ContestState = state.ContestReducer
-    return {
-        minWidth: CState.minWidth
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(withRouter(MLayout)))

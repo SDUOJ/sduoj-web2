@@ -103,8 +103,10 @@ test('real isolated accounts exercise management, practice/exam sets, submission
   await expect(dialog).not.toBeVisible();
 
   const sets: Array<{ psid: number; name: string }> = [];
+  const names: string[] = [];
   for (const type of [0, 1]) {
     const name = `${prefix}-${type === 0 ? 'practice' : 'exam'}`;
+    names.push(name);
     await call(page.request, '/ps/problem_set/add', {
       name,
       type,
@@ -127,12 +129,16 @@ test('real isolated accounts exercise management, practice/exam sets, submission
         mergerSubjectiveGroup: 0,
       },
     });
-    const listed = await call<{ rows: Array<{ psid: number; name: string }> }>(
-      page.request,
-      '/ps/problem_set/list',
-      { pageNow: 1, pageSize: 20, searchKey: name },
-    );
-    sets.push(listed.rows.find((row) => row.name === name)!);
+  }
+  const listed = await call<{ rows: Array<{ psid: number; name: string }> }>(
+    page.request,
+    '/ps/problem_set/search',
+    { pageNow: 1, pageSize: 20, groupId, tag: 'FE-DEV' },
+  );
+  for (const name of names) {
+    const created = listed.rows.find((row) => row.name === name);
+    if (!created) throw new Error(`Created fixture was not returned for group ${groupId}: ${name}`);
+    sets.push(created);
   }
 
   await page.context().clearCookies();
@@ -208,6 +214,18 @@ test('real isolated accounts exercise management, practice/exam sets, submission
     body: JSON.stringify({ prefix, groupId, sets, submissionId }),
     contentType: 'application/json',
   });
+  await page
+    .getByRole('dialog')
+    .locator('.ant-modal-footer')
+    .getByRole('button', { name: 'Close', exact: true })
+    .click();
+  await page
+    .locator('.client-header-actions')
+    .getByRole('button', { name: new RegExp(student.username) })
+    .hover();
+  await page.getByRole('menuitem', { name: /Logout/i }).click();
+  await expect(page).toHaveURL(/\/v2\/home$/);
+  expect((await page.request.get('/api/user/getProfile')).status()).toBe(401);
   expect(external).toEqual([]);
   expect(errors).toEqual([]);
 });

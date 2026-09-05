@@ -1,11 +1,10 @@
-import React, { Dispatch, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Card, Space, Tabs } from 'antd';
 import { LoginForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from './ThirdPartyLoginSDUCAS';
 import { useTranslation } from 'react-i18next';
-import { connect, useDispatch } from 'react-redux';
-import { withRouter } from 'react-router';
+import { useAppDispatch } from '../../Redux/Store/hooks';
 import { loginInfo } from '../../Type/types';
 import Logo from 'Assert/img/sduoj.png';
 import ForgetPass from './Form/ForgetPass';
@@ -16,43 +15,43 @@ import { constraintRules } from '../../Config/validation/constraints';
 
 type LoginType = 'SDUCAS' | 'account' | 'email';
 
-const Login = (props: any) => {
+const Login = () => {
   const { t } = useTranslation();
 
   const formRef = useRef<ProFormInstance>();
   const [loginType, setLoginType] = useState<LoginType>('SDUCAS');
-  const dispatch = useDispatch();
+  const [submitting, setSubmitting] = useState(false);
+  const pending = useRef(false);
+  const dispatch = useAppDispatch();
   const afterLogin = (data: loginInfo) => {
     dispatch({ type: 'userLogin' });
     dispatch({ type: 'setUserInfo', data: data });
   };
-  const passwordLogin = () => {
-    formRef.current
-      ?.validateFields(['username', 'password'])
-      .then((value) => {
-        return CApi.login(value).then((resData: any) => {
-          afterLogin(resData);
-        });
-      })
-      .catch(() => {
-        // Field validation and the request layer already present errors.
-      });
+  const submit = async (type: 'account' | 'email') => {
+    if (pending.current) return;
+    pending.current = true;
+    try {
+      const value = await formRef.current?.validateFields(
+        type === 'account' ? ['username', 'password'] : ['email', 'emailCode'],
+      );
+      if (!value) return;
+      setSubmitting(true);
+      const data: loginInfo = await (type === 'account'
+        ? CApi.login(value)
+        : CApi.emailLogin(value));
+      afterLogin(data);
+    } catch {
+      // Field validation and transport already present errors; preserve credentials for retry.
+    } finally {
+      pending.current = false;
+      setSubmitting(false);
+    }
   };
-  const emailLogin = () => {
-    formRef.current
-      ?.validateFields(['email', 'emailCode'])
-      .then((value) => {
-        return CApi.emailLogin(value).then((resData: any) => {
-          afterLogin(resData);
-        });
-      })
-      .catch(() => {
-        // Field validation and the request layer already present errors.
-      });
-  };
+  const passwordLogin = () => submit('account');
+  const emailLogin = () => submit('email');
 
   return (
-    <Card style={{ width: '500px', textAlign: 'center', margin: '0 auto' }}>
+    <Card className="client-login">
       <LoginForm
         contentStyle={{ width: '100%', minWidth: 0 }}
         containerStyle={{ padding: '32px 0' }}
@@ -69,6 +68,7 @@ const Login = (props: any) => {
                 <Button
                   type={'primary'}
                   block
+                  loading={submitting}
                   onClick={() => {
                     loginType === 'account' ? passwordLogin() : emailLogin();
                   }}
@@ -87,14 +87,24 @@ const Login = (props: any) => {
           tabBarGutter={16}
           activeKey={loginType}
           onChange={(activeKey) => setLoginType(activeKey as LoginType)}
-        >
-          <Tabs.TabPane key={'account'} tab={t('AccountPassword', { defaultValue: t('Login') })} />
-          <Tabs.TabPane
-            key={'email'}
-            tab={t('EmailVerifyCode', { defaultValue: t('emailCode') })}
-          />
-          <Tabs.TabPane key={'SDUCAS'} tab={t('UnifiedIdentity', { defaultValue: 'CAS' })} />
-        </Tabs>
+          items={[
+            {
+              key: 'account',
+              disabled: submitting,
+              label: t('AccountPassword', { defaultValue: t('Login') }),
+            },
+            {
+              key: 'email',
+              disabled: submitting,
+              label: t('EmailVerifyCode', { defaultValue: t('emailCode') }),
+            },
+            {
+              key: 'SDUCAS',
+              disabled: submitting,
+              label: t('UnifiedIdentity', { defaultValue: 'CAS' }),
+            },
+          ]}
+        />
         {loginType === 'account' && (
           <>
             <ProFormText
@@ -169,10 +179,4 @@ const Login = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));
+export default Login;

@@ -1,5 +1,5 @@
-import { Button, Form, Input, message, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Form, Input, message, Modal, Space } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import CApi from 'Utils/API/c-api';
 import ItemCaptcha from './ItemCaptcha';
@@ -23,17 +23,18 @@ const ItemEmail = (props: ItemEmailProps & any) => {
   const [imgId, setImgId] = useState<string>('');
   const [captcha, setCaptcha] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [sending, setSending] = useState(false);
+  const pending = useRef(false);
 
-  const reduce = () => {
-    if (canSend > 0) {
-      setCanSend(canSend - 1);
-    }
-  };
-
+  const coolingDown = canSend > 0;
   useEffect(() => {
-    let intervalId = setInterval(() => reduce(), 1000);
+    if (!coolingDown) return;
+    const intervalId = setInterval(
+      () => setCanSend((remaining) => Math.max(0, remaining - 1)),
+      1000,
+    );
     return () => clearInterval(intervalId);
-  });
+  }, [coolingDown]);
 
   return (
     <>
@@ -65,19 +66,31 @@ const ItemEmail = (props: ItemEmailProps & any) => {
             open={modalVis}
             maskClosable={false}
             destroyOnHidden={true}
+            confirmLoading={sending}
             onOk={() => {
+              if (pending.current) return;
+              pending.current = true;
+              setSending(true);
               CApi.sendVerificationEmail({
                 email: email,
                 captcha: captcha,
                 captchaId: imgId,
                 event: props.emailVerifyType,
-              }).then((res) => {
-                message.success(
-                  props.t('VerificationCodeSent', { defaultValue: props.t('Success') }),
-                );
-                setCanSend(60);
-                setModalVis(false);
-              });
+              })
+                .then((res) => {
+                  message.success(
+                    props.t('VerificationCodeSent', { defaultValue: props.t('Success') }),
+                  );
+                  setCanSend(60);
+                  setModalVis(false);
+                })
+                .catch(() => {
+                  // Transport reports the rejection; keep the captcha and email available for retry.
+                })
+                .finally(() => {
+                  pending.current = false;
+                  setSending(false);
+                });
             }}
             onCancel={() => {
               setModalVis(false);
@@ -85,56 +98,55 @@ const ItemEmail = (props: ItemEmailProps & any) => {
           >
             <ItemCaptcha setImgId={setImgId} setCaptcha={setCaptcha} />
           </Modal>
-          <Form.Item
-            name="email"
-            label={props.emailTitle ?? props.t('new email')}
-            rules={[
-              ...constraintRules(contracts.user.email),
-              { required: true },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                  if (!emailRegex.test(value)) {
-                    return Promise.reject(props.t('emailError'));
-                  }
-                  if (props.checkExist === false) return Promise.resolve();
-                  return CApi.isExist({ email: value })
-                    .then((data: any) => {
-                      if (data === false) return Promise.resolve();
-                      else if (data === true) return Promise.reject(props.t('邮箱已存在'));
-                      return Promise.reject(props.t('检验失败'));
+          <Form.Item label={props.emailTitle ?? props.t('new email')}>
+            <Space.Compact block>
+              <Form.Item
+                name="email"
+                noStyle
+                rules={[
+                  ...constraintRules(contracts.user.email),
+                  { required: true },
+                  () => ({
+                    validator(_, value) {
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!emailRegex.test(value)) {
+                        return Promise.reject(props.t('emailError'));
+                      }
+                      if (props.checkExist === false) return Promise.resolve();
+                      return CApi.isExist({ email: value })
+                        .then((data: any) => {
+                          if (data === false) return Promise.resolve();
+                          if (data === true) return Promise.reject(props.t('邮箱已存在'));
+                          return Promise.reject(props.t('检验失败'));
+                        })
+                        .catch((error: unknown) => Promise.reject(error));
+                    },
+                  }),
+                ]}
+              >
+                <Input
+                  disabled={props.editable === false || canSend > 0}
+                  variant={props.editable !== false ? 'outlined' : 'borderless'}
+                  onPressEnter={props.onPressEnter}
+                />
+              </Form.Item>
+              <Button
+                disabled={canSend !== 0 || sending}
+                onClick={() => {
+                  props
+                    .getEmail()
+                    .then((data: string) => {
+                      setEmail(data);
+                      setModalVis(true);
                     })
-                    .catch((e: any) => {
-                      return Promise.reject(e);
+                    .catch(() => {
+                      message.error('邮箱不合法');
                     });
-                },
-              }),
-            ]}
-          >
-            <Input
-              disabled={props.editable === false || canSend > 0}
-              variant={props.editable !== false ? 'outlined' : 'borderless'}
-              onPressEnter={props.onPressEnter}
-              addonAfter={
-                <Button
-                  type={'text'}
-                  disabled={canSend !== 0}
-                  onClick={() => {
-                    props
-                      .getEmail()
-                      .then((data: string) => {
-                        setEmail(data);
-                        setModalVis(true);
-                      })
-                      .catch(() => {
-                        message.error('邮箱不合法');
-                      });
-                  }}
-                >
-                  {canSend !== 0 ? canSend + 's' : props.t('Verify')}
-                </Button>
-              }
-            />
+                }}
+              >
+                {canSend !== 0 ? canSend + 's' : props.t('Verify')}
+              </Button>
+            </Space.Compact>
           </Form.Item>
           <Form.Item name="emailCode" label={props.t('emailCode')} rules={[{ required: true }]}>
             <Input onPressEnter={props.onPressEnter} />

@@ -65,7 +65,7 @@
     "xlsx": "^0.17.4"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack serve --config config/webpack.config.js --host 0.0.0.0 --port 3000 --allowed-hosts all",
+    "start": "cross-env NODE_ENV=development webpack serve --config config/webpack.config.js --port 3000",
     "build": "cross-env NODE_ENV=production PUBLIC_URL=/v2/ webpack --config config/webpack.config.js",
     "test": "jest",
     "test:unit": "jest --runInBand",

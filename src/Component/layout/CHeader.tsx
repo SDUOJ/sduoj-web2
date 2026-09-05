@@ -1,133 +1,79 @@
-import React, {Component, Dispatch} from "react";
-import {Button, Layout, Menu, message, Space} from "antd";
-import ChangeLang from "../common/ChangeLang";
-import {Link} from "react-router-dom";
-// icons moved into UserAccountDropdown
-import logo from "../../Assert/img/logo.png";
-import {UserState} from "../../Type/Iuser";
-import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
-import {withRouter} from "react-router";
-import {userLogoutTodo} from "../../Redux/Action/user";
+import { Button, Layout, Menu, message } from 'antd';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import ChangeLang from '../common/ChangeLang';
+import logo from '../../Assert/img/logo.png';
+import { userLogoutTodo } from '../../Redux/Action/user';
+import { useAppDispatch, useAppSelector } from '../../Redux/Store/hooks';
 import UserAccountDropdown from './UserAccountDropdown';
-import {routerC_M} from "../../Config/router/routerC";
-import {UrlPrefix} from "../../Config/constValue";
+import { routerC_M } from '../../Config/router/routerC';
+import { UrlPrefix } from '../../Config/constValue';
 
-const {Header} = Layout;
+export default function CHeader() {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const { isLogin, userInfo } = useAppSelector((state) => state.UserReducer);
+  const selected = routerC_M.find(
+    (route) => location.pathname === route.path || location.pathname.startsWith(route.path + '/'),
+  );
 
-class CHeader extends Component<any, any> {
-    constructor(props: any, context: any) {
-        super(props, context);
-        this.state = {selectedKey: '0'}
+  const logout = async () => {
+    try {
+      await dispatch(userLogoutTodo());
+      history.push(UrlPrefix + '/home');
+      message.info(t('LogoutSuccess', { defaultValue: t('Logout') }));
+    } catch {
+      // Transport reports the failed logout; retain the current route and session display.
     }
+  };
 
-    syncSelect = ()=>{
-        for (let i = 0; i < routerC_M.length; i++) {
-            if (this.props.location.pathname === routerC_M[i].path) {
-                if (this.state.selectedKey !== routerC_M[i].id.toString()) {
-                    this.setState({
-                        selectedKey: routerC_M[i].id.toString()
-                    })
-                }
-            }
-        }
-    }
-
-    componentDidMount() {
-        this.syncSelect()
-        try{
-            "test".replaceAll("t", "1")
-        }catch (e){
-            this.props.history.replace(UrlPrefix + "/error/browser")
-        }
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        this.syncSelect()
-    }
-
-    render() {
-        return (
-        <Header className="site-layout-sub-header-background"
-            style={{position: 'fixed', zIndex: 1, width: '100%', display: "flex", justifyContent: "space-between", alignItems: 'center', height: 64, padding: '0 20px'}}>
-                <div className="logo" style={{flex: "125px 0 0", display:'flex', alignItems:'center'}} key={"logo"}>
-                    <img src={logo} style={{width: 125, height: 30}}
-                         alt={"SDUOJ-logo"} />
-                </div>
-                <div style={{minWidth: 0, flex: "auto"}}>
-                    <Menu
-                        mode="horizontal"
-                        theme="light"
-                        selectedKeys={[this.state.selectedKey]}
-                        items={routerC_M.map((r:any) => ({
-                            key: r.id,
-                            icon: r.icon,
-                            label: <Link to={r.path}>{this.props.t(r.title_i18n)}</Link>
-                        }))}
-                    />
-                </div>
-                <div style={{flex: "0"}} key={"operator"}>
-                    <Space size={30}>
-                        {/*<Button type={"text"} onClick={()=>{*/}
-                        {/*    this.props.history.replace("/home")*/}
-                        {/*    window.location.reload()*/}
-                        {/*}}>返回老版</Button>*/}
-                        <ChangeLang/>
-                                                {this.props.isLogin ? (
-                                                    <UserAccountDropdown
-                                                        isLogin={true}
-                                                        mode="console"
-                                                        username={this.props.username}
-                                                        email={this.props.email}
-                                                        roles={this.props.roles}
-                                                        onToManage={() => this.props.history.push(UrlPrefix + "/manage")}
-                                                        onToProfile={() => this.props.history.push(UrlPrefix + "/user")}
-                                                        onLogout={() => {
-                                                            this.props.userLogout();
-                                                            setTimeout(() => {
-                                                                this.props.history.push(UrlPrefix + "/home")
-                                                            }, 200);
-                                                            message.info(this.props.t('LogoutSuccess', {defaultValue: this.props.t('Logout')}));
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <Space>
-                                                        <Button type={"text"} onClick={() => {
-                                                            const loginPath = UrlPrefix + "/login";
-                                                            const { pathname } = this.props.location;
-                                                            // 当前就在登录页时，不要再次修改重定向地址
-                                                            if (pathname === loginPath) return;
-                                                            this.props.history.push(loginPath + "?to=" + pathname)
-                                                        }}>{this.props.t('LoginOrRegister', {defaultValue: this.props.t('Login') + ' / ' + this.props.t('Register')})}</Button>
-                                                    </Space>
-                                                )}
-                    </Space>
-                </div>
-            </Header>
-        )
-    }
+  return (
+    <Layout.Header className="site-layout-sub-header-background client-header">
+      <Link className="client-logo" to={UrlPrefix + '/home'}>
+        <img src={logo} width={125} height={30} alt="SDUOJ-logo" />
+      </Link>
+      <nav className="client-navigation">
+        <Menu
+          mode="horizontal"
+          theme="light"
+          selectedKeys={selected ? [String(selected.id)] : []}
+          items={routerC_M.map((route) => ({
+            key: String(route.id),
+            icon: route.icon,
+            label: <Link to={route.path}>{t(route.title_i18n)}</Link>,
+          }))}
+        />
+      </nav>
+      <div className="client-header-actions">
+        <ChangeLang />
+        {isLogin ? (
+          <UserAccountDropdown
+            isLogin
+            mode="console"
+            username={userInfo?.username}
+            email={userInfo?.email ?? undefined}
+            roles={userInfo?.roles}
+            onToManage={() => history.push(UrlPrefix + '/manage')}
+            onToProfile={() => history.push(UrlPrefix + '/user')}
+            onLogout={logout}
+          />
+        ) : (
+          <Button
+            type="text"
+            onClick={() => {
+              const loginPath = UrlPrefix + '/login';
+              if (location.pathname !== loginPath) {
+                const target = location.pathname + location.search + location.hash;
+                history.push(loginPath + '?to=' + encodeURIComponent(target));
+              }
+            }}
+          >
+            {t('LoginOrRegister', { defaultValue: t('Login') + ' / ' + t('Register') })}
+          </Button>
+        )}
+      </div>
+    </Layout.Header>
+  );
 }
-
-
-const mapStateToProps = (state: any) => {
-    const UState: UserState = state.UserReducer
-
-    return {
-        isLogin: UState.isLogin,
-        username: UState.userInfo?.username,
-        email: UState.userInfo?.email,
-        roles: UState.userInfo?.roles
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-    userLogout: () => dispatch(userLogoutTodo()),
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(
-    withTranslation()(
-        withRouter(CHeader)
-    ))
