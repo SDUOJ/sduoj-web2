@@ -94,7 +94,20 @@ were checked against the current `feature/upgrade-antd-v5` working tree.
 - Coverage: `src/Component/problemSet/dataConvert/dataConvert.test.ts` freezes the
   observable contract by checking both transformed output and unchanged input.
 
-## Pending Findings
+## Historical Pending Findings
+
+The Autolab course, attendance, QR polling, problem lookup, contest-rank, and client
+problem-detail entries described below were addressed in the 2026-09 follow-up. The
+remaining section is retained as historical audit context; current closure status and
+test evidence are summarized in `FRONTEND_AUDIT.md`.
+
+The management role boundary and workbook parser hardening are also covered by
+`MLayout.test.ts` and `AutoImportUsers.test.ts`; the unresolved dependency replacement
+for `xlsx` remains tracked separately as A-07/A-18.
+
+The historical rows below for Autolab races, QR polling, problem lookup, contest rank,
+and client problem detail are closed by the follow-up tests. Remaining active domain work
+is the standalone exam backend acceptance and broader real upload/attendance workflows.
 
 ### P1: Autolab course and attendance requests can overwrite a newer selection
 
@@ -174,10 +187,10 @@ were checked against the current `feature/upgrade-antd-v5` working tree.
 
 ## Verification
 
-- Focused domain Jest: 6 suites, 14 tests passed.
+- Focused domain Jest: 10 suites, 24 tests passed.
 - TypeScript: `tsc --noEmit` and tools typecheck passed.
-- Changed-file ESLint: zero errors. Three pre-existing warnings remain in
-  `Problem.tsx` (one hook dependency and two missing list keys).
+- Changed-file ESLint: zero errors; remaining warnings are legacy hook/list cleanup in
+  unrelated consumers. No new warning baseline was added.
 - Prettier: every changed source, test, and this document was formatted.
 - Environment note: the repository declares Node 24, while the available shell is
   Node 22.22.0; checks were run with Yarn's engine check bypassed. No baseline file

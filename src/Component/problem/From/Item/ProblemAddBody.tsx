@@ -21,6 +21,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import { examProblemType } from '../../../../Type/IExam';
 import { ck, get, isValueEmpty } from '../../../../Utils/empty';
 import { SketchPicker } from 'react-color';
+import { createCachedRequest } from '../../problemLookup';
 
 export const defaultKeyMapping = {
   ProblemCode: 'ProblemCode',
@@ -60,58 +61,50 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
   ); // 编辑区域构造
 
   const [TableData, setTableDataX] = useState<any[]>([]);
-  const [TableDataHis, setTableDataHis] = useState<any>({});
+  const [TableDataHis, setTableDataHis] = useState<Record<string | number, string>>({});
   const setTableData = (data: any) => {
     // console.log("setTableData", data)
     props.onChange && props.onChange(data);
     setTableDataX([...data]);
   };
 
-  const [problemInfoLoading, setProblemInfoLoading] = useState<string[]>([]); // 题目信息是否正在加载
   const [problemInfoCache, setProblemInfoCacheX] = useState<any>({}); // 根据题号请求得到的题目信息的缓存
-  const setProblemInfoCache = (data: any) => {
-    setProblemInfoCacheX({ ...data });
-  };
-
-  const [problemDescriptionLoading, setProblemDescriptionLoading] = useState<string[]>([]); // 题目描述是否正在加载
   const [problemDescriptionCache, setProblemDescriptionCacheX] = useState<{
     [key: string]: {
       DescriptionInfo: any;
     };
   }>({}); // 根据题号请求得到的题目描述的缓存
-  const setProblemDescriptionCache = (data: any) => {
-    setProblemDescriptionCacheX({ ...data });
-  };
+  const problemInfoRequests = useRef(createCachedRequest<string, void>());
+  const problemDescriptionRequests = useRef(createCachedRequest<string, void>());
 
   // 执行初始化
   useEffect(() => {
     if (props.value !== undefined && TableData.length === 0) {
       setTableDataX(props.value);
       setEditableRowKeys(genNumberList(props.value));
+      const nextHistory: Record<string | number, string> = {};
       for (let x of props.value) {
         let nowKey = x[keyMapping['ProblemCode']];
-        TableDataHis[x.id] = nowKey;
-        getProblemDescriptionInfo(nowKey);
+        nextHistory[x.id] = nowKey;
+        getProblemDescriptionInfo(nowKey).catch(() => undefined);
       }
-      setTableDataHis(TableDataHis);
+      setTableDataHis(nextHistory);
     }
   }, [props, props.value, TableData]);
 
   useEffect(() => {
     // console.log("update", TableData, TableDataHis, problemInfoCache, problemDescriptionCache)
-    let newTableData: any[] = [],
-      use = false,
-      useHis = false;
-    TableData.map((value) => {
+    let use = false;
+    const nextHistory = { ...TableDataHis };
+    const newTableData = TableData.map((value) => {
       if (strMatch(value[keyMapping['ProblemCode']]) !== null) {
         let obj: any = {},
           updateNum = 0,
           forceUpdate = false;
         // 根据是否已经加载过数据，判断是否更新当前区域
         if (TableDataHis[value.id] !== value[keyMapping['ProblemCode']]) {
-          TableDataHis[value.id] = value[keyMapping['ProblemCode']];
+          nextHistory[value.id] = value[keyMapping['ProblemCode']];
           forceUpdate = true;
-          useHis = true;
         }
 
         const check = (nameA: string, arr: any) => {
@@ -135,20 +128,22 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
         }
 
         if (updateNum !== 0) {
-          newTableData.push({
+          use = true;
+          return {
             id: value.id,
             [keyMapping['ProblemCode']]: value[keyMapping['ProblemCode']],
             ...obj,
-          });
-          use = true;
-        } else newTableData.push(value);
-      } else newTableData.push(value);
-      return undefined;
+          };
+        }
+      }
+      return value;
     });
     // console.log("use", use, "useHis", useHis)
     // console.log("newTableData", newTableData, "TableDataHis", TableDataHis)
     if (use) setTableData(newTableData);
-    if (useHis) setTableDataHis(TableDataHis);
+    if (Object.keys(nextHistory).some((key) => nextHistory[key] !== TableDataHis[key])) {
+      setTableDataHis(nextHistory);
+    }
   }, [TableData, TableDataHis, problemInfoCache, problemDescriptionCache]);
 
   // console.log("TableData", TableData)
@@ -167,108 +162,61 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
   // 获取题目描述信息
   const getProblemDescriptionInfo = async (problemCode?: string) => {
     if (problemCode === undefined) return {};
-    if (problemDescriptionCache[problemCode] !== undefined) {
-      return Promise.resolve();
-    }
-    if (strMatch(problemCode) !== null) {
-      if (problemDescriptionLoading.indexOf(problemCode) === -1) {
-        problemDescriptionLoading.push(problemCode);
-        setProblemDescriptionLoading(problemDescriptionLoading);
-        return mApi
-          .getProblemDescriptionList({ problemCode: problemCode })
-          .then((resData: any) => {
-            if (resData !== null) {
-              let res: any = {};
-              for (const x of resData) res[x.id] = { text: x.title };
-              problemDescriptionCache[problemCode] = { DescriptionInfo: res };
-              setProblemDescriptionCache({ ...problemDescriptionCache });
-              return Promise.resolve();
-            }
-          })
-          .catch((e) => {
-            setProblemDescriptionLoading(
-              problemDescriptionLoading.filter((val) => val !== problemCode),
-            );
-            return Promise.reject(e);
-          });
-      } else return Promise.resolve();
-    } else return Promise.reject(t('ProblemCodeFormatError'));
+    if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
+    return problemDescriptionRequests.current.get(problemCode, async () => {
+      const resData = await mApi.getProblemDescriptionList({ problemCode });
+      if (resData === null) throw new Error(t('ProblemNotExist'));
+      const descriptions: any = {};
+      for (const description of resData as any[]) {
+        descriptions[description.id] = { text: description.title };
+      }
+      setProblemDescriptionCacheX((current) => ({
+        ...current,
+        [problemCode]: { DescriptionInfo: descriptions },
+      }));
+    });
   };
 
   const getProblemInfo = async (problemCode: string) => {
     // console.log("getProblemInfo", TableData, problemCode, rowID)
     if (problemCode === undefined) return Promise.reject(t('fieldRequired'));
-    if (strMatch(problemCode) !== null) {
-      // Cache 命中直接返回
-      if (problemInfoCache[problemCode] !== undefined) {
-        return Promise.resolve();
+    if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
+    return problemInfoRequests.current.get(problemCode, async () => {
+      if (ProblemType === 'program') {
+        const resData: any = await mApi.getProblem({ problemCode });
+        if (resData === null) throw new Error(t('ProblemNotExist'));
+        setProblemInfoCacheX((current: any) => ({
+          ...current,
+          [problemCode]: {
+            [keyMapping['ProblemAlias']]: resData.problemTitle,
+            [keyMapping['defaultDescriptionId']]: resData.defaultDescriptionId,
+          },
+        }));
+        return;
       }
-      if (problemInfoLoading.indexOf(problemCode) === -1) {
-        problemInfoLoading.push(problemCode);
-        setProblemInfoLoading(problemInfoLoading);
 
-        const removeProblemCode = () => {
-          setProblemInfoLoading(problemInfoLoading.filter((val) => val !== problemCode));
-        };
-
-        switch (ProblemType) {
-          case 'program':
-            return mApi
-              .getProblem({ problemCode: problemCode })
-              .then((resData: any) => {
-                if (resData === null) return Promise.reject(t('ProblemNotExist'));
-                else {
-                  problemInfoCache[problemCode] = {
-                    [keyMapping['ProblemAlias']]: resData.problemTitle,
-                    [keyMapping['defaultDescriptionId']]: resData.defaultDescriptionId,
-                  };
-                  setProblemInfoCache(problemInfoCache);
-                  return Promise.resolve();
-                }
-              })
-              .catch((e) => {
-                removeProblemCode();
-              });
-          case 'single':
-          case 'multi':
-            return mApi
-              .getChoiceProblem({ problemCode: problemCode })
-              .then((resData: any) => {
-                if (resData === null) return Promise.reject(t('ProblemNotExist'));
-                else {
-                  if (resData.isMulti === 1 && ProblemType === 'single')
-                    return Promise.reject(t('SingleGroupCantUseMulti'));
-                  if (resData.isMulti === 0 && ProblemType === 'multi')
-                    return Promise.reject(t('MultiGroupCantUseSingle'));
-
-                  let str = '';
-                  const pro =
-                    typeof resData.description === 'string'
-                      ? JSON.parse(resData.description)
-                      : resData.description;
-                  str += pro.content + '\n';
-                  let len = Object.keys(pro.choice).length;
-                  for (const x of Object.keys(pro.choice)) {
-                    len -= 1;
-                    str += x + '.' + pro.choice[x];
-                    if (len > 0) str += '\n';
-                  }
-                  str = str.substr(0, 50);
-
-                  problemInfoCache[problemCode] = {
-                    [keyMapping['ProblemPreview']]: str,
-                  };
-                  setProblemInfoCache(problemInfoCache);
-                  return Promise.resolve();
-                }
-              })
-              .catch((e) => {
-                removeProblemCode();
-                return Promise.reject(e);
-              });
-        }
-      } else return Promise.resolve();
-    } else return Promise.reject('题号格式错误');
+      const resData: any = await mApi.getChoiceProblem({ problemCode });
+      if (resData === null) throw new Error(t('ProblemNotExist'));
+      if (resData.isMulti === 1 && ProblemType === 'single') {
+        throw new Error(t('SingleGroupCantUseMulti'));
+      }
+      if (resData.isMulti === 0 && ProblemType === 'multi') {
+        throw new Error(t('MultiGroupCantUseSingle'));
+      }
+      const problem =
+        typeof resData.description === 'string'
+          ? JSON.parse(resData.description)
+          : resData.description;
+      let preview = `${problem.content}\n`;
+      const choices = Object.keys(problem.choice);
+      choices.forEach((choice, index) => {
+        preview += `${choice}.${problem.choice[choice]}${index < choices.length - 1 ? '\n' : ''}`;
+      });
+      setProblemInfoCacheX((current: any) => ({
+        ...current,
+        [problemCode]: { [keyMapping['ProblemPreview']]: preview.substring(0, 50) },
+      }));
+    });
   };
 
   const SortColumnItem: ProColumns[] = [

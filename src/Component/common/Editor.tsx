@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useRef, useState } from 'react';
+import { createContext, Dispatch, useEffect, useId, useMemo, useRef, useState } from 'react';
 // 按需引入 vditor 样式，避免主入口全局引入
 import 'vditor/dist/index.css';
 import Vditor from 'vditor';
@@ -13,13 +13,42 @@ import apiAddress from '../../Utils/API/apiAddress';
 import { isValueEmpty } from '../../Utils/empty';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintError } from '../../Config/validation/constraints';
+import saveIcon from '../../Assert/img/save.svg';
+import { UserState } from '../../Type/Iuser';
 
 export interface EditorProps {
-  value: string;
+  value?: string;
   height?: number;
-  save: any;
-  id?: any;
+  save?: unknown;
+  id?: string;
+  documentIdentity?: string | number;
+  fieldIdentity?: string | number;
+  userIdentity?: string | number;
+  currentUserIdentity?: string | number;
+  langCode?: string;
+  onChange?: (value: string) => void;
+  location?: { pathname?: string };
 }
+
+export const EditorDocumentIdentityContext = createContext<string | number | undefined>(undefined);
+
+const identityPart = (value: string | number) => encodeURIComponent(String(value));
+
+export const buildEditorCacheId = (
+  userIdentity: string | number,
+  documentIdentity: string | number,
+  fieldIdentity: string | number,
+) =>
+  `sduoj:vditor:draft:v1:${identityPart(userIdentity)}:${identityPart(documentIdentity)}:${identityPart(fieldIdentity)}`;
+
+const hashIdentity = (value: string) => {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+};
 
 export const CopiedButton = (props: any) => {
   const { t } = useTranslation();
@@ -48,16 +77,40 @@ export const CopiedButton = (props: any) => {
 // Use unified front server host from apiAddress
 const host = apiAddress().FRONT_SERVER;
 export const Editor = (props: EditorProps & any) => {
-  const [vditors, setVditors] = useState<any>(undefined);
-  const [finishRender, setFinishRender] = useState(false);
+  const [readyVersion, setReadyVersion] = useState(0);
   const { t } = useTranslation();
+  const reactId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const editorRef = useRef<Vditor>();
+  const editorElementRef = useRef<HTMLDivElement>(null);
+  const initialValueRef = useRef(props.value ?? '');
+  const lastExternalValueRef = useRef(initialValueRef.current);
   const onChangeRef = useRef(props.onChange);
   onChangeRef.current = props.onChange;
 
-  const setEditor = () => {
-    const vditor0 = new Vditor(props.id ?? 'vditor', {
+  const userIdentity = props.userIdentity ?? props.currentUserIdentity;
+  const documentIdentity = props.documentIdentity ?? props.location?.pathname ?? props.id;
+  const fieldIdentity = props.fieldIdentity ?? props.id ?? 'content';
+  const cacheEnabled = userIdentity !== undefined && documentIdentity !== undefined;
+  const cacheId = cacheEnabled
+    ? buildEditorCacheId(userIdentity, documentIdentity, fieldIdentity)
+    : undefined;
+  const identityForDom = cacheId ?? `ephemeral:${reactId}:${fieldIdentity}`;
+  const domId = useMemo(
+    () => `sduoj-editor-${hashIdentity(identityForDom)}-${reactId}`,
+    [identityForDom, reactId],
+  );
+
+  useEffect(() => {
+    if (isValueEmpty(props.langCode) || !editorElementRef.current) return;
+
+    const initialExternalValue = initialValueRef.current;
+    lastExternalValueRef.current = initialExternalValue;
+    let vditor0: Vditor;
+    vditor0 = new Vditor(editorElementRef.current, {
       height: props.height === undefined ? 800 : props.height,
       mode: 'ir', //及时渲染模式
+      value: initialExternalValue,
+      cache: cacheEnabled ? { enable: true, id: cacheId } : { enable: false },
       placeholder: t('editorPlaceholder'),
       lang: props.langCode,
       cdn: host + '/vditor',
@@ -121,15 +174,16 @@ export const Editor = (props: EditorProps & any) => {
           tipPosition: 's',
           tip: t('Save'),
           className: 'right',
-          icon: `<img style="height: 16px" src='https://img.58cdn.com.cn/escstatic/docs/imgUpload/idocs/save.svg' alt="save"/>`,
+          icon: `<img style="height: 16px" src="${saveIcon}" alt="save"/>`,
           click() {
             onChangeRef.current?.(vditor0.getValue());
           },
         },
       ],
       after() {
-        vditor0.setValue(props.value === undefined ? '' : props.value);
-        setFinishRender(true);
+        if (editorRef.current === vditor0) {
+          setReadyVersion((version) => version + 1);
+        }
       },
       blur() {
         onChangeRef.current?.(vditor0.getValue());
@@ -227,37 +281,35 @@ export const Editor = (props: EditorProps & any) => {
             });
           }
 
-          fileUpload(files, callback);
+          void fileUpload(files, callback).catch(() => undefined);
         },
       },
     });
-    setVditors(vditor0);
-    return vditor0;
-  };
+    editorRef.current = vditor0;
+    return () => {
+      if (editorRef.current === vditor0) editorRef.current = undefined;
+      vditor0.destroy();
+    };
+  }, [cacheEnabled, cacheId, props.height, props.langCode, t]);
 
   useEffect(() => {
-    if (isValueEmpty(props.langCode)) return;
-    const editor = setEditor();
-    return () => editor.destroy();
-  }, [props.langCode]);
-
-  useEffect(() => {
-    if (finishRender && vditors !== undefined && vditors.getValue() !== props.value) {
-      vditors.setValue(props.value ?? '');
+    const nextValue = props.value ?? '';
+    const editor = editorRef.current;
+    if (editor && lastExternalValueRef.current !== nextValue) {
+      lastExternalValueRef.current = nextValue;
+      if (editor.getValue() !== nextValue) editor.setValue(nextValue);
     }
-  }, [vditors, props.value, finishRender]);
+  }, [props.value, readyVersion]);
 
-  return (
-    <>
-      <div id={props.id ?? 'vditor'} className="vditor" />
-    </>
-  );
+  return <div ref={editorElementRef} id={domId} className="vditor" />;
 };
 
 const mapStateToProps = (state: any) => {
   const CState: ConfigState = state.ConfigReducer;
+  const UState: UserState = state.UserReducer;
   return {
     langCode: CState.langCode,
+    currentUserIdentity: UState.userInfo?.userId ?? UState.userInfo?.username,
   };
 };
 

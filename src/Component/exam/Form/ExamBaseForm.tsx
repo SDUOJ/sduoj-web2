@@ -141,7 +141,11 @@ const ExamBaseForm = (props: any) => {
             rules={constraintRules(contracts.exam.examDescription)}
             label={t('Description')}
           >
-            <Editor height={400} />
+            <Editor
+              height={400}
+              documentIdentity={`exam:${props.examID ?? 'new'}`}
+              fieldIdentity="examDescription"
+            />
           </Form.Item>
         </Form>
       </Skeleton>

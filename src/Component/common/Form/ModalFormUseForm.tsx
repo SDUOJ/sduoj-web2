@@ -8,6 +8,7 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ck, isValueEmpty } from '../../../Utils/empty';
 import { useForm } from 'antd/es/form/Form';
 import { ProFormInstance, StepsForm } from '@ant-design/pro-components';
+import { EditorDocumentIdentityContext } from '../Editor';
 
 interface subFormType {
   component: any;
@@ -43,6 +44,23 @@ const ModalForm = (props: ModalFormProps & any) => {
   const [current, setCurrent] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const loadIdRef = useRef(0);
+  const modalInstanceId = React.useId();
+  const editorDocumentIdentity = React.useMemo(() => {
+    if (props.editorDocumentIdentity !== undefined) return props.editorDocumentIdentity;
+    const scope = props.formName ?? props.TableName ?? 'form';
+    const recordIdentity = Object.entries(props.updateAppendProps ?? {})
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => `${key}=${String(value)}`)
+      .join('&');
+    return `modal:${scope}:${props.type}:${recordIdentity || `new:${modalInstanceId}`}`;
+  }, [
+    props.TableName,
+    props.editorDocumentIdentity,
+    props.formName,
+    props.type,
+    props.updateAppendProps,
+    modalInstanceId,
+  ]);
 
   const BtnTypeMap: { [key: string]: ButtonProps['type'] } = {
     create: 'primary',
@@ -216,96 +234,98 @@ const ModalForm = (props: ModalFormProps & any) => {
           }
         })()}
       </Button>
-      {props.subForm.length === 1 && (
-        <Modal
-          width={props.width}
-          style={{ minWidth: props.width }}
-          destroyOnHidden={true}
-          title={props.title}
-          className={props.className}
-          open={formVis}
-          maskClosable={false}
-          onCancel={() => {
-            loadIdRef.current += 1;
-            props.onClose && props.onClose();
-            setFormVis(false);
-          }}
-          footer={[
-            <Button type="primary" key="submit" onClick={submitData} loading={submitting}>
-              {t('Submit')}
-            </Button>,
-          ]}
-        >
-          <Form
-            form={form}
-            layout={props.layout ?? 'vertical'}
-            initialValues={props.initData}
-            scrollToFirstError
-            preserve={false}
+      <EditorDocumentIdentityContext.Provider value={editorDocumentIdentity}>
+        {props.subForm.length === 1 && (
+          <Modal
+            width={props.width}
+            style={{ minWidth: props.width }}
+            destroyOnHidden={true}
+            title={props.title}
+            className={props.className}
+            open={formVis}
+            maskClosable={false}
+            onCancel={() => {
+              loadIdRef.current += 1;
+              props.onClose && props.onClose();
+              setFormVis(false);
+            }}
+            footer={[
+              <Button type="primary" key="submit" onClick={submitData} loading={submitting}>
+                {t('Submit')}
+              </Button>,
+            ]}
           >
-            {props.subForm[0].component}
-          </Form>
-        </Modal>
-      )}
-      {props.subForm.length !== 1 && (
-        <StepsForm
-          current={current}
-          onCurrentChange={(currentPage: number) => {
-            setCurrent(currentPage);
-          }}
-          formMapRef={formMapRef}
-          onFinish={async (values) => {
-            submitData(values);
-          }}
-          submitter={{
-            submitButtonProps: {
-              loading: submitting,
-            },
-          }}
-          stepsFormRender={(dom, submitter) => {
-            return (
-              <Modal
-                destroyOnHidden={true}
-                title={props.title}
-                className={props.className}
-                open={formVis}
-                maskClosable={false}
-                width={props.width ?? 1200}
-                style={{ minWidth: props.width }}
-                onCancel={() => {
-                  loadIdRef.current += 1;
-                  props.onClose && props.onClose();
-                  setFormVis(false);
-                }}
-                footer={submitter}
-              >
-                {dom}
-              </Modal>
-            );
-          }}
-        >
-          {props.subForm.map((item: any, index: number) => {
-            const stepComponent = React.isValidElement(item.component)
-              ? React.cloneElement(item.component as React.ReactElement<any>, {
-                  getAllStepValues,
-                })
-              : item.component;
-            return (
-              <StepsForm.StepForm
-                key={item.label || index}
-                layout={props.layout ?? 'vertical'}
-                name={'step' + index}
-                title={item.label}
-                onFinish={async () => {
-                  return true;
-                }}
-              >
-                {stepComponent}
-              </StepsForm.StepForm>
-            );
-          })}
-        </StepsForm>
-      )}
+            <Form
+              form={form}
+              layout={props.layout ?? 'vertical'}
+              initialValues={props.initData}
+              scrollToFirstError
+              preserve={false}
+            >
+              {props.subForm[0].component}
+            </Form>
+          </Modal>
+        )}
+        {props.subForm.length !== 1 && (
+          <StepsForm
+            current={current}
+            onCurrentChange={(currentPage: number) => {
+              setCurrent(currentPage);
+            }}
+            formMapRef={formMapRef}
+            onFinish={async (values) => {
+              submitData(values);
+            }}
+            submitter={{
+              submitButtonProps: {
+                loading: submitting,
+              },
+            }}
+            stepsFormRender={(dom, submitter) => {
+              return (
+                <Modal
+                  destroyOnHidden={true}
+                  title={props.title}
+                  className={props.className}
+                  open={formVis}
+                  maskClosable={false}
+                  width={props.width ?? 1200}
+                  style={{ minWidth: props.width }}
+                  onCancel={() => {
+                    loadIdRef.current += 1;
+                    props.onClose && props.onClose();
+                    setFormVis(false);
+                  }}
+                  footer={submitter}
+                >
+                  {dom}
+                </Modal>
+              );
+            }}
+          >
+            {props.subForm.map((item: any, index: number) => {
+              const stepComponent = React.isValidElement(item.component)
+                ? React.cloneElement(item.component as React.ReactElement<any>, {
+                    getAllStepValues,
+                  })
+                : item.component;
+              return (
+                <StepsForm.StepForm
+                  key={item.label || index}
+                  layout={props.layout ?? 'vertical'}
+                  name={'step' + index}
+                  title={item.label}
+                  onFinish={async () => {
+                    return true;
+                  }}
+                >
+                  {stepComponent}
+                </StepsForm.StepForm>
+              );
+            })}
+          </StepsForm>
+        )}
+      </EditorDocumentIdentityContext.Provider>
     </>
   );
 };

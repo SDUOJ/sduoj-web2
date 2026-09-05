@@ -24,6 +24,31 @@ it('preserves POST bodies and unwraps results', async () => {
   await expect(request.post('/example', { title: 'Draft' })).resolves.toEqual({ id: 1 });
 });
 
+it.each([undefined, null, '', 'not-a-number'])(
+  'accepts a successful envelope with an unusable timestamp: %p',
+  async (timestamp) => {
+    localStorage.removeItem('server-time');
+    adapter.onGet('/example').reply(200, { code: 0, data: { id: 1 }, timestamp });
+
+    await expect(request.get('/example')).resolves.toEqual({ id: 1 });
+    expect(localStorage.getItem('server-time')).toBeNull();
+    expect(message.error).not.toHaveBeenCalled();
+  },
+);
+
+it('does not turn an unavailable storage write into a network failure', async () => {
+  const setItem = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    throw new DOMException('blocked', 'SecurityError');
+  });
+  try {
+    adapter.onGet('/example').reply(200, success({ id: 2 }));
+    await expect(request.get('/example')).resolves.toEqual({ id: 2 });
+    expect(message.error).not.toHaveBeenCalled();
+  } finally {
+    setItem.mockRestore();
+  }
+});
+
 it.each([
   [{ message: 'Bad input' }, 'Bad input'],
   [{ msg: 'Bad input' }, 'Bad input'],

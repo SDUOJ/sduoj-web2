@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useRef, useState } from 'react';
 import { Badge, Button, Form, message, Modal, Select, Space, Tooltip, Upload } from 'antd';
 import { JudgeTemplateAllType } from '../../Type/IProblem';
 import { connect } from 'react-redux';
@@ -24,8 +24,9 @@ export interface SubmitPropsType {
   FuncTemplates: any;
 }
 
-const Submit = (props: SubmitPropsType & any) => {
+export const Submit = (props: SubmitPropsType & any) => {
   const [form] = Form.useForm();
+  const submissionGeneration = useRef(0);
 
   const [SubmitModalVis, setSubmitModalVis] = useState<boolean>(false);
   const [SubmitDisable, setSubmitDisable] = useState<boolean>(false);
@@ -46,44 +47,54 @@ const Submit = (props: SubmitPropsType & any) => {
     }
   }, [props.JudgeTemplates, props.name, SubmitModalVis]);
 
-  const CodeSubmit = () => {
-    let gb_hide: any;
-    form
-      .validateFields()
-      .then((value) => {
-        setSubmitDisable(true);
-        // if (props.FuncTemplates !== undefined) {
-        //     let fid = props.FuncTemplates.findIndex((v: any) => {
-        //         return v.judgeTemplateId === value.JudgeTemplate
-        //     })
-        //     if (fid !== -1) {
-        //         const funcTemplate: functionTemplate = props.FuncTemplates[fid]
-        //         if (funcTemplate.functionTemplate !== undefined)
-        //             value.code = funcTemplate.functionTemplate + value.code
-        //     }
-        // }
-        gb_hide = message.info(props.t('inQueueForSubmission,PleaseBePatient'), 0);
-        return props
-          .API(value.JudgeTemplate, value.code, zipFileId)
-          .then((data: any) => {
-            props.setTopSubmission(data, props.TopSubmissionInfo);
-            setSubmitModalVis(false);
-            setSubmitDisable(false);
-            props.setSubmissionModalVis(true);
-            props.SubmissionListName !== undefined &&
-              props.addTableVersion(props.SubmissionListName);
-            localStorage.setItem('SDUOJ-Last-Submit-JT', value.JudgeTemplate);
-            gb_hide && gb_hide();
-          })
-          .catch(() => {
-            gb_hide && gb_hide();
-            setSubmitDisable(false);
-          });
-      })
-      .catch(() => {
-        gb_hide && gb_hide();
-        setSubmitDisable(false);
-      });
+  useEffect(
+    () => () => {
+      submissionGeneration.current += 1;
+    },
+    [],
+  );
+
+  const closeSubmitForm = () => {
+    submissionGeneration.current += 1;
+    setSubmitDisable(false);
+    setSubmitModalVis(false);
+  };
+
+  const CodeSubmit = async () => {
+    let value: any;
+    try {
+      value = await form.validateFields();
+    } catch {
+      return;
+    }
+
+    const generation = ++submissionGeneration.current;
+    setSubmitDisable(true);
+    const hide = message.info(props.t('inQueueForSubmission,PleaseBePatient'), 0);
+    try {
+      // if (props.FuncTemplates !== undefined) {
+      //     let fid = props.FuncTemplates.findIndex((v: any) => {
+      //         return v.judgeTemplateId === value.JudgeTemplate
+      //     })
+      //     if (fid !== -1) {
+      //         const funcTemplate: functionTemplate = props.FuncTemplates[fid]
+      //         if (funcTemplate.functionTemplate !== undefined)
+      //             value.code = funcTemplate.functionTemplate + value.code
+      //     }
+      // }
+      const data = await props.API(value.JudgeTemplate, value.code, zipFileId);
+      if (generation !== submissionGeneration.current) return;
+      props.setTopSubmission(data, props.TopSubmissionInfo);
+      setSubmitModalVis(false);
+      props.setSubmissionModalVis(true);
+      props.SubmissionListName !== undefined && props.addTableVersion(props.SubmissionListName);
+      localStorage.setItem('SDUOJ-Last-Submit-JT', value.JudgeTemplate);
+    } catch {
+      // The request layer presents the failure; keep the form open for retry.
+    } finally {
+      hide?.();
+      if (generation === submissionGeneration.current) setSubmitDisable(false);
+    }
   };
 
   const SubmitButton = (
@@ -118,9 +129,7 @@ const Submit = (props: SubmitPropsType & any) => {
         title={props.title}
         open={SubmitModalVis}
         destroyOnHidden={true}
-        onCancel={() => {
-          setSubmitModalVis(false);
-        }}
+        onCancel={closeSubmitForm}
         width={1200}
         footer={[
           <Space key="actions" size={25}>
@@ -149,12 +158,7 @@ const Submit = (props: SubmitPropsType & any) => {
             >
               {props.t('Submit')}
             </Button>
-            <Button
-              key="back"
-              onClick={() => {
-                setSubmitModalVis(false);
-              }}
-            >
+            <Button key="back" onClick={closeSubmitForm}>
               {props.t('no')}
             </Button>
           </Space>,

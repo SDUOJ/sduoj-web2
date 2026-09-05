@@ -68,11 +68,19 @@ const rejection = (message: string) => Promise.reject(message);
 const dealResponse = async (resp: any, url: string) => {
   try {
     const response = await resp;
-    localStorage.setItem('server-time', response.data.timestamp);
-    if (Math.abs(response.data.timestamp - Date.now()) > 60000) {
-      window.location.replace(UrlPrefix + '/error/time');
-      message.error('本地时间异常');
-      return rejection('本地时间异常');
+    const rawTimestamp = response.data?.timestamp;
+    const timestamp = rawTimestamp === null || rawTimestamp === '' ? NaN : Number(rawTimestamp);
+    if (Number.isFinite(timestamp)) {
+      try {
+        localStorage.setItem('server-time', String(timestamp));
+      } catch {
+        // Storage can be unavailable in privacy-restricted contexts; it is not part of the API result.
+      }
+      if (Math.abs(timestamp - Date.now()) > 60000) {
+        window.location.replace(UrlPrefix + '/error/time');
+        message.error('本地时间异常');
+        return rejection('本地时间异常');
+      }
     }
     switch (response.data.code) {
       case 0:

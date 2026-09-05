@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Button, message, Modal, Space, Table, Tag } from 'antd';
+import { Button, message, Modal, Space, Table, Tag, Upload } from 'antd';
 import { InboxOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import Dragger from 'antd/lib/upload/Dragger';
 import mApi from '../../Utils/API/m-api';
@@ -18,6 +18,131 @@ type ExcelUserRow = {
   banThirdParty?: number | string;
   banEmailUpdate?: number | string;
   banInfoUpdate?: number | string;
+};
+
+export const USER_IMPORT_LIMITS = {
+  maxBytes: 5 * 1024 * 1024,
+  maxSheets: 5,
+  maxRows: 5000,
+  maxColumns: 32,
+  maxCellCharacters: 32767,
+} as const;
+
+const USER_IMPORT_HEADERS = [
+  'username',
+  'password',
+  'email',
+  'nickname',
+  'phone',
+  'gender',
+  'studentId',
+  'banThirdParty',
+  'banEmailUpdate',
+  'banInfoUpdate',
+] as const;
+const USER_IMPORT_HEADER_SET = new Set<string>(USER_IMPORT_HEADERS);
+const DANGEROUS_HEADERS = new Set(['__proto__', 'prototype', 'constructor']);
+
+const hasWorkbookSignature = (bytes: Uint8Array) =>
+  (bytes[0] === 0x50 && bytes[1] === 0x4b) ||
+  (bytes[0] === 0xd0 && bytes[1] === 0xcf && bytes[2] === 0x11 && bytes[3] === 0xe0);
+
+export const parseUserWorkbook = (XLSX: any, input: ArrayBuffer): ExcelUserRow[] => {
+  if (input.byteLength === 0 || input.byteLength > USER_IMPORT_LIMITS.maxBytes) {
+    throw new Error('Workbook size is outside the allowed range');
+  }
+  if (!hasWorkbookSignature(new Uint8Array(input))) {
+    throw new Error('Workbook signature is invalid');
+  }
+
+  const workbook = XLSX.read(input, {
+    type: 'array',
+    sheetRows: USER_IMPORT_LIMITS.maxRows + 2,
+  });
+  const sheetNames = Array.isArray(workbook.SheetNames)
+    ? workbook.SheetNames
+    : Object.keys(workbook.Sheets ?? {});
+  if (sheetNames.length === 0 || sheetNames.length > USER_IMPORT_LIMITS.maxSheets) {
+    throw new Error('Workbook contains too many sheets');
+  }
+
+  const result: ExcelUserRow[] = [];
+  for (const sheetName of sheetNames) {
+    if (DANGEROUS_HEADERS.has(sheetName)) throw new Error('Workbook sheet name is unsafe');
+    const sheet = workbook.Sheets?.[sheetName];
+    if (!sheet) throw new Error('Workbook sheet is missing');
+    if (sheet['!ref']) {
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      const rowCount = range.e.r - range.s.r + 1;
+      const columnCount = range.e.c - range.s.c + 1;
+      if (rowCount > USER_IMPORT_LIMITS.maxRows + 2) {
+        throw new Error('Workbook contains too many rows');
+      }
+      if (columnCount > USER_IMPORT_LIMITS.maxColumns) {
+        throw new Error('Workbook contains too many columns');
+      }
+    }
+
+    const matrix = XLSX.utils.sheet_to_json(sheet, {
+      header: 1,
+      raw: false,
+      defval: null,
+      blankrows: false,
+    }) as unknown[][];
+    if (matrix.length === 0) continue;
+    const rawHeaders = matrix[0];
+    const lastHeader = rawHeaders.reduce<number>(
+      (last, value, index) => (value === null || value === '' ? last : index),
+      -1,
+    );
+    const headers = rawHeaders.slice(0, lastHeader + 1).map((value) => String(value ?? '').trim());
+    if (headers.length === 0 || headers.length > USER_IMPORT_LIMITS.maxColumns) {
+      throw new Error('Workbook header count is outside the allowed range');
+    }
+    if (new Set(headers).size !== headers.length)
+      throw new Error('Workbook headers are duplicated');
+    if (
+      headers.some(
+        (header) =>
+          header.length === 0 ||
+          DANGEROUS_HEADERS.has(header) ||
+          !USER_IMPORT_HEADER_SET.has(header),
+      )
+    ) {
+      throw new Error('Workbook contains an unsupported header');
+    }
+    if (!['username', 'password', 'email'].every((header) => headers.includes(header))) {
+      throw new Error('Workbook is missing a required header');
+    }
+
+    for (const values of matrix.slice(1)) {
+      if (result.length >= USER_IMPORT_LIMITS.maxRows) {
+        throw new Error('Workbook contains too many rows');
+      }
+      if (
+        values.some(
+          (value) =>
+            typeof value === 'string' && value.length > USER_IMPORT_LIMITS.maxCellCharacters,
+        )
+      ) {
+        throw new Error('Workbook contains an oversized cell');
+      }
+      const valueAt = (header: string) => values[headers.indexOf(header)] as any;
+      result.push({
+        username: valueAt('username'),
+        password: valueAt('password'),
+        email: valueAt('email'),
+        nickname: valueAt('nickname'),
+        phone: valueAt('phone'),
+        gender: valueAt('gender'),
+        studentId: valueAt('studentId'),
+        banThirdParty: valueAt('banThirdParty'),
+        banEmailUpdate: valueAt('banEmailUpdate'),
+        banInfoUpdate: valueAt('banInfoUpdate'),
+      });
+    }
+  }
+  return result;
 };
 
 type ParsedUser = {
@@ -122,49 +247,30 @@ const AutoImportUsers = (props: any) => {
     setUploadState(states);
   };
 
-  const onImportExcel = async (file: any) => {
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
-    fileReader.onload = async (event: any) => {
-      try {
-        const { result } = event.target;
-        const XLSX = (await import('xlsx')).default || (await import('xlsx'));
-        const workbook = XLSX.read(result, { type: 'binary' });
-        let data: ExcelUserRow[] = [];
-        for (const sheet in workbook.Sheets) {
-          if (Object.prototype.hasOwnProperty.call(workbook.Sheets, sheet)) {
-            const part = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]) as ExcelUserRow[];
-            data = data.concat(part);
-          }
-        }
-        if (!data || data.length === 0) {
-          message.warning(props.t('NoData') || '未读取到数据');
-          return false;
-        }
-        parseAndValidate(data);
-        message.success(props.t('UploadSuccess') || '上传成功');
-      } catch (e) {
-        console.error(e);
-        message.error(props.t('FileTypeIncorrect') || '文件格式不正确');
+  const onImportExcel = async (file: File) => {
+    if (file.size === 0 || file.size > USER_IMPORT_LIMITS.maxBytes) {
+      message.error(props.t('FileTooLargeMB', { max: 5 }) || '文件大小不符合要求');
+      return Upload.LIST_IGNORE;
+    }
+    try {
+      const xlsxModule = await import('xlsx');
+      const XLSX = xlsxModule.default || xlsxModule;
+      const data = parseUserWorkbook(XLSX, await file.arrayBuffer());
+      if (data.length === 0) {
+        message.warning(props.t('NoData') || '未读取到数据');
+        return false;
       }
-    };
+      parseAndValidate(data);
+      message.success(props.t('UploadSuccess') || '上传成功');
+    } catch {
+      message.error(props.t('FileTypeIncorrect') || '文件格式不正确');
+    }
     return false;
   };
 
   const downloadTemplate = async () => {
     const XLSX = (await import('xlsx')).default || (await import('xlsx'));
-    const header = [
-      'username',
-      'password',
-      'email',
-      'nickname',
-      'phone',
-      'gender',
-      'studentId',
-      'banThirdParty',
-      'banEmailUpdate',
-      'banInfoUpdate',
-    ];
+    const header = [...USER_IMPORT_HEADERS];
     const instructions: any = [
       {
         username: "此行为样例，不可删除。\n必填，用户名必须由英文、数字、'_'构成，且长度为4~16",

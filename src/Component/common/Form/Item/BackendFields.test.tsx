@@ -8,6 +8,7 @@ import { contracts } from '../../../../Config/validation/contracts';
 
 jest.mock('../../Editor', () => ({
   __esModule: true,
+  EditorDocumentIdentityContext: jest.requireActual('react').createContext(undefined),
   default: (props: any) => (
     <textarea
       id={props.id}

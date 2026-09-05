@@ -5,6 +5,7 @@ import SubjectiveForm from './SubjectiveForm';
 
 jest.mock('../../common/Editor', () => ({
   __esModule: true,
+  EditorDocumentIdentityContext: jest.requireActual('react').createContext(undefined),
   default: () => <textarea aria-label="Description" />,
 }));
 jest.mock('../../common/Table/CellEditTable', () => () => <div>File configuration</div>);

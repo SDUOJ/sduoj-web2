@@ -1,51 +1,73 @@
-import CApi from "Utils/API/c-api"
-import md5 from "js-md5";
+import CApi from 'Utils/API/c-api';
+import md5 from 'js-md5';
 
-export const fileUpload = (files: File[], callback: any) => {
-    let formData = new FormData();
-    let num = 0
-    let pros: Promise<any>[] = []
-    let md5Set: Promise<any>[] = []
-    files.forEach((file) => {
-        md5Set.push(
-            file.arrayBuffer().then(((value) => {
-                let code = md5(value)
-                pros.push(
-                    CApi.getFileByMD5({md5: code}).then((value: any) => {
-                        if (value !== null) {
-                            callback(value)
-                            return Promise.resolve()
-                        } else {
-                            formData.append("files", file);
-                            num += 1;
-                            return Promise.resolve()
-                        }
-                    })
-                )
-                return Promise.resolve()
-            }))
-        )
+export interface FileUploadOptions {
+  signal?: AbortSignal;
+}
+
+export type FileUploadCallback<T = any> = (value: T) => void;
+
+const throwIfAborted = (signal?: AbortSignal) => {
+  if (signal?.aborted) {
+    throw new DOMException('The upload was aborted', 'AbortError');
+  }
+};
+
+export const fileUpload = async <T = any>(
+  files: File[],
+  callback?: FileUploadCallback<T>,
+  options: FileUploadOptions = {},
+): Promise<T[]> => {
+  throwIfAborted(options.signal);
+
+  const cacheResults: (T | null)[] = await Promise.all(
+    files.map(async (file) => {
+      throwIfAborted(options.signal);
+      const buffer = await file.arrayBuffer();
+      throwIfAborted(options.signal);
+      const value = (await CApi.getFileByMD5({ md5: md5(buffer) }, { signal: options.signal })) as
+        T | null | undefined;
+      throwIfAborted(options.signal);
+      return value ?? null;
+    }),
+  );
+
+  const missingIndexes: number[] = [];
+  const formData = new FormData();
+  cacheResults.forEach((value, index) => {
+    if (value === null) {
+      missingIndexes.push(index);
+      formData.append('files', files[index]);
+    }
+  });
+
+  if (missingIndexes.length > 0) {
+    throwIfAborted(options.signal);
+    const uploaded = (await CApi.uploadFile(formData, { signal: options.signal })) as T[];
+    throwIfAborted(options.signal);
+    if (!Array.isArray(uploaded) || uploaded.length !== missingIndexes.length) {
+      throw new Error('Uploaded file count does not match the requested file count');
+    }
+    missingIndexes.forEach((inputIndex, uploadIndex) => {
+      cacheResults[inputIndex] = uploaded[uploadIndex];
     });
+  }
 
-    Promise.all(md5Set).then(() => {
-        Promise.all(pros).then(() => {
-            if (num !== 0) {
-                CApi.uploadFile(formData).then((data: any) => {
-                    data.map((value: any) => {
-                        callback(value)
-                        return undefined
-                    })
-                })
-            }
-        })
-    })
-}
+  const results = cacheResults as T[];
+  results.forEach((value) => callback?.(value));
+  return results;
+};
 
-export const fileUploadWithoutMD5 = (file: File, callback: any) => {
-    let formData = new FormData();
-    formData.append("file", file);
-    CApi.uploadSingleFile(formData).then((data: any) => {
-        callback(data)
-        return undefined
-    })
-}
+export const fileUploadWithoutMD5 = async <T = any>(
+  file: File,
+  callback?: FileUploadCallback<T>,
+  options: FileUploadOptions = {},
+): Promise<T> => {
+  throwIfAborted(options.signal);
+  const formData = new FormData();
+  formData.append('file', file);
+  const data = (await CApi.uploadSingleFile(formData, { signal: options.signal })) as T;
+  throwIfAborted(options.signal);
+  callback?.(data);
+  return data;
+};

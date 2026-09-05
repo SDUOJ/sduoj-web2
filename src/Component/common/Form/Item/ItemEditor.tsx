@@ -1,8 +1,14 @@
-import Editor from '../../Editor';
+import { useContext } from 'react';
+import Editor, { EditorDocumentIdentityContext } from '../../Editor';
 import { Form } from 'antd';
 import { constraintRules } from '../../../../Config/validation/constraints';
 
 const ItemEditor = (props: any) => {
+  const contextualDocumentIdentity = useContext(EditorDocumentIdentityContext);
+  const fieldIdentity = Array.isArray(props.name)
+    ? props.name.map((part: string | number) => String(part)).join('.')
+    : String(props.name ?? 'content');
+
   return (
     <Form.Item
       label={props.label}
@@ -13,7 +19,12 @@ const ItemEditor = (props: any) => {
         ...(props.rules ?? []),
       ]}
     >
-      <Editor height={500} id={props.id} />
+      <Editor
+        height={props.height ?? 500}
+        id={props.id}
+        documentIdentity={props.documentIdentity ?? contextualDocumentIdentity}
+        fieldIdentity={props.fieldIdentity ?? fieldIdentity}
+      />
     </Form.Item>
   );
 };

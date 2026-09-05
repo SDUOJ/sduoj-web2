@@ -1,5 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
-import { Processing } from './Processing';
+import { applyCheckpointUpdate, Processing } from './Processing';
+
+let handleJudgeMessage: ((message: any[]) => void) | undefined;
 
 jest.mock('antd', () => ({
   Skeleton: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -9,8 +11,27 @@ jest.mock('antd', () => ({
 }));
 jest.mock('@ant-design/icons', () => ({ LoadingOutlined: () => null }));
 jest.mock('../../common/CodeHighlight', () => () => null);
-jest.mock('../SyncJudging', () => ({ SyncJudging: () => null }));
-jest.mock('./Running', () => () => null);
+jest.mock('../SyncJudging', () => ({
+  SyncJudging: ({ dataHandle }: { dataHandle: (message: any[]) => void }) => {
+    handleJudgeMessage = dataHandle;
+    return null;
+  },
+}));
+jest.mock(
+  './Running',
+  () =>
+    ({ TestCaseStateList, PublicTestCaseStateList, submissionInfo }: any) => (
+      <div>
+        <span>{submissionInfo?.problemTitle}</span>
+        <output aria-label="private-cases">
+          {TestCaseStateList.map((item: any) => item.caseScore ?? '-').join(',')}
+        </output>
+        <output aria-label="public-cases">
+          {PublicTestCaseStateList.map((item: any) => item.caseScore ?? '-').join(',')}
+        </output>
+      </div>
+    ),
+);
 jest.mock('./Summary', () => ({ submissionInfo }: any) => (
   <div>{submissionInfo?.problemTitle}</div>
 ));
@@ -53,4 +74,44 @@ it('ignores stale detail results and does not mutate cached response objects', a
   await act(async () => first.resolve(response('a', 'Stale submission')));
   expect(screen.getByText('New submission')).toBeInTheDocument();
   expect(screen.queryByText('Stale submission')).not.toBeInTheDocument();
+});
+
+it('updates frozen checkpoint snapshots without mutation', () => {
+  const current = Object.freeze([Object.freeze({ caseIndex: 1, caseType: 0 })]) as unknown as any[];
+  const next = applyCheckpointUpdate(current, 0, 1, 25, 10, 256);
+
+  expect(next).not.toBe(current);
+  expect(next[0]).toMatchObject({ caseIndex: 1, caseScore: 25, caseTime: 10, caseMemory: 256 });
+  expect(current[0]).toEqual({ caseIndex: 1, caseType: 0 });
+});
+
+it('preserves synchronous private and public checkpoint frames', async () => {
+  const query = jest.fn().mockResolvedValue({
+    submissionId: 'live',
+    problemTitle: 'Live submission',
+    judgeResult: -2,
+    checkpointNum: 2,
+    publicCheckpointNum: 1,
+    checkpointResults: [],
+    publicCheckpointResults: [],
+  });
+  render(
+    <Processing
+      TimeLimit={1000}
+      MemoryLimit={256}
+      submissionId="live"
+      QuerySubmissionAPI={query}
+      t={(key: string) => key}
+    />,
+  );
+  expect(await screen.findByText('Live submission')).toBeInTheDocument();
+
+  act(() => {
+    handleJudgeMessage?.(['live', 1, 0, 0, 10, 1, 10, 1, 128]);
+    handleJudgeMessage?.(['live', 1, 0, 1, 11, 1, 20, 2, 256]);
+    handleJudgeMessage?.(['live', 1, 1, 0, 12, 1, 30, 3, 512]);
+  });
+
+  expect(screen.getByLabelText('private-cases')).toHaveTextContent('10,20');
+  expect(screen.getByLabelText('public-cases')).toHaveTextContent('30');
 });

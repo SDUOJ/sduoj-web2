@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Card, Descriptions, Divider, Form, Input, Modal, Space, Table, Tag } from 'antd';
 import autolabApi from '../../Utils/API/autolab-api';
 import ItemUploadUser from '../common/Form/Item/ItemUploadUser';
@@ -18,8 +18,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
   const [leaveSubmitting, setLeaveSubmitting] = useState(false);
   const [currentRow, setCurrentRow] = useState<any>(null);
   const [leaveForm] = Form.useForm();
+  const requestIdRef = useRef(0);
+  const sessionIdRef = useRef(0);
 
   const loadAttendanceRecords = () => {
+    const requestId = ++requestIdRef.current;
     if (!courseId || !targetUsername) {
       setAttendanceMap({});
       return;
@@ -31,6 +34,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
         pageSize: 500,
       })
       .then((res: any) => {
+        if (requestId !== requestIdRef.current) return;
         const rows = Array.isArray(res?.records) ? res.records : [];
         const m: Record<number, any> = {};
         rows.forEach((item: any) => {
@@ -41,12 +45,21 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
         setAttendanceMap(m);
       })
       .catch(() => {
-        setAttendanceMap({});
+        if (requestId === requestIdRef.current) setAttendanceMap({});
       });
   };
 
   useEffect(() => {
+    sessionIdRef.current += 1;
+    setLeaveVisible(false);
+    setLeaveSubmitting(false);
+    setCurrentRow(null);
+    setAttendanceMap({});
     loadAttendanceRecords();
+    return () => {
+      requestIdRef.current += 1;
+      sessionIdRef.current += 1;
+    };
   }, [courseId, targetUsername]);
 
   const timeRows = useMemo(() => {
@@ -103,25 +116,35 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
   const submitLeave = async () => {
     if (!courseId || !targetUsername || !currentRow?.schedule_id) return;
     const values = await leaveForm.validateFields();
+    const sessionId = sessionIdRef.current;
+    const submittedCourseId = courseId;
+    const submittedUsername = targetUsername;
+    const submittedRow = currentRow;
     try {
       setLeaveSubmitting(true);
-      const initRes: any = await autolabApi.initAttendance(courseId, currentRow.schedule_id, {
-        group_id: course?.group_id,
-      });
-      const sgId = currentRow.sg_id ?? initRes?.sg_id;
+      const initRes: any = await autolabApi.initAttendance(
+        submittedCourseId,
+        submittedRow.schedule_id,
+        {
+          group_id: course?.group_id,
+        },
+      );
+      const sgId = submittedRow.sg_id ?? initRes?.sg_id;
       if (!sgId) return;
 
       const leaveFileId = values.leave_file_id;
-      await autolabApi.submitLeave(sgId, targetUsername, {
+      await autolabApi.submitLeave(sgId, submittedUsername, {
         leave_message: values.leave_message,
         leave_files: leaveFileId ? [String(leaveFileId)] : [],
       });
-      setLeaveVisible(false);
-      setCurrentRow(null);
-      leaveForm.resetFields();
-      loadAttendanceRecords();
+      if (sessionId === sessionIdRef.current) {
+        setLeaveVisible(false);
+        setCurrentRow(null);
+        leaveForm.resetFields();
+        loadAttendanceRecords();
+      }
     } finally {
-      setLeaveSubmitting(false);
+      if (sessionId === sessionIdRef.current) setLeaveSubmitting(false);
     }
   };
 

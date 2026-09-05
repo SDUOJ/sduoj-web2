@@ -13,31 +13,27 @@ import { genNumberList } from '../../Type/IManage';
 import mApi from 'Utils/API/m-api';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { examProblemDescription, examProblemInfo, examProblemType } from '../../Type/IExam';
+import { createCachedRequest, updateMatchingProblemRow } from './problemLookup';
 
 const ProblemAddForm = (props: any) => {
+  const { groupId, listData, setListData } = props;
   // 可编辑表格的操作引用
   const actionRef = useRef<ActionType>();
   const [form] = Form.useForm();
   const getListData = (type?: string) => {
-    for (const x of props.listData) {
-      if (x.groupId === props.groupId) {
-        if (type === undefined) return x.proList;
-        if (type === 'problemInfo') return x.problemInfo;
-        if (type === 'checkedProblemCode') return x.checkedProblemCode;
-      }
+    const group = props.listData.find((item: any) => item.groupId === props.groupId);
+    if (group) {
+      if (type === undefined) return group.proList ?? [];
+      if (type === 'problemInfo') return group.problemInfo ?? [];
+      if (type === 'checkedProblemCode') return group.checkedProblemCode ?? [];
     }
-    props.listData.push({
-      groupId: props.groupId,
-      proList: [],
-      problemInfo: [],
-      checkedProblemCode: [],
-    });
-    props.setListData(props.listData);
     return [];
   };
   const strMatch = (value: string) => {
-    if (props.type === 'single' || props.type === 'multi') return value.match(/SDUOJ-C-[0-9]{4}/);
-    if (props.type === 'program') return value.match(/SDUOJ-[0-9]{4}/);
+    if (typeof value !== 'string') return null;
+    if (props.type === 'single' || props.type === 'multi') return value.match(/^SDUOJ-C-[0-9]{4}$/);
+    if (props.type === 'program') return value.match(/^SDUOJ-[0-9]{4}$/);
+    return null;
   };
 
   // === State ===
@@ -48,59 +44,125 @@ const ProblemAddForm = (props: any) => {
   const [checkedProblemCode, setCheckedProblemCode] = useState<string[]>(
     getListData('checkedProblemCode'),
   );
-  const [descriptionLoading, setDescriptionLoading] = useState<string[]>([]);
   const [isStart, setIsStart] = useState<boolean>(props.isStart);
+  const proListDataRef = useRef(proListData);
+  const problemInfoRef = useRef(problemInfo);
+  const problemRequests = useRef(createCachedRequest<string, any>());
+  const descriptionRequests = useRef(createCachedRequest<string, examProblemInfo>());
+  proListDataRef.current = proListData;
+  problemInfoRef.current = problemInfo;
+
+  useEffect(() => {
+    if (!listData.some((item: any) => item.groupId === groupId)) {
+      setListData((current: any[]) => [
+        ...current,
+        { groupId, proList: [], problemInfo: [], checkedProblemCode: [] },
+      ]);
+    }
+  }, [groupId, listData, setListData]);
 
   const setListDataAll = (listData: examProblemType[]) => {
-    for (let x of props.listData) {
-      if (x.groupId === props.groupId) x.proList = listData;
-    }
-    props.setListData(props.listData);
-    setProListData(listData);
+    const nextList = [...listData];
+    proListDataRef.current = nextList;
+    props.setListData((current: any[]) =>
+      current.map((group) =>
+        group.groupId === props.groupId ? { ...group, proList: nextList } : group,
+      ),
+    );
+    setProListData(nextList);
     props.updateGroup();
     // 刷新当前界面的编辑值
     setEditableRowKeys([]);
-    setEditableRowKeys(genNumberList(getListData()));
+    setEditableRowKeys(genNumberList(nextList));
   };
   const setProblemInfoAll = (data: examProblemInfo[]) => {
-    for (let x of props.listData) {
-      if (x.groupId === props.groupId) x.problemInfo = data;
-    }
-    props.setListData(props.listData);
-    setProblemInfo(data);
+    const nextInfo = [...data];
+    problemInfoRef.current = nextInfo;
+    props.setListData((current: any[]) =>
+      current.map((group) =>
+        group.groupId === props.groupId ? { ...group, problemInfo: nextInfo } : group,
+      ),
+    );
+    setProblemInfo(nextInfo);
   };
   const setCheckedProblemCodeAll = (data: string[]) => {
-    for (let x of props.listData) {
-      if (x.groupId === props.groupId) x.checkedProblemCode = data;
-    }
-    props.setListData(props.listData);
-    setCheckedProblemCode(data);
+    const nextCodes = [...data];
+    props.setListData((current: any[]) =>
+      current.map((group) =>
+        group.groupId === props.groupId ? { ...group, checkedProblemCode: nextCodes } : group,
+      ),
+    );
+    setCheckedProblemCode(nextCodes);
   };
   const getValueEnum = (problemCode?: string) => {
     if (problemCode === undefined) return {};
     for (const x of problemInfo) {
       if (x.problemCode === problemCode) return x.problemDescription;
     }
-    if (strMatch(problemCode) !== null && descriptionLoading.indexOf(problemCode) === -1) {
-      descriptionLoading.push(problemCode);
-      setDescriptionLoading(descriptionLoading);
-      return mApi.getProblemDescriptionList({ problemCode: problemCode }).then((resData) => {
-        if (resData !== null) {
-          let res: any = {};
-          const data: examProblemDescription[] = resData as unknown as examProblemDescription[];
-          for (const x of data) res[x.id] = { text: x.title };
-          problemInfo.push({
-            problemCode: problemCode,
-            problemDescription: res,
-          });
-          setProblemInfoAll(problemInfo);
-          setEditableRowKeys([]);
-          setEditableRowKeys(genNumberList(getListData()));
-        }
-      });
+    if (strMatch(problemCode) !== null) {
+      void descriptionRequests.current
+        .get(problemCode, async () => {
+          const resData = await mApi.getProblemDescriptionList({ problemCode });
+          if (resData === null) throw new Error(props.t('ProblemNotExist'));
+          const descriptions: any = {};
+          const data = resData as unknown as examProblemDescription[];
+          for (const description of data) {
+            descriptions[description.id] = { text: description.title };
+          }
+          return { problemCode, problemDescription: descriptions };
+        })
+        .then((loaded) => {
+          const withoutOld = problemInfoRef.current.filter(
+            (item) => item.problemCode !== problemCode,
+          );
+          setProblemInfoAll([...withoutOld, loaded]);
+          setEditableRowKeys(genNumberList(proListDataRef.current));
+        })
+        .catch(() => undefined);
     }
     return {};
   };
+
+  const updateProblemRow = (
+    rowId: React.Key | undefined,
+    problemCode: string,
+    changes: Partial<examProblemType>,
+  ) => {
+    const current = proListDataRef.current;
+    const next = updateMatchingProblemRow(current, rowId, problemCode, changes);
+    if (next.some((row, index) => row !== current[index])) setListDataAll(next);
+  };
+
+  const queryProblem = (problemCode: string) =>
+    problemRequests.current.get(problemCode, async () => {
+      if (props.type === 'program') {
+        const problem: any = await mApi.getProblem({ problemCode });
+        if (problem === null) throw new Error(props.t('ProblemNotExist'));
+        return {
+          ProblemAlias: problem.problemTitle,
+          ProblemDescription: problem.defaultDescriptionId,
+        };
+      }
+
+      const problem: any = await mApi.getChoiceProblem({ problemCode });
+      if (problem === null) throw new Error(props.t('ProblemNotExist'));
+      if (problem.isMulti === 1 && props.type === 'single') {
+        throw new Error(props.t('SingleGroupCantUseMulti'));
+      }
+      if (problem.isMulti === 0 && props.type === 'multi') {
+        throw new Error(props.t('MultiGroupCantUseSingle'));
+      }
+      const description =
+        typeof problem.description === 'string'
+          ? JSON.parse(problem.description)
+          : problem.description;
+      let preview = `${description.content}\n`;
+      const choices = Object.keys(description.choice);
+      choices.forEach((choice, index) => {
+        preview += `${choice}.${description.choice[choice]}${index < choices.length - 1 ? '\n' : ''}`;
+      });
+      return { ProblemDescription: preview };
+    });
 
   // === 拖拽排序 ===
   // 可拖拽的排序手柄
@@ -206,52 +268,18 @@ const ProblemAddForm = (props: any) => {
       formItemProps: (form, { rowIndex }) => {
         return {
           rules: [
-            ({ getFieldValue }) => ({
+            () => ({
               validator(_, value) {
-                if (strMatch(value) !== null) {
-                  if (checkedProblemCode.indexOf(value) === -1) {
-                    checkedProblemCode.push(value);
-                    setCheckedProblemCodeAll(checkedProblemCode);
-                    if (props.type === 'program') {
-                      return mApi.getProblem({ problemCode: value }).then((resData: any) => {
-                        if (resData === null) return Promise.reject();
-                        else {
-                          proListData[rowIndex].ProblemAlias = resData.problemTitle;
-                          proListData[rowIndex].ProblemDescription = resData.defaultDescriptionId;
-                          setListDataAll(proListData);
-                          return Promise.resolve();
-                        }
-                      });
-                    } else {
-                      return mApi.getChoiceProblem({ problemCode: value }).then((resData: any) => {
-                        if (resData === null) return Promise.reject();
-                        else {
-                          if (resData.isMulti === 1 && props.type === 'single') {
-                            return Promise.reject(props.t('SingleGroupCantUseMulti'));
-                          }
-                          if (resData.isMulti === 0 && props.type === 'multi') {
-                            return Promise.reject(props.t('MultiGroupCantUseSingle'));
-                          }
-                          let str = '';
-                          const pro =
-                            typeof resData.description === 'string'
-                              ? JSON.parse(resData.description)
-                              : resData.description;
-                          str += pro.content + '\n';
-                          let len = Object.keys(pro.choice).length;
-                          for (const x of Object.keys(pro.choice)) {
-                            len -= 1;
-                            str += x + '.' + pro.choice[x];
-                            if (len > 0) str += '\n';
-                          }
-                          proListData[rowIndex].ProblemDescription = str;
-                          setListDataAll(proListData);
-                          return Promise.resolve();
-                        }
-                      });
-                    }
-                  } else return Promise.resolve();
+                if (strMatch(value) === null) {
+                  return Promise.reject(new Error(props.t('ProblemCodeFormatError')));
                 }
+                const rowId = proListDataRef.current[rowIndex]?.id;
+                return queryProblem(value).then((changes) => {
+                  updateProblemRow(rowId, value, changes);
+                  if (!checkedProblemCode.includes(value)) {
+                    setCheckedProblemCodeAll([...checkedProblemCode, value]);
+                  }
+                });
               },
             }),
           ],

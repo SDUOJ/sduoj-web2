@@ -15,15 +15,28 @@ AI workbench), and `src/Component/submission`.
 | P1       | `Component/submission/Processing/Processing.tsx:93`                                                         | Rapidly opening submission B before submission A resolved let A overwrite B's detail state. Normalization also mutated the response object and checkpoint arrays, corrupting frozen or shared cached DTOs.                                                                      | `Processing.test.tsx` resolves B before A, then resolves the stale frozen A response. B remains rendered and neither DTO is mutated. Request generations invalidate results after navigation and unmount.                                                                        | Fixed  |
 | P1       | `Redux/Action/user.ts:13`                                                                                   | The logout thunk returned `void` while starting a detached request, so callers could navigate and announce success before the server accepted logout. Rejections were not observable through dispatch.                                                                          | `user.test.ts` verifies the returned promise remains pending with state intact, clears all Redux state after success, and rejects with state intact after failure.                                                                                                               | Fixed  |
 
-## Pending findings
+## Historical Pending Findings
 
-| Severity | Location                                             | Trigger and impact                                                                                                                                                                                                                                        | Missing test                                                                                         | Status                                                                                                               |
-| -------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| P1       | `Utils/fileUpload.ts:4`                              | Both upload helpers return `void` and detach every promise. Hash, lookup, and upload rejection becomes unhandled, while callers cannot await completion, report failure, or cancel navigation.                                                            | Hash failure, lookup failure, upload failure, mixed cache hit/miss, and callback ordering tests.     | Pending; all common form/editor consumers must migrate with the return contract.                                     |
-| P2       | `Component/submission/API/getSubmissionList.ts:4`    | Concurrent mounts with the same missing key issue duplicate requests. A late request can dispatch after key changes or unmount, and rejection is unhandled.                                                                                               | Hook test for two consumers, key change, unmount, rejection, and retry.                              | Pending; the hook currently has no in-tree consumers and should likely be removed after confirming external imports. |
-| P2       | `Component/submission/Processing/Processing.tsx:149` | Checkpoint handlers write into captured state arrays before copying them. Batched frames can use stale arrays, lose an update, and mutate prior React snapshots.                                                                                          | Back-to-back frame test under batched React updates with frozen state.                               | Pending; migrate together with the stale detail request above.                                                       |
-| P2       | `Utils/API/request.ts:70`                            | Successful envelopes assume a finite numeric timestamp. Missing or nonnumeric timestamps write invalid storage and bypass clock-skew detection because comparisons produce `NaN`. Storage exceptions can also turn a valid response into a network error. | Envelope tests for missing/invalid timestamp and unavailable storage.                                | Pending; the server timestamp contract and desired fallback need confirmation.                                       |
-| P2       | `Component/submission/Submit.tsx:50`                 | The nested promise chain catches validation and submission failures identically and discards the rejection. Callers and tests cannot observe failure, and closing the modal while a request is pending can still open the result modal when it resolves.  | Deferred submission test covering cancel-while-pending, retry, and distinct validation/API failures. | Pending; requires an explicit modal cancellation policy.                                                             |
+The former pending entries for `fileUpload`, the unused `getSubmissionList` hook,
+checkpoint mutation, invalid response timestamps, and canceled submission results
+were closed in the 2026-09 follow-up. See `fileUpload.test.ts`, `Processing.test.tsx`,
+`request.test.ts`, and `Submit.test.tsx`. The unused hook was removed after confirming
+that no in-tree consumer imported it.
+
+The table below is retained as the original trigger record. Current closure status is
+tracked in `FRONTEND_AUDIT.md`; only dependency and backend acceptance work remains open.
+
+The upload, obsolete hook, checkpoint mutation, timestamp, and canceled-submission rows
+are closed by the current follow-up implementation and tests. They remain below as
+historical trigger descriptions for traceability.
+
+| Severity | Location                                             | Trigger and impact                                                                                                                                          | Missing test                                                                                                           | Status |
+| -------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------ |
+| P1       | `Utils/fileUpload.ts:4`                              | Both upload helpers returned `void` and detached every promise.                                                                                             | `fileUpload.test.ts` covers hash/cache/upload failures, mixed batches, ordering, and cancellation.                     | Fixed  |
+| P2       | `Component/submission/API/getSubmissionList.ts:4`    | Concurrent mounts with the same missing key issue duplicate requests. A late request can dispatch after key changes or unmount, and rejection is unhandled. | No in-tree consumers remained; the obsolete hook was removed.                                                          | Fixed  |
+| P2       | `Component/submission/Processing/Processing.tsx:149` | Checkpoint handlers wrote into captured state arrays before copying them.                                                                                   | `Processing.test.tsx` covers frozen snapshots and synchronous private/public frames with functional updates.           | Fixed  |
+| P2       | `Utils/API/request.ts:70`                            | Successful envelopes assumed a finite timestamp and storage was treated as part of transport success.                                                       | `request.test.ts` covers missing/invalid timestamps and unavailable storage.                                           | Fixed  |
+| P2       | `Component/submission/Submit.tsx:50`                 | The nested promise chain collapsed validation/API failures and accepted late success after cancel.                                                          | `Submit.test.tsx` covers cancel-while-pending, late success suppression, retry after API failure, and oversized files. | Fixed  |
 
 ## Existing coverage reviewed
 
@@ -38,13 +51,17 @@ authentication checks, downloads, session redirects, and clock skew.
 ## Verification
 
 - Node 24 TypeScript checks passed.
-- Final shared-worktree Jest: 48 suites, 267 tests passed. The cumulative-frame and
+- Final shared-worktree Jest: 64 suites, 320 tests passed. The cumulative-frame and
   rejudge consumer regressions pass with the pure update suite (2 suites, 6 tests).
-- Lint: 0 errors, 156 tracked legacy warnings in the shared worktree. Excluding the
-  parallel AI files, comparable warnings fell from 168 to 156; no baseline was changed.
+- Lint: 0 errors, 149 tracked legacy warnings in the shared worktree. Excluding the
+  parallel AI files, comparable warnings fell from 168 to 149; no baseline was changed.
 - Touched source and tests pass Prettier; `git diff --check` passed.
 
 The focused suite uses Axios Mock Adapter and pure frozen state fixtures. It does not
 prove backend WebSocket ordering, cookie invalidation, upload behavior, or the real
 submission lifecycle; those require the pending component and local-service scenarios
 listed above.
+Current remaining entries are historical follow-up targets; closure status is recorded in
+`FRONTEND_AUDIT.md`. The upload contract now returns awaitable results and abort handles,
+and all in-tree upload consumers either await the result or attach an explicit rejection
+handler.

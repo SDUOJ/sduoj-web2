@@ -470,6 +470,7 @@ const MProblemSet = (props: any) => {
               width={1200}
               title={props.t('CreateProblemSetFrom', { name: rows.name })}
               type={'fork'}
+              editorDocumentIdentity={`problem-set:fork:${rows.psid}`}
               subForm={ProblemSetForm}
               formName={'ProblemSetForm'}
               dataLoader={async () => {

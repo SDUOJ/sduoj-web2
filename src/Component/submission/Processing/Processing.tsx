@@ -27,6 +27,25 @@ interface IProcessingProp {
   MemoryLimit: number;
 }
 
+export const applyCheckpointUpdate = (
+  current: TestCaseProp[],
+  checkpointIndex: number,
+  judgeResult: string | number,
+  judgeScore: number,
+  usedTime: number,
+  usedMemory: number,
+) => {
+  const next = [...current];
+  next[checkpointIndex] = {
+    caseIndex: checkpointIndex + 1,
+    caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
+    caseScore: judgeScore,
+    caseTime: usedTime,
+    caseMemory: usedMemory,
+  };
+  return next;
+};
+
 export const Processing = (props: IProcessingProp & any) => {
   const requestGeneration = useRef(0);
 
@@ -146,6 +165,11 @@ export const Processing = (props: IProcessingProp & any) => {
   };
 
   useEffect(() => {
+    setSubmissionInfo(undefined);
+    setTestCaseStateList([]);
+    setPublicTestCaseStateList([]);
+    setWebSocketOpen(false);
+    setWebSocketQueryList([]);
     if (props.submissionId !== undefined) getSubmissionInfo();
     return () => {
       requestGeneration.current += 1;
@@ -178,23 +202,27 @@ export const Processing = (props: IProcessingProp & any) => {
     } else {
       // 否则表示同步测试点信息
       if (checkpointType === 0) {
-        TestCaseStateList[checkpointIndex] = {
-          caseIndex: checkpointIndex + 1,
-          caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
-          caseScore: judgeScore,
-          caseTime: usedTime,
-          caseMemory: usedMemory,
-        };
-        setTestCaseStateList([...TestCaseStateList]);
+        setTestCaseStateList((current) =>
+          applyCheckpointUpdate(
+            current,
+            checkpointIndex,
+            judgeResult,
+            judgeScore,
+            usedTime,
+            usedMemory,
+          ),
+        );
       } else if (checkpointType === 1) {
-        PublicTestCaseStateList[checkpointIndex] = {
-          caseIndex: checkpointIndex + 1,
-          caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
-          caseScore: judgeScore,
-          caseTime: usedTime,
-          caseMemory: usedMemory,
-        };
-        setPublicTestCaseStateList([...PublicTestCaseStateList]);
+        setPublicTestCaseStateList((current) =>
+          applyCheckpointUpdate(
+            current,
+            checkpointIndex,
+            judgeResult,
+            judgeScore,
+            usedTime,
+            usedMemory,
+          ),
+        );
       }
     }
   };

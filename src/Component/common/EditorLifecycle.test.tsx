@@ -1,21 +1,26 @@
 import { act, fireEvent, render } from '@testing-library/react';
-import { CopiedButton, Editor } from './Editor';
+import { buildEditorCacheId, CopiedButton, Editor } from './Editor';
 import { MD2export } from './Md2export';
 
 const instances: Array<{ destroy: jest.Mock; getValue: jest.Mock; setValue: jest.Mock }> = [];
-const options: Array<{ after?: () => void }> = [];
+const options: any[] = [];
+const targets: Array<HTMLElement | string> = [];
 const mockClipboardDestroy = jest.fn();
 
 jest.mock('vditor', () =>
-  jest.fn().mockImplementation((_id, config) => {
+  jest.fn().mockImplementation((target, config) => {
+    let value = globalThis.localStorage.getItem(config.cache?.id) ?? config.value ?? '';
     const instance = {
       destroy: jest.fn(),
-      getValue: jest.fn().mockReturnValue(''),
-      setValue: jest.fn(),
+      getValue: jest.fn(() => value),
+      setValue: jest.fn((nextValue: string) => {
+        value = nextValue;
+      }),
       vditor: { currentMode: 'ir' },
     };
     instances.push(instance);
     options.push(config);
+    targets.push(target);
     return instance;
   }),
 );
@@ -30,6 +35,8 @@ jest.mock('clipboard', () =>
 beforeEach(() => {
   instances.length = 0;
   options.length = 0;
+  targets.length = 0;
+  localStorage.clear();
   mockClipboardDestroy.mockClear();
 });
 
@@ -40,14 +47,106 @@ it('destroys the clipboard listener when a copy button unmounts', () => {
 });
 
 it('destroys the editor before language replacement and on unmount', () => {
-  const view = render(<Editor value="draft" langCode="en_US" t={(key: string) => key} />);
+  const view = render(
+    <Editor
+      value="draft"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+      t={(key: string) => key}
+    />,
+  );
   act(() => options[0].after?.());
-  expect(instances[0].setValue).toHaveBeenCalledWith('draft');
-  view.rerender(<Editor value="draft" langCode="zh_CN" t={(key: string) => key} />);
+  expect(instances[0].getValue()).toBe('draft');
+  expect(instances[0].setValue).not.toHaveBeenCalled();
+  view.rerender(
+    <Editor
+      value="draft"
+      langCode="zh_CN"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+      t={(key: string) => key}
+    />,
+  );
   expect(instances[0].destroy).toHaveBeenCalledTimes(1);
   expect(instances).toHaveLength(2);
   view.unmount();
   expect(instances[1].destroy).toHaveBeenCalledTimes(1);
+});
+
+it('isolates and restores drafts by user, document, and field without relying on destroy', () => {
+  const aliceDocumentOne = buildEditorCacheId('alice', 'problem:1', 'description');
+  localStorage.setItem(aliceDocumentOne, 'alice document one draft');
+
+  const first = render(
+    <Editor
+      value="server one"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  act(() => options[0].after?.());
+  expect(instances[0].getValue()).toBe('alice document one draft');
+  expect(instances[0].setValue).not.toHaveBeenCalled();
+
+  render(
+    <Editor
+      value="server two"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:2"
+      fieldIdentity="description"
+    />,
+  );
+  render(
+    <Editor
+      value="server one for bob"
+      langCode="en_US"
+      userIdentity="bob"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+
+  expect(options.map((option) => option.cache.id)).toEqual([
+    aliceDocumentOne,
+    buildEditorCacheId('alice', 'problem:2', 'description'),
+    buildEditorCacheId('bob', 'problem:1', 'description'),
+  ]);
+  expect(new Set(targets.map((target) => (target as HTMLElement).id)).size).toBe(3);
+  expect(instances[1].getValue()).toBe('server two');
+  expect(instances[2].getValue()).toBe('server one for bob');
+  expect(instances[0].destroy).not.toHaveBeenCalled();
+
+  first.unmount();
+});
+
+it('uses unique DOM containers for duplicate mounts and disables unscoped persistent cache', () => {
+  render(<Editor value="one" langCode="en_US" />);
+  render(<Editor value="two" langCode="en_US" />);
+
+  expect(options[0].cache).toEqual({ enable: false });
+  expect(options[1].cache).toEqual({ enable: false });
+  expect((targets[0] as HTMLElement).id).not.toBe((targets[1] as HTMLElement).id);
+});
+
+it('uses the bundled save icon instead of an external image', () => {
+  render(
+    <Editor
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  const save = options[0].toolbar.find((item: any) => item?.name === 'save');
+  expect(save.icon).toContain('test-asset');
+  expect(save.icon).not.toContain('58cdn');
+  expect(save.icon).not.toContain('http');
 });
 
 it('destroys the export editor when its modal closes', () => {

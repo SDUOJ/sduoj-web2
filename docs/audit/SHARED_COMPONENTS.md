@@ -26,15 +26,29 @@ null (`TableWithPagination.tsx:87`). The Card migration also removes deprecated
 `bordered`, `headStyle`, and `bodyStyle` props, and search-only tables no longer operate on
 an unmounted filter form.
 
-## Pending Findings
+## Historical Pending Findings
 
-| Severity | Location                                       | Trigger and impact                                                                                                                                                                                                                                                                                                                                                                    | Missing test                                                                                                                                                                                                               | Status  |
-| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| P2       | `Form/Item/ItemUpload.tsx:45`                  | The public prop is named `use`, but upload routing reads `props.ues`. A consumer passing `use="user"` is routed through the administrator multi-file/MD5 path. The only current repository caller passes `use="admin"`, so changing this needs a user-mode upload contract fixture rather than an unverified one-line correction.                                                     | Render the upload control with mocked upload adapters and assert both `user` and `admin` select the documented endpoint and publish the returned id.                                                                       | Pending |
-| P2       | `Form/ModalFormUseForm.tsx:102`                | Initial values still depend on a fixed 100 ms delay so that ProComponents step refs can mount. Under a delayed step mount, fields can briefly be empty or miss initialization; removing the delay without coordinating child readiness would regress existing multi-step forms.                                                                                                       | A real multi-step ProComponents test covering async load, next/back navigation, reset, close/reopen and nested field values.                                                                                               | Pending |
-| P2       | `Table/TableWithPagination.tsx:121`            | The initial-load and version effects intentionally omit callback/state dependencies. This avoids refetching for the many inline API props, but it leaves five `react-hooks/exhaustive-deps` warnings and makes prop-change refresh semantics implicit.                                                                                                                                | Characterization tests for same-name API replacement, changed `initRequestProps`, filter restoration, negative Redux versions and positive refresh versions before extracting a stable query hook.                         | Pending |
-| P1       | `Editor.tsx:58`, `Form/Item/ItemEditor.tsx:16` | Vditor cache is enabled by the installed library and derives its local-storage key from the element id. Most `ItemEditor` callers omit `id`, so unrelated documents use the default `vditor` element and the same `vditorvditor` cache key until normal destroy clears it. A crash or forced navigation can therefore leave one document's draft under another document's editor key. | Add an explicit cache identity contract containing user and document identity, then test two editors/documents plus crash-style remount. Disabling cache would avoid sharing but would deliberately remove draft recovery. | Pending |
-| P2       | `Editor.tsx:124`                               | The save toolbar icon is loaded from `https://img.58cdn.com.cn/.../save.svg` while the editor runtime and emoji assets use the configured frontend host. Offline use, CSP restrictions, or that third-party host failing leaves the save action without its intended icon.                                                                                                            | Serve a local reviewed icon and verify it in the editor's browser/asset test.                                                                                                                                              | Pending |
+The upload-routing entry and editor cache/external-icon entries below were closed in
+the 2026-09 follow-up. Upload controls now use the documented `use` prop, expose an
+abort handle, and return awaitable results. Editors disable unscoped persistent cache,
+use user/document/field identities when available, and serve the save icon locally.
+The current pending rows are retained as historical audit context; their closure evidence
+is listed in `FRONTEND_AUDIT.md` A-01, A-12, A-13, and A-17.
+
+Only A-11 and A-12 remain active component follow-ups. The upload and editor rows below
+are closed by the current implementation and tests; their original descriptions remain
+for traceability.
+
+The active rows are retained as migration targets; they are not release blockers for the
+closed upload/editor fixes listed in `FRONTEND_AUDIT.md`.
+
+| Severity | Location                                       | Trigger and impact                                                                                                                                                                                                                                                              | Missing test                                                                                                                                                                                       | Status  |
+| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| P2       | `Form/Item/ItemUpload.tsx:45`                  | The public prop was named `use`, but routing read `props.ues`; user mode could take the wrong path.                                                                                                                                                                             | `ItemUpload.test.tsx` covers both adapters and abort.                                                                                                                                              | Fixed   |
+| P2       | `Form/ModalFormUseForm.tsx:102`                | Initial values still depend on a fixed 100 ms delay so that ProComponents step refs can mount. Under a delayed step mount, fields can briefly be empty or miss initialization; removing the delay without coordinating child readiness would regress existing multi-step forms. | A real multi-step ProComponents test covering async load, next/back navigation, reset, close/reopen and nested field values.                                                                       | Pending |
+| P2       | `Table/TableWithPagination.tsx:121`            | The initial-load and version effects intentionally omit callback/state dependencies. This avoids refetching for the many inline API props, but it leaves five `react-hooks/exhaustive-deps` warnings and makes prop-change refresh semantics implicit.                          | Characterization tests for same-name API replacement, changed `initRequestProps`, filter restoration, negative Redux versions and positive refresh versions before extracting a stable query hook. | Pending |
+| P1       | `Editor.tsx:58`, `Form/Item/ItemEditor.tsx:16` | Cache keys now include user, document, and field identity; unscoped editors disable persistent cache and use unique DOM containers.                                                                                                                                             | `EditorLifecycle.test.tsx` covers two users, two documents, fields, duplicate mounts, and remounts.                                                                                                | Fixed   |
+| P2       | `Editor.tsx:124`                               | The save toolbar icon previously loaded from an external 58cdn host.                                                                                                                                                                                                            | Bundled `Assert/img/save.svg`; lifecycle test verifies no external URL.                                                                                                                            | Fixed   |
 
 `Utils/MarkdownPreview.ts:41` delegates HTML generation to Vditor 3.11.2. The installed
 Vditor defaults `preview.markdown.sanitize` to `true`, and no audited wrapper overrides it.
@@ -45,13 +59,12 @@ is migrated or the Vditor version changes.
 
 ## Verification
 
-- Focused shared suite: 7 suites, 22 tests passed (`ModalFormUseForm`, `FormExtraInfo`,
+- Focused shared suite: 11 suites, 44 tests passed (`ModalFormUseForm`, `FormExtraInfo`,
   `TableWithPagination`, `CellEditTable`, `TableWithAllData`, `SortableTable`, and editor
   lifecycle).
 - TypeScript: `tsc --noEmit && tsc -p tsconfig.tools.json` passed.
-- Scoped ESLint: 0 errors. Tracked warnings in the audited files fell from 9 to 5:
-  both `FormExtraInfo` hook warnings, the `CellEditTable` hook warning, and the modal
-  iterator-key warning were removed. No suppression or baseline change was added.
+- Scoped ESLint: 0 errors. Remaining warnings are legacy hook/nested-component patterns;
+  no new warning baseline was added.
 - Changed source and test files pass Prettier. Commands used `yarn --ignore-engines`
   because this shell provides Node 22.22 while the repository declares Node 24; the
   TypeScript and Jest processes themselves completed successfully.

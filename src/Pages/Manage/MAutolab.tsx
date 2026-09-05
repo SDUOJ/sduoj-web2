@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   Card,
@@ -38,6 +38,8 @@ const tagOptions = [
 ];
 
 const COURSE_TABLE_NAME = 'AutolabCourseList';
+type ModalSessionKind = 'time' | 'ta' | 'assign';
+type ModalSession = { id: number; kind: ModalSessionKind; courseId: number };
 
 const formatDateTime = (v: any): string | undefined => {
   if (!v) return undefined;
@@ -85,6 +87,53 @@ const MAutolab: React.FC = () => {
   const [assignUsernames, setAssignUsernames] = useState<string[]>([]);
   const [assignClassroomIds, setAssignClassroomIds] = useState<number[]>([]);
   const [assignSubmitting, setAssignSubmitting] = useState(false);
+  const sessionIdRef = useRef(0);
+  const modalSessionRef = useRef<ModalSession | null>(null);
+
+  const sessionIsActive = (session: ModalSession) => {
+    const active = modalSessionRef.current;
+    return (
+      active?.id === session.id &&
+      active.kind === session.kind &&
+      active.courseId === session.courseId
+    );
+  };
+
+  const beginModalSession = (kind: ModalSessionKind, course: any): ModalSession => {
+    const session = { id: ++sessionIdRef.current, kind, courseId: Number(course.course_id) };
+    modalSessionRef.current = session;
+    setCurrentCourse(course);
+    setTimeModalOpen(kind === 'time');
+    setTaModalOpen(kind === 'ta');
+    setAssignModalOpen(kind === 'assign');
+    setBindModalOpen(false);
+    setAssignSubmitting(false);
+    return session;
+  };
+
+  const closeModalSession = (kind: ModalSessionKind) => {
+    if (modalSessionRef.current?.kind === kind) {
+      modalSessionRef.current = null;
+      sessionIdRef.current += 1;
+    }
+    if (kind === 'time') setTimeModalOpen(false);
+    if (kind === 'ta') {
+      setTaModalOpen(false);
+      setBindModalOpen(false);
+    }
+    if (kind === 'assign') {
+      setAssignModalOpen(false);
+      setAssignSubmitting(false);
+    }
+  };
+
+  useEffect(
+    () => () => {
+      modalSessionRef.current = null;
+      sessionIdRef.current += 1;
+    },
+    [],
+  );
 
   const courseForm = (
     <>
@@ -195,30 +244,47 @@ const MAutolab: React.FC = () => {
     </>
   );
 
-  const loadCourseTimes = async (course: any) => {
+  const loadCourseTimes = async (course: any, session = modalSessionRef.current) => {
+    if (!session || session.kind !== 'time' || session.courseId !== Number(course.course_id))
+      return;
     const res: any = await autolabApi.listCourseTimes(course.course_id);
-    setTimeRows(buildTimeRows(res));
+    if (sessionIsActive(session)) setTimeRows(buildTimeRows(res));
   };
 
-  const loadCourseTAs = async (course: any) => {
+  const loadCourseTAs = async (course: any, session = modalSessionRef.current) => {
+    if (!session || session.kind !== 'ta' || session.courseId !== Number(course.course_id)) return;
     const [taRes, studentRes]: any = await Promise.all([
       autolabApi.listTA(course.course_id),
       autolabApi.listCourseStudents(course.course_id),
     ]);
-    setTaRows(Array.isArray(taRes) ? taRes : []);
-    setStudents(Array.isArray(studentRes?.students) ? studentRes.students : []);
+    if (sessionIsActive(session)) {
+      setTaRows(Array.isArray(taRes) ? taRes : []);
+      setStudents(Array.isArray(studentRes?.students) ? studentRes.students : []);
+    }
   };
 
   const openTimeModal = async (course: any) => {
-    setCurrentCourse(course);
-    await loadCourseTimes(course);
-    setTimeModalOpen(true);
+    const session = beginModalSession('time', course);
+    setTimeRows([]);
+    try {
+      await loadCourseTimes(course, session);
+    } catch (error) {
+      if (sessionIsActive(session)) setTimeRows([]);
+    }
   };
 
   const openTaModal = async (course: any) => {
-    setCurrentCourse(course);
-    await loadCourseTAs(course);
-    setTaModalOpen(true);
+    const session = beginModalSession('ta', course);
+    setTaRows([]);
+    setStudents([]);
+    try {
+      await loadCourseTAs(course, session);
+    } catch (error) {
+      if (sessionIsActive(session)) {
+        setTaRows([]);
+        setStudents([]);
+      }
+    }
   };
 
   const openBindModal = (ta: any) => {
@@ -229,17 +295,33 @@ const MAutolab: React.FC = () => {
 
   const submitBindStudents = async () => {
     if (!currentCourse || !bindingTA) return;
-    await autolabApi.updateTA(currentCourse.course_id, bindingTA.TA_id, {
+    const session = modalSessionRef.current;
+    if (!session || session.kind !== 'ta') return;
+    const course = currentCourse;
+    const ta = bindingTA;
+    await autolabApi.updateTA(course.course_id, ta.TA_id, {
       usernames: bindingUsernames,
     });
+    if (!sessionIsActive(session)) return;
     setBindModalOpen(false);
     setBindingTA(null);
-    await loadCourseTAs(currentCourse);
+    await loadCourseTAs(course, session);
   };
 
   const openAssignModal = async (course: any) => {
-    setCurrentCourse(course);
-    const res: any = await autolabApi.getAutoAssignOptions(course.course_id);
+    const session = beginModalSession('assign', course);
+    setAssignStudents([]);
+    setAssignClassrooms([]);
+    setAssignUsernames([]);
+    setAssignClassroomIds([]);
+    setAssignSubmitting(false);
+    let res: any;
+    try {
+      res = await autolabApi.getAutoAssignOptions(course.course_id);
+    } catch (error) {
+      return;
+    }
+    if (!sessionIsActive(session)) return;
     const studentRows = Array.isArray(res?.students) ? res.students : [];
     const classroomRows = Array.isArray(res?.classrooms) ? res.classrooms : [];
     setAssignStudents(studentRows);
@@ -247,11 +329,13 @@ const MAutolab: React.FC = () => {
     // 默认不勾选，只有移动到右侧“本次要分配”才参与分配
     setAssignUsernames([]);
     setAssignClassroomIds(classroomRows.map((item: any) => item.c_id));
-    setAssignModalOpen(true);
   };
 
   const submitAutoAssign = async () => {
     if (!currentCourse) return;
+    const session = modalSessionRef.current;
+    if (!session || session.kind !== 'assign') return;
+    const course = currentCourse;
     if (assignUsernames.length === 0) {
       message.warning('请至少选择一个本次要分配学生');
       return;
@@ -263,14 +347,16 @@ const MAutolab: React.FC = () => {
     try {
       setAssignSubmitting(true);
       await autolabApi.autoAssignSeats({
-        course_id: currentCourse.course_id,
+        course_id: course.course_id,
         usernames: assignUsernames,
         c_ids: assignClassroomIds,
       });
-      setAssignModalOpen(false);
-      await loadCourseTAs(currentCourse);
+      if (sessionIsActive(session)) {
+        setAssignSubmitting(false);
+        closeModalSession('assign');
+      }
     } finally {
-      setAssignSubmitting(false);
+      if (sessionIsActive(session)) setAssignSubmitting(false);
     }
   };
 
@@ -432,7 +518,7 @@ const MAutolab: React.FC = () => {
       <Modal
         open={timeModalOpen}
         title={currentCourse ? `课程时间管理：${currentCourse.course_name}` : '课程时间管理'}
-        onCancel={() => setTimeModalOpen(false)}
+        onCancel={() => closeModalSession('time')}
         footer={null}
         width={960}
         destroyOnHidden
@@ -517,7 +603,7 @@ const MAutolab: React.FC = () => {
       <Modal
         open={taModalOpen}
         title={currentCourse ? `助教管理：${currentCourse.course_name}` : '助教管理'}
-        onCancel={() => setTaModalOpen(false)}
+        onCancel={() => closeModalSession('ta')}
         footer={null}
         width={920}
         destroyOnHidden
@@ -639,7 +725,7 @@ const MAutolab: React.FC = () => {
       <Modal
         open={assignModalOpen}
         title={currentCourse ? `自动分配座位：${currentCourse.course_name}` : '自动分配座位'}
-        onCancel={() => setAssignModalOpen(false)}
+        onCancel={() => closeModalSession('assign')}
         onOk={submitAutoAssign}
         confirmLoading={assignSubmitting}
         width={980}

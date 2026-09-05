@@ -137,6 +137,7 @@ const ProDescriptions = (props: any) => {
                       width={1200}
                       title={`${props.problemCode} - ${row.title}`}
                       type={'update'}
+                      editorDocumentIdentity={`problem-description:${row.id}`}
                       dataLoader={() => {
                         return mApi.getProblemDescription({ descriptionId: row.id });
                       }}
