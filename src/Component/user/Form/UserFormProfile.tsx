@@ -13,12 +13,12 @@ const UserFormProfile = (props: any) => {
   return (
     <>
       <ItemUsername editable={props.editUsername} />
-      {props.needPassword && <ItemPassword />}
+      {props.needPassword && <ItemPassword policy="admin" />}
       <ItemNickname />
       <ItemGender />
       <ItemStudentId />
-      <ItemPhone required={true} />
-      <ItemEmail needVerify={false} />
+      <ItemPhone />
+      <ItemEmail needVerify={false} required={false} />
       <ItemRoles />
     </>
   );

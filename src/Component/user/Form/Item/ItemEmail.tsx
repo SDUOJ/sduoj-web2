@@ -4,6 +4,8 @@ import { withTranslation } from 'react-i18next';
 import CApi from 'Utils/API/c-api';
 import ItemCaptcha from './ItemCaptcha';
 import { emailType } from '../../../../Type/types';
+import { contracts } from '../../../../Config/validation/contracts';
+import { constraintRules } from '../../../../Config/validation/constraints';
 
 export interface ItemEmailProps {
   needVerify: boolean;
@@ -42,8 +44,9 @@ const ItemEmail = (props: ItemEmailProps & any) => {
           rules={
             props.notCheck !== true
               ? [
+                  ...constraintRules(contracts.user.email),
                   { type: 'email', message: props.t('emailError') },
-                  { required: props.editable !== false },
+                  { required: props.required ?? props.editable !== false },
                 ]
               : undefined
           }
@@ -86,6 +89,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
             name="email"
             label={props.emailTitle ?? props.t('new email')}
             rules={[
+              ...constraintRules(contracts.user.email),
               { required: true },
               ({ getFieldValue }) => ({
                 validator(_, value) {

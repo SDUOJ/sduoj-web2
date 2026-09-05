@@ -53,7 +53,7 @@ class CUser extends Component<any, any> {
                         <Row>
                           <Col span={11}>
                             <ItemUsername editable={false} />
-                            <ItemNickname />
+                            <ItemNickname required />
                             <ItemStudentId />
                             <SubmitButton
                               API={async () => {

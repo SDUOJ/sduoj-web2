@@ -2,13 +2,17 @@ import { Form, Input } from 'antd';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import CApi from '../../../../Utils/API/c-api';
+import { contracts } from '../../../../Config/validation/contracts';
+import { constraintRules } from '../../../../Config/validation/constraints';
 
 const ItemUsername = (props: any) => {
   return (
     <Form.Item
       name="username"
       label={props.t('username')}
+      validateFirst
       rules={[
+        ...(props.editable === false ? [] : constraintRules(contracts.user.username)),
         {
           required: props.editable !== false && props.notRequired !== true,
           message: props.t('usernameEmpty'),
