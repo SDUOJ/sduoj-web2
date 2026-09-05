@@ -1,9 +1,9 @@
 import React, {useRef, useState} from "react";
 import {Button, Form, message, Popconfirm, Radio, Skeleton, Space} from "antd";
-import type {ProFormInstance} from '@ant-design/pro-form';
-import {ModalForm, ProFormCheckbox, ProFormText, ProFormTextArea} from '@ant-design/pro-form';
+import type {ProFormInstance} from '@ant-design/pro-components';
+import {ModalForm, ProFormCheckbox, ProFormText, ProFormTextArea} from '@ant-design/pro-components';
 import {MenuOutlined, PlusOutlined,} from "@ant-design/icons"
-import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
+import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-components";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {withTranslation} from "react-i18next";

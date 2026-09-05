@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
-import {ActionType, EditableProTable} from "@ant-design/pro-table";
+import {ActionType, EditableProTable} from "@ant-design/pro-components";
 
 const getRowKeyValue = (row: any, rowKey: any, data: any[]) => {
     const key = row?.[rowKey];

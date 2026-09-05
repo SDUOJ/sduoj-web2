@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Popconfirm, Popover, Space} from "antd";
 import {CheckOutlined, CloseOutlined, MenuOutlined, PlusOutlined, SwapOutlined} from "@ant-design/icons"
-import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-table";
+import {ActionType, EditableProTable, ProColumns} from "@ant-design/pro-components";
 import {arrayMoveImmutable} from 'array-move';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {useTranslation} from "react-i18next";

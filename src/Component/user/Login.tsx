@@ -1,6 +1,6 @@
 import React, {Dispatch, useRef, useState} from "react";
 import {Button, Card, Space, Tabs} from "antd";
-import {LoginForm, ProFormInstance, ProFormText} from "@ant-design/pro-form";
+import {LoginForm, ProFormInstance, ProFormText} from '@ant-design/pro-components';
 import {LockOutlined, UserOutlined,} from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from "./ThirdPartyLoginSDUCAS";
 import {useTranslation} from "react-i18next";

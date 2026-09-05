@@ -1,4 +1,4 @@
-import {ModalForm} from "@ant-design/pro-form";
+import {ModalForm} from "@ant-design/pro-components";
 import {message} from "antd";
 import ItemUsername from "./Item/ItemUsername";
 import ItemPassword from "./Item/ItemPassword";

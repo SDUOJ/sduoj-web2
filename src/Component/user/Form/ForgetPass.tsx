@@ -1,4 +1,4 @@
-import {ModalForm} from "@ant-design/pro-form";
+import {ModalForm} from "@ant-design/pro-components";
 import {message, Tabs} from "antd";
 import ItemCaptcha from "./Item/ItemCaptcha";
 import React, {useState} from "react";

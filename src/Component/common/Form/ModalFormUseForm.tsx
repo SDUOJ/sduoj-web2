@@ -7,7 +7,7 @@ import type { ButtonProps } from 'antd';
 import {EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {ck, isValueEmpty} from "../../../Utils/empty";
 import {useForm} from "antd/es/form/Form";
-import {ProFormInstance, StepsForm} from "@ant-design/pro-form";
+import {ProFormInstance, StepsForm} from "@ant-design/pro-components";
 
 interface subFormType {
     component: any

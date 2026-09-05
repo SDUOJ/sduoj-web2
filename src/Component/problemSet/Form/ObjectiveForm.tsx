@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Button, Form, Radio} from "antd";
-import {ProFormCheckbox, ProFormTextArea} from '@ant-design/pro-form';
+import {ProFormCheckbox, ProFormTextArea} from '@ant-design/pro-components';
 import {PlusOutlined,} from "@ant-design/icons"
-import {ProColumns} from "@ant-design/pro-table";
+import {ProColumns} from "@ant-design/pro-components";
 import {withTranslation} from "react-i18next";
 import {genAnswerList} from "Type/IManage";
 import CellEditTable from "../../common/Table/CellEditTable";
