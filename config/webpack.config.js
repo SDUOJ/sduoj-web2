@@ -791,6 +791,15 @@ module.exports = function (webpackEnv) {
     ...(isEnvDevelopment
       ? {
           devServer: {
+            proxy: [
+              {
+                context: ['/api', '/ws/submission'],
+                target: process.env.DEV_API_TARGET || 'http://127.0.0.1:8080',
+                changeOrigin: true,
+                ws: true,
+                cookieDomainRewrite: '',
+              },
+            ],
             allowedHosts: 'all',
             compress: true,
             static: {
