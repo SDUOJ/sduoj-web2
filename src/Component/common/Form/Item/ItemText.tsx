@@ -7,10 +7,18 @@ export interface ItemTextProps extends Pick<
   'name' | 'label' | 'required' | 'initialValue' | 'help' | 'rules'
 > {
   addonAfter?: InputProps['addonAfter'];
+  suffix?: InputProps['suffix'];
   constraint?: Constraint;
 }
 
-const ItemText = ({ required, rules = [], addonAfter, constraint, ...props }: ItemTextProps) => {
+const ItemText = ({
+  required,
+  rules = [],
+  addonAfter,
+  constraint,
+  suffix,
+  ...props
+}: ItemTextProps) => {
   const isRequired = required ?? (constraint ? (constraint.required ?? false) : true);
   return (
     <Form.Item
@@ -32,7 +40,7 @@ const ItemText = ({ required, rules = [], addonAfter, constraint, ...props }: It
             : rules
       }
     >
-      <Input addonAfter={addonAfter} />
+      <Input suffix={suffix ?? addonAfter} />
     </Form.Item>
   );
 };

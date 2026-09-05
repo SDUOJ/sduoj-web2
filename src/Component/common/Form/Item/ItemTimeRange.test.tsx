@@ -2,6 +2,7 @@ import { Button, Form } from 'antd';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ItemTimeRange from './ItemTimeRange';
+import '../../../../Config/i18n';
 
 const start = new Date(2026, 8, 5, 10).valueOf();
 const end = start + 3600000;

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Table } from 'antd';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '../../../Config/i18n';
 import {
   DragHandle,
   SortableTableScope,

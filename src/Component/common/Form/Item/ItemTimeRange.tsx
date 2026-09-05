@@ -53,7 +53,12 @@ export default function ItemTimeRange({
               format="YYYY-MM-DD HH:mm:ss"
             />
           </Form.Item>
-          <Form.Item noStyle name={endName} rules={[...requiredRules, ...endRules]}>
+          <Form.Item
+            noStyle
+            name={endName}
+            rules={[...requiredRules, ...endRules]}
+            getValueProps={(value) => ({ value: value ?? '' })}
+          >
             <input type="hidden" />
           </Form.Item>
         </Form.Item>
