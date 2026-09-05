@@ -6,6 +6,7 @@ import { ManageState } from 'Type/IManage';
 import { groupSelection } from 'Type/Igroup';
 import mApi from 'Utils/API/m-api';
 import { isValueEmpty } from '../../../../Utils/empty';
+import { constraintRules } from '../../../../Config/validation/constraints';
 
 const { Option } = Select;
 
@@ -40,7 +41,17 @@ const ItemSelectGroup = (props: any) => {
   }, [props.manageInitData]);
 
   return (
-    <Form.Item label={props.label} name={props.name} help={props.help} required={props.required}>
+    <Form.Item
+      label={props.label}
+      name={props.name}
+      help={props.help}
+      required={props.required}
+      rules={[
+        { required: props.required },
+        ...(props.constraint ? constraintRules(props.constraint) : []),
+        ...(props.rules ?? []),
+      ]}
+    >
       <Select
         mode={props.mode} // "multiple"
         showSearch
