@@ -11,7 +11,7 @@ const useAnswerSheet = (examId: React.Key, groupId: React.Key) => {
     const dispatch = useDispatch()
     useEffect(() => {
         if (answerSheets === undefined) {
-            eApi.getAnswerSheet(examId, groupId).then((res: any) => {
+            eApi.getAnswerSheet(String(examId), String(groupId)).then((res: any) => {
                 dispatch({
                     type: "setAnswerSheet",
                     data: res,

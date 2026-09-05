@@ -1,13 +1,13 @@
-import {AxiosRequestConfig, CustomSuccessData} from "axios";
+import {AxiosRequestConfig} from "axios";
 import {Sex} from "./Iuser";
 import React from "react";
 
 export interface Get {
-    <T>(url: string, params?: object, config?: AxiosRequestConfig): Promise<CustomSuccessData<T>>;
+    <T = any>(url: string, params?: object, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface Post {
-    <T>(url: string, data: object, config?: AxiosRequestConfig): Promise<CustomSuccessData<T>>
+    <T = any>(url: string, data: object, config?: AxiosRequestConfig): Promise<T>
 }
 
 export interface GetError {
@@ -175,7 +175,7 @@ export type updatePassWord = {
 }
 
 
-export type examID = React.Key
+export type examID = string | number
 
 
 export type ProblemID = {

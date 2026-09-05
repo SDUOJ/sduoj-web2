@@ -3,11 +3,11 @@ import {useDispatch, useSelector} from "react-redux";
 import eApi from "Utils/API/e-api"
 
 const useExamInfo = (examId: React.Key) => {
-    const examInfo = useSelector((state: any) => state.ExamReducer.examInfo[examId])
+    const examInfo = useSelector((state: any) => state.ExamReducer.examInfo[String(examId)])
     const dispatch = useDispatch()
     useEffect(() => {
         if (examInfo === undefined) {
-            eApi.getExamInfo(examId).then((x: any) => {
+            eApi.getExamInfo(String(examId)).then((x: any) => {
                 dispatch({
                     type: "setExamInfo",
                     key: examId,

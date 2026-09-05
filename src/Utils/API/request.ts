@@ -1,12 +1,12 @@
 import apiAddress from "./apiAddress";
 import axios, {AxiosRequestConfig} from "axios";
-import {Get, GetError, Post} from "../../Type/types";
+import {Get, Post} from "../../Type/types";
 import {message} from "antd";
 import {UrlPrefix} from "../../Config/constValue";
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api'
 
-const service = axios.create({
+export const service = axios.create({
     baseURL: baseUrl,
     timeout: 1000 * 60 * 5, // 超时时间改为 5 分钟
 })
@@ -96,22 +96,23 @@ const dealResponse = async (resp: any, url: string) => {
                     message.error(parseErrorMessage(response.data, "未登录或登录已过期"));
                 }
                 return Promise.reject(parseErrorMessage(response.data, "未登录或登录已过期"))
-            default:
+            default: {
                 const errorMsg = parseErrorMessage(response.data);
                 if (messageDisabledList.indexOf(url) === -1)
                     message.error(errorMsg);
                 return Promise.reject(errorMsg)
+            }
         }
     }
 }
 
-const get: Get | GetError = async (url: string, params?: object, config?: AxiosRequestConfig) => {
+const get: Get = async (url: string, params?: object, config?: AxiosRequestConfig) => {
     return await dealResponse(service.get(url, {
         ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, params, ...config,
     }), url)
 }
 
-const post: Post | GetError = async (url: string, data: object, config?: AxiosRequestConfig) => {
+const post: Post = async (url: string, data: object, config?: AxiosRequestConfig) => {
     return await dealResponse(service.post(url, data, {
         ...{headers: {"Cache-Control": "no-cache, no-store, must-revalidate"}}, ...config
     }), url);
