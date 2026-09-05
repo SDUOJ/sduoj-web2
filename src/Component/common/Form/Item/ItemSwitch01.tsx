@@ -1,24 +1,28 @@
-import {Form} from "antd";
-import React from "react";
-import {withTranslation} from "react-i18next";
-import SwitchX from "./SwitchX";
+import { Form } from 'antd';
+import type { FormItemProps } from 'antd';
+import React from 'react';
+import SwitchX from './SwitchX';
 
-const ItemSwitch01 = (props: any) => {
-    return (
-        <>
-            <Form.Item
-                name={props.name}
-                label={props.label}
-                initialValue={props.InitValue ?? 0}
-                required={props.required ?? true}
-            >
-                <SwitchX ck={props.ck} unck={props.unck}/>
-            </Form.Item>
-        </>
-    )
+interface Props extends Pick<FormItemProps, 'name' | 'label' | 'required' | 'rules'> {
+  InitValue?: number;
+  ck?: React.ReactNode;
+  unck?: React.ReactNode;
 }
 
+const ItemSwitch01 = (props: Props) => {
+  return (
+    <>
+      <Form.Item
+        name={props.name}
+        label={props.label}
+        initialValue={props.InitValue ?? 0}
+        required={props.required ?? true}
+        rules={props.rules}
+      >
+        <SwitchX ck={props.ck} unck={props.unck} />
+      </Form.Item>
+    </>
+  );
+};
 
-
-
-export default withTranslation()(ItemSwitch01)
+export default ItemSwitch01;

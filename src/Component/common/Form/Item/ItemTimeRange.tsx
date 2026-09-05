@@ -1,50 +1,63 @@
-import {withTranslation} from "react-i18next";
-import {DatePicker, Form} from "antd";
-import React, {useEffect, useState} from "react";
-import FormExtraInfo from "../FormExtraInfo";
-import {isValueEmpty} from "../../../../Utils/empty";
-import dayjs, {Dayjs} from "dayjs";
+import { DatePicker, Form } from 'antd';
+import type { FormItemProps } from 'antd';
+import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
-const ItemTimeRange = (props: any) =>{
-    const [timeRange, setTimeRange] = useState<[Dayjs, Dayjs] | null>()
-    const [timeRange1, setTimeRange1] = useState<Dayjs | null>()
-    const [timeRange2, setTimeRange2] = useState<Dayjs | null>()
-    const {RangePicker} = DatePicker;
-
-    useEffect(() => {
-        if (timeRange1 && timeRange2) setTimeRange([timeRange1, timeRange2])
-        else setTimeRange(null)
-    }, [timeRange1, timeRange2])
-
-    return (
-        <>
-            <Form.Item
-                label={props.label}
-                required={props.required}
-            >
-                <RangePicker
-                    showTime={{minuteStep: 5, secondStep: 30}}
-                    format={"YYYY-MM-DD HH:mm:ss"}
-                    value={timeRange as any}
-                    onChange={(v) => {
-                        setTimeRange(v as any)
-                        setTimeRange1(v?.[0] ?? null)
-                        setTimeRange2(v?.[1] ?? null)
-                    }}
-                />
-            </Form.Item>
-            <Form.Item name={props.startName ?? "gmtStart"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange1) ? undefined : timeRange1?.valueOf()} setV={(v: any) => {
-                    setTimeRange1(dayjs(parseInt(v)))
-                }} eqs={(a: string, b: string) => a === b}/>
-            </Form.Item>
-            <Form.Item name={props.endName ?? "gmtEnd"} hidden required>
-                <FormExtraInfo v={isValueEmpty(timeRange2) ? undefined : timeRange2?.valueOf()} setV={(v: any) => {
-                    setTimeRange2(dayjs(parseInt(v)))
-                }} eqs={(a: string, b: string) => a === b}/>
-            </Form.Item>
-        </>
-    )
+interface Props {
+  label?: React.ReactNode;
+  required?: boolean;
+  startName?: FormItemProps['name'];
+  endName?: FormItemProps['name'];
+  prefix?: (string | number)[];
+  startRules?: FormItemProps['rules'];
+  endRules?: FormItemProps['rules'];
 }
 
-export default withTranslation()(ItemTimeRange)
+function timestamp(value: unknown) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = dayjs(Number(value));
+  return date.isValid() ? date : null;
+}
+
+export default function ItemTimeRange({
+  label,
+  required = false,
+  startName = 'gmtStart',
+  endName = 'gmtEnd',
+  prefix = [],
+  startRules = [],
+  endRules = [],
+}: Props) {
+  const { t } = useTranslation();
+  const endPath = [...prefix, ...(Array.isArray(endName) ? endName : [endName])];
+  const requiredRules = required ? [{ required: true, message: t('ValidationRequired') }] : [];
+  return (
+    <Form.Item noStyle shouldUpdate>
+      {(form) => (
+        <Form.Item label={label} required={required}>
+          <Form.Item
+            noStyle
+            name={startName}
+            rules={[...requiredRules, ...startRules]}
+            getValueProps={(value) => ({
+              value: [timestamp(value), timestamp(form.getFieldValue(endPath))],
+            })}
+            getValueFromEvent={(range) => {
+              // Store clears too, so reset/edit cannot restore stale dates.
+              form.setFieldValue(endPath, range?.[1]?.valueOf() ?? null);
+              return range?.[0]?.valueOf() ?? null;
+            }}
+          >
+            <DatePicker.RangePicker
+              showTime={{ minuteStep: 5, secondStep: 30 }}
+              format="YYYY-MM-DD HH:mm:ss"
+            />
+          </Form.Item>
+          <Form.Item noStyle name={endName} rules={[...requiredRules, ...endRules]}>
+            <input type="hidden" />
+          </Form.Item>
+        </Form.Item>
+      )}
+    </Form.Item>
+  );
+}

@@ -6,6 +6,7 @@ import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import TableRowDeleteButton from '../../Component/common/Table/TableRowDeleteButton';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintRules, numericProps } from '../../Config/validation/constraints';
+import { autolabFieldRules } from '../../Config/validation/fields';
 
 interface ISeatBan {
   seat_number: number;
@@ -92,20 +93,49 @@ const buildClassroomPayload = (values: any) => {
 
 const classroomForm = (
   <>
-    <Form.Item name="c_name" label="教室名称" rules={constraintRules(contracts.classroom.c_name)}>
+    <Form.Item
+      name="c_name"
+      label="教室名称"
+      rules={[
+        ...constraintRules(contracts.classroom.c_name),
+        ...autolabFieldRules('ClassroomCreateRequest', 'c_name'),
+      ]}
+    >
       <Input />
     </Form.Item>
-    <Form.Item name="address" label="教室地点" rules={constraintRules(contracts.classroom.address)}>
+    <Form.Item
+      name="address"
+      label="教室地点"
+      rules={[
+        ...constraintRules(contracts.classroom.address),
+        ...autolabFieldRules('ClassroomCreateRequest', 'address'),
+      ]}
+    >
       <Input />
     </Form.Item>
     <Form.Item
       name="c_seat_num"
       label="座位数量"
-      rules={constraintRules(contracts.classroom.c_seat_num)}
+      rules={[
+        ...constraintRules(contracts.classroom.c_seat_num),
+        ...autolabFieldRules('ClassroomCreateRequest', 'c_seat_num'),
+      ]}
     >
       <InputNumber {...numericProps(contracts.classroom.c_seat_num)} style={{ width: '100%' }} />
     </Form.Item>
-    <Form.Item name="seat_ban_text" label="禁用座位（每行：座位号|原因，可仅填座位号）">
+    <Form.Item
+      name="seat_ban_text"
+      label="禁用座位（每行：座位号|原因，可仅填座位号）"
+      rules={[
+        {
+          validator: async (_, value: string | undefined) => {
+            const { invalidLines } = parseSeatBanInput(value);
+            if (invalidLines.length)
+              throw new Error(`禁用座位格式错误：${invalidLines.join('，')}`);
+          },
+        },
+      ]}
+    >
       <Input.TextArea rows={4} placeholder="5|座位损坏\n12|电脑故障" />
     </Form.Item>
   </>

@@ -8,6 +8,7 @@ import mApi from 'Utils/API/m-api';
 import ItemTitle from '../../Component/common/Form/Item/ItemTitle';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintRules, numericProps } from '../../Config/validation/constraints';
+import { autolabFieldRules } from '../../Config/validation/fields';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import ItemText from '../../Component/common/Form/Item/ItemText';
 import ItemEditor from '../../Component/common/Form/Item/ItemEditor';
@@ -62,6 +63,7 @@ const MProblemSet = (props: any) => {
     {
       title: props.t('ProblemGroupId'),
       dataIndex: 'gid',
+      formItemProps: () => ({ rules: autolabFieldRules('groupInfoItem', 'gid') }),
       editable: true,
       valueType: 'select',
       fieldProps: {
@@ -72,6 +74,7 @@ const MProblemSet = (props: any) => {
     {
       title: props.t('ProblemGroupAlias'),
       dataIndex: 'name',
+      formItemProps: () => ({ rules: autolabFieldRules('groupInfoItem', 'name') }),
       editable: true,
       valueType: 'text',
       width: '240px',
@@ -79,6 +82,7 @@ const MProblemSet = (props: any) => {
     {
       title: props.t('Score'),
       dataIndex: 'score',
+      formItemProps: () => ({ rules: autolabFieldRules('groupInfoItem', 'score') }),
       editable: true,
       valueType: 'digit',
       width: '120px',
@@ -88,7 +92,8 @@ const MProblemSet = (props: any) => {
   if (useGlobalTime !== 1) {
     tableColumns.push({
       title: props.t('TimeSetting'),
-      dataIndex: 'answer',
+      dataIndex: 'timeSetting',
+      formItemProps: () => ({ rules: autolabFieldRules('groupInfoItem', 'timeSetting') }),
       editable: true,
       renderFormItem: () => <TimeSettingX />,
     });
@@ -137,6 +142,7 @@ const MProblemSet = (props: any) => {
           <ItemSelectGroup
             label={props.t('ManagementGroup')}
             name={'manageGroupId'}
+            rules={autolabFieldRules('problem_set_base', 'manageGroupId')}
             formName={'ProblemSetForm'}
           />
           <Row gutter={24}>
@@ -144,6 +150,7 @@ const MProblemSet = (props: any) => {
               <ItemSelectGroup
                 label={props.t('AnswerGroup')}
                 name={'groupId'}
+                rules={autolabFieldRules('problem_set_base', 'groupId')}
                 formName={'ProblemSetForm'}
                 required={true}
               />
@@ -173,7 +180,11 @@ const MProblemSet = (props: any) => {
         <>
           <Row gutter={24}>
             {/*<Col span={6}>*/}
-            <Form.Item name={['config', 'useSameSE']} hidden>
+            <Form.Item
+              name={['config', 'useSameSE']}
+              hidden
+              rules={autolabFieldRules('problem_set_config', 'useSameSE')}
+            >
               <FormExtraInfo
                 v={useGlobalTime}
                 setV={setUseGlobalTime}
@@ -192,13 +203,19 @@ const MProblemSet = (props: any) => {
                   required={true}
                   startName={'tm_start'}
                   endName={'tm_end'}
+                  startRules={autolabFieldRules('problem_set_base', 'tm_start')}
+                  endRules={autolabFieldRules('problem_set_base', 'tm_end')}
                 />
               )}
             </Col>
           </Row>
           <Row gutter={24}>
             <Col span={6}>
-              <Form.Item name={['config', 'showReport']} hidden>
+              <Form.Item
+                name={['config', 'showReport']}
+                hidden
+                rules={autolabFieldRules('problem_set_config', 'showReport')}
+              >
                 <FormExtraInfo
                   v={useReport}
                   setV={setUseReport}
@@ -223,6 +240,7 @@ const MProblemSet = (props: any) => {
                     unck={props.t('Hide')}
                     required={true}
                     name={['config', 'showObjectiveAnswer']}
+                    rules={autolabFieldRules('problem_set_config', 'showObjectiveAnswer')}
                   />
                 </Col>
                 <Col span={6}>
@@ -232,6 +250,7 @@ const MProblemSet = (props: any) => {
                     unck={props.t('Hide')}
                     required={true}
                     name={['config', 'showSubjectiveAnswer']}
+                    rules={autolabFieldRules('problem_set_config', 'showSubjectiveAnswer')}
                   />
                 </Col>
                 <Col span={6}>
@@ -241,6 +260,7 @@ const MProblemSet = (props: any) => {
                     unck={props.t('Hide')}
                     required={true}
                     name={['config', 'showSubjectiveJudgeLog']}
+                    rules={autolabFieldRules('problem_set_config', 'showSubjectiveJudgeLog')}
                   />
                 </Col>
               </>
@@ -249,7 +269,11 @@ const MProblemSet = (props: any) => {
 
           {useGlobalTime === 1 && (
             <>
-              <Form.Item name={['config', 'usePractice']} hidden>
+              <Form.Item
+                name={['config', 'usePractice']}
+                hidden
+                rules={autolabFieldRules('problem_set_config', 'usePractice')}
+              >
                 <FormExtraInfo
                   v={usePractice}
                   setV={setUsePractice}
@@ -270,12 +294,14 @@ const MProblemSet = (props: any) => {
                     name={['config', 'practiceScoreCalculate']}
                     label={props.t('PracticeScoreFormula')}
                     help={props.t('PracticeScoreFormulaHelp')}
+                    rules={autolabFieldRules('problem_set_config', 'practiceScoreCalculate')}
                   >
                     <Input />
                   </Form.Item>
                   <ItemTimeSetting
                     name={['config', 'practiceTimeSetting']}
                     label={props.t('PracticeTimeSetting')}
+                    rules={autolabFieldRules('problem_set_config', 'practiceTimeSetting')}
                   />
                 </>
               )}
@@ -285,6 +311,7 @@ const MProblemSet = (props: any) => {
             <Col span={8}>
               <ItemSwitch01
                 name={['config', 'showScoreInRunning']}
+                rules={autolabFieldRules('problem_set_config', 'showScoreInRunning')}
                 label={props.t('ShowScoreInRunning')}
                 ck={props.t('Yes')}
                 unck={props.t('No')}
@@ -294,6 +321,7 @@ const MProblemSet = (props: any) => {
             <Col span={8}>
               <ItemSwitch01
                 name={['config', 'showProgramScoreInRunning']}
+                rules={autolabFieldRules('problem_set_config', 'showProgramScoreInRunning')}
                 label={props.t('ShowProgramScoreInRunning')}
                 ck={props.t('Yes')}
                 unck={props.t('No')}
@@ -303,6 +331,7 @@ const MProblemSet = (props: any) => {
             <Col span={8}>
               <ItemSwitch01
                 name={['config', 'mergerSubjectiveGroup']}
+                rules={autolabFieldRules('problem_set_config', 'mergerSubjectiveGroup')}
                 label={props.t('MergeSubjectiveGroup')}
                 ck={props.t('Yes')}
                 unck={props.t('No')}
@@ -317,7 +346,14 @@ const MProblemSet = (props: any) => {
     {
       component: (
         <>
-          <Form.Item name={'groupInfo'} label={props.t('ProblemGroupSetting')}>
+          <Form.Item
+            name={'groupInfo'}
+            label={props.t('ProblemGroupSetting')}
+            rules={[
+              ...constraintRules(contracts.problemSet.groupInfo),
+              ...autolabFieldRules('problem_set_base', 'groupInfo'),
+            ]}
+          >
             <CellEditTable
               columns={tableColumns}
               rowKey={'id'}

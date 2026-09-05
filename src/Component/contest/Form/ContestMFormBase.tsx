@@ -1,7 +1,8 @@
 import { withTranslation } from 'react-i18next';
 import ItemText from '../../common/Form/Item/ItemText';
 import ItemTitle from '../../common/Form/Item/ItemTitle';
-import { contracts } from '../../../Config/validation/contracts';
+import { contracts, contestFeatureContracts } from '../../../Config/validation/contracts';
+import { constraintRules } from '../../../Config/validation/constraints';
 import { Col, Form, Radio, Row, Select } from 'antd';
 import React, { useState } from 'react';
 import FormExtraInfo from '../../common/Form/FormExtraInfo';
@@ -17,7 +18,11 @@ const ContestMFormBase = (props: any) => {
       <ItemTitle name={'contestTitle'} constraint={contracts.contest.contestTitle} />
       <Row>
         <Col span={5}>
-          <Form.Item label={props.t('Mode')} name={['features', 'mode']} required>
+          <Form.Item
+            label={props.t('Mode')}
+            name={['features', 'mode']}
+            rules={constraintRules(contestFeatureContracts.mode)}
+          >
             <Radio.Group>
               <Radio value={'acm'}> ACM </Radio>
               <Radio value={'oi'}> OI </Radio>
@@ -80,7 +85,11 @@ const ContestMFormBase = (props: any) => {
         </Col>
       </Row>
 
-      <Form.Item name={['features', 'openness']} hidden required>
+      <Form.Item
+        name={['features', 'openness']}
+        hidden
+        rules={constraintRules(contestFeatureContracts.openness)}
+      >
         <FormExtraInfo v={openness} setV={setOpenness} eqs={(a: string, b: string) => a === b} />
       </Form.Item>
 

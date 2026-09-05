@@ -26,6 +26,7 @@ import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import TableRowDeleteButton from '../../Component/common/Table/TableRowDeleteButton';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintRules } from '../../Config/validation/constraints';
+import { autolabFieldRules } from '../../Config/validation/fields';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import ItemSelectClassroom from '../../Component/autolab/Form/Item/ItemSelectClassroom';
 
@@ -90,38 +91,77 @@ const MAutolab: React.FC = () => {
       <Form.Item
         name="course_name"
         label="课程名称"
-        rules={constraintRules(contracts.course.course_name)}
+        rules={[
+          ...constraintRules(contracts.course.course_name),
+          ...autolabFieldRules('CourseCreateRequest', 'course_name'),
+        ]}
       >
         <Input />
       </Form.Item>
-      <ItemSelectGroup name={'group_id'} label={'用户组'} required={true} />
-      <ItemSelectGroup name={'manager_groups'} label={'管理组'} mode={'multiple'} />
-      <Form.Item name="tag" label="标签" rules={constraintRules(contracts.course.tag)}>
+      <ItemSelectGroup
+        name={'group_id'}
+        label={'用户组'}
+        required={true}
+        rules={autolabFieldRules('CourseCreateRequest', 'group_id')}
+      />
+      <ItemSelectGroup
+        name={'manager_groups'}
+        label={'管理组'}
+        mode={'multiple'}
+        rules={autolabFieldRules('CourseCreateRequest', 'manager_groups')}
+      />
+      <Form.Item
+        name="tag"
+        label="标签"
+        rules={[
+          ...constraintRules(contracts.course.tag),
+          ...autolabFieldRules('CourseCreateRequest', 'tag'),
+        ]}
+      >
         <Select options={tagOptions} />
       </Form.Item>
-      <ItemSelectClassroom name={'c_ids'} label={'教室'} mode={'multiple'} />
+      <ItemSelectClassroom
+        name={'c_ids'}
+        label={'教室'}
+        mode={'multiple'}
+        rules={autolabFieldRules('CourseCreateRequest', 'c_ids')}
+      />
     </>
   );
 
   const timeForm = (
     <>
-      <Form.Item name="start_time" label="开始时间" rules={[{ required: true }]}>
+      <Form.Item
+        name="start_time"
+        label="开始时间"
+        rules={autolabFieldRules('CourseTimeItemAddRequest', 'start_time')}
+      >
         <DatePicker showTime style={{ width: '100%' }} />
       </Form.Item>
-      <Form.Item name="end_time" label="结束时间" rules={[{ required: true }]}>
+      <Form.Item
+        name="end_time"
+        label="结束时间"
+        rules={autolabFieldRules('CourseTimeItemAddRequest', 'end_time')}
+      >
         <DatePicker showTime style={{ width: '100%' }} />
       </Form.Item>
       <Form.Item
         name="course_content"
         label="课程内容"
-        rules={constraintRules(contracts.course.course_content)}
+        rules={[
+          ...constraintRules(contracts.course.course_content),
+          ...autolabFieldRules('CourseTimeItemAddRequest', 'course_content'),
+        ]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         name="course_homework"
         label="课程作业"
-        rules={constraintRules(contracts.course.course_homework)}
+        rules={[
+          ...constraintRules(contracts.course.course_homework),
+          ...autolabFieldRules('CourseTimeItemAddRequest', 'course_homework'),
+        ]}
       >
         <Input />
       </Form.Item>
@@ -130,7 +170,14 @@ const MAutolab: React.FC = () => {
 
   const taForm = (
     <>
-      <Form.Item name="ta_name" label="助教姓名" rules={constraintRules(contracts.course.ta_name)}>
+      <Form.Item
+        name="ta_name"
+        label="助教姓名"
+        rules={[
+          ...constraintRules(contracts.course.ta_name),
+          ...autolabFieldRules('TAAddRequest', 'ta_name'),
+        ]}
+      >
         <Input />
       </Form.Item>
       <Form.Item name="contact" label="联系方式">

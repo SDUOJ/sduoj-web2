@@ -5,7 +5,7 @@ import ItemSelectGroup from '../../group/Form/Item/ItemSelectGroup';
 import React from 'react';
 import TextArea from 'antd/es/input/TextArea';
 import ItemSwitch01 from '../../common/Form/Item/ItemSwitch01';
-import { contracts } from '../../../Config/validation/contracts';
+import { contracts, contestFeatureContracts } from '../../../Config/validation/contracts';
 import { constraintRules } from '../../../Config/validation/constraints';
 
 const ContestMFormManagement = (props: any) => {
@@ -35,6 +35,7 @@ const ContestMFormManagement = (props: any) => {
                 <ItemSwitch01
                   InitValue={1}
                   name={['features', rows.type, 'displayPeerSubmission']}
+                  rules={constraintRules(contestFeatureContracts.visibility)}
                   ck={props.t('Show')}
                   unck={props.t('Hide')}
                 />
@@ -48,6 +49,7 @@ const ContestMFormManagement = (props: any) => {
                 <ItemSwitch01
                   InitValue={1}
                   name={['features', rows.type, 'displayRank']}
+                  rules={constraintRules(contestFeatureContracts.visibility)}
                   ck={props.t('Show')}
                   unck={props.t('Hide')}
                 />
@@ -61,6 +63,7 @@ const ContestMFormManagement = (props: any) => {
                 <ItemSwitch01
                   InitValue={1}
                   name={['features', rows.type, 'displayJudgeScore']}
+                  rules={constraintRules(contestFeatureContracts.visibility)}
                   ck={props.t('Show')}
                   unck={props.t('Hide')}
                 />
@@ -74,6 +77,7 @@ const ContestMFormManagement = (props: any) => {
                 <ItemSwitch01
                   InitValue={1}
                   name={['features', rows.type, 'displayCheckpointResult']}
+                  rules={constraintRules(contestFeatureContracts.visibility)}
                   ck={props.t('Show')}
                   unck={props.t('Hide')}
                 />
@@ -87,6 +91,7 @@ const ContestMFormManagement = (props: any) => {
                 <ItemSwitch01
                   InitValue={1}
                   name={['features', rows.type, 'allowToSubmit']}
+                  rules={constraintRules(contestFeatureContracts.visibility)}
                   ck={props.t('Allow')}
                   unck={props.t('Disallow')}
                 />

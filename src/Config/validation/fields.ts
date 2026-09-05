@@ -23,7 +23,11 @@ function resolve(schema: Schema): Schema {
   return schema;
 }
 
-export function autolabFieldSchema(model: AutolabModel, path: readonly (string | number)[]) {
+export function autolabFieldSchema(
+  model: AutolabModel,
+  path: string | readonly (string | number)[],
+) {
+  if (typeof path === 'string') path = [path];
   let schema = schemas[model];
   let required = false;
   for (const part of path) {

@@ -10,6 +10,7 @@ import equ from '../../../Utils/equ';
 import FormExtraInfo from '../../common/Form/FormExtraInfo';
 import { contracts } from '../../../Config/validation/contracts';
 import { constraintRules } from '../../../Config/validation/constraints';
+import { autolabFieldRules } from '../../../Config/validation/fields';
 
 const initData = {
   choice: [
@@ -52,7 +53,7 @@ const ObjectiveForm = (props: any) => {
         return {
           rules: [
             { required: true, message: props.t('fieldRequired') },
-            { type: 'string', min: 1, max: 250 },
+            ...autolabFieldRules('objective_content', ['choice', 0]),
           ],
         };
       },
@@ -77,7 +78,11 @@ const ObjectiveForm = (props: any) => {
 
   return (
     <>
-      <Form.Item label={props.t('Type')} name={'type'} rules={[{ required: true }]}>
+      <Form.Item
+        label={props.t('Type')}
+        name={'type'}
+        rules={autolabFieldRules('objective_base', 'type')}
+      >
         <Radio.Group disabled={props.type === 'update'}>
           <Radio value={0}>{props.t('SingleChoice')}</Radio>
           <Radio value={1}>{props.t('MultipleChoice')}</Radio>
@@ -128,7 +133,10 @@ const ObjectiveForm = (props: any) => {
         layout="vertical"
         label={props.t('answer')}
         options={answerList}
-        rules={[{ required: true, message: props.t('PleaseChooseTheAnswer') }]}
+        rules={[
+          { required: true, message: props.t('PleaseChooseTheAnswer') },
+          ...autolabFieldRules('objective_base', 'answer'),
+        ]}
       />
     </>
   );

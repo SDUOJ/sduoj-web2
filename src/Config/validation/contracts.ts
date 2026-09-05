@@ -9,6 +9,18 @@ const list = (maxItems: number, source: string): Constraint => ({
   source,
 });
 
+export const contestFeatureContracts = {
+  mode: { kind: 'string', required: true, source: 'ContestFeatureDTO.mode @NotNull' },
+  openness: { kind: 'string', required: true, source: 'ContestFeatureDTO.openness @NotNull' },
+  visibility: {
+    kind: 'integer',
+    required: true,
+    min: -2147483648,
+    max: 2147483647,
+    source: 'ContestFeatureDTO.InfoOpenness Integer @NotNull',
+  },
+} satisfies Record<string, Constraint>;
+
 export const contracts = {
   user: {
     username: column('oj', 'oj_user', 'u_username', {
@@ -170,6 +182,32 @@ export const contracts = {
   exam: {
     examTitle: column('oj', 'oj_exam', 'e_title'),
     examDescription: column('oj', 'oj_exam', 'e_markdown_description'),
+    scoreMod: {
+      kind: 'string',
+      required: true,
+      values: ['show', 'partial', 'disable'],
+      source: 'examBasicType',
+    } as Constraint,
+    caseMod: {
+      kind: 'string',
+      required: true,
+      values: ['show', 'partial', 'disable'],
+      source: 'examBasicType',
+    } as Constraint,
+    openReport: {
+      kind: 'integer',
+      required: true,
+      min: 0,
+      max: 1,
+      source: 'examBasicType',
+    } as Constraint,
+    timeRange: {
+      kind: 'array',
+      required: true,
+      minItems: 2,
+      maxItems: 2,
+      source: 'examBasicType',
+    } as Constraint,
   },
   choice: {
     problemTitle: column('oj', 'oj_choice_problem', 'cp_title'),

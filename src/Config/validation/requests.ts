@@ -1,5 +1,5 @@
 import { Constraint, constraintError } from './constraints';
-import { contracts as c } from './contracts';
+import { contracts as c, contestFeatureContracts } from './contracts';
 import { autolabSchemaError } from './autolab';
 import { column } from './constraints';
 import database from './database.json';
@@ -121,7 +121,23 @@ export const requestContracts: RequestContract[] = [
   { match: /^\/manage\/judgetemplate\/(create|update)$/, fields: c.judgeTemplate },
   {
     match: /^\/manage\/contest\/(create|update)$/,
-    fields: { ...c.contest, 'features.frozenTime': c.contest.frozenTime },
+    fields: {
+      ...c.contest,
+      'features.frozenTime': c.contest.frozenTime,
+      'features.mode': contestFeatureContracts.mode,
+      'features.openness': contestFeatureContracts.openness,
+      ...Object.fromEntries(
+        ['contestRunning', 'contestEnd'].flatMap((phase) =>
+          [
+            'displayPeerSubmission',
+            'displayRank',
+            'displayJudgeScore',
+            'displayCheckpointResult',
+            'allowToSubmit',
+          ].map((field) => [`features.${phase}.${field}`, contestFeatureContracts.visibility]),
+        ),
+      ),
+    },
   },
   { match: /^\/contest\/participate$/, fields: { password: c.contest.password } },
   {
@@ -132,7 +148,16 @@ export const requestContracts: RequestContract[] = [
     match: /^\/(submit\/create|contest\/createSubmission|exam\/createSubmission)$/,
     fields: c.submission,
   },
-  { match: /^\/manage\/exam\/(create|update)$/, fields: c.exam },
+  {
+    match: /^\/manage\/exam\/(create|update)$/,
+    fields: {
+      examTitle: c.exam.examTitle,
+      description: c.exam.examDescription,
+      'features.scoreMod': c.exam.scoreMod,
+      'features.caseMod': c.exam.caseMod,
+      'features.openReport': c.exam.openReport,
+    },
+  },
   {
     match: /^\/manage\/exam\/choiceProblem\/(createChoiceProblem|updateChoiceProblem)$/,
     fields: c.choice,

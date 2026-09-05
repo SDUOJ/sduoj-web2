@@ -59,7 +59,7 @@ const ExamBaseForm = (props: any) => {
               <Form.Item
                 name="scoreMod"
                 label={t('ScoreDisplayMode')}
-                rules={[{ required: true, message: t('fieldRequired') }]}
+                rules={constraintRules(contracts.exam.scoreMod)}
               >
                 <Radio.Group
                   optionType="button"
@@ -76,7 +76,7 @@ const ExamBaseForm = (props: any) => {
               <Form.Item
                 name="caseMod"
                 label={t('CheckpointDisplayMode')}
-                rules={[{ required: true, message: t('fieldRequired') }]}
+                rules={constraintRules(contracts.exam.caseMod)}
               >
                 <Radio.Group
                   optionType="button"
@@ -93,7 +93,7 @@ const ExamBaseForm = (props: any) => {
               <Form.Item
                 name="openReport"
                 label={t('ExamReportAfterExam')}
-                rules={[{ required: true, message: t('fieldRequired') }]}
+                rules={constraintRules(contracts.exam.openReport)}
               >
                 <Radio.Group
                   optionType="button"
@@ -112,7 +112,7 @@ const ExamBaseForm = (props: any) => {
               <Form.Item
                 name="examStartEndTime"
                 label={t('ExamTimeRange')}
-                rules={[{ type: 'array' as const, required: true, message: t('fieldRequired') }]}
+                rules={constraintRules(contracts.exam.timeRange)}
                 tooltip={{ title: t('ExamTimeRangeHint'), icon: <InfoCircleOutlined /> }}
               >
                 <RangePicker
