@@ -297,7 +297,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
                 const targetPsid = record.psid ?? psid;
                 return (
                     <Switch
-                        checked={value !== undefined ? value : (record.enabled ?? true)}
+                        checked={Boolean(value !== undefined ? value : (record.enabled ?? true))}
                         onChange={(checked) => handleToggleEnabled(record, checked)}
                         disabled={switchLoadingId === (record.permission_id ?? record.id) || !targetPsid}
                         loading={switchLoadingId === (record.permission_id ?? record.id)}

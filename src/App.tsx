@@ -5,8 +5,8 @@ import './App.css';
 import './Config/i18n'
 import {ConfigProvider} from "antd";
 import {appTheme} from './Config/theme';
-import {connect} from "react-redux";
-import {ConfigState} from "./Type/IConfig";
+import {useAppSelector} from './Redux/Store/hooks';
+import ErrorBoundary from './Utils/ErrorBoundary';
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
@@ -14,12 +14,14 @@ const SubmissionModal = lazy(() => import('./Component/submission/Processing/Mod
 const RequirePassChange = lazy(() => import('./Component/common/RequirePassChange'));
 
 
-const App = (props: any) => {
+const App = () => {
+    const locale = useAppSelector((state) => state.ConfigReducer.lang);
 
 
     return (
         // antd 全局化配置  国际化参数
-    <ConfigProvider locale={props.local} theme={appTheme}>
+    <ConfigProvider locale={locale} theme={appTheme}>
+        <ErrorBoundary>
             {/*顶级路由*/}
             <Router>
                 {/* 提交详情窗体 / 密码修改提示 懒加载，避免首屏引入 */}
@@ -38,21 +40,10 @@ const App = (props: any) => {
                     }
                 </Suspense>
             </Router>
-        </ConfigProvider>
+        </ErrorBoundary>
+    </ConfigProvider>
     );
 
 }
 
-const mapStateToProps = (state: any) => {
-    const State: ConfigState = state.ConfigReducer
-    return {
-        local: State.lang,
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App)
+export default App;
