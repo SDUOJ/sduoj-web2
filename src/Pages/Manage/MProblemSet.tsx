@@ -6,6 +6,8 @@ import TableWithPagination from '../../Component/common/Table/TableWithPaginatio
 import { withTranslation } from 'react-i18next';
 import mApi from 'Utils/API/m-api';
 import ItemTitle from '../../Component/common/Form/Item/ItemTitle';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules, numericProps } from '../../Config/validation/constraints';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import ItemText from '../../Component/common/Form/Item/ItemText';
 import ItemEditor from '../../Component/common/Form/Item/ItemEditor';
@@ -105,7 +107,7 @@ const MProblemSet = (props: any) => {
     {
       component: (
         <>
-          <ItemTitle name={'name'} />
+          <ItemTitle name={'name'} constraint={contracts.problemSet.name} />
           <Form.Item hidden name={'type'} required>
             <FormExtraInfo v={type} setV={setType} eqs={(a: any, b: any) => a === b} />
           </Form.Item>
@@ -124,7 +126,12 @@ const MProblemSet = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <ItemText name={'tag'} label={props.t('Tag')} help={props.t('TagHelp')} />
+              <ItemText
+                name={'tag'}
+                label={props.t('Tag')}
+                help={props.t('TagHelp')}
+                constraint={contracts.problemSet.tag}
+              />
             </Col>
           </Row>
           <ItemSelectGroup
@@ -146,12 +153,17 @@ const MProblemSet = (props: any) => {
                 name={'global_score'}
                 label={props.t('GroupScore')}
                 help={props.t('GroupScoreHelp')}
+                rules={constraintRules(contracts.problemSet.global_score)}
               >
                 <InputNumber />
               </Form.Item>
             </Col>
           </Row>
-          <ItemEditor name={'description'} label={props.t('ProblemSetDescription')} />
+          <ItemEditor
+            name={'description'}
+            label={props.t('ProblemSetDescription')}
+            constraint={contracts.problemSet.description}
+          />
         </>
       ),
       label: props.t('BasicInformation'),

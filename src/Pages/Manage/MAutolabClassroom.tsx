@@ -4,6 +4,8 @@ import autolabApi from '../../Utils/API/autolab-api';
 import TableWithPagination from '../../Component/common/Table/TableWithPagination';
 import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import TableRowDeleteButton from '../../Component/common/Table/TableRowDeleteButton';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules, numericProps } from '../../Config/validation/constraints';
 
 interface ISeatBan {
   seat_number: number;
@@ -90,14 +92,18 @@ const buildClassroomPayload = (values: any) => {
 
 const classroomForm = (
   <>
-    <Form.Item name="c_name" label="教室名称" rules={[{ required: true }]}>
+    <Form.Item name="c_name" label="教室名称" rules={constraintRules(contracts.classroom.c_name)}>
       <Input />
     </Form.Item>
-    <Form.Item name="address" label="教室地点" rules={[{ required: true }]}>
+    <Form.Item name="address" label="教室地点" rules={constraintRules(contracts.classroom.address)}>
       <Input />
     </Form.Item>
-    <Form.Item name="c_seat_num" label="座位数量" rules={[{ required: true }]}>
-      <InputNumber min={1} style={{ width: '100%' }} />
+    <Form.Item
+      name="c_seat_num"
+      label="座位数量"
+      rules={constraintRules(contracts.classroom.c_seat_num)}
+    >
+      <InputNumber {...numericProps(contracts.classroom.c_seat_num)} style={{ width: '100%' }} />
     </Form.Item>
     <Form.Item name="seat_ban_text" label="禁用座位（每行：座位号|原因，可仅填座位号）">
       <Input.TextArea rows={4} placeholder="5|座位损坏\n12|电脑故障" />

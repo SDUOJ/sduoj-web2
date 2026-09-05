@@ -7,6 +7,7 @@ import MApi from '../../Utils/API/m-api';
 import TableWithPagination from '../../Component/common/Table/TableWithPagination';
 import React from 'react';
 import ItemTitle from '../../Component/common/Form/Item/ItemTitle';
+import { contracts } from '../../Config/validation/contracts';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import { unix2Time } from '../../Utils/Time';
 import ProblemListInGroup from '../../Component/problemSet/problemGroup/ProblemListInGroup';
@@ -16,7 +17,7 @@ import groupGet from '../../Component/problemSet/dataConvert/groupGet';
 const MProblemGroup = (props: any) => {
   const base = (edit: boolean) => (
     <>
-      <ItemTitle name={'name'} />
+      <ItemTitle name={'name'} constraint={contracts.problemGroup.name} />
       <Form.Item name={'type'} label={props.t('ProblemType')} required>
         <Radio.Group disabled={edit}>
           <Radio value={0}>{props.t('ObjectiveQuestions')}</Radio>

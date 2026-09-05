@@ -24,6 +24,8 @@ import autolabApi from '../../Utils/API/autolab-api';
 import TableWithPagination from '../../Component/common/Table/TableWithPagination';
 import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import TableRowDeleteButton from '../../Component/common/Table/TableRowDeleteButton';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import ItemSelectClassroom from '../../Component/autolab/Form/Item/ItemSelectClassroom';
 
@@ -85,12 +87,16 @@ const MAutolab: React.FC = () => {
 
   const courseForm = (
     <>
-      <Form.Item name="course_name" label="课程名称" rules={[{ required: true }]}>
+      <Form.Item
+        name="course_name"
+        label="课程名称"
+        rules={constraintRules(contracts.course.course_name)}
+      >
         <Input />
       </Form.Item>
       <ItemSelectGroup name={'group_id'} label={'用户组'} required={true} />
       <ItemSelectGroup name={'manager_groups'} label={'管理组'} mode={'multiple'} />
-      <Form.Item name="tag" label="标签" rules={[{ required: true }]}>
+      <Form.Item name="tag" label="标签" rules={constraintRules(contracts.course.tag)}>
         <Select options={tagOptions} />
       </Form.Item>
       <ItemSelectClassroom name={'c_ids'} label={'教室'} mode={'multiple'} />
@@ -105,10 +111,18 @@ const MAutolab: React.FC = () => {
       <Form.Item name="end_time" label="结束时间" rules={[{ required: true }]}>
         <DatePicker showTime style={{ width: '100%' }} />
       </Form.Item>
-      <Form.Item name="course_content" label="课程内容">
+      <Form.Item
+        name="course_content"
+        label="课程内容"
+        rules={constraintRules(contracts.course.course_content)}
+      >
         <Input />
       </Form.Item>
-      <Form.Item name="course_homework" label="课程作业">
+      <Form.Item
+        name="course_homework"
+        label="课程作业"
+        rules={constraintRules(contracts.course.course_homework)}
+      >
         <Input />
       </Form.Item>
     </>
@@ -116,7 +130,7 @@ const MAutolab: React.FC = () => {
 
   const taForm = (
     <>
-      <Form.Item name="ta_name" label="助教姓名" rules={[{ required: true }]}>
+      <Form.Item name="ta_name" label="助教姓名" rules={constraintRules(contracts.course.ta_name)}>
         <Input />
       </Form.Item>
       <Form.Item name="contact" label="联系方式">
