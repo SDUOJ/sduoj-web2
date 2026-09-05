@@ -1,6 +1,6 @@
 import React, {Dispatch, useRef, useState} from "react";
 import {Button, Card, Space, Tabs} from "antd";
-import {LoginForm, ProFormInstance, ProFormText} from '@ant-design/pro-components';
+import {LoginForm, ProFormInstance, ProFormText} from "@ant-design/pro-components";
 import {LockOutlined, UserOutlined,} from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from "./ThirdPartyLoginSDUCAS";
 import {useTranslation} from "react-i18next";
@@ -27,16 +27,20 @@ const Login = (props: any) => {
     }
     const passwordLogin = () => {
         formRef.current?.validateFields(["username", "password"]).then((value) => {
-            CApi.login(value).then((resData: any) => {
+            return CApi.login(value).then((resData: any) => {
                 afterLogin(resData)
             })
+        }).catch(() => {
+            // Field validation and the request layer already present errors.
         })
     }
     const emailLogin = () => {
         formRef.current?.validateFields(["email", "emailCode"]).then((value) => {
-            CApi.emailLogin(value).then((resData: any) => {
+            return CApi.emailLogin(value).then((resData: any) => {
                 afterLogin(resData)
             })
+        }).catch(() => {
+            // Field validation and the request layer already present errors.
         })
     }
 
@@ -44,6 +48,8 @@ const Login = (props: any) => {
         <Card
             style={{width: "500px", textAlign: "center", margin: "0 auto"}}>
             <LoginForm
+                contentStyle={{width: '100%', minWidth: 0}}
+                containerStyle={{padding: '32px 0'}}
                 formRef={formRef}
                 logo={Logo}
                 title={t("UserLogin", {defaultValue: t("Login")})}
@@ -64,7 +70,7 @@ const Login = (props: any) => {
                     },
                 }}
             >
-                <Tabs activeKey={loginType} onChange={(activeKey) => setLoginType(activeKey as LoginType)}>
+                <Tabs tabBarGutter={16} activeKey={loginType} onChange={(activeKey) => setLoginType(activeKey as LoginType)}>
                     <Tabs.TabPane key={'account'} tab={t('AccountPassword', {defaultValue: t('Login')})}/>
                     <Tabs.TabPane key={'email'} tab={t('EmailVerifyCode', {defaultValue: t('emailCode')})}/>
                     <Tabs.TabPane key={'SDUCAS'} tab={t('UnifiedIdentity', {defaultValue: 'CAS'})}/>
