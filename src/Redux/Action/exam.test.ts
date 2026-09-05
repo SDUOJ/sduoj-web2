@@ -7,7 +7,7 @@ import eApi from '../../Utils/API/e-api';
 jest.mock('../../Utils/API/e-api', () => ({__esModule: true, default: {setAnswerSheet: jest.fn()}}));
 
 function setup(type = 'SingleChoice') {
-  const store = createStore(rootReducers, applyMiddleware(thunk));
+  const store = createStore(rootReducers, undefined, applyMiddleware(thunk));
   store.dispatch({type: 'setProLists', data: {'1_2': {type, proList: [{index: 0}]}}} as never);
   return store;
 }
