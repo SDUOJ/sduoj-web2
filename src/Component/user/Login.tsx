@@ -11,6 +11,8 @@ import Logo from 'Assert/img/sduoj.png';
 import ForgetPass from './Form/ForgetPass';
 import ItemEmail from './Form/Item/ItemEmail';
 import CApi from '../../Utils/API/c-api';
+import { contracts } from '../../Config/validation/contracts';
+import { constraintRules } from '../../Config/validation/constraints';
 
 type LoginType = 'SDUCAS' | 'account' | 'email';
 
@@ -103,12 +105,7 @@ const Login = (props: any) => {
                 onPressEnter: () => passwordLogin(),
               }}
               placeholder={t('PleaseInputUsername', { defaultValue: t('usernameEmpty') })}
-              rules={[
-                {
-                  required: true,
-                  message: t('PleaseInputUsername', { defaultValue: t('usernameEmpty') }),
-                },
-              ]}
+              rules={constraintRules(contracts.user.loginUsername)}
             />
             <ProFormText.Password
               name="password"

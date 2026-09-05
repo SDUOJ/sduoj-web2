@@ -1,8 +1,16 @@
 import { Form, Input } from 'antd';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { contracts } from '../../../../Config/validation/contracts';
+import { constraintRules } from '../../../../Config/validation/constraints';
 
 const ItemPassword = (props: any) => {
+  const policy =
+    props.policy === 'admin'
+      ? contracts.user.adminPassword
+      : props.oldpass
+        ? contracts.user.currentPassword
+        : contracts.user.newPassword;
   let firstPassProps = { name: 'password', label: props.t('password') };
   if (props.newpass === true)
     firstPassProps = { name: 'newPassword', label: props.t('NewPassword') };
@@ -11,7 +19,7 @@ const ItemPassword = (props: any) => {
     <>
       <Form.Item
         {...firstPassProps}
-        rules={[{ required: true, message: props.t('passwordEmpty') }]}
+        rules={constraintRules({ ...policy, required: true, notBlank: true })}
         hasFeedback
       >
         <Input.Password />

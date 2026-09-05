@@ -4,6 +4,8 @@ import { InboxOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons
 import Dragger from 'antd/lib/upload/Dragger';
 import mApi from '../../Utils/API/m-api';
 import { withTranslation } from 'react-i18next';
+import { batchUserFields } from '../../Config/validation/requests';
+import { constraintError } from '../../Config/validation/constraints';
 
 type ExcelUserRow = {
   username: string;
@@ -35,19 +37,14 @@ type ParsedUser = {
 };
 
 const isEmail = (v?: string) => (v ? /\S+@\S+\.\S+/.test(v) : true);
-const isUsername = (v: string) => /^[A-Za-z0-9_]{4,16}$/.test(v);
-const isPassword = (v: string) => typeof v === 'string' && v.length >= 6 && v.length <= 32;
-const isPhone = (v?: string) => !v || /^[0-9]{11,16}$/.test(v);
 
 const normalizeNumber = (v: any): string | undefined => {
   if (v === undefined || v === null) return undefined;
   return String(v);
 };
 
-const mapGender = (v: any): number => {
-  const n = Number(v);
-  return [0, 1, 2].includes(n) ? n : 2;
-};
+const mapGender = (v: any): number | undefined =>
+  v === undefined || v === null || v === '' ? undefined : Number(v);
 
 const map01 = (v: any): number => (Number(v) === 1 ? 1 : 0);
 
@@ -102,13 +99,11 @@ const AutoImportUsers = (props: any) => {
 
       // validations（邮箱改为必填并校验格式）
       const valid =
-        isUsername(item.username) &&
-        isPassword(item.password) &&
+        Object.entries(batchUserFields).every(
+          ([key, rule]) => !constraintError(rule, item[key as keyof ParsedUser]),
+        ) &&
         !!item.email &&
-        isEmail(item.email) &&
-        isPhone(item.phone) &&
-        (!item.nickname || item.nickname.length <= 30) &&
-        (!item.studentId || String(item.studentId).length <= 20);
+        isEmail(item.email);
 
       parsed.push(item);
       display.push({

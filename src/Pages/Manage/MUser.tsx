@@ -134,7 +134,12 @@ const MUser = (props: any) => {
                             btnIcon={false}
                             btnType={'link'}
                             title={rows.username}
-                            subForm={[{ component: <ItemPassword />, label: props.t('password') }]}
+                            subForm={[
+                              {
+                                component: <ItemPassword policy="admin" />,
+                                label: props.t('password'),
+                              },
+                            ]}
                             updateAppendProps={{ username: rows.username }}
                             dataSubmitter={(value: any) => mApi.updateUserPasswd(value)}
                           />
