@@ -337,8 +337,7 @@
   "DownloadFirstRejectCase": "Download First Reject Case",
   "PublicTestCaseInfo": "Public test case info",
   "new email": "New Email",
-  "ShowAllInformation": "Show All Information"
-  ,
+  "ShowAllInformation": "Show All Information",
   "IOFilename": "Input/Output Filename",
   "UploadTime": "Upload Time",
   "SampleCheckpoint": "Sample Case",
@@ -354,8 +353,7 @@
   "mdLink": "MD link",
   "mdImage": "MD image",
   "htmlLink": "HTML link",
-  "htmlImage": "HTML image"
-  ,
+  "htmlImage": "HTML image",
   "examSubmittedSuccess": "Exam submitted successfully",
   "ProblemNav": "Problem Navigation",
   "AcceptedSlashSubmitted": "Accepted / Submitted",
@@ -383,8 +381,7 @@
   "devsWentToPetCats": "Developers went to pet cats. Before leaving, they completed the following functions",
   "backToOldVersion": "Back to old version",
   "examSystem": "Exam System",
-  "adminConsole": "Admin Console"
-  ,
+  "adminConsole": "Admin Console",
   "ContestPassword": "Contest password",
   "RegisterSuccess": "Registration successful",
   "Register": "Register",
@@ -396,7 +393,12 @@
   "FirstAccepted": "First Accepted",
   "IsPublic": "Public",
   "anyoneCanJoin": "Anyone can join",
-  "openness": {"public": "Public", "protected": "Protected", "apply": "Apply", "private": "Private"},
+  "openness": {
+    "public": "Public",
+    "protected": "Protected",
+    "apply": "Apply",
+    "private": "Private"
+  },
   "problemsPublicButSubmissionRequiresPassword": "Problems are public, but submission requires password",
   "passwordRequiredToJoin": "Password required to join",
   "ContestTimeRange": "Contest Time Range",
@@ -424,7 +426,7 @@
   "studentNumber": "Student ID",
   "name": "Name",
   "evaluation": "Evaluation",
-  "grade": {"excellent": "Excellent", "good": "Good", "medium": "Medium", "poor": "Poor"},
+  "grade": { "excellent": "Excellent", "good": "Good", "medium": "Medium", "poor": "Poor" },
   "evaluationStats": "Evaluation statistics",
   "smeTitle": "Class of 2022 Master's Mutual Evaluation",
   "smePleaseLoginCAS": "You are not logged in. Please use [SDU Unified Identity Authentication] in the upper right corner to log in",
@@ -509,199 +511,199 @@
   "ContentAndAnswer": "Content & Answer",
   "ScoringStrategy": "Scoring Strategy",
   "ProblemScoring": "Problem Scoring",
-  "public": "Public"
-  ,"CollectName": "Collection Name"
-  ,"SubmitUserGroup": "Submit User Group"
-  ,"CollectDescription": "Collection Description"
-  ,"FileSubmitComponent": "File Submit Module"
-  ,"NewCollect": "New Collection"
-  ,"Creator": "Creator"
-  ,"ProblemCode": "Problem Code"
-  ,"Title": "Title"
-  ,"IOMode": "IO Mode"
-  ,"AdvancedMode": "Advanced Mode"
-  ,"Language": "Language"
-  ,"LanguageNotSet": "Language not set"
-  ,"FunctionTemplate": "Function Template"
-  ,"Use": "Use"
-  ,"NotUse": "Not Use"
-  ,"TemplateCodeVisibility": "Template Code Visibility"
-  ,"TemplateCode": "Template Code"
-  ,"InitialCode": "Initial Code"
-  ,"Comparator": "Comparator"
-  ,"AdvancedJudgeTemplateHint": "Advanced judge templates need to be added after creation"
-  ,"Comment": "Comment"
-  ,"ProblemCodeLabel": "Problem Code"
-  ,"ProblemAliasLabel": "Problem Alias"
-  ,"ProblemDescriptionLabel": "Problem Description"
-  ,"ProblemPreview": "Problem Preview"
-  ,"ProblemWeight": "Weight"
-  ,"BalloonColor": "Balloon Color"
-  ,"SubmitLimitTimes": "Submit Limit"
-  ,"DuplicateRate": "Duplicate Rate"
-  ,"DuplicateRateTooltip": "Leave blank to disable; range 0.4 - 1"
-  ,"ProblemCodeFormatError": "Invalid problem code format"
-  ,"ProblemNotExist": "Problem does not exist"
-  ,"CreateTemplateClone": "Create Template (Clone from {{title}})"
-  ,"PublicStatus": "Public Status"
-  ,"Public": "Public"
-  ,"Private": "Private"
-  ,"ProblemDescription": "Problem Description"
-  ,"ProblemDescriptions": "Problem Descriptions"
-  ,"CreateDescription": "Create Description"
-  ,"DefaultDescription": "Default Description"
-  ,"YesSimple": "Yes"
-  ,"NoSimple": "No"
-  ,"Vote": "Vote"
-  ,"Author": "Author"
-  ,"Success": "Success"
-  ,"FormIncomplete": "Form incomplete"
-  ,"OperationConfirm": "Operation Confirm"
-  ,"IConfirmToDo": "I confirm to {{todo}}"
-  ,"AreYouSureToDo": "Are you sure to {{todo}}?"
-  ,"PleaseInputToConfirm": "Please input"
-  ,"ToConfirm": "to confirm"
-  ,"AreYouSureToOperate": "Are you sure to operate?"
-  ,"CollectItemName": "Item Name"
-  ,"CollectItemTag": "Item Tag"
-  ,"Deadline": "Deadline"
-  ,"FileSuffix": "File Suffix"
-  ,"FileSizeLimit": "File Size Limit"
-  ,"DetailPreviewWithName": "{{name}} Details Preview"
-  ,"TimeLeft": "Time Left"
-  ,"MinuteShort": "min"
-  ,"Finished": "Finished"
-  ,"MySubmission": "My Submission"
-  ,"SubmitTime": "Submit Time"
-  ,"NotSubmitted": "Not Submitted"
-  ,"Submitted": "Submitted"
-  ,"Delayed": "Delayed"
-  ,"SubmitFile": "Submit File"
-  ,"Withdraw": "Withdraw"
-  ,"WithdrawSuccess": "Withdrawn Successfully"
-  ,"WithdrawSubmit": "Withdraw Submission"
-  ,"Move": "Move"
-  ,"CloneMove": "Clone & Move"
-  ,"AdminOperation": "Admin Operations"
-  ,"DeleteSubmit": "Delete Submission"
-  ,"NewCollectItem": "New Item"
-  ,"PresetSubmit": "Preset Submit"
-  ,"UploadFirstThenSubmit": "Please click Upload first, then submit"
-  ,"CollectInstruction": "Instructions"
-  ,"CollectItemList": "Item List"
-  ,"HistorySubmitList": "History Submissions"
-  ,"ContestSubmissionCancel": "Contest Submission Cancellation"
-  ,"OnlyRevokeOwnSubmission": "You can only revoke your own submission"
-  ,"OnlyAfterContestEnd": "You can cancel only after the contest ends"
-  ,"OnlyIOIContestCancelable": "Only IOI contests can cancel submissions"
-  ,"ContestIdHint": "Contest ID (number in URL, e.g., 175)"
-  ,"SubmissionIdHint": "Submission ID (e.g., 225a5a7cb018012)"
-  ,"ICertainToCancel": "I confirm to cancel"
-  ,"CancelCurrentSubmission": "Cancel current submission"
-  ,"CancelSuccess": "Cancelled successfully"
-  ,"ExamTitle": "Final Exam: Introduction to Computing and Programming"
-  ,"TempSave": "Save Draft"
-  ,"SubmitPaper": "Submit"
-  ,"ExamFooterBrand": "School of Computer Science and Technology, SDU ©2020-2021"
-  ,"BatchDownload": "Batch Download"
-  ,"UploadAcceptHintMulti": "Please upload one or more {{nameList}} files"
-  ,"UploadExtHwsPresetHint": "Please upload one or more files, each named: studentId.name.timestamp.filename.zip"
-  ,"SetTime": "Set Time"
-  ,"TimeSettingTitle": "Time Setting"
-  ,"Weight": "Weight"
-  ,"AddTime": "Add Time"
-  ,"ExistingFile": "Existing file:"
-  ,"Download": "Download"
-  ,"UploadDragAreaText": "Click or drag file to this area to upload"
-  ,"UploadAcceptHint": "Please upload a {{nameList}} file"
-  ,"FileTooLargeMB": "File is too large, max {{max}} MB"
-    ,"TSummaryTitle": "2022 Programming Thinking & Practice SDUOJ Objective Score Summary (89 points)"
-    ,"TSummarySubTitle": "The following scores are unchecked for duplication and are for reference only. If there are any issues, please contact the TA."
-  ,"FrozenTimeMinutes": "Frozen time (minutes)"
-  ,"FrozenTimeTooltip": "Freeze the rank in the last N minutes of the contest"
-  ,"ContestParams": "Contest Parameters"
-  ,"DisplayPeerSubmission": "Display others' submissions"
-  ,"DisplayRank": "Display rank"
-  ,"DisplayJudgeScore": "Display judge score"
-  ,"DisplayCheckpointResult": "Display checkpoint info"
-  ,"AllowToSubmit": "Allow to submit"
-  ,"Allow": "Allow"
-  ,"Disallow": "Disallow"
-  ,"ContestRunning": "During contest"
-  ,"ContestEnd": "After contest"
-  ,"ParticipantsLabel": "Participants"
-  ,"UnofficialParticipants": "Unofficial participants"
-  ,"SplitUsernamesHint": "Use TAB '\t', space ' ', newline '\n' or comma ',' to split usernames"
-  ,"ParticipatingGroups": "Participating Groups"
-  ,"ParticipantsNoPasswordHint": "Participants in participating groups do not need a password"
-    ,"ObjectiveScoreSummaryProgress": "Objective score summary ({{sum}}/89)"
-    ,"WeeklyHomeworkTitle": "Weekly assignments ({{sum}}/15 = 1*15)"
-    ,"GoToContest": "Go to contest"
-    ,"SubmissionId": "Submission ID"
-    ,"NoValidSubmission": "No valid submission"
-    ,"TimeoutDiscount": "Timeout discount"
-    ,"CodeDuplication": "Code duplication"
-    ,"NotChecked": "Not checked"
-    ,"CSPMockTitle": "CSP mock exam ({{sum}}/20 = 4*5)"
-    ,"GoToExamReport": "Go to exam report"
-    ,"MonthlyT3PracticeTitle": "Monthly T3 practice ({{sum}}/8 = 2*4)"
-    ,"FinalScore": "Final score"
-    ,"ExamScore": "Exam score"
-    ,"PracticeScore": "Practice score"
-    ,"PracticeSubmissionId": "Practice submission ID"
-    ,"PracticeSubmitTime": "Practice submit time"
-    ,"PracticeTimeoutDiscount": "Practice timeout discount"
-    ,"PracticeCodeDuplication": "Practice code duplication"
-    ,"T3MockTitle": "T3 mock exam ({{sum}}/6 = 2*3)"
-    ,"FinalExamTitle": "Final exam ({{sum}}/40)"
-    ,"ScoresOnly": "Scores only"
-    ,"NonObjectiveScoreExplanationTitle": "Non-objective score explanation (11 points)"
-    ,"AttendanceTitle": "Attendance (3 points)"
-    ,"AttendanceFullScoreRule": "Full score: Online class, offline lab. Within 3 absences (including leave without submitting a leave note) across all attendances."
-    ,"AttendanceDeductionRule": "If absences exceed 3, 0.5 points will be deducted for each additional absence until the attendance score is deducted to zero."
-    ,"LabReportTitle": "Lab report (8 points)"
-    ,"LabReportDesc": "According to the written content, the TA will grade. The ratio of each report score will be adjusted according to the content of that report, with a full score of 8 points."
-  ,"proctorErrorToast": "Proctoring error, please refresh the page within 10s"
-  ,"proctorModalTitle": "Proctoring error"
-  ,"proctorModalBody": "Your proctoring program is offline. You must refresh the page within 10s and reconnect, otherwise you will be marked as cheating."
-  ,"notConnected": "Not connected"
-  ,"screenRecording": "Screen recording"
-  ,"connectionFailed": "Connection failed"
-  ,"newlineHandling": "End-of-line handling"
-  ,"inputData": "Input data"
-  ,"outputData": "Output data"
-  ,"noteShort": "Note"
-  ,"addCheckpoint": "Add checkpoint"
-  ,"fieldRequired": "This field is required"
-  ,"IndefiniteChoice": "Indefinite Choice"
-  ,"fileName": "File name"
-  ,"fileSizeLimitMB": "Max file size (MB)"
-  ,"fileType": "File type"
-  ,"fileTypeTooltip": "Green means preview available, red means not supported"
-  ,"pdfDocument": "PDF document"
-  ,"wordDocx": "Word document (docx)"
-  ,"wordDoc": "Word document (doc)"
-  ,"zipArchive": "ZIP archive"
-  ,"fileAnswer": "File answer"
-  ,"textAnswer": "Text answer"
-  ,"acceptanceAnswer": "Acceptance"
-  ,"submitFileList": "Submit file list"
-  ,"addSubmitFile": "Add submit file"
-  ,"SubjectiveExport": "Export subjective attachments"
-  ,"SubjectiveExportTitle": "Batch download subjective attachments"
-  ,"SubjectiveExportDescription": "Choose a file-type subjective problem to export submissions."
-  ,"SubjectiveExportEmpty": "This problem set has no file-type subjective problems."
-  ,"SubjectiveExportDownload": "Batch download"
-  ,"SubjectiveExportSuccess": "Download started. Please check your browser."
-  ,"SubjectiveExportFailed": "Export failed. Please try again later."
-  ,"RankUpdateNotice": "Rank updates have about a 1 minute delay. Last update: {{time}}"
-  ,"RankUpdateTimePending": "--"
-  ,"RankExportScoreButton": "Export scores"
-  ,"RankExportFilenameSuffix": "score_export"
-  ,"RankColumnRanking": "Rank"
-  ,"RankColumnParticipant": "Participant"
-  ,"RankColumnTotalScore": "Total score"
-  ,"maxWordCountLimit": "Max word count limit",
+  "public": "Public",
+  "CollectName": "Collection Name",
+  "SubmitUserGroup": "Submit User Group",
+  "CollectDescription": "Collection Description",
+  "FileSubmitComponent": "File Submit Module",
+  "NewCollect": "New Collection",
+  "Creator": "Creator",
+  "ProblemCode": "Problem Code",
+  "Title": "Title",
+  "IOMode": "IO Mode",
+  "AdvancedMode": "Advanced Mode",
+  "Language": "Language",
+  "LanguageNotSet": "Language not set",
+  "FunctionTemplate": "Function Template",
+  "Use": "Use",
+  "NotUse": "Not Use",
+  "TemplateCodeVisibility": "Template Code Visibility",
+  "TemplateCode": "Template Code",
+  "InitialCode": "Initial Code",
+  "Comparator": "Comparator",
+  "AdvancedJudgeTemplateHint": "Advanced judge templates need to be added after creation",
+  "Comment": "Comment",
+  "ProblemCodeLabel": "Problem Code",
+  "ProblemAliasLabel": "Problem Alias",
+  "ProblemDescriptionLabel": "Problem Description",
+  "ProblemPreview": "Problem Preview",
+  "ProblemWeight": "Weight",
+  "BalloonColor": "Balloon Color",
+  "SubmitLimitTimes": "Submit Limit",
+  "DuplicateRate": "Duplicate Rate",
+  "DuplicateRateTooltip": "Leave blank to disable; range 0.4 - 1",
+  "ProblemCodeFormatError": "Invalid problem code format",
+  "ProblemNotExist": "Problem does not exist",
+  "CreateTemplateClone": "Create Template (Clone from {{title}})",
+  "PublicStatus": "Public Status",
+  "Public": "Public",
+  "Private": "Private",
+  "ProblemDescription": "Problem Description",
+  "ProblemDescriptions": "Problem Descriptions",
+  "CreateDescription": "Create Description",
+  "DefaultDescription": "Default Description",
+  "YesSimple": "Yes",
+  "NoSimple": "No",
+  "Vote": "Vote",
+  "Author": "Author",
+  "Success": "Success",
+  "FormIncomplete": "Form incomplete",
+  "OperationConfirm": "Operation Confirm",
+  "IConfirmToDo": "I confirm to {{todo}}",
+  "AreYouSureToDo": "Are you sure to {{todo}}?",
+  "PleaseInputToConfirm": "Please input",
+  "ToConfirm": "to confirm",
+  "AreYouSureToOperate": "Are you sure to operate?",
+  "CollectItemName": "Item Name",
+  "CollectItemTag": "Item Tag",
+  "Deadline": "Deadline",
+  "FileSuffix": "File Suffix",
+  "FileSizeLimit": "File Size Limit",
+  "DetailPreviewWithName": "{{name}} Details Preview",
+  "TimeLeft": "Time Left",
+  "MinuteShort": "min",
+  "Finished": "Finished",
+  "MySubmission": "My Submission",
+  "SubmitTime": "Submit Time",
+  "NotSubmitted": "Not Submitted",
+  "Submitted": "Submitted",
+  "Delayed": "Delayed",
+  "SubmitFile": "Submit File",
+  "Withdraw": "Withdraw",
+  "WithdrawSuccess": "Withdrawn Successfully",
+  "WithdrawSubmit": "Withdraw Submission",
+  "Move": "Move",
+  "CloneMove": "Clone & Move",
+  "AdminOperation": "Admin Operations",
+  "DeleteSubmit": "Delete Submission",
+  "NewCollectItem": "New Item",
+  "PresetSubmit": "Preset Submit",
+  "UploadFirstThenSubmit": "Please click Upload first, then submit",
+  "CollectInstruction": "Instructions",
+  "CollectItemList": "Item List",
+  "HistorySubmitList": "History Submissions",
+  "ContestSubmissionCancel": "Contest Submission Cancellation",
+  "OnlyRevokeOwnSubmission": "You can only revoke your own submission",
+  "OnlyAfterContestEnd": "You can cancel only after the contest ends",
+  "OnlyIOIContestCancelable": "Only IOI contests can cancel submissions",
+  "ContestIdHint": "Contest ID (number in URL, e.g., 175)",
+  "SubmissionIdHint": "Submission ID (e.g., 225a5a7cb018012)",
+  "ICertainToCancel": "I confirm to cancel",
+  "CancelCurrentSubmission": "Cancel current submission",
+  "CancelSuccess": "Cancelled successfully",
+  "ExamTitle": "Final Exam: Introduction to Computing and Programming",
+  "TempSave": "Save Draft",
+  "SubmitPaper": "Submit",
+  "ExamFooterBrand": "School of Computer Science and Technology, SDU ©2020-2021",
+  "BatchDownload": "Batch Download",
+  "UploadAcceptHintMulti": "Please upload one or more {{nameList}} files",
+  "UploadExtHwsPresetHint": "Please upload one or more files, each named: studentId.name.timestamp.filename.zip",
+  "SetTime": "Set Time",
+  "TimeSettingTitle": "Time Setting",
+  "Weight": "Weight",
+  "AddTime": "Add Time",
+  "ExistingFile": "Existing file:",
+  "Download": "Download",
+  "UploadDragAreaText": "Click or drag file to this area to upload",
+  "UploadAcceptHint": "Please upload a {{nameList}} file",
+  "FileTooLargeMB": "File is too large, max {{max}} MB",
+  "TSummaryTitle": "2022 Programming Thinking & Practice SDUOJ Objective Score Summary (89 points)",
+  "TSummarySubTitle": "The following scores are unchecked for duplication and are for reference only. If there are any issues, please contact the TA.",
+  "FrozenTimeMinutes": "Frozen time (minutes)",
+  "FrozenTimeTooltip": "Freeze the rank in the last N minutes of the contest",
+  "ContestParams": "Contest Parameters",
+  "DisplayPeerSubmission": "Display others' submissions",
+  "DisplayRank": "Display rank",
+  "DisplayJudgeScore": "Display judge score",
+  "DisplayCheckpointResult": "Display checkpoint info",
+  "AllowToSubmit": "Allow to submit",
+  "Allow": "Allow",
+  "Disallow": "Disallow",
+  "ContestRunning": "During contest",
+  "ContestEnd": "After contest",
+  "ParticipantsLabel": "Participants",
+  "UnofficialParticipants": "Unofficial participants",
+  "SplitUsernamesHint": "Use TAB '\t', space ' ', newline '\n' or comma ',' to split usernames",
+  "ParticipatingGroups": "Participating Groups",
+  "ParticipantsNoPasswordHint": "Participants in participating groups do not need a password",
+  "ObjectiveScoreSummaryProgress": "Objective score summary ({{sum}}/89)",
+  "WeeklyHomeworkTitle": "Weekly assignments ({{sum}}/15 = 1*15)",
+  "GoToContest": "Go to contest",
+  "SubmissionId": "Submission ID",
+  "NoValidSubmission": "No valid submission",
+  "TimeoutDiscount": "Timeout discount",
+  "CodeDuplication": "Code duplication",
+  "NotChecked": "Not checked",
+  "CSPMockTitle": "CSP mock exam ({{sum}}/20 = 4*5)",
+  "GoToExamReport": "Go to exam report",
+  "MonthlyT3PracticeTitle": "Monthly T3 practice ({{sum}}/8 = 2*4)",
+  "FinalScore": "Final score",
+  "ExamScore": "Exam score",
+  "PracticeScore": "Practice score",
+  "PracticeSubmissionId": "Practice submission ID",
+  "PracticeSubmitTime": "Practice submit time",
+  "PracticeTimeoutDiscount": "Practice timeout discount",
+  "PracticeCodeDuplication": "Practice code duplication",
+  "T3MockTitle": "T3 mock exam ({{sum}}/6 = 2*3)",
+  "FinalExamTitle": "Final exam ({{sum}}/40)",
+  "ScoresOnly": "Scores only",
+  "NonObjectiveScoreExplanationTitle": "Non-objective score explanation (11 points)",
+  "AttendanceTitle": "Attendance (3 points)",
+  "AttendanceFullScoreRule": "Full score: Online class, offline lab. Within 3 absences (including leave without submitting a leave note) across all attendances.",
+  "AttendanceDeductionRule": "If absences exceed 3, 0.5 points will be deducted for each additional absence until the attendance score is deducted to zero.",
+  "LabReportTitle": "Lab report (8 points)",
+  "LabReportDesc": "According to the written content, the TA will grade. The ratio of each report score will be adjusted according to the content of that report, with a full score of 8 points.",
+  "proctorErrorToast": "Proctoring error, please refresh the page within 10s",
+  "proctorModalTitle": "Proctoring error",
+  "proctorModalBody": "Your proctoring program is offline. You must refresh the page within 10s and reconnect, otherwise you will be marked as cheating.",
+  "notConnected": "Not connected",
+  "screenRecording": "Screen recording",
+  "connectionFailed": "Connection failed",
+  "newlineHandling": "End-of-line handling",
+  "inputData": "Input data",
+  "outputData": "Output data",
+  "noteShort": "Note",
+  "addCheckpoint": "Add checkpoint",
+  "fieldRequired": "This field is required",
+  "IndefiniteChoice": "Indefinite Choice",
+  "fileName": "File name",
+  "fileSizeLimitMB": "Max file size (MB)",
+  "fileType": "File type",
+  "fileTypeTooltip": "Green means preview available, red means not supported",
+  "pdfDocument": "PDF document",
+  "wordDocx": "Word document (docx)",
+  "wordDoc": "Word document (doc)",
+  "zipArchive": "ZIP archive",
+  "fileAnswer": "File answer",
+  "textAnswer": "Text answer",
+  "acceptanceAnswer": "Acceptance",
+  "submitFileList": "Submit file list",
+  "addSubmitFile": "Add submit file",
+  "SubjectiveExport": "Export subjective attachments",
+  "SubjectiveExportTitle": "Batch download subjective attachments",
+  "SubjectiveExportDescription": "Choose a file-type subjective problem to export submissions.",
+  "SubjectiveExportEmpty": "This problem set has no file-type subjective problems.",
+  "SubjectiveExportDownload": "Batch download",
+  "SubjectiveExportSuccess": "Download started. Please check your browser.",
+  "SubjectiveExportFailed": "Export failed. Please try again later.",
+  "RankUpdateNotice": "Rank updates have about a 1 minute delay. Last update: {{time}}",
+  "RankUpdateTimePending": "--",
+  "RankExportScoreButton": "Export scores",
+  "RankExportFilenameSuffix": "score_export",
+  "RankColumnRanking": "Rank",
+  "RankColumnParticipant": "Participant",
+  "RankColumnTotalScore": "Total score",
+  "maxWordCountLimit": "Max word count limit",
   "close": "Close",
   "Reviewed": "Reviewed",
   "NotReviewed": "Not reviewed",
@@ -727,280 +729,280 @@
   "CollapseFullText": "Collapse",
   "ExpandFullText": "Expand",
   "Review": "Review",
-  "SubmissionList": "Submission List"
-  ,"LatePermission": "Late Permission"
-  ,"LatePermissionDuration": "Grace duration (minutes)"
-  ,"LatePermissionDiscount": "Discount"
-  ,"LatePermissionStart": "First used at"
-  ,"LatePermissionExpire": "Expire time"
-  ,"LatePermissionGrantedBy": "Granted by"
-  ,"LatePermissionEnabled": "Enabled"
-  ,"LatePermissionAdd": "Grant Late Permission"
-  ,"LatePermissionEdit": "Edit Late Permission"
-  ,"LatePermissionNotUsed": "Not used yet"
-  ,"LatePermissionDurationHelp": "Minutes of late access counted from first use."
-  ,"LatePermissionDiscountHelp": "Applied to all submissions during late window, value between 0 and 1."
-  ,"pleaseSelectExpireTime": "Please select expire time"
-  ,"pleaseEnterDiscount": "Please enter discount"
-  ,"LatePermissionBannerTitle": "Late submission discount ×{{discount}} ({{percent}})"
-  ,"LatePermissionBannerActive": "Active window: {{start}} → {{expire}}"
-  ,"LatePermissionBannerPending": "Window not started yet. You will have {{duration}} minutes once activated."
-  ,"LatePermissionBannerExpired": "Window expired at {{expire}}"
-  ,"LatePermissionBannerDuration": "Total duration: {{duration}} minutes"
-  ,"LatePermissionBannerRemaining": "Time remaining: {{minutes}} minute(s)"
-  ,"LatePermissionBannerNoExpire": "Expiration time pending"
-  ,"AutoTaskTab": "Automation"
-  ,"AutoTaskCreateTitle": "Automated Review Tasks"
-  ,"AutoTaskCreateHelp": "Select subjective questions and students to enqueue AI-assisted reviews."
-  ,"AutoTaskSubjectiveSelect": "Select subjective questions"
-  ,"AutoTaskSubjectiveRequired": "Please choose at least one subjective question"
-  ,"AutoTaskStudentSelect": "Select students"
-  ,"AutoTaskStudentRequired": "Please choose at least one student"
-  ,"AutoTaskProgrammingSelect": "Optional reference programming problems"
-  ,"AutoTaskSubmit": "Create tasks"
-  ,"AutoTaskOptionsRefresh": "Reload options"
-  ,"AutoTaskListTitle": "Automation Tasks"
-  ,"AutoTaskFilterStatus": "Status"
-  ,"AutoTaskFilterType": "Task type"
-  ,"AutoTaskStatusPending": "Pending"
-  ,"AutoTaskStatusRunning": "Running"
-  ,"AutoTaskStatusSuccess": "Finished"
-  ,"AutoTaskStatusFailed": "Failed"
-  ,"AutoTaskSubjectiveReview": "Subjective review"
-  ,"AutoTaskTypeInvalid": "Invalid task"
-  ,"AutoTaskTypeUnknown": "Unknown task"
-  ,"AutoTaskRefresh": "Refresh"
-  ,"AutoTaskDetail": "Task detail"
-  ,"AutoTaskTaskId": "Task ID"
-  ,"AutoTaskPSID": "Problem set ID"
-  ,"AutoTaskUsername": "Student"
-  ,"AutoTaskCreatedAt": "Created at"
-  ,"AutoTaskStartedAt": "Started at"
-  ,"AutoTaskFinishedAt": "Finished at"
-  ,"AutoTaskDuration": "Duration"
-  ,"AutoTaskLogs": "Execution logs"
-  ,"AutoTaskEmpty": "No automation tasks yet"
-  ,"AutoTaskPayloadSubjective": "Subjective question"
-  ,"AutoTaskPayloadProgramming": "Reference programming problems"
-  ,"AutoTaskPayloadNone": "None"
-  ,"AutoTaskFilterUsername": "Student filter"
-  ,"AutoTaskRerun": "Re-run"
-  ,"AutoTaskRerunConfirm": "Re-run this task?"
-  ,"AutoTaskRerunSuccess": "Task re-queued"
-  ,"AutoTaskDelete": "Delete"
-  ,"AutoTaskDeleteConfirm": "Delete this task? This cannot be undone."
-  ,"AutoTaskDeleteSuccess": "Task deleted"
-  ,"AutoTaskSelectPending": "Add unsubmitted students"
-  ,"AutoTaskSelectPendingEmpty": "No unsubmitted students found for selected problems"
-  ,"AutoTaskSelectPendingNoChange": "No new students added"
-  ,"AutoTaskSelectPendingSuccess": "{{count}} students added"
-  ,"AutoTaskBatchRerun": "Re-run selected"
-  ,"AutoTaskBatchRerunEmpty": "Select at least one runnable task"
-  ,"AutoTaskBatchRerunSuccess": "{{count}} tasks re-queued"
-  ,"AutoTaskBatchRerunPartial": "{{success}} succeeded, {{failed}} failed"
-  ,"AutoTaskViewResult": "View Result"
-  ,"AutoTaskResult": "Task Result"
-  ,"AutoTaskCreate": "Create Task"
-  ,"AutoTaskSummaryExport": "Summary Report Export"
-  ,"AutoTaskProblemId": "Problem ID"
-  ,"AutoTaskFilterProblemSet": "Filter by Problem Set"
-  ,"AutoTaskFilterProblem": "Filter by Problem"
-  ,"AutoTaskScore": "Score"
-  ,"AutoTaskFilterScoreLe": "Score <= "
-  ,"subjectiveReview": "Subjective Review"
-  ,"SummaryExportCreateTitle": "Create Summary Report Export Task"
-  ,"SummaryExportCreateHelp": "Select problem sets to include, or leave blank to include all. The system automatically excludes admin group members, creators, and superadmins."
-  ,"SummaryExportTaskList": "Summary Report Task List"
-  ,"SummaryExportProblemSets": "Problem Sets"
-  ,"SummaryExportProblemSetsHelp": "Leave blank to include all problem sets in the group"
-  ,"SummaryExportProblemSetsPlaceholder": "Select problem sets to include"
-  ,"SummaryExportSubmit": "Create Task"
-  ,"SummaryExportGroupId": "Group ID"
-  ,"SummaryExportAllProblemSets": "All problem sets in group"
-  ,"SummaryExportFileStatus": "File Status"
-  ,"SummaryExportFileReady": "File ready"
-  ,"SummaryExportFileNotFound": "File not found"
-  ,"SummaryExportNoFile": "No downloadable file found"
-  ,"SummaryExportDownload": "Download Report"
-  ,"SummaryExportDownloadStarted": "Download started"
-  ,"PointValue": "Point Value"
-  ,"TimedSubmission": "Timed submission ID"
-  ,"TimedWeight": "Timed weight"
-  ,"TimedSubmitTime": "Timed submit time"
-  ,"PracticeSubmission": "Practice submission ID"
-  ,"PracticeWeight": "Practice weight"
-  ,"ScoreAndDetails": "Score & Details"
-  ,"Reviewing": "Reviewing"
-  ,"CurrentDiscount": "Current discount:"
-  ,"DiscountRemaining": "Discount remaining:"
-  ,"ContentPreview": "Content Preview"
-  ,"ContentPreviewTooltip": "Only first 55 chars shown, click edit to view full content"
-  ,"AntiCheatingRate": "Duplication coefficient"
-  ,"AntiCheatingRateTooltip": "Leave blank to disable; should be between 0.4 and 1"
-  ,"SubmitLimit": "Submit limit"
-  ,"SubmitLimitTooltip": "Leave blank for no limit"
-  ,"CreateObjectiveProblem": "Create Objective Problem"
-  ,"CreateSubjectiveProblem": "Create Subjective Problem"
-  ,"reviewQueue": "Review Queue"
-  ,"reviewQueueTooltip": "Configure optional review queues for this problem; leave blank for direct manual review without queuing"
-  ,"reviewQueuePlaceholder": "Type a queue name and press Enter"
-  ,"JudgeInformation": "Judging Information"
-  ,"GroupDescriptionLabel": "Description"
-  ,"OpenPublicOption": "Public: Anyone can join"
-  ,"OpenApplyOption": "Apply: Admin approval required"
-  ,"OpenPrivateOption": "Private: Joining not allowed"
-  ,"GroupAnnouncement": "Group Announcement"
-  ,"Agree": "Approve"
-  ,"Transfer": "Transfer"
-  ,"Remove": "Remove"
-  ,"RemoveAll": "Remove All"
-  ,"ApplyingUsers": "Applying Users"
-  ,"AcceptAll": "Accept All"
-  ,"RejectAll": "Reject All"
-  ,"UserListLabel": "Member List"
-  ,"ShellScript": "Shell Script"
-  ,"ZipResourceFile": "ZIP Resource File"
-  ,"PleaseSearchAndSelectGroup": "Search and select group"
-  ,"SingleGroupCantUseMulti": "Single-choice group cannot include multi-choice problem"
-  ,"MultiGroupCantUseSingle": "Multi-choice group cannot include single-choice problem"
-  ,"ProblemContentLabel": "Problem Content"
-  ,"ProblemAlias": "Problem Alias"
-  ,"ProblemScore": "Problem Score"
-  ,"UploadSuccess": "Upload success"
-  ,"FileTypeIncorrect": "Incorrect file type"
-  ,"BatchImport": "Batch Import"
-  ,"BatchImportProblems": "Batch Import Problems"
-  ,"BatchImportUsers": "Batch Import Users"
-  ,"Cancel": "Cancel"
-  ,"ProblemInfoNotLoaded": "Problem info not loaded"
-  ,"SubmitAll": "Submit All"
-  ,"UploadExcelHint": "Please upload one *.xlsx file; example file can be downloaded at bottom-right"
-  ,"ExampleFileDownload": "Download example file"
-  ,"DownloadTemplate": "Download template"
-  ,"ManagerGroupIds": "Manager Group IDs"
-  ,"Upload": "Upload"
-  ,"Uploading": "Uploading"
-  ,"SubmitSuccess": "Submit success"
-  ,"SubmitFailed": "Submit failed"
-  ,"Submitting": "Submitting"
-  ,"Created": "Created"
-  ,"Queueing": "Queueing"
-  ,"Invalid": "Invalid"
-  ,"NoData": "No data found"
-  ,"DataNotLoaded": "Data not loaded"
-  ,"SubmitExamConfirm": "After submission you cannot continue answering. Are you sure to submit?"
-  ,"ConfirmSubmitPaper": "Confirm submit"
-  ,"GenderMale": "Male"
-  ,"GenderFemale": "Female"
-  ,"GenderUnknown": "Unknown"
-  ,"RankLoadingHint": "Ranking data is large, please wait patiently"
-  ,"FinishTimeLabel": "Submission time"
-  ,"SubmittedPaper": "Submitted"
-  ,"IPNormal": "IP normal"
-  ,"IPAbnormal": "IP abnormal"
-  ,"IPsUsedLabel": "IPs used"
-  ,"IPMultiple": "Multiple IPs"
-  ,"IPShared": "Shared IP"
-  ,"IPSharedLabel": "Shared IP details"
-  ,"RankScoreboardTab": "Scoreboard"
-  ,"RankMonitorTab": "Invigilation"
-  ,"MonitorMultiIpUsersTitle": "Users with multiple IPs"
-  ,"MonitorSharedIpTitle": "IPs used by multiple users"
-  ,"MonitorFinishedUsersTitle": "Submitted users"
-  ,"MonitorFinishedSearchPlaceholder": "Search by username or name"
-  ,"MonitorEmptyHint": "No matching records"
-  ,"ExamOngoing": "In progress"
-  ,"IPCount": "IP Count"
-  ,"TotalScore": "Total Score"
-  ,"IPAddress": "IP Address"
-  ,"UserCount": "User Count"
-  ,"Users": "Users"
-  ,"Username": "Username"
-  ,"Nickname": "Name"
-  ,"ExamFooterNotice": "If rate limited, please refresh later. The exam paper will auto submit when the exam ends. If you submit manually, the paper will be locked and cannot be modified again."
-  ,"AddCode": "Add Code"
-  ,"IsReferenceCode": "Is reference code"
-  ,"CodeRepositoryTab": "Code Repository"
-  ,"ProblemBankSubmissionTab": "Problem Bank Submissions"
-  ,"ContestId": "Contest ID"
-  ,"RecognitionParam": "Recognition Param"
-  ,"ExamRecognitionCodeTab": "Exam Recognition Code"
-  ,"ExamId": "Exam ID"
-  ,"PleaseInputExamTitle": "Please input exam title"
-  ,"ScoreDisplayMode": "Score display mode on submit page"
-  ,"PartialShow": "Partial Show"
-  ,"CheckpointDisplayMode": "Checkpoint display mode"
-  ,"ExamReportAfterExam": "Report after exam"
-  ,"ExamTimeRange": "Exam time range"
-  ,"ExamTimeRangeHint": "Exam time range cannot be modified after start"
-  ,"ExamDuration": "Exam Duration"
-  ,"UserLogin": "User Login"
-  ,"SDUOJSystem": "SDUOJ Online Judge"
-  ,"AccountPassword": "Account & Password"
-  ,"EmailVerifyCode": "Email Verification"
-  ,"UnifiedIdentity": "Unified Identity"
-  ,"PleaseInputUsername": "Please input username"
-  ,"PleaseInputPassword": "Please input password"
-  ,"ForgotPassword": "Forgot Password"
-  ,"LogoutSuccess": "Logged out"
-  ,"PasswordResetLinkSent": "Password reset link has been sent to your email"
-  ,"VerificationCodeSent": "Verification code has been sent to your email"
-  ,"LoginOrRegister": "Login / Register"
-  ,"RetrievePasswordTitle": "Retrieve Password"
-  ,"Send": "Send"
-  ,"UsernameTab": "Username"
-  ,"EmailTab": "Email"
-  ,"RegisterAndBindTitle": "Register & Bind"
-  ,"UserRegisterTitle": "User Registration"
-  ,"RegisterAndBind": "Register & Bind"
-  ,"QuickEntry": "Quick Entry"
-  ,"quickEntry": "Quick Entry"
-  ,"upcoming": "Upcoming"
-  ,"Overview": "Overview"
-  ,"Problem Set Details": "Problem Set Details"
-  ,"Problem Details": "Problem Details"
-  ,"Tag Classification": "Tag Overview"
-  ,"Problem Set Submission Rate": "PS Submission Rate"
-  ,"Problem Set Score Rate": "PS Score Rate"
-  ,"Total Score": "Total Score"
-  ,"Total Submission Rate": "Total Submission Rate"
-  ,"Score Rate": "Score Rate"
-  ,"Submission Rate": "Submission Rate"
-  ,"Tag Count": "Tag Count"
-  ,"Problem Set": "Problem Set"
-  ,"Tag": "Tag"
-  ,"Weight": "Weight"
-  ,"Correctness": "Correctness"
-  ,"Point": "Point"
-  ,"searchByUsername": "Search User"
-  ,"showAll": "Show All"
-  ,"placeholderUsername": "Username"
-  ,"courseManagement": "Course Management"
-  ,"courseGradeExport": "Course Grade Export"
-  ,"codePlagiarismCheck": "Code Plagiarism Check"
-  ,"batchExtension": "Batch Extension"
-  ,"externalGradeImport": "External Grade Import"
-  ,"courseSignManagement": "Attendance Management"
-  ,"latePermissionList": "Late Permission List"
-  ,"addBatchLatePermission": "Add Batch Late Permission"
-  ,"selectProblemSets": "Select Problem Sets"
-  ,"durationMinute": "Duration (Minutes)"
-  ,"discount": "Discount"
-  ,"note": "Note"
-  ,"created": "Created"
-  ,"conflicts": "Conflicts"
-  ,"requested": "Requested"
-  ,"selectByTag": "Select by Tag"
-  ,"availableProblemSets": "Available Problem Sets"
-  ,"selectedProblemSets": "Selected Problem Sets"
-  ,"problemSetName": "Problem Set Name"
-  ,"isActive": "Is Active"
-  ,"startTime": "Start Time"
-  ,"endTime": "End Time"
-  ,"operation": "Operation"
-  ,"update": "Update"
-  ,"active": "Active"
-  ,"inactive": "Inactive"
-  ,"classroom": "Classroom"
-  ,"course": "Course"
+  "SubmissionList": "Submission List",
+  "LatePermission": "Late Permission",
+  "LatePermissionDuration": "Grace duration (minutes)",
+  "LatePermissionDiscount": "Discount",
+  "LatePermissionStart": "First used at",
+  "LatePermissionExpire": "Expire time",
+  "LatePermissionGrantedBy": "Granted by",
+  "LatePermissionEnabled": "Enabled",
+  "LatePermissionAdd": "Grant Late Permission",
+  "LatePermissionEdit": "Edit Late Permission",
+  "LatePermissionNotUsed": "Not used yet",
+  "LatePermissionDurationHelp": "Minutes of late access counted from first use.",
+  "LatePermissionDiscountHelp": "Applied to all submissions during late window, value between 0 and 1.",
+  "pleaseSelectExpireTime": "Please select expire time",
+  "pleaseEnterDiscount": "Please enter discount",
+  "LatePermissionBannerTitle": "Late submission discount ×{{discount}} ({{percent}})",
+  "LatePermissionBannerActive": "Active window: {{start}} → {{expire}}",
+  "LatePermissionBannerPending": "Window not started yet. You will have {{duration}} minutes once activated.",
+  "LatePermissionBannerExpired": "Window expired at {{expire}}",
+  "LatePermissionBannerDuration": "Total duration: {{duration}} minutes",
+  "LatePermissionBannerRemaining": "Time remaining: {{minutes}} minute(s)",
+  "LatePermissionBannerNoExpire": "Expiration time pending",
+  "AutoTaskTab": "Automation",
+  "AutoTaskCreateTitle": "Automated Review Tasks",
+  "AutoTaskCreateHelp": "Select subjective questions and students to enqueue AI-assisted reviews.",
+  "AutoTaskSubjectiveSelect": "Select subjective questions",
+  "AutoTaskSubjectiveRequired": "Please choose at least one subjective question",
+  "AutoTaskStudentSelect": "Select students",
+  "AutoTaskStudentRequired": "Please choose at least one student",
+  "AutoTaskProgrammingSelect": "Optional reference programming problems",
+  "AutoTaskSubmit": "Create tasks",
+  "AutoTaskOptionsRefresh": "Reload options",
+  "AutoTaskListTitle": "Automation Tasks",
+  "AutoTaskFilterStatus": "Status",
+  "AutoTaskFilterType": "Task type",
+  "AutoTaskStatusPending": "Pending",
+  "AutoTaskStatusRunning": "Running",
+  "AutoTaskStatusSuccess": "Finished",
+  "AutoTaskStatusFailed": "Failed",
+  "AutoTaskSubjectiveReview": "Subjective review",
+  "AutoTaskTypeInvalid": "Invalid task",
+  "AutoTaskTypeUnknown": "Unknown task",
+  "AutoTaskRefresh": "Refresh",
+  "AutoTaskDetail": "Task detail",
+  "AutoTaskTaskId": "Task ID",
+  "AutoTaskPSID": "Problem set ID",
+  "AutoTaskUsername": "Student",
+  "AutoTaskCreatedAt": "Created at",
+  "AutoTaskStartedAt": "Started at",
+  "AutoTaskFinishedAt": "Finished at",
+  "AutoTaskDuration": "Duration",
+  "AutoTaskLogs": "Execution logs",
+  "AutoTaskEmpty": "No automation tasks yet",
+  "AutoTaskPayloadSubjective": "Subjective question",
+  "AutoTaskPayloadProgramming": "Reference programming problems",
+  "AutoTaskPayloadNone": "None",
+  "AutoTaskFilterUsername": "Student filter",
+  "AutoTaskRerun": "Re-run",
+  "AutoTaskRerunConfirm": "Re-run this task?",
+  "AutoTaskRerunSuccess": "Task re-queued",
+  "AutoTaskDelete": "Delete",
+  "AutoTaskDeleteConfirm": "Delete this task? This cannot be undone.",
+  "AutoTaskDeleteSuccess": "Task deleted",
+  "AutoTaskSelectPending": "Add unsubmitted students",
+  "AutoTaskSelectPendingEmpty": "No unsubmitted students found for selected problems",
+  "AutoTaskSelectPendingNoChange": "No new students added",
+  "AutoTaskSelectPendingSuccess": "{{count}} students added",
+  "AutoTaskBatchRerun": "Re-run selected",
+  "AutoTaskBatchRerunEmpty": "Select at least one runnable task",
+  "AutoTaskBatchRerunSuccess": "{{count}} tasks re-queued",
+  "AutoTaskBatchRerunPartial": "{{success}} succeeded, {{failed}} failed",
+  "AutoTaskViewResult": "View Result",
+  "AutoTaskResult": "Task Result",
+  "AutoTaskCreate": "Create Task",
+  "AutoTaskSummaryExport": "Summary Report Export",
+  "AutoTaskProblemId": "Problem ID",
+  "AutoTaskFilterProblemSet": "Filter by Problem Set",
+  "AutoTaskFilterProblem": "Filter by Problem",
+  "AutoTaskScore": "Score",
+  "AutoTaskFilterScoreLe": "Score <= ",
+  "subjectiveReview": "Subjective Review",
+  "SummaryExportCreateTitle": "Create Summary Report Export Task",
+  "SummaryExportCreateHelp": "Select problem sets to include, or leave blank to include all. The system automatically excludes admin group members, creators, and superadmins.",
+  "SummaryExportTaskList": "Summary Report Task List",
+  "SummaryExportProblemSets": "Problem Sets",
+  "SummaryExportProblemSetsHelp": "Leave blank to include all problem sets in the group",
+  "SummaryExportProblemSetsPlaceholder": "Select problem sets to include",
+  "SummaryExportSubmit": "Create Task",
+  "SummaryExportGroupId": "Group ID",
+  "SummaryExportAllProblemSets": "All problem sets in group",
+  "SummaryExportFileStatus": "File Status",
+  "SummaryExportFileReady": "File ready",
+  "SummaryExportFileNotFound": "File not found",
+  "SummaryExportNoFile": "No downloadable file found",
+  "SummaryExportDownload": "Download Report",
+  "SummaryExportDownloadStarted": "Download started",
+  "PointValue": "Point Value",
+  "TimedSubmission": "Timed submission ID",
+  "TimedWeight": "Timed weight",
+  "TimedSubmitTime": "Timed submit time",
+  "PracticeSubmission": "Practice submission ID",
+  "PracticeWeight": "Practice weight",
+  "ScoreAndDetails": "Score & Details",
+  "Reviewing": "Reviewing",
+  "CurrentDiscount": "Current discount:",
+  "DiscountRemaining": "Discount remaining:",
+  "ContentPreview": "Content Preview",
+  "ContentPreviewTooltip": "Only first 55 chars shown, click edit to view full content",
+  "AntiCheatingRate": "Duplication coefficient",
+  "AntiCheatingRateTooltip": "Leave blank to disable; should be between 0.4 and 1",
+  "SubmitLimit": "Submit limit",
+  "SubmitLimitTooltip": "Leave blank for no limit",
+  "CreateObjectiveProblem": "Create Objective Problem",
+  "CreateSubjectiveProblem": "Create Subjective Problem",
+  "reviewQueue": "Review Queue",
+  "reviewQueueTooltip": "Configure optional review queues for this problem; leave blank for direct manual review without queuing",
+  "reviewQueuePlaceholder": "Type a queue name and press Enter",
+  "JudgeInformation": "Judging Information",
+  "GroupDescriptionLabel": "Description",
+  "OpenPublicOption": "Public: Anyone can join",
+  "OpenApplyOption": "Apply: Admin approval required",
+  "OpenPrivateOption": "Private: Joining not allowed",
+  "GroupAnnouncement": "Group Announcement",
+  "Agree": "Approve",
+  "Transfer": "Transfer",
+  "Remove": "Remove",
+  "RemoveAll": "Remove All",
+  "ApplyingUsers": "Applying Users",
+  "AcceptAll": "Accept All",
+  "RejectAll": "Reject All",
+  "UserListLabel": "Member List",
+  "ShellScript": "Shell Script",
+  "ZipResourceFile": "ZIP Resource File",
+  "PleaseSearchAndSelectGroup": "Search and select group",
+  "SingleGroupCantUseMulti": "Single-choice group cannot include multi-choice problem",
+  "MultiGroupCantUseSingle": "Multi-choice group cannot include single-choice problem",
+  "ProblemContentLabel": "Problem Content",
+  "ProblemAlias": "Problem Alias",
+  "ProblemScore": "Problem Score",
+  "UploadSuccess": "Upload success",
+  "FileTypeIncorrect": "Incorrect file type",
+  "BatchImport": "Batch Import",
+  "BatchImportProblems": "Batch Import Problems",
+  "BatchImportUsers": "Batch Import Users",
+  "Cancel": "Cancel",
+  "ProblemInfoNotLoaded": "Problem info not loaded",
+  "SubmitAll": "Submit All",
+  "UploadExcelHint": "Please upload one *.xlsx file; example file can be downloaded at bottom-right",
+  "ExampleFileDownload": "Download example file",
+  "DownloadTemplate": "Download template",
+  "ManagerGroupIds": "Manager Group IDs",
+  "Upload": "Upload",
+  "Uploading": "Uploading",
+  "SubmitSuccess": "Submit success",
+  "SubmitFailed": "Submit failed",
+  "Submitting": "Submitting",
+  "Created": "Created",
+  "Queueing": "Queueing",
+  "Invalid": "Invalid",
+  "NoData": "No data found",
+  "DataNotLoaded": "Data not loaded",
+  "SubmitExamConfirm": "After submission you cannot continue answering. Are you sure to submit?",
+  "ConfirmSubmitPaper": "Confirm submit",
+  "GenderMale": "Male",
+  "GenderFemale": "Female",
+  "GenderUnknown": "Unknown",
+  "RankLoadingHint": "Ranking data is large, please wait patiently",
+  "FinishTimeLabel": "Submission time",
+  "SubmittedPaper": "Submitted",
+  "IPNormal": "IP normal",
+  "IPAbnormal": "IP abnormal",
+  "IPsUsedLabel": "IPs used",
+  "IPMultiple": "Multiple IPs",
+  "IPShared": "Shared IP",
+  "IPSharedLabel": "Shared IP details",
+  "RankScoreboardTab": "Scoreboard",
+  "RankMonitorTab": "Invigilation",
+  "MonitorMultiIpUsersTitle": "Users with multiple IPs",
+  "MonitorSharedIpTitle": "IPs used by multiple users",
+  "MonitorFinishedUsersTitle": "Submitted users",
+  "MonitorFinishedSearchPlaceholder": "Search by username or name",
+  "MonitorEmptyHint": "No matching records",
+  "ExamOngoing": "In progress",
+  "IPCount": "IP Count",
+  "TotalScore": "Total Score",
+  "IPAddress": "IP Address",
+  "UserCount": "User Count",
+  "Users": "Users",
+  "Username": "Username",
+  "Nickname": "Name",
+  "ExamFooterNotice": "If rate limited, please refresh later. The exam paper will auto submit when the exam ends. If you submit manually, the paper will be locked and cannot be modified again.",
+  "AddCode": "Add Code",
+  "IsReferenceCode": "Is reference code",
+  "CodeRepositoryTab": "Code Repository",
+  "ProblemBankSubmissionTab": "Problem Bank Submissions",
+  "ContestId": "Contest ID",
+  "RecognitionParam": "Recognition Param",
+  "ExamRecognitionCodeTab": "Exam Recognition Code",
+  "ExamId": "Exam ID",
+  "PleaseInputExamTitle": "Please input exam title",
+  "ScoreDisplayMode": "Score display mode on submit page",
+  "PartialShow": "Partial Show",
+  "CheckpointDisplayMode": "Checkpoint display mode",
+  "ExamReportAfterExam": "Report after exam",
+  "ExamTimeRange": "Exam time range",
+  "ExamTimeRangeHint": "Exam time range cannot be modified after start",
+  "ExamDuration": "Exam Duration",
+  "UserLogin": "User Login",
+  "SDUOJSystem": "SDUOJ Online Judge",
+  "AccountPassword": "Account & Password",
+  "EmailVerifyCode": "Email Verification",
+  "UnifiedIdentity": "Unified Identity",
+  "PleaseInputUsername": "Please input username",
+  "PleaseInputPassword": "Please input password",
+  "ForgotPassword": "Forgot Password",
+  "LogoutSuccess": "Logged out",
+  "PasswordResetLinkSent": "Password reset link has been sent to your email",
+  "VerificationCodeSent": "Verification code has been sent to your email",
+  "LoginOrRegister": "Login / Register",
+  "RetrievePasswordTitle": "Retrieve Password",
+  "Send": "Send",
+  "UsernameTab": "Username",
+  "EmailTab": "Email",
+  "RegisterAndBindTitle": "Register & Bind",
+  "UserRegisterTitle": "User Registration",
+  "RegisterAndBind": "Register & Bind",
+  "QuickEntry": "Quick Entry",
+  "quickEntry": "Quick Entry",
+  "upcoming": "Upcoming",
+  "Overview": "Overview",
+  "Problem Set Details": "Problem Set Details",
+  "Problem Details": "Problem Details",
+  "Tag Classification": "Tag Overview",
+  "Problem Set Submission Rate": "PS Submission Rate",
+  "Problem Set Score Rate": "PS Score Rate",
+  "Total Score": "Total Score",
+  "Total Submission Rate": "Total Submission Rate",
+  "Score Rate": "Score Rate",
+  "Submission Rate": "Submission Rate",
+  "Tag Count": "Tag Count",
+  "Problem Set": "Problem Set",
+  "Tag": "Tag",
+  "Weight": "Weight",
+  "Correctness": "Correctness",
+  "Point": "Point",
+  "searchByUsername": "Search User",
+  "showAll": "Show All",
+  "placeholderUsername": "Username",
+  "courseManagement": "Course Management",
+  "courseGradeExport": "Course Grade Export",
+  "codePlagiarismCheck": "Code Plagiarism Check",
+  "batchExtension": "Batch Extension",
+  "externalGradeImport": "External Grade Import",
+  "courseSignManagement": "Attendance Management",
+  "latePermissionList": "Late Permission List",
+  "addBatchLatePermission": "Add Batch Late Permission",
+  "selectProblemSets": "Select Problem Sets",
+  "durationMinute": "Duration (Minutes)",
+  "discount": "Discount",
+  "note": "Note",
+  "created": "Created",
+  "conflicts": "Conflicts",
+  "requested": "Requested",
+  "selectByTag": "Select by Tag",
+  "availableProblemSets": "Available Problem Sets",
+  "selectedProblemSets": "Selected Problem Sets",
+  "problemSetName": "Problem Set Name",
+  "isActive": "Is Active",
+  "startTime": "Start Time",
+  "endTime": "End Time",
+  "operation": "Operation",
+  "update": "Update",
+  "active": "Active",
+  "inactive": "Inactive",
+  "classroom": "Classroom",
+  "course": "Course"
 }
