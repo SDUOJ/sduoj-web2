@@ -407,7 +407,7 @@ export default function AuthoringWorkbench() {
                       icon={<CloudUploadOutlined />}
                       onClick={() => setPublishOpen(true)}
                     >
-                      保存编程题
+                      录入 OJ
                     </Button>
                   )}
                 </Space>
