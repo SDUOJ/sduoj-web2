@@ -85,7 +85,7 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                   setModalVis(false);
                 })
                 .catch(() => {
-                  // Transport reports the rejection; keep the captcha and email available for retry.
+                  message.error(props.t('sendVerificationFailed', {defaultValue: '验证码发送失败，请重试'}));
                 })
                 .finally(() => {
                   pending.current = false;

@@ -9,6 +9,7 @@ import { withRouter } from 'react-router';
 import UserAccountDropdown from './UserAccountDropdown';
 import { userLogoutTodo } from '../../Redux/Action/user';
 import { UrlPrefix } from '../../Config/constValue';
+import { loginRedirect } from '../../Utils/authReturn';
 
 const { Header } = Layout;
 
@@ -85,9 +86,7 @@ class MHeader extends Component<any, any> {
                 const { pathname, search, hash } = this.props.location;
                 // 如果已经在登录页，则不要修改已有重定向地址（也不再跳转）
                 if (pathname === loginPath) return;
-                this.props.history.push(
-                  loginPath + '?to=' + encodeURIComponent(pathname + search + hash),
-                );
+                this.props.history.push(loginRedirect({ pathname, search, hash }));
               }}
             >
               {this.props.t('LoginOrRegister', {

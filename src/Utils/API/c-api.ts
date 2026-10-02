@@ -308,6 +308,9 @@ const cApi = {
       return res;
     });
   },
+  clearAcceptanceQueueCache() {
+    delete (cApi as any)._acceptanceQueueCache;
+  },
   // 获取评阅信息
   async getJudgeInfo(data: any) {
     return request.post('/ps/judge/info', data);

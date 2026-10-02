@@ -4,6 +4,7 @@ import { Get, Post } from '../../Type/types';
 import { message } from 'antd';
 import { UrlPrefix } from '../../Config/constValue';
 import { requestConstraintError } from '../../Config/validation/requests';
+import { loginRedirect } from '../authReturn';
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api';
 
@@ -175,9 +176,10 @@ const dealResponse = async (resp: any, url: string) => {
           const current = new URL(window.location.href);
           const inApp =
             current.pathname === UrlPrefix || current.pathname.startsWith(UrlPrefix + '/');
-          const to = inApp ? current.pathname + current.search + current.hash : UrlPrefix;
           if (current.pathname !== UrlPrefix + '/login') {
-            window.location.replace(`${UrlPrefix}/login?to=${encodeURIComponent(to)}`);
+            window.location.replace(inApp
+              ? loginRedirect({ pathname: current.pathname, search: current.search, hash: current.hash })
+              : loginRedirect({ pathname: UrlPrefix }));
           }
           message.error(parseErrorMessage(payload, '未登录或登录已过期'));
         }

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Menu} from 'antd';
-import {Link, RouteComponentProps, withRouter} from "react-router-dom";
+import {Link, matchPath, RouteComponentProps, withRouter} from "react-router-dom";
 import {IUserPropRoles} from "../../Type/Iuser";
 import {withTranslation} from "react-i18next";
 import {routerM} from "../../Config/router/routerM";
@@ -12,23 +12,31 @@ import {routerM} from "../../Config/router/routerM";
 const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
 
 
-    const [selectedKey, setSelectedKey] = useState<any[]>([])
+    const [selectedKey, setSelectedKey] = useState<string[]>([])
+    const [openKeys, setOpenKeys] = useState<string[]>([])
 
 
     useEffect(() => {
-        let select: any[] = []
-        const find = (router:any)=>{
-            for (let i = 0; i < router.length; i++) {
-                if (RegExp(router[i].path).exec(props.location.pathname) !== null) {
-                    select.push(router[i].id.toString())
-                    if(router[i].children !== undefined){
-                        find(router[i].children)
-                    }
+        const select: string[] = []
+        const opened: string[] = []
+        let leaf: string | undefined
+        const find = (router: any[], parentMatched = false) => {
+            router.forEach((item) => {
+                const matched = matchPath(props.location.pathname, {path: item.path, exact: false}) !== null
+                if (!matched && !parentMatched) return
+                const key = item.id.toString()
+                if (item.children !== undefined) {
+                    opened.push(key)
+                    find(item.children, matched || parentMatched)
+                } else if (matched) {
+                    leaf = key
                 }
-            }
+            });
         }
         find(routerM)
+        if (leaf !== undefined) select.push(leaf)
         setSelectedKey(select)
+        setOpenKeys(opened)
     }, [props.location.pathname])
 
     const buildItems = (menuList: any[]): any[] => menuList.map(r => ({
@@ -44,9 +52,9 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
                 {/*显示目录结构*/}
                 <Menu
                     selectedKeys={selectedKey}
-                    openKeys={selectedKey}
+                    openKeys={openKeys}
                     onOpenChange={(openKeys: string[])=>{
-                        setSelectedKey([...selectedKey, ...openKeys])
+                        setOpenKeys(openKeys)
                     }}
                     mode="inline"
                     theme="dark"

@@ -5,6 +5,8 @@ import CApi from 'Utils/API/c-api';
 import { RedoOutlined } from '@ant-design/icons';
 
 const ItemCaptcha = (props: any) => {
+  const captchaLabel = typeof props.t === 'function' ? props.t('captcha', {defaultValue: '验证码'}) : '验证码';
+  const refreshLabel = typeof props.t === 'function' ? props.t('refresh', {defaultValue: '刷新验证码'}) : '刷新验证码';
   const [image, setImage] = useState<string>();
   const requestIdRef = useRef(0);
   const mountedRef = useRef(true);
@@ -35,13 +37,14 @@ const ItemCaptcha = (props: any) => {
     <Row>
       <Col span={14}>
         <Input
+          aria-label={captchaLabel}
           onChange={(e) => {
             if (props.setCaptcha !== undefined) props.setCaptcha(e.target.value);
           }}
         />
       </Col>
       <Col offset={1} span={8}>
-        <Image src={image} height={32} preview={false} />
+        <Image src={image} height={32} preview={false} alt={captchaLabel} />
       </Col>
       <Col span={1}>
         <Button
@@ -50,6 +53,7 @@ const ItemCaptcha = (props: any) => {
           onClick={() => {
             getCaptcha();
           }}
+          aria-label={refreshLabel}
         />
       </Col>
     </Row>

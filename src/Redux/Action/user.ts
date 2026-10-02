@@ -8,6 +8,7 @@ export type UserAction = setUserInfo | userLogin | userLogout | authCheckFailed 
 export function userLogoutTodo() {
   return (dispatch: Dispatch<UserAction>): Promise<void> => {
     return CApi.logout().then(() => {
+      (CApi as any).clearAcceptanceQueueCache?.();
       dispatch({ type: 'userLogout' });
       dispatch({ type: 'clearRedux' });
     });

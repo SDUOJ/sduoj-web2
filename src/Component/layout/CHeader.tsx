@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../Redux/Store/hooks';
 import UserAccountDropdown from './UserAccountDropdown';
 import { routerC_M } from '../../Config/router/routerC';
 import { UrlPrefix } from '../../Config/constValue';
+import { loginRedirect } from '../../Utils/authReturn';
 
 export default function CHeader() {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ export default function CHeader() {
       <Link className="client-logo" to={UrlPrefix + '/home'}>
         <img src={logo} width={125} height={30} alt="SDUOJ-logo" />
       </Link>
-      <nav className="client-navigation">
+      <nav className="client-navigation" aria-label={t('navigation', { defaultValue: '主导航' })}>
         <Menu
           mode="horizontal"
           theme="light"
@@ -65,8 +66,7 @@ export default function CHeader() {
             onClick={() => {
               const loginPath = UrlPrefix + '/login';
               if (location.pathname !== loginPath) {
-                const target = location.pathname + location.search + location.hash;
-                history.push(loginPath + '?to=' + encodeURIComponent(target));
+                history.push(loginRedirect(location));
               }
             }}
           >

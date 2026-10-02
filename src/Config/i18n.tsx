@@ -53,6 +53,8 @@ i18n
     },
     //选择默认语言，选择内容为上述配置中的key，即en/zh
     lng: defLang,
+    fallbackLng: 'zh',
+    returnEmptyString: false,
     debug: false,
     showSupportNotice: false,
     interpolation: {

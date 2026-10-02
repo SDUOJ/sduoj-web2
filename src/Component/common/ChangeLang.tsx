@@ -32,12 +32,13 @@ class ChangeLang extends Component<any, any> {
     }
 
     changeLang(value: string) {
-        i18n.changeLanguage(value)
+    i18n.changeLanguage(value)
         const id = language.findIndex((item) => {
             return item.id === value
         })
     this.props.ChangeLanguage(languageMap[value], language[id].code)
     dayjs.locale(language[id].time);
+        document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en';
         localStorage.setItem('language', language[id].code)
     }
 
@@ -46,7 +47,7 @@ class ChangeLang extends Component<any, any> {
             <>
                 <Space>
                     <img src={lang} alt={'lang'} width={20}/>
-                    <Select onChange={this.changeLang} defaultValue={this.defLang} variant={"borderless"}
+                    <Select aria-label="Language" onChange={this.changeLang} defaultValue={this.defLang} variant={"borderless"}
                             style={{marginLeft: -15}}>
                         {
                             language.map((r, i) => {
