@@ -1,7 +1,7 @@
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router-dom";
 import {Alert, Card, Col, Divider, Menu, Row, Slider, Space, Switch} from "antd";
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useMemo, useState} from "react";
 import getContestInfo from "./API/getContestInfo";
 import {TimeDiff, TimeRangeState, unix2Time} from "../../Utils/Time";
 import AntdTimer from "../../Utils/AntdTimer";
@@ -22,18 +22,21 @@ const ContestHeader = (props: any) => {
     const [selectedKey, setSelectedKey] = useState<string>("")
     const contestId = props.match.params.contestId
     const url = props.location.pathname
+    const history = props.history
+    const sliderTime = props.sliderTime
+    const setSliderTime = props.setSliderTime
     const contestInfo = getContestInfo(contestId)
     const [nowSliderTime, setNowSliderTime] = useState<number>(Date.now())
 
     // console.log(contestInfo)
 
-    const menuData = [
+    const menuData = useMemo(() => [
         {key: "register", name: "Register", link: UrlPrefix + "/contest/" + contestId + "/register", re: /\/contest\/.*\/register/g},
         {key: "overview", name: "Overview", link: UrlPrefix + "/contest/" + contestId + "/overview", re: /\/contest\/.*\/overview/g},
         {key: "problem", name: "Problem", link: UrlPrefix + "/contest/" + contestId + "/problem/1", re: /\/contest\/.*\/problem\/.*/g},
         {key: "status", name: "Status", link: UrlPrefix + "/contest/" + contestId + "/submission", re: /\/contest\/.*\/submission/g},
         {key: "rank", name: "Rank", link: UrlPrefix + "/contest/" + contestId + "/rank", re: /\/contest\/.*\/rank/g},
-    ]
+    ], [contestId])
 
 
     const timeState = contestInfo !== undefined ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd) : undefined
@@ -43,22 +46,22 @@ const ContestHeader = (props: any) => {
     useEffect(() => {
         if (url.match(/\/contest\/[0-9]*\/?$/g) !== null && openness !== undefined && isPractice !== undefined) {
             // 在私有模式下，率先跳转到注册页面
-            if (openness === "private" && !isPractice) props.history.replace(menuData[0].link)
-            else props.history.replace(menuData[1].link)
+            if (openness === "private" && !isPractice) history.replace(menuData[0].link)
+            else history.replace(menuData[1].link)
         }
         // 若已经注册，则不能访问注册页面
-        if (url.match(menuData[0].re) !== null && isPractice) props.history.replace(menuData[1].link)
+        if (url.match(menuData[0].re) !== null && isPractice) history.replace(menuData[1].link)
         menuData.map((value) => {
             if (url.match(value.re) !== null) setSelectedKey(value.key)
         })
-    }, [url, openness, isPractice, contestId, props.history])
+    }, [history, isPractice, menuData, openness, url])
 
 
     useEffect(() => {
-        if (Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60) {
-            props.setSliderTime(nowSliderTime)
+        if (Math.abs(nowSliderTime - sliderTime) >= 1000 * 60) {
+            setSliderTime(nowSliderTime)
         }
-    }, [nowSliderTime, props.sliderTime, props.setSliderTime])
+    }, [nowSliderTime, setSliderTime, sliderTime])
 
     return (
         <>

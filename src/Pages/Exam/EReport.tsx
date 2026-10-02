@@ -19,6 +19,12 @@ import CodeHighlight from "../../Component/common/CodeHighlight";
 import ProProgram from "../../Component/problem/Program/ProProgram";
 import {useTranslation} from "react-i18next";
 
+const scoreIcon = (score: number, orgScore: number) => {
+    if (score === 0) return <Icon component={FIcon} style={{fontSize: 36}}/>;
+    if (score === orgScore) return <Icon component={TIcon} style={{fontSize: 36}}/>;
+    return <Icon component={TFIcon} style={{fontSize: 36}}/>;
+};
+
 const EReport = (props: any) => {
     const eid = props.match.params.eid ?? props.eid
 
@@ -256,6 +262,7 @@ const EReport = (props: any) => {
                                     const groupName = `${eid}_${groupData.groupIndex}`
                                     return (
                                         <Card
+                                            key={groupName}
                                             title={`${t('problemGroup')}${groupData.groupIndex + 1} - ${title} (${myScore[groupName]} / ${score[groupName]})`}
                                             bordered={false}>
                                             <List
@@ -268,7 +275,7 @@ const EReport = (props: any) => {
                                                             actions={(() => {
                                                                 if (type === "SingleChoice" || type === "MultipleChoice") {
                                                                     return [
-                                                                        <Button type={"link"} onClick={() => {
+                                                                        <Button key="details" type={"link"} onClick={() => {
                                                                             setTopInfo([eid, groupData.groupIndex, item.id])
                                                                             setObjectVis(true)
                                                                         }}>{t('details')}</Button>,
@@ -276,14 +283,14 @@ const EReport = (props: any) => {
                                                                 }
                                                                 if (type === "Program") {
                                                                     return [
-                                                                        <Button type={"link"}
+                                                                        <Button key="code" type={"link"}
                                                                                 onClick={() => {
                                                                                     setTopInfo([eid, groupData.groupIndex, item.id])
                                                                                     setCodeVis(true)
                                                                                 }}
                                                                                 disabled={isValueEmpty(item.code)}
                                                                         > {t('recognizedCode')} </Button>,
-                                                                        <Button type={"link"} onClick={() => {
+                                                                        <Button key="details" type={"link"} onClick={() => {
                                                                             setTopInfo([eid, groupData.groupIndex, item.id])
                                                                             setProgramVis(true)
                                                                         }}>{t('details')}</Button>
@@ -292,16 +299,7 @@ const EReport = (props: any) => {
                                                             })()}
                                                         >
                                                             <List.Item.Meta
-                                                                avatar={(() => {
-                                                                    if (item.score === 0)
-                                                                        return <Icon component={FIcon}
-                                                                                     style={{fontSize: 36}}/>
-                                                                    else if (item.score === item.orgScore)
-                                                                        return <Icon component={TIcon}
-                                                                                     style={{fontSize: 36}}/>
-                                                                    else return <Icon component={TFIcon}
-                                                                                      style={{fontSize: 36}}/>
-                                                                })()}
+                                                                avatar={scoreIcon(item.score, item.orgScore)}
                                                                 title={(item.id + 1)}
                                                                 description={
                                                                     <>

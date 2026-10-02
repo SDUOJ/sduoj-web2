@@ -56,7 +56,7 @@ const EWait = (props: any) => {
     }, [])
 
     let actions: any = [
-        <Button
+        <Button key="start"
             type="primary" disabled={!ExamStart}
             onClick={() => {
                 props.history.push(UrlPrefix + "/exam/running/" + props.match.params.eid + "/0/0")

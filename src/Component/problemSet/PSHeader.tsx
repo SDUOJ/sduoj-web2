@@ -2,7 +2,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Button, Card, Space, Tabs } from 'antd';
 import { isValueEmpty } from '../../Utils/empty';
 import MarkdownText from '../../Utils/MarkdownText';
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import useProblemSetInfo from './API/getProblemSetInfo';
 import { UrlPrefix } from '../../Config/constValue';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import LatePermissionNotice from './LatePermissionNotice';
 const PSHeader = (props: any) => {
   const problemSetId = props.match.params.problemSetId;
   const path = props.location.pathname;
+  const t = props.t;
 
   const onError = () => {
     props.history.replace(UrlPrefix + '/problemSetPublic/' + problemSetId);
@@ -23,56 +24,56 @@ const PSHeader = (props: any) => {
 
   const problemSetInfo = useProblemSetInfo(problemSetId, onError);
 
-  const menuData = [
+  const menuData = useMemo(() => [
     {
       key: 'overview',
-      name: props.t('Overview'),
+      name: t('Overview'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/overview',
       re: /\/problemSet\/.*\/overview/g,
     },
     {
       key: 'problem',
-      name: props.t('Problem'),
+      name: t('Problem'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/problem/0/0',
       re: /\/problemSet\/.*\/problem/g,
     },
     {
       key: 'review',
-      name: props.t('Review'),
+      name: t('Review'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/review',
       re: /\/problemSet\/.*\/review/g,
     },
     {
       key: 'rank',
-      name: props.t('Rank'),
+      name: t('Rank'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/rank',
       re: /\/problemSet\/.*\/rank/g,
     },
     {
       key: 'monitor',
-      name: props.t('RankMonitorTab'),
+      name: t('RankMonitorTab'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/monitor',
       re: /\/problemSet\/.*\/monitor/g,
     },
     {
       key: 'submission',
-      name: props.t('SubmissionList'),
+      name: t('SubmissionList'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/submission',
       re: /\/problemSet\/.*\/submission/g,
     },
     {
       key: 'late',
-      name: props.t('LatePermission'),
+      name: t('LatePermission'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/late',
       re: /\/problemSet\/.*\/late/g,
     },
     {
       key: 'auto-task',
-      name: props.t('AutoTaskTab'),
+      name: t('AutoTaskTab'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/auto-task',
       re: /\/problemSet\/.*\/auto-task/g,
     },
-  ];
+  ], [problemSetId, t]);
 
   const [nowKey, setNowKey] = useState<any>();
 
@@ -90,7 +91,7 @@ const PSHeader = (props: any) => {
       if (path.match(value.re) !== null) setNowKey(value.key);
       return undefined;
     });
-  }, [path, props.history, problemSetId, props.t]);
+  }, [menuData, path, props.history]);
 
   return (
     <>

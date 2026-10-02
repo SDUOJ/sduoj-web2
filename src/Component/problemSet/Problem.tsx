@@ -317,12 +317,12 @@ const Problem = (props: any) => {
             <div style={hasTimer ? { marginTop: 25 } : {}}>
               {problemSetInfo?.groupInfo.map((group: any, g_index: number) => {
                 return (
-                  <div>
+                  <div key={`group-${group.index ?? g_index}`}>
                     <Card size={'small'} title={group.name} bordered={false}>
                       <Row gutter={10}>
                         {group.problemInfo.map((problem: any, index: number) => {
                           return (
-                            <Col span={3}>
+                            <Col key={`problem-${group.index ?? g_index}-${problem.index ?? index}`} span={3}>
                               <Button
                                 ghost={true}
                                 size={'middle'}
