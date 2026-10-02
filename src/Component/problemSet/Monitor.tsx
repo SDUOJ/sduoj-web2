@@ -9,6 +9,7 @@ import dealFloat from "../../Utils/dealFloat";
 
 const Monitor = (props: any) => {
     const problemSetId = props.match.params.problemSetId
+    const t = props.t
 
     const [rankInfo, setRankInfo] = useState<any>()
     const [lastUpdate, setLastUpdate] = useState<any>()
@@ -22,16 +23,22 @@ const Monitor = (props: any) => {
     }
 
     useEffect(() => {
-        if (rankInfo === undefined) {
-            const hide = showLoading("RankLoadingHint", props.t("RankLoadingHint"))
-            cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
-                setRankInfo(res.data)
-                setLastUpdate(res.lastUpdate)
-            }).finally(() => {
-                hide()
-            })
-        }
-    }, [problemSetId, props.t, rankInfo])
+        let active = true
+        const hide = showLoading("RankLoadingHint", t("RankLoadingHint"))
+        cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
+            if (!active) return
+            setRankInfo(res.data)
+            setLastUpdate(res.lastUpdate)
+        }).catch(() => {
+            if (active) {
+                setRankInfo([])
+                setLastUpdate(undefined)
+            }
+        }).finally(() => {
+            hide()
+        })
+        return () => { active = false; hide() }
+    }, [problemSetId, t])
 
     useEffect(() => {
         setRankInfo(undefined)

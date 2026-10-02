@@ -18,12 +18,15 @@ const Public = (props: any) => {
     const State = info && TimeRangeState(info.tm_start, info.tm_end)
 
     useEffect(() => {
-        if (info === undefined) {
-            cApi.getProblemSetPublic({psid: problemSetId}).then((res: any) => {
-                setInfo(res)
-            })
-        }
-    }, [info])
+        let active = true
+        setInfo(undefined)
+        cApi.getProblemSetPublic({psid: problemSetId}).then((res: any) => {
+            if (active) setInfo(res)
+        }).catch(() => {
+            if (active) setInfo(null)
+        })
+        return () => { active = false }
+    }, [problemSetId])
 
     const getStartText = () => {
         if (info === undefined) return ""
@@ -59,7 +62,7 @@ const Public = (props: any) => {
                             }
                             // antd Card actions 期望一维 ReactNode[]，之前误用二维数组导致布局异常
                             actions={[
-                                <Button
+                                <Button key="start"
                                     type="primary" disabled={State !== "running" || info?.finish === 1}
                                     onClick={() => {
                                         props.history.push(UrlPrefix + `/problemSet/${problemSetId}/overview`)
