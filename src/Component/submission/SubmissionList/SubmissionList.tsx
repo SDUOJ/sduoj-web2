@@ -256,7 +256,7 @@ export const SubmissionList = (props: any) => {
           <Select onChange={onFinish} allowClear style={{ width: 200 }}>
             {RunningResultList.map((value) => {
               return (
-                <Select.Option value={parseInt(value)}>
+                <Select.Option key={value} value={parseInt(value)}>
                   <TestCase type={'text'} caseType={StateList.indexOf(SubmissionMap[value])} />
                 </Select.Option>
               );
@@ -327,7 +327,7 @@ export const SubmissionList = (props: any) => {
         actions={
           props.lessInfo && props.isLogin
             ? [
-                <div>
+                <div key="show-all-information">
                   {props.lessInfo && props.isLogin && (
                     <ModalSubmissionList
                       btnProps={{ type: 'text', block: true }}

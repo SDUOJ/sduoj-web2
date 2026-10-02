@@ -68,18 +68,8 @@ class CProblem extends Component<any, any> {
                             >
                               {text}
                             </Button>
-                            {[''].map(() => {
-                              if (this.state.ACList.indexOf(row.problemCode) !== -1) {
-                                return <CheckOutlined style={{ color: 'green' }} />;
-                              }
-                              return undefined;
-                            })}
-                            {[''].map(() => {
-                              if (row.isPublic === 0) {
-                                return <Tag color={'orange'}>{this.props.t('private')}</Tag>;
-                              }
-                              return undefined;
-                            })}
+                            {this.state.ACList.indexOf(row.problemCode) !== -1 && <CheckOutlined style={{ color: 'green' }} />}
+                            {row.isPublic === 0 && <Tag color={'orange'}>{this.props.t('private')}</Tag>}
                           </Space>
                         </>
                       );

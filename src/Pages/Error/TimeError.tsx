@@ -35,7 +35,7 @@ const TimeError = (props: any) => {
                 [''].map(() => {
                     if (Math.abs(sysTime - serTime) < 60000) {
                         return (
-                            <Result
+                            <Result key="time-ok"
                                 status="success"
                 title={t("timeOkTitle")}
                                 subTitle={
@@ -60,7 +60,7 @@ const TimeError = (props: any) => {
                         )
                     } else {
                         return (
-                            <Result
+                            <Result key="time-error"
                                 status="warning"
                 title={t("timeErrorTitle")}
                                 subTitle={

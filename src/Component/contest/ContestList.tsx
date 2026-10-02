@@ -40,7 +40,7 @@ const ContestList = (props: any) => {
                                             <Select.Option value={""}>{props.t("All")}</Select.Option>
                                             {myGroup.map((val: any) => {
                                                 return (
-                                                    <Select.Option value={val.groupId}>
+                                                    <Select.Option key={val.groupId} value={val.groupId}>
                                                         {val.groupId}: {val.title}
                                                     </Select.Option>
                                                 )

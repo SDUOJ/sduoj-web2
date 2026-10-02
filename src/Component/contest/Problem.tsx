@@ -71,7 +71,7 @@ const Problem = (props: any) => {
             <Row gutter={10}>
               {contestInfo?.problems.map((value: any) => {
                 return (
-                  <Col span={3}>
+                  <Col key={value.problemCode} span={3}>
                     <Button
                       size={'middle'}
                       type={value.problemCode === problemCode ? 'primary' : 'text'}

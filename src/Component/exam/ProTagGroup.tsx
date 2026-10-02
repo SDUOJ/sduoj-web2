@@ -26,7 +26,7 @@ const ProTagGroup = (props: any) => {
                     {
                         problemList?.proList.map((v:any) => {
                             return (
-                                <Col span={3}>
+                                <Col key={v.index} span={3}>
                                     <ProTag gid={gid} pid={v.index}/>
                                 </Col>
                             )

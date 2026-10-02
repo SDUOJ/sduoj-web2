@@ -89,7 +89,7 @@ const ScoreMode = (props: any) => {
                                                     <Row>
                                                         {data.info && data.info.map((r: any) => {
                                                             return (
-                                                                <Col span={12}><Radio
+                                                                <Col key={r[0]} span={12}><Radio
                                                                     value={r[0]}> {r[0]}分 {r[1]}</Radio></Col>
                                                             )
                                                         })}

@@ -245,7 +245,7 @@ const ExamProblemForm = (props: any) => {
               editableKeys: props.isStart || sortSwitch ? [] : editableKeys,
               actionRender: (row: any, config: any, defDom: any) => {
                 return [
-                  <Popconfirm
+                  <Popconfirm key={row.id}
                     title={props.t('deleteConfirm')}
                     onConfirm={() => {
                       setProblemGroupData(

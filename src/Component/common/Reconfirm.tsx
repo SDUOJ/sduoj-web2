@@ -42,7 +42,7 @@ const Reconfirm = (props: ReconfirmProps) => {
                     setModalVis(false)
                 }}
                 footer={[
-                    <Button
+                    <Button key="confirm"
                         block={true}
                         danger={true}
                         disabled={props.confirm !== value}

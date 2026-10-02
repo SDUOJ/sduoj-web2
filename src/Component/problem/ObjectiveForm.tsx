@@ -195,9 +195,7 @@ const ObjectiveForm = (props: any) => {
               }
             }}
           >
-            {[''].map(() => {
-              if (props.type === 'create') return <PlusOutlined />;
-            })}
+            {props.type === 'create' && <PlusOutlined />}
             {props.type === 'create' ? '新建' : '修改'}
           </Button>
         }
@@ -212,7 +210,7 @@ const ObjectiveForm = (props: any) => {
           submitButtonProps: { style: { display: 'none' } },
           render: (prop, defaultDoms) => {
             return [
-              <Button
+              <Button key="submit-objective"
                 type="primary"
                 onClick={() => {
                   formRef.current
@@ -315,7 +313,7 @@ const ObjectiveForm = (props: any) => {
                 editableKeys: sortSwitch ? [] : editableKeys,
                 actionRender: (row: any, config: any, defDom: any) => {
                   return [
-                    <Popconfirm
+                    <Popconfirm key={row.id}
                       title={props.t('deleteConfirm')}
                       onConfirm={() => {
                         let choice = formRef.current?.getFieldValue('choice');

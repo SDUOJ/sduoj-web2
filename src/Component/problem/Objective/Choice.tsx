@@ -18,7 +18,7 @@ const Choice = (props: any) => {
             {choice !== undefined && (
                 Object.keys(choice).map((v: any) => {
                     return (
-                        <Options
+                        <Options key={v}
                             answer={props.answer}
                             topInfo={props.topInfo}
                             ChoiceID={v}

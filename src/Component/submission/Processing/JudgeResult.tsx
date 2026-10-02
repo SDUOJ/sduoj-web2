@@ -100,7 +100,7 @@ class JudgeResult extends Component<IJudgeResult, any> {
                                                         flexWrap: "wrap"
                                                     }}>
                                                         {value.map((val: any) => {
-                                                            return <TestCase type={"index"} {...val}/>
+                                                            return <TestCase key={val.caseIndex ?? val.Index} type={"index"} {...val}/>
                                                         })}
                                                     </div>
 

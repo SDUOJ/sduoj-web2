@@ -66,10 +66,10 @@ class CThirdPartyLogin extends Component<any, any> {
             <div className={"center"} style={{width: 450}}>
                 {this.state.error ? <Card>{this.state.error}</Card> : null}
                 {
-                    [''].map(() => {
+                    ['login'].map((key) => {
                         if (this.state.loading === true) {
                             return (
-                                <Spin tip={this.props.t("certificationIn...")}>
+                                <Spin key={key} tip={this.props.t("certificationIn...")}>
                                     <div style={{textAlign: "center", margin: "0 auto"}}>
                                         <div>
                                             <Image width={200} src={SDU_Logo} preview={false}/>

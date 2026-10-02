@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Form, Select } from 'antd';
 
 import autolabApi from '../../../../Utils/API/autolab-api';
@@ -26,21 +26,21 @@ const ItemSelectClassroom = (props: any) => {
     );
   }, [selected]);
 
-  const mergeOptions = (incoming: ClassroomOption[]) => {
+  const mergeOptions = useCallback((incoming: ClassroomOption[]) => {
     setOptions((prev) => {
       const m = new Map<number, ClassroomOption>();
       prev.forEach((item) => m.set(item.value, item));
       incoming.forEach((item) => m.set(item.value, item));
       return Array.from(m.values()).sort((a, b) => a.value - b.value);
     });
-  };
+  }, []);
 
-  const toOption = (row: any): ClassroomOption => ({
+  const toOption = useCallback((row: any): ClassroomOption => ({
     value: Number(row.c_id),
     label: `${row.c_id}: ${row.c_name}${row.address ? ` (${row.address})` : ''}`,
-  });
+  }), []);
 
-  const queryClassrooms = async (keyword: string) => {
+  const queryClassrooms = useCallback(async (keyword: string) => {
     setLoading(true);
     try {
       const res: any = await autolabApi.listClassrooms({
@@ -53,11 +53,13 @@ const ItemSelectClassroom = (props: any) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mergeOptions, toOption]);
 
   useEffect(() => {
     queryClassrooms('');
-  }, []);
+  }, [queryClassrooms]);
+
+  const selectedIdsKey = selectedIds.join(',');
 
   useEffect(() => {
     if (selectedIds.length === 0) return;
@@ -72,7 +74,7 @@ const ItemSelectClassroom = (props: any) => {
         if (valid.length > 0) mergeOptions(valid);
       },
     );
-  }, [selectedIds.join(','), options]);
+  }, [mergeOptions, options, selectedIds, selectedIdsKey, toOption]);
 
   return (
     <Form.Item

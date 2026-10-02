@@ -158,7 +158,7 @@ const Overview = (props: any) => {
                             })
                         }
                         return (
-                            <Row gutter={24}>
+                            <Row key={problemSetInfo.psid ?? "overview"} gutter={24}>
                                 <Col span={problemSetInfo.config.useSameSE === 1 ? 24 : 16}>
                                     <Table
                                         className={"problemSet-overview-table"}

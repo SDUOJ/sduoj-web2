@@ -16,10 +16,10 @@ class Timer extends Component<ITimer & WithTranslation, any> {
         return (
             <div className={"Timer"}>
                 {
-                    [''].map(() => {
+                    [this.props.inline ? 'inline' : 'block'].map((key) => {
                         if (this.props.inline) {
                             return (
-                                <Card className={"Timer-inline-card"}>
+                                <Card key={key} className={"Timer-inline-card"}>
                                     <Space>
                                         <Space className={"Timer-inline"}>
                                             <ClockCircleOutlined/>
@@ -35,7 +35,7 @@ class Timer extends Component<ITimer & WithTranslation, any> {
                             )
                         } else {
                             return (
-                                <Card>
+                                <Card key={key}>
                                     <AntdTimer title={this.props.name} value={this.props.deadline}
                                                format={this.props.t("TimeFormat")}
                                                onFinish={this.props.onFinish}

@@ -104,7 +104,7 @@ const FormJudgeType = (props: any) => {
                     >
                         <Select mode={"multiple"} value={selectedJudgeTemplate} onChange={setSelectJudgeTemplate}>
                             {judgeTemplateInfo !== undefined && judgeTemplateInfo.map((value: any) => {
-                                return <Select.Option value={value.id}>{value.id + ": " + value.title}</Select.Option>
+                                return <Select.Option key={value.id} value={value.id}>{value.id + ": " + value.title}</Select.Option>
                             })}
                         </Select>
                     </Form.Item>

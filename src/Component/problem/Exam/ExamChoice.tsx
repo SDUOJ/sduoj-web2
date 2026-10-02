@@ -27,7 +27,7 @@ const ExamChoice = (props: any) => {
                 {choice !== undefined && (
                     Object.keys(choice).map((v: any) => {
                         return (
-                            <Options
+                            <Options key={v}
                                 ChoiceID={v}
                                 ChoiceContent={choice[v]}
                             />

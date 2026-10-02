@@ -30,7 +30,7 @@ class MExam extends Component<any, any> {
                     bordered={true}
                     title={this.props.t("examList")}
                     extra={[
-                        <ExamForm type={"create"}/>
+                        <ExamForm key="create-exam" type={"create"}/>
                     ]}
                 >
                     <ExamList type={"manage"}/>

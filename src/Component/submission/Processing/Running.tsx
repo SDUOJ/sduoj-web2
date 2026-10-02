@@ -78,7 +78,7 @@ const Running = (props: any) => {
                             else if (RunningResult === "5") obj = {message: props.t("SystemError"), type: "error"}
                             else obj = {message: props.t("judgingLog"), type: "info"}
                             return (
-                                <Alert
+                                <Alert key="judge-log"
                                     description={<pre className="preAutoLine">{submissionInfo.judgeLog}</pre>}
                                     showIcon={true}
                                     {...obj}
@@ -179,7 +179,7 @@ const Running = (props: any) => {
                                     <Title level={4}> {props.t("TestCaseInfo")} </Title>
                                     <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
                                         {TestCaseStateList.map((value: any) => {
-                                            return <TestCase {...value} scoreMod={scoreMod}/>
+                                            return <TestCase key={value.caseIndex ?? value.caseID} {...value} scoreMod={scoreMod}/>
                                         })}
                                     </div>
 
@@ -190,7 +190,7 @@ const Running = (props: any) => {
                                     <Title level={4}> {props.t("PublicTestCaseInfo")} </Title>
                                     <div style={{display: "flex", justifyContent: "left", flexWrap: "wrap"}}>
                                         {PublicTestCaseStateList.map((value: any) => {
-                                            return <TestCase {...value} scoreMod={scoreMod}/>
+                                            return <TestCase key={value.caseIndex ?? value.caseID} {...value} scoreMod={scoreMod}/>
                                         })}
                                     </div>
                                 </div>

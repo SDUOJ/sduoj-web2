@@ -37,7 +37,7 @@ const ExamAnswerSheet = (props: any) => {
                               {problemList !== undefined && (
                                   Object.keys(problemList).map((v: any) => {
                                       return (
-                                          <ProTagGroup gid={problemList[v].index}/>
+                                          <ProTagGroup key={v} gid={problemList[v].index}/>
                                       )
                                   })
                               )}

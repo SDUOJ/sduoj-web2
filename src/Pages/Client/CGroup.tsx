@@ -105,8 +105,8 @@ const CGroup = (props: any) => {
                                             size={"small"}
                                             className={"GroupListItemCard"}
                                             actions={[
-                                                <span> <ClockCircleOutlined/> {unix2Date(item.gmtCreate)}</span>,
-                                                <span> <UserOutlined/> {item.memberNum}</span>
+                                                <span key="created"> <ClockCircleOutlined/> {unix2Date(item.gmtCreate)}</span>,
+                                                <span key="members"> <UserOutlined/> {item.memberNum}</span>
                                             ]}
                                         >
                                             <List.Item.Meta

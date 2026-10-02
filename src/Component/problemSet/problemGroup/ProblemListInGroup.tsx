@@ -113,7 +113,7 @@ const ProblemListInGroup = (props: any) => {
                         toolBar={(actionRef: any) => {
                             if (props.type === 0) {
                                 // 客观题
-                                return [<ModalFormUseForm
+                                return [<ModalFormUseForm key="create-objective"
                                     width={900}
                                     type={"create"}
                                     btnProps={{block: true}}
@@ -133,7 +133,7 @@ const ProblemListInGroup = (props: any) => {
                                     }}
                                 />]
                             } else if (props.type === 1) {
-                                return [<ModalFormUseForm
+                                return [<ModalFormUseForm key="create-subjective"
                                     width={900}
                                     type={"create"}
                                     btnProps={{block: true}}
@@ -159,7 +159,7 @@ const ProblemListInGroup = (props: any) => {
                             if (props.type === 0) {
                                 // 客观题
                                 return [
-                                    <ModalFormUseForm
+                                    <ModalFormUseForm key={row.id}
                                         width={900}
                                         type={"update"}
                                         title={props.t('Edit')}
@@ -192,7 +192,7 @@ const ProblemListInGroup = (props: any) => {
                             } else if (props.type === 1) {
                                 // 主观题
                                 return [
-                                    <ModalFormUseForm
+                                    <ModalFormUseForm key={row.id}
                                         width={900}
                                         type={"update"}
                                         title={"编辑"}

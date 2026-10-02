@@ -41,11 +41,8 @@ const ExamOptions = (props: any) => {
              onClick={() => updateChoice("yes")}>
             <Row>
                 <Col span={1}>
-                    {[''].map(() => {
-                        if (OptionsState === "used") return <CheckOutlined/>
-                        if (OptionsState === "unused") return <CloseOutlined/>
-                        return undefined
-                    })}
+                    {OptionsState === "used" && <CheckOutlined/>}
+                    {OptionsState === "unused" && <CloseOutlined/>}
                 </Col>
                 <Col className={"Options-Choice"} span={1}>
                     {props.ChoiceID}.

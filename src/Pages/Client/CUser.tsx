@@ -173,7 +173,7 @@ class CUser extends Component<any, any> {
                     {[''].map(() => {
                       if (!isValueEmpty(this.props.userInfo?.sduId)) {
                         return (
-                          <Card
+                          <Card key="sdu-cas"
                             title={`SDUCAS（${this.props.t('sduUnifiedIdentityPlatform')}）`}
                             style={{ marginTop: 30 }}
                           >

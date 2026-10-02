@@ -201,7 +201,7 @@ const Summary = (props: any) => {
                                         if (info.mxTime <= props.TimeLimit)
                                             obj = {success: {percent: info.mxTime / props.TimeLimit * 100}}
                                         return (
-                                            <Progress
+                                            <Progress key="time"
                                                 {...obj}
                                                 type="dashboard"
                                                 format={() => `${info.mxTime} / ${props.TimeLimit} ms`}
@@ -230,7 +230,7 @@ const Summary = (props: any) => {
                                         if (info.mxMem <= props.MemoryLimit)
                                             obj = {success: {percent: info.mxMem / props.MemoryLimit * 100}}
                                         return (
-                                            <Progress
+                                            <Progress key="memory"
                                                 {...obj}
                                                 type="dashboard"
                                                 format={() => `${Math.floor(info.mxMem / 1024)} / ${Math.floor(props.MemoryLimit / 1024)} MB`}
