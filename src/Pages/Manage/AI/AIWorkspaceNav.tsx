@@ -1,4 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
+import React, {useContext} from 'react';
+import {Link} from 'react-router-dom';
+import {__RouterContext} from 'react-router';
 import { UrlPrefix } from '../../../Config/constValue';
 
 const items = [
@@ -14,13 +16,16 @@ const items = [
 ] as const;
 
 export default function AIWorkspaceNav() {
-  const location = useLocation();
+  const router = useContext(__RouterContext);
+  const pathname = router?.location?.pathname;
   return (
     <nav className="ai-workspace-nav" aria-label="AI 工作区">
       {items.map(([label, path]) => (
-        <Link key={path} className={location.pathname === path ? 'active' : undefined} to={path}>
-          {label}
-        </Link>
+        router ? (
+          <Link key={path} className={pathname === path ? 'active' : undefined} to={path}>{label}</Link>
+        ) : (
+          <a key={path} className={pathname === path ? 'active' : undefined} href={path}>{label}</a>
+        )
       ))}
     </nav>
   );
