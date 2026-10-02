@@ -3,7 +3,7 @@ import { UserInfo } from '../../Type/Iuser';
 import { Dispatch } from 'redux';
 import { clearRedux } from './common';
 
-export type UserAction = setUserInfo | userLogin | userLogout | clearRedux;
+export type UserAction = setUserInfo | userLogin | userLogout | authCheckFailed | clearRedux;
 
 export function userLogoutTodo() {
   return (dispatch: Dispatch<UserAction>): Promise<void> => {
@@ -25,4 +25,8 @@ export interface userLogin {
 
 export interface userLogout {
   type: 'userLogout';
+}
+
+export interface authCheckFailed {
+  type: 'authCheckFailed';
 }

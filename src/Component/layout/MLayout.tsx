@@ -4,7 +4,7 @@ import logo from '../../Assert/img/logo.png';
 import MMenu from './MMenu';
 import MHeader from './MHeader';
 import Loading from '../../Utils/Loading';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { routerM } from '../../Config/router/routerM';
@@ -14,6 +14,7 @@ import LoginCheck from '../common/LoginCheck';
 import { Role, UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
 import judgeAuth from '../../Utils/judgeAhtu';
+import NotFound from '../../Pages/Error/NotFound';
 
 const { Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -40,14 +41,12 @@ const MLayout = (props: any) => {
     setMenuOpen(false);
   }, [props.location.pathname, isMobile]);
 
-  const geneRoute: any = (router: IRouter[]) =>
-    router.map((r) =>
-      r.children !== undefined ? (
-        geneRoute(r.children)
-      ) : !r.component ? null : (
-        <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />
-      ),
-    );
+  const flattenRoutes = (router: IRouter[]): IRouter[] =>
+    router.flatMap((r) => [
+      ...(r.component ? [{ ...r, exact: r.children ? true : r.exact }] : []),
+      ...(r.children ? flattenRoutes(r.children) : []),
+    ]);
+  const manageRoutes = flattenRoutes(routerM);
   const hasManageAccess = canAccessManage(props.roles);
   const menu = <MMenu id={1} roles={['superadmin']} />;
 
@@ -93,7 +92,14 @@ const MLayout = (props: any) => {
               }}
             >
               <div className="site-layout-background" style={{ padding: isMobile ? 8 : 24 }}>
-                <Suspense fallback={<Loading />}>{geneRoute(routerM)}</Suspense>
+                <Suspense fallback={<Loading />}>
+                  <Switch>
+                    {manageRoutes.map((r) => (
+                      <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />
+                    ))}
+                    <Route component={NotFound} />
+                  </Switch>
+                </Suspense>
               </div>
             </Content>
           </Layout>

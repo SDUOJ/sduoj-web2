@@ -49,12 +49,15 @@ class CThirdPartyLogin extends Component<any, any> {
             } else {
                 this.props.history.push(UrlPrefix + "/home")
             }
+        }).catch((error: any) => {
+            this.setState({loading: false, error: error?.message || this.props.t('certificationFailed', {defaultValue: '认证失败，请重试'})})
         })
     }
 
     render() {
         return (
             <div className={"center"} style={{width: 450}}>
+                {this.state.error ? <Card>{this.state.error}</Card> : null}
                 {
                     [''].map(() => {
                         if (this.state.loading === true) {

@@ -2,7 +2,8 @@ import {UserState} from "../../Type/Iuser";
 import {UserAction} from "../Action/user";
 
 const initState: UserState = {
-    isLogin: false
+    isLogin: false,
+    authStatus: 'unknown',
 }
 
 export const UserReducer = (state: UserState = initState, action: UserAction) => {
@@ -13,10 +14,17 @@ export const UserReducer = (state: UserState = initState, action: UserAction) =>
             break
         case "userLogin":
             State.isLogin = true
+            State.authStatus = 'authenticated'
             break
         case "userLogout":
             State.isLogin = false
             State.userInfo = undefined
+            State.authStatus = 'anonymous'
+            break
+        case "authCheckFailed":
+            State.isLogin = false
+            State.userInfo = undefined
+            State.authStatus = 'anonymous'
             // message.info("已退出登录")
             break
 

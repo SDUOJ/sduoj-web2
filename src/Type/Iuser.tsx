@@ -67,6 +67,7 @@ export interface UserInfo{
 export interface UserState{
     isLogin: boolean
     userInfo?: UserInfo
+    authStatus?: 'unknown' | 'authenticated' | 'anonymous'
 }
 
 export interface thirdPartyLoginDataSDUCAS{
@@ -89,4 +90,3 @@ export interface thirdPartyLoginResponse{
     token: string
     user: any
 }
-

@@ -5,6 +5,7 @@ import { message } from 'antd';
 import Login from '../../Component/user/Login';
 import { UrlPrefix } from '../../Config/constValue';
 import { useAppSelector } from '../../Redux/Store/hooks';
+import { returnTo } from '../../Utils/authReturn';
 
 export function loginDestination(search: string, origin: string): string {
   const fallback = UrlPrefix + '/home';
@@ -18,7 +19,7 @@ export function loginDestination(search: string, origin: string): string {
       (url.pathname !== UrlPrefix && !url.pathname.startsWith(UrlPrefix + '/'))
     )
       return fallback;
-    return url.pathname + url.search + url.hash;
+    return returnTo({ pathname: url.pathname, search: url.search, hash: url.hash });
   } catch {
     return fallback;
   }

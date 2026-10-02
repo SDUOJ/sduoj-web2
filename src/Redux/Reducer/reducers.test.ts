@@ -77,6 +77,13 @@ describe('Redux compatibility contracts', () => {
     actions.forEach((action) => store.dispatch(action as never));
     store.dispatch({ type: 'userLogout' });
     store.dispatch({ type: 'clearRedux' });
-    expect(store.getState()).toEqual(untouched.getState());
+    expect(store.getState().UserReducer).toMatchObject({
+      isLogin: false,
+      authStatus: 'anonymous',
+    });
+    expect({ ...store.getState(), UserReducer: undefined }).toEqual({
+      ...untouched.getState(),
+      UserReducer: undefined,
+    });
   });
 });

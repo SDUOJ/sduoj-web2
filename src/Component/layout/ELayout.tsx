@@ -2,7 +2,7 @@ import React, {Component, Dispatch, Suspense} from "react";
 import {Layout} from "antd";
 import Loading from "../../Utils/Loading";
 import {getRouterPath} from "../../Config/router/router";
-import {Route} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import EHeader from "./EHeader";
 import {connect} from "react-redux";
@@ -10,6 +10,7 @@ import {withRouter} from "react-router";
 import {routerE} from "../../Config/router/routerE";
 import {UrlPrefix} from "../../Config/constValue";
 import LoginCheck from "../common/LoginCheck";
+import NotFound from '../../Pages/Error/NotFound';
 
 
 const {Footer, Content} = Layout;
@@ -36,14 +37,13 @@ class ELayout extends Component<any, any> {
                             <div className="site-layout-background" style={{padding: 24}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
-                                    {
-                                        routerE.map((r) => {
-                                            return (
-                                                <Route key={r.id} path={r.path} exact={r.exact}
-                                                       component={r.component}/>
-                                            )
-                                        })
-                                    }
+                                    <Switch>
+                                        {routerE.map((r) => (
+                                            <Route key={r.id} path={r.path} exact={r.exact}
+                                                   component={r.component}/>
+                                        ))}
+                                        <Route component={NotFound}/>
+                                    </Switch>
                                 </Suspense>
                             </div>
                         </Content>

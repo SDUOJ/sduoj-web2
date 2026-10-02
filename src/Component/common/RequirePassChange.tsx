@@ -15,6 +15,8 @@ const RequirePassChange = (props: any) => {
     useEffect(() => {
         if (requirePasswordChange === 1)
             setPassChange(true)
+        else
+            setPassChange(false)
     }, [requirePasswordChange])
 
 
@@ -22,10 +24,10 @@ const RequirePassChange = (props: any) => {
         <Modal
             title={t("ChangePass")}
             open={passChange}
-            // closable={false}
+            closable={requirePasswordChange !== 1}
             maskClosable={false}
             onCancel={() => {
-                setPassChange(false)
+                if (requirePasswordChange !== 1) setPassChange(false)
             }}
             footer={
                 <SubmitButton
@@ -57,4 +59,3 @@ const RequirePassChange = (props: any) => {
     )
 }
 export default RequirePassChange
-

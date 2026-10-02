@@ -1,6 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { Layout } from 'antd';
-import { Route, useHistory, useLocation } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import Loading from '../../Utils/Loading';
 import FooterSDU from './FooterSDU';
 import CHeader from './CHeader';
@@ -9,6 +9,7 @@ import { UrlPrefix } from '../../Config/constValue';
 import LoginCheck from '../common/LoginCheck';
 import { useAppSelector } from '../../Redux/Store/hooks';
 import './clientLayout.css';
+import NotFound from '../../Pages/Error/NotFound';
 
 export default function CLayout() {
   const history = useHistory();
@@ -29,9 +30,12 @@ export default function CLayout() {
         <Layout.Content className="client-content">
           <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
             <Suspense fallback={<Loading />}>
-              {routerC.map(({ id, path, exact, component }) => (
-                <Route key={id} path={path} exact={exact} component={component} />
-              ))}
+              <Switch>
+                {routerC.map(({ id, path, exact, component }) => (
+                  <Route key={id} path={path} exact={exact} component={component} />
+                ))}
+                <Route component={NotFound} />
+              </Switch>
             </Suspense>
           </div>
         </Layout.Content>
