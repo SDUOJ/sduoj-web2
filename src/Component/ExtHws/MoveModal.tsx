@@ -10,12 +10,14 @@ const MoveModal = (props: any) => {
     const [hid, setHid] = useState<any>()
 
     useEffect(() => {
+        let active = true
         if (vis && all === null) {
             extApi.getHomeworkListAll({cid: props.cid}).then((res) => {
-                setAll(res)
+                if (active) setAll(res)
             })
         }
-    }, [vis, all])
+        return () => { active = false }
+    }, [all, props.cid, vis])
 
     return (
         <>

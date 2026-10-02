@@ -9,6 +9,7 @@ import {withRouter} from "react-router";
 import {isValueEmpty} from "../../../../Utils/empty";
 
 const BodyChecker = (props: any) => {
+    const {initData, onChange} = props
     const [selectValue, setSelectValue] = useState<string>("lcmp.cpp")
     const [source, setSource] = useState<string>("")
     const [spj, setSpj] = useState<string>("")
@@ -16,34 +17,34 @@ const BodyChecker = (props: any) => {
 
     useEffect(() => {
         if (selectValue === "@") {
-            props.onChange({
+            onChange({
                 source: source,
                 spj: spj
             })
         } else {
             setSource("")
             setSpj("")
-            props.onChange({
+            onChange({
                 source: selectValue,
                 spj: null
             })
         }
-    }, [source, spj, selectValue])
+    }, [onChange, selectValue, source, spj])
 
     useEffect(() => {
-        if (props.initData !== undefined && props.initData["ProblemInfo"] !== undefined) {
-            const initData = props.initData["ProblemInfo"]
-            if(!isValueEmpty(initData.checkerConfig?.spj)){
+        if (initData !== undefined && initData["ProblemInfo"] !== undefined) {
+            const problemInfo = initData["ProblemInfo"]
+            if(!isValueEmpty(problemInfo.checkerConfig?.spj)){
                 setSelectValue("@")
-                setSource(initData.checkerConfig.source)
-                setSpj(initData.checkerConfig.spj)
-            }else if(!isValueEmpty(initData.checkerConfig?.source)){
-                setSelectValue(initData.checkerConfig.source)
+                setSource(problemInfo.checkerConfig.source)
+                setSpj(problemInfo.checkerConfig.spj)
+            }else if(!isValueEmpty(problemInfo.checkerConfig?.source)){
+                setSelectValue(problemInfo.checkerConfig.source)
             }else{
                 setSelectValue("");
             }
         }
-    }, [props.initData])
+    }, [initData])
 
     return (
         <>
@@ -51,7 +52,7 @@ const BodyChecker = (props: any) => {
                 <Select.Option value={"@"}> 自定义 </Select.Option>
                 {PREDEFINED_CHECKERS.map(({name, description}) => {
                     return (
-                        <Select.Option value={name}>{name + " - " + description}</Select.Option>
+                        <Select.Option key={name} value={name}>{name + " - " + description}</Select.Option>
                     )
                 })}
             </Select>

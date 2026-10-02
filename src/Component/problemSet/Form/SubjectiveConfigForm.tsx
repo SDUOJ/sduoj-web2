@@ -1,7 +1,7 @@
 import { Button, Form, Input, Space, Typography, message } from 'antd';
 import { withTranslation } from 'react-i18next';
 import CellEditTable from '../../common/Table/CellEditTable';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { autolabFieldRules } from '../../../Config/validation/fields';
 
@@ -307,7 +307,7 @@ const SubjectiveConfigForm = (props: any) => {
     );
   };
 
-  const applyJudgeConfigToForm = (list: any[], silent: boolean = false) => {
+  const applyJudgeConfigToForm = useCallback((list: any[], silent: boolean = false) => {
     const config = form.getFieldValue('config') || {};
     form.setFieldsValue({
       config: {
@@ -318,7 +318,7 @@ const SubjectiveConfigForm = (props: any) => {
     if (!silent) {
       message.success(`已生成 ${list.length} 条得分项配置`);
     }
-  };
+  }, [form]);
 
   const parseJudgeConfigFromRaw = (raw: string) => {
     const payload = parseJsonRaw(raw);
@@ -382,7 +382,7 @@ const SubjectiveConfigForm = (props: any) => {
       }
     }, 350);
     return () => clearTimeout(timer);
-  }, [jsonInput]);
+  }, [applyJudgeConfigToForm, jsonInput]);
 
   const tableColumns = [
     {
@@ -483,7 +483,7 @@ const SubjectiveConfigForm = (props: any) => {
           rowKey={'id'}
           toolBar={(actionRef: any) => {
             return [
-              <Button
+              <Button key="add-judge-config"
                 type={'dashed'}
                 block
                 icon={<PlusOutlined />}

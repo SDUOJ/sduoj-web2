@@ -1,4 +1,4 @@
-import React, {Dispatch, useEffect, useRef, useState} from "react";
+import React, {Dispatch, useCallback, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
@@ -59,20 +59,20 @@ const GroupMember = (props: any) => {
     }
 
     // 更新页面数据
-    const updateData = (data: any) => {
+    const updateData = useCallback((data: any) => {
         setInitData(data)
         setMemberData(data.filter((v: any) => v.status === 2))
         setApplyData(data.filter((v: any) => v.status === 1))
-    }
+    }, [])
 
-    const getGroupDetail = () => {
+    const getGroupDetail = useCallback(() => {
         MApi.getGroupDetail({groupId: props.groupId}).then((data: any) => {
             updateData(data.members)
             setOwner(data.owner)
         }).catch(() => {
             console.log("error")
         })
-    }
+    }, [props.groupId, updateData])
 
     // 更新用户信息，申请通过、拒绝和移除用户
     const setUserStatus = (data: any, status: number) => {
@@ -122,7 +122,7 @@ const GroupMember = (props: any) => {
         if (props.groupId !== undefined && vis) {
             getGroupDetail()
         }
-    }, [props.groupId, vis])
+    }, [getGroupDetail, props.groupId, vis])
 
     const columnsBase: ColumnsType<DataType> = [
         {

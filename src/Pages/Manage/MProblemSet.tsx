@@ -27,6 +27,7 @@ import problemSetSubmit from '../../Component/problemSet/dataConvert/problemSetS
 import { UrlPrefix } from '../../Config/constValue';
 
 const MProblemSet = (props: any) => {
+  const {t} = props;
   const [type, setType] = useState();
   const [useGlobalTime, setUseGlobalTime] = useState(1);
   const [useReport, setUseReport] = useState();
@@ -44,9 +45,9 @@ const MProblemSet = (props: any) => {
   useEffect(() => {
     if (pidValueEnum === undefined) {
       const getType = (tp: number) => {
-        if (tp === 0) return props.t('ObjectiveQuestions');
-        else if (tp === 1) return props.t('SubjectiveQuestions');
-        else if (tp === 2) return props.t('ProgrammingQuestions');
+        if (tp === 0) return t('ObjectiveQuestions');
+        else if (tp === 1) return t('SubjectiveQuestions');
+        else if (tp === 2) return t('ProgrammingQuestions');
       };
       mApi.getProblemGroupSearch({ search: '' }).then((res: any) => {
         let data: any = [];
@@ -59,7 +60,7 @@ const MProblemSet = (props: any) => {
         setPidValueEnum(data);
       });
     }
-  }, [pidValueEnum]);
+  }, [pidValueEnum, t]);
 
   const tableColumns: any = [
     {
@@ -361,7 +362,7 @@ const MProblemSet = (props: any) => {
               rowKey={'id'}
               toolBar={(actionRef: any) => {
                 return [
-                  <Button
+                  <Button key="add-problem-group"
                     type={'dashed'}
                     block
                     icon={<PlusOutlined />}

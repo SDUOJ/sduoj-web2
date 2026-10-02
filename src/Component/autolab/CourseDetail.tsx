@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Card, Descriptions, Divider, Form, Input, Modal, Space, Table, Tag } from 'antd';
 import autolabApi from '../../Utils/API/autolab-api';
 import ItemUploadUser from '../common/Form/Item/ItemUploadUser';
@@ -21,7 +21,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
   const requestIdRef = useRef(0);
   const sessionIdRef = useRef(0);
 
-  const loadAttendanceRecords = () => {
+  const loadAttendanceRecords = useCallback(() => {
     const requestId = ++requestIdRef.current;
     if (!courseId || !targetUsername) {
       setAttendanceMap({});
@@ -47,7 +47,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
       .catch(() => {
         if (requestId === requestIdRef.current) setAttendanceMap({});
       });
-  };
+  }, [courseId, targetUsername]);
 
   useEffect(() => {
     sessionIdRef.current += 1;
@@ -60,7 +60,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, targetUsername, cur
       requestIdRef.current += 1;
       sessionIdRef.current += 1;
     };
-  }, [courseId, targetUsername]);
+  }, [courseId, loadAttendanceRecords, targetUsername]);
 
   const timeRows = useMemo(() => {
     const timeList = Array.isArray(course?.course_times) ? course.course_times : [];

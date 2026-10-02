@@ -20,15 +20,17 @@ const SubmitInfo = (props: any) => {
 
 
     useEffect(() => {
+        let active = true
         if (vis && groupInfo === null && props.groupId !== undefined) {
             cApi.getGroupInfo({groupId: props.groupId}).then((res) => {
-                setGroupInfo(res)
+                if (active) setGroupInfo(res)
             })
             extApi.downloadHomework({hid: props.hid}).then((res) => {
-                setSubmitInfo(res)
+                if (active) setSubmitInfo(res)
             })
         }
-    }, [props.groupId, vis])
+        return () => { active = false }
+    }, [groupInfo, props.groupId, props.hid, vis])
 
     useEffect(() => {
         if (groupInfo !== null && submitInfo !== null && already === null) {
@@ -52,7 +54,7 @@ const SubmitInfo = (props: any) => {
             setAlready1(a1)
             setDid_not(dn)
         }
-    }, [groupInfo, submitInfo])
+    }, [already, groupInfo, props.deadline, submitInfo])
 
     return (
         <>

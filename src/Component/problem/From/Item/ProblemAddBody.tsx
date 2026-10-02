@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Popconfirm, Popover, Space } from 'antd';
 import {
   CheckOutlined,
@@ -49,10 +49,11 @@ interface ProblemAddBodyType {
 
 const ProblemAddBody = (props: ProblemAddBodyType & any) => {
   const { t } = useTranslation();
+  const {onChange} = props;
 
   // 可编辑表格的操作引用
   const actionRef = useRef<ActionType>();
-  const keyMapping = { ...defaultKeyMapping, ...props.keyMapping };
+  const keyMapping = useMemo(() => ({ ...defaultKeyMapping, ...props.keyMapping }), [props.keyMapping]);
 
   // === State ===
   const [sortSwitch, setSortSwitch] = useState<boolean>(false); // 操作是否开启排序模式
@@ -62,11 +63,11 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
   const [TableData, setTableDataX] = useState<any[]>([]);
   const [TableDataHis, setTableDataHis] = useState<Record<string | number, string>>({});
-  const setTableData = (data: any) => {
+  const setTableData = useCallback((data: any) => {
     // console.log("setTableData", data)
-    props.onChange && props.onChange(data);
+    onChange && onChange(data);
     setTableDataX([...data]);
-  };
+  }, [onChange]);
 
   const [problemInfoCache, setProblemInfoCacheX] = useState<any>({}); // 根据题号请求得到的题目信息的缓存
   const [problemDescriptionCache, setProblemDescriptionCacheX] = useState<{
@@ -76,6 +77,37 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
   }>({}); // 根据题号请求得到的题目描述的缓存
   const problemInfoRequests = useRef(createCachedRequest<string, void>());
   const problemDescriptionRequests = useRef(createCachedRequest<string, void>());
+
+  // console.log("TableData", TableData)
+
+  // === 拖拽排序 ===
+
+  // 题目信息匹配
+  const ProblemType = props.problemType;
+  const strMatch = useCallback((value?: string) => {
+    if (value === undefined) return null;
+    if (ProblemType === 'single' || ProblemType === 'multi')
+      return value.match(/SDUOJ-C-[0-9]{4}$/);
+    if (ProblemType === 'program') return value.match(/SDUOJ-[0-9]{4}$/);
+  }, [ProblemType]);
+
+  // 获取题目描述信息
+  const getProblemDescriptionInfo = useCallback(async (problemCode?: string) => {
+    if (problemCode === undefined) return {};
+    if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
+    return problemDescriptionRequests.current.get(problemCode, async () => {
+      const resData = await mApi.getProblemDescriptionList({ problemCode });
+      if (resData === null) throw new Error(t('ProblemNotExist'));
+      const descriptions: any = {};
+      for (const description of resData as any[]) {
+        descriptions[description.id] = { text: description.title };
+      }
+      setProblemDescriptionCacheX((current) => ({
+        ...current,
+        [problemCode]: { DescriptionInfo: descriptions },
+      }));
+    });
+  }, [strMatch, t]);
 
   // 执行初始化
   useEffect(() => {
@@ -90,10 +122,9 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
       }
       setTableDataHis(nextHistory);
     }
-  }, [props, props.value, TableData]);
+  }, [TableData, getProblemDescriptionInfo, keyMapping, props.value]);
 
   useEffect(() => {
-    // console.log("update", TableData, TableDataHis, problemInfoCache, problemDescriptionCache)
     let use = false;
     const nextHistory = { ...TableDataHis };
     const newTableData = TableData.map((value) => {
@@ -101,7 +132,6 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
         let obj: any = {},
           updateNum = 0,
           forceUpdate = false;
-        // 根据是否已经加载过数据，判断是否更新当前区域
         if (TableDataHis[value.id] !== value[keyMapping['ProblemCode']]) {
           nextHistory[value.id] = value[keyMapping['ProblemCode']];
           forceUpdate = true;
@@ -109,10 +139,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
         const check = (nameA: string, arr: any) => {
           let nowKey = value[keyMapping['ProblemCode']];
-          if (
-            forceUpdate ||
-            (value[nameA] === undefined && get(arr[nowKey], nameA) !== undefined)
-          ) {
+          if (forceUpdate || (value[nameA] === undefined && get(arr[nowKey], nameA) !== undefined)) {
             obj[nameA] = get(arr[nowKey], nameA);
             updateNum += 1;
           }
@@ -138,44 +165,11 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
       }
       return value;
     });
-    // console.log("use", use, "useHis", useHis)
-    // console.log("newTableData", newTableData, "TableDataHis", TableDataHis)
     if (use) setTableData(newTableData);
     if (Object.keys(nextHistory).some((key) => nextHistory[key] !== TableDataHis[key])) {
       setTableDataHis(nextHistory);
     }
-  }, [TableData, TableDataHis, problemInfoCache, problemDescriptionCache]);
-
-  // console.log("TableData", TableData)
-
-  // === 拖拽排序 ===
-
-  // 题目信息匹配
-  const ProblemType = props.problemType;
-  const strMatch = (value?: string) => {
-    if (value === undefined) return null;
-    if (ProblemType === 'single' || ProblemType === 'multi')
-      return value.match(/SDUOJ-C-[0-9]{4}$/);
-    if (ProblemType === 'program') return value.match(/SDUOJ-[0-9]{4}$/);
-  };
-
-  // 获取题目描述信息
-  const getProblemDescriptionInfo = async (problemCode?: string) => {
-    if (problemCode === undefined) return {};
-    if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
-    return problemDescriptionRequests.current.get(problemCode, async () => {
-      const resData = await mApi.getProblemDescriptionList({ problemCode });
-      if (resData === null) throw new Error(t('ProblemNotExist'));
-      const descriptions: any = {};
-      for (const description of resData as any[]) {
-        descriptions[description.id] = { text: description.title };
-      }
-      setProblemDescriptionCacheX((current) => ({
-        ...current,
-        [problemCode]: { DescriptionInfo: descriptions },
-      }));
-    });
-  };
+  }, [TableData, TableDataHis, keyMapping, problemDescriptionCache, problemInfoCache, setTableData, strMatch]);
 
   const getProblemInfo = async (problemCode: string) => {
     // console.log("getProblemInfo", TableData, problemCode, rowID)
@@ -429,7 +423,7 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
             editableKeys: sortSwitch ? [] : editableKeys,
             actionRender: (row: any, config: any, defDom: any) => {
               return [
-                <Popconfirm
+                <Popconfirm key={row.id}
                   title={t('deleteConfirm')}
                   onConfirm={() => {
                     const data = TableData.filter((value: any) => value.id !== row.id);

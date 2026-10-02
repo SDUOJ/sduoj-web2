@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Card,
   Button,
@@ -50,12 +50,8 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
   const [tagPsidsMap, setTagPsidsMap] = useState<Map<string, number[]>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
 
-  useEffect(() => {
-    fetchProblemSets();
-  }, [groupId]);
-
   // 获取题单列表并构建穿梭框数据
-  const fetchProblemSets = async () => {
+  const fetchProblemSets = useCallback(async () => {
     try {
       const res: any = await cApi.getProblemSetListByGroup({ groupId });
 
@@ -100,7 +96,11 @@ const BatchExtension: React.FC<BatchExtensionProps> = ({ groupId }) => {
     } catch (error) {
       message.error(t('Failed to fetch problem sets'));
     }
-  };
+  }, [groupId, t]);
+
+  useEffect(() => {
+    fetchProblemSets();
+  }, [fetchProblemSets]);
 
   // 处理批量添加
   const handleBatchAdd = async (values: any) => {

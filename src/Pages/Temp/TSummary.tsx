@@ -1,4 +1,4 @@
-import {Dispatch, useEffect, useState} from "react";
+import {Dispatch, useCallback, useEffect, useMemo, useState} from "react";
 import {Button, Collapse, Image, Result, Space, Table} from "antd";
 import logo from "Assert/img/sdu-logo.jpg"
 import {withRouter} from "react-router-dom";
@@ -16,18 +16,23 @@ import {loginRedirect} from "../../Utils/authReturn";
 
 const {Panel} = Collapse;
 
+const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175", "177", "180"];
+const mt3 = ["145", "155", "167", "176"];
+const ext3 = [
+    {contestId: "152", examId: "20"},
+    {contestId: "163", examId: "22"},
+    {contestId: "174", examId: "29"}
+];
+const ext124 = ["19", "21", "24", "30"];
+
 
 const TSummary = (props: any) => {
+    const {history, isLogin, location} = props;
 
     const [data, setData] = useState<any>(undefined)
     const [dataExam, setDataExam] = useState<any>(undefined)
-    const [score1, setScore1] = useState<number>(0)
-    const [score2, setScore2] = useState<number>(0)
-    const [score3, setScore3] = useState<number>(0)
-    const [score4, setScore4] = useState<number>(0)
-    const [score5, setScore5] = useState<number>(0)
 
-    const getExam = async () => {
+    const getExam = useCallback(async () => {
         const examIds = ["20", "22", "29", "19", "21", "24", "30", "31"]
         let examInfo: any = {}, examGroupInfo: any = {}, examResult: any = {}
         for (let examId of examIds) {
@@ -42,11 +47,11 @@ const TSummary = (props: any) => {
         setDataExam({
             examInfo: examInfo, examResult: examResult
         })
-    }
+    }, [])
 
     useEffect(() => {
-        if (!props.isLogin) {
-            props.history.replace(loginRedirect(props.location))
+        if (!isLogin) {
+            history.replace(loginRedirect(location))
         } else {
             const timeoutScoreRatio1 = [["0", 1.0], ["604800001", 0.9], ["1209600001", 0.8], ["12960000000", 0.7]];
             const timeoutScoreRatio2 = [["0", 0.85], ["604800001", 0.8], ["1209600001", 0.75], ["12960000000", 0.7]];
@@ -84,18 +89,26 @@ const TSummary = (props: any) => {
             })
             getExam()
         }
-    }, [])
+    }, [getExam, history, isLogin, location])
 
-    const hw = ["144", "146", "148", "151", "153", "156", "157", "160", "162", "166", "169", "172", "175", "177", "180"]
-    const mt3 = ["145", "155", "167", "176"]
-
-    const ext3 = [
-        {contestId: "152", examId: "20"},
-        {contestId: "163", examId: "22"},
-        {contestId: "174", examId: "29"}
-    ]
-
-    const ext124 = ["19", "21", "24", "30"]
+    const {score1, score2, score3, score4, score5} = useMemo(() => {
+        const findContest = (contestId: string) => data?.find((item: any) => item.contestId === contestId)
+        const score1 = hw.reduce((sum, contestId) => sum + (findContest(contestId)?.sumScore ?? 0) / 100, 0)
+        const score2 = ext124.reduce((sum, examId) => sum + (dataExam?.examResult?.[examId]?.score ?? 0) / 400 * 5, 0)
+        const score3 = mt3.reduce((sum, contestId) => sum + (findContest(contestId)?.sumScore ?? 0) / 100 * 2, 0)
+        const score4 = ext3.reduce((sum, item) => {
+            const contest = findContest(item.contestId)
+            const exam = dataExam?.examResult?.[item.examId]
+            if (!contest || !exam) return sum
+            const problemResults = exam.problemGroupResult?.[0]?.problemResult?.[0] ?? []
+            const contestScore = (contest.problemResults ?? []).reduce((result: number, problem: any, index: number) => {
+                return result + Math.max(problemResults[index]?.realScore ?? 0, problem.score ?? 0)
+            }, 0)
+            return sum + contestScore / 100 * 2
+        }, 0)
+        const score5 = (dataExam?.examResult?.["31"]?.score ?? 0) / 10
+        return {score1, score2, score3, score4, score5}
+    }, [data, dataExam])
 
 
     return (
@@ -118,21 +131,7 @@ const TSummary = (props: any) => {
                 </div>
                 <div style={{textAlign: "left", maxWidth: "1200px", margin: "0 auto"}}>
                     <Collapse>
-                        <Panel header={<>
-                            {(() => {
-                                if (data !== undefined) {
-                                    let sum = 0
-                                    hw.map((contestId: string) => {
-                                        let d = data.filter((item: any) => item.contestId === contestId)[0]
-                                        sum += d.sumScore / 100
-                                    })
-                                    if(sum !== score1) setScore1(sum)
-                                    return (
-                                        <Title level={3}>{props.t("WeeklyHomeworkTitle", {sum: sum})}</Title>
-                                    )
-                                }
-                            })()}
-                        </>} key="1">
+                        <Panel header={data !== undefined ? <Title level={3}>{props.t("WeeklyHomeworkTitle", {sum: score1})}</Title> : null} key="1">
                             {data !== undefined && hw.map((contestId: string) => {
                                 let d = data.filter((item: any) => item.contestId === contestId)[0]
                                 return (
@@ -212,21 +211,7 @@ const TSummary = (props: any) => {
                                 )
                             })}
                         </Panel>
-                        <Panel header={<>
-                            {(() => {
-                                if (dataExam !== undefined) {
-                                    let sum = 0
-                                    ext124.map((value: string) => {
-                                        let eResult = dataExam.examResult[value]
-                                        sum += eResult.score / 400 * 5
-                                    })
-                                    if(sum !== score2) setScore2(sum)
-                                    return (
-                                        <Title level={3}>{props.t("CSPMockTitle", {sum: sum})}</Title>
-                                    )
-                                }
-                            })()}
-                        </>} key="2">
+                        <Panel header={dataExam !== undefined ? <Title level={3}>{props.t("CSPMockTitle", {sum: score2})}</Title> : null} key="2">
                             {dataExam !== undefined && ext124.map((value: string) => {
                                 const examId = value
                                 let eInfo = dataExam.examInfo[examId]
@@ -264,21 +249,7 @@ const TSummary = (props: any) => {
 
                             })}
                         </Panel>
-                        <Panel header={<>
-                            {(() => {
-                                if (data !== undefined) {
-                                    let sum = 0
-                                    mt3.map((contestId: string) => {
-                                        let d = data.filter((item: any) => item.contestId === contestId)[0]
-                                        sum += d.sumScore / 100 * 2
-                                    })
-                                    if(sum !== score3) setScore3(sum)
-                                    return (
-                                        <Title level={3}>{props.t("MonthlyT3PracticeTitle", {sum: sum})}</Title>
-                                    )
-                                }
-                            })()}
-                        </>} key="3">
+                        <Panel header={data !== undefined ? <Title level={3}>{props.t("MonthlyT3PracticeTitle", {sum: score3})}</Title> : null} key="3">
                             {data !== undefined && mt3.map((contestId: string) => {
                                 let d = data.filter((item: any) => item.contestId === contestId)[0]
                                 return (
@@ -358,36 +329,7 @@ const TSummary = (props: any) => {
                                 )
                             })}
                         </Panel>
-                        <Panel header={<>
-                            {(() => {
-                                if (data !== undefined && dataExam !== undefined) {
-                                    let sum = 0
-                                    ext3.map((item: any) => {
-                                        const contestId = item.contestId
-                                        const examId = item.examId
-                                        let d = data.filter((item: any) => item.contestId === contestId)[0]
-                                        let eResult = dataExam.examResult[examId]
-
-                                        let ds: any = [], cnt = 0, sumScore = 0
-                                        for (let x of d.problemResults) {
-                                            let examScore = eResult.problemGroupResult[0].problemResult[0][cnt].realScore
-                                            ds.push({
-                                                ...x,
-                                                examScore: examScore,
-                                                finalScore: Math.max(examScore, x.score)
-                                            })
-                                            sumScore += Math.max(examScore, x.score)
-                                            cnt++;
-                                        }
-                                        sum += sumScore / 100 * 2
-                                    })
-                                    if(sum !== score4) setScore4(sum)
-                                    return (
-                                        <Title level={3}>{props.t("T3MockTitle", {sum: sum})}</Title>
-                                    )
-                                }
-                            })()}
-                        </>} key="4">
+                        <Panel header={data !== undefined && dataExam !== undefined ? <Title level={3}>{props.t("T3MockTitle", {sum: score4})}</Title> : null} key="4">
                             {data !== undefined && dataExam !== undefined && ext3.map((item: any) => {
                                 const contestId = item.contestId
                                 const examId = item.examId
@@ -495,19 +437,7 @@ const TSummary = (props: any) => {
                                 )
                             })}
                         </Panel>
-                        <Panel header={<>
-                            {(() => {
-                                if (dataExam !== undefined) {
-                                    let eResult = dataExam.examResult["31"]
-                                    let sum = eResult.score / 10
-
-                                    if(sum !== score5) setScore5(sum)
-                                    return (
-                                        <Title level={3}>{props.t("FinalExamTitle", {sum: sum})}</Title>
-                                    )
-                                }
-                            })()}
-                        </>} key="5">
+                        <Panel header={dataExam !== undefined ? <Title level={3}>{props.t("FinalExamTitle", {sum: score5})}</Title> : null} key="5">
                             {props.t("ScoresOnly")}
                         </Panel>
                     </Collapse>

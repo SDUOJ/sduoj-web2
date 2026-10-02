@@ -74,7 +74,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
             // console.log("tableData?.tableInfo?.total ?? 0", tableData?.tableInfo?.total ?? 0)
             setTotalSubmission(tableData?.tableInfo?.total ?? 0)
         }
-    }, [props.tableData])
+    }, [props.name, props.tableData])
 
     const ProgramHeader = (
         <div style={{textAlign: "center"}}>

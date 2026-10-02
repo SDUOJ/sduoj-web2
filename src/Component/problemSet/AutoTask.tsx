@@ -179,6 +179,7 @@ const AutoTask = (props: any) => {
   const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [batchRerunLoading, setBatchRerunLoading] = useState<boolean>(false);
+  const { current: paginationCurrent, pageSize: paginationPageSize } = pagination;
 
   const fetchOptions = useCallback(() => {
     if (!psid) return;
@@ -246,8 +247,8 @@ const AutoTask = (props: any) => {
   );
 
   useEffect(() => {
-    loadTasks(1, pagination.pageSize);
-  }, [loadTasks]);
+    loadTasks(1, paginationPageSize);
+  }, [loadTasks, paginationPageSize]);
 
   useEffect(() => {
     setSelectedRowKeys((prev) => prev.filter((key) => taskList.some((task) => task.id === key)));
@@ -324,7 +325,7 @@ const AutoTask = (props: any) => {
         setRerunLoadingId(taskId);
         await cApi.rerunProblemSetAutoTask(taskId);
         message.success(t('AutoTaskRerunSuccess'));
-        loadTasks(pagination.current, pagination.pageSize);
+        loadTasks(paginationCurrent, paginationPageSize);
         if (taskDetail?.id === taskId) {
           openDetail(taskId);
         }
@@ -334,7 +335,7 @@ const AutoTask = (props: any) => {
         setRerunLoadingId((prev) => (prev === taskId ? null : prev));
       }
     },
-    [loadTasks, openDetail, pagination.current, pagination.pageSize, t, taskDetail],
+    [loadTasks, openDetail, paginationCurrent, paginationPageSize, t, taskDetail],
   );
 
   const handleDelete = useCallback(
@@ -343,7 +344,7 @@ const AutoTask = (props: any) => {
         setDeleteLoadingId(taskId);
         await cApi.deleteProblemSetAutoTask(taskId);
         message.success(t('AutoTaskDeleteSuccess'));
-        loadTasks(pagination.current, pagination.pageSize);
+        loadTasks(paginationCurrent, paginationPageSize);
         if (taskDetail?.id === taskId) {
           closeDetail();
         }
@@ -354,7 +355,7 @@ const AutoTask = (props: any) => {
         setDeleteLoadingId((prev) => (prev === taskId ? null : prev));
       }
     },
-    [closeDetail, loadTasks, pagination.current, pagination.pageSize, t, taskDetail],
+    [closeDetail, loadTasks, paginationCurrent, paginationPageSize, t, taskDetail],
   );
 
   const handleBatchRerun = useCallback(async () => {
@@ -381,13 +382,13 @@ const AutoTask = (props: any) => {
         );
       }
       setSelectedRowKeys([]);
-      loadTasks(pagination.current, pagination.pageSize);
+      loadTasks(paginationCurrent, paginationPageSize);
     } catch (error) {
       message.error(t('failed'));
     } finally {
       setBatchRerunLoading(false);
     }
-  }, [canRerun, loadTasks, pagination.current, pagination.pageSize, selectedRowKeys, t, taskList]);
+  }, [canRerun, loadTasks, paginationCurrent, paginationPageSize, selectedRowKeys, t, taskList]);
 
   const hasRunnableSelection = useMemo(() => {
     if (selectedRowKeys.length === 0) return false;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   Card,
@@ -66,7 +66,7 @@ const CourseSignManagement: React.FC<CourseSignManagementProps> = ({ groupId }) 
   const courseRequestIdRef = useRef(0);
   const detailRequestIdRef = useRef(0);
 
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     const requestId = ++courseRequestIdRef.current;
     if (!numericGroupId) {
       setCourseCards([]);
@@ -106,7 +106,7 @@ const CourseSignManagement: React.FC<CourseSignManagementProps> = ({ groupId }) 
     } finally {
       if (requestId === courseRequestIdRef.current) setLoading(false);
     }
-  };
+  }, [numericGroupId]);
 
   const loadSignDetail = async (course: any, scheduleRow: any) => {
     if (!course?.course_id || !scheduleRow?.schedule_id) return;
@@ -283,7 +283,7 @@ const CourseSignManagement: React.FC<CourseSignManagementProps> = ({ groupId }) 
       courseRequestIdRef.current += 1;
       detailRequestIdRef.current += 1;
     };
-  }, [numericGroupId]);
+  }, [loadCourses, numericGroupId]);
 
   if (loading) return <Spin />;
 

@@ -1,5 +1,5 @@
 import MarkdownText from '../../../Utils/MarkdownText';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Alert, Button, Card, message, Space, Upload, Select, Divider } from 'antd';
 import Editor from '../../common/Editor';
@@ -9,7 +9,35 @@ import { isValueEmpty } from '../../../Utils/empty';
 // 主观题组件：支持三种子类型
 // 0 文件题 1 文本题 2 验收题（排队）
 
+const detectSubType = (as: any, problemInfo: any): number => {
+  if (problemInfo?.type !== undefined) return problemInfo.type;
+  if (!as) return 1;
+  if (Array.isArray(as.answer_m)) {
+    if (as.answer_m.length > 0 && typeof as.answer_m[0] === 'object' && as.answer_m[0] !== null && as.answer_m[0].fileId) return 0;
+    return 1;
+  }
+  if (typeof as.answer_m === 'string') return 2;
+  if (as.acceptanceQueue !== undefined) return 2;
+  return 1;
+};
+
+const normalizeToArray = (value: any) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && typeof parsed === 'object') return [parsed];
+    } catch (e) {
+      // ignore parse error
+    }
+  }
+  if (value && typeof value === 'object') return [value];
+  return [];
+};
+
 const Subjective = (props: any) => {
+  const {getAS, problemInfo} = props;
   // ---------------- State ----------------
   const [answerSheet, setAnswerSheet] = useState<any>();
   const [open, setOpen] = useState<boolean>(false); // 编辑开关（文件题/文本题）
@@ -23,47 +51,14 @@ const Subjective = (props: any) => {
   const [refreshCooldown, setRefreshCooldown] = useState<number>(0); // 验收题刷新冷却秒数
 
   // ---------------- Helpers ----------------
-  const detectSubType = (as: any, problemInfo: any): number => {
-    if (problemInfo?.type !== undefined) return problemInfo.type;
-    if (!as) return 1;
-    if (Array.isArray(as.answer_m)) {
-      if (
-        as.answer_m.length > 0 &&
-        typeof as.answer_m[0] === 'object' &&
-        as.answer_m[0] !== null &&
-        as.answer_m[0].fileId
-      )
-        return 0;
-      return 1;
-    }
-    if (typeof as.answer_m === 'string') return 2;
-    if (as.acceptanceQueue !== undefined) return 2;
-    return 1;
-  };
-
-  const normalizeToArray = (value: any) => {
-    if (Array.isArray(value)) return value;
-    if (typeof value === 'string') {
-      try {
-        const parsed = JSON.parse(value);
-        if (Array.isArray(parsed)) return parsed;
-        if (parsed && typeof parsed === 'object') return [parsed];
-      } catch (e) {
-        // ignore parse error
-      }
-    }
-    if (value && typeof value === 'object') return [value];
-    return [];
-  };
-
-  const updateAnswerSheet = () => {
+  const updateAnswerSheet = useCallback(() => {
     const request = ++answerRequest.current;
-    return props.getAS().then((res: any) => {
+    return getAS().then((res: any) => {
       if (request !== answerRequest.current) return;
       if (res.answer_m === null || res.answer_m === undefined) res.answer_m = [''];
       res.judgeLog = normalizeToArray(res.judgeLog);
       res.judgeConfig = normalizeToArray(res.judgeConfig);
-      const st = detectSubType(res, props.problemInfo);
+      const st = detectSubType(res, problemInfo);
       setSubType(st);
       if (st === 1) {
         // 文本题
@@ -84,7 +79,7 @@ const Subjective = (props: any) => {
       setAnswerSheet(res);
       return res;
     });
-  };
+  }, [getAS, problemInfo]);
 
   // 刷新冷却计时器
   useEffect(() => {
@@ -97,19 +92,19 @@ const Subjective = (props: any) => {
 
   // 初始化 / problemInfo 变化重新拉取
   useEffect(() => {
-    if (props.problemInfo) updateAnswerSheet().catch(() => {});
+    if (problemInfo) updateAnswerSheet().catch(() => {});
     setOpen(false);
     return () => {
       answerRequest.current += 1;
     };
-  }, [props.problemInfo]);
+  }, [problemInfo, updateAnswerSheet]);
 
   // problemInfo.type 变化时尝试重算 subtype
   useEffect(() => {
     if (!answerSheet) return;
-    const st = detectSubType(answerSheet, props.problemInfo);
+    const st = detectSubType(answerSheet, problemInfo);
     if (st !== subType) setSubType(st);
-  }, [props.problemInfo?.type]);
+  }, [answerSheet, problemInfo, subType]);
 
   // ---------------- Render ----------------
   return (

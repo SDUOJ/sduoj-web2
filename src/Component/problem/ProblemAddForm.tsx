@@ -45,6 +45,8 @@ const ProblemAddForm = (props: any) => {
     getListData('checkedProblemCode'),
   );
   const [isStart, setIsStart] = useState<boolean>(props.isStart);
+  const isStartRef = useRef(isStart);
+  isStartRef.current = isStart;
   const proListDataRef = useRef(proListData);
   const problemInfoRef = useRef(problemInfo);
   const problemRequests = useRef(createCachedRequest<string, any>());
@@ -177,16 +179,17 @@ const ProblemAddForm = (props: any) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = window.setTimeout(() => {
       if (props.type !== 'program') {
-        const x = isStart;
+        const x = isStartRef.current;
         setIsStart(false);
         form.validateFields().then(() => {
           setIsStart(x);
         });
       }
     }, 100);
-  }, [props.isDataLoad, form]);
+    return () => window.clearTimeout(timer);
+  }, [form, props.isDataLoad, props.type]);
 
   const sortColumns: ProColumns<examProblemType>[] = [
     {
@@ -409,7 +412,7 @@ const ProblemAddForm = (props: any) => {
             editableKeys: sortSwitch ? [] : editableKeys,
             actionRender: (row: any, config: any, defDom: any) => {
               return [
-                <Popconfirm
+                <Popconfirm key={row.id}
                   title={props.t('deleteConfirm')}
                   onConfirm={() => {
                     const data = proListData.filter(

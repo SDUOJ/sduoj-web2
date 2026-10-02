@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Modal, Space, Tag } from 'antd';
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { Dispatch, useCallback, useEffect, useState } from 'react';
 import mApi from 'Utils/API/m-api';
 import { connect } from 'react-redux';
 import { TableState } from '../../Type/ITable';
@@ -25,13 +25,16 @@ const ProCheckPoints = (props: any) => {
   const [vis, setVis] = useState<boolean>(false);
   const [sumScore, setSumScore] = useState<number>(0);
   const name = `ProCheckPoints-${props.problemCode}`;
+  const tableData = props.tableData;
+  const tableDataForName = tableData[name];
+  const setDataSource = props.setDataSource;
 
   const { t } = useTranslation();
   const [form] = useForm();
 
   // 维护当前总分
   useEffect(() => {
-    const data = props.tableData[name]?.dataSource;
+    const data = tableDataForName?.dataSource;
     if (data !== undefined) {
       let formData: any = {},
         score = 0;
@@ -44,13 +47,13 @@ const ProCheckPoints = (props: any) => {
       form.setFieldsValue(formData);
       setSumScore(score);
     }
-  }, [props.tableData]);
+  }, [form, name, tableDataForName]);
 
   // 维护当前表格数据
   const [dataSource, setDatasource] = useState(props.tableData[name]?.dataSource);
 
   // 处理删除与批量删除后的 Case 信息
-  const updateCaseInfo = () => {
+  const updateCaseInfo = useCallback(() => {
     if (dataSource === undefined) return;
     let caseLeft: any = [];
     let caseIndexMax = 0;
@@ -71,19 +74,19 @@ const ProCheckPoints = (props: any) => {
         newDataSource.push({ ...x, caseIndex: changeMap[x.caseIndex] });
       } else newDataSource.push(x);
     }
-    props.setDataSource(newDataSource, name);
-  };
+    setDataSource(newDataSource, name);
+  }, [dataSource, name, setDataSource]);
 
-  useEffect(updateCaseInfo, [dataSource]);
+  useEffect(updateCaseInfo, [updateCaseInfo]);
 
   useEffect(() => {
     if (
-      props.tableData[name]?.dataSource &&
-      JSON.stringify(dataSource) !== JSON.stringify(props.tableData[name]?.dataSource)
+      tableDataForName?.dataSource &&
+      JSON.stringify(dataSource) !== JSON.stringify(tableDataForName.dataSource)
     ) {
-      setDatasource(props.tableData[name]?.dataSource);
+      setDatasource(tableDataForName.dataSource);
     }
-  }, [props.tableData, props.tableData[name]]);
+  }, [dataSource, name, tableDataForName]);
 
   const selectedRowKeys = props.tableData[name]?.selectedRowKeys ?? [];
 

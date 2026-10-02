@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Col, Row} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import "Assert/css/Options.scss"
@@ -14,39 +14,41 @@ interface propType {
 }
 
 const Objective = (props: propType & any) => {
+    const {answerSheet: initialAnswerSheet, getAS, key_o, onAnswerM, onMark, problemInfo} = props
 
-    const [answerSheet, setAnswerSheet] = useState<any>(props.answerSheet)
+    const [answerSheet, setAnswerSheet] = useState<any>(initialAnswerSheet)
+
+    const updateAnswerSheet = useCallback(() => {
+        return getAS && getAS().then((res: any) => {
+            setAnswerSheet(res)
+        })
+    }, [getAS])
 
     useEffect(() => {
-        if (props.answerSheet !== undefined) {
-            setAnswerSheet(props.answerSheet)
+        if (initialAnswerSheet !== undefined) {
+            setAnswerSheet(initialAnswerSheet)
         } else {
             updateAnswerSheet()
         }
-    }, [props.key_o])
-
-    const updateAnswerSheet = () => {
-        props.getAS && props.getAS().then((res: any) => {
-            setAnswerSheet(res)
-        })
-    }
+    }, [initialAnswerSheet, key_o, updateAnswerSheet])
 
     return (
         <div className={"Choice"}>
             <div className={"Choice-title"}>
                 <MarkdownText id={"Choice-title-id" + props.key_o} text={props.problemInfo?.description}/>
             </div>
-            {props.problemInfo?.choice !== undefined && (
-                props.problemInfo.choice.map((v: any, index: number) => {
+            {problemInfo?.choice !== undefined && (
+                problemInfo.choice.map((v: any, index: number) => {
                     return (
                         <ObjectiveOption
+                            key={key_o + "-" + index.toString()}
                             onMark={(SID: string) => {
-                                props.onMark && props.onMark(SID).then(() => {
+                                onMark && onMark(SID).then(() => {
                                     updateAnswerSheet()
                                 })
                             }}
                             onAnswerM={(SID: string) => {
-                                props.onAnswerM && props.onAnswerM(SID).then(() => {
+                                onAnswerM && onAnswerM(SID).then(() => {
                                     updateAnswerSheet()
                                 })
                             }}
@@ -55,7 +57,7 @@ const Objective = (props: propType & any) => {
                             answer_m={answerSheet?.answer_m ?? []}
                             index={index}
                             content={v}
-                            key_o={props.key_o + "-" + index.toString()}
+                            key_o={key_o + "-" + index.toString()}
                         />
                     )
                 })
@@ -99,11 +101,8 @@ const ObjectiveOption = (props: ObjectiveOptionType) => {
             >
                 <Row>
                     <Col span={1}>
-                        {[''].map(() => {
-                            if (OptionsState === "used") return <CheckOutlined/>
-                            if (OptionsState === "unused") return <CloseOutlined/>
-                            return undefined
-                        })}
+                        {OptionsState === "used" && <CheckOutlined/>}
+                        {OptionsState === "unused" && <CloseOutlined/>}
                     </Col>
                     <Col className={"Options-Choice"} span={1}>
                         {SID}.

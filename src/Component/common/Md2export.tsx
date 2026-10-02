@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useRef, useState } from 'react';
+import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import Vditor from 'vditor';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
@@ -11,13 +11,14 @@ import { Button, Modal } from 'antd';
 export const MD2export = (props: any) => {
   const [vis, setVis] = useState<boolean>(false);
   const editorRef = useRef<Vditor>();
+  const {height, id, langCode, value} = props;
 
-  const setEditor = () => {
-    const vditor0 = new Vditor(props.id ?? 'vditor-export', {
-      height: props.height === undefined ? 800 : props.height,
+  const setEditor = useCallback(() => {
+    const vditor0 = new Vditor(id ?? 'vditor-export', {
+      height: height === undefined ? 800 : height,
       mode: 'ir',
       placeholder: '',
-      lang: props.langCode,
+      lang: langCode,
       cdn: apiAddress().FRONT_SERVER + '/vditor',
       outline: {
         enable: true,
@@ -44,28 +45,28 @@ export const MD2export = (props: any) => {
       },
       toolbar: ['export'],
       after() {
-        vditor0.setValue(props.value);
+        vditor0.setValue(value);
       },
       blur() {},
     });
     editorRef.current = vditor0;
     return vditor0;
-  };
+  }, [height, id, langCode, value]);
 
   useEffect(() => {
-    if (!isValueEmpty(props.langCode) && vis) {
+    if (!isValueEmpty(langCode) && vis) {
       const editor = setEditor();
       return () => {
         editor.destroy();
         if (editorRef.current === editor) editorRef.current = undefined;
       };
     }
-  }, [props.langCode, vis]);
+  }, [langCode, setEditor, vis]);
 
   useEffect(() => {
-    if (vis && editorRef.current && editorRef.current.getValue() !== props.value)
-      editorRef.current.setValue(props.value ?? '');
-  }, [props.value, vis]);
+    if (vis && editorRef.current && editorRef.current.getValue() !== value)
+      editorRef.current.setValue(value ?? '');
+  }, [value, vis]);
 
   return (
     <>

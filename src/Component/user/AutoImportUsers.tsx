@@ -108,6 +108,7 @@ const mapGender = (v: any): number | undefined =>
 const map01 = (v: any): number => (Number(v) === 1 ? 1 : 0);
 
 const AutoImportUsers = (props: any) => {
+  const {t} = props;
   const [visible, setVisible] = useState(false);
   const [rows, setRows] = useState<ParsedUser[]>([]);
   const [displayRows, setDisplayRows] = useState<any[]>([]);
@@ -256,30 +257,30 @@ const AutoImportUsers = (props: any) => {
 
   const columns = useMemo(
     () => [
-      { title: props.t('username') || 'username', dataIndex: 'username' },
-      { title: props.t('password') || 'password', dataIndex: 'password' },
-      { title: props.t('email') || 'email', dataIndex: 'email' },
-      { title: props.t('nickname') || 'nickname', dataIndex: 'nickname' },
-      { title: props.t('phone') || 'phone', dataIndex: 'phone' },
-      { title: props.t('sex') || 'gender', dataIndex: 'genderText' },
-      { title: props.t('student_id') || 'studentId', dataIndex: 'studentId' },
+      { title: t('username') || 'username', dataIndex: 'username' },
+      { title: t('password') || 'password', dataIndex: 'password' },
+      { title: t('email') || 'email', dataIndex: 'email' },
+      { title: t('nickname') || 'nickname', dataIndex: 'nickname' },
+      { title: t('phone') || 'phone', dataIndex: 'phone' },
+      { title: t('sex') || 'gender', dataIndex: 'genderText' },
+      { title: t('student_id') || 'studentId', dataIndex: 'studentId' },
       {
-        title: props.t('Dis3pLogin') || 'banThirdParty',
+        title: t('Dis3pLogin') || 'banThirdParty',
         dataIndex: ['features', 'banThirdParty'],
         render: (v: number) => (v ? <Tag color="red">1</Tag> : <Tag>0</Tag>),
       },
       {
-        title: props.t('DisEmailUpd') || 'banEmailUpdate',
+        title: t('DisEmailUpd') || 'banEmailUpdate',
         dataIndex: ['features', 'banEmailUpdate'],
         render: (v: number) => (v ? <Tag color="red">1</Tag> : <Tag>0</Tag>),
       },
       {
-        title: props.t('DisInfoUpd') || 'banInfoUpdate',
+        title: t('DisInfoUpd') || 'banInfoUpdate',
         dataIndex: ['features', 'banInfoUpdate'],
         render: (v: number) => (v ? <Tag color="red">1</Tag> : <Tag>0</Tag>),
       },
     ],
-    [props.i18n?.language],
+    [t],
   );
 
   return (

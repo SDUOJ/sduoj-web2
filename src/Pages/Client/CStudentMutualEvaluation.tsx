@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Title from 'antd/es/typography/Title';
 import { useSelector } from 'react-redux';
 import CApi from '../../Utils/API/c-api';
@@ -28,7 +28,7 @@ const CStudentMutualEvaluation = () => {
   const [results, set_results] = useState<any>();
   const { t } = useTranslation();
 
-  const listUpd = () => {
+  const listUpd = useCallback(() => {
     CApi.getSMEList({}).then((res: any) => {
       if (res.error !== undefined) {
         message.error(res.error);
@@ -36,8 +36,8 @@ const CStudentMutualEvaluation = () => {
         setEvaluations(res.my_evaluations);
         setData(res.to_evaluate);
         setIsDisabled(true);
-        setGradeCounts(() => {
-          const newCounts: any = { ...gradeCounts };
+        setGradeCounts((currentCounts) => {
+          const newCounts: any = { ...currentCounts };
           for (let x in res.my_evaluations) {
             let v = res.my_evaluations[x];
             newCounts[v] = (newCounts[v] || 0) + 1;
@@ -48,9 +48,9 @@ const CStudentMutualEvaluation = () => {
         setData(res.to_evaluate);
       }
     });
-  };
+  }, []);
 
-  const getRes = () => {
+  const getRes = useCallback(() => {
     CApi.getSMEResult({}).then((res: any) => {
       set_is_admin(res.admin);
       if (res.admin) {
@@ -58,14 +58,14 @@ const CStudentMutualEvaluation = () => {
         set_results(res.results);
       }
     });
-  };
+  }, []);
 
   useEffect(() => {
     if (isLogin) {
       listUpd();
       getRes();
     }
-  }, [isLogin]);
+  }, [getRes, isLogin, listUpd]);
 
   const exportToExcel = async () => {
     await downloadXlsxRecords(

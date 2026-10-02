@@ -1,6 +1,6 @@
 import {Button, Card, message, Modal, Popconfirm, Space, Table, Tag} from "antd";
 import {useTranslation} from "react-i18next";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {unix2Time} from "../../../Utils/Time";
 import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
 import mApi from "../../../Utils/API/m-api";
@@ -15,15 +15,16 @@ const PublicCheckpointsFormModal = (props: any) => {
     const [data, setData] = useState<any>()
     const [load, setLoad] = useState<boolean>(false)
 
-    const updData = () => {
+    const {getPublicCheckpoints} = props;
+    const updData = useCallback(() => {
         if (load) return
         setLoad(true)
-        props.getPublicCheckpoints().then((res: any) => {
+        getPublicCheckpoints().then((res: any) => {
             setData(res)
         }).finally(() => {
             setLoad(false)
         })
-    }
+    }, [getPublicCheckpoints, load])
 
     const upd = (cpId: string, statue: number) => {
         props.updPublicCheckpoints({
@@ -39,7 +40,7 @@ const PublicCheckpointsFormModal = (props: any) => {
 
     useEffect(() => {
         updData()
-    }, [])
+    }, [updData])
 
     return (
         <>

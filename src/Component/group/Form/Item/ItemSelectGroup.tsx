@@ -38,7 +38,7 @@ const ItemSelectGroup = (props: any) => {
       add(props.manageInitData[props.formName]?.participatingGroupDTOList);
       setGroupInfo(newData);
     }
-  }, [props.manageInitData]);
+  }, [props.formName, props.manageInitData]);
 
   return (
     <Form.Item
@@ -59,7 +59,7 @@ const ItemSelectGroup = (props: any) => {
         onSearch={(value) => onSearch(value)}
       >
         {GroupInfo.map((value: groupSelection) => {
-          return <Option value={value.groupId}>{value.groupId + ': ' + value.title}</Option>;
+          return <Option key={value.groupId} value={value.groupId}>{value.groupId + ': ' + value.title}</Option>;
         })}
       </Select>
     </Form.Item>

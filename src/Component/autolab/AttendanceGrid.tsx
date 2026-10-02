@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Button, Card, Divider, Modal, Select, Space, Tag} from "antd";
 import autolabApi from "../../Utils/API/autolab-api";
 import QRScanner from "./QRScanner";
@@ -44,7 +44,7 @@ const AttendanceGrid: React.FC<AttendanceGridProps> = ({courseId, schedules, gro
         label: `第${s.sequence ?? "?"}次课 ${s.start_time ?? ""}`
     })), [schedules]);
 
-    const loadAttendance = (sid: number) => {
+    const loadAttendance = useCallback((sid: number) => {
         if (!sid) return;
         setLoading(true);
         const gid = typeof groupId === 'string' ? parseInt(groupId) : groupId;
@@ -63,17 +63,17 @@ const AttendanceGrid: React.FC<AttendanceGridProps> = ({courseId, schedules, gro
             });
             setStudents(sorted);
         }).finally(() => setLoading(false));
-    };
+    }, [courseId, groupId]);
 
     useEffect(() => {
         if (scheduleOptions.length > 0 && scheduleId === undefined) {
             setScheduleId(scheduleOptions[0].value);
         }
-    }, [scheduleOptions]);
+    }, [scheduleId, scheduleOptions]);
 
     useEffect(() => {
         if (scheduleId !== undefined) loadAttendance(scheduleId);
-    }, [scheduleId]);
+    }, [loadAttendance, scheduleId]);
 
     const openStatusModal = (student: any) => {
         setCurrentStudent(student);

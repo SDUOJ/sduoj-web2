@@ -29,7 +29,7 @@ const PackageDownload = (props: any) => {
         if (targetKeys.length !== 0) {
             let down: any = []
             let filenameSet: any = []
-            for (const x of props.submitInfo) {
+            for (const x of (Array.isArray(props.submitInfo) ? props.submitInfo : [])) {
                 let downloadFilename = ""
                 if (targetKeys.indexOf("1") !== -1) downloadFilename += x["username"] + splitChar
                 if (targetKeys.indexOf("2") !== -1) downloadFilename += x["real_name"] + splitChar
@@ -77,7 +77,7 @@ const PackageDownload = (props: any) => {
         } else {
             setDownload(null)
         }
-    }, [targetKeys, splitChar])
+    }, [dataSource, props.deadline, props.submitInfo, splitChar, targetKeys])
 
     const onChange = (nextTargetKeys: Key[], direction: TransferDirection, moveKeys: Key[]) => {
         setTargetKeys(nextTargetKeys)
@@ -156,11 +156,10 @@ const PackageDownload = (props: any) => {
                         }}/>
                         <Button type={"primary"} size={"small"} style={{marginTop: 12}} disabled={appendV.length === 0}
                                 onClick={() => {
-                                    dataSource.push({
+                                    setDataSource([...dataSource, {
                                         key: (dataSource.length + 1).toString(),
                                         title: appendV
-                                    })
-                                    setDataSource(dataSource)
+                                    }])
                                     setAppendV("")
                                 }}>添加</Button>
                     </Form.Item>

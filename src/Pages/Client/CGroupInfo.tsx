@@ -27,13 +27,14 @@ const CGroupInfo = (props: any) => {
     const [psSum, setPsSum] = useState<string>()
     const [psTabItems, setPsTabItems] = useState<any>()
     const {t} = useTranslation()
+    const {keyValueData} = props
 
     const isAdmin = props.userInfo?.roles?.some((role: any) => role === "admin" || role === "superadmin") || false;
     const username = props.userInfo?.username;
 
     useEffect(() => {
-        const keyValueData_g = props.keyValueData["Group-C-activeKey-" + groupId]
-        const keyValueData_ps = props.keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
+        const keyValueData_g = keyValueData["Group-C-activeKey-" + groupId]
+        const keyValueData_ps = keyValueData[`Group-C-activeKey-${groupId}-ProblemSet`]
 
         cApi.getGroupInfo({groupId: groupId}).then((value: any) => {
             setGroupInfo(value)
@@ -62,7 +63,7 @@ const CGroupInfo = (props: any) => {
             setPsSum(res.sum);
         })
 
-    }, [groupId])
+    }, [groupId, keyValueData, t])
 
     return (
         <>

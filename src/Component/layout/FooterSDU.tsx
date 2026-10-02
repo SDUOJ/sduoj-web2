@@ -11,18 +11,19 @@ import { sanitizeHtml } from '../../Utils/sanitizeHtml';
 const { Footer } = Layout;
 
 const FooterSDU = (props: any) => {
+  const {copyRight, setCopyRight} = props;
   useEffect(() => {
-    if (typeof props.copyRight !== 'string' || props.copyRight.length === 0) {
+    if (typeof copyRight !== 'string' || copyRight.length === 0) {
       cApi
         .getCopyright()
         .then((data: any) => {
-          props.setCopyRight(data);
+          setCopyRight(data);
         })
         .catch(() => {
           // The request layer reports transport failures.
         });
     }
-  }, [props.copyRight]);
+  }, [copyRight, setCopyRight]);
 
   return (
     <>

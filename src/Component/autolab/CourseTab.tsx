@@ -1,5 +1,5 @@
 import { FeatureAction } from '../../Pages/Manage/AI/BusinessFeature';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Card, Tabs, Empty, Select, Space, Spin } from 'antd';
 import autolabApi from '../../Utils/API/autolab-api';
 import CourseDetail from './CourseDetail';
@@ -22,7 +22,7 @@ const CourseTab: React.FC<CourseTabProps> = ({ groupId, username, members }) => 
     [groupId],
   );
 
-  const loadCourses = () => {
+  const loadCourses = useCallback(() => {
     const requestId = ++requestIdRef.current;
     if (!selectedUsername || !numericGroupId) {
       setCourses([]);
@@ -63,7 +63,7 @@ const CourseTab: React.FC<CourseTabProps> = ({ groupId, username, members }) => 
       .finally(() => {
         if (requestId === requestIdRef.current) setLoading(false);
       });
-  };
+  }, [numericGroupId, selectedUsername]);
 
   useEffect(() => {
     setSelectedUsername(username);
@@ -74,7 +74,7 @@ const CourseTab: React.FC<CourseTabProps> = ({ groupId, username, members }) => 
     return () => {
       requestIdRef.current += 1;
     };
-  }, [groupId, selectedUsername]);
+  }, [groupId, loadCourses, selectedUsername, numericGroupId]);
 
   const canViewOtherStudents = useMemo(
     () => (courses ?? []).some((item: any) => item?.can_manage === true),
