@@ -27,7 +27,7 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
     switch (action.type) {
         case "setSelectedRowKeys":
             initTableData(action.name)
-            State.tableData[action.name].selectedRowKeys = action.data
+            State.tableData[action.name].selectedRowKeys = [...action.data]
             break
 
         case "addTableVersion": {
@@ -39,7 +39,7 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
 
         case "setDataSource":
             initTableData(action.name)
-            State.tableData[action.name].dataSource = action.data
+            State.tableData[action.name].dataSource = Array.isArray(action.data) ? [...action.data] : action.data
             if(action.add) {
                 const nv = State.tableData[action.name].tableVersion
                 State.tableData[action.name].tableVersion = -(Math.abs(nv) + 1)
@@ -48,7 +48,7 @@ export const TableReduce = (state: TableState = initState, action: TableAction) 
 
         case "setTableInfo":
             initTableData(action.name)
-            State.tableData[action.name].tableInfo = action.data
+            State.tableData[action.name].tableInfo = {...action.data}
             break
         case "clearRedux":
             return {

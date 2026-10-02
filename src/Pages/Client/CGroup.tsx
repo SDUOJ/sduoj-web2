@@ -112,11 +112,9 @@ const CGroup = (props: any) => {
                                             <List.Item.Meta
                                                 style={{padding: 12, margin: 0}}
                                                 avatar={
-                                                    <div onClick={() => {
-                                                        props.history.push(UrlPrefix + "/group/" + item.groupId)
-                                                    }}>
+                                                    <Link to={UrlPrefix + "/group/" + item.groupId} aria-label={item.title}>
                                                         <Avatar email={item.owner.email} shape={"square"} size={60}/>
-                                                    </div>
+                                                    </Link>
                                                 }
                                                 description={
                                                     <>

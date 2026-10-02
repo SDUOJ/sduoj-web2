@@ -3,6 +3,7 @@ import React, {Component, ErrorInfo, ReactNode} from "react";
 type Props = {
     fallback?: ReactNode
     onError?: (error: Error, info: ErrorInfo) => void
+    resetKey?: string
     children?: ReactNode
 }
 
@@ -21,6 +22,12 @@ export default class ErrorBoundary extends Component<Props, State> {
     componentDidCatch(error: Error, info: ErrorInfo) {
         this.props.onError && this.props.onError(error, info)
         // 可在此处上报日志
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+            this.setState({hasError: false})
+        }
     }
 
     render() {

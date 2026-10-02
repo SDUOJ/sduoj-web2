@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react'
-import {Card, Divider, Empty, List, Space, Tag} from 'antd'
+import {Button, Card, Divider, Empty, List, Space, Tag} from 'antd'
 import {withTranslation} from 'react-i18next'
 import {withRouter} from 'react-router-dom'
 import {FieldTimeOutlined, RocketOutlined} from '@ant-design/icons'
@@ -76,7 +76,7 @@ function PsItem({ps, t, onJump, now, isZh}: { ps: ProblemSetCard & { groupTitle?
         }
         title={
           <>
-            <a onClick={() => onJump(ps.psid)}>{ps.name}</a>
+            <Button type="link" onClick={() => onJump(ps.psid)} style={{padding: 0, height: 'auto'}}>{ps.name}</Button>
             <Space size={8} style={{marginLeft: 8}}>
               <StatusTag st={ps.startTime} ed={ps.endTime} t={t} />
               {ps.tag && <Tag>{ps.tag}</Tag>}

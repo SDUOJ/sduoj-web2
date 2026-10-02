@@ -40,6 +40,10 @@ const copyAnswerSheets = (state: ExamState, groupKey: string): SExamAnswerSheet[
 export function updateChoiceTodo(groupKey: string, proIndex: number, choice: string, action: "yes" | "no") {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
+        const group = EState.examProListInfo[groupKey]
+        if (group === undefined || proIndex < 0 || proIndex >= group.proList.length) {
+            return Promise.resolve()
+        }
         const answerSheets = copyAnswerSheets(EState, groupKey)
 
         const answerSheet = answerSheets[proIndex]
@@ -68,6 +72,10 @@ export function updateChoiceTodo(groupKey: string, proIndex: number, choice: str
 export function updateFlagTodo(groupKey: string, proIndex: number) {
     return (dispatch: Dispatch<any>, getState: any) => {
         const EState: ExamState = getState().ExamReducer
+        const group = EState.examProListInfo[groupKey]
+        if (group === undefined || proIndex < 0 || proIndex >= group.proList.length) {
+            return Promise.resolve()
+        }
         const answerSheets = copyAnswerSheets(EState, groupKey)
         const answerSheet = answerSheets[proIndex]
         answerSheet.marked = !answerSheet.marked

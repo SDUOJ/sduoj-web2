@@ -7,12 +7,28 @@ import {ConfigProvider} from "antd";
 import {appTheme} from './Config/theme';
 import {useAppSelector} from './Redux/Store/hooks';
 import ErrorBoundary from './Utils/ErrorBoundary';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, useLocation} from "react-router-dom";
 import Loading from "./Utils/Loading";
 import {routerLayout} from "./Config/router/router";
 import NotFound from './Pages/Error/NotFound';
 const SubmissionModal = lazy(() => import('./Component/submission/Processing/ModalProcessing'));
 const RequirePassChange = lazy(() => import('./Component/common/RequirePassChange'));
+
+const RoutedContent = () => {
+    const location = useLocation();
+    return (
+        <ErrorBoundary resetKey={location.pathname + location.search + location.hash}>
+            <Suspense fallback={<Loading/>}>
+                <Switch>
+                    {routerLayout.map((r) => (
+                        <Route key={r.id} path={r.path} exact={r.exact} component={r.component}/>
+                    ))}
+                    <Route component={NotFound}/>
+                </Switch>
+            </Suspense>
+        </ErrorBoundary>
+    );
+};
 
 
 const App = () => {
@@ -26,18 +42,11 @@ const App = () => {
             {/*顶级路由*/}
             <Router>
                 {/* 提交详情窗体 / 密码修改提示 懒加载，避免首屏引入 */}
-                <Suspense fallback={null}>
+                <Suspense fallback={<Loading/>}>
                     <SubmissionModal/>
                     <RequirePassChange/>
                 </Suspense>
-                <Suspense fallback={<Loading/>}>
-                    <Switch>
-                        {routerLayout.map((r) => (
-                            <Route key={r.id} path={r.path} exact={r.exact} component={r.component}/>
-                        ))}
-                        <Route component={NotFound}/>
-                    </Switch>
-                </Suspense>
+                <RoutedContent/>
             </Router>
         </ErrorBoundary>
     </ConfigProvider>
