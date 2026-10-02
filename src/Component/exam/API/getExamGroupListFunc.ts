@@ -2,7 +2,14 @@ import {SExamProListInfo, SProList} from "../../../Type/IExam";
 import eApi from "../../../Utils/API/e-api";
 import deepClone from "../../../Utils/deepClone";
 
-export const getExamGroupListFunc = (res : any, eid: any, dispatch: any, openReport:boolean=false)=>{
+export const getExamGroupListFunc = (
+    res: any,
+    eid: any,
+    dispatch: any,
+    openReport = false,
+    isActive: () => boolean = () => true,
+) => {
+    if (!isActive()) return;
     let data: { [key: string]: SExamProListInfo } = {}
     let plistIndex = 0;
     for(const x of res){
@@ -21,6 +28,7 @@ export const getExamGroupListFunc = (res : any, eid: any, dispatch: any, openRep
         }
         if (x.type === "SingleChoice" || x.type === "MultipleChoice") {
             eApi.getAnswerSheet(eid, x.index, openReport).then((res: any) => {
+                if (!isActive()) return;
                 dispatch({
                     type: "setAnswerSheet",
                     data: res?.problemAnswer ?? [],
@@ -39,6 +47,7 @@ export const getExamGroupListFunc = (res : any, eid: any, dispatch: any, openRep
         }
     }
     data[eid] = deepClone(data)
+    if (!isActive()) return;
     dispatch({
         type: "setProLists",
         data: data

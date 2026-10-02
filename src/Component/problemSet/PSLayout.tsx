@@ -4,6 +4,7 @@ import Loading from "../../Utils/Loading";
 import {router_ProblemSet} from "../../Config/router/routerC";
 import React, {Dispatch, Suspense, useEffect, useState} from "react";
 import LoginCheck from "../common/LoginCheck";
+import {useSelector} from 'react-redux';
 import {ContestState} from "../../Redux/Action/contest";
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
@@ -18,6 +19,7 @@ const PSLayout = (props: any) => {
     let minWidth = 500
 
     const [pageWidth, setPageWidth] = useState<number>(document.querySelector('body')?.clientWidth as number)
+    const authStatus = useSelector((state: any) => state.UserReducer.authStatus ?? 'unknown');
 
     const handleResize = (e: any) => {
         setPageWidth(e.target.innerWidth)
@@ -48,7 +50,7 @@ const PSLayout = (props: any) => {
     return (
         <>
             <LoginCheck jump={true}/>
-            <div style={minWidth <= 1500 ? {textAlign: "center", margin: "0 auto"} : undefined}>
+            {authStatus === 'authenticated' && <div style={minWidth <= 1500 ? {textAlign: "center", margin: "0 auto"} : undefined}>
                 <div style={minWidth <= 1500 ? {
                     textAlign: "left",
                     maxWidth: "1500px",
@@ -74,7 +76,7 @@ const PSLayout = (props: any) => {
                         <QRFloat problemSetId={problemSetId} username={props.username} />
                     )}
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

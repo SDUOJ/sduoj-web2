@@ -6,19 +6,19 @@ import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
 import {withRouter} from "react-router";
 import ExamList from "../../Component/exam/ExamList";
-import {UrlPrefix} from "../../Config/constValue";
+import {loginRedirect} from "../../Utils/authReturn";
 
 class MExam extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(loginRedirect(this.props.location))
         }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(loginRedirect(this.props.location))
         }
     }
 

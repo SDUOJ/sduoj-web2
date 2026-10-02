@@ -11,21 +11,28 @@ import {withTranslation} from "react-i18next";
 
 
 class CContest extends Component<any, any> {
+    private active = false;
 
     constructor(props: any, context: any) {
         super(props, context);
         this.state = {
             upComing: undefined
         }
-        this.getUpComing()
+    }
+
+    componentDidMount() {
+        this.active = true;
+        this.getUpComing();
+    }
+
+    componentWillUnmount() {
+        this.active = false;
     }
 
     getUpComing = () => {
         cApi.getUpcomingContest({groupId: undefined}).then((res: any) => {
-            this.setState({
-                upComing: res
-            })
-        })
+            if (this.active) this.setState({upComing: res});
+        }).catch(() => undefined)
     }
 
     render() {
@@ -34,12 +41,12 @@ class CContest extends Component<any, any> {
                 <div style={{textAlign: "center", margin: "0 auto"}}>
                     <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
                         <Row gutter={20}>
-                            <Col span={17}>
+                            <Col xs={24} lg={17}>
 
                                 <ContestList/>
 
                             </Col>
-                            <Col span={7}>
+                            <Col xs={24} lg={7}>
                                 {!isValueEmpty(this.state.upComing) && (
                                     <Card
                                         title={this.props.t("ComingSoon")}

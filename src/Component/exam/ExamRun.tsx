@@ -26,12 +26,14 @@ const ExamRun = (props: any) => {
 
     // 获取题组信息
     useEffect(() => {
+        let active = true
         if (problemList === undefined) {
             eApi.getExamGroupList(eid).then((res: any)=>{
-                getExamGroupListFunc(res, eid, dispatch)
+                getExamGroupListFunc(res, eid, dispatch, false, () => active)
             })
         }
-    }, [problemList])
+        return () => { active = false }
+    }, [dispatch, eid, problemList])
 
     // console.log("problemList", problemList)
 

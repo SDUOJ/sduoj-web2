@@ -39,9 +39,10 @@ const EReport = (props: any) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
+        let active = true
         if (problemList === undefined) {
             eApi.getExamGroupList(eid, true).then((res: any) => {
-                getExamGroupListFunc(res, eid, dispatch, true)
+                getExamGroupListFunc(res, eid, dispatch, true, () => active)
             })
         } else {
             const rs: any = {}
@@ -59,6 +60,7 @@ const EReport = (props: any) => {
             rs['all'] = sumScore
             setScore(rs)
         }
+        return () => { active = false }
     }, [dispatch, eid, problemList])
 
     useEffect(() => {
@@ -80,12 +82,14 @@ const EReport = (props: any) => {
     }, [eid, examRes])
 
     useEffect(() => {
+        let active = true
         if (!isValueEmpty(topInfo[1])) {
             eApi.getProInfo({
                 examId: topInfo[0],
                 groupIndex: topInfo[1],
                 problemIndex: topInfo[2]
             }, true).then((res: any) => {
+                if (!active) return
                 dispatch({
                     type: "setProblemInfo",
                     key: `EXAM_${topInfo[0]}_${topInfo[1]}_${topInfo[2]}`,
@@ -94,14 +98,17 @@ const EReport = (props: any) => {
                 setProData(res)
             })
         }
+        return () => { active = false }
     }, [dispatch, topInfo])
 
     useEffect(() => {
+        let active = true
         if (examRes === undefined) {
             eApi.getExamResult(eid).then((res: any) => {
-                setExamRes(res)
+                if (active) setExamRes(res)
             })
         }
+        return () => { active = false }
     }, [eid, examRes])
 
 

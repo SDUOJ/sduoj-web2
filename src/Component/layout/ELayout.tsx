@@ -17,16 +17,30 @@ const {Footer, Content} = Layout;
 
 class ELayout extends Component<any, any> {
 
-    componentDidMount() {
+    redirectExamRoot() {
+        if (this.props.authStatus !== 'authenticated') return;
         if ((
             this.props.location.pathname === UrlPrefix + '/exam' ||
             this.props.location.pathname === UrlPrefix + '/exam/'
         ) && routerE.length !== 0) {
-            this.props.history.push(getRouterPath(routerE, 2));
+            this.props.history.replace(getRouterPath(routerE, 2));
+        }
+    }
+
+    componentDidMount() {
+        this.redirectExamRoot();
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>) {
+        if (prevProps.authStatus !== this.props.authStatus || prevProps.location.pathname !== this.props.location.pathname) {
+            this.redirectExamRoot();
         }
     }
 
     render() {
+        if (this.props.authStatus !== 'authenticated') {
+            return <LoginCheck jump={true}/>;
+        }
         return (
             <>
                 <LoginCheck jump={true}/>
@@ -59,7 +73,7 @@ class ELayout extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
-    return {}
+    return {authStatus: state.UserReducer.authStatus ?? 'unknown'}
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})

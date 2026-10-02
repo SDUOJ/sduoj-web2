@@ -33,9 +33,15 @@ const MLayout = (props: any) => {
       const firstManageRoute = routerM.find((route) =>
         route.path.startsWith(UrlPrefix + '/manage/'),
       );
-      if (firstManageRoute) props.history.push(firstManageRoute.path);
+      if (firstManageRoute) {
+        props.history.replace({
+          pathname: firstManageRoute.path,
+          search: props.location.search,
+          hash: props.location.hash,
+        });
+      }
     }
-  }, [props.history, props.location.pathname]);
+  }, [props.history, props.location.hash, props.location.pathname, props.location.search]);
 
   useEffect(() => {
     setMenuOpen(false);

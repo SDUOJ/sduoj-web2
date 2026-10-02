@@ -25,41 +25,49 @@ const PSHeader = (props: any) => {
 
   const menuData = [
     {
+      key: 'overview',
       name: props.t('Overview'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/overview',
       re: /\/problemSet\/.*\/overview/g,
     },
     {
+      key: 'problem',
       name: props.t('Problem'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/problem/0/0',
       re: /\/problemSet\/.*\/problem/g,
     },
     {
+      key: 'review',
       name: props.t('Review'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/review',
       re: /\/problemSet\/.*\/review/g,
     },
     {
+      key: 'rank',
       name: props.t('Rank'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/rank',
       re: /\/problemSet\/.*\/rank/g,
     },
     {
+      key: 'monitor',
       name: props.t('RankMonitorTab'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/monitor',
       re: /\/problemSet\/.*\/monitor/g,
     },
     {
+      key: 'submission',
       name: props.t('SubmissionList'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/submission',
       re: /\/problemSet\/.*\/submission/g,
     },
     {
+      key: 'late',
       name: props.t('LatePermission'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/late',
       re: /\/problemSet\/.*\/late/g,
     },
     {
+      key: 'auto-task',
       name: props.t('AutoTaskTab'),
       link: UrlPrefix + '/problemSet/' + problemSetId + '/auto-task',
       re: /\/problemSet\/.*\/auto-task/g,
@@ -68,15 +76,10 @@ const PSHeader = (props: any) => {
 
   const [nowKey, setNowKey] = useState<any>();
 
-  const menuList: any = [props.t('Overview'), props.t('Problem')];
+  const menuList: any = ['overview', 'problem'];
   if (problemSetInfo?.isAdmin === true)
     menuList.push(
-      props.t('Review'),
-      props.t('SubmissionList'),
-      props.t('LatePermission'),
-      props.t('AutoTaskTab'),
-      props.t('Rank'),
-      props.t('RankMonitorTab'),
+      'review', 'submission', 'late', 'auto-task', 'rank', 'monitor',
     );
 
   useEffect(() => {
@@ -84,10 +87,10 @@ const PSHeader = (props: any) => {
       props.history.replace(menuData[0].link);
     }
     menuData.map((value) => {
-      if (path.match(value.re) !== null) setNowKey(value.name);
+      if (path.match(value.re) !== null) setNowKey(value.key);
       return undefined;
     });
-  }, [path]);
+  }, [path, props.history, problemSetId, props.t]);
 
   return (
     <>
@@ -142,13 +145,13 @@ const PSHeader = (props: any) => {
             activeKey={nowKey}
             onChange={(activeKey) => {
               menuData.forEach((item) => {
-                if (item.name === activeKey) props.history.push(item.link);
+                if (item.key === activeKey) props.history.push(item.link);
               });
             }}
             items={menuData
-              .filter((m) => menuList.includes(m.name))
+              .filter((m) => menuList.includes(m.key))
               .map((m) => ({
-                key: m.name,
+                key: m.key,
                 label: m.name,
               }))}
             animated

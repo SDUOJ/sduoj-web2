@@ -7,19 +7,19 @@ import {withRouter} from "react-router";
 import {Card, Space} from "antd";
 import ProblemList from "../../../Component/problem/ProblemList";
 import AutoImportObjective from "../../../Component/problem/AutoImportObjective";
-import {UrlPrefix} from "../../../Config/constValue";
+import {loginRedirect} from "../../../Utils/authReturn";
 
 class MObjective extends Component<any, any> {
 
     componentDidMount() {
         if (!this.props.isLogin) {
-            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(loginRedirect(this.props.location))
         }
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (!this.props.isLogin) {
-            this.props.history.replace(UrlPrefix + "/login?to=" + this.props.location.pathname)
+            this.props.history.replace(loginRedirect(this.props.location))
         }
     }
 

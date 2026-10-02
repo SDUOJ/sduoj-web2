@@ -26,9 +26,11 @@ export default class ErrorBoundary extends Component<Props, State> {
     render() {
         if (this.state.hasError) {
             return this.props.fallback ?? (
-                <div style={{padding: 24}}>
+                <div style={{padding: 24}} role="alert">
                     <h3>页面出错了</h3>
-                    <p>请尝试刷新页面，或返回上一步重试。</p>
+                    <p>请尝试重新加载当前内容，或返回上一步。</p>
+                    <button type="button" onClick={() => this.setState({hasError: false})}>重试</button>{' '}
+                    <button type="button" onClick={() => window.history.back()}>返回</button>
                 </div>
             )
         }

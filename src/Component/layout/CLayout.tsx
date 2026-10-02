@@ -15,6 +15,7 @@ export default function CLayout() {
   const history = useHistory();
   const { pathname } = useLocation();
   const rankWidth = useAppSelector((state) => state.ContestReducer.minWidth);
+  const authStatus = useAppSelector((state) => state.UserReducer.authStatus ?? 'unknown');
   const isRank = /\/contest\/.*\/rank/.test(pathname);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function CLayout() {
   return (
     <>
       <LoginCheck />
-      <Layout className="client-layout">
+      {authStatus === 'unknown' && pathname !== UrlPrefix + '/login' ? <Loading /> : <Layout className="client-layout">
         <CHeader />
         <Layout.Content className="client-content">
           <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
@@ -40,7 +41,7 @@ export default function CLayout() {
           </div>
         </Layout.Content>
         <FooterSDU />
-      </Layout>
+      </Layout>}
     </>
   );
 }

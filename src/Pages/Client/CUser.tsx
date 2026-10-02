@@ -18,7 +18,7 @@ import ItemPassword from '../../Component/user/Form/Item/ItemPassword';
 import Reconfirm from '../../Component/common/Reconfirm';
 import { isValueEmpty } from '../../Utils/empty';
 import LoadingData from '../../Component/common/LoadingData';
-import { UrlPrefix } from '../../Config/constValue';
+import { loginRedirect } from '../../Utils/authReturn';
 
 class CUser extends Component<any, any> {
   ref1 = React.createRef<FormInstance<any>>();
@@ -28,13 +28,13 @@ class CUser extends Component<any, any> {
   componentDidMount() {
     if (!this.props.isLogin) {
       console.log('not login');
-      this.props.history.replace(UrlPrefix + '/login?to=' + this.props.location.pathname);
+      this.props.history.replace(loginRedirect(this.props.location));
     }
   }
 
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
     if (!this.props.isLogin) {
-      this.props.history.replace(UrlPrefix + '/login?to=' + this.props.location.pathname);
+      this.props.history.replace(loginRedirect(this.props.location));
     }
   }
 

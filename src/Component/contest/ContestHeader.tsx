@@ -28,11 +28,11 @@ const ContestHeader = (props: any) => {
     // console.log(contestInfo)
 
     const menuData = [
-        {name: "Register", link: UrlPrefix + "/contest/" + contestId + "/register", re: /\/contest\/.*\/register/g},
-        {name: "Overview", link: UrlPrefix + "/contest/" + contestId + "/overview", re: /\/contest\/.*\/overview/g},
-        {name: "Problem", link: UrlPrefix + "/contest/" + contestId + "/problem/1", re: /\/contest\/.*\/problem\/.*/g},
-        {name: "Status", link: UrlPrefix + "/contest/" + contestId + "/submission", re: /\/contest\/.*\/submission/g},
-        {name: "Rank", link: UrlPrefix + "/contest/" + contestId + "/rank", re: /\/contest\/.*\/rank/g},
+        {key: "register", name: "Register", link: UrlPrefix + "/contest/" + contestId + "/register", re: /\/contest\/.*\/register/g},
+        {key: "overview", name: "Overview", link: UrlPrefix + "/contest/" + contestId + "/overview", re: /\/contest\/.*\/overview/g},
+        {key: "problem", name: "Problem", link: UrlPrefix + "/contest/" + contestId + "/problem/1", re: /\/contest\/.*\/problem\/.*/g},
+        {key: "status", name: "Status", link: UrlPrefix + "/contest/" + contestId + "/submission", re: /\/contest\/.*\/submission/g},
+        {key: "rank", name: "Rank", link: UrlPrefix + "/contest/" + contestId + "/rank", re: /\/contest\/.*\/rank/g},
     ]
 
 
@@ -49,16 +49,16 @@ const ContestHeader = (props: any) => {
         // 若已经注册，则不能访问注册页面
         if (url.match(menuData[0].re) !== null && isPractice) props.history.replace(menuData[1].link)
         menuData.map((value) => {
-            if (url.match(value.re) !== null) setSelectedKey(value.name)
+            if (url.match(value.re) !== null) setSelectedKey(value.key)
         })
-    }, [url, openness, isPractice])
+    }, [url, openness, isPractice, contestId, props.history])
 
 
     useEffect(() => {
         if (Math.abs(nowSliderTime - props.sliderTime) >= 1000 * 60) {
             props.setSliderTime(nowSliderTime)
         }
-    }, [nowSliderTime, props.sliderTime])
+    }, [nowSliderTime, props.sliderTime, props.setSliderTime])
 
     return (
         <>
@@ -159,15 +159,15 @@ const ContestHeader = (props: any) => {
                         style={{border: 0}}
                         selectedKeys={[selectedKey]}
                         items={menuData.filter(value => {
-                            if (timeState === "wait" && value.name !== "Register") return false
-                            if (isPractice && value.name === "Register") return false
-                            if (openness === "private" && isPractice === false && value.name !== "Register") return false
+                            if (timeState === "wait" && value.key !== "register") return false
+                            if (isPractice && value.key === "register") return false
+                            if (openness === "private" && isPractice === false && value.key !== "register") return false
                             return true
                         }).map(value => ({
-                            key: value.name,
+                            key: value.key,
                             label: props.t(value.name),
                             onClick: () => {
-                                setSelectedKey(value.name)
+                                setSelectedKey(value.key)
                                 props.history.push(value.link)
                             }
                         }))}
@@ -188,7 +188,7 @@ const ContestHeader = (props: any) => {
                                     <Divider type={"vertical"}/>
                                 </>
                             )}
-                            {props.allowSliderMove === true && selectedKey === "Rank" && (
+                            {props.allowSliderMove === true && selectedKey === "rank" && (
                                 <>
                                     {props.t("HistoryReplay")}
                                     <Switch
@@ -201,7 +201,7 @@ const ContestHeader = (props: any) => {
                                 </>
                             )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
-                                timeState === "end" && selectedKey === "Rank" && (
+                                timeState === "end" && selectedKey === "rank" && (
                                     <>
                                         {props.t("AfterContestSubmission")}
                                         <Switch
@@ -214,7 +214,7 @@ const ContestHeader = (props: any) => {
                                     </>
                                 )}
                             {judgeAuth(props.roles, ["admin", "superadmin"]) &&
-                                selectedKey === "Rank" && (
+                                selectedKey === "rank" && (
                                     <>
                                         <ExportExcel
                                             ButtonProps={{size: "small"}}

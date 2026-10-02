@@ -12,6 +12,7 @@ import {UrlPrefix} from "../../Config/constValue";
 
 
 class CThirdPartyLogin extends Component<any, any> {
+    private active = false;
 
 
     constructor(props: any, context: any) {
@@ -26,11 +27,13 @@ class CThirdPartyLogin extends Component<any, any> {
     }
 
     componentDidMount() {
+        this.active = true;
         const paras = getUrlParams(this.props.location.search)
         CApi.thirdPartyLogin({
             thirdParty: paras.thirdParty,
             ticket: paras.ticket
         }).then((resData: any) => {
+            if (!this.active) return;
             message.success(this.props.t("certificationSuccess"))
             if (resData.user === null) {
                 // 之前没有绑定账号，现在进行绑定
@@ -50,8 +53,12 @@ class CThirdPartyLogin extends Component<any, any> {
                 this.props.history.push(UrlPrefix + "/home")
             }
         }).catch((error: any) => {
-            this.setState({loading: false, error: error?.message || this.props.t('certificationFailed', {defaultValue: '认证失败，请重试'})})
+            if (this.active) this.setState({loading: false, error: error?.message || this.props.t('certificationFailed', {defaultValue: '认证失败，请重试'})})
         })
+    }
+
+    componentWillUnmount() {
+        this.active = false;
     }
 
     render() {
