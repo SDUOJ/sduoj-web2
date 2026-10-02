@@ -1,0 +1,18 @@
+.ai-admin-operations {
+  display: grid;
+  gap: 20px;
+}
+.ai-admin-operations .ant-descriptions-title {
+  margin-bottom: 8px;
+}
+.ai-admin-operations .ant-alert {
+  margin-top: 4px;
+}
+.ai-admin-operations .ant-space {
+  margin-top: 4px;
+}
+.ai-admin-loading {
+  min-height: 160px;
+  display: grid;
+  place-items: center;
+}

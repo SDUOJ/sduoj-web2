@@ -4,6 +4,11 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createAppStore } from '../../Redux/Store';
 import Submit, { Submit as RawSubmit } from './Submit';
+import { fileUploadWithoutMD5 } from '../../Utils/fileUpload';
+
+jest.mock('../../Utils/fileUpload', () => ({
+  fileUploadWithoutMD5: jest.fn(),
+}));
 
 jest.mock('../common/CodeEditor', () => ({
   __esModule: true,
@@ -64,6 +69,29 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
+async function setupZipRaw(api: jest.Mock) {
+  localStorage.setItem('SDUOJ-Last-Submit-JT', 'zip');
+  render(
+    <RawSubmit
+      isLogin
+      name="zip"
+      title="ZIP Program"
+      API={api}
+      TopSubmissionInfo={{}}
+      JudgeTemplates={[{ id: 'zip', title: 'ZIP', acceptFileExtensions: ['zip'] }]}
+      setTopSubmission={jest.fn()}
+      setSubmissionModalVis={jest.fn()}
+      addTableVersion={jest.fn()}
+      t={(key: string) => key}
+    />,
+  );
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('button', { name: 'Submit' }));
+  const dialog = await screen.findByRole('dialog');
+  const upload = dialog.querySelector('input[type="file"]') as HTMLInputElement;
+  return { user, dialog, upload };
+}
+
 async function setupRaw(api: jest.Mock) {
   localStorage.setItem('SDUOJ-Last-Submit-JT', '1');
   const setTopSubmission = jest.fn();
@@ -118,4 +146,51 @@ it('keeps the form available for retry after an API failure', async () => {
   await waitFor(() => expect(setTopSubmission).toHaveBeenCalledWith('accepted', {}));
   expect(setSubmissionModalVis).toHaveBeenCalledWith(true);
   expect(api).toHaveBeenCalledTimes(2);
+});
+
+it('aborts a pending ZIP upload when the submit form closes', async () => {
+  let uploadSignal: AbortSignal | undefined;
+  jest.mocked(fileUploadWithoutMD5).mockImplementation((_file, _callback, options) => {
+    uploadSignal = options?.signal;
+    return new Promise((_resolve, reject) => {
+      options?.signal?.addEventListener('abort', () =>
+        reject(new DOMException('aborted', 'AbortError')),
+      );
+    });
+  });
+  const { user, dialog, upload } = await setupZipRaw(jest.fn());
+
+  await user.upload(upload, new File(['zip'], 'solution.zip', { type: 'application/zip' }));
+  await waitFor(() => expect(fileUploadWithoutMD5).toHaveBeenCalledTimes(1));
+  expect(within(dialog).getByRole('button', { name: 'Submit' })).toBeDisabled();
+  await user.click(within(dialog).getByRole('button', { name: 'no' }));
+
+  expect(uploadSignal?.aborted).toBe(true);
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+
+it('blocks a failed ZIP upload and submits only after a successful retry', async () => {
+  jest
+    .mocked(fileUploadWithoutMD5)
+    .mockRejectedValueOnce(new Error('offline'))
+    .mockResolvedValueOnce({ id: 'zip-file' });
+  const api = jest.fn().mockResolvedValue('submission-id');
+  const { user, dialog, upload } = await setupZipRaw(api);
+  const submit = within(dialog).getByRole('button', { name: 'Submit' });
+  const file = new File(['zip'], 'solution.zip', { type: 'application/zip' });
+
+  await user.upload(
+    upload,
+    new File(['zip-retry'], 'solution-retry.zip', { type: 'application/zip' }),
+  );
+  expect(await screen.findByText('fileUploadFailed')).toBeVisible();
+  expect(submit).toBeDisabled();
+  expect(api).not.toHaveBeenCalled();
+
+  const retryUpload = dialog.querySelector('input[type="file"]') as HTMLInputElement;
+  await user.upload(retryUpload, file);
+  await waitFor(() => expect(submit).toBeEnabled());
+  await user.click(submit);
+
+  await waitFor(() => expect(api).toHaveBeenCalledWith('zip', undefined, 'zip-file'));
 });

@@ -35,6 +35,16 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const postcssNormalize = require('postcss-normalize');
 // NOTE: stray insertions removed; real configuration lives in module.exports below
 
+// jpegtran-bin does not publish a working darwin-arm64 binary and its postinstall
+// fallback may leave vendor/jpegtran absent. Treat JPEG compression as optional so
+// a clean install can still produce a release build on supported Node platforms.
+const bundledJpegtranPath = path.join(
+  path.dirname(require.resolve('jpegtran-bin')),
+  'vendor',
+  'jpegtran',
+);
+const hasBundledJpegtran = fs.existsSync(bundledJpegtranPath);
+
 // ===== Missing constants restored (aligned with CRA ejected config) =====
 // Whether to generate source map in production
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -310,7 +320,7 @@ module.exports = function (webpackEnv) {
             options: {
               plugins: [
                 ['gifsicle', { interlaced: true }],
-                ['jpegtran', { progressive: true }],
+                ...(hasBundledJpegtran ? [['jpegtran', { progressive: true }]] : []),
                 ['optipng', { optimizationLevel: 5 }],
                 [
                   'svgo',
@@ -365,9 +375,9 @@ module.exports = function (webpackEnv) {
             chunks: 'all',
             priority: 20,
           },
-          xlsx: {
-            test: /[\\/]node_modules[\\/]xlsx[\\/]/,
-            name: 'xlsx-vendor',
+          spreadsheet: {
+            test: /[\\/]node_modules[\\/](?:read-excel-file|write-excel-file|fflate|unzipper-esm)[\\/]/,
+            name: 'spreadsheet-vendor',
             chunks: 'all',
             priority: 20,
           },

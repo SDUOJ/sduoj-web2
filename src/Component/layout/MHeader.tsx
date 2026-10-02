@@ -1,5 +1,6 @@
 import React, { Component, Dispatch } from 'react';
 import { Button, Layout, message, Space } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import ChangeLang from '../common/ChangeLang';
 import { UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
@@ -13,27 +14,36 @@ const { Header } = Layout;
 
 class MHeader extends Component<any, any> {
   render() {
+    const isMobile = this.props.isMobile === true;
     return (
       <Header
         className="site-layout-sub-header-background"
         style={{
-          minWidth: 550,
+          minWidth: 0,
           position: 'fixed',
           top: 0,
-          left: 200,
-          width: 'calc(100% - 200px)',
+          left: isMobile ? 0 : 200,
+          width: isMobile ? '100%' : 'calc(100% - 200px)',
           display: 'flex',
           alignItems: 'center',
           height: 64,
-          padding: '0 20px',
+          padding: isMobile ? '0 8px' : '0 20px',
           boxSizing: 'border-box',
           zIndex: 100,
         }}
       >
+        {isMobile && (
+          <Button
+            type="text"
+            icon={<MenuOutlined />}
+            aria-label={this.props.t('openMenu', { defaultValue: 'Open menu' })}
+            onClick={this.props.onMenuToggle}
+          />
+        )}
         <div style={{ flex: 1 }} />
         <div
           className="mheader-ops"
-          style={{ display: 'flex', gap: 24, alignItems: 'center', flexShrink: 0 }}
+          style={{ display: 'flex', gap: isMobile ? 8 : 24, alignItems: 'center', flexShrink: 0 }}
         >
           <Button
             type="text"

@@ -1,0 +1,57 @@
+/* Business tools inherit the surrounding OJ layout and Ant Design theme. */
+.business-feature {
+  min-width: 0;
+  width: 100%;
+}
+.business-feature .ai-workspace,
+.business-feature .ai-course-knowledge,
+.business-feature .ai-interview-shell,
+.business-feature .ai-authoring-workbench,
+.business-feature .ai-plagiarism-workbench {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+.business-feature .ai-workspace-body,
+.business-feature .ai-interview-main {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.business-feature .ai-course-content {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.business-feature .ai-workspace-heading h3,
+.business-feature .ai-interview-header h2 {
+  font-size: 18px;
+}
+@media (max-width: 760px) {
+  .business-feature .ai-course-content,
+  .business-feature .ai-workspace-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Same card, heading and table treatment as the surrounding management pages. */
+.business-feature > .ai-workspace,
+.business-feature .ai-workspace-body > .ai-plagiarism-workbench {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 12px;
+}
+.business-feature .ai-workspace-heading,
+.business-feature .ai-plagiarism-header {
+  min-height: 38px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.business-feature .ai-workspace-heading h3,
+.business-feature .ai-plagiarism-header h3 { font-size: 14px; margin: 0; }
+.business-feature .ai-workspace-columns { display: flex; flex-direction: column; gap: 20px; }
+.business-feature .ant-table-wrapper { width: 100%; }

@@ -1,0 +1,24 @@
+.ai-native-workbench {
+  min-height: 100vh;
+  padding: 24px;
+  background: #fff;
+  gap: 16px;
+}
+.ai-native-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.ai-native-header h3 {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .ai-native-workbench {
+    padding: 12px;
+  }
+  .ai-native-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

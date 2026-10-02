@@ -84,6 +84,7 @@ const Login = () => {
         }}
       >
         <Tabs
+          centered
           tabBarGutter={16}
           activeKey={loginType}
           onChange={(activeKey) => setLoginType(activeKey as LoginType)}

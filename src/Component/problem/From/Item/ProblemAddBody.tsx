@@ -20,7 +20,7 @@ import mApi from 'Utils/API/m-api';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { examProblemType } from '../../../../Type/IExam';
 import { ck, get, isValueEmpty } from '../../../../Utils/empty';
-import { SketchPicker } from 'react-color';
+import { HexColorPicker } from 'react-colorful';
 import { createCachedRequest } from '../../problemLookup';
 
 export const defaultKeyMapping = {
@@ -496,10 +496,10 @@ const ColorPickerBody = ({ value, onChange }: any) => {
     <Space size={12}>
       <Popover
         content={
-          <SketchPicker
-            color={value}
-            onChangeComplete={(v: any) => {
-              onChange(v.hex);
+          <HexColorPicker
+            color={value || '#000000'}
+            onChange={(nextColor: string) => {
+              onChange(nextColor);
               setOpen(false);
             }}
           />

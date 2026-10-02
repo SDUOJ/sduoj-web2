@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useRef, useState } from 'react';
+import React, { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Button, Form, message, Modal, Select, Space, Tooltip, Upload } from 'antd';
 import { JudgeTemplateAllType } from '../../Type/IProblem';
 import { connect } from 'react-redux';
@@ -27,14 +27,26 @@ export interface SubmitPropsType {
 export const Submit = (props: SubmitPropsType & any) => {
   const [form] = Form.useForm();
   const submissionGeneration = useRef(0);
+  const uploadGeneration = useRef(0);
+  const uploadAbortController = useRef<AbortController>();
 
   const [SubmitModalVis, setSubmitModalVis] = useState<boolean>(false);
   const [SubmitDisable, setSubmitDisable] = useState<boolean>(false);
   const [judgeTemplateId, setJudgeTemplateId] = useState<number | undefined>();
   const [zipFileId, setZipFileId] = useState<string | undefined>();
+  const [zipUploadPending, setZipUploadPending] = useState(false);
+
+  const cancelZipUpload = useCallback(() => {
+    uploadGeneration.current += 1;
+    uploadAbortController.current?.abort();
+    uploadAbortController.current = undefined;
+    setZipUploadPending(false);
+    setZipFileId(undefined);
+  }, []);
 
   useEffect(() => {
     if (SubmitModalVis) {
+      cancelZipUpload();
       form.resetFields();
       const value: any = localStorage.getItem('SDUOJ-Last-Submit-JT');
       if (!isValueEmpty(value) && props.JudgeTemplates !== undefined) {
@@ -45,17 +57,20 @@ export const Submit = (props: SubmitPropsType & any) => {
         }
       }
     }
-  }, [props.JudgeTemplates, props.name, SubmitModalVis]);
+  }, [cancelZipUpload, form, props.JudgeTemplates, props.name, SubmitModalVis]);
 
   useEffect(
     () => () => {
       submissionGeneration.current += 1;
+      uploadGeneration.current += 1;
+      uploadAbortController.current?.abort();
     },
     [],
   );
 
   const closeSubmitForm = () => {
     submissionGeneration.current += 1;
+    cancelZipUpload();
     setSubmitDisable(false);
     setSubmitModalVis(false);
   };
@@ -109,6 +124,11 @@ export const Submit = (props: SubmitPropsType & any) => {
       {props.t('Submit')}
     </Button>
   );
+  const selectedTemplate =
+    judgeTemplateId === undefined ? undefined : props.JudgeTemplates?.[judgeTemplateId];
+  const requiresZipUpload = selectedTemplate?.acceptFileExtensions?.some(
+    (extension: string) => extension === 'zip' || extension === '.zip',
+  );
   // console.log("props.LeftSubmitCount", props.LeftSubmitCount)
   return (
     <>
@@ -153,7 +173,9 @@ export const Submit = (props: SubmitPropsType & any) => {
                 (!isNaN(props.LeftSubmitCount) &&
                   props.LeftSubmitCount !== undefined &&
                   props.LeftSubmitCount <= 0) ||
-                SubmitDisable
+                SubmitDisable ||
+                zipUploadPending ||
+                (requiresZipUpload && zipFileId === undefined)
               }
             >
               {props.t('Submit')}
@@ -184,6 +206,7 @@ export const Submit = (props: SubmitPropsType & any) => {
                 label: template.title,
               }))}
               onChange={(value) => {
+                cancelZipUpload();
                 const id = props.JudgeTemplates.findIndex((val: any) => val.id === value);
                 setJudgeTemplateId(id >= 0 ? id : undefined);
               }}
@@ -302,14 +325,49 @@ export const Submit = (props: SubmitPropsType & any) => {
                       multiple={false}
                       accept={accept}
                       customRequest={(obj: any) => {
-                        obj.onSuccess(() => {});
+                        const generation = ++uploadGeneration.current;
+                        uploadAbortController.current?.abort();
+                        const controller = new AbortController();
+                        uploadAbortController.current = controller;
+                        setZipFileId(undefined);
+                        setZipUploadPending(true);
+                        fileUploadWithoutMD5(obj.file as File, undefined, {
+                          signal: controller.signal,
+                        })
+                          .then((value: any) => {
+                            if (generation !== uploadGeneration.current) return;
+                            setZipFileId(value.id);
+                            obj.onSuccess?.(value);
+                          })
+                          .catch((error: Error) => {
+                            if (generation !== uploadGeneration.current) return;
+                            if (!controller.signal.aborted) {
+                              message.error(
+                                props.t('fileUploadFailed', {
+                                  defaultValue: 'File upload failed',
+                                }),
+                              );
+                            }
+                            obj.onError?.(error);
+                          })
+                          .finally(() => {
+                            if (generation === uploadGeneration.current) {
+                              uploadAbortController.current = undefined;
+                              setZipUploadPending(false);
+                            }
+                          });
+                        return {
+                          abort: () => {
+                            if (generation === uploadGeneration.current) cancelZipUpload();
+                            else controller.abort();
+                          },
+                        };
+                      }}
+                      onRemove={() => {
+                        cancelZipUpload();
+                        return true;
                       }}
                       listType={'text'}
-                      beforeUpload={(file) => {
-                        fileUploadWithoutMD5(file, (value: any) => {
-                          setZipFileId(value.id);
-                        });
-                      }}
                     >
                       <Button icon={<UploadOutlined />}>{props.t('upload')}</Button>
                     </Upload>

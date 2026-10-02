@@ -1,3 +1,4 @@
+import { FeatureAction } from './AI/BusinessFeature';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
@@ -29,6 +30,7 @@ import { constraintRules } from '../../Config/validation/constraints';
 import { autolabFieldRules } from '../../Config/validation/fields';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
 import ItemSelectClassroom from '../../Component/autolab/Form/Item/ItemSelectClassroom';
+import { UrlPrefix } from '../../Config/constValue';
 
 const tagOptions = [
   { value: '授课', label: '授课' },
@@ -471,6 +473,12 @@ const MAutolab: React.FC = () => {
           <Button key={'assign'} type="link" size="small" onClick={() => openAssignModal(row)}>
             自动分配座位
           </Button>,
+          <FeatureAction key="knowledge" feature="course" context={{ course_id: row.course_id }}>
+            课程资料
+          </FeatureAction>,
+          <FeatureAction key="exam-tools" feature="exams" context={{ course_id: row.course_id }}>
+            考务管理
+          </FeatureAction>,
           <TableRowDeleteButton
             key={'delete'}
             type={'inline'}
@@ -489,21 +497,25 @@ const MAutolab: React.FC = () => {
         bordered={true}
         title="课程管理"
         extra={
-          <ModalFormUseForm
-            TableName={COURSE_TABLE_NAME}
-            title="创建课程"
-            type={'create'}
-            subForm={[{ component: courseForm }]}
-            dataSubmitter={async (values: any) =>
-              autolabApi.createCourse({
-                course_name: values.course_name,
-                group_id: Number(values.group_id),
-                manager_groups: normalizeIds(values.manager_groups, true),
-                tag: values.tag,
-                c_ids: normalizeIds(values.c_ids, true),
-              })
-            }
-          />
+          <Space wrap>
+            <Button href={UrlPrefix + '/courses/knowledge'}>AI 课程资料</Button>
+            <Button href={UrlPrefix + '/manage/problemSet/exams'}>AI 考务</Button>
+            <ModalFormUseForm
+              TableName={COURSE_TABLE_NAME}
+              title="创建课程"
+              type={'create'}
+              subForm={[{ component: courseForm }]}
+              dataSubmitter={async (values: any) =>
+                autolabApi.createCourse({
+                  course_name: values.course_name,
+                  group_id: Number(values.group_id),
+                  manager_groups: normalizeIds(values.manager_groups, true),
+                  tag: values.tag,
+                  c_ids: normalizeIds(values.c_ids, true),
+                })
+              }
+            />
+          </Space>
         }
       >
         <TableWithPagination

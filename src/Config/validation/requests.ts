@@ -5,6 +5,7 @@ import { column } from './constraints';
 import database from './database.json';
 import transport from './transport.json';
 import i18n from '../i18n';
+import { contestProblemsError } from './contestProblems';
 
 type Fields = Record<string, Constraint>;
 interface RequestContract {
@@ -213,6 +214,10 @@ export function requestConstraintError(
           )
         : {};
     return autolabSchemaError(path, query, 'GET');
+  }
+  if (/^\/manage\/contest\/(create|update)$/.test(path) && data && typeof data === 'object') {
+    const error = contestProblemsError((data as { problems?: unknown }).problems);
+    if (error) return error;
   }
   const checked = new Set<string>();
   if (typeof FormData !== 'undefined' && data instanceof FormData) {

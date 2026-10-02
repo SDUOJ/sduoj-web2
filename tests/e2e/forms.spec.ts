@@ -4,7 +4,6 @@ test('classroom form blocks storage overflow and submits a valid boundary value'
   page,
   isMobile,
 }) => {
-  test.skip(isMobile, 'The existing administrative layout requires a desktop viewport.');
   let submitted: unknown;
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -48,5 +47,40 @@ test('classroom form blocks storage overflow and submits a valid boundary value'
     address: 'Local room',
     c_seat_num: 1,
   });
+  if (isMobile) {
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+  }
   expect(errors).toEqual([]);
+});
+
+test('mobile management navigation opens as a drawer and keeps the form usable', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'The drawer interaction is specific to mobile viewports.');
+  await page.addInitScript(() => localStorage.setItem('language', 'en'));
+  await page.route('**/api/**', async (route) => {
+    const path = new URL(route.request().url()).pathname.replace(/^\/api/, '');
+    let data: unknown = { rows: [], totalNum: 0 };
+    if (path === '/user/getProfile')
+      data = { username: 'test_admin', roles: ['admin'], features: {} };
+    if (path === '/site/getCopyright') data = 'SDUOJ';
+    await route.fulfill({
+      json: { code: path === '/user/getProfile' ? 0 : 0, data, timestamp: Date.now() },
+    });
+  });
+  await page.goto('/v2/manage/course/classroom');
+  const menuButton = page.getByRole('button', { name: /Open menu/i });
+  await expect(menuButton).toBeVisible();
+  await menuButton.click();
+  await expect(page.locator('.ant-drawer-content .ant-menu').first()).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await page.getByRole('button', { name: /Create/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByLabel('教室名称')).toBeVisible();
+  const box = await dialog.boundingBox();
+  expect(box?.width ?? 0).toBeLessThanOrEqual(page.viewportSize()!.width);
 });

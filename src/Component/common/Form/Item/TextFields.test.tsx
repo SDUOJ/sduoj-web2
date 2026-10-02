@@ -56,6 +56,15 @@ it('preserves nested names and zero initial values', async () => {
   await waitFor(() => expect(submit).toHaveBeenCalledWith({ limits: { score: 0 } }));
 });
 
+it('renders a text field with the Ant Design v5 suffix prop', () => {
+  render(
+    <Form>
+      <ItemText name="limit" label="Limit" suffix="ms" />
+    </Form>,
+  );
+  expect(screen.getByText('ms')).toBeInTheDocument();
+});
+
 it('combines required validation with caller-supplied rules', async () => {
   const submit = jest.fn();
   const user = userEvent.setup();

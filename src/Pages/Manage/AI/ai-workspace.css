@@ -1,0 +1,70 @@
+.ai-workspace {
+  min-height: 100vh;
+  background: #fff;
+  color: #20242b;
+  padding: 20px;
+}
+.ai-workspace-nav {
+  display: flex;
+  gap: 6px 20px;
+  flex-wrap: wrap;
+  padding: 12px 0 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e4e7eb;
+}
+.ai-workspace-nav a {
+  color: #49515c;
+  padding: 5px 0;
+  border-bottom: 2px solid transparent;
+}
+.ai-workspace-nav a.active {
+  color: #1677ff;
+  border-bottom-color: #1677ff;
+}
+.ai-workspace-body {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+.ai-workspace-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.ai-workspace-columns {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 28px;
+}
+.ai-workspace-result {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 16px 0;
+  border-top: 1px solid #e4e7eb;
+}
+.ai-workspace .ant-form {
+  max-width: 800px;
+}
+.ai-workspace .ant-input-number {
+  width: 100%;
+}
+.ai-workspace pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ai-workspace .ant-tabs-content-holder {
+  min-width: 0;
+}
+@media (max-width: 720px) {
+  .ai-workspace {
+    padding: 12px;
+  }
+  .ai-workspace-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ai-workspace-nav {
+    gap: 6px 14px;
+  }
+}

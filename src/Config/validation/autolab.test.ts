@@ -4,6 +4,9 @@ import spec from './autolab.json';
 
 it('loads a request contract for every exported JSON endpoint', () => {
   expect(Object.keys(spec.routes).length).toBeGreaterThan(70);
+  expect(Object.keys(spec.routes).filter((route) => route.includes('/auto-task/ai/')).length).toBe(
+    62,
+  );
   for (const route of Object.keys(spec.routes)) {
     const path = route.split(' ')[1].replace(/\{[^}]+\}/g, '1');
     expect(() => autolabSchemaError(path, {}, route.split(' ')[0])).not.toThrow();

@@ -6,6 +6,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { createAppStore } from '../../../Redux/Store';
 import ModalForm from './ModalFormUseForm';
 
+function StepField({ name, label }: { name: string; label?: string }) {
+  return (
+    <Form.Item name={name} label={label}>
+      <Input />
+    </Form.Item>
+  );
+}
+
 function renderForm(submit: jest.Mock) {
   return render(
     <Provider store={createAppStore()}>
@@ -105,7 +113,69 @@ it('ignores an older loader result when the edit action is started twice', async
   await user.click(open);
   await user.click(open);
   second.resolve({ name: 'Newest' });
-  expect(await screen.findByDisplayValue('Newest')).toBeVisible();
+  await waitFor(() => expect(screen.getByDisplayValue('Newest')).toBeVisible());
   first.resolve({ name: 'Stale' });
   await waitFor(() => expect(screen.getByLabelText('Name')).toHaveValue('Newest'));
+});
+
+it('applies initial values to every step without a timer', async () => {
+  const user = userEvent.setup();
+  const submit = jest.fn().mockResolvedValue({});
+  render(
+    <Provider store={createAppStore()}>
+      <MemoryRouter>
+        <ModalForm
+          type="create"
+          title="Wizard"
+          btnName="Open wizard"
+          initData={{ first: 'Alpha', second: 'Beta' }}
+          dataSubmitter={submit}
+          subForm={[
+            {
+              label: 'First',
+              component: <StepField name="first" label="First" />,
+            },
+            {
+              label: 'Second',
+              component: <StepField name="second" label="Second" />,
+            },
+          ]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await user.click(screen.getByRole('button', { name: /Open wizard/ }));
+  await waitFor(() => expect(screen.getByLabelText('First')).toHaveValue('Alpha'));
+  await user.click(screen.getByRole('button', { name: /Next|下一步/ }));
+  await waitFor(() => expect(screen.getByLabelText('Second')).toHaveValue('Beta'));
+});
+
+it('resets step state when the wizard is closed and reopened', async () => {
+  const user = userEvent.setup();
+  render(
+    <Provider store={createAppStore()}>
+      <MemoryRouter>
+        <ModalForm
+          type="create"
+          title="Wizard"
+          btnName="Open wizard"
+          initData={{ first: 'Initial', second: 'Second' }}
+          dataSubmitter={jest.fn().mockResolvedValue({})}
+          subForm={[
+            { label: 'First', component: <StepField name="first" label="First" /> },
+            { label: 'Second', component: <StepField name="second" label="Second" /> },
+          ]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  const open = screen.getByRole('button', { name: /Open wizard/ });
+  await user.click(open);
+  await waitFor(() => expect(screen.getByLabelText('First')).toHaveValue('Initial'));
+  await user.clear(screen.getByLabelText('First'));
+  await user.type(screen.getByLabelText('First'), 'Changed');
+  await user.click(screen.getByRole('button', { name: /Close|取消/ }));
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  await user.click(open);
+  await waitFor(() => expect(screen.getByLabelText('First')).toHaveValue('Initial'));
 });

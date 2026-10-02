@@ -22,7 +22,7 @@ async function goto(page: Page, route: string) {
     .frameLocator('#webpack-dev-server-client-overlay')
     .getByRole('button', { name: 'Dismiss' });
   await dismiss.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
-  if (await dismiss.isVisible().catch(() => false)) await dismiss.click();
+  if (await dismiss.isVisible().catch(() => false)) await dismiss.click({ force: true });
 }
 
 async function login(page: Page, user: { username: string; password: string }) {
@@ -151,6 +151,34 @@ test('real isolated accounts exercise management, practice/exam sets, submission
     await expect(page.getByText(set.name, { exact: true }).first()).toBeVisible();
     expect(await call(page.request, '/ps/problem_set/info_c', { psid: set.psid })).toBeTruthy();
   }
+
+  const examSet = sets.find((set) => set.name.endsWith('-exam'))!;
+  const examInfo = await call<any>(page.request, '/ps/problem_set/info_c', { psid: examSet.psid });
+  const objectiveGroup = examInfo.groupInfo.find((group: any) => group.type === 0);
+  const objectiveProblem = objectiveGroup?.problemInfo?.[0];
+  expect(objectiveGroup).toBeTruthy();
+  expect(objectiveProblem).toBeTruthy();
+  await goto(
+    page,
+    `/v2/problemSet/${examSet.psid}/problem/${objectiveGroup.index}/${objectiveProblem.index ?? 0}`,
+  );
+  await expect(page.locator('.Options-init').first()).toBeVisible();
+  const answerResponse = page.waitForResponse((res) =>
+    res.url().endsWith('/api/ps/answer_sheet/answer'),
+  );
+  await page.locator('.Options-init').first().click();
+  expect((await (await answerResponse).json()).code).toBe(0);
+  // The isolated backend fixture exposes the authoritative finish endpoint even
+  // when the generated set is rendered without the timed-exam confirmation bar.
+  await call(page.request, '/ps/answer_sheet/finish', {
+    router: { psid: examSet.psid, gid: 0, pid: 0 },
+  });
+  await page.goto(`/v2/problemSetPublic/${examSet.psid}`);
+  await expect(page).toHaveURL(new RegExp(`/v2/problemSetPublic/${examSet.psid}$`));
+  const publicInfo = await call<any>(page.request, '/ps/problem_set/public', {
+    psid: examSet.psid,
+  });
+  expect(publicInfo.finish).toBe(1);
 
   await page.evaluate(() => localStorage.setItem('SDUOJ-Last-Submit-JT', '6'));
   await goto(page, '/v2/problem/SDUOJ-1000');

@@ -1,0 +1,81 @@
+.ai-plagiarism-workbench {
+  min-height: 100vh;
+  padding: 20px 24px;
+  gap: 16px;
+  background: #f5f6f8;
+}
+
+.ai-plagiarism-header,
+.ai-plagiarism-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ai-plagiarism-header h3 {
+  display: inline;
+  margin: 0 12px 0 0;
+}
+
+.ai-plagiarism-picker {
+  width: min(320px, 42vw);
+}
+
+.ai-plagiarism-summary {
+  padding: 12px 0;
+  border-top: 1px solid #d9dde4;
+  border-bottom: 1px solid #d9dde4;
+}
+
+.ai-plagiarism-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ai-plagiarism-form-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ai-plagiarism-form-grid .ant-input-number {
+  width: 100%;
+}
+
+.ai-plagiarism-evidence {
+  margin: 16px 0;
+}
+
+.ai-plagiarism-evidence pre {
+  max-height: 220px;
+  margin: 8px 0 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid #d9dde4;
+  border-radius: 6px;
+  background: #f7f8fa;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .ai-plagiarism-workbench {
+    padding: 12px;
+  }
+
+  .ai-plagiarism-header,
+  .ai-plagiarism-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ai-plagiarism-picker {
+    width: min(100%, 280px);
+  }
+
+  .ai-plagiarism-form-grid,
+  .ai-plagiarism-form-grid-two {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

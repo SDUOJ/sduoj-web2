@@ -100,3 +100,24 @@ it('rejects expired late permissions even though custom Pydantic validators are 
     }),
   ).toBeDefined();
 });
+
+it.each(['/manage/contest/create', '/manage/contest/update'])(
+  'blocks duplicate contest problems at %s before sending HTTP',
+  async (url) => {
+    const adapter = new MockAdapter(service);
+    try {
+      await expect(
+        request.post(url, {
+          problems: [
+            { problemCode: 'SDUOJ-1806', problemTitle: 'A' },
+            { problemCode: 'SDUOJ-1807' },
+            { problemCode: ' SDUOJ-1806 ', problemTitle: 'B' },
+          ],
+        }),
+      ).rejects.toContain('SDUOJ-1806（第 1、3 行）');
+      expect(adapter.history.post).toHaveLength(0);
+    } finally {
+      adapter.restore();
+    }
+  },
+);

@@ -1,105 +1,52 @@
-import {Component} from "react";
-import {Button, message} from "antd";
+import { Component } from 'react';
+import { Button, message } from 'antd';
 import type { ButtonProps } from 'antd';
+import { downloadXlsxRecords } from '../../Utils/spreadsheetXlsx';
 
 interface IButtonText {
-    ButtonText: any
-    ButtonType: ButtonProps['type']
-    ButtonProps?: any
-    fileName: string
-    colMap?: any
-    nowData?: any
-    getJson?: any
+  ButtonText: any;
+  ButtonType: ButtonProps['type'];
+  ButtonProps?: any;
+  fileName: string;
+  colMap?: any;
+  nowData?: any;
+  getJson?: any;
 }
 
-class ExportExcel extends Component<IButtonText, any> {
+class ExportExcel extends Component<IButtonText> {
+  handleExportAll = async (colMap: any, nowData: any[], fileName: string) => {
+    const records = nowData.map((item: Record<string, unknown>) =>
+      Object.fromEntries(Object.entries(item).map(([key, value]) => [colMap[key] || key, value])),
+    );
+    await downloadXlsxRecords(records, `${fileName}.xlsx`);
+  };
 
-    handleExportAll = async (colMap: any, nowData: any, fileName: string) => {
-        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
-        const json = nowData.map((item: any) => {
-            return Object.keys(item).reduce((newData: any, key) => {
-                newData[colMap[key] || key] = item[key]
-                return newData
-            }, {})
-        });
-        // console.log("json", json)
-    const sheet = XLSX.utils.json_to_sheet(json);
-    this.openDownloadDialog(await this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
-    }
+  handleExportAllJson = async (records: Record<string, unknown>[], fileName: string) => {
+    await downloadXlsxRecords(records, `${fileName}.xlsx`);
+  };
 
-    handleExportAllJson = async (json: any, fileName: string) => {
-        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
-    const sheet = XLSX.utils.json_to_sheet(json);
-    this.openDownloadDialog(await this.sheet2blob(sheet, undefined), fileName + `.xlsx`);
-    }
-
-    openDownloadDialog = (url: any, saveName: any) => {
-        if (typeof url === 'object' && url instanceof Blob) {
-            url = URL.createObjectURL(url); // 创建blob地址
-        }
-        var aLink = document.createElement('a');
-        aLink.href = url;
-        aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
-        var event;
-        if (window.MouseEvent) event = new MouseEvent('click');
-        else {
-            event = document.createEvent('MouseEvents');
-            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        }
-        aLink.dispatchEvent(event);
-    }
-
-    sheet2blob = async (sheet: any, sheetName: any) => {
-        sheetName = sheetName || 'sheet1';
-        let workbook: any = {
-            SheetNames: [sheetName],
-            Sheets: {}
-        };
-        workbook.Sheets[sheetName] = sheet; // 生成excel的配置项
-
-        let wopts: any = {
-            bookType: 'xlsx', // 要生成的文件类型
-            bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
-            type: 'binary'
-        };
-        const XLSX = (await import("xlsx")).default || (await import("xlsx"));
-        let wbout = XLSX.write(workbook, wopts);
-
-        // 字符串转ArrayBuffer
-        function s2ab(s: any) {
-            let buf = new ArrayBuffer(s.length);
-            let view = new Uint8Array(buf);
-            for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-            return buf;
-        }
-
-        return new Blob([s2ab(wbout)], {type: "application/octet-stream"});
-    }
-
-    render() {
-        return (
-            <Button
-                type={this.props.ButtonType}
-                {...this.props.ButtonProps}
-                onClick={async () => {
-                    if (this.props.getJson !== undefined) {
-                        this.props.getJson().then(async (json: any) => {
-                            await this.handleExportAllJson(json, this.props.fileName)
-                        }).catch((e: any) => {
-                            // console.log(e)
-                            message.error(e)
-                        })
-                    } else {
-                        const nowData = this.props.nowData()
-                        const colMap = this.props.colMap(nowData)
-                        await this.handleExportAll(colMap, nowData, this.props.fileName)
-                    }
-                }}
-            >
-                {this.props.ButtonText}
-            </Button>
-        )
-    }
+  render() {
+    return (
+      <Button
+        type={this.props.ButtonType}
+        {...this.props.ButtonProps}
+        onClick={async () => {
+          try {
+            if (this.props.getJson !== undefined) {
+              await this.handleExportAllJson(await this.props.getJson(), this.props.fileName);
+            } else {
+              const nowData = this.props.nowData();
+              await this.handleExportAll(this.props.colMap(nowData), nowData, this.props.fileName);
+            }
+          } catch (error) {
+            message.error(String(error));
+          }
+        }}
+      >
+        {this.props.ButtonText}
+      </Button>
+    );
+  }
 }
 
-export default ExportExcel
+export default ExportExcel;

@@ -1,5 +1,6 @@
 """Export request schemas and Pydantic nullability without reading business rows."""
 import contextlib
+import argparse
 import io
 import json
 import sys
@@ -53,4 +54,16 @@ for path, methods in spec["paths"].items():
                     "required": [item["name"] for item in parameters if item.get("required")],
                 }
 
-print(json.dumps({"routes": routes, "components": spec.get("components", {})}, ensure_ascii=True))
+output = {"routes": routes, "components": spec.get("components", {})}
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--write", action="store_true")
+    args = parser.parse_args()
+    if args.write:
+        target = Path(__file__).resolve().parents[1] / "src/Config/validation/autolab.json"
+        target.write_text(json.dumps(output, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
+        print("Autolab validation contract: {} request routes; written".format(len(routes)))
+    else:
+        print(json.dumps(output, ensure_ascii=True))

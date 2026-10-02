@@ -1,3 +1,4 @@
+import { FeatureAction } from '../../Pages/Manage/AI/BusinessFeature';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, Tabs, Empty, Select, Space, Spin } from 'antd';
 import autolabApi from '../../Utils/API/autolab-api';
@@ -98,7 +99,17 @@ const CourseTab: React.FC<CourseTabProps> = ({ groupId, username, members }) => 
   if (loading) return <Spin />;
 
   return (
-    <Card size="small" style={{ marginTop: 12 }}>
+    <Card
+      extra={
+        activeKey ? (
+          <FeatureAction feature="course" context={{ course_id: activeKey }}>
+            课程资料与问答
+          </FeatureAction>
+        ) : undefined
+      }
+      size="small"
+      style={{ marginTop: 12 }}
+    >
       {showStudentSelector && (
         <Space style={{ marginBottom: 12 }}>
           <span>查看学生：</span>

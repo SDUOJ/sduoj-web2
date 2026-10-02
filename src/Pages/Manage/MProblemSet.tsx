@@ -1,3 +1,4 @@
+import { FeatureAction } from './AI/BusinessFeature';
 import { Button, Card, Col, Form, Input, InputNumber, Row, Select, Space } from 'antd';
 import MApi from '../../Utils/API/m-api';
 import { withRouter } from 'react-router-dom';
@@ -23,6 +24,7 @@ import TimeSettingX from '../../Component/common/Form/Item/TimeSettingX';
 import { PlusOutlined } from '@ant-design/icons';
 import problemSetGet from '../../Component/problemSet/dataConvert/problemSetGet';
 import problemSetSubmit from '../../Component/problemSet/dataConvert/problemSetSubmit';
+import { UrlPrefix } from '../../Config/constValue';
 
 const MProblemSet = (props: any) => {
   const [type, setType] = useState();
@@ -501,6 +503,9 @@ const MProblemSet = (props: any) => {
         title={props.t('ProblemSetList')}
         extra={
           <Space>
+            <Button href={UrlPrefix + '/manage/intelligent'}>智能管理</Button>
+            <FeatureAction feature="exams">考务管理</FeatureAction>
+            <FeatureAction feature="interviews">实验验收</FeatureAction>
             <ModalFormUseForm
               TableName={'ProblemSetList'}
               width={1200}

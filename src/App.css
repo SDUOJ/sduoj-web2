@@ -555,6 +555,28 @@ h5.TestCase-text {
     vertical-align: middle;
 }
 
+/* Keep wide tables inside their column without clipping access to later columns. */
+.ant-table-wrapper {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.ant-table-wrapper .ant-table-content {
+    overflow-x: auto;
+}
+
+.table-title-button.ant-btn {
+    max-width: 100%;
+    height: auto;
+    white-space: normal;
+    text-align: left;
+}
+
+.table-title-button.ant-btn > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .overview-table .ant-table-cell {
     text-align: center;
     margin: 0 auto;

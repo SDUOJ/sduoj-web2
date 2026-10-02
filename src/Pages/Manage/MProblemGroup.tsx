@@ -1,11 +1,13 @@
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
-import { Card, Form, Radio, Space } from 'antd';
+import { Button, Card, Drawer, Form, Radio, Space } from 'antd';
 import ModalFormUseForm from '../../Component/common/Form/ModalFormUseForm';
 import mApi from '../../Utils/API/m-api';
 import MApi from '../../Utils/API/m-api';
 import TableWithPagination from '../../Component/common/Table/TableWithPagination';
-import React from 'react';
+import React, { useState } from 'react';
+import NativeGroupQuestions from './AI/NativeGroupQuestions';
+import NativeQuestionWorkbench from './AI/NativeQuestionWorkbench';
 import ItemTitle from '../../Component/common/Form/Item/ItemTitle';
 import { contracts } from '../../Config/validation/contracts';
 import ItemSelectGroup from '../../Component/group/Form/Item/ItemSelectGroup';
@@ -15,6 +17,8 @@ import groupSubmit from '../../Component/problemSet/dataConvert/groupSubmit';
 import groupGet from '../../Component/problemSet/dataConvert/groupGet';
 
 const MProblemGroup = (props: any) => {
+  const [intakeOpen, setIntakeOpen] = useState(false);
+  const [revision, setRevision] = useState(0);
   const base = (edit: boolean) => (
     <>
       <ItemTitle name={'name'} constraint={contracts.problemGroup.name} />
@@ -97,6 +101,7 @@ const MProblemGroup = (props: any) => {
       render: (text: any, rows: any) => {
         return (
           <Space>
+            {rows.type !== 2 && <NativeGroupQuestions gid={rows.gid} name={rows.name} />}
             <ModalFormUseForm
               TableName={'ProblemGroupList'}
               width={1200}
@@ -139,6 +144,15 @@ const MProblemGroup = (props: any) => {
 
   return (
     <>
+      <Drawer
+        title="批量录题"
+        width={880}
+        open={intakeOpen}
+        onClose={() => setIntakeOpen(false)}
+        destroyOnClose
+      >
+        <NativeQuestionWorkbench onSaved={() => setRevision((v) => v + 1)} />
+      </Drawer>
       <div style={{ marginTop: -20, overflow: 'hidden' }}>
         <Card
           size={'small'}
@@ -146,6 +160,9 @@ const MProblemGroup = (props: any) => {
           title={props.t('ProblemGroupList')}
           extra={
             <Space>
+              <Button type="primary" onClick={() => setIntakeOpen(true)}>
+                批量录题
+              </Button>
               <ModalFormUseForm
                 TableName={'ProblemGroupList'}
                 width={1200}
@@ -162,6 +179,7 @@ const MProblemGroup = (props: any) => {
           }
         >
           <TableWithPagination
+            key={revision}
             name={'ProblemGroupList'}
             columns={colData}
             API={MApi.getProblemGroupList}

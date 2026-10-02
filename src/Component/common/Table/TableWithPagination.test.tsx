@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Form, Input } from 'antd';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createAppStore } from '../../../Redux/Store';
@@ -64,4 +65,149 @@ it('stops loading after rejection and supports a version-triggered retry', async
     view.store.dispatch({ type: 'addTableVersion', name: 'records' });
   });
   expect(await screen.findByText('Recovered')).toBeVisible();
+});
+
+it('reloads when the API changes while the table name stays the same', async () => {
+  const first = jest.fn().mockResolvedValue({ rows: [{ id: 1, name: 'First' }], totalNum: 1 });
+  const second = jest.fn().mockResolvedValue({ rows: [{ id: 2, name: 'Second' }], totalNum: 1 });
+  const store = createAppStore();
+  const view = render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <TableWithPagination
+          name="records"
+          API={first}
+          rowKey="id"
+          size="small"
+          columns={[{ title: 'Name', dataIndex: 'name' }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await waitFor(() => expect(first).toHaveBeenCalledTimes(1));
+  view.rerender(
+    <Provider store={store}>
+      <MemoryRouter>
+        <TableWithPagination
+          name="records"
+          API={second}
+          rowKey="id"
+          size="small"
+          columns={[{ title: 'Name', dataIndex: 'name' }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await waitFor(() => expect(second).toHaveBeenCalledTimes(1));
+  expect(await screen.findByText('Second')).toBeVisible();
+  expect(screen.queryByText('First')).not.toBeInTheDocument();
+});
+
+it('prefers initRequestProps over stale cached filters', async () => {
+  const API = jest.fn().mockResolvedValue({ rows: [], totalNum: 0 });
+  const store = createAppStore();
+  store.dispatch({
+    type: 'setTableInfo',
+    name: 'records',
+    data: { pageNow: 3, pageSize: 15, searchKey: 'old', moreProps: { status: 'old' } },
+  });
+  render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <TableWithPagination
+          name="records"
+          API={API}
+          rowKey="id"
+          size="small"
+          initRequestProps={{ status: 'new' }}
+          columns={[{ title: 'Name', dataIndex: 'name' }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(1));
+  expect(API.mock.calls[0][0]).toMatchObject({ status: 'new', pageNow: 3, pageSize: 15 });
+  expect(API.mock.calls[0][0].searchKey).toBe('old');
+});
+
+it('restores externally managed rows for a negative table version', async () => {
+  const pending = deferred<{ rows: []; totalNum: number }>();
+  const API = jest.fn().mockReturnValue(pending.promise);
+  const { store } = setup(API);
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(1));
+  act(() => {
+    store.dispatch({
+      type: 'setDataSource',
+      name: 'records',
+      data: [{ id: 7, name: 'Injected' }],
+      add: true,
+    });
+  });
+  expect(await screen.findByText('Injected')).toBeVisible();
+  await act(async () => pending.resolve({ rows: [], totalNum: 0 }));
+  expect(screen.getByText('Injected')).toBeVisible();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+});
+
+it('keeps an explicit zero total when totalPage is omitted', async () => {
+  const API = jest.fn().mockResolvedValue({ rows: [], totalNum: '0' });
+  const { store } = setup(API);
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(1));
+  await waitFor(() =>
+    expect(store.getState().TableReduce.tableData.records.tableInfo.total).toBe(0),
+  );
+});
+
+it('does not duplicate the initial request for a persisted positive version', async () => {
+  const API = jest.fn().mockResolvedValue({ rows: [], totalNum: 0 });
+  const store = createAppStore();
+  store.dispatch({ type: 'addTableVersion', name: 'records' });
+  store.dispatch({ type: 'addTableVersion', name: 'records' });
+  render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <TableWithPagination
+          name="records"
+          API={API}
+          rowKey="id"
+          size="small"
+          columns={[{ title: 'Name', dataIndex: 'name' }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(1));
+});
+
+it('reloads page one when a filter is cleared and submitted', async () => {
+  const API = jest.fn().mockResolvedValue({ rows: [], totalNum: 0 });
+  const user = userEvent.setup();
+  render(
+    <Provider store={createAppStore()}>
+      <MemoryRouter>
+        <TableWithPagination
+          name="records"
+          API={API}
+          rowKey="id"
+          size="small"
+          useFormBtn
+          getForm={() => (
+            <Form.Item name="status" label="Status">
+              <Input />
+            </Form.Item>
+          )}
+          columns={[{ title: 'Name', dataIndex: 'name' }]}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(1));
+  await user.type(screen.getByLabelText('Status'), 'active');
+  await user.click(screen.getByRole('button', { name: /filtering/i }));
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(2));
+  await user.clear(screen.getByLabelText('Status'));
+  await user.click(screen.getByRole('button', { name: /filtering/i }));
+  await waitFor(() => expect(API).toHaveBeenCalledTimes(3));
+  expect(API.mock.calls[2][0]).toMatchObject({ pageNow: 1 });
+  expect(API.mock.calls[2][0]).not.toHaveProperty('status');
 });

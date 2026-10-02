@@ -1,0 +1,821 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Descriptions,
+  Divider,
+  Empty,
+  Form,
+  Input,
+  InputNumber,
+  Layout,
+  Progress,
+  Segmented,
+  Space,
+  Spin,
+  Tag,
+  Timeline,
+  Typography,
+} from 'antd';
+import {
+  ArrowLeftOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  CloudUploadOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  RedoOutlined,
+  SafetyCertificateOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import AIWorkspaceNav from './AIWorkspaceNav';
+import { interviewApi, InterviewResource, ManifestGroup, MediaTrack } from './interview-api';
+import { pendingFor, PendingMedia, savePending, uploadPending } from './interview-media';
+import './interview-workbench.css';
+
+const trackNames: Record<MediaTrack, string> = {
+  audio: '麦克风',
+  video: '摄像头',
+  screen: '屏幕',
+};
+
+const terminal = new Set(['completed', 'expired', 'cancelled', 'approved', 'rejected', 'adopted']);
+
+const statusLabels: Record<string, string> = {
+  pending: '待开始',
+  running: '生成问题',
+  awaiting_answer: '待回答',
+  completed: '待复核',
+  expired: '已过期',
+  cancelled: '已取消',
+  approved: '已批准',
+  rejected: '已退回',
+  adopted: '已采用',
+  failed: '失败',
+};
+
+function visibleStatus(session: InterviewResource) {
+  if (['approved', 'rejected', 'adopted', 'failed'].includes(session.state)) return session.state;
+  return session.effective_status;
+}
+
+function canRenew(session: InterviewResource) {
+  return (
+    session.role === 'teacher' &&
+    (['expired', 'cancelled'].includes(session.effective_status) || session.state === 'rejected')
+  );
+}
+
+export default function InterviewSession() {
+  const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+  const [reviewForm] = Form.useForm();
+  const [session, setSession] = useState<InterviewResource | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [checks, setChecks] = useState({
+    https: window.isSecureContext,
+    camera: false,
+    microphone: false,
+    screen: false,
+    single_display: false,
+  });
+  const [activeTrack, setActiveTrack] = useState<MediaTrack>('video');
+  const [recording, setRecording] = useState(false);
+  const [uploading, setUploading] = useState({ done: 0, total: 0 });
+  const previewRef = useRef<HTMLVideoElement>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const recordingStartedRef = useRef(0);
+  const chunksRef = useRef<Blob[]>([]);
+  const loadSequence = useRef(0);
+
+  const load = useCallback(
+    async (quiet = false) => {
+      const sequence = ++loadSequence.current;
+      if (!quiet) setLoading(true);
+      try {
+        const result = await interviewApi.session(id);
+        if (sequence === loadSequence.current) {
+          setSession(result);
+          const required = result.data.media_policy?.required_tracks || [];
+          if (required.length && !required.includes(activeTrack)) setActiveTrack(required[0]);
+          if (result.data.candidate && !reviewForm.isFieldsTouched()) {
+            reviewForm.setFieldsValue({
+              notes: '',
+              criteria: result.data.candidate.criteria.map((item) => ({
+                name: item.name,
+                score: item.score,
+              })),
+            });
+          }
+        }
+      } catch (reason) {
+        if (sequence === loadSequence.current) setError(String(reason));
+      } finally {
+        if (sequence === loadSequence.current) setLoading(false);
+      }
+    },
+    [activeTrack, id, reviewForm],
+  );
+
+  useEffect(() => {
+    void load();
+    return () => {
+      loadSequence.current += 1;
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, [load]);
+
+  useEffect(() => {
+    if (
+      !session ||
+      terminal.has(session.effective_status) ||
+      session.effective_status === 'awaiting_answer'
+    )
+      return;
+    const timer = window.setInterval(() => void load(true), 2500);
+    return () => window.clearInterval(timer);
+  }, [load, session]);
+
+  const turnSequence = Math.max(0, (session?.data.turns.length || 1) - 1);
+  const turnManifest =
+    session?.media_manifest?.groups.filter((group) => group.turn_sequence === turnSequence) || [];
+
+  async function testCameraAndMicrophone() {
+    setBusy(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      const next = {
+        camera: stream.getVideoTracks().length > 0,
+        microphone: stream.getAudioTracks().length > 0,
+      };
+      stream.getTracks().forEach((track) => track.stop());
+      setChecks((value) => ({ ...value, ...next, https: window.isSecureContext }));
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function testScreen() {
+    setBusy(true);
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const available = stream.getVideoTracks().length > 0;
+      stream.getTracks().forEach((track) => track.stop());
+      setChecks((value) => ({ ...value, screen: available }));
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function beginInterview() {
+    setBusy(true);
+    try {
+      await interviewApi.preflight(id, checks);
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startRecording() {
+    if (!session) return;
+    setError('');
+    try {
+      const stream =
+        activeTrack === 'screen'
+          ? await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false })
+          : await navigator.mediaDevices.getUserMedia({
+              video: activeTrack === 'video',
+              audio: true,
+            });
+      const preferred = activeTrack === 'audio' ? 'audio/webm' : 'video/webm';
+      const options = MediaRecorder.isTypeSupported(preferred)
+        ? { mimeType: preferred }
+        : undefined;
+      const recorder = new MediaRecorder(stream, options);
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => void persistRecording(activeTrack);
+      recorderRef.current = recorder;
+      streamRef.current = stream;
+      recordingStartedRef.current = Date.now();
+      if (previewRef.current && activeTrack !== 'audio') {
+        previewRef.current.srcObject = stream;
+        void previewRef.current.play().catch(() => undefined);
+      }
+      recorder.start(10000);
+      setRecording(true);
+    } catch (reason) {
+      setError(String(reason));
+    }
+  }
+
+  function stopRecording() {
+    const recorder = recorderRef.current;
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    setRecording(false);
+  }
+
+  async function persistRecording(track: MediaTrack) {
+    const blobs = chunksRef.current;
+    const elapsed = Math.max(1000, Date.now() - recordingStartedRef.current);
+    streamRef.current?.getTracks().forEach((mediaTrack) => mediaTrack.stop());
+    streamRef.current = null;
+    if (!blobs.length) {
+      setError('录制没有生成可上传的媒体片段');
+      return;
+    }
+    const recordingId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const duration = Math.max(1, Math.ceil(elapsed / blobs.length));
+    try {
+      for (let index = 0; index < blobs.length; index += 1) {
+        const suffix = track === 'audio' ? 'webm' : 'webm';
+        await savePending({
+          key: `${id}:${turnSequence}:${track}:${recordingId}:${index}`,
+          resourceId: id,
+          turnSequence,
+          track,
+          segmentIndex: index,
+          segmentCount: blobs.length,
+          startedMs: index * duration,
+          durationMs: duration,
+          filename: `${track}-${index}.${suffix}`,
+          blob: blobs[index],
+        });
+      }
+      await retryPendingMedia();
+    } catch (reason) {
+      setError(String(reason));
+    }
+  }
+
+  async function addManualFile(file: File) {
+    const item: PendingMedia = {
+      key: `${id}:${turnSequence}:${activeTrack}:manual:${Date.now()}`,
+      resourceId: id,
+      turnSequence,
+      track: activeTrack,
+      segmentIndex: 0,
+      segmentCount: 1,
+      startedMs: 0,
+      durationMs: 1000,
+      filename: file.name,
+      blob: file,
+    };
+    setBusy(true);
+    try {
+      await savePending(item);
+      await retryPendingMedia();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function retryPendingMedia() {
+    const pending = await pendingFor(id, turnSequence);
+    if (!pending.length) {
+      await load(true);
+      return;
+    }
+    setUploading({ done: 0, total: pending.length });
+    let done = 0;
+    for (const item of pending) {
+      await uploadPending(item);
+      done += 1;
+      setUploading({ done, total: pending.length });
+    }
+    await load(true);
+  }
+
+  async function submitAnswer() {
+    if (!session) return;
+    const groups =
+      session.media_manifest?.groups.filter((group) => group.turn_sequence === turnSequence) || [];
+    const fileIds = groups.flatMap((group) => group.segments.map((item) => item.file_id));
+    setBusy(true);
+    try {
+      await interviewApi.answer(id, turnSequence, session.version, answer, fileIds);
+      setAnswer('');
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function retryJob() {
+    setBusy(true);
+    try {
+      await interviewApi.retryJob(id);
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function renewInterview() {
+    if (!session) return;
+    setBusy(true);
+    setError('');
+    try {
+      const renewed = await interviewApi.renew(id, session.version, 72);
+      history.push(`/v2/practice/interviews/${renewed.id}`);
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancelInterview() {
+    setBusy(true);
+    setError('');
+    try {
+      await interviewApi.cancel(id);
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitReview(decision: 'approve' | 'reject') {
+    if (!session) return;
+    const values = await reviewForm.validateFields().catch(() => null);
+    if (!values) return;
+    setBusy(true);
+    try {
+      await interviewApi.review(id, session.version, decision, values.notes, values.criteria || []);
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function adoptGrade(overwriteManual: boolean) {
+    if (!session?.data.teacher_review) return;
+    setBusy(true);
+    try {
+      await interviewApi.adopt(
+        id,
+        session.version,
+        session.data.teacher_review.notes,
+        overwriteManual,
+      );
+      await load();
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (loading && !session) {
+    return (
+      <div className="ai-interview-loading">
+        <Spin size="large" />
+      </div>
+    );
+  }
+  if (!session) {
+    return <Alert type="error" showIcon message={error || '验收不存在'} />;
+  }
+
+  const { data } = session;
+  const currentTurn = data.turns[turnSequence];
+  const requiredComplete = session.media_manifest?.complete ?? false;
+  const checkComplete = Object.values(checks).every(Boolean);
+  const nativeBound = Boolean(data.native_source || data.native_source_bound);
+
+  return (
+    <Layout className="ai-interview-shell">
+      <AIWorkspaceNav />
+      <main className="ai-interview-main ai-interview-session">
+        <header className="ai-interview-header">
+          <Space align="start">
+            <Link to="/v2/practice/interviews" aria-label="返回验收列表">
+              <ArrowLeftOutlined />
+            </Link>
+            <div>
+              <Typography.Title level={2}>{data.title}</Typography.Title>
+              <Space wrap>
+                <Tag>{session.role === 'student' ? '学生端' : '教师端'}</Tag>
+                <Tag color={session.effective_status === 'awaiting_answer' ? 'gold' : 'blue'}>
+                  {statusLabels[visibleStatus(session)] || visibleStatus(session)}
+                </Tag>
+                {nativeBound && <Tag color="green">已绑定答题卡</Tag>}
+              </Space>
+            </div>
+          </Space>
+          <Space>
+            {session.job?.status === 'failed' && (
+              <Button icon={<RedoOutlined />} loading={busy} onClick={() => void retryJob()}>
+                重试生成
+              </Button>
+            )}
+            {canRenew(session) && (
+              <Button icon={<RedoOutlined />} loading={busy} onClick={() => void renewInterview()}>
+                重新邀请
+              </Button>
+            )}
+            {session.role === 'teacher' && !terminal.has(session.effective_status) && (
+              <Button danger loading={busy} onClick={() => void cancelInterview()}>
+                取消验收
+              </Button>
+            )}
+          </Space>
+        </header>
+
+        {error && (
+          <Alert showIcon closable type="error" message={error} onClose={() => setError('')} />
+        )}
+        {session.job?.status === 'failed' && (
+          <Alert showIcon type="error" message="问题生成失败" description={session.job.error} />
+        )}
+        {session.job?.status === 'blocked' && (
+          <Alert
+            showIcon
+            type="warning"
+            message="问题生成暂时阻塞"
+            description="账户、并发或额度恢复后任务会继续排队，已提交回答不会丢失。"
+          />
+        )}
+        {session.effective_status === 'expired' && (
+          <Alert showIcon type="warning" message="邀请已过期" />
+        )}
+        {session.effective_status === 'cancelled' && (
+          <Alert showIcon type="info" message="验收已取消，不再接受新的回答或媒体" />
+        )}
+        {session.state === 'rejected' && (
+          <Alert showIcon type="warning" message="教师已退回本次候选，可重新邀请后再次验收" />
+        )}
+        {session.state === 'adopted' && (
+          <Alert showIcon type="success" message="教师复核成绩已采用到原生答题卡" />
+        )}
+        {data.evidence_policy && (
+          <Alert
+            showIcon
+            type="info"
+            message="验收证据隐私"
+            description="回答与媒体仅供受邀学生本人及具有当前课程或题单权限的教师复核；保留期限遵循平台配置。"
+          />
+        )}
+
+        <section className="ai-interview-band">
+          <Descriptions column={{ xs: 1, sm: 2, lg: 4 }} size="small">
+            <Descriptions.Item label="学生">
+              {data.student_username} · {data.student_id}
+            </Descriptions.Item>
+            <Descriptions.Item label="截止">
+              {new Date(data.expires_at).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="限时">{data.duration_minutes} 分钟</Descriptions.Item>
+            <Descriptions.Item label="问题">
+              {data.turns.length} / {data.max_questions}
+            </Descriptions.Item>
+          </Descriptions>
+        </section>
+
+        <div className="ai-interview-session-grid">
+          <section className="ai-interview-primary">
+            {session.role === 'student' && data.status === 'pending' && (
+              <div className="ai-interview-preflight">
+                <div className="ai-interview-section-heading">
+                  <Typography.Title level={4}>设备预检</Typography.Title>
+                  <SafetyCertificateOutlined />
+                </div>
+                <div className="ai-interview-checks">
+                  <span>
+                    {checks.https ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 安全连接
+                  </span>
+                  <span>
+                    {checks.camera ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 摄像头
+                  </span>
+                  <span>
+                    {checks.microphone ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 麦克风
+                  </span>
+                  <span>
+                    {checks.screen ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 屏幕共享
+                  </span>
+                </div>
+                <Space wrap>
+                  <Button
+                    icon={<VideoCameraOutlined />}
+                    loading={busy}
+                    onClick={() => void testCameraAndMicrophone()}
+                  >
+                    检测摄像头与麦克风
+                  </Button>
+                  <Button loading={busy} onClick={() => void testScreen()}>
+                    检测屏幕共享
+                  </Button>
+                  <Checkbox
+                    checked={checks.single_display}
+                    onChange={(event) =>
+                      setChecks((value) => ({ ...value, single_display: event.target.checked }))
+                    }
+                  >
+                    单显示器
+                  </Checkbox>
+                  <Button
+                    type="primary"
+                    disabled={!checkComplete}
+                    loading={busy}
+                    onClick={() => void beginInterview()}
+                  >
+                    开始验收
+                  </Button>
+                </Space>
+              </div>
+            )}
+
+            {currentTurn ? (
+              <div className="ai-interview-turn">
+                <Typography.Text type="secondary">问题 {turnSequence + 1}</Typography.Text>
+                <Typography.Title level={3}>{currentTurn.question}</Typography.Title>
+                {currentTurn.source_type && currentTurn.source_type !== 'none' && (
+                  <Tag>
+                    {currentTurn.source_type} · {currentTurn.source_start_line}-
+                    {currentTurn.source_end_line}
+                  </Tag>
+                )}
+                {currentTurn.answer !== null && <blockquote>{currentTurn.answer}</blockquote>}
+                {currentTurn.evaluation && <Alert type="info" message={currentTurn.evaluation} />}
+              </div>
+            ) : data.status !== 'pending' ? (
+              <div className="ai-interview-generating">
+                <Spin />
+                <Typography.Text>正在生成验收问题</Typography.Text>
+              </div>
+            ) : null}
+
+            {session.role === 'student' && data.status === 'awaiting_answer' && currentTurn && (
+              <div className="ai-interview-answer-panel">
+                <Divider />
+                <Typography.Title level={4}>回答与证据</Typography.Title>
+                <Segmented<MediaTrack>
+                  value={activeTrack}
+                  options={(data.media_policy?.required_tracks || ['video']).map((track) => ({
+                    value: track,
+                    label: trackNames[track],
+                  }))}
+                  onChange={setActiveTrack}
+                />
+                <video ref={previewRef} className="ai-interview-preview" muted playsInline />
+                <Space wrap>
+                  {!recording ? (
+                    <Button
+                      type="primary"
+                      icon={<PlayCircleOutlined />}
+                      onClick={() => void startRecording()}
+                    >
+                      录制{trackNames[activeTrack]}
+                    </Button>
+                  ) : (
+                    <Button danger icon={<PauseCircleOutlined />} onClick={stopRecording}>
+                      停止录制
+                    </Button>
+                  )}
+                  <Button icon={<CloudUploadOutlined />} onClick={() => void retryPendingMedia()}>
+                    重传待上传片段
+                  </Button>
+                  <label className="ai-interview-file-button">
+                    上传媒体
+                    <input
+                      type="file"
+                      accept="video/webm,video/mp4,audio/webm,audio/wav,audio/mpeg"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) void addManualFile(file);
+                        event.target.value = '';
+                      }}
+                    />
+                  </label>
+                </Space>
+                {uploading.total > 0 && uploading.done < uploading.total && (
+                  <Progress percent={Math.round((100 * uploading.done) / uploading.total)} />
+                )}
+                <MediaManifest groups={turnManifest} />
+                <Input.TextArea
+                  aria-label="回答"
+                  value={answer}
+                  onChange={(event) => setAnswer(event.target.value)}
+                  autoSize={{ minRows: 4, maxRows: 12 }}
+                  maxLength={50000}
+                />
+                <Button
+                  type="primary"
+                  loading={busy}
+                  disabled={!answer.trim() || !requiredComplete || recording}
+                  onClick={() => void submitAnswer()}
+                >
+                  提交本题
+                </Button>
+              </div>
+            )}
+
+            {data.status === 'completed' && data.candidate && session.role === 'teacher' && (
+              <TeacherReviewPanel
+                session={session}
+                form={reviewForm}
+                busy={busy}
+                onReview={submitReview}
+                onAdopt={adoptGrade}
+              />
+            )}
+          </section>
+
+          <aside className="ai-interview-evidence">
+            <Typography.Title level={4}>证据时间线</Typography.Title>
+            {data.turns.length ? (
+              <Timeline
+                items={data.turns.map((turn, index) => ({
+                  color: turn.answer === null ? 'gold' : 'green',
+                  children: (
+                    <div className="ai-interview-timeline-item">
+                      <Typography.Text strong>问题 {index + 1}</Typography.Text>
+                      <Typography.Text>{turn.question}</Typography.Text>
+                      <MediaManifest
+                        compact
+                        groups={(session.media_manifest?.groups || []).filter(
+                          (group) => group.turn_sequence === index,
+                        )}
+                      />
+                    </div>
+                  ),
+                }))}
+              />
+            ) : (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无问题" />
+            )}
+          </aside>
+        </div>
+      </main>
+    </Layout>
+  );
+}
+
+function MediaManifest({
+  groups,
+  compact = false,
+}: {
+  groups: ManifestGroup[];
+  compact?: boolean;
+}) {
+  if (!groups.length)
+    return compact ? null : <Alert type="warning" showIcon message="尚无媒体证据" />;
+  return (
+    <div className={compact ? 'ai-interview-manifest compact' : 'ai-interview-manifest'}>
+      {groups.map((group) => (
+        <div key={`${group.turn_sequence}-${group.track}`} className="ai-interview-track">
+          <div className="ai-interview-track-status">
+            <Typography.Text strong>{trackNames[group.track]}</Typography.Text>
+            {group.complete ? (
+              <Tag color="green">{group.present_segments.length} 片完整</Tag>
+            ) : (
+              <Tag color="red">缺片 {group.missing_segments.join(', ') || '未上传'}</Tag>
+            )}
+          </div>
+          {!compact &&
+            group.segments.map((segment) =>
+              segment.track === 'audio' ? (
+                <audio key={segment.file_id} controls preload="metadata" src={segment.url} />
+              ) : (
+                <video key={segment.file_id} controls preload="metadata" src={segment.url} />
+              ),
+            )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TeacherReviewPanel({
+  session,
+  form,
+  busy,
+  onReview,
+  onAdopt,
+}: {
+  session: InterviewResource;
+  form: ReturnType<typeof Form.useForm>[0];
+  busy: boolean;
+  onReview: (decision: 'approve' | 'reject') => Promise<void>;
+  onAdopt: (overwriteManual: boolean) => Promise<void>;
+}) {
+  const candidate = session.data.candidate!;
+  const review = session.data.teacher_review;
+  const [overwriteManual, setOverwriteManual] = useState(false);
+  return (
+    <div className="ai-interview-review">
+      <Divider />
+      <div className="ai-interview-section-heading">
+        <Typography.Title level={4}>教师复核</Typography.Title>
+        <Tag color={candidate.integrity_conclusion === 'pass' ? 'green' : 'gold'}>
+          完整性：{candidate.integrity_conclusion}
+        </Tag>
+      </div>
+      <Alert
+        type="info"
+        message={`AI 候选 ${candidate.score.toFixed(1)} / 100 · 置信度 ${Math.round(candidate.confidence * 100)}%`}
+        description={candidate.summary}
+      />
+      {review ? (
+        <div className="ai-interview-reviewed">
+          <Descriptions column={1} size="small">
+            {review.criteria.map((item) => (
+              <Descriptions.Item key={item.name} label={item.name}>
+                {item.score} / {item.max_score}
+              </Descriptions.Item>
+            ))}
+            <Descriptions.Item label="复核意见">{review.notes}</Descriptions.Item>
+          </Descriptions>
+          {review.decision === 'approve' &&
+            (session.data.native_source || session.data.native_source_bound) &&
+            session.state !== 'adopted' && (
+              <Space direction="vertical" align="start">
+                <Checkbox
+                  checked={overwriteManual}
+                  onChange={(event) => setOverwriteManual(event.target.checked)}
+                >
+                  确认替换当前已有人工成绩
+                </Checkbox>
+                <Button type="primary" loading={busy} onClick={() => void onAdopt(overwriteManual)}>
+                  采用到原答题卡
+                </Button>
+              </Space>
+            )}
+          {session.state === 'adopted' && <Tag color="green">已采用到原答题卡</Tag>}
+        </div>
+      ) : (
+        <Form form={form} layout="vertical">
+          <Form.List name="criteria">
+            {(fields) =>
+              fields.map((field, index) => {
+                const rubric = session.data.rubric[index];
+                return (
+                  <div className="ai-interview-score-row" key={field.key}>
+                    <Typography.Text>{rubric.name}</Typography.Text>
+                    <Form.Item name={[field.name, 'name']} hidden>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item name={[field.name, 'score']} rules={[{ required: true }]}>
+                      <InputNumber
+                        min={0}
+                        max={rubric.max_score}
+                        suffix={`/ ${rubric.max_score}`}
+                      />
+                    </Form.Item>
+                  </div>
+                );
+              })
+            }
+          </Form.List>
+          <Form.Item name="notes" label="复核意见" rules={[{ required: true }]}>
+            <Input.TextArea autoSize={{ minRows: 3, maxRows: 8 }} maxLength={4000} />
+          </Form.Item>
+          <Space>
+            <Button
+              type="primary"
+              loading={busy}
+              icon={<CheckCircleOutlined />}
+              onClick={() => void onReview('approve')}
+            >
+              批准候选
+            </Button>
+            <Button
+              danger
+              loading={busy}
+              icon={<CloseCircleOutlined />}
+              onClick={() => void onReview('reject')}
+            >
+              退回
+            </Button>
+          </Space>
+        </Form>
+      )}
+    </div>
+  );
+}

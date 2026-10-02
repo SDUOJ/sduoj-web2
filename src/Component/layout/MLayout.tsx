@@ -1,5 +1,5 @@
-import React, { Component, Suspense } from 'react';
-import { Layout, Result } from 'antd';
+import React, { Suspense, useEffect, useState } from 'react';
+import { Drawer, Grid, Layout, Result } from 'antd';
 import logo from '../../Assert/img/logo.png';
 import MMenu from './MMenu';
 import MHeader from './MHeader';
@@ -16,70 +16,92 @@ import { connect } from 'react-redux';
 import judgeAuth from '../../Utils/judgeAhtu';
 
 const { Sider, Content } = Layout;
+const { useBreakpoint } = Grid;
 
-class MLayout extends Component<any, any> {
-  componentDidMount() {
+const MLayout = (props: any) => {
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
     if (
-      (this.props.location.pathname === UrlPrefix + '/manage' ||
-        this.props.location.pathname === UrlPrefix + '/manage/') &&
+      (props.location.pathname === UrlPrefix + '/manage' ||
+        props.location.pathname === UrlPrefix + '/manage/') &&
       routerM.length !== 0
     ) {
-      this.props.history.push(routerM[0].path);
+      const firstManageRoute = routerM.find((route) =>
+        route.path.startsWith(UrlPrefix + '/manage/'),
+      );
+      if (firstManageRoute) props.history.push(firstManageRoute.path);
     }
-  }
+  }, [props.history, props.location.pathname]);
 
-  render() {
-    const geneRoute: any = (router: IRouter[]) => {
-      return router.map((r) => {
-        if (r.children !== undefined) return geneRoute(r.children);
-        else {
-          return <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />;
-        }
-      });
-    };
-    const hasManageAccess = canAccessManage(this.props.roles);
-    return (
-      <>
-        <LoginCheck jump={true} />
-        {!this.props.isLogin ? null : !hasManageAccess ? (
-          <Result status="403" title={this.props.t('NoPermission', { defaultValue: '没有权限' })} />
-        ) : (
-          <Layout style={{ height: 'max-content', minHeight: '100%' }}>
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [props.location.pathname, isMobile]);
+
+  const geneRoute: any = (router: IRouter[]) =>
+    router.map((r) =>
+      r.children !== undefined ? (
+        geneRoute(r.children)
+      ) : !r.component ? null : (
+        <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />
+      ),
+    );
+  const hasManageAccess = canAccessManage(props.roles);
+  const menu = <MMenu id={1} roles={['superadmin']} />;
+
+  return (
+    <>
+      <LoginCheck jump={true} />
+      {!props.isLogin ? null : !hasManageAccess ? (
+        <Result status="403" title={props.t('NoPermission', { defaultValue: '没有权限' })} />
+      ) : (
+        <Layout style={{ height: 'max-content', minHeight: '100%' }}>
+          {isMobile ? (
+            <Drawer
+              title={<img src={logo} style={{ width: '125px', height: '30px' }} alt="SDUOJ-logo" />}
+              placement="left"
+              width={240}
+              open={menuOpen}
+              onClose={() => setMenuOpen(false)}
+              styles={{ body: { padding: 0 }, header: { padding: '12px 16px' } }}
+            >
+              {menu}
+            </Drawer>
+          ) : (
             <Sider
               theme="dark"
               style={{ position: 'fixed', zIndex: 50, height: '100vh', overflow: 'auto' }}
             >
               <div className="logo">
-                <img src={logo} style={{ width: '125px', height: '30px' }} alt={'SDUOJ-logo'} />
+                <img src={logo} style={{ width: '125px', height: '30px' }} alt="SDUOJ-logo" />
               </div>
-              <MMenu id={1} roles={['superadmin']} />
+              {menu}
             </Sider>
-            <Layout style={{ minWidth: 1200, marginLeft: 200 }}>
-              <MHeader />
-              <Content
-                style={{
-                  backgroundColor: '#ffffff',
-                  paddingTop: 64,
-                  margin: '20px 16px 0',
-                  display: 'table',
-                  height: 'auto',
-                }}
-              >
-                <div className="site-layout-background" style={{ padding: 24 }}>
-                  <Suspense fallback={<Loading />}>
-                    {/*对应路由*/}
-                    {geneRoute(routerM)}
-                  </Suspense>
-                </div>
-              </Content>
-              {/*<FooterSDU/>*/}
-            </Layout>
+          )}
+          <Layout style={{ minWidth: 0, marginLeft: isMobile ? 0 : 200 }}>
+            <MHeader isMobile={isMobile} onMenuToggle={() => setMenuOpen(true)} />
+            <Content
+              style={{
+                backgroundColor: '#ffffff',
+                paddingTop: 64,
+                margin: isMobile ? '20px 8px 0' : '20px 16px 0',
+                display: 'block',
+                minWidth: 0,
+                height: 'auto',
+              }}
+            >
+              <div className="site-layout-background" style={{ padding: isMobile ? 8 : 24 }}>
+                <Suspense fallback={<Loading />}>{geneRoute(routerM)}</Suspense>
+              </div>
+            </Content>
           </Layout>
-        )}
-      </>
-    );
-  }
-}
+        </Layout>
+      )}
+    </>
+  );
+};
 
 const mapStateToProps = (state: { UserReducer: UserState }) => ({
   isLogin: state.UserReducer.isLogin,

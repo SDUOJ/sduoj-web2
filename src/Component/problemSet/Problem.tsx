@@ -1,6 +1,6 @@
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
-import { Badge, Button, Card, Col, message, Row } from 'antd';
+import { Badge, Button, Card, Col, message, Row, Spin } from 'antd';
 import ProProgram from '../problem/Program/ProProgram';
 import cApi from '../../Utils/API/c-api';
 import ProProgramDetail from '../problem/Program/ProProgramDetail';
@@ -198,10 +198,12 @@ const Problem = (props: any) => {
               }
             >
               {(() => {
+                if (!problemInfo) return <Spin />;
                 switch (groupType) {
                   case 2:
                     return (
                       <ProProgram
+                        key={proName}
                         showMdExport={false}
                         name={proName}
                         nameWithD={proName}
@@ -230,6 +232,7 @@ const Problem = (props: any) => {
                     );
                     return (
                       <Subjective
+                        key={proName}
                         problemInfo={problemInfo}
                         onAnswerM={submitAPI}
                         getAS={getAs}
@@ -241,6 +244,7 @@ const Problem = (props: any) => {
                   case 0:
                     return (
                       <Objective
+                        key={proName}
                         key_o={`objective-${psid}-${gid}-${pid}`}
                         onMark={(SID: string) => {
                           return cApi

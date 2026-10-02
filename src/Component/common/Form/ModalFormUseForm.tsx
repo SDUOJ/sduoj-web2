@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useRef, useState } from 'react';
+import React, { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
@@ -34,8 +34,54 @@ interface ModalFormProps {
   onClose?: any; // 关闭时进行回调
 }
 
+interface StepsFormModalProps {
+  title: React.ReactNode;
+  className?: string;
+  width?: number;
+  open: boolean;
+  onCancel: () => void;
+  footer: React.ReactNode;
+  children: React.ReactNode;
+}
+
+const StepsFormModal = ({
+  title,
+  className,
+  width,
+  open,
+  onCancel,
+  footer,
+  children,
+}: StepsFormModalProps) => (
+  <Modal
+    destroyOnHidden
+    title={title}
+    className={className}
+    open={open}
+    maskClosable={false}
+    width={width ?? 1200}
+    style={{ minWidth: width }}
+    onCancel={onCancel}
+    footer={footer}
+  >
+    {children}
+  </Modal>
+);
+
+const renderStepsFormModal = (
+  config: Omit<StepsFormModalProps, 'children' | 'footer'>,
+  dom: React.ReactNode,
+  submitter: React.ReactNode,
+) => (
+  <StepsFormModal {...config} footer={submitter}>
+    {dom}
+  </StepsFormModal>
+);
+
 const ModalForm = (props: ModalFormProps & any) => {
   const { t } = useTranslation();
+  const { formName, addManageInitData } = props;
+  const subFormCount = props.subForm.length;
 
   const [form] = useForm();
   const formMapRef = useRef<React.MutableRefObject<ProFormInstance<any> | undefined>[]>([]);
@@ -116,27 +162,28 @@ const ModalForm = (props: ModalFormProps & any) => {
     }
   };
 
-  // 当表单的可见性发生改变时，维护表单信息
-  useEffect(() => {
-    // 延迟向表单注入信息
-    const timer = window.setTimeout(() => {
-      !isValueEmpty(formMapRef.current) &&
-        formMapRef.current.forEach((formInstanceRef) => {
-          formInstanceRef.current?.setFieldsValue(saveInitData);
-        });
-      form && form.setFieldsValue(saveInitData);
-    }, 100);
+  const applyInitialValues = useCallback(
+    (initialValues: any) => {
+      if (isValueEmpty(initialValues)) return;
+      if (subFormCount === 1) form.setFieldsValue(initialValues);
+      formMapRef.current.forEach((formInstanceRef) => {
+        formInstanceRef.current?.setFieldsValue(initialValues);
+      });
+    },
+    [form, subFormCount],
+  );
 
-    // 当表单消失时，清除相关数据
+  // 表单实例在提交后的 commit 阶段就绪，直接注入初始值，避免依赖定时器。
+  useEffect(() => {
+    if (formVis) applyInitialValues(saveInitData);
     if (!formVis) {
       setCurrent(0);
       formMapRef.current.forEach((formInstanceRef) => {
         formInstanceRef.current?.resetFields();
       });
-      props.formName && props.addManageInitData(props.formName, undefined);
+      formName && addManageInitData(formName, undefined);
     }
-    return () => window.clearTimeout(timer);
-  }, [formVis, saveInitData]);
+  }, [formVis, saveInitData, form, applyInitialValues, formName, addManageInitData]);
 
   useEffect(
     () => () => {
@@ -146,8 +193,8 @@ const ModalForm = (props: ModalFormProps & any) => {
   );
 
   useEffect(() => {
-    props.formName && props.addManageInitData(props.formName, saveInitData);
-  }, [saveInitData]);
+    formName && addManageInitData(formName, saveInitData);
+  }, [formName, addManageInitData, saveInitData]);
 
   // 提交数据
   const submitData = (values: any) => {
@@ -281,27 +328,17 @@ const ModalForm = (props: ModalFormProps & any) => {
                 loading: submitting,
               },
             }}
-            stepsFormRender={(dom, submitter) => {
-              return (
-                <Modal
-                  destroyOnHidden={true}
-                  title={props.title}
-                  className={props.className}
-                  open={formVis}
-                  maskClosable={false}
-                  width={props.width ?? 1200}
-                  style={{ minWidth: props.width }}
-                  onCancel={() => {
-                    loadIdRef.current += 1;
-                    props.onClose && props.onClose();
-                    setFormVis(false);
-                  }}
-                  footer={submitter}
-                >
-                  {dom}
-                </Modal>
-              );
-            }}
+            stepsFormRender={renderStepsFormModal.bind(null, {
+              title: props.title,
+              className: props.className,
+              open: formVis,
+              width: props.width,
+              onCancel: () => {
+                loadIdRef.current += 1;
+                props.onClose && props.onClose();
+                setFormVis(false);
+              },
+            })}
           >
             {props.subForm.map((item: any, index: number) => {
               const stepComponent = React.isValidElement(item.component)
@@ -317,6 +354,9 @@ const ModalForm = (props: ModalFormProps & any) => {
                   title={item.label}
                   onFinish={async () => {
                     return true;
+                  }}
+                  onInit={(_, stepForm) => {
+                    if (!isValueEmpty(saveInitData)) stepForm.setFieldsValue(saveInitData);
                   }}
                 >
                   {stepComponent}

@@ -6,6 +6,12 @@ import mApi from '../../Utils/API/m-api';
 import { withTranslation } from 'react-i18next';
 import { batchUserFields } from '../../Config/validation/requests';
 import { constraintError } from '../../Config/validation/constraints';
+import {
+  matrixToRecords,
+  parseXlsxMatrices,
+  SPREADSHEET_LIMITS,
+  SpreadsheetSheet,
+} from '../../Utils/spreadsheetXlsx';
 
 type ExcelUserRow = {
   username: string;
@@ -20,13 +26,7 @@ type ExcelUserRow = {
   banInfoUpdate?: number | string;
 };
 
-export const USER_IMPORT_LIMITS = {
-  maxBytes: 5 * 1024 * 1024,
-  maxSheets: 5,
-  maxRows: 5000,
-  maxColumns: 32,
-  maxCellCharacters: 32767,
-} as const;
+export const USER_IMPORT_LIMITS = SPREADSHEET_LIMITS;
 
 const USER_IMPORT_HEADERS = [
   'username',
@@ -43,91 +43,25 @@ const USER_IMPORT_HEADERS = [
 const USER_IMPORT_HEADER_SET = new Set<string>(USER_IMPORT_HEADERS);
 const DANGEROUS_HEADERS = new Set(['__proto__', 'prototype', 'constructor']);
 
-const hasWorkbookSignature = (bytes: Uint8Array) =>
-  (bytes[0] === 0x50 && bytes[1] === 0x4b) ||
-  (bytes[0] === 0xd0 && bytes[1] === 0xcf && bytes[2] === 0x11 && bytes[3] === 0xe0);
-
-export const parseUserWorkbook = (XLSX: any, input: ArrayBuffer): ExcelUserRow[] => {
-  if (input.byteLength === 0 || input.byteLength > USER_IMPORT_LIMITS.maxBytes) {
-    throw new Error('Workbook size is outside the allowed range');
-  }
-  if (!hasWorkbookSignature(new Uint8Array(input))) {
-    throw new Error('Workbook signature is invalid');
-  }
-
-  const workbook = XLSX.read(input, {
-    type: 'array',
-    sheetRows: USER_IMPORT_LIMITS.maxRows + 2,
-  });
-  const sheetNames = Array.isArray(workbook.SheetNames)
-    ? workbook.SheetNames
-    : Object.keys(workbook.Sheets ?? {});
-  if (sheetNames.length === 0 || sheetNames.length > USER_IMPORT_LIMITS.maxSheets) {
-    throw new Error('Workbook contains too many sheets');
-  }
+export const parseUserWorkbook = async (
+  readWorkbook: (input: ArrayBuffer) => Promise<SpreadsheetSheet[]>,
+  input: ArrayBuffer,
+): Promise<ExcelUserRow[]> => {
+  const sheets = await parseXlsxMatrices(readWorkbook, input, USER_IMPORT_LIMITS);
 
   const result: ExcelUserRow[] = [];
-  for (const sheetName of sheetNames) {
-    if (DANGEROUS_HEADERS.has(sheetName)) throw new Error('Workbook sheet name is unsafe');
-    const sheet = workbook.Sheets?.[sheetName];
-    if (!sheet) throw new Error('Workbook sheet is missing');
-    if (sheet['!ref']) {
-      const range = XLSX.utils.decode_range(sheet['!ref']);
-      const rowCount = range.e.r - range.s.r + 1;
-      const columnCount = range.e.c - range.s.c + 1;
-      if (rowCount > USER_IMPORT_LIMITS.maxRows + 2) {
-        throw new Error('Workbook contains too many rows');
-      }
-      if (columnCount > USER_IMPORT_LIMITS.maxColumns) {
-        throw new Error('Workbook contains too many columns');
-      }
-    }
-
-    const matrix = XLSX.utils.sheet_to_json(sheet, {
-      header: 1,
-      raw: false,
-      defval: null,
-      blankrows: false,
-    }) as unknown[][];
+  for (const { sheet: sheetName, data: matrix } of sheets) {
     if (matrix.length === 0) continue;
-    const rawHeaders = matrix[0];
-    const lastHeader = rawHeaders.reduce<number>(
-      (last, value, index) => (value === null || value === '' ? last : index),
-      -1,
-    );
-    const headers = rawHeaders.slice(0, lastHeader + 1).map((value) => String(value ?? '').trim());
-    if (headers.length === 0 || headers.length > USER_IMPORT_LIMITS.maxColumns) {
-      throw new Error('Workbook header count is outside the allowed range');
-    }
-    if (new Set(headers).size !== headers.length)
-      throw new Error('Workbook headers are duplicated');
-    if (
-      headers.some(
-        (header) =>
-          header.length === 0 ||
-          DANGEROUS_HEADERS.has(header) ||
-          !USER_IMPORT_HEADER_SET.has(header),
-      )
-    ) {
-      throw new Error('Workbook contains an unsupported header');
-    }
-    if (!['username', 'password', 'email'].every((header) => headers.includes(header))) {
-      throw new Error('Workbook is missing a required header');
-    }
-
-    for (const values of matrix.slice(1)) {
+    if (DANGEROUS_HEADERS.has(sheetName)) throw new Error('Workbook sheet name is unsafe');
+    for (const record of matrixToRecords(matrix, USER_IMPORT_HEADER_SET, [
+      'username',
+      'password',
+      'email',
+    ])) {
       if (result.length >= USER_IMPORT_LIMITS.maxRows) {
         throw new Error('Workbook contains too many rows');
       }
-      if (
-        values.some(
-          (value) =>
-            typeof value === 'string' && value.length > USER_IMPORT_LIMITS.maxCellCharacters,
-        )
-      ) {
-        throw new Error('Workbook contains an oversized cell');
-      }
-      const valueAt = (header: string) => values[headers.indexOf(header)] as any;
+      const valueAt = (header: string) => record[header] as any;
       result.push({
         username: valueAt('username'),
         password: valueAt('password'),
@@ -253,9 +187,8 @@ const AutoImportUsers = (props: any) => {
       return Upload.LIST_IGNORE;
     }
     try {
-      const xlsxModule = await import('xlsx');
-      const XLSX = xlsxModule.default || xlsxModule;
-      const data = parseUserWorkbook(XLSX, await file.arrayBuffer());
+      const { default: readWorkbook } = await import('read-excel-file/browser');
+      const data = await parseUserWorkbook(readWorkbook, await file.arrayBuffer());
       if (data.length === 0) {
         message.warning(props.t('NoData') || '未读取到数据');
         return false;
@@ -269,28 +202,23 @@ const AutoImportUsers = (props: any) => {
   };
 
   const downloadTemplate = async () => {
-    const XLSX = (await import('xlsx')).default || (await import('xlsx'));
-    const header = [...USER_IMPORT_HEADERS];
-    const instructions: any = [
-      {
-        username: "此行为样例，不可删除。\n必填，用户名必须由英文、数字、'_'构成，且长度为4~16",
-        password: '必填，密码不能为空，长度必须在6-32位之间',
-        email: '必填，邮箱',
-        nickname: '选填，长度在30位之内',
-        phone: '选填，手机号码长度在11到16位',
-        gender: '0.女，1.男，2.问号，默认为2',
-        studentId: '选填，学号长度在20位之内',
-        banThirdParty: '选填，0或1，1表示禁止使用第三方登录，默认为0',
-        banEmailUpdate: '选填，0或1，1表示禁止更改邮箱，默认为0',
-        banInfoUpdate: '选填，0或1，1表示禁止更改个人信息，默认为0',
-      },
+    const { default: writeWorkbook } = await import('write-excel-file/browser');
+    const sheet = [
+      USER_IMPORT_HEADERS.map((value) => ({ value })),
+      [
+        "此行为样例，不可删除。\n必填，用户名必须由英文、数字、'_'构成，且长度为4~16",
+        '必填，密码不能为空，长度必须在6-32位之间',
+        '必填，邮箱',
+        '选填，长度在30位之内',
+        '选填，手机号码长度在11到16位',
+        '0.女，1.男，2.问号，默认为2',
+        '选填，学号长度在20位之内',
+        '选填，0或1，1表示禁止使用第三方登录，默认为0',
+        '选填，0或1，1表示禁止更改邮箱，默认为0',
+        '选填，0或1，1表示禁止更改个人信息，默认为0',
+      ].map((value) => ({ value, wrap: true })),
     ];
-    const ws = XLSX.utils.json_to_sheet(instructions, { header });
-    // Make row1 as header explicitly
-    XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'users');
-    XLSX.writeFile(wb, '批量导入用户模板.xlsx');
+    await writeWorkbook(sheet, { sheet: 'users' }).toFile('批量导入用户模板.xlsx');
   };
 
   const submitAll = async () => {
@@ -379,7 +307,7 @@ const AutoImportUsers = (props: any) => {
       >
         <Dragger
           multiple={false}
-          accept={'.xlsx,.xls'}
+          accept={'.xlsx'}
           action=""
           listType="text"
           beforeUpload={onImportExcel}
@@ -393,7 +321,7 @@ const AutoImportUsers = (props: any) => {
           </p>
           <p className="ant-upload-hint">
             {props.t('UploadExcelHint') ||
-              '仅支持 .xlsx/.xls；前两行为模板说明，请勿删除；从第3行开始填写数据。'}
+              '仅支持 .xlsx；前两行为模板说明，请勿删除；从第3行开始填写数据。'}
           </p>
         </Dragger>
         <div style={{ marginTop: 10 }} />

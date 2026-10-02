@@ -48,7 +48,8 @@ const Announcement = (props: any) => {
                         {
                             title: "ID",
                             dataIndex: "noticeId",
-                            key: "ID"
+                            key: "ID",
+                            width: 48
                         },
                         {
                             title: props.t("title"),
@@ -56,14 +57,14 @@ const Announcement = (props: any) => {
                             key: "title",
                             render: (text: string, row: any) => {
                                 return (
-                                    <Space size={5}>
+                                    <div className="announcement-title">
                                         <Button size={"small"} type={"link"} onClick={() => {
                                             setShow(true)
                                             setShowId(parseInt(row.noticeId))
                                             setShowTitle(row.title)
                                         }}>{text}</Button>
                                         {row.top === 1 && (<Tag color={"#e10000"}>{props.t("Top")}</Tag>)}
-                                    </Space>
+                                    </div>
 
                                 )
 
@@ -73,6 +74,8 @@ const Announcement = (props: any) => {
                             title: props.t("ReleaseDate"),
                             dataIndex: "gmtCreate",
                             key: "date",
+                            width: 112,
+                            responsive: ['md'],
                             render: (text: any) => {
                                 return unix2Time(parseInt(text))
                             }

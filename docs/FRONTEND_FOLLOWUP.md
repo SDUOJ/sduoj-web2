@@ -1,4 +1,4 @@
-# Frontend Follow-up, 2026-09-05
+# Frontend Follow-up, 2026-09-06
 
 For the subsequent multi-agent scan and current issue status, see
 [FRONTEND_AUDIT.md](FRONTEND_AUDIT.md).
@@ -32,19 +32,38 @@ This continues the form-contract and React 18 migration on
   replay is ignored within that subscriber.
 - Development avatars use the local icon instead of contacting Cravatar.
   Production avatar behavior is preserved.
+- Table queries now have an explicit request/response contract, stable refresh
+  semantics, filter reset behavior and stale-response protection. Multi-step
+  modal forms inject initial values when form instances are ready rather than
+  relying on a timer.
+- Management layout uses a drawer navigation on mobile, and classroom tables
+  remain locally scrollable. Copyright HTML is sanitized with an allowlist and
+  Vditor markdown rendering explicitly enables sanitization.
+- Added Playwright flows for mobile management, session login/logout, regular
+  user management denial, and inert copyright markup.
+- Removed the remaining production dependency advisory by resolving
+  `@ant-design/pro-layout`'s `path-to-regexp` to `8.4.0`; compatibility copies
+  used by React Router and the development server remain on their required majors.
+- Added browser-level ZIP upload failure/retry and cancellation flows across
+  Chromium, Firefox, WebKit, and mobile Chromium; failed or stale uploads can
+  no longer enable submission.
+- Made JPEG optimization optional when `jpegtran-bin` has no platform binary,
+  so clean ARM installs still produce a verified production build.
 
 ## Verification
 
-| Check                                              | Result                                                                               |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Node 24 typecheck                                  | Passed                                                                               |
-| Jest with coverage                                 | 22 suites, 191 tests passed; configured coverage gates passed                        |
-| Lint                                               | 0 errors; tracked legacy warnings reduced from 172 to 169                            |
-| Explicit production `any` types in changed modules | Reduced by 12 relative to the starting HEAD                                          |
-| Production build                                   | Passed; existing lint/asset-size warnings remain                                     |
-| Desktop Chromium, Firefox, WebKit                  | All 15 browser scenarios passed                                                      |
-| Mobile Chromium                                    | 2 passed, 2 existing expected layout failures, 1 existing administrative-layout skip |
-| Local services and authenticated workflows         | All 3 scenarios passed                                                               |
+| Check                                              | Result                                                                            |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| TypeScript                                         | Passed (`YARN_IGNORE_ENGINES=1`, local Node 22; package requires Node 24)         |
+| Jest with coverage                                 | 77 suites, 367 tests passed; Lines 28.66%, Statements 27.87%                      |
+| Lint / format                                      | 0 errors; 143 tracked legacy warnings; format 0 failures                          |
+| Explicit production `any` types in changed modules | Reduced by 12 relative to the starting HEAD                                       |
+| Dependency audit                                   | 0 critical / 0 high / 0 moderate / 0 low; ProLayout path-to-regexp resolved 8.4.0 |
+| Production build                                   | Passed; Vditor asset-size warnings remain; entrypoint 4.04 MiB, JS gzip ~1.23 MiB |
+| Desktop Chromium, Firefox, WebKit                  | 33 scenarios passed                                                               |
+| Mobile Chromium                                    | 12 scenarios passed; 3 non-mobile-only checks skipped                             |
+| Visual regression                                  | Chromium desktop + mobile baselines passed (2 tests)                              |
+| Local services and authenticated workflows         | All 3 scenarios passed                                                            |
 
 The local workflow uses an isolated generated administrator and creates test
 students and data with `fe_` / `FE-DEV-` identifiers. It checks real browser login,
@@ -73,19 +92,20 @@ test refuses non-loopback base URLs and does not alter existing account password
 Test records remain locally for inspection; there is no problem-set deletion API.
 
 ```sh
-LOCAL_BASE_URL=http://localhost:3001 yarn test:local services.spec.ts workflows.spec.ts
+LOCAL_BASE_URL=http://127.0.0.1:3002 yarn test:local services.spec.ts workflows.spec.ts
 yarn typecheck
 yarn lint
 yarn test:coverage --silent
 yarn build
 yarn test:e2e
+yarn test:visual
 ```
 
-The checked dev server is `http://localhost:3001/v2`. Runtime evidence is ignored:
+The checked dev server is `http://127.0.0.1:3002/v2`. Runtime evidence is ignored:
 `test-results/local/`, `playwright-report/local/`, and `output/web2-followup-*.log`.
-On this ARM Mac, reinstalling dependencies removed the local jpegtran executable;
-the installed Homebrew executable was relinked into jpegtran-bin's vendor directory
-before the successful production build.
+On this ARM Mac, a clean dependency install has no bundled jpegtran executable;
+the production config now skips only that optional JPEG optimization and builds
+successfully without a manual binary relink.
 
 ## Remaining Work
 
@@ -95,8 +115,8 @@ before the successful production build.
   automatic-task forms, attendance/seat actions, upload failures, and actual
   answering/hand-in flows beyond problem-set browsing.
 - The subsequent audit repaired the recorded client login and pagination mobile
-  failures. Mobile administration remains intentionally skipped pending its wider
-  fixed-width and touch-workflow migration; see `FRONTEND_AUDIT.md` A-20 and F-17.
+  failures. The classroom management flow now runs on mobile; broader automatic
+  task, attendance and seat workflows still need real-service coverage.
 - Continue reducing historical lint and `any` usage. Whole-repository line coverage
   is only 8.7%; passing migrated-module gates does not imply broad coverage.
 - The full format check also sees concurrent AI workbench/router edits. At this

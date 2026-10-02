@@ -1,5 +1,5 @@
 import MarkdownText from '../../../Utils/MarkdownText';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Alert, Button, Card, message, Space, Upload, Select, Divider } from 'antd';
 import Editor from '../../common/Editor';
@@ -17,7 +17,9 @@ const Subjective = (props: any) => {
   const [fileAnswers, setFileAnswers] = useState<any[]>([]); // 本地已上传（未必提交）
   const [serverFileAnswers, setServerFileAnswers] = useState<any[]>([]); // 服务器已保存
   const [queueValue, setQueueValue] = useState<string>(''); // 验收题选择的队列
-  const [subType, setSubType] = useState<number>(1); // 当前子类型
+  const [inferredSubType, setSubType] = useState<number>(1);
+  const subType = props.problemInfo?.type ?? inferredSubType;
+  const answerRequest = useRef(0);
   const [refreshCooldown, setRefreshCooldown] = useState<number>(0); // 验收题刷新冷却秒数
 
   // ---------------- Helpers ----------------
@@ -55,7 +57,9 @@ const Subjective = (props: any) => {
   };
 
   const updateAnswerSheet = () => {
+    const request = ++answerRequest.current;
     return props.getAS().then((res: any) => {
+      if (request !== answerRequest.current) return;
       if (res.answer_m === null || res.answer_m === undefined) res.answer_m = [''];
       res.judgeLog = normalizeToArray(res.judgeLog);
       res.judgeConfig = normalizeToArray(res.judgeConfig);
@@ -93,8 +97,11 @@ const Subjective = (props: any) => {
 
   // 初始化 / problemInfo 变化重新拉取
   useEffect(() => {
-    updateAnswerSheet();
+    if (props.problemInfo) updateAnswerSheet().catch(() => {});
     setOpen(false);
+    return () => {
+      answerRequest.current += 1;
+    };
   }, [props.problemInfo]);
 
   // problemInfo.type 变化时尝试重算 subtype

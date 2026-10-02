@@ -1,0 +1,64 @@
+.ai-authoring-workbench {
+  min-height: calc(100vh - 90px);
+  gap: 16px;
+  background: #fff;
+}
+
+.ai-authoring-header,
+.ai-authoring-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ai-authoring-header h3 {
+  display: inline;
+  margin: 0 12px 0 0;
+}
+
+.ai-authoring-picker {
+  width: min(340px, 44vw);
+}
+
+.ai-authoring-toolbar {
+  padding: 12px 0;
+  border-top: 1px solid #e4e7eb;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.ai-authoring-revision {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.ai-authoring-prose {
+  white-space: pre-wrap;
+}
+
+.ai-authoring-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ai-authoring-form-grid .ant-input-number {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .ai-authoring-header,
+  .ai-authoring-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ai-authoring-picker {
+    width: min(100%, 300px);
+  }
+
+  .ai-authoring-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

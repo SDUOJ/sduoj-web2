@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Space } from 'antd';
+import { Button, Card, Space } from 'antd';
 import MApi from '../../../Utils/API/m-api';
 import mApi from '../../../Utils/API/m-api';
 import TableWithPagination from '../../../Component/common/Table/TableWithPagination';
@@ -14,6 +14,7 @@ import FormJudgeType from '../../../Component/problem/From/FormJudgeType';
 import ProDescriptions from '../../../Component/problem/ProDescriptions';
 import ProCheckPoints from '../../../Component/problem/ProCheckPoints';
 import { contracts } from '../../../Config/validation/contracts';
+import { UrlPrefix } from '../../../Config/constValue';
 
 class MProblem extends Component<any, any> {
   render() {
@@ -80,21 +81,21 @@ class MProblem extends Component<any, any> {
             <ItemText
               name={'timeLimit'}
               label={this.props.t('TimeLimit')}
-              addonAfter={'ms'}
+              suffix={'ms'}
               constraint={contracts.problem.timeLimit}
               initialValue={1000}
             />
             <ItemText
               name={'memoryLimit'}
               label={this.props.t('MemoryLimit')}
-              addonAfter={'KB'}
+              suffix={'KB'}
               constraint={contracts.problem.memoryLimit}
               initialValue={256 * 1024}
             />
             <ItemText
               name={'outputLimit'}
               label={this.props.t('OutputLimit')}
-              addonAfter={'KB'}
+              suffix={'KB'}
               constraint={contracts.problem.outputLimit}
               initialValue={100 * 1024}
             />
@@ -240,7 +241,11 @@ class MProblem extends Component<any, any> {
           variant="outlined"
           title={this.props.t('ProblemList')}
           extra={
-            <>
+            <Space wrap>
+              <Button href={UrlPrefix + '/manage/problemSet/problem_group'}>
+                客观题 / 主观题组
+              </Button>
+              <Button href={UrlPrefix + '/manage/intelligent'}>智能管理</Button>
               <ModalFormUseForm
                 TableName={'ProblemList'}
                 width={600}
@@ -252,7 +257,7 @@ class MProblem extends Component<any, any> {
                   return mApi.createProblem(value);
                 }}
               />
-            </>
+            </Space>
           }
         >
           <TableWithPagination

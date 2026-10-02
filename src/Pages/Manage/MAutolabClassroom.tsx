@@ -208,7 +208,7 @@ const MAutolabClassroom: React.FC = () => {
   ];
 
   return (
-    <div style={{ marginTop: -20, overflow: 'hidden' }}>
+    <div style={{ marginTop: -20, overflowX: 'auto', overflowY: 'hidden' }}>
       <Card
         size={'small'}
         bordered={true}

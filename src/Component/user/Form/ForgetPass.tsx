@@ -39,6 +39,7 @@ const ForgetPass = (props: any) => {
             }}
         >
             <Tabs
+                centered
                 onChange={setActive}
                 activeKey={active}>
                 <Tabs.TabPane tab={props.t('UsernameTab', {defaultValue: props.t('username')})} key="1">

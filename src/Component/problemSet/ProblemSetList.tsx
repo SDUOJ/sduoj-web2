@@ -15,7 +15,7 @@ const ProblemSetList = (props: any) => {
                     {title: "ID", dataIndex: "psid"},
                     {
                         title: props.t("title"), dataIndex: "name", render: (v: any, r: any) => {
-                            return <Button type={"text"} size={"small"} onClick={() => {
+                            return <Button className="table-title-button" type={"text"} size={"small"} onClick={() => {
                                 props.history.push(`${UrlPrefix}/problemSet/${r.psid}/overview`)
                             }}>
                                 {v}

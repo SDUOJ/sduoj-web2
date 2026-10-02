@@ -1,0 +1,44 @@
+.ai-task-monitor {
+  margin-top: 20px;
+  border-top: 1px solid #e4e7eb;
+  padding-top: 18px;
+}
+.ai-task-monitor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ai-task-monitor-heading .ant-typography {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ai-task-monitor-loading {
+  min-height: 104px;
+  display: grid;
+  place-items: center;
+}
+.ai-task-monitor .ant-alert,
+.ai-task-monitor-runs,
+.ai-task-events {
+  margin-top: 14px;
+}
+.ai-task-events {
+  border-top: 1px solid #edf0f2;
+  padding-top: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.ai-task-events .ant-typography {
+  margin-top: 0;
+}
+.ai-task-event {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid #f1f3f5;
+  overflow-wrap: anywhere;
+}

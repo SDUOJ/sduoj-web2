@@ -1,0 +1,102 @@
+.ai-course-knowledge {
+  min-height: 100vh;
+  padding: 24px;
+  background: #fff;
+  gap: 20px;
+}
+
+.ai-course-header,
+.ai-course-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ai-course-header h3,
+.ai-course-section-header h4,
+.ai-course-chat h4 {
+  margin: 0;
+}
+
+.ai-course-content {
+  display: grid;
+  grid-template-columns: minmax(520px, 3fr) minmax(360px, 2fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.ai-course-content section {
+  min-width: 0;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.ai-course-section-header {
+  margin-bottom: 12px;
+}
+
+.ai-course-chat {
+  display: grid;
+  gap: 14px;
+}
+
+.ai-course-chat-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+}
+
+.ai-course-messages {
+  height: min(58vh, 620px);
+  min-height: 320px;
+  overflow: auto;
+  border-block: 1px solid #e5e7eb;
+}
+
+.ai-course-message > div {
+  width: 100%;
+}
+
+.ai-course-message-user {
+  background: #f7f8fa;
+}
+
+.ai-course-message .ant-typography {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ai-course-source-text {
+  margin-top: 20px;
+  padding-block: 16px;
+  border-block: 1px solid #e5e7eb;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 960px) {
+  .ai-course-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .ai-course-knowledge {
+    padding: 12px;
+  }
+
+  .ai-course-header,
+  .ai-course-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ai-course-header .ant-space-compact {
+    width: 100%;
+  }
+
+  .ai-course-messages {
+    min-height: 260px;
+  }
+}
