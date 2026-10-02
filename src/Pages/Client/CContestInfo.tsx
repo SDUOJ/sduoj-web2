@@ -18,15 +18,13 @@ const CContestInfo = (props: any) => {
 
     const [pageWidth, setPageWidth] = useState<number>(document.querySelector('body')?.clientWidth as number)
 
-    useEffect(() => {
-        window.addEventListener('resize', handleResize)
-        return () => {
-            window.removeEventListener('resize', handleResize)
-        }
-    },)
     const handleResize = (e: any) => {
         setPageWidth(e.target.innerWidth)
     }
+    useEffect(() => {
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
     if (props.location.pathname.match(/\/contest\/.*\/rank/g) !== null) {
         minWidth = Math.max(500, (props.minWidth ?? 0) + 100)

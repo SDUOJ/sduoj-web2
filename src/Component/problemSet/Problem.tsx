@@ -74,10 +74,6 @@ const Problem = (props: any) => {
   };
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return installProblemGuards();
-  }, []);
-
-  useEffect(() => {
     if (problemMeta && flag !== problemMeta.collect) setFlag(problemMeta.collect);
   }, [flag, gid, pid, problemMeta, problemSetInfo, psid]);
 

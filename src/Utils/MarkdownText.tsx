@@ -1,21 +1,28 @@
 import {MarkdownPreview} from "./MarkdownPreview";
-import {useEffect, useState} from "react";
+import {useEffect, useRef} from "react";
 import {isValueEmpty} from "./empty";
 
 const MarkdownText = (props: any) => {
 
-    const [running, setRunning] = useState<boolean>(false);
-    const [nowText, setNowText] = useState<boolean>(false);
+    const generation = useRef(0);
 
     useEffect(() => {
-        if (!isValueEmpty(props.text) && !running && nowText !== props.text) {
-            setRunning(true)
-            setNowText(props.text)
-            MarkdownPreview(props.text, props.id).then((res: any) => {
-                setRunning(false)
-            })
+        const currentGeneration = ++generation.current;
+        const target = document.getElementById(props.id);
+        if (!target || isValueEmpty(props.text)) {
+            if (target) target.replaceChildren();
+            return () => undefined;
         }
-    }, [props.id, props.text, running])
+        target.replaceChildren();
+        Promise.resolve(MarkdownPreview(props.text, props.id)).catch(() => {
+            if (generation.current === currentGeneration && target.isConnected) {
+                target.replaceChildren();
+            }
+        });
+        return () => {
+            generation.current += 1;
+        };
+    }, [props.id, props.text])
 
     return (
         <div id={props.id} style={{overflowY: "hidden"}}>

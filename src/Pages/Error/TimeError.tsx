@@ -11,15 +11,13 @@ const TimeError = (props: any) => {
     const [sysTime, setSysTime] = useState<number>(Date.now())
     const [serTime, setSerTime] = useState<number>(Date.now())
 
-    const add = () => {
-        setSysTime(sysTime + 1000)
-        setSerTime(serTime + 1000)
-    }
-
     useEffect(() => {
-        let id = setInterval(() => add(), 1000)
+        const id = setInterval(() => {
+            setSysTime((value) => value + 1000)
+            setSerTime((value) => value + 1000)
+        }, 1000)
         return () => clearInterval(id)
-    })
+    }, [])
 
     const update = ()=>{
         setSerTime(parseInt(localStorage.getItem("server-time") ?? "0"))

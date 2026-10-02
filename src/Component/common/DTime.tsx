@@ -5,14 +5,10 @@ const DTime = (props: any)=>{
 
     const [nowTime, setNowTime] = useState<number>(Date.now())
 
-    const update = () => {
-        setNowTime(Date.now())
-    }
-
     useEffect(() => {
-        let intervalId = setInterval(() => update(), 1000)
+        const intervalId = setInterval(() => setNowTime(Date.now()), 1000)
         return () => clearInterval(intervalId)
-    })
+    }, [])
 
     return (
         <>
