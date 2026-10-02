@@ -137,22 +137,7 @@ const mApi = {
     // TODO
     // 综合报表
     exportComprehensive: async function (data: {}) {
-        return new Promise((resolve, reject) => {
-            request.post<any>('/manage/contest/exportComprehensiveReport', data, {responseType: 'blob'}).then(ret => {
-                resolve(ret);
-                const blob = new Blob([ret.data], {type: ret.headers['content-type']});
-                const elink = document.createElement('a');
-                const filename = new Date().getTime().toString();
-                if ('download' in elink) {
-                    elink.download = filename;
-                    elink.href = URL.createObjectURL(blob);
-                    elink.click();
-                    URL.revokeObjectURL(elink.href);
-                } else {
-                    // window.navigator.msSaveBlob(blob, filename);
-                }
-            }, err => (reject(err)));
-        })
+        return request.downloadFile('/manage/contest/exportComprehensiveReport', data, {}, `${Date.now()}.xlsx`);
     },
     // ----------------- 评测模板相关 -------------------
     // 查询单个评测模板
@@ -254,7 +239,7 @@ const mApi = {
         return request.post("/manage/exam/choiceProblem/updateChoiceProblem", data)
     },
     getChoiceInfo: async function (data: string) {
-        return request.get("/manage/exam/choiceProblem/queryChoiceProblem?problemCode=" + data)
+        return request.get("/manage/exam/choiceProblem/queryChoiceProblem", {problemCode: data})
     },
     getChoiceProblem: async function (params: { problemCode: string }) {
         return request.get("/manage/exam/choiceProblem/queryChoiceProblem", params)
@@ -267,8 +252,7 @@ const mApi = {
         return request.post("/manage/notice/update", data)
     },
     async getAnnouncementList(data: any) {
-        data['filter'] = "default"
-        return request.get("/manage/notice/list", data)
+        return request.get("/manage/notice/list", {...data, filter: 'default'})
     },
     deleteAnnouncement: async function (data: any) {
         return request.get("/manage/notice/delete", data)

@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+import { Alert, Button, Table } from 'antd';
 import type { TableProps } from 'antd';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DragHandle, SortableTableScope, sortableTableComponents, SortEnd } from './SortableTable';
@@ -33,6 +33,8 @@ function TableWithAllData<Row extends object>({
   const version = entry?.tableVersion ?? 0;
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>();
+  const [retryToken, setRetryToken] = useState(0);
   const previousName = useRef<string>();
   const source = useRef({ API, APIRowsTransForm, dataSource: entry?.dataSource });
 
@@ -61,6 +63,7 @@ function TableWithAllData<Row extends object>({
     const { API: load, APIRowsTransForm: transform } = source.current;
     if (!sameTable) setRows([]);
     setLoading(true);
+    setError(undefined);
     Promise.resolve()
       .then(() => (active ? (load() ?? undefined) : undefined))
       .then((data) => {
@@ -69,8 +72,8 @@ function TableWithAllData<Row extends object>({
         setRows(nextRows);
         dispatch({ type: 'setDataSource', name, data: nextRows, add: false });
       })
-      .catch(() => {
-        // The request layer presents errors. Keep existing rows available for a retry.
+      .catch((requestError) => {
+        if (active) setError(requestError);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -78,7 +81,7 @@ function TableWithAllData<Row extends object>({
     return () => {
       active = false;
     };
-  }, [dispatch, name, version]);
+  }, [dispatch, name, retryToken, version]);
 
   const onSortEnd = useCallback<(indices: SortEnd) => void>(
     ({ oldIndex, newIndex }) => {
@@ -120,15 +123,27 @@ function TableWithAllData<Row extends object>({
 
   return (
     <SortableTableScope items={keys} onSortEnd={onSortEnd} disabled={!useDrag}>
-      <Table<Row>
-        {...tableProps}
-        loading={loading}
-        columns={allColumns}
-        dataSource={rows}
-        pagination={false}
-        onRow={onRow}
-        components={useDrag ? sortableTableComponents : tableProps.components}
-      />
+      <>
+        {error && (
+          <Alert
+            role="alert"
+            type="error"
+            showIcon
+            message="加载失败"
+            action={<Button onClick={() => setRetryToken((value) => value + 1)}>重试</Button>}
+            style={{ marginBottom: 12 }}
+          />
+        )}
+        <Table<Row>
+          {...tableProps}
+          loading={loading}
+          columns={allColumns}
+          dataSource={rows}
+          pagination={false}
+          onRow={onRow}
+          components={useDrag ? sortableTableComponents : tableProps.components}
+        />
+      </>
     </SortableTableScope>
   );
 }

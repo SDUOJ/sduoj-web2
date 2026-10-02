@@ -139,7 +139,7 @@ const Subjective = (props: any) => {
                                   serverExist.fileId,
                                   serverExist.fileName,
                                 );
-                              window.open(url);
+                              window.open(url, '_blank', 'noopener,noreferrer');
                             }}
                           >
                             {serverExist.fileName}
@@ -192,7 +192,7 @@ const Subjective = (props: any) => {
                                           exist.fileId,
                                           exist.fileName,
                                         );
-                                      window.open(url);
+                                      window.open(url, '_blank', 'noopener,noreferrer');
                                     }}
                                   >
                                     下载

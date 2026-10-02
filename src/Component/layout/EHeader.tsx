@@ -17,18 +17,19 @@ const EHeader = (props: any) => {
     <Header
       className="site-layout-sub-header-background"
       style={{
-        minWidth: 550,
+        minWidth: 0,
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
+        padding: '0 clamp(8px, 3vw, 20px)',
         height: 64,
       }}
     >
       <div className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={logo} style={{ width: 125, height: 30 }} alt="SDUOJ-logo" />
+        <img src={logo} style={{ width: 'clamp(88px, 32vw, 125px)', height: 'auto' }} alt="SDUOJ-logo" />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         {props.location.pathname.match(/\/exam\/running\//) !== null && <ExamOver />}
         <ChangeLang />
         <UserAccountDropdown

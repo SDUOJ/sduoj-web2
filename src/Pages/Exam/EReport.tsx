@@ -109,7 +109,7 @@ const EReport = (props: any) => {
         <>
             <LoginCheck/>
             <div style={{textAlign: "center", margin: "0 auto"}}>
-                <div style={{textAlign: "left", maxWidth: "800px", minWidth: "400px", margin: "0 auto"}}>
+                <div style={{textAlign: "left", maxWidth: "800px", width: "100%", minWidth: 0, margin: "0 auto"}}>
                     {props.eid === undefined && (
                         <Result
                             className={"Ewait"}

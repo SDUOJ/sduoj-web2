@@ -67,7 +67,7 @@ const SummaryExportResult: React.FC<SummaryExportResultProps> = (props) => {
         // 构建下载链接
         const fileName = groupName ? `${groupName}_成绩报告.xlsx` : "成绩报告.xlsx";
         const downloadUrl = cApi.getFileDownloadUrl(fileId, fileName);
-        window.open(downloadUrl, "_blank");
+        window.open(downloadUrl, "_blank", "noopener,noreferrer");
         message.success(t("SummaryExportDownloadStarted"));
     };
 

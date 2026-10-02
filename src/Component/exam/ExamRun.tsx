@@ -37,15 +37,15 @@ const ExamRun = (props: any) => {
 
     return (
         <>
-            <div style={{margin: 35}}>
+            <div style={{margin: 'clamp(8px, 3vw, 35px)', width: '100%', minWidth: 0}}>
                 <div style={{textAlign: "center", margin: "0 auto"}}>
-                    <div style={{textAlign: "left", maxWidth: "1600px", minWidth: "1300px", margin: "0 auto"}}>
+                    <div style={{textAlign: "left", maxWidth: "1600px", width: "100%", minWidth: 0, margin: "0 auto"}}>
                         <Row>
-                            <Col span={16}>
+                            <Col xs={24} lg={16}>
                                 <ExamProblem/>
                                 <ExamPageCtrl/>
                             </Col>
-                            <Col span={7} className={"ExamRun-ExamAnswerSheet"}>
+                            <Col xs={24} lg={7} className={"ExamRun-ExamAnswerSheet"}>
                                 <Timer
                                     deadline={examInfo?.endTime}
                                     inline={true}
@@ -54,7 +54,7 @@ const ExamRun = (props: any) => {
                                     }}
                                 />
                                 <ExamAnswerSheet problemList={problemList}/>
-                                {problemList && problemList[`${eid}_${gid}`].type === "Program" && (
+                                {problemList && problemList[`${eid}_${gid}`]?.type === "Program" && (
                                     <div style={{marginTop: 30}}>
                                         <RecentSubmissionList
                                             name={`Pro-SubmissionList-Recent-EXAM_${eid}_${gid}_${pid}`}

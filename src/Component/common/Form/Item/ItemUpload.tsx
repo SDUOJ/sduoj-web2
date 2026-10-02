@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next';
 import { InboxOutlined } from '@ant-design/icons';
 import Dragger from 'antd/lib/upload/Dragger';
 import { isValueEmpty } from '../../../../Utils/empty';
-import apiAddress from '../../../../Utils/API/apiAddress';
+import cApi from '../../../../Utils/API/c-api';
 import { FileUploadOptions, fileUpload, fileUploadWithoutMD5 } from '../../../../Utils/fileUpload';
 
 interface ItemUploadPropsType {
@@ -65,9 +65,8 @@ const UploadFile = (props: any) => {
             <Button
               size={'small'}
               onClick={() => {
-                const path =
-                  apiAddress().CLIENT_SERVER + '/api/filesys/download/' + value + '/' + filename;
-                window.open(path);
+                const path = cApi.getFileDownloadUrl(String(value), filename);
+                window.open(path, '_blank', 'noopener,noreferrer');
               }}
             >
               {props.t('Download')}

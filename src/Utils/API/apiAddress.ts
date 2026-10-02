@@ -1,17 +1,15 @@
 export default function apiAddress() {
-  if (process.env.NODE_ENV === 'development') {
-    const origin = window.location.origin;
-    return {
-      CLIENT_SERVER: '',
-      MANAGE_SERVER: '',
-      FRONT_SERVER: origin,
-      SOCKET_SERVER: origin.replace(/^http/, 'ws'),
-    };
-  }
+  const origin = window.location.origin;
+  const configuredClient = process.env.REACT_APP_API_ORIGIN?.replace(/\/$/, '');
+  const configuredFront = process.env.REACT_APP_FRONT_ORIGIN?.replace(/\/$/, '');
+  const configuredSocket = process.env.REACT_APP_SOCKET_ORIGIN?.replace(/\/$/, '');
+  const clientServer = configuredClient ?? (process.env.NODE_ENV === 'development' ? '' : origin);
+  const frontServer = configuredFront ?? origin;
+  const socketServer = configuredSocket ?? frontServer.replace(/^http/, 'ws');
   return {
-    CLIENT_SERVER: 'https://oj.qd.sdu.edu.cn',
-    MANAGE_SERVER: 'https://oj.qd.sdu.edu.cn',
-    FRONT_SERVER: 'https://oj.qd.sdu.edu.cn',
-    SOCKET_SERVER: 'wss://oj.qd.sdu.edu.cn',
+    CLIENT_SERVER: clientServer,
+    MANAGE_SERVER: clientServer,
+    FRONT_SERVER: frontServer,
+    SOCKET_SERVER: socketServer,
   };
 }

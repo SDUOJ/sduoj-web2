@@ -9,33 +9,98 @@ const baseUrl = apiAddress().CLIENT_SERVER + '/api';
 
 export const service = axios.create({
   baseURL: baseUrl,
-  timeout: 1000 * 60 * 5, // 超时时间改为 5 分钟
+  timeout: 30_000,
 });
 service.defaults.withCredentials = true;
 
-const getZipFile: any = async (
+const readBlobPayload = async (value: unknown): Promise<unknown> => {
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  if (!(value instanceof Blob)) return value;
+  try {
+    const text =
+      typeof (value as any).text === 'function'
+        ? await (value as any).text()
+        : await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result ?? ''));
+            reader.onerror = () => reject(reader.error);
+            reader.readAsText(value);
+          });
+    if (!text.trim()) return undefined;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
+  } catch {
+    return undefined;
+  }
+};
+
+const binaryError = async (error: any) => {
+  if (error?.response?.data instanceof Blob) {
+    const payload = await readBlobPayload(error.response.data);
+    error.response = {...error.response, data: payload};
+  }
+  return error;
+};
+
+const downloadPost = async (
   url: string,
   data: object,
   config?: AxiosRequestConfig,
   filename?: string,
+  expectedContentType?: RegExp,
 ) => {
-  const response = await service.post(url, data, {
-    ...config,
-    responseType: 'blob',
-  });
   try {
+    const response = await service.post(url, data, {
+      ...config,
+      responseType: 'blob',
+    });
+    const contentType = String(response.headers?.['content-type'] ?? '').toLowerCase();
+    if (contentType.includes('json') || contentType.startsWith('text/')) {
+      const payload = await readBlobPayload(response.data);
+      throw {response: {...response, data: payload}};
+    }
+    if (expectedContentType && contentType && !expectedContentType.test(contentType)) {
+      throw new Error('服务器返回了无法识别的文件类型');
+    }
     let blob = new Blob([response.data], { type: 'application/zip' });
-    let Url = window.URL.createObjectURL(blob);
+    const objectUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = Url;
+    link.href = objectUrl;
     link.download = filename ?? `${Date.now()}-TestCase.zip`;
     link.click();
-    URL.revokeObjectURL(Url);
+    link.remove();
+    window.URL.revokeObjectURL(objectUrl);
   } catch (e) {
-    return Promise.reject(e);
+    if (axios.isAxiosError(e) || (e as any)?.response !== undefined) {
+      return dealResponse(Promise.reject(await binaryError(e)), url);
+    }
+    throw e;
   }
   return Promise.resolve();
 };
+
+const getZipFile = (
+  url: string,
+  data: object,
+  config?: AxiosRequestConfig,
+  filename?: string,
+) => downloadPost(url, data, config, filename, /zip|octet-stream/);
+
+const downloadFile = (
+  url: string,
+  data: object,
+  config?: AxiosRequestConfig,
+  filename?: string,
+) => downloadPost(url, data, config, filename);
 
 const messageDisabledList = [
   '/user/getProfile',
@@ -161,5 +226,6 @@ const request = {
   get,
   post,
   getZipFile,
+  downloadFile,
 };
 export default request;

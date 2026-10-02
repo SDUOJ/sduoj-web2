@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button, Card, Image, List, message, Result} from "antd";
 import SDU_Logo from "Assert/img/sdu-logo.jpg"
 import Timer from "../../Component/common/Timer";
@@ -18,12 +18,16 @@ const {Meta} = Card;
 const EWait = (props: any) => {
     const [ExamStart, setExamStartX] = useState<boolean>(false)
     const [examState, setExamState] = useState<any>()
+    const queueTimerRef = useRef<number>()
+    const mountedRef = useRef(true)
     const {t} = useTranslation();
 
     const setExamStart = (data: boolean) => {
-        if (data !== ExamStart) {
+        if (data !== ExamStart && queueTimerRef.current === undefined) {
             message.info(t("queuingForExamPaper"))
-            setTimeout(() => {
+            queueTimerRef.current = window.setTimeout(() => {
+                queueTimerRef.current = undefined
+                if (!mountedRef.current || props.match.params.eid === undefined) return
                 setExamStartX(data)
                 props.history.push(UrlPrefix + "/exam/running/" + props.match.params.eid + "/0/0")
             }, Math.random() * 5000)
@@ -39,16 +43,17 @@ const EWait = (props: any) => {
         return props.t("StartAnswering")
     }
 
-    if (examInfo !== undefined) {
-        const examStart = examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1
-        if (ExamStart !== examStart) setExamStartX(examStart)
-    }
-
     useEffect(() => {
         if (examInfo !== undefined) {
             setExamState(TimeRangeState(examInfo.startTime, examInfo.endTime))
+            setExamStartX(examInfo.startTime < Date.now() && examInfo.endTime > Date.now() && examInfo.userIsSubmit !== 1)
         }
-    }, [examInfo, examState])
+    }, [examInfo])
+
+    useEffect(() => () => {
+        mountedRef.current = false
+        if (queueTimerRef.current !== undefined) window.clearTimeout(queueTimerRef.current)
+    }, [])
 
     let actions: any = [
         <Button

@@ -10,6 +10,7 @@ import { useTranslation, withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { ConfigState } from '../../Type/IConfig';
 import apiAddress from '../../Utils/API/apiAddress';
+import cApi from '../../Utils/API/c-api';
 import { isValueEmpty } from '../../Utils/empty';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintError } from '../../Config/validation/constraints';
@@ -212,8 +213,7 @@ export const Editor = (props: EditorProps & any) => {
               .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, '')
               .replaceAll('/\\s/g', '');
 
-            const path =
-              apiAddress().CLIENT_SERVER + '/api/filesys/download/' + value.id + '/' + name;
+            const path = cApi.getFileDownloadUrl(String(value.id), name);
 
             let suffix = name.substr(name.lastIndexOf('.') + 1).toUpperCase();
             let picSuffix = [

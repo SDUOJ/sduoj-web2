@@ -1,12 +1,12 @@
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
-import { Badge, Button, Card, Col, message, Row, Spin } from 'antd';
+import { Badge, Button, Card, Col, message, Result, Row, Spin } from 'antd';
 import ProProgram from '../problem/Program/ProProgram';
 import cApi from '../../Utils/API/c-api';
 import ProProgramDetail from '../problem/Program/ProProgramDetail';
 import RecentSubmissionList from '../submission/SubmissionList/RecentSubmissionList';
 import React, { Dispatch, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { UserState } from '../../Type/Iuser';
 import useProblemInfo from '../problem/API/getProblemInfo';
 import { UrlPrefix } from '../../Config/constValue';
@@ -44,22 +44,42 @@ const Problem = (props: any) => {
 
   const proName = `problemSet-${psid}-${gid}-${pid}`;
   const psType = problemSetInfo?.type;
-  const groupType = problemSetInfo?.groupInfo[gid].type;
-  const proType = problemSetInfo?.groupInfo[gid].problemInfo[pid].type;
-  const score = problemSetInfo?.groupInfo[gid].problemInfo[pid].point;
+  const groupInfo = problemSetInfo?.groupInfo?.[gid];
+  const problemMeta = groupInfo?.problemInfo?.[pid];
+  const groupType = groupInfo?.type;
+  const proType = problemMeta?.type;
+  const score = problemMeta?.point;
   const latePermission = problemSetInfo?.latePermission;
 
-  const [flag, setFlag] = useState(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect);
-  const [upd, setUpd] = useState(0);
+  const [flag, setFlag] = useState(problemMeta?.collect);
+  const dispatch = useDispatch();
+
+  const updateProblemMeta = (data: Record<string, unknown>) => {
+    if (!problemSetInfo || !groupInfo || !problemMeta) return;
+    const groups = Array.isArray(problemSetInfo.groupInfo)
+      ? [...problemSetInfo.groupInfo]
+      : { ...problemSetInfo.groupInfo };
+    groups[gid] = {
+      ...groupInfo,
+      problemInfo: {
+        ...groupInfo.problemInfo,
+        [pid]: { ...problemMeta, ...data },
+      },
+    };
+    dispatch({
+      type: 'setProblemSetInfo',
+      key: psid,
+      data: { ...problemSetInfo, groupInfo: groups },
+    });
+  };
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return installProblemGuards();
   }, []);
 
   useEffect(() => {
-    if (problemSetInfo && flag !== problemSetInfo?.groupInfo[gid].problemInfo[pid].collect)
-      setFlag(problemSetInfo?.groupInfo[gid].problemInfo[pid].collect);
-  }, [psid, pid, gid, problemSetInfo]);
+    if (problemMeta && flag !== problemMeta.collect) setFlag(problemMeta.collect);
+  }, [flag, gid, pid, problemMeta, problemSetInfo, psid]);
 
   const getTypeText = () => {
     if (proType === 0) return props.t('SingleChoice');
@@ -94,8 +114,7 @@ const Problem = (props: any) => {
       .then((res: any) => {
         let hasAnswer = true;
         if (groupType !== 2) hasAnswer = res;
-        problemSetInfo.groupInfo[gid].problemInfo[pid].hasAnswer = hasAnswer;
-        setUpd(upd + 1);
+        updateProblemMeta({ hasAnswer });
         return Promise.resolve(res);
       });
   };
@@ -118,7 +137,7 @@ const Problem = (props: any) => {
   const hasTimer =
     problemSetInfo !== undefined &&
     psType === 1 &&
-    problemSetInfo.config.useSameSE === 1 &&
+    problemSetInfo.config?.useSameSE === 1 &&
     parseInt(problemSetInfo.tm_end) > Date.now();
 
   let publicCheckPointAPI: any = {};
@@ -149,6 +168,10 @@ const Problem = (props: any) => {
         });
       },
     };
+  }
+
+  if (problemSetInfo !== undefined && (groupInfo === undefined || problemMeta === undefined)) {
+    return <Result status="404" title={props.t('PageNotFound', { defaultValue: '题目不存在或已被移除' })} />;
   }
 
   return (
@@ -188,8 +211,8 @@ const Problem = (props: any) => {
                         router: { psid: psid, gid: gid, pid: pid },
                       })
                       .then((res) => {
-                        problemSetInfo.groupInfo[gid].problemInfo[pid].collect = 1 - flag;
-                        setFlag(1 - flag);
+                        updateProblemMeta({ collect: flag ? 0 : 1 });
+                        setFlag((current: number | undefined) => (current ? 0 : 1));
                       });
                   }}
                 >
@@ -253,9 +276,7 @@ const Problem = (props: any) => {
                               router: { psid: psid, gid: gid, pid: pid },
                             })
                             .then((res: any) => {
-                              problemSetInfo.groupInfo[gid].problemInfo[pid].hasAnswer =
-                                res.hasAnswer;
-                              setUpd(upd + 1);
+                              updateProblemMeta({ hasAnswer: res.hasAnswer });
                               return Promise.resolve(res);
                             });
                         }}

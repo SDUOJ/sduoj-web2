@@ -1,4 +1,4 @@
-import { Button, Card, Form, List, Space, Table } from 'antd';
+import { Alert, Button, Card, Form, List, Space, Table } from 'antd';
 import React, { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { defaultPageSize } from '../../../Config/constValue';
 import { UserState } from '../../../Type/Iuser';
@@ -66,6 +66,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
   const [total, setTotal] = useState<number>(0); // 项的总数
   const [tableData, setTableDataX] = useState(); // 表格核心数据
   const [loading, setLoading] = useState(true); // 表格的加载状态
+  const [error, setError] = useState<unknown>();
   const [PageNow, setPageNow] = useState<number>(1); // 当前的页码数
   const [PageSize, setPageSize] = useState<number>(ck(props.defaultPageSize, defaultPageSize)); // 当前的页大小
   const [searchText, setSearchText] = useState<string | undefined>(); // 搜索的文本
@@ -135,6 +136,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
     setPageSize(ps);
     setSearchText(sk);
     setLoading(true);
+    setError(undefined);
     Promise.resolve()
       .then(() =>
         props.API({
@@ -177,14 +179,18 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
             });
         }
       })
-      .catch(() => {
-        // The request layer presents errors; preserve the current rows for retry.
+      .catch((requestError) => {
+        if (requestId === requestIdRef.current) setError(requestError);
       })
       .finally(() => {
         if (requestId === requestIdRef.current) setLoading(false);
       });
   };
   getInfoRef.current = getInfo;
+  const retry = () => {
+    getInfoRef.current?.(PageNow, PageSize, searchText, form.getFieldsValue(), false);
+  };
+  const hasError = error !== undefined;
 
   useEffect(() => {
     if (hasGetForm) form.setFieldsValue(initRequestPropsRef.current);
@@ -307,6 +313,16 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
             )
           }
         >
+          {hasError && (
+            <Alert
+              role="alert"
+              type="error"
+              showIcon
+              message={t('LoadFailed', { defaultValue: '加载失败' })}
+              action={<Button onClick={retry}>{t('Retry', { defaultValue: '重试' })}</Button>}
+              style={{ marginBottom: 12 }}
+            />
+          )}
           <List
             grid={props.grid}
             itemLayout={'vertical'}
@@ -376,6 +392,16 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
             )
           }
         >
+          {hasError && (
+            <Alert
+              role="alert"
+              type="error"
+              showIcon
+              message={t('LoadFailed', { defaultValue: '加载失败' })}
+              action={<Button onClick={retry}>{t('Retry', { defaultValue: '重试' })}</Button>}
+              style={{ marginBottom: 12 }}
+            />
+          )}
           <Table
             rowKey={props.rowKey}
             loading={loading}

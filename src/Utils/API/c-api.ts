@@ -103,7 +103,13 @@ const cApi = {
     return request.get('/filesys/queryByMd5', data, config);
   },
   getFileDownloadUrl(id: string, name: string) {
-    return apiAddress().CLIENT_SERVER + '/api/filesys/download/' + id + '/' + name;
+    return (
+      apiAddress().CLIENT_SERVER +
+      '/api/filesys/download/' +
+      encodeURIComponent(id) +
+      '/' +
+      encodeURIComponent(name)
+    );
   },
 
   // 比赛相关
@@ -178,8 +184,7 @@ const cApi = {
 
   // 公告相关
   async getAnnouncementList(data: any) {
-    data['filter'] = 'default';
-    return request.get('/notice/list', data);
+    return request.get('/notice/list', {...data, filter: 'default'});
   },
   async getAnnouncement(data: any) {
     return request.get('notice/query', data);

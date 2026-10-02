@@ -31,10 +31,10 @@ class ELayout extends Component<any, any> {
             <>
                 <LoginCheck jump={true}/>
                 <Layout style={{height: "max-content", minHeight: "100%"}}>
-                    <Layout style={{minWidth: 500}}>
+                    <Layout style={{minWidth: 0, width: '100%'}}>
                         <EHeader/>
-                        <Content style={{margin: '24px 16px 0', display: "table", height: "auto"}}>
-                            <div className="site-layout-background" style={{padding: 24}}>
+                        <Content style={{margin: '24px clamp(8px, 3vw, 16px) 0', display: "block", height: "auto", minWidth: 0}}>
+                            <div className="site-layout-background" style={{padding: 'clamp(8px, 3vw, 24px)', minWidth: 0}}>
                                 <Suspense fallback={<Loading/>}>
                                     {/*对应路由*/}
                                     <Switch>

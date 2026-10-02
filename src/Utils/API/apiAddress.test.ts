@@ -11,7 +11,13 @@ it('uses same-origin development API and asset addresses', () => {
 });
 
 it('retains the existing production deployment addresses', () => {
-  jest.replaceProperty(process, 'env', { ...process.env, NODE_ENV: 'production' });
+  jest.replaceProperty(process, 'env', {
+    ...process.env,
+    NODE_ENV: 'production',
+    REACT_APP_API_ORIGIN: 'https://oj.qd.sdu.edu.cn',
+    REACT_APP_FRONT_ORIGIN: 'https://oj.qd.sdu.edu.cn',
+    REACT_APP_SOCKET_ORIGIN: 'wss://oj.qd.sdu.edu.cn',
+  });
   expect(apiAddress().CLIENT_SERVER).toBe('https://oj.qd.sdu.edu.cn');
   expect(apiAddress().SOCKET_SERVER).toBe('wss://oj.qd.sdu.edu.cn');
 });

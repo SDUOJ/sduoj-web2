@@ -123,6 +123,16 @@ it('downloads a ZIP with the requested filename and releases its object URL', as
   expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test');
 });
 
+it('routes a JSON response from a binary endpoint through the normal error contract', async () => {
+  adapter
+    .onPost('/binary')
+    .reply(200, new Blob([JSON.stringify({ code: 1, message: '导出失败' })]), {
+      'content-type': 'application/json',
+    });
+  await expect(request.downloadFile('/binary', {})).rejects.toBe('导出失败');
+  expect(message.error).toHaveBeenCalledWith('导出失败');
+});
+
 it('redirects for expired sessions and excessive clock skew', async () => {
   const original = window.location;
   const replace = jest.fn();

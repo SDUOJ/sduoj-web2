@@ -3,6 +3,7 @@ import { Button, message, Modal, Space, Table } from 'antd';
 import { InboxOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import Dragger from 'antd/lib/upload/Dragger';
 import mApi from '../../Utils/API/m-api';
+import cApi from '../../Utils/API/c-api';
 import deepClone from 'Utils/deepClone';
 import { withTranslation } from 'react-i18next';
 import { matrixToRecords, parseXlsxMatrices, SpreadsheetCell } from '../../Utils/spreadsheetXlsx';
@@ -203,8 +204,7 @@ const AutoImportObjective = (props: any) => {
         <div style={{ textAlign: 'right', marginTop: '10px', marginBottom: '20px' }}>
           <a
             href={
-              require('../../Utils/API/apiAddress').default().CLIENT_SERVER +
-              '/api/filesys/download/262337552520937533/AutoImportObjective.xlsx'
+              cApi.getFileDownloadUrl('262337552520937533', 'AutoImportObjective.xlsx')
             }
           >
             {props.t('ExampleFileDownload')}
