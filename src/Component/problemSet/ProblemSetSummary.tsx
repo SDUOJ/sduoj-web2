@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Card, Tabs, Row, Col, Statistic, Progress, Empty, Spin, message, Table, Space, Tooltip, Input, Switch, Button} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
@@ -52,24 +52,18 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({groupId, username:
     const [queryUsername, setQueryUsername] = useState<string>(initialUsername || "");
     const [showAll, setShowAll] = useState<boolean>(initialForce || false);
 
-    useEffect(() => {
-        fetchSummaryData();
-    }, [groupId, initialUsername, initialForce]);
-
-    const fetchSummaryData = async (user?: string, forceAll?: boolean) => {
+    const fetchSummaryData = useCallback(async (user = "", forceAll = false) => {
         try {
             setLoading(true);
             const res = (await cApi.getPersonalTagSummary({
                 groupId,
-                username: user !== undefined ? user : queryUsername,
-                force: forceAll !== undefined ? forceAll : showAll
+                username: user,
+                force: forceAll
             })) as any as TagSummaryData;
             setData(res || {});
             const keys = Object.keys(res || {});
             if (keys.length > 0) {
-                if (!keys.includes(activeTagKey)) {
-                    setActiveTagKey(keys[0]);
-                }
+                setActiveTagKey(current => keys.includes(current) ? current : keys[0]);
             } else {
                 setActiveTagKey("");
             }
@@ -78,7 +72,11 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({groupId, username:
         } finally {
             setLoading(false);
         }
-    };
+    }, [groupId]);
+
+    useEffect(() => {
+        fetchSummaryData(initialUsername || "", initialForce || false);
+    }, [fetchSummaryData, initialUsername, initialForce]);
 
     // 计算按 Tag 分类的统计信息
     const getTagStats = () => {
@@ -434,12 +432,12 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({groupId, username:
                                 placeholder={t("placeholderUsername")}
                                 value={queryUsername}
                                 onChange={e => setQueryUsername(e.target.value)}
-                                onPressEnter={() => fetchSummaryData()}
+                                onPressEnter={() => fetchSummaryData(queryUsername, showAll)}
                                 style={{width: 200}}
                                 suffix={
                                     <SearchOutlined
                                         style={{cursor: 'pointer', color: '#1890ff'}}
-                                        onClick={() => fetchSummaryData()}
+                                        onClick={() => fetchSummaryData(queryUsername, showAll)}
                                     />
                                 }
                             />
@@ -457,7 +455,7 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({groupId, username:
                         <Button
                             type="primary"
                             icon={<SearchOutlined />}
-                            onClick={() => fetchSummaryData()}
+                            onClick={() => fetchSummaryData(queryUsername, showAll)}
                         >
                             {t("Search")}
                         </Button>

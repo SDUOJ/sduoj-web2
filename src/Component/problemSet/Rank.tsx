@@ -18,6 +18,7 @@ import useProblemSetInfo from "./API/getProblemSetInfo";
 
 const Rank = (props: any) => {
     const problemSetId = props.match.params.problemSetId
+    const t = props.t
     const [rankInfo, setRankInfo] = useState<any>()
     const [lastUpdate, setLastUpdate] = useState<any>()
     const [summaryProblemSetInfo, setSummaryProblemSetInfo] = useState<any>()
@@ -108,23 +109,26 @@ const Rank = (props: any) => {
     }
 
     useEffect(() => {
-        if (rankInfo === undefined) {
-            const hide = showLoading("RankLoadingHint", props.t("RankLoadingHint"))
-            cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
-                setRankInfo(res.data)
-                setLastUpdate(res.lastUpdate)
-                setSummaryProblemSetInfo(res.info)
-            }).finally(() => {
-                hide()
-            })
-        }
-    }, [problemSetId, props.t, rankInfo])
-
-    useEffect(() => {
+        let active = true
         setRankInfo(undefined)
         setSummaryProblemSetInfo(undefined)
         setLastUpdate(undefined)
-    }, [problemSetId])
+        const hide = showLoading("RankLoadingHint", t("RankLoadingHint"))
+        cApi.getProblemSummary({psid: problemSetId, code: 0}).then((res: any) => {
+            if (!active) return
+            setRankInfo(res.data)
+            setLastUpdate(res.lastUpdate)
+            setSummaryProblemSetInfo(res.info)
+        }).catch(() => {
+            if (active) setRankInfo([])
+        }).finally(() => {
+            hide()
+        })
+        return () => {
+            active = false
+            hide()
+        }
+    }, [problemSetId, t])
 
     const problemColumns = []
     let tableWidth = 330

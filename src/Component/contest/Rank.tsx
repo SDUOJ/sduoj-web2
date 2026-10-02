@@ -77,6 +77,12 @@ export const useContestRankRows = (
 export const Rank = (props: any) => {
   const contestId = props.match.params.contestId;
   const contestInfo = props.ContestInfo[contestId];
+  const {
+    afterContestSubmission,
+    openSliderMove,
+    setExportData,
+    sliderTime,
+  } = props;
   const [data, setData] = useState<any>();
   const timeState =
     contestInfo !== undefined
@@ -103,8 +109,8 @@ export const Rank = (props: any) => {
 
   useEffect(() => {
     if (rankInfo !== undefined && contestInfo !== undefined) {
-      if (props.openSliderMove && Math.abs(Date.now() - lastSliderTime) <= 500) return;
-      if (props.openSliderMove) setLastSliderTime(Date.now());
+      if (openSliderMove && Math.abs(Date.now() - lastSliderTime) <= 500) return;
+      if (openSliderMove) setLastSliderTime(Date.now());
 
       // console.log(props.sliderTime)
 
@@ -183,16 +189,16 @@ export const Rank = (props: any) => {
         if (value.submissions === null) {
           value.problemResults.map((val: any, index: number) => convertValue(val, index));
         } else {
-          const sliderTime = Math.max(props.sliderTime, parseInt(contestInfo.gmtStart));
+          const currentSliderTime = Math.max(sliderTime, parseInt(contestInfo.gmtStart));
 
           let proSet: any = {};
 
           for (let i = 0; i < value.submissions.length; i++) {
             const sbm = value.submissions[i];
-            if (!props.afterContestSubmission && parseInt(sbm[1]) > parseInt(contestInfo.gmtEnd))
+            if (!afterContestSubmission && parseInt(sbm[1]) > parseInt(contestInfo.gmtEnd))
               break;
             // 控制提交时间筛选
-            if (props.openSliderMove && parseInt(sbm[1]) > sliderTime) break;
+            if (openSliderMove && parseInt(sbm[1]) > currentSliderTime) break;
             const proId = sbm[0];
 
             if (proSet[proId] === undefined)
@@ -284,9 +290,9 @@ export const Rank = (props: any) => {
 
       setSummaryInfo(summaryInfo);
       setData(afterSort);
-      props.setExportData(afterSort);
+      setExportData(afterSort);
     }
-  }, [rankInfo, props.afterContestSubmission, props.sliderTime]);
+  }, [afterContestSubmission, contestInfo, lastSliderTime, openSliderMove, rankInfo, setExportData, sliderTime]);
 
   const problemColumns: any = [
     {
@@ -496,6 +502,8 @@ export const Rank = (props: any) => {
           return className;
         }}
         columns={problemColumns}
+        // Ant Design requires a render callback for the summary; keep the summary tree local to the table.
+        // eslint-disable-next-line react/no-unstable-nested-components
         summary={() => (
           <Table.Summary>
             <Table.Summary.Row className={'RankSummary'}>
@@ -524,7 +532,7 @@ export const Rank = (props: any) => {
                   {contestInfo.problems.map((x: any) => {
                     const i = parseInt(x.problemCode) - 1;
                     return (
-                      <Table.Summary.Cell index={2 + i} className={'RankSummary-Pro'}>
+                      <Table.Summary.Cell key={x.problemCode} index={2 + i} className={'RankSummary-Pro'}>
                         <div>
                           <FileTextOutlined /> {SummaryInfo[`ac_${i}`]}/{SummaryInfo[`submit_${i}`]}
                         </div>

@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useRef, useState } from 'react';
+import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { Skeleton, Steps } from 'antd';
 import { withTranslation } from 'react-i18next';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -46,8 +46,49 @@ export const applyCheckpointUpdate = (
   return next;
 };
 
+const normalizeSubmission = (data: any) => ({
+  ...data,
+  checkpointResults: (data.checkpointResults ?? []).map((value: any) => ({
+    RunningResult: value[1].toString(),
+    Score: value[2],
+    Time: value[3],
+    Memory: value[4],
+    Index: value[0],
+  })),
+  publicCheckpointResults: (data.publicCheckpointResults ?? []).map((value: any) => ({
+    RunningResult: value[1].toString(),
+    Score: value[2],
+    Time: value[3],
+    Memory: value[4],
+    Index: value[0],
+  })),
+});
+
+const initCaseData = (data: TestCaseProp[], num: number) => {
+  for (let i = 1; i <= num; i++) {
+    data.push({
+      caseIndex: i,
+      caseType: TestCaseStates.Pending,
+    });
+  }
+};
+
+const setCaseValue = (resData: any, key: string, data: TestCaseProp[]) => {
+  for (let i = 0; i < resData[key].length; i++) {
+    data.push({
+      caseIndex: i + 1,
+      caseType: StateList.indexOf(SubmissionMap[resData[key][i].RunningResult.toString()]),
+      caseScore: resData[key][i].Score,
+      caseTime: resData[key][i].Time,
+      caseMemory: resData[key][i].Memory,
+      caseID: resData[key][i].Index,
+    });
+  }
+};
+
 export const Processing = (props: IProcessingProp & any) => {
   const requestGeneration = useRef(0);
+  const {QuerySubmissionAPI, submissionId, t} = props;
 
   // 当前评测的最新到达的步骤
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -73,48 +114,9 @@ export const Processing = (props: IProcessingProp & any) => {
   // ws 发送的信息（在打开时，当前数据的变更将同步发送至 ws）
   const [webSocketQueryList, setWebSocketQueryList] = useState<string[]>([]);
 
-  const normalizeSubmission = (data: any) => ({
-    ...data,
-    checkpointResults: (data.checkpointResults ?? []).map((value: any) => ({
-      RunningResult: value[1].toString(),
-      Score: value[2],
-      Time: value[3],
-      Memory: value[4],
-      Index: value[0],
-    })),
-    publicCheckpointResults: (data.publicCheckpointResults ?? []).map((value: any) => ({
-      RunningResult: value[1].toString(),
-      Score: value[2],
-      Time: value[3],
-      Memory: value[4],
-      Index: value[0],
-    })),
-  });
-  const initCaseData = (data: TestCaseProp[], num: number) => {
-    for (let i = 1; i <= num; i++) {
-      data.push({
-        caseIndex: i,
-        caseType: TestCaseStates.Pending,
-      });
-    }
-  };
-
-  const setCaseValue = (resData: any, key: string, data: TestCaseProp[]) => {
-    for (let i = 0; i < resData[key].length; i++) {
-      data.push({
-        caseIndex: i + 1,
-        caseType: StateList.indexOf(SubmissionMap[resData[key][i].RunningResult.toString()]),
-        caseScore: resData[key][i].Score,
-        caseTime: resData[key][i].Time,
-        caseMemory: resData[key][i].Memory,
-        caseID: resData[key][i].Index,
-      });
-    }
-  };
-
-  const getSubmissionInfo = () => {
+  const getSubmissionInfo = useCallback(() => {
     const generation = ++requestGeneration.current;
-    props.QuerySubmissionAPI(props.submissionId).then((response: any) => {
+    QuerySubmissionAPI(submissionId).then((response: any) => {
       if (generation !== requestGeneration.current) return;
       const resData = normalizeSubmission(response);
 
@@ -151,7 +153,7 @@ export const Processing = (props: IProcessingProp & any) => {
         setCaseValue(resData, 'publicCheckpointResults', PublicTestCaseInit);
 
         // 评测已经结束后，当编译信息为空时，显示编译成功
-        if (isValueEmpty(resData.judgeLog)) resData.judgeLog = props.t('CompileSuccess');
+        if (isValueEmpty(resData.judgeLog)) resData.judgeLog = t('CompileSuccess');
         setSubmissionInfo(resData);
         setTestCaseStateList(TestCaseInit);
         setPublicTestCaseStateList(PublicTestCaseInit);
@@ -162,7 +164,7 @@ export const Processing = (props: IProcessingProp & any) => {
         setRunningResult(resData.judgeResult.toString());
       }
     });
-  };
+  }, [QuerySubmissionAPI, submissionId, t]);
 
   useEffect(() => {
     setSubmissionInfo(undefined);
@@ -170,11 +172,11 @@ export const Processing = (props: IProcessingProp & any) => {
     setPublicTestCaseStateList([]);
     setWebSocketOpen(false);
     setWebSocketQueryList([]);
-    if (props.submissionId !== undefined) getSubmissionInfo();
+    if (submissionId !== undefined) getSubmissionInfo();
     return () => {
       requestGeneration.current += 1;
     };
-  }, [props.submissionId]);
+  }, [getSubmissionInfo, submissionId]);
 
   const addCaseInfo = (data: any[]) => {
     const submissionIdHex = data[0];

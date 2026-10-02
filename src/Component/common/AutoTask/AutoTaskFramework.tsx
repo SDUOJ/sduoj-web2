@@ -199,6 +199,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
     const [batchRerunLoading, setBatchRerunLoading] = useState<boolean>(false);
     const [resultVisible, setResultVisible] = useState<boolean>(false);
     const [createVisible, setCreateVisible] = useState<boolean>(false);
+    const {current: paginationCurrent, pageSize: paginationPageSize} = pagination;
 
     const loadTasks = useCallback((pageNow?: number, pageSize?: number) => {
         if (!groupId && !psid && !contestId) return;
@@ -251,8 +252,8 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
     }, [filters.status, filters.taskType, filters.username, filters.psid, filters.problemId, filters.scoreLe, groupId, psid, contestId, taskTypeFilter, t]);
 
     useEffect(() => {
-        loadTasks(1, pagination.pageSize);
-    }, [loadTasks]);
+        loadTasks(1, paginationPageSize);
+    }, [loadTasks, paginationPageSize]);
 
     useEffect(() => {
         setSelectedRowKeys(prev => prev.filter(key => taskList.some(task => task.id === key)));
@@ -319,7 +320,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
             setRerunLoadingId(taskId);
             await cApi.rerunAutoTask(taskId);
             message.success(t("AutoTaskRerunSuccess"));
-            loadTasks(pagination.current, pagination.pageSize);
+            loadTasks(paginationCurrent, paginationPageSize);
             if (taskDetail?.id === taskId) {
                 openDetail(taskId);
             }
@@ -328,14 +329,14 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
         } finally {
             setRerunLoadingId(prev => (prev === taskId ? null : prev));
         }
-    }, [loadTasks, openDetail, pagination.current, pagination.pageSize, t, taskDetail]);
+    }, [loadTasks, openDetail, paginationCurrent, paginationPageSize, t, taskDetail]);
 
     const handleDelete = useCallback(async (taskId: string) => {
         try {
             setDeleteLoadingId(taskId);
             await cApi.deleteAutoTask(taskId);
             message.success(t("AutoTaskDeleteSuccess"));
-            loadTasks(pagination.current, pagination.pageSize);
+            loadTasks(paginationCurrent, paginationPageSize);
             if (taskDetail?.id === taskId) {
                 closeDetail();
             }
@@ -345,7 +346,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
         } finally {
             setDeleteLoadingId(prev => (prev === taskId ? null : prev));
         }
-    }, [closeDetail, loadTasks, pagination.current, pagination.pageSize, t, taskDetail]);
+    }, [closeDetail, loadTasks, paginationCurrent, paginationPageSize, t, taskDetail]);
 
     const handleBatchRerun = useCallback(async () => {
         const runnableTasks = selectedRowKeys
@@ -369,13 +370,13 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                 message.warning(t("AutoTaskBatchRerunPartial", {success: successCount, failed: failedCount}));
             }
             setSelectedRowKeys([]);
-            loadTasks(pagination.current, pagination.pageSize);
+            loadTasks(paginationCurrent, paginationPageSize);
         } catch (error) {
             message.error(t("failed"));
         } finally {
             setBatchRerunLoading(false);
         }
-    }, [canRerun, loadTasks, pagination.current, pagination.pageSize, selectedRowKeys, t, taskList]);
+    }, [canRerun, loadTasks, paginationCurrent, paginationPageSize, selectedRowKeys, t, taskList]);
 
     const hasRunnableSelection = useMemo(() => {
         if (selectedRowKeys.length === 0) return false;
@@ -385,8 +386,8 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
 
     const handleCreateTaskSubmit = useCallback(async () => {
         setCreateVisible(false);
-        loadTasks(1, pagination.pageSize);
-    }, [loadTasks, pagination.pageSize]);
+        loadTasks(1, paginationPageSize);
+    }, [loadTasks, paginationPageSize]);
 
     const openCreateModal = useCallback(() => {
         setCreateVisible(true);
