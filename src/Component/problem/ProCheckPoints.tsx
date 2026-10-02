@@ -288,7 +288,7 @@ const ProCheckPoints = (props: any) => {
           }}
         >
           <TableWithSelection
-            uesAlldata={true}
+            useAllData={true}
             useDrag={true}
             rowKey={'checkpointId'}
             name={name}

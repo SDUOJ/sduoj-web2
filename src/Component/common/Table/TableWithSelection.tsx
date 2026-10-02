@@ -16,6 +16,7 @@ class TableWithSelection extends Component<any, any> {
 
   render() {
     const selectedRowKeys = ck(this.props.tableData[this.props.name]?.selectedRowKeys, []);
+    const useAllData = this.props.useAllData ?? this.props.uesAlldata;
     let rowSelection: any = {
       selectedRowKeys,
       onChange: (selectedRowKeys: React.Key[]) => {
@@ -66,7 +67,7 @@ class TableWithSelection extends Component<any, any> {
 
     return (
       <>
-        {this.props.uesAlldata && (
+        {useAllData && (
           <TableWithAllData
             {...this.props}
             name={this.props.name}
@@ -74,7 +75,7 @@ class TableWithSelection extends Component<any, any> {
             rowSelection={this.props.disableSelection ? undefined : rowSelection}
           />
         )}
-        {this.props.uesAlldata !== true && (
+        {useAllData !== true && (
           <TableWithPagination
             {...this.props}
             rowSelection={this.props.disableSelection ? undefined : rowSelection}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { Link } from 'react-router-dom';
 import { aiPlatform } from '../../../Utils/API/ai-platform';
+import { UrlPrefix } from '../../../Config/constValue';
 
 export default function AIRouteBoundary({
   children,
@@ -24,7 +25,7 @@ export default function AIRouteBoundary({
         if (
           account.status === 'suspended' &&
           !allowSuspended &&
-          !['/v2/account/assistant', '/v2/manage/settings/assistant'].includes(
+          ![`${UrlPrefix}/account/assistant`, `${UrlPrefix}/manage/settings/assistant`].includes(
             window.location.pathname,
           )
         ) {
@@ -54,9 +55,9 @@ export default function AIRouteBoundary({
     return (
       <main style={{ padding: 24 }}>
         <Alert type="warning" message={error} showIcon />
-        <Link to="/v2/home">返回 OJ</Link>
+        <Link to={`${UrlPrefix}/home`}>返回 OJ</Link>
         {' · '}
-        <Link to="/v2/account/assistant">账户状态</Link>
+        <Link to={`${UrlPrefix}/account/assistant`}>账户状态</Link>
         {status === 'error' && (
           <Button onClick={() => setAttempt((value) => value + 1)}>重试</Button>
         )}

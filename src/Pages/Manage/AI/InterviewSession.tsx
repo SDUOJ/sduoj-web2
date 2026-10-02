@@ -33,6 +33,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import AIWorkspaceNav from './AIWorkspaceNav';
 import { interviewApi, InterviewResource, ManifestGroup, MediaTrack } from './interview-api';
 import { pendingFor, PendingMedia, savePending, uploadPending } from './interview-media';
+import { UrlPrefix } from '../../../Config/constValue';
 import './interview-workbench.css';
 
 const trackNames: Record<MediaTrack, string> = {
@@ -338,7 +339,7 @@ export default function InterviewSession() {
     setError('');
     try {
       const renewed = await interviewApi.renew(id, session.version, 72);
-      history.push(`/v2/practice/interviews/${renewed.id}`);
+      history.push(`${UrlPrefix}/practice/interviews/${renewed.id}`);
     } catch (reason) {
       setError(String(reason));
     } finally {
@@ -415,7 +416,7 @@ export default function InterviewSession() {
       <main className="ai-interview-main ai-interview-session">
         <header className="ai-interview-header">
           <Space align="start">
-            <Link to="/v2/practice/interviews" aria-label="返回验收列表">
+            <Link to={`${UrlPrefix}/practice/interviews`} aria-label="返回验收列表">
               <ArrowLeftOutlined />
             </Link>
             <div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Card, Table, Tag } from 'antd';
+import { Alert, Button, Card, Table, Tag, Typography } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { aiPlatform, PlatformJob } from '../../../Utils/API/ai-platform';
 import AITaskMonitor from './AITaskMonitor';
 import { positiveIntParam } from './route-context';
+import AIWorkspaceNav from './AIWorkspaceNav';
 
 export default function AIOperations({ location }: { location?: { search?: string } }) {
   const [jobs, setJobs] = useState<PlatformJob[]>([]);
@@ -32,7 +33,10 @@ export default function AIOperations({ location }: { location?: { search?: strin
     };
   }, [page, psid, revision]);
   return (
-    <Card
+    <>
+      <AIWorkspaceNav />
+      <Typography.Title level={3}>任务与创作</Typography.Title>
+      <Card
       size="small"
       title="任务管理"
       extra={
@@ -72,6 +76,7 @@ export default function AIOperations({ location }: { location?: { search?: strin
         ]}
       />
       {task && <AITaskMonitor taskId={task} />}
-    </Card>
+      </Card>
+    </>
   );
 }

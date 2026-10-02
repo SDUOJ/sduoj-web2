@@ -24,6 +24,7 @@ import {
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import AIWorkspaceNav from './AIWorkspaceNav';
+import { UrlPrefix } from '../../../Config/constValue';
 import { interviewApi, InterviewResource, MediaTrack, operationKey } from './interview-api';
 import './interview-workbench.css';
 
@@ -138,7 +139,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
       });
       setInviteOpen(false);
       form.resetFields();
-      history.push(`/v2/practice/interviews/${result.id}`);
+      history.push(`${UrlPrefix}/practice/interviews/${result.id}`);
     } catch (reason) {
       setError(String(reason));
     } finally {
@@ -150,7 +151,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
     setBusy(true);
     try {
       const result = await interviewApi.renew(row.id, row.version, 72);
-      history.push(`/v2/practice/interviews/${result.id}`);
+      history.push(`${UrlPrefix}/practice/interviews/${result.id}`);
     } catch (reason) {
       setError(String(reason));
     } finally {
@@ -228,7 +229,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
           dataSource={rows}
           className="ai-interview-table"
           onRow={(row) => ({
-            onClick: () => history.push(`/v2/practice/interviews/${row.id}`),
+            onClick: () => history.push(`${UrlPrefix}/practice/interviews/${row.id}`),
           })}
           pagination={{
             current: page,

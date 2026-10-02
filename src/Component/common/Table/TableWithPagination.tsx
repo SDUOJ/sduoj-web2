@@ -291,7 +291,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
                       getInfo(1, PageSize, text, values);
                     }}
                     enterButton
-                    style={{ width: 300 }}
+                    style={{ width: '100%', maxWidth: 300 }}
                   />
                 )}
                 {props.getForm !== undefined && (
@@ -368,7 +368,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
                       getInfo(1, PageSize, text);
                     }}
                     enterButton
-                    style={{ width: 300 }}
+                    style={{ width: '100%', maxWidth: 300 }}
                   />
                 )}
                 {props.getForm !== undefined && (
