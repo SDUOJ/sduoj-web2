@@ -97,10 +97,12 @@
 | [ ] | R-38 | P2 | 待迁移 | 合并重复的路由、菜单和移动端路由来源。 | `router.tsx`、`routerC.tsx`、`routerC_M` 和 `routerM.tsx` 分别维护路径、页面、移动路由和菜单；新增/下线入口需要多处同步，存在重复或注释残留。 | 建立单一 typed route tree 生成导航、菜单和 Switch；路径唯一性、组件映射和移动/桌面覆盖有自动测试。 |
 | [ ] | R-39 | P1 | 待修复 | 对生产 API、前端和 WebSocket origin 做协议与 host 校验。 | `apiAddress.ts` 直接信任 `REACT_APP_*_ORIGIN`；误配置可能把带 cookie 的 API 降级到 HTTP，或把资源/媒体指向任意站点。 | 生产构建拒绝非 HTTPS API/非 WSS socket 和未批准 host；开发环境保留明确例外；CI 阻止未审查的环境变量覆盖。 |
 | [ ] | R-40 | P2 | 待修复 | 编码并校验 CAS 登录的 `service` 回调参数。 | `src/Component/user/ThirdPartyLoginSDUCAS.tsx:14-16` 直接拼接 server、路径和 `service=`；origin/path 含 `?`、`&` 或 `#` 时可能改变 CAS 参数。 | 使用 `URL` 构造并对 service 完整编码；生产 host 走 allowlist；补查询串、fragment 和错误 origin 的回归测试。 |
+| [ ] | R-41 | P2 | 待补门禁 | 对发布 artifact 做 manifest、hash 和内容白名单校验。 | 当前发布流程按 artifact 名称下载后直接同步，未显式校验 SHA256、文件清单、大小或构建 ref，错误 artifact 仍可能进入生产。 | 构建生成带版本/ref 的 manifest；部署前校验 hash、路径白名单和关键资源，再执行同步并保留校验报告。 |
+| [ ] | R-42 | P2 | 待补门禁 | 为页面和业务域建立渐进覆盖率门槛。 | `jest.config.cjs` 只对少数 Redux/API 模块设置 threshold，CI 的 `test:coverage` 不会因考试、上传、摄像头和 AutoLab 页面覆盖不足而失败。 | 为新增/迁移业务域设 lines/branches/functions 门槛，或明确用真实 E2E 替代；CI 上传并阻断低于门槛的报告。 |
 
 ## 未关闭项目
 
-以下详细说明与待办表对应；其中 R-01、R-02、R-03、R-10、R-13、R-16、R-17、R-19、R-22、R-27、R-28、R-29、R-30、R-32、R-33、R-34、R-35、R-36、R-37、R-38、R-39、R-40 可在当前前端仓库推进，R-04、R-05、R-06、R-07、R-08、R-11、R-12、R-15、R-18、R-20、R-21、R-23、R-24、R-25、R-26、R-31 需要服务、部署或专项验证，R-09 属于持续迁移，R-14 由改动所有者处理。
+以下详细说明与待办表对应；其中 R-01、R-02、R-03、R-10、R-13、R-16、R-17、R-19、R-22、R-27、R-28、R-29、R-30、R-32、R-33、R-34、R-35、R-36、R-37、R-38、R-39、R-40、R-41、R-42 可在当前前端仓库推进，R-04、R-05、R-06、R-07、R-08、R-11、R-12、R-15、R-18、R-20、R-21、R-23、R-24、R-25、R-26、R-31 需要服务、部署或专项验证，R-09 属于持续迁移，R-14 由改动所有者处理。
 
 ### A-19：首屏和编辑器资源体积
 
