@@ -22,5 +22,8 @@ module.exports = {
     // measured aggregate baseline. Keep a small buffer below the current
     // Node 24 coverage report so new tests can raise the floor deliberately.
     './src/Pages/Manage/AI/': { statements: 55, branches: 50, functions: 45, lines: 58 },
+    // AutoLab has a smaller but stable component-test baseline; keep the gate
+    // below the measured report while preventing coverage regressions.
+    './src/Component/autolab/': { statements: 45, branches: 30, functions: 30, lines: 48 },
   },
 };
