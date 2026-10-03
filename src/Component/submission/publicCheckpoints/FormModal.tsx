@@ -33,7 +33,7 @@ const PublicCheckpointsFormModal = (props: any) => {
             .finally(() => {
                 loadingRef.current = false
             })
-    }, [getPublicCheckpoints])
+    }, [])
 
     const upd = (cpId: string, statue: number) => {
         props.updPublicCheckpoints({

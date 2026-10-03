@@ -15,6 +15,8 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-key': 'warn',
     'react/jsx-no-duplicate-props': 'error',
-    'react/no-unstable-nested-components': 'warn',
+    // Table, form and dropdown APIs intentionally accept render callbacks. The
+    // remaining component identities are stabilized at their call sites.
+    'react/no-unstable-nested-components': ['warn', { allowAsProps: true }],
   },
 };

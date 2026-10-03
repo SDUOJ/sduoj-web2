@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | TypeScript | `YARN_IGNORE_ENGINES=1 yarn typecheck` 通过 | 当前本机 Node 为 22.22.0，`package.json` 和 `.nvmrc` 要求 Node 24；需要在 Node 24 且不忽略 engines 的 CI 再验一次 |
 | 单元测试 | `YARN_IGNORE_ENGINES=1 yarn test --runInBand --silent`：82 个 suite、373 个测试通过 | Node 22 且忽略 engines；Node 24 CI 仍需重跑。`ExaminationWorkbench` 超时已通过显式异步等待和合理测试时限修复 |
-| ESLint | 0 errors，12 个 warning | R-02 已移除两处真实不稳定组件 warning；剩余 warning 是否都是第三方 render-prop 仍待 R-03 逐条核对 |
+| ESLint | 0 errors，0 个 warning | R-02 修复真实组件身份问题；R-03 将剩余 render-prop 配置为 `allowAsProps`，并清除了 FormModal 的依赖警告 |
 | 依赖审计 | 0 vulnerabilities，345 个包 | Yarn 仍提示 `path-to-regexp@8.4.0` resolution 与请求版本不一致，需要随依赖升级持续复核 |
 | 生产构建 | 通过，main entrypoint 约 3.91 MiB | Vditor、MathJax、Mermaid、Graphviz 等静态资源仍超出 webpack 建议体积 |
 | 开发构建 | 3001 端口全量冷启动编译通过，TypeScript 无错误 | webpack 仅保留 ESLint render-prop、资源体积和入口体积 3 组 warning |
@@ -59,7 +59,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | [x] | R-01 | P1 | 已修复 | 修复公共测试点弹窗的重复请求循环，并补失败、卸载、父组件重渲染和重复触发保护。 | `FormModal.tsx` 改用 loading/mounted refs、最新 API ref 和显式 `refreshKey`，调用方不再因内联 API 函数重渲染而重复请求；`FormModal.test.tsx` 覆盖初始请求只执行一次、父组件重渲染和卸载后的迟到响应；相关测试与 `yarn typecheck` 通过。 | 请求在挂载时只发起一次；请求结束不循环；题目切换由 `refreshKey` 触发；卸载后不更新状态。 |
 | [x] | R-02 | P1 | 已修复 | 稳定 AutoTask 的触发组件身份，避免表单因父组件重渲染而重新挂载。 | `SummaryExport.tsx`、`SubjectiveReview.tsx` 使用按 `groupId` 缓存的稳定 adapter；`AutoTaskTriggerProps` 已导出；lint 从 13 降为 12 条 warning，typecheck 通过。 | 父组件重渲染不会重新创建触发组件；groupId 改变时才创建新的 adapter；剩余 warning 按 R-03 复核。 |
-| [ ] | R-03 | P1 | 待验收 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 当前审计把 13 条 warning 全部解释为 render-prop，但至少 R-02 属于传入 `ComponentType` 的真实组件身份风险；`config/lint-baseline.json` 仍记录大量历史 warning。 | 逐条列出 warning 的文件、规则、风险和处置；真实组件 warning 修复或有测试依据后，基线与文档数字一致。 |
+| [x] | R-03 | P1 | 已修复 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 重新导出后 11 条 nested-component warning 均位于表格、表单、下拉等 render callback 属性；R-02 的两个真实组件已提取稳定 adapter；`.eslintrc.cjs` 对该规则启用 `allowAsProps`，FormModal 依赖警告也已清除。`YARN_IGNORE_ENGINES=1 yarn lint`：0 errors/0 warnings。 | warning 分类、规则配置和当前输出一致；新增 warning 会使 lint 门禁失败。 |
 | [ ] | R-04 | P1 | 待验收 | 完成 standalone exam 的真实生命周期回归。 | 当前工作区没有对应 Java 后端 checkout，前端 mock 不能证明考试创建、开始、保存、重连、到时交卷和权限变化。 | 提供隔离服务、账号、fixture 和清理日志；覆盖上述场景，并保留可重复运行的 dev/CI 命令。 |
 | [ ] | R-05 | P1 | 待验收 | 完成上传、摄像头和 AutoLab 考勤的真实接口矩阵。 | 题单拍照、文件提交、签到/签退、座位和外部作业目前主要由 mock 或边界测试覆盖。 | 每个流程覆盖成功、失败、取消、重复提交、权限拒绝、超时和资源清理；真实 fixture 接入 dev 验收或 CI。 |
 | [ ] | R-06 | P1 | 待决策 | 处理“返回老版”入口。 | `src/Component/layout/MHeader.tsx:49-57` 仍显示按钮，但跳转到当前管理入口，没有已确认的旧版部署地址。 | 产品确认旧版 URL 并实现受控跳转，或移除按钮并提供迁移说明；补导航验收。 |
@@ -160,7 +160,7 @@ CI 的 `quality`、构建和 E2E 门禁没有包含依赖审计，手工得到�
 ```text
 YARN_IGNORE_ENGINES=1 yarn typecheck                         PASS
 YARN_IGNORE_ENGINES=1 yarn test --runInBand                 PASS: 82 suites / 373 tests
-YARN_IGNORE_ENGINES=1 yarn lint                             PASS: 0 errors / 13 intentional warnings
+YARN_IGNORE_ENGINES=1 yarn lint                             PASS: 0 errors / 0 warnings
 YARN_IGNORE_ENGINES=1 yarn audit --groups dependencies ...  PASS: 0 vulnerabilities
 YARN_IGNORE_ENGINES=1 yarn build                            PASS: main entrypoint 3.91 MiB
 webpack serve --port 3001                                  PASS: cold compile, no TypeScript errors
