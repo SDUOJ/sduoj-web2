@@ -87,7 +87,10 @@ beforeEach(() => {
 
 async function selectExam(label: string) {
   fireEvent.click((await screen.findAllByRole('button', { name: '查看' }))[0]);
-  await screen.findByRole('heading', { name: /期末实验考试|正式考试|已发布考试/ });
+  await waitFor(
+    () => expect(screen.getByRole('heading', { name: /期末实验考试|正式考试|已发布考试/ })).toBeVisible(),
+    { timeout: 10000 },
+  );
 }
 
 test('prefills the course supplied by course management', async () => {
@@ -195,10 +198,10 @@ test('requires explicit formal acknowledgement after teacher review', async () =
       reason: '题单内容和座位已复核',
     }),
   );
-  const publish = await screen.findByRole('button', { name: /发布到 OJ/ });
+  const publish = await screen.findByRole('button', { name: /发布到 OJ/ }, { timeout: 10000 });
   expect(publish).toBeDisabled();
   fireEvent.click(screen.getByText('确认发布正式考试'));
-  expect(publish).toBeEnabled();
+  await waitFor(() => expect(publish).toBeEnabled(), { timeout: 10000 });
   fireEvent.click(publish);
   await waitFor(() =>
     expect(request.post).toHaveBeenCalledWith('/ps/auto-task/ai/exams/exam-1/publish', {
@@ -208,7 +211,7 @@ test('requires explicit formal acknowledgement after teacher review', async () =
       formal_ack: true,
     }),
   );
-});
+}, 15000);
 
 test('monitors submissions and resets replace-seat confirmation between exams', async () => {
   const first = plannedExam({

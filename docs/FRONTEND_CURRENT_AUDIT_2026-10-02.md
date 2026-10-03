@@ -11,7 +11,7 @@
 | 门禁 | 当前结果 | 边界 |
 | --- | --- | --- |
 | TypeScript | `YARN_IGNORE_ENGINES=1 yarn typecheck` 通过 | 当前本机 Node 为 22.22.0，`package.json` 和 `.nvmrc` 要求 Node 24；需要在 Node 24 且不忽略 engines 的 CI 再验一次 |
-| 单元测试 | 历史记录为 81 个 suite、371 个测试通过；最新全量复验出现 1 个超时失败 | `ExaminationWorkbench.test.tsx` 的单测存在时序不稳定；单独重跑本文件 5 个测试通过，但不能替代全量稳定性证据 |
+| 单元测试 | `YARN_IGNORE_ENGINES=1 yarn test --runInBand --silent`：82 个 suite、373 个测试通过 | Node 22 且忽略 engines；Node 24 CI 仍需重跑。`ExaminationWorkbench` 超时已通过显式异步等待和合理测试时限修复 |
 | ESLint | 0 errors，12 个 warning | R-02 已移除两处真实不稳定组件 warning；剩余 warning 是否都是第三方 render-prop 仍待 R-03 逐条核对 |
 | 依赖审计 | 0 vulnerabilities，345 个包 | Yarn 仍提示 `path-to-regexp@8.4.0` resolution 与请求版本不一致，需要随依赖升级持续复核 |
 | 生产构建 | 通过，main entrypoint 约 3.91 MiB | Vditor、MathJax、Mermaid、Graphviz 等静态资源仍超出 webpack 建议体积 |
@@ -72,7 +72,7 @@
 | [ ] | R-13 | P2 | 待复核 | 复核 `path-to-regexp` resolution 与上游请求版本的长期兼容性。 | Yarn 提示 `8.4.0` resolution 与 ProLayout 声明版本不一致；当前 audit 无漏洞不等于兼容性已证明。 | 在 Node 24、生产构建和关键路由测试下确认实际解析版本；升级上游或记录有范围的固定策略。 |
 | [ ] | R-14 | P2 | 待处理 | 清理工作树中的发布配置改动，或明确其归属。 | 当前仍有 `.github/workflows/release.yml`、`docs/RELEASE_CI.md`、`.github/actionlint.yaml`、`scripts/deploy-production.sh` 未提交改动。 | 由所有者提交、拆分或丢弃这些改动；修复批次完成后 `git status` 只保留明确的用户工作。 |
 | [ ] | R-15 | P1 | 待验收 | 加强发布产物、部署 smoke 和回滚验证。 | 当前工作树删除了原 `release.yml`，新增的 `scripts/release-local.sh:103-135,129-136` 仍主要检查入口 HTML 和 `<div id="root"></div>`，未验证 JS chunk、深链 fallback、API/缓存头；发布流程是否生效也没有 CI 运行证据。 | 构建验证 manifest 中所有入口资源存在且 hash 匹配；部署前后覆盖 `/v2/`、登录深链、未知路由、runtime/main JS 和健康/API；保留带 release-id 的可恢复备份并演练 rollback。 |
-| [ ] | R-16 | P1 | 待修复 | 消除 AI ExaminationWorkbench 单测的时序/超时不稳定。 | 最近一次全量复验为 80 个 suite、371 个测试，其中 `src/Pages/Manage/AI/ExaminationWorkbench.test.tsx:165` 超时失败；单独重跑该文件 5 个测试通过，说明问题具有间歇性。 | 连续多次全量运行稳定通过；测试使用明确的异步等待、`act` 和轮询终止条件，不靠盲目增加 timeout；保留失败复现和修复前后日志。 |
+| [x] | R-16 | P1 | 已修复 | 消除 AI ExaminationWorkbench 单测的时序/超时不稳定。 | `ExaminationWorkbench.test.tsx` 为列表加载、标题和正式发布确认增加显式等待，并将该真实异步场景的测试上限设为 15 秒；全量复验 82 suites/373 tests 通过。 | 连续全量运行通过；等待针对具体 UI 状态，不使用无限重试或盲目隐藏失败。 |
 | [ ] | R-17 | P2 | 待修复 | 修正 PWA manifest 中不存在的图标资源。 | `public/manifest.json:5-19` 声明 `favicon.ico`、`logo192.png`、`logo512.png`，当前 public/build 实际只有 `sduoj.ico`、`logo.png`、`logo192.png`；至少两个 manifest URL 会 404。 | 修改 manifest 指向实际资源或补齐缺失文件；构建后逐个请求 manifest icons 均返回 200 且 Content-Type、尺寸符合声明。 |
 | [ ] | R-18 | P1 | 待验收 | 统一 Vditor 静态资源的生产 URL 前缀。 | `.env.production` 的 `FRONT_ORIGIN` 是站点根域名；`Editor.tsx:117,123`、`MarkdownPreview.ts:18-22`、`Md2export.tsx:22,28` 请求 `${FRONT_SERVER}/vditor`，而发布产物同步到 `/v2/vditor`，现有部署模板未证明根路径 `/vditor` 可用。 | 在真实 dev/production-like 环境请求根路径与 `/v2/` 路径的 JS、CSS、emoji、theme 资源；编辑器和 Markdown 预览无 404。若根路径没有 alias，则统一改为 `${PUBLIC_URL}/vditor` 或补受控 alias。 |
 | [ ] | R-19 | P2 | 待补门禁 | 将依赖安全审计纳入 CI/release 阻断条件。 | `.github/workflows/ci.yml:19-22` 只执行 `yarn quality`、build 和 E2E；`quality` 不含 `yarn audit`，当前手工 audit 通过不会阻止后续 PR 或发布。 | CI 产出带版本和锁文件的 audit 报告；超过允许基线的漏洞使 job 失败；release workflow 复用同一安全门禁。 |
@@ -159,7 +159,7 @@ CI 的 `quality`、构建和 E2E 门禁没有包含依赖审计，手工得到�
 
 ```text
 YARN_IGNORE_ENGINES=1 yarn typecheck                         PASS
-YARN_IGNORE_ENGINES=1 yarn test --runInBand                 UNSTABLE: 80 suites / 371 tests, 1 timeout in ExaminationWorkbench (focused rerun passed)
+YARN_IGNORE_ENGINES=1 yarn test --runInBand                 PASS: 82 suites / 373 tests
 YARN_IGNORE_ENGINES=1 yarn lint                             PASS: 0 errors / 13 intentional warnings
 YARN_IGNORE_ENGINES=1 yarn audit --groups dependencies ...  PASS: 0 vulnerabilities
 YARN_IGNORE_ENGINES=1 yarn build                            PASS: main entrypoint 3.91 MiB
@@ -168,7 +168,7 @@ Playwright /v2/unknown                                      PASS: 404, 0 console
 Playwright protected deep link                             PASS: login `to` 保留 query/hash
 ```
 
-上述记录没有包含 `format:check`：当前环境直接执行该命令会在脚本调用系统 `git` 时被 Xcode license 错误中断，因此不能把格式门禁视为已通过；详见 R-07。
+`format:check` 当前仍未通过：使用可用 Git 路径复验为 112 个新格式失败、265 个历史不变文件；直接使用系统 Git 还会被 Xcode license 错误中断，详见 R-07。
 
 ## 工作树说明
 
