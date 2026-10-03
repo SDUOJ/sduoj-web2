@@ -95,6 +95,35 @@ type ParsedUser = {
   roles: string[];
 };
 
+export const PASSWORD_DISPLAY_MASK = '••••••';
+
+type DisplayUser = Omit<ParsedUser, 'password'> & {
+  password: string;
+  genderText: string;
+};
+
+/**
+ * Keep the import payload separate from the table model. Passwords are needed
+ * for the submit request, but must never be copied into values rendered by
+ * the preview table.
+ */
+export const maskUserForDisplay = (
+  item: ParsedUser,
+  translate: (key: string) => string,
+): DisplayUser => {
+  const { password, ...safeItem } = item;
+  return {
+    ...safeItem,
+    password: password ? PASSWORD_DISPLAY_MASK : '',
+    genderText:
+      item.gender === 0
+        ? translate('GenderFemale') || '女'
+        : item.gender === 1
+          ? translate('GenderMale') || '男'
+          : translate('GenderUnknown') || '问号',
+  };
+};
+
 const isEmail = (v?: string) => (v ? /\S+@\S+\.\S+/.test(v) : true);
 
 const normalizeNumber = (v: any): string | undefined => {
@@ -166,15 +195,7 @@ const AutoImportUsers = (props: any) => {
         isEmail(item.email);
 
       parsed.push(item);
-      display.push({
-        ...item,
-        genderText:
-          item.gender === 0
-            ? props.t('GenderFemale') || '女'
-            : item.gender === 1
-              ? props.t('GenderMale') || '男'
-              : props.t('GenderUnknown') || '问号',
-      });
+      display.push(maskUserForDisplay(item, props.t));
       states.push(valid ? 0 : 3);
     }
     setRows(parsed);
@@ -183,6 +204,9 @@ const AutoImportUsers = (props: any) => {
   };
 
   const onImportExcel = async (file: File) => {
+    // Remove the previous import before parsing a new file, including when
+    // parsing fails, so an old password cannot remain visible in the modal.
+    reset();
     if (file.size === 0 || file.size > USER_IMPORT_LIMITS.maxBytes) {
       message.error(props.t('FileTooLargeMB', { max: 5 }) || '文件大小不符合要求');
       return Upload.LIST_IGNORE;

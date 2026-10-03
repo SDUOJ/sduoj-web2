@@ -1,6 +1,11 @@
 import readWorkbook from 'read-excel-file/node';
 import writeWorkbook from 'write-excel-file/node';
-import { parseUserWorkbook, USER_IMPORT_LIMITS } from './AutoImportUsers';
+import {
+  maskUserForDisplay,
+  PASSWORD_DISPLAY_MASK,
+  parseUserWorkbook,
+  USER_IMPORT_LIMITS,
+} from './AutoImportUsers';
 import type { SpreadsheetMatrix } from '../../Utils/spreadsheetXlsx';
 
 const workbookBuffer = async (rows: unknown[][]) => {
@@ -39,6 +44,26 @@ it('parses the supported user columns without creating user-controlled object ke
     }),
   ]);
   expect(Object.getPrototypeOf(rows[0])).toBe(Object.prototype);
+});
+
+it('masks imported passwords in the preview model while preserving the submit value separately', () => {
+  const imported = {
+    username: 'alice',
+    password: 'secret12',
+    email: 'alice@example.com',
+    features: {
+      banThirdParty: 0,
+      banEmailUpdate: 0,
+      banInfoUpdate: 0,
+    },
+    roles: ['user'],
+  };
+
+  const display = maskUserForDisplay(imported, () => '');
+
+  expect(display.password).toBe(PASSWORD_DISPLAY_MASK);
+  expect(JSON.stringify(display)).not.toContain(imported.password);
+  expect(imported.password).toBe('secret12');
 });
 
 it.each(['__proto__', 'prototype', 'constructor'])(
