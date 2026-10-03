@@ -57,7 +57,7 @@
 
 | 完成 | 编号 | 优先级 | 状态 | 待办事项 | 证据/范围 | 关闭条件 |
 | --- | --- | --- | --- | --- | --- | --- |
-| [ ] | R-01 | P1 | 待修复 | 修复公共测试点弹窗的重复请求循环，并补失败、卸载和重复点击保护。 | `src/Component/submission/publicCheckpoints/FormModal.tsx:19-43` 将 `load` 放入 `updData` 依赖，effect 会在请求结束后再次触发；当前没有对应回归测试。 | 请求在挂载时只发起一次；手动刷新只发起一次；成功、失败、卸载后都不会产生循环或更新已卸载组件。 |
+| [x] | R-01 | P1 | 已修复 | 修复公共测试点弹窗的重复请求循环，并补失败、卸载、父组件重渲染和重复触发保护。 | `FormModal.tsx` 改用 loading/mounted refs、最新 API ref 和显式 `refreshKey`，调用方不再因内联 API 函数重渲染而重复请求；`FormModal.test.tsx` 覆盖初始请求只执行一次、父组件重渲染和卸载后的迟到响应；相关测试与 `yarn typecheck` 通过。 | 请求在挂载时只发起一次；请求结束不循环；题目切换由 `refreshKey` 触发；卸载后不更新状态。 |
 | [ ] | R-02 | P1 | 待修复 | 稳定 AutoTask 的触发组件身份，避免表单因父组件重渲染而重新挂载。 | `SummaryExport.tsx:17-22` 和 `SubjectiveReview.tsx:41-46` 把内联函数传给 `TriggerComponent`；`AutoTaskFramework.tsx:65,907` 将其当作 `React.ComponentType` 渲染。 | 改为稳定组件或稳定适配层；打开表单后父组件重渲染不会丢失输入、校验状态和草稿；补组件交互测试。 |
 | [ ] | R-03 | P1 | 待验收 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 当前审计把 13 条 warning 全部解释为 render-prop，但至少 R-02 属于传入 `ComponentType` 的真实组件身份风险；`config/lint-baseline.json` 仍记录大量历史 warning。 | 逐条列出 warning 的文件、规则、风险和处置；真实组件 warning 修复或有测试依据后，基线与文档数字一致。 |
 | [ ] | R-04 | P1 | 待验收 | 完成 standalone exam 的真实生命周期回归。 | 当前工作区没有对应 Java 后端 checkout，前端 mock 不能证明考试创建、开始、保存、重连、到时交卷和权限变化。 | 提供隔离服务、账号、fixture 和清理日志；覆盖上述场景，并保留可重复运行的 dev/CI 命令。 |

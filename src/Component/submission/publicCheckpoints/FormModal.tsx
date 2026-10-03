@@ -1,6 +1,6 @@
 import {Button, Card, message, Modal, Popconfirm, Space, Table, Tag} from "antd";
 import {useTranslation} from "react-i18next";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {unix2Time} from "../../../Utils/Time";
 import ModalFormUseForm from "../../common/Form/ModalFormUseForm";
 import mApi from "../../../Utils/API/m-api";
@@ -13,18 +13,27 @@ const PublicCheckpointsFormModal = (props: any) => {
     const [vis, setVis] = useState<boolean>(false)
 
     const [data, setData] = useState<any>()
-    const [load, setLoad] = useState<boolean>(false)
+    const loadingRef = useRef(false)
+    const mountedRef = useRef(true)
+    const getPublicCheckpointsRef = useRef(props.getPublicCheckpoints)
 
     const {getPublicCheckpoints} = props;
+    useEffect(() => {
+        getPublicCheckpointsRef.current = getPublicCheckpoints
+    }, [getPublicCheckpoints])
+
     const updData = useCallback(() => {
-        if (load) return
-        setLoad(true)
-        getPublicCheckpoints().then((res: any) => {
-            setData(res)
-        }).finally(() => {
-            setLoad(false)
-        })
-    }, [getPublicCheckpoints, load])
+        if (loadingRef.current) return Promise.resolve()
+        loadingRef.current = true
+        return Promise.resolve(getPublicCheckpointsRef.current())
+            .then((res: any) => {
+                if (mountedRef.current) setData(res)
+            })
+            .catch(() => undefined)
+            .finally(() => {
+                loadingRef.current = false
+            })
+    }, [getPublicCheckpoints])
 
     const upd = (cpId: string, statue: number) => {
         props.updPublicCheckpoints({
@@ -39,8 +48,12 @@ const PublicCheckpointsFormModal = (props: any) => {
     }
 
     useEffect(() => {
+        mountedRef.current = true
         updData()
-    }, [updData])
+        return () => {
+            mountedRef.current = false
+        }
+    }, [props.refreshKey, updData])
 
     return (
         <>

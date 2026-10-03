@@ -169,6 +169,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
                                 updPublicCheckpoints={props.UpdPublicCheckpointAPI}
                                 btnProps={{type: "default"}}
                                 title={problemInfo?.problemTitle}
+                                refreshKey={problemInfo?.problemId}
                             />
                         )}
                 </Space>
