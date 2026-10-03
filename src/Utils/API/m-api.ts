@@ -1,5 +1,7 @@
 import {
   checkPointData,
+  contestComprehensiveExportParams,
+  contestManagePayload,
   examID,
   groupInfo,
   groupListQuery,
@@ -127,16 +129,16 @@ const mApi = {
   },
   // TODO
   // 更新比赛信息
-  updateContest: async function (data: {}) {
+  updateContest: async function (data: contestManagePayload) {
     return request.post('/manage/contest/update', data);
   },
   // 创建比赛
-  createContest: async function (data: {}) {
+  createContest: async function (data: contestManagePayload) {
     return request.post('/manage/contest/create', data);
   },
   // TODO
   // 综合报表
-  exportComprehensive: async function (data: {}) {
+  exportComprehensive: async function (data: contestComprehensiveExportParams) {
     return request.downloadFile(
       '/manage/contest/exportComprehensiveReport',
       data,

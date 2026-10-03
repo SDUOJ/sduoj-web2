@@ -108,13 +108,59 @@ export type userListQuery = query & {
 }
 
 export interface judgeTemplate {
-    // TODO
     type: number,
     title: string,
     shellScript: string,
     zipFileId: number | string,
     acceptFileExtensions: string[],
     comment: string,
+}
+
+export interface contestVisibility {
+    displayPeerSubmission: number,
+    displayRank: number,
+    displayJudgeScore: number,
+    displayCheckpointResult: number,
+    allowToSubmit: number,
+}
+
+export interface contestFeatures {
+    mode: 'acm' | 'oi' | 'ioi',
+    openness: 'public' | 'protected' | 'private',
+    frozenTime: number,
+    contestRunning?: contestVisibility,
+    contestEnd?: contestVisibility,
+}
+
+export interface contestProblem {
+    problemCode: string,
+    problemTitle?: string,
+    problemDescriptionId?: number,
+    problemWeight?: number,
+    problemColor?: string,
+    submitNumber?: number,
+}
+
+/** Payload shared by the manage contest create, update and fork forms. */
+export interface contestManagePayload {
+    contestId?: number,
+    contestTitle: string,
+    isPublic: number,
+    password?: string,
+    gmtStart: number,
+    gmtEnd: number,
+    source?: string,
+    markdownDescription?: string,
+    features: contestFeatures,
+    participants?: string[],
+    unofficialParticipants?: string[],
+    groupId?: number,
+    participatingGroups?: number[],
+    problems: contestProblem[],
+}
+
+export interface contestComprehensiveExportParams {
+    contestId: number,
 }
 
 export type loginInfo = {
