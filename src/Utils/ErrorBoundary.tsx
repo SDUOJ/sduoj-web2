@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import i18n from '../Config/i18n';
 
 type Props = {
   fallback?: ReactNode;
@@ -35,13 +36,13 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         this.props.fallback ?? (
           <div style={{ padding: 24 }} role="alert">
-            <h3>页面出错了</h3>
-            <p>请尝试重新加载当前内容，或返回上一步。</p>
+            <h3>{i18n.t('errorBoundaryTitle')}</h3>
+            <p>{i18n.t('errorBoundaryDescription')}</p>
             <button type="button" onClick={() => this.setState({ hasError: false })}>
-              重试
+              {i18n.t('Retry')}
             </button>{' '}
             <button type="button" onClick={() => window.history.back()}>
-              返回
+              {i18n.t('Return')}
             </button>
           </div>
         )
