@@ -163,6 +163,12 @@ it('uses the bundled save icon instead of an external image', async () => {
   expect(save.icon).not.toContain('http');
 });
 
+it('enables markdown sanitization in the editor preview', async () => {
+  render(<Editor langCode="en_US" value={'<script>alert(1)</script>'} />);
+  await waitForEditor();
+  expect(options[0].preview.markdown.sanitize).toBe(true);
+});
+
 it('reports upload failures instead of leaving an unhandled promise', async () => {
   const { fileUpload } = jest.requireMock('../../Utils/fileUpload') as {
     fileUpload: jest.Mock;

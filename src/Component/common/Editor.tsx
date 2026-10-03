@@ -143,6 +143,7 @@ export const Editor = (props: EditorProps & any) => {
           mark: true,
           footnotes: true,
           autoSpace: true,
+          sanitize: true,
         },
         math: {
           inlineDigit: true,
