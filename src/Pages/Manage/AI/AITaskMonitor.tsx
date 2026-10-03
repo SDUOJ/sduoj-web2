@@ -116,7 +116,7 @@ export default function AITaskMonitor({
       source?.close();
       window.clearInterval(timer);
     };
-  }, [reloadKey, taskId]);
+  }, [reloadKey, t, taskId]);
   async function action(retry: boolean) {
     if (!job) return;
     setBusy(true);
