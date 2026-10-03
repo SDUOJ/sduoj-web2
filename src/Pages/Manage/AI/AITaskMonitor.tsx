@@ -1,20 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Button, Empty, Popconfirm, Space, Spin, Table, Tag, Typography } from 'antd';
 import { ReloadOutlined, StopOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { aiPlatform, PlatformJob } from '../../../Utils/API/ai-platform';
 import { service } from '../../../Utils/API/request';
 import { operationKey } from './operation-key';
 import './ai-task-monitor.css';
 
 const terminal = new Set(['success', 'failed', 'cancelled']);
-const labels: Record<string, string> = {
-  pending: '排队中',
-  blocked: '等待额度或对账',
-  running: '执行中',
-  success: '生成完成',
-  failed: '失败',
-  cancelled: '已取消',
-};
 const colors: Record<string, string> = {
   pending: 'processing',
   blocked: 'warning',
@@ -30,6 +23,15 @@ export default function AITaskMonitor({
   taskId?: string;
   onComplete?: (job: PlatformJob) => void;
 }) {
+  const { t } = useTranslation();
+  const labels: Record<string, string> = {
+    pending: t('aiTaskStatusPending'),
+    blocked: t('aiTaskStatusBlocked'),
+    running: t('aiTaskStatusRunning'),
+    success: t('aiTaskStatusSuccess'),
+    failed: t('aiTaskStatusFailed'),
+    cancelled: t('aiTaskStatusCancelled'),
+  };
   const [job, setJob] = useState<PlatformJob>();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -87,13 +89,13 @@ export default function AITaskMonitor({
             try {
               merge([JSON.parse(event.data)]);
             } catch {
-              setError('任务事件无法解析');
+              setError(t('aiTaskEventParseError'));
             }
           };
           source.addEventListener('revoked', () => {
             finished = true;
             source?.close();
-            setError('任务访问权限已失效');
+            setError(t('aiTaskAccessRevoked'));
           });
           source.onerror = () => {
             source?.close();
@@ -134,18 +136,22 @@ export default function AITaskMonitor({
       setBusy(false);
     }
   }
-  if (!taskId) return <Empty description="尚未选择任务" />;
+  if (!taskId) return <Empty description={t('aiTaskMonitorEmpty')} />;
   return (
-    <section className="ai-task-monitor" aria-label="任务状态" aria-live="polite">
+    <section
+      className="ai-task-monitor"
+      aria-label={t('aiTaskMonitorAriaLabel')}
+      aria-live="polite"
+    >
       <div className="ai-task-monitor-heading">
         <div>
-          <Typography.Title level={5}>任务详情</Typography.Title>
+          <Typography.Title level={5}>{t('aiTaskDetails')}</Typography.Title>
           <Typography.Text type="secondary" copyable={{ text: taskId }}>
             {taskId}
           </Typography.Text>
         </div>
         <Button
-          aria-label="刷新任务"
+          aria-label={t('aiTaskRefresh')}
           icon={<ReloadOutlined />}
           loading={loading}
           onClick={() => setReloadKey((key) => key + 1)}
@@ -162,30 +168,32 @@ export default function AITaskMonitor({
             {labels[job?.status || 'pending'] || job?.status}
           </Tag>
           <Typography.Text type="secondary">
-            尝试 {job?.attempt || 0}
-            {job?.max_attempts ? ` / ${job.max_attempts}` : ''}
+            {t('aiTaskAttempts', {
+              attempt: job?.attempt || 0,
+              max: job?.max_attempts ? ` / ${job.max_attempts}` : '',
+            })}
           </Typography.Text>
           {job && !terminal.has(job.status) && (
             <Tag color={stream === 'live' ? 'green' : 'default'}>
-              {stream === 'live' ? '事件流已连接' : '定时同步'}
+              {stream === 'live' ? t('aiTaskStreamLive') : t('aiTaskStreamPolling')}
             </Tag>
           )}
           {job && !terminal.has(job.status) && (
             <Popconfirm
-              title="确认取消该任务？"
-              description="任务将在安全检查点停止。"
-              okText="取消任务"
-              cancelText="继续执行"
+              title={t('aiTaskCancelConfirm')}
+              description={t('aiTaskCancelDescription')}
+              okText={t('aiTaskCancel')}
+              cancelText={t('aiTaskContinue')}
               onConfirm={() => void action(false)}
             >
               <Button danger icon={<StopOutlined />} loading={busy}>
-                取消任务
+                {t('aiTaskCancel')}
               </Button>
             </Popconfirm>
           )}
           {job && ['failed', 'cancelled'].includes(job.status) && (
             <Button icon={<ReloadOutlined />} loading={busy} onClick={() => void action(true)}>
-              重试
+              {t('aiTaskRetry')}
             </Button>
           )}
         </Space>
@@ -194,16 +202,16 @@ export default function AITaskMonitor({
         <Alert
           type="warning"
           showIcon
-          message="任务暂未执行"
-          description="请检查账户余额或联系管理员完成未知用量对账。"
+          message={t('aiTaskBlockedMessage')}
+          description={t('aiTaskBlockedDescription')}
         />
       )}
       {job?.review_required && (
         <Alert
           type="info"
           showIcon
-          message="结果待人工复核"
-          description="AI 结果不会自动成为最终成绩或正式内容。"
+          message={t('aiTaskReviewMessage')}
+          description={t('aiTaskReviewDescription')}
         />
       )}
       {job?.error && <Alert type="warning" message={job.error} />}
@@ -214,19 +222,20 @@ export default function AITaskMonitor({
           pagination={false}
           dataSource={job.ai_runs}
           columns={[
-            { title: '模型', dataIndex: 'model' },
+            { title: t('aiTaskRunModel'), dataIndex: 'model' },
             {
-              title: '费用 USD',
-              render: (_, row) => (row.status === 'unsettled' ? '未知，待对账' : row.cost_usd),
+              title: t('aiTaskRunCost'),
+              render: (_, row) =>
+                row.status === 'unsettled' ? t('aiTaskUnsettledUsage') : row.cost_usd,
             },
-            { title: '结算状态', dataIndex: 'status' },
+            { title: t('aiTaskRunStatus'), dataIndex: 'status' },
           ]}
         />
       )}
-      <div className="ai-task-events" aria-label="任务事件">
-        <Typography.Title level={5}>执行事件</Typography.Title>
+      <div className="ai-task-events" aria-label={t('aiTaskEventsAriaLabel')}>
+        <Typography.Title level={5}>{t('aiTaskEventsTitle')}</Typography.Title>
         {!events.length && (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无执行事件" />
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('aiTaskEventsEmpty')} />
         )}
         {events.map((event) => (
           <div className="ai-task-event" key={event.id}>

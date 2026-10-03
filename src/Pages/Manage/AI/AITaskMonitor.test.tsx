@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import AITaskMonitor from './AITaskMonitor';
 import { aiPlatform, PlatformJob } from '../../../Utils/API/ai-platform';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-platform', () => ({
   aiPlatform: {
@@ -33,6 +34,7 @@ const job: PlatformJob = {
 test('shows terminal review warning and unknown usage without opening an event stream', async () => {
   const jobMock = aiPlatform.job as jest.MockedFunction<typeof aiPlatform.job>;
   jobMock.mockResolvedValue(job);
+  await i18n.changeLanguage('zh');
   const originalEventSource = global.EventSource;
   // jsdom may expose EventSource through a polyfill; disabling it verifies polling-safe rendering.
   Object.defineProperty(global, 'EventSource', { configurable: true, value: undefined });
@@ -44,4 +46,26 @@ test('shows terminal review warning and unknown usage without opening an event s
   expect(jobMock).toHaveBeenCalledWith('job-1', 0);
   unmount();
   Object.defineProperty(global, 'EventSource', { configurable: true, value: originalEventSource });
+});
+
+test('translates task monitor labels in English', async () => {
+  const jobMock = aiPlatform.job as jest.MockedFunction<typeof aiPlatform.job>;
+  jobMock.mockResolvedValue(job);
+  const originalEventSource = global.EventSource;
+  Object.defineProperty(global, 'EventSource', { configurable: true, value: undefined });
+  await i18n.changeLanguage('en');
+  try {
+    const { unmount } = render(<AITaskMonitor taskId="job-1" />);
+    expect(await screen.findByText('Result needs human review')).toBeInTheDocument();
+    expect(screen.getByText('Unknown, pending reconciliation')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Task details' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh task' })).toBeInTheDocument();
+    unmount();
+  } finally {
+    await i18n.changeLanguage('zh');
+    Object.defineProperty(global, 'EventSource', {
+      configurable: true,
+      value: originalEventSource,
+    });
+  }
 });
