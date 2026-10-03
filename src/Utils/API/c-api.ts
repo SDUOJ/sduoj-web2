@@ -12,6 +12,11 @@ import {
   updatePassWord,
   userExistQuery,
   verificationEmail,
+  contestListQuery,
+  contestUpcomingQuery,
+  contestSubmissionQuery,
+  contestSubmissionPayload,
+  contestReportParams,
 } from '../../Type/types';
 import request from './request';
 import apiAddress from './apiAddress';
@@ -118,13 +123,13 @@ const cApi = {
   },
 
   // 比赛相关
-  async getContestList(data: any) {
+  async getContestList(data: contestListQuery) {
     return request.get('/contest/list', data);
   },
   async invalidateContestSubmission(data: { submissionId: string; contestId: string }) {
     return request.get('/contest/invalidateSubmission', data);
   },
-  async getUpcomingContest(data: any) {
+  async getUpcomingContest(data: contestUpcomingQuery) {
     return request.get('/contest/queryUpcomingContest', data);
   },
   async getContestProblem(data: { contestId: string; problemCode: string }) {
@@ -136,13 +141,13 @@ const cApi = {
   async participateContest(data: { contestId: string; password?: string }) {
     return request.post('/contest/participate', data);
   },
-  async submitContestProblem(data: { contestId: string } & any) {
+  async submitContestProblem(data: contestSubmissionPayload) {
     return request.post('/contest/createSubmission', data);
   },
   async getContestInfo(data: { contestId: string }) {
     return request.get('/contest/query', data);
   },
-  async getContestSubmissionList(data: any) {
+  async getContestSubmissionList(data: contestSubmissionQuery) {
     return request.get('/contest/listSubmission', data);
   },
   async rejudgeInContest(data: { contestId: string; submissionIds: string[] }) {
@@ -154,10 +159,10 @@ const cApi = {
   async getRank(data: { contestId: string }) {
     return request.get('/contest/rank', data);
   },
-  async submitInContest(data: { contestId: string } & any) {
+  async submitInContest(data: contestSubmissionPayload) {
     return request.post('/contest/createSubmission', data);
   },
-  async getContestReport(data: any) {
+  async getContestReport(data: contestReportParams) {
     return request.post('/contest/comprehensiveReport', data);
   },
 

@@ -163,6 +163,42 @@ export interface contestComprehensiveExportParams {
   contestId: number;
 }
 
+export type contestListQuery = query & {
+  groupId?: number | string;
+  mode?: contestFeatures['mode'];
+  openness?: contestFeatures['openness'];
+};
+
+export type contestUpcomingQuery = {
+  groupId?: number | string;
+};
+
+export type contestSubmissionQuery = query & {
+  contestId: string;
+  problemCode?: string;
+  username?: string;
+  status?: string;
+};
+
+export interface contestSubmissionPayload {
+  contestId: string;
+  problemCode: string;
+  judgeTemplateId: string;
+  code?: string;
+  zipFileId?: string;
+}
+
+export interface contestReportItem {
+  contestId: string;
+  title: string;
+  weight: number;
+  timeoutScoreRatio: Array<[string, number]>;
+}
+
+export interface contestReportParams {
+  contestList: contestReportItem[];
+}
+
 export type loginInfo = {
   username: string;
   password: string;

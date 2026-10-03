@@ -71,13 +71,13 @@ const TSummary = (props: any) => {
     if (!isLogin) {
       history.replace(loginRedirect(location));
     } else {
-      const timeoutScoreRatio1 = [
+      const timeoutScoreRatio1: Array<[string, number]> = [
         ['0', 1.0],
         ['604800001', 0.9],
         ['1209600001', 0.8],
         ['12960000000', 0.7],
       ];
-      const timeoutScoreRatio2 = [
+      const timeoutScoreRatio2: Array<[string, number]> = [
         ['0', 0.85],
         ['604800001', 0.8],
         ['1209600001', 0.75],

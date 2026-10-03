@@ -74,3 +74,73 @@ test('accepts FormData for both file upload endpoints', async () => {
   expect(adapter.history.post[0].url).toBe('/filesys/uploadFiles');
   expect(adapter.history.post[1].url).toBe('/filesys/upload');
 });
+
+test('preserves typed contest query and submission payloads', async () => {
+  adapter.onGet('/contest/list').reply(200, success({ rows: [] }));
+  adapter.onGet('/contest/listSubmission').reply(200, success({ rows: [] }));
+  adapter.onPost('/contest/createSubmission').reply(200, success({ id: 'submission-1' }));
+
+  await cApi.getContestList({ pageNow: 1, pageSize: 20, mode: 'acm', groupId: 7 });
+  await cApi.getContestSubmissionList({
+    pageNow: 1,
+    pageSize: 10,
+    contestId: 'contest-1',
+    problemCode: 'A',
+  });
+  await cApi.submitContestProblem({
+    contestId: 'contest-1',
+    problemCode: 'A',
+    judgeTemplateId: 'template-1',
+    code: 'print(1)',
+  });
+
+  expect(adapter.history.get[0].params).toEqual({
+    pageNow: 1,
+    pageSize: 20,
+    mode: 'acm',
+    groupId: 7,
+  });
+  expect(adapter.history.get[1].params).toEqual({
+    pageNow: 1,
+    pageSize: 10,
+    contestId: 'contest-1',
+    problemCode: 'A',
+  });
+  expect(JSON.parse(adapter.history.post[0].data)).toEqual({
+    contestId: 'contest-1',
+    problemCode: 'A',
+    judgeTemplateId: 'template-1',
+    code: 'print(1)',
+  });
+});
+
+test('preserves typed contest report configuration', async () => {
+  adapter.onPost('/contest/comprehensiveReport').reply(200, success({ rows: [] }));
+  await cApi.getContestReport({
+    contestList: [
+      {
+        contestId: '144',
+        title: 'week1',
+        weight: 1.25,
+        timeoutScoreRatio: [
+          ['0', 1],
+          ['604800001', 0.9],
+        ],
+      },
+    ],
+  });
+
+  expect(JSON.parse(adapter.history.post[0].data)).toEqual({
+    contestList: [
+      {
+        contestId: '144',
+        title: 'week1',
+        weight: 1.25,
+        timeoutScoreRatio: [
+          ['0', 1],
+          ['604800001', 0.9],
+        ],
+      },
+    ],
+  });
+});
