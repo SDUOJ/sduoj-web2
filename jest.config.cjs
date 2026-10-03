@@ -18,5 +18,9 @@ module.exports = {
   coverageThreshold: {
     './src/Redux/Reducer/': { statements: 90, branches: 85, functions: 100, lines: 90 },
     './src/Utils/API/request.ts': { statements: 75, branches: 65, functions: 80, lines: 75 },
+    // The AI management pages are the first migrated page domain with a
+    // measured aggregate baseline. Keep a small buffer below the current
+    // Node 24 coverage report so new tests can raise the floor deliberately.
+    './src/Pages/Manage/AI/': { statements: 55, branches: 50, functions: 45, lines: 58 },
   },
 };
