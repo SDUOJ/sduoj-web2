@@ -30,6 +30,7 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Link, useHistory, useParams } from 'react-router-dom';
+import { useAppSelector } from '../../../Redux/Store/hooks';
 import AIWorkspaceNav from './AIWorkspaceNav';
 import { interviewApi, InterviewResource, ManifestGroup, MediaTrack } from './interview-api';
 import { pendingFor, PendingMedia, savePending, uploadPending } from './interview-media';
@@ -72,6 +73,7 @@ function canRenew(session: InterviewResource) {
 export default function InterviewSession() {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
+  const ownerId = useAppSelector((state) => state.UserReducer.userInfo?.userId ?? '');
   const [reviewForm] = Form.useForm();
   const [session, setSession] = useState<InterviewResource | null>(null);
   const [loading, setLoading] = useState(true);
@@ -247,6 +249,7 @@ export default function InterviewSession() {
         const suffix = track === 'audio' ? 'webm' : 'webm';
         await savePending({
           key: `${id}:${turnSequence}:${track}:${recordingId}:${index}`,
+          ownerId,
           resourceId: id,
           turnSequence,
           track,
@@ -267,6 +270,7 @@ export default function InterviewSession() {
   async function addManualFile(file: File) {
     const item: PendingMedia = {
       key: `${id}:${turnSequence}:${activeTrack}:manual:${Date.now()}`,
+      ownerId,
       resourceId: id,
       turnSequence,
       track: activeTrack,
@@ -289,7 +293,11 @@ export default function InterviewSession() {
   }
 
   async function retryPendingMedia() {
-    const pending = await pendingFor(id, turnSequence);
+    if (!ownerId) {
+      setError('登录状态不可用，无法读取本地媒体缓存');
+      return;
+    }
+    const pending = await pendingFor(ownerId, id, turnSequence);
     if (!pending.length) {
       await load(true);
       return;

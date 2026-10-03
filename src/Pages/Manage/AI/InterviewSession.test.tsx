@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
+import { createAppStore } from '../../../Redux/Store';
 import InterviewSession from './InterviewSession';
 import { interviewApi, InterviewResource } from './interview-api';
 
@@ -71,12 +73,26 @@ const studentSession: InterviewResource = {
 };
 
 function renderSession() {
+  const store = createAppStore();
+  store.dispatch({
+    type: 'setUserInfo',
+    data: {
+      userId: 'student-42',
+      username: 'student',
+      nickname: 'Student',
+      studentId: '42',
+      roles: ['user'],
+    },
+  });
+  store.dispatch({ type: 'userLogin' });
   return render(
-    <MemoryRouter initialEntries={['/v2/ai-interviews/i1']}>
-      <Route path="/v2/ai-interviews/:id">
-        <InterviewSession />
-      </Route>
-    </MemoryRouter>,
+    <Provider store={store}>
+      <MemoryRouter initialEntries={['/v2/ai-interviews/i1']}>
+        <Route path="/v2/ai-interviews/:id">
+          <InterviewSession />
+        </Route>
+      </MemoryRouter>
+    </Provider>,
   );
 }
 
