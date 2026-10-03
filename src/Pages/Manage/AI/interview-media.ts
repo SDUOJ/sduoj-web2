@@ -18,6 +18,10 @@ export type PendingMedia = {
 export const PENDING_MEDIA_TTL_MS = 24 * 60 * 60 * 1000;
 export const PENDING_MEDIA_MAX_BYTES = 50 * 1024 * 1024;
 
+export function canCachePendingMedia(sizeBytes: number) {
+  return Number.isFinite(sizeBytes) && sizeBytes >= 0 && sizeBytes <= PENDING_MEDIA_MAX_BYTES;
+}
+
 type StoredPendingMedia = PendingMedia & {
   createdAt: number;
   sizeBytes: number;
@@ -94,7 +98,7 @@ export function savePending(item: PendingMedia) {
       reject(new Error('Cannot cache media without an authenticated owner'));
       return;
     }
-    if (item.blob.size > PENDING_MEDIA_MAX_BYTES) {
+    if (!canCachePendingMedia(item.blob.size)) {
       reject(new Error('Media segment exceeds the local cache limit'));
       return;
     }
@@ -103,16 +107,19 @@ export function savePending(item: PendingMedia) {
       const now = Date.now();
       const current = list.result as StoredPendingMedia[];
       current
-        .filter((entry) => entry.ownerId === item.ownerId && !isPendingMediaFresh(entry, now))
+        .filter((entry) => !entry.ownerId || !isPendingMediaFresh(entry, now))
         .forEach((entry) => store.delete(entry.key));
       const retained = current
-        .filter((entry) => entry.ownerId === item.ownerId && isPendingMediaFresh(entry, now))
+        .filter((entry) => entry.ownerId && isPendingMediaFresh(entry, now))
         .sort((left, right) => left.createdAt - right.createdAt);
-      let retainedBytes = retained.reduce((total, entry) => total + entry.sizeBytes, 0);
+      let retainedBytes = retained.reduce(
+        (total, entry) => total + (entry.sizeBytes || entry.blob.size),
+        0,
+      );
       while (retainedBytes + item.blob.size > PENDING_MEDIA_MAX_BYTES && retained.length) {
         const evicted = retained.shift();
         if (!evicted) break;
-        retainedBytes -= evicted.sizeBytes;
+        retainedBytes -= evicted.sizeBytes || evicted.blob.size;
         store.delete(evicted.key);
       }
       const request = store.put({

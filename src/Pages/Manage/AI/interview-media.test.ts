@@ -1,6 +1,8 @@
 import {
+  canCachePendingMedia,
   isPendingMediaFresh,
   mediaFileUrl,
+  PENDING_MEDIA_MAX_BYTES,
   PENDING_MEDIA_TTL_MS,
   selectPendingMedia,
 } from './interview-media';
@@ -41,4 +43,9 @@ it('treats the TTL boundary as fresh and older entries as expired', () => {
   const now = PENDING_MEDIA_TTL_MS + 10_000;
   expect(isPendingMediaFresh({ createdAt: now - PENDING_MEDIA_TTL_MS }, now)).toBe(true);
   expect(isPendingMediaFresh({ createdAt: now - PENDING_MEDIA_TTL_MS - 1 }, now)).toBe(false);
+});
+
+it('rejects a single media segment above the local cache limit', () => {
+  expect(canCachePendingMedia(PENDING_MEDIA_MAX_BYTES)).toBe(true);
+  expect(canCachePendingMedia(PENDING_MEDIA_MAX_BYTES + 1)).toBe(false);
 });
