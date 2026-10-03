@@ -1,28 +1,32 @@
+import approvedHosts from '../../../config/production-service-hosts.json';
+
 export default function apiAddress() {
   const origin = window.location.origin;
   const isProduction = process.env.NODE_ENV === 'production';
-  const allowedHosts = new Set(
-    (process.env.REACT_APP_ALLOWED_HOSTS ?? 'oj.qd.sdu.edu.cn')
-      .split(',')
-      .map((host) => host.trim().toLowerCase())
-      .filter(Boolean),
-  );
-  const validateOrigin = (
-    value: string,
-    field: string,
-    protocol: 'https:' | 'wss:' | 'http:' | 'ws:',
-  ) => {
+  const allowedHosts = new Set(approvedHosts);
+  const validateOrigin = (value: string, field: string, protocol: 'https:' | 'wss:') => {
     let parsed: URL;
     try {
       parsed = new URL(value);
     } catch {
       throw new Error(`${field} must be an absolute URL`);
     }
-    if (isProduction && parsed.protocol !== protocol.replace('ws:', 'wss:')) {
-      throw new Error(`${field} must use ${protocol.replace('ws:', 'wss:')}`);
+    if (isProduction && parsed.protocol !== protocol) {
+      throw new Error(`${field} must use ${protocol}`);
     }
     if (isProduction && !allowedHosts.has(parsed.hostname.toLowerCase())) {
-      throw new Error(`${field} host is not in REACT_APP_ALLOWED_HOSTS`);
+      throw new Error(`${field} host is not in the approved host list`);
+    }
+    if (
+      isProduction &&
+      (parsed.username ||
+        parsed.password ||
+        parsed.port ||
+        parsed.pathname !== '/' ||
+        parsed.search ||
+        parsed.hash)
+    ) {
+      throw new Error(`${field} must be an origin without credentials, port or URL path`);
     }
     return value.replace(/\/$/, '');
   };

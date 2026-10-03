@@ -41,5 +41,5 @@ it('rejects insecure or unapproved production origins', () => {
     REACT_APP_SOCKET_ORIGIN: 'wss://oj.qd.sdu.edu.cn',
     REACT_APP_ALLOWED_HOSTS: 'oj.qd.sdu.edu.cn',
   });
-  expect(() => apiAddress()).toThrow('REACT_APP_API_ORIGIN host is not in REACT_APP_ALLOWED_HOSTS');
+  expect(() => apiAddress()).toThrow('REACT_APP_API_ORIGIN host is not in the approved host list');
 });
