@@ -16,6 +16,8 @@ jobs:
           node-version-file: .nvmrc
       - run: npm install --global yarn@1.22.22
       - run: yarn install --frozen-lockfile
+      - name: Audit production dependencies
+        run: yarn audit --groups dependencies --level moderate --json > dependency-audit.json
       - run: yarn quality
       - run: yarn build
       - run: yarn bundle:check
@@ -27,6 +29,7 @@ jobs:
           name: frontend-test-results
           path: |
             coverage/
+            dependency-audit.json
             playwright-report/
             test-results/
           retention-days: 14
