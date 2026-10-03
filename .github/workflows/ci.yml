@@ -19,7 +19,7 @@ jobs:
       - name: Check workflow and shell contracts
         run: |
           node scripts/check-workflow-pins.cjs
-          bash -n scripts/*.sh
+          find scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n
       - name: Audit production dependencies
         run: yarn audit --groups dependencies --level moderate --json > dependency-audit.json
       - run: yarn quality
