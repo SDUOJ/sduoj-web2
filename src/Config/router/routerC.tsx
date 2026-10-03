@@ -233,55 +233,21 @@ export const routerC_Contest_M: IRouter[] = [
   },
 ];
 
-// C 端目录
-export const routerC_M: IRouter[] = [
-  {
-    id: 1,
-    title_i18n: 'Home',
-    path: UrlPrefix + '/home',
-    exact: true,
-    component: lazy(() => import('../../Pages/Client/CHome')),
-  },
-  {
-    id: 2,
-    title_i18n: 'Problem',
-    path: UrlPrefix + '/problem',
-    exact: true,
-    component: lazy(() => import('../../Pages/Client/CProblem')),
-  },
-  {
-    id: 3,
-    path: UrlPrefix + '/submission',
-    title_i18n: 'Submission',
-    exact: true,
-    component: lazy(() => import('../../Pages/Client/CSubmissions')),
-  },
-  {
-    id: 4,
-    path: UrlPrefix + '/contest',
-    title_i18n: 'Contest',
-    exact: true,
-    component: lazy(() => import('../../Pages/Client/CContest')),
-  },
-  {
-    id: 5,
-    path: UrlPrefix + '/group',
-    title_i18n: 'Group',
-    exact: true,
-    component: lazy(() => import('../../Pages/Client/CGroup')),
-  },
-  // {
-  //     id: 6,
-  //     path: UrlPrefix + "/hws",
-  //     title_i18n: "文件提交",
-  //     exact: true,
-  //     component: lazy(() => import('../../Pages/Ext/Ext-Hws'))
-  // },
-  // {
-  //     id: 7,
-  //     path: UrlPrefix + "/exam",
-  //     title_i18n: "考试系统",
-  //     exact: true,
-  //     component: lazy(() => import('../../Pages/Exam/EList'))
-  // },
-];
+// The desktop/mobile navigation is projected from the canonical client route
+// table above. Keeping path and component in one place prevents the menu from
+// silently drifting away from the route that it links to.
+const clientNavigation = [
+  { id: 4, title_i18n: 'Home' },
+  { id: 5, title_i18n: 'Problem' },
+  { id: 6, title_i18n: 'Submission' },
+  { id: 7, title_i18n: 'Contest' },
+  { id: 8, title_i18n: 'Group' },
+] as const;
+
+export const routerC_M: IRouter[] = clientNavigation.map(({ id, title_i18n }) => {
+  const route = routerC.find((candidate) => candidate.id === id);
+  if (!route) {
+    throw new Error(`Missing client navigation route ${id}`);
+  }
+  return { ...route, title_i18n };
+});
