@@ -372,7 +372,9 @@ module.exports = function (webpackEnv) {
           vditor: {
             test: /[\\/]node_modules[\\/]vditor[\\/]/,
             name: 'vditor-vendor',
-            chunks: 'all',
+            // Vditor is loaded only when an editor or markdown preview opens.
+            // Keep its vendor chunk asynchronous so it cannot inflate the initial entrypoint.
+            chunks: 'async',
             priority: 20,
           },
           spreadsheet: {

@@ -121,7 +121,7 @@ const LogMarkdownViewer = ({ content }: { content: string }) => {
   const containerIdRef = useRef(`auto-task-log-${Math.random().toString(36).slice(2, 10)}`);
 
   useEffect(() => {
-    MarkdownPreview(content || '-', containerIdRef.current);
+    void MarkdownPreview(content || '-', containerIdRef.current).catch(() => undefined);
   }, [content]);
 
   return (

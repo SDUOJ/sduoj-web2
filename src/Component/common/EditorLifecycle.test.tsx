@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { message } from 'antd';
 import { buildEditorCacheId, CopiedButton, Editor } from './Editor';
 import { MD2export } from './Md2export';
@@ -45,13 +45,16 @@ beforeEach(() => {
   jest.spyOn(message, 'error').mockClear();
 });
 
+const waitForEditor = (count = 1) =>
+  waitFor(() => expect(options).toHaveLength(count), { timeout: 2000 });
+
 it('destroys the clipboard listener when a copy button unmounts', () => {
   const view = render(<CopiedButton text="path" btnText="Copy" />);
   view.unmount();
   expect(mockClipboardDestroy).toHaveBeenCalledTimes(1);
 });
 
-it('destroys the editor before language replacement and on unmount', () => {
+it('destroys the editor before language replacement and on unmount', async () => {
   const view = render(
     <Editor
       value="draft"
@@ -62,6 +65,7 @@ it('destroys the editor before language replacement and on unmount', () => {
       t={(key: string) => key}
     />,
   );
+  await waitForEditor();
   act(() => options[0].after?.());
   expect(instances[0].getValue()).toBe('draft');
   expect(instances[0].setValue).not.toHaveBeenCalled();
@@ -76,12 +80,13 @@ it('destroys the editor before language replacement and on unmount', () => {
     />,
   );
   expect(instances[0].destroy).toHaveBeenCalledTimes(1);
+  await waitForEditor(2);
   expect(instances).toHaveLength(2);
   view.unmount();
   expect(instances[1].destroy).toHaveBeenCalledTimes(1);
 });
 
-it('isolates and restores drafts by user, document, and field without relying on destroy', () => {
+it('isolates and restores drafts by user, document, and field without relying on destroy', async () => {
   const aliceDocumentOne = buildEditorCacheId('alice', 'problem:1', 'description');
   localStorage.setItem(aliceDocumentOne, 'alice document one draft');
 
@@ -94,6 +99,7 @@ it('isolates and restores drafts by user, document, and field without relying on
       fieldIdentity="description"
     />,
   );
+  await waitForEditor();
   act(() => options[0].after?.());
   expect(instances[0].getValue()).toBe('alice document one draft');
   expect(instances[0].setValue).not.toHaveBeenCalled();
@@ -117,6 +123,7 @@ it('isolates and restores drafts by user, document, and field without relying on
     />,
   );
 
+  await waitForEditor(3);
   expect(options.map((option) => option.cache.id)).toEqual([
     aliceDocumentOne,
     buildEditorCacheId('alice', 'problem:2', 'description'),
@@ -130,16 +137,17 @@ it('isolates and restores drafts by user, document, and field without relying on
   first.unmount();
 });
 
-it('uses unique DOM containers for duplicate mounts and disables unscoped persistent cache', () => {
+it('uses unique DOM containers for duplicate mounts and disables unscoped persistent cache', async () => {
   render(<Editor value="one" langCode="en_US" />);
   render(<Editor value="two" langCode="en_US" />);
 
+  await waitForEditor(2);
   expect(options[0].cache).toEqual({ enable: false });
   expect(options[1].cache).toEqual({ enable: false });
   expect((targets[0] as HTMLElement).id).not.toBe((targets[1] as HTMLElement).id);
 });
 
-it('uses the bundled save icon instead of an external image', () => {
+it('uses the bundled save icon instead of an external image', async () => {
   render(
     <Editor
       langCode="en_US"
@@ -148,6 +156,7 @@ it('uses the bundled save icon instead of an external image', () => {
       fieldIdentity="description"
     />,
   );
+  await waitForEditor();
   const save = options[0].toolbar.find((item: any) => item?.name === 'save');
   expect(save.icon).toContain('test-asset');
   expect(save.icon).not.toContain('58cdn');
@@ -168,15 +177,17 @@ it('reports upload failures instead of leaving an unhandled promise', async () =
     />,
   );
 
+  await waitForEditor();
   await act(async () => {
     await options[0].upload.handler([new File(['x'], 'note.txt')]);
   });
   expect(message.error).toHaveBeenCalledWith('File upload failed');
 });
 
-it('destroys the export editor when its modal closes', () => {
+it('destroys the export editor when its modal closes', async () => {
   const view = render(<MD2export value="answer" langCode="en_US" t={(key: string) => key} />);
   fireEvent.click(view.getByRole('button', { name: 'markdownText' }));
+  await waitForEditor();
   expect(instances).toHaveLength(1);
   fireEvent.click(view.getByRole('button', { name: 'Close' }));
   expect(instances[0].destroy).toHaveBeenCalledTimes(1);

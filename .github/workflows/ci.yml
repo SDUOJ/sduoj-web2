@@ -18,6 +18,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn quality
       - run: yarn build
+      - run: yarn bundle:check
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
       - uses: actions/upload-artifact@v4

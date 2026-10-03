@@ -1,14 +1,16 @@
 // 全局引入 markdown 预览所需样式（仅在预览工具中引入，避免全局污染）
 import 'vditor/dist/index.css';
-// @ts-ignore
-import VditorPreview from 'vditor/dist/method.min';
 import { isValueEmpty } from './empty';
 import apiAddress from './API/apiAddress';
 
 // Use unified front server host from apiAddress
 const host = apiAddress().FRONT_SERVER;
 
-export function MarkdownPreview(code: string | null | undefined, id: string) {
+export async function MarkdownPreview(code: string | null | undefined, id: string) {
+  // Preview is used on demand by markdown-heavy views; keep the renderer out of
+  // the initial entrypoint and load it with the first preview request.
+  // @ts-ignore Vditor ships this runtime helper without a declaration file.
+  const { default: VditorPreview } = await import('vditor/dist/method.min');
   if (isValueEmpty(code) || isValueEmpty(code?.trim())) code = '';
   code = code?.replaceAll(/`{3}\n([-|0-9a-zA-Z])/g, '```plaintext\n$1');
   // 针对原本 $ 换行的公式，加以修正

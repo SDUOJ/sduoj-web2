@@ -1,5 +1,4 @@
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
-import Vditor from 'vditor';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
@@ -10,11 +9,24 @@ import { Button, Modal } from 'antd';
 
 export const MD2export = (props: any) => {
   const [vis, setVis] = useState<boolean>(false);
-  const editorRef = useRef<Vditor>();
+  const [VditorConstructor, setVditorConstructor] = useState<typeof import('vditor').default>();
+  const editorRef = useRef<InstanceType<typeof import('vditor').default>>();
   const { height, id, langCode, value } = props;
 
+  useEffect(() => {
+    if (isValueEmpty(langCode) || !vis) return;
+    let active = true;
+    void import('vditor').then(({ default: constructor }) => {
+      if (active) setVditorConstructor(() => constructor);
+    });
+    return () => {
+      active = false;
+    };
+  }, [langCode, vis]);
+
   const setEditor = useCallback(() => {
-    const vditor0 = new Vditor(id ?? 'vditor-export', {
+    if (!VditorConstructor) return undefined;
+    const vditor0 = new VditorConstructor(id ?? 'vditor-export', {
       height: height === undefined ? 800 : height,
       mode: 'ir',
       placeholder: '',
@@ -51,17 +63,18 @@ export const MD2export = (props: any) => {
     });
     editorRef.current = vditor0;
     return vditor0;
-  }, [height, id, langCode, value]);
+  }, [VditorConstructor, height, id, langCode, value]);
 
   useEffect(() => {
-    if (!isValueEmpty(langCode) && vis) {
+    if (!isValueEmpty(langCode) && vis && VditorConstructor) {
       const editor = setEditor();
+      if (!editor) return;
       return () => {
         editor.destroy();
         if (editorRef.current === editor) editorRef.current = undefined;
       };
     }
-  }, [langCode, setEditor, vis]);
+  }, [VditorConstructor, langCode, setEditor, vis]);
 
   useEffect(() => {
     if (vis && editorRef.current && editorRef.current.getValue() !== value)

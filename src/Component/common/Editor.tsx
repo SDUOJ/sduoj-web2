@@ -1,7 +1,6 @@
 import { createContext, Dispatch, useEffect, useId, useMemo, useRef, useState } from 'react';
 // 按需引入 vditor 样式，避免主入口全局引入
 import 'vditor/dist/index.css';
-import Vditor from 'vditor';
 import { fileUpload } from '../../Utils/fileUpload';
 import { Button, message, notification, Space } from 'antd';
 import ClipboardJS from 'clipboard';
@@ -32,6 +31,7 @@ export interface EditorProps {
 }
 
 export const EditorDocumentIdentityContext = createContext<string | number | undefined>(undefined);
+type VditorInstance = import('vditor').default;
 
 const identityPart = (value: string | number) => encodeURIComponent(String(value));
 
@@ -79,9 +79,10 @@ export const CopiedButton = (props: any) => {
 const host = apiAddress().FRONT_SERVER;
 export const Editor = (props: EditorProps & any) => {
   const [readyVersion, setReadyVersion] = useState(0);
+  const [VditorConstructor, setVditorConstructor] = useState<typeof import('vditor').default>();
   const { t } = useTranslation();
   const reactId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
-  const editorRef = useRef<Vditor>();
+  const editorRef = useRef<VditorInstance>();
   const editorElementRef = useRef<HTMLDivElement>(null);
   const initialValueRef = useRef(props.value ?? '');
   const lastExternalValueRef = useRef(initialValueRef.current);
@@ -102,12 +103,22 @@ export const Editor = (props: EditorProps & any) => {
   );
 
   useEffect(() => {
-    if (isValueEmpty(props.langCode) || !editorElementRef.current) return;
+    let active = true;
+    void import('vditor').then(({ default: constructor }) => {
+      if (active) setVditorConstructor(() => constructor);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!VditorConstructor || isValueEmpty(props.langCode) || !editorElementRef.current) return;
 
     const initialExternalValue = initialValueRef.current;
     lastExternalValueRef.current = initialExternalValue;
-    let vditor0: Vditor;
-    vditor0 = new Vditor(editorElementRef.current, {
+    let vditor0: InstanceType<typeof VditorConstructor>;
+    vditor0 = new VditorConstructor(editorElementRef.current, {
       height: props.height === undefined ? 800 : props.height,
       mode: 'ir', //及时渲染模式
       value: initialExternalValue,
@@ -292,7 +303,7 @@ export const Editor = (props: EditorProps & any) => {
       if (editorRef.current === vditor0) editorRef.current = undefined;
       vditor0.destroy();
     };
-  }, [cacheEnabled, cacheId, props.height, props.langCode, t]);
+  }, [VditorConstructor, cacheEnabled, cacheId, props.height, props.langCode, t]);
 
   useEffect(() => {
     const nextValue = props.value ?? '';
