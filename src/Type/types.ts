@@ -175,6 +175,30 @@ export type registerInfo = {
   emailCode: string;
 };
 
+export type updateEmailInfo = {
+  password: string;
+  email: string;
+  emailCode: string;
+};
+
+export type resetPasswordInfo = {
+  password: string;
+  token: string;
+};
+
+export type userExistQuery =
+  { username: string; email?: never } | { email: string; username?: never };
+
+export type thirdPartyRegisterInfo = registerInfo & {
+  token: string;
+};
+
+export type thirdPartyBindingInfo = {
+  username: string;
+  password: string;
+  token: string;
+};
+
 export interface groupInfo {
   openness: number;
   title: string;

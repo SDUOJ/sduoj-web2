@@ -4,8 +4,13 @@ import {
   problemListQuery,
   profileInfo,
   registerInfo,
+  resetPasswordInfo,
   thirdPartyLogin,
+  thirdPartyBindingInfo,
+  thirdPartyRegisterInfo,
+  updateEmailInfo,
   updatePassWord,
+  userExistQuery,
   verificationEmail,
 } from '../../Type/types';
 import request from './request';
@@ -43,19 +48,19 @@ const cApi = {
   async updatePassword(data: updatePassWord) {
     return request.post('/user/updatePassword', data);
   },
-  async updateEmail(data: any) {
+  async updateEmail(data: updateEmailInfo) {
     return request.post('/user/updateEmail', data);
   },
   async sendVerificationEmail(data: verificationEmail) {
     return request.post('/user/sendVerificationEmail', data);
   },
-  async resetPassword(data: any) {
+  async resetPassword(data: resetPasswordInfo) {
     return request.post('/user/resetPassword', data);
   },
   async getCaptcha() {
     return request.get('/user/getCaptcha');
   },
-  async isExist(data: any) {
+  async isExist(data: userExistQuery) {
     return request.get('/user/isExist', data);
   },
   async queryParticipateContest() {
@@ -78,22 +83,22 @@ const cApi = {
     return request.get('/user/thirdPartyUnbinding', data);
   },
   //// 注册新账号并绑定已有账号
-  async thirdPartyRegister(data: any) {
+  async thirdPartyRegister(data: thirdPartyRegisterInfo) {
     return request.post('/user/thirdPartyRegister', data);
   },
   //// 绑定已有账号
-  async thirdPartyBinding(data: any) {
+  async thirdPartyBinding(data: thirdPartyBindingInfo) {
     return request.post('/user/thirdPartyBinding', data);
   },
 
   // 文件相关
-  async uploadFile(data: any, config?: AxiosRequestConfig) {
+  async uploadFile(data: FormData, config?: AxiosRequestConfig) {
     return request.post('/filesys/uploadFiles', data, {
       ...config,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
-  async uploadSingleFile(data: any, config?: AxiosRequestConfig) {
+  async uploadSingleFile(data: FormData, config?: AxiosRequestConfig) {
     return request.post('/filesys/upload', data, {
       ...config,
       headers: { 'Content-Type': 'multipart/form-data' },
