@@ -1003,5 +1003,15 @@
   "active": "启用",
   "inactive": "停用",
   "classroom": "教室管理",
-  "course": "课程"
+  "course": "课程",
+  "aiNavLabel": "AI 工作区",
+  "aiNavTasks": "任务与创作",
+  "aiNavAccount": "账户与管理",
+  "aiNavProblemBank": "AI 题库",
+  "aiNavKnowledgeBase": "课程知识库",
+  "aiNavGrading": "主观题批阅",
+  "aiNavExams": "考试与考务",
+  "aiNavPlagiarism": "代码查重",
+  "aiNavAuthoring": "程序题创作",
+  "aiNavInterviews": "实验验收"
 }

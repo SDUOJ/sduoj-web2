@@ -1028,5 +1028,15 @@
   "active": "Active",
   "inactive": "Inactive",
   "classroom": "Classroom",
-  "course": "Course"
+  "course": "Course",
+  "aiNavLabel": "AI workspace",
+  "aiNavTasks": "Tasks and authoring",
+  "aiNavAccount": "Account and administration",
+  "aiNavProblemBank": "AI problem bank",
+  "aiNavKnowledgeBase": "Course knowledge base",
+  "aiNavGrading": "Subjective grading",
+  "aiNavExams": "Exams and invigilation",
+  "aiNavPlagiarism": "Code plagiarism",
+  "aiNavAuthoring": "Programming problem authoring",
+  "aiNavInterviews": "Lab acceptance"
 }
