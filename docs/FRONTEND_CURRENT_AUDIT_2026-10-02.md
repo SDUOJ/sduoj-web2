@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | TypeScript | `YARN_IGNORE_ENGINES=1 yarn typecheck` 通过 | 当前本机 Node 为 22.22.0，`package.json` 和 `.nvmrc` 要求 Node 24；需要在 Node 24 且不忽略 engines 的 CI 再验一次 |
 | 单元测试 | 历史记录为 81 个 suite、371 个测试通过；最新全量复验出现 1 个超时失败 | `ExaminationWorkbench.test.tsx` 的单测存在时序不稳定；单独重跑本文件 5 个测试通过，但不能替代全量稳定性证据 |
-| ESLint | 0 errors，13 个 warning | 当前记录为 `react/no-unstable-nested-components`；这些 warning 是否都是第三方 render-prop 仍待 R-03 逐条核对，不能据此宣称所有组件都安全 |
+| ESLint | 0 errors，12 个 warning | R-02 已移除两处真实不稳定组件 warning；剩余 warning 是否都是第三方 render-prop 仍待 R-03 逐条核对 |
 | 依赖审计 | 0 vulnerabilities，345 个包 | Yarn 仍提示 `path-to-regexp@8.4.0` resolution 与请求版本不一致，需要随依赖升级持续复核 |
 | 生产构建 | 通过，main entrypoint 约 3.91 MiB | Vditor、MathJax、Mermaid、Graphviz 等静态资源仍超出 webpack 建议体积 |
 | 开发构建 | 3001 端口全量冷启动编译通过，TypeScript 无错误 | webpack 仅保留 ESLint render-prop、资源体积和入口体积 3 组 warning |
@@ -58,7 +58,7 @@
 | 完成 | 编号 | 优先级 | 状态 | 待办事项 | 证据/范围 | 关闭条件 |
 | --- | --- | --- | --- | --- | --- | --- |
 | [x] | R-01 | P1 | 已修复 | 修复公共测试点弹窗的重复请求循环，并补失败、卸载、父组件重渲染和重复触发保护。 | `FormModal.tsx` 改用 loading/mounted refs、最新 API ref 和显式 `refreshKey`，调用方不再因内联 API 函数重渲染而重复请求；`FormModal.test.tsx` 覆盖初始请求只执行一次、父组件重渲染和卸载后的迟到响应；相关测试与 `yarn typecheck` 通过。 | 请求在挂载时只发起一次；请求结束不循环；题目切换由 `refreshKey` 触发；卸载后不更新状态。 |
-| [ ] | R-02 | P1 | 待修复 | 稳定 AutoTask 的触发组件身份，避免表单因父组件重渲染而重新挂载。 | `SummaryExport.tsx:17-22` 和 `SubjectiveReview.tsx:41-46` 把内联函数传给 `TriggerComponent`；`AutoTaskFramework.tsx:65,907` 将其当作 `React.ComponentType` 渲染。 | 改为稳定组件或稳定适配层；打开表单后父组件重渲染不会丢失输入、校验状态和草稿；补组件交互测试。 |
+| [x] | R-02 | P1 | 已修复 | 稳定 AutoTask 的触发组件身份，避免表单因父组件重渲染而重新挂载。 | `SummaryExport.tsx`、`SubjectiveReview.tsx` 使用按 `groupId` 缓存的稳定 adapter；`AutoTaskTriggerProps` 已导出；lint 从 13 降为 12 条 warning，typecheck 通过。 | 父组件重渲染不会重新创建触发组件；groupId 改变时才创建新的 adapter；剩余 warning 按 R-03 复核。 |
 | [ ] | R-03 | P1 | 待验收 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 当前审计把 13 条 warning 全部解释为 render-prop，但至少 R-02 属于传入 `ComponentType` 的真实组件身份风险；`config/lint-baseline.json` 仍记录大量历史 warning。 | 逐条列出 warning 的文件、规则、风险和处置；真实组件 warning 修复或有测试依据后，基线与文档数字一致。 |
 | [ ] | R-04 | P1 | 待验收 | 完成 standalone exam 的真实生命周期回归。 | 当前工作区没有对应 Java 后端 checkout，前端 mock 不能证明考试创建、开始、保存、重连、到时交卷和权限变化。 | 提供隔离服务、账号、fixture 和清理日志；覆盖上述场景，并保留可重复运行的 dev/CI 命令。 |
 | [ ] | R-05 | P1 | 待验收 | 完成上传、摄像头和 AutoLab 考勤的真实接口矩阵。 | 题单拍照、文件提交、签到/签退、座位和外部作业目前主要由 mock 或边界测试覆盖。 | 每个流程覆盖成功、失败、取消、重复提交、权限拒绝、超时和资源清理；真实 fixture 接入 dev 验收或 CI。 |

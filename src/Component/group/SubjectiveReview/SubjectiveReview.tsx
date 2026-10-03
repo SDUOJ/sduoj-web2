@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {withTranslation, WithTranslation} from "react-i18next";
-import AutoTaskFramework from "../../common/AutoTask/AutoTaskFramework";
+import AutoTaskFramework, {AutoTaskTriggerProps} from "../../common/AutoTask/AutoTaskFramework";
 import SubjectiveReviewTrigger from "./SubjectiveReviewTrigger";
 import cApi from "../../../Utils/API/c-api";
 
@@ -8,8 +8,16 @@ interface SubjectiveReviewProps extends WithTranslation {
     groupId: number;
 }
 
+const createSubjectiveReviewTrigger = (groupId: number): React.ComponentType<AutoTaskTriggerProps> => {
+    const SubjectiveReviewTriggerAdapter: React.FC<AutoTaskTriggerProps> = ({onSubmit}) => (
+        <SubjectiveReviewTrigger groupId={groupId} onSubmit={onSubmit}/>
+    );
+    return SubjectiveReviewTriggerAdapter;
+};
+
 const SubjectiveReview: React.FC<SubjectiveReviewProps> = (props) => {
     const {t, groupId} = props;
+    const TriggerComponent = useMemo(() => createSubjectiveReviewTrigger(groupId), [groupId]);
     const [problemSets, setProblemSets] = useState<{psid: number, name: string}[]>([]);
 
     useEffect(() => {
@@ -38,12 +46,7 @@ const SubjectiveReview: React.FC<SubjectiveReviewProps> = (props) => {
     return (
         <AutoTaskFramework
             groupId={groupId}
-            TriggerComponent={(triggerProps) => (
-                <SubjectiveReviewTrigger
-                    groupId={groupId}
-                    onSubmit={triggerProps.onSubmit}
-                />
-            )}
+            TriggerComponent={TriggerComponent}
             createTitle={t("AutoTaskCreateTitle")}
             createHelp={t("AutoTaskCreateHelp")}
             title={t("AutoTaskListTitle")}

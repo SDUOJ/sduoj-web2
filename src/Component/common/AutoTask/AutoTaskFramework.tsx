@@ -45,7 +45,7 @@ interface AutoTaskLog {
     create_time?: string;
 }
 
-interface AutoTaskTriggerProps {
+export interface AutoTaskTriggerProps {
     onSubmit: () => Promise<void>;
 }
 
