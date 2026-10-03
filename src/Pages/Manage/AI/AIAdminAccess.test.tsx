@@ -2,11 +2,15 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import AIAdminAccess, { AITagManagement } from './AIAdminAccess';
 import request from '../../../Utils/API/request';
+import i18n from '../../../Config/i18n';
 jest.mock('../../../Utils/API/request', () => ({
   __esModule: true,
   default: { get: jest.fn(), post: jest.fn() },
 }));
-beforeEach(() => jest.clearAllMocks());
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
+  jest.clearAllMocks();
+});
 test('explicit account hold preserves reason and stable operation key', async () => {
   (request.get as jest.Mock).mockResolvedValue({
     rows: [{ subject_id: '42', username: 'student', status: 'active', balance: '0' }],
@@ -45,4 +49,22 @@ test('edits canonical tag aliases through the native tag endpoint', async () => 
       expect.objectContaining({ name: '动态规划', aliases: ['DP'] }),
     ),
   );
+});
+
+test('localizes account access controls in English', async () => {
+  (request.get as jest.Mock).mockResolvedValue({
+    rows: [{ subject_id: '42', username: 'student', status: 'active', balance: '0' }],
+    totalNum: 1,
+  });
+  await i18n.changeLanguage('en');
+  try {
+    const { unmount } = render(<AIAdminAccess />);
+    expect(await screen.findByPlaceholderText('OJ user ID')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'User' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Manage access' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Access history' })).toBeInTheDocument();
+    unmount();
+  } finally {
+    await i18n.changeLanguage('zh');
+  }
 });

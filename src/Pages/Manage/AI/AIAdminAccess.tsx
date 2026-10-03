@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Form, Input, Modal, Select, Space, Table, Tag } from 'antd';
 import { HistoryOutlined, SaveOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
 import request from '../../../Utils/API/request';
@@ -13,6 +14,7 @@ type ManagedAccount = {
 };
 const base = '/ps/auto-task/ai';
 export default function AIAdminAccess() {
+  const { t } = useTranslation();
   const [accounts, setAccounts] = useState<ManagedAccount[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -42,8 +44,8 @@ export default function AIAdminAccess() {
     <>
       {error && <Alert message={error} type="error" showIcon />}
       <Input.Search
-        aria-label="筛选 OJ 用户 ID"
-        placeholder="OJ 用户 ID"
+        aria-label={t('aiAccessFilterSubject')}
+        placeholder={t('aiAccessFilterSubject')}
         onSearch={(value) => {
           setFilter(value);
           setPage(1);
@@ -62,18 +64,21 @@ export default function AIAdminAccess() {
         }}
         columns={[
           {
-            title: '用户',
+            title: t('aiAccessUser'),
             render: (_, row: ManagedAccount) => `${row.username} (${row.subject_id})`,
           },
-          { title: '状态', render: (_, row: ManagedAccount) => <Tag>{row.status}</Tag> },
-          { title: '原因', dataIndex: 'reason' },
           {
-            title: '操作',
+            title: t('aiAccessStatus'),
+            render: (_, row: ManagedAccount) => <Tag>{row.status}</Tag>,
+          },
+          { title: t('aiAccessReason'), dataIndex: 'reason' },
+          {
+            title: t('aiAccessActions'),
             render: (_, row: ManagedAccount) => (
               <Space wrap>
                 <Button
                   icon={<StopOutlined />}
-                  aria-label="管理资格"
+                  aria-label={t('aiAccessManage')}
                   onClick={() => {
                     setEditing(row);
                     form.setFieldsValue({
@@ -83,10 +88,10 @@ export default function AIAdminAccess() {
                     });
                   }}
                 >
-                  管理资格
+                  {t('aiAccessManage')}
                 </Button>
                 <Button
-                  aria-label="操作历史"
+                  aria-label={t('aiAccessHistory')}
                   icon={<HistoryOutlined />}
                   onClick={() =>
                     void request
@@ -103,7 +108,7 @@ export default function AIAdminAccess() {
         ]}
       />
       <Modal
-        title="管理 AI 使用资格"
+        title={t('aiAccessManageTitle')}
         forceRender
         open={!!editing}
         onCancel={() => !busy && setEditing(undefined)}
@@ -127,21 +132,21 @@ export default function AIAdminAccess() {
                 setEditing(undefined);
                 await load();
                 if (values.suspended === 'release' && result.status === 'suspended')
-                  setError(result.reason || '内容复核仍未解除');
+                  setError(result.reason || t('aiAccessReviewStillBlocked'));
               })
               .catch((value) => setError(String(value)))
               .finally(() => setBusy(false));
           }}
         >
-          <Form.Item name="suspended" label="操作" rules={[{ required: true }]}>
+          <Form.Item name="suspended" label={t('aiAccessAction')} rules={[{ required: true }]}>
             <Select
               options={[
-                { value: 'hold', label: '暂停 AI 使用' },
-                { value: 'release', label: '解除人工暂停' },
+                { value: 'hold', label: t('aiAccessHold') },
+                { value: 'release', label: t('aiAccessRelease') },
               ]}
             />
           </Form.Item>
-          <Form.Item name="reason" label="操作依据" rules={[{ required: true }]}>
+          <Form.Item name="reason" label={t('aiAccessActionReason')} rules={[{ required: true }]}>
             <Input.TextArea rows={3} />
           </Form.Item>
           <Form.Item name="operation_key" hidden>
@@ -150,7 +155,7 @@ export default function AIAdminAccess() {
         </Form>
       </Modal>
       <Modal
-        title="资格操作历史"
+        title={t('aiAccessHistoryTitle')}
         open={history !== null}
         onCancel={() => setHistory(null)}
         footer={null}
@@ -160,10 +165,10 @@ export default function AIAdminAccess() {
           rowKey="id"
           dataSource={history || []}
           columns={[
-            { title: '时间', dataIndex: 'created_at' },
-            { title: '操作人', dataIndex: 'actor_id' },
+            { title: t('aiAccessTime'), dataIndex: 'created_at' },
+            { title: t('aiAccessActor'), dataIndex: 'actor_id' },
             {
-              title: '依据',
+              title: t('aiAccessReason'),
               render: (_, row: NonNullable<typeof history>[number]) => row.request.reason,
             },
           ]}
@@ -175,6 +180,7 @@ export default function AIAdminAccess() {
 
 type ManagedTag = { id: string; name: string; aliases: string[] };
 export function AITagManagement() {
+  const { t } = useTranslation();
   const [tags, setTags] = useState<ManagedTag[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -202,18 +208,23 @@ export function AITagManagement() {
             .finally(() => setBusy(false));
         }}
       >
-        <Form.Item name="name" label="规范标签名称" rules={[{ required: true }]}>
+        <Form.Item name="name" label={t('aiAccessCanonicalTag')} rules={[{ required: true }]}>
           <Input maxLength={64} />
         </Form.Item>
-        <Form.Item name="aliases" label="别名" initialValue={[]}>
+        <Form.Item name="aliases" label={t('aiAccessAliases')} initialValue={[]}>
           <Select mode="tags" tokenSeparators={[',']} />
         </Form.Item>
         <Space>
-          <Button htmlType="submit" icon={<SaveOutlined />} aria-label="保存标签" loading={busy}>
-            保存标签
+          <Button
+            htmlType="submit"
+            icon={<SaveOutlined />}
+            aria-label={t('aiAccessSaveTag')}
+            loading={busy}
+          >
+            {t('aiAccessSaveTag')}
           </Button>
           <Button icon={<UndoOutlined />} onClick={() => form.resetFields()}>
-            清空
+            {t('aiAccessClear')}
           </Button>
         </Space>
       </Form>
@@ -221,12 +232,12 @@ export function AITagManagement() {
         rowKey="id"
         dataSource={tags}
         columns={[
-          { title: '规范名称', dataIndex: 'name' },
-          { title: '别名', render: (_, row: ManagedTag) => row.aliases.join(', ') },
+          { title: t('aiAccessCanonicalName'), dataIndex: 'name' },
+          { title: t('aiAccessAliases'), render: (_, row: ManagedTag) => row.aliases.join(', ') },
           {
-            title: '操作',
+            title: t('aiAccessActions'),
             render: (_, row: ManagedTag) => (
-              <Button onClick={() => form.setFieldsValue(row)}>编辑别名</Button>
+              <Button onClick={() => form.setFieldsValue(row)}>{t('aiAccessEditAliases')}</Button>
             ),
           },
         ]}
