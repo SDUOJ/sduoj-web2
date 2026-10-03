@@ -6,13 +6,13 @@
 
 ## 当前结论
 
-本轮已经完成仓库内可以独立完成的前端修复，并按批次验证、提交。当前没有发现新的 P0/P1 前端代码阻塞；仍有少量必须依赖后端契约、部署配置或真实业务环境才能关闭的项目，见“未关闭项目”。
+本轮已经完成多批修复，但清单尚未全部完成。当前没有确认的 P0；仍有 P1 代码回归、P1 真实业务验收缺口，以及 P2 性能、工具链和类型债务。此前“仓库内可以独立完成的前端修复已经全部完成”的表述不成立，以下待办表以当前代码复核结果为准。
 
 | 门禁 | 当前结果 | 边界 |
 | --- | --- | --- |
-| TypeScript | `YARN_IGNORE_ENGINES=1 yarn typecheck` 通过 | 当前本机 Node 为 20.20.2，`package.json` 要求 `>=24 <25`；需要 Node 24 CI 再验一次 |
-| 单元测试 | 81 个 suite、371 个测试全部通过 | 测试含 AI、路由、请求、表格、题目、提交、AutoLab 和认证边界；真实后端流程仍不由 mock 代替 |
-| ESLint | 0 errors，13 个 warning | 13 条均为 `react/no-unstable-nested-components`，来源是第三方表格/下拉组件要求的 render-prop 回调；本轮已清除所有 `exhaustive-deps` 和 `jsx-key` warning |
+| TypeScript | `YARN_IGNORE_ENGINES=1 yarn typecheck` 通过 | 当前本机 Node 为 22.22.0，`package.json` 和 `.nvmrc` 要求 Node 24；需要在 Node 24 且不忽略 engines 的 CI 再验一次 |
+| 单元测试 | 历史记录为 81 个 suite、371 个测试通过；最新全量复验出现 1 个超时失败 | `ExaminationWorkbench.test.tsx` 的单测存在时序不稳定；单独重跑本文件 5 个测试通过，但不能替代全量稳定性证据 |
+| ESLint | 0 errors，13 个 warning | 当前记录为 `react/no-unstable-nested-components`；这些 warning 是否都是第三方 render-prop 仍待 R-03 逐条核对，不能据此宣称所有组件都安全 |
 | 依赖审计 | 0 vulnerabilities，345 个包 | Yarn 仍提示 `path-to-regexp@8.4.0` resolution 与请求版本不一致，需要随依赖升级持续复核 |
 | 生产构建 | 通过，main entrypoint 约 3.91 MiB | Vditor、MathJax、Mermaid、Graphviz 等静态资源仍超出 webpack 建议体积 |
 | 开发构建 | 3001 端口全量冷启动编译通过，TypeScript 无错误 | webpack 仅保留 ESLint render-prop、资源体积和入口体积 3 组 warning |
@@ -40,20 +40,65 @@
 
 - 题单拍照流程记录并清理 timer、interval、MediaStream tracks，加入卸载/generation guard；真实上传 contract 仍需后端验收。
 - standalone exam 和移动考试布局去除全局固定宽度，题目、考试、竞赛和筛选布局增加移动断点。
-- 竞赛、题单、考试、提交评测、AutoLab 课程/考勤、外部作业下载和题目编辑器补齐 effect 依赖、竞态保护和失败状态。
+- 竞赛、题单、考试、提交评测、AutoLab 课程/考勤、外部作业下载和题目编辑器的主要路径补充了 effect 依赖、竞态保护和失败状态；共享表单与分页表格仍有 R-10 的隐式生命周期问题。
 - 修复 Problem/Objective/Subjective、汇总报表等组件在 render 阶段 setState 的问题；成绩汇总改为派生计算。
-- 清除所有列表缺失 key，修复可变数组 `push` 造成的状态引用污染。
+- 修复本轮发现的关键列表缺失 key 和可变数组 `push` 状态污染；历史 lint 基线仍需按 R-03 逐条复核。
 
 ### AI、国际化和可访问性
 
 - AI 工作区导航实现共享 navigation、规范 heading 和 canonical links；桌面恢复双栏，移动端单列。
 - AI 页面硬编码 `/v2` 改用 `UrlPrefix`；AI 导航在 Router 外部独立渲染时回退为普通链接，避免业务测试和嵌入场景崩溃。
-- Loading、LoadingData、ErrorBoundary、验证码、邮箱错误、主导航、语言选择、HTML lang、manifest 和键盘可操作链接补齐可访问性反馈。
+- Loading、LoadingData、ErrorBoundary、验证码、邮箱错误、主导航、语言选择、HTML lang、manifest 基础元数据和键盘可操作链接补齐了主要反馈；manifest 图标资源仍有 R-17 缺口。
 - `TableWithSelection` 正式支持 `useAllData`，兼容旧拼写 `uesAlldata`，调用点已迁移。
+
+## 当前剩余问题待办表
+
+状态只表示当前证据：`待修复` 需要改代码，`待验收` 需要真实环境或新增回归证据，`待决策` 需要产品或部署侧给出结论，`待迁移` 属于持续性的工程债务。每一项关闭时都应补充对应测试、运行日志或决策记录；通过 TypeScript、单元测试或生产构建本身不能关闭真实服务验收项。
+
+| 完成 | 编号 | 优先级 | 状态 | 待办事项 | 证据/范围 | 关闭条件 |
+| --- | --- | --- | --- | --- | --- | --- |
+| [ ] | R-01 | P1 | 待修复 | 修复公共测试点弹窗的重复请求循环，并补失败、卸载和重复点击保护。 | `src/Component/submission/publicCheckpoints/FormModal.tsx:19-43` 将 `load` 放入 `updData` 依赖，effect 会在请求结束后再次触发；当前没有对应回归测试。 | 请求在挂载时只发起一次；手动刷新只发起一次；成功、失败、卸载后都不会产生循环或更新已卸载组件。 |
+| [ ] | R-02 | P1 | 待修复 | 稳定 AutoTask 的触发组件身份，避免表单因父组件重渲染而重新挂载。 | `SummaryExport.tsx:17-22` 和 `SubjectiveReview.tsx:41-46` 把内联函数传给 `TriggerComponent`；`AutoTaskFramework.tsx:65,907` 将其当作 `React.ComponentType` 渲染。 | 改为稳定组件或稳定适配层；打开表单后父组件重渲染不会丢失输入、校验状态和草稿；补组件交互测试。 |
+| [ ] | R-03 | P1 | 待验收 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 当前审计把 13 条 warning 全部解释为 render-prop，但至少 R-02 属于传入 `ComponentType` 的真实组件身份风险；`config/lint-baseline.json` 仍记录大量历史 warning。 | 逐条列出 warning 的文件、规则、风险和处置；真实组件 warning 修复或有测试依据后，基线与文档数字一致。 |
+| [ ] | R-04 | P1 | 待验收 | 完成 standalone exam 的真实生命周期回归。 | 当前工作区没有对应 Java 后端 checkout，前端 mock 不能证明考试创建、开始、保存、重连、到时交卷和权限变化。 | 提供隔离服务、账号、fixture 和清理日志；覆盖上述场景，并保留可重复运行的 dev/CI 命令。 |
+| [ ] | R-05 | P1 | 待验收 | 完成上传、摄像头和 AutoLab 考勤的真实接口矩阵。 | 题单拍照、文件提交、签到/签退、座位和外部作业目前主要由 mock 或边界测试覆盖。 | 每个流程覆盖成功、失败、取消、重复提交、权限拒绝、超时和资源清理；真实 fixture 接入 dev 验收或 CI。 |
+| [ ] | R-06 | P1 | 待决策 | 处理“返回老版”入口。 | `src/Component/layout/MHeader.tsx:49-57` 仍显示按钮，但跳转到当前管理入口，没有已确认的旧版部署地址。 | 产品确认旧版 URL 并实现受控跳转，或移除按钮并提供迁移说明；补导航验收。 |
+| [ ] | R-07 | P2 | 待验收 | 在 Node 24 上重跑完整质量门禁并固定格式工具链。 | `package.json` 要求 Node `>=24 <25`，本机当前为 Node 22.22.0，历史复验还使用过 `YARN_IGNORE_ENGINES=1`；当前直接运行 `yarn format:check` 会因系统 `git` 触发 Xcode license 错误，格式门禁没有得到有效复验。 | Node 24 CI 通过 format、typecheck、lint、unit、build、audit；标准 runner 不依赖本机 Xcode license，并保存实际结果。 |
+| [ ] | R-08 | P2 | 待优化 | 拆分首屏和编辑器资源，建立真实性能预算。 | 生产入口约 3.91 MiB，Vditor、MathJax、Mermaid、Graphviz、ECharts、Lute 仍在大入口或关联资源中。 | 按路由/功能懒加载；记录桌面和移动网络的 gzip、LCP、首屏可交互时间；预算和实测结果达标。 |
+| [ ] | R-09 | P2 | 待迁移 | 收敛 API envelope、分页、认证、下载和 AI job/resource 的 `any` 类型。 | 当前生产源文件约 1,800 个 `any`（包含测试约 1,875 个），类型债务集中在 API 适配层和页面组件。 | 按业务域建立 DTO 和 adapter；每个域有类型检查与契约测试；迁移期间不得用不准确类型掩盖运行时差异。 |
+| [ ] | R-10 | P2 | 待修复 | 消除共享表单和分页表格的隐式生命周期。 | `ModalFormUseForm` 仍依赖约 100 ms 延迟初始化；`TableWithPagination` 的 effect 依赖被省略，刷新语义依赖 inline callback。 | 补多步骤异步表单和 API 替换/筛选恢复测试；改为显式 readiness、稳定查询输入和可取消请求。 |
+| [ ] | R-11 | P2 | 待验收 | 补齐 Markdown/HTML、下载和 WebSocket 协议边界的安全与兼容性 fixture。 | Vditor 负责 Markdown HTML 生成，下载和 WebSocket 仍依赖后端内容/协议；当前没有完整恶意标记、版本和超限矩阵。 | 固定恶意标记、超大 payload、错误内容类型、协议版本和断线重连 fixture；确认清理、拒绝和用户反馈。 |
+| [ ] | R-12 | P2 | 待验收 | 扩展真实浏览器回归覆盖管理、考试、竞赛、题单、上传和登出路径。 | 当前浏览器验收主要覆盖 404、登录深链和 mock 场景；本地后端不可用时仍有代理 console error/warning。 | 在隔离 dev 服务运行桌面/移动矩阵，控制 console 错误预算，并保存报告、截图和服务版本。 |
+| [ ] | R-13 | P2 | 待复核 | 复核 `path-to-regexp` resolution 与上游请求版本的长期兼容性。 | Yarn 提示 `8.4.0` resolution 与 ProLayout 声明版本不一致；当前 audit 无漏洞不等于兼容性已证明。 | 在 Node 24、生产构建和关键路由测试下确认实际解析版本；升级上游或记录有范围的固定策略。 |
+| [ ] | R-14 | P2 | 待处理 | 清理工作树中的发布配置改动，或明确其归属。 | 当前仍有 `.github/workflows/release.yml`、`docs/RELEASE_CI.md`、`.github/actionlint.yaml`、`scripts/deploy-production.sh` 未提交改动。 | 由所有者提交、拆分或丢弃这些改动；修复批次完成后 `git status` 只保留明确的用户工作。 |
+| [ ] | R-15 | P1 | 待验收 | 加强发布产物、部署 smoke 和回滚验证。 | 当前工作树删除了原 `release.yml`，新增的 `scripts/release-local.sh:103-135,129-136` 仍主要检查入口 HTML 和 `<div id="root"></div>`，未验证 JS chunk、深链 fallback、API/缓存头；发布流程是否生效也没有 CI 运行证据。 | 构建验证 manifest 中所有入口资源存在且 hash 匹配；部署前后覆盖 `/v2/`、登录深链、未知路由、runtime/main JS 和健康/API；保留带 release-id 的可恢复备份并演练 rollback。 |
+| [ ] | R-16 | P1 | 待修复 | 消除 AI ExaminationWorkbench 单测的时序/超时不稳定。 | 最近一次全量复验为 80 个 suite、371 个测试，其中 `src/Pages/Manage/AI/ExaminationWorkbench.test.tsx:165` 超时失败；单独重跑该文件 5 个测试通过，说明问题具有间歇性。 | 连续多次全量运行稳定通过；测试使用明确的异步等待、`act` 和轮询终止条件，不靠盲目增加 timeout；保留失败复现和修复前后日志。 |
+| [ ] | R-17 | P2 | 待修复 | 修正 PWA manifest 中不存在的图标资源。 | `public/manifest.json:5-19` 声明 `favicon.ico`、`logo192.png`、`logo512.png`，当前 public/build 实际只有 `sduoj.ico`、`logo.png`、`logo192.png`；至少两个 manifest URL 会 404。 | 修改 manifest 指向实际资源或补齐缺失文件；构建后逐个请求 manifest icons 均返回 200 且 Content-Type、尺寸符合声明。 |
+| [ ] | R-18 | P1 | 待验收 | 统一 Vditor 静态资源的生产 URL 前缀。 | `.env.production` 的 `FRONT_ORIGIN` 是站点根域名；`Editor.tsx:117,123`、`MarkdownPreview.ts:18-22`、`Md2export.tsx:22,28` 请求 `${FRONT_SERVER}/vditor`，而发布产物同步到 `/v2/vditor`，现有部署模板未证明根路径 `/vditor` 可用。 | 在真实 dev/production-like 环境请求根路径与 `/v2/` 路径的 JS、CSS、emoji、theme 资源；编辑器和 Markdown 预览无 404。若根路径没有 alias，则统一改为 `${PUBLIC_URL}/vditor` 或补受控 alias。 |
+| [ ] | R-19 | P2 | 待补门禁 | 将依赖安全审计纳入 CI/release 阻断条件。 | `.github/workflows/ci.yml:19-22` 只执行 `yarn quality`、build 和 E2E；`quality` 不含 `yarn audit`，当前手工 audit 通过不会阻止后续 PR 或发布。 | CI 产出带版本和锁文件的 audit 报告；超过允许基线的漏洞使 job 失败；release workflow 复用同一安全门禁。 |
+| [ ] | R-20 | P2 | 待验收 | 处理 Vditor 无 hash 静态资源的缓存一致性。 | `public/vditor/dist/**` 原样复制到产物，文件名无 content hash；部署脚本在 `/v2` 原位 `rsync --delete`，若反代对资源长缓存，发布后可能加载旧编辑器 runtime。 | 为 Vditor 资源提供版本化/hash URL，或明确 `/v2/vditor/**` 的 no-cache/短 TTL；发布后完成新旧缓存和回滚测试。 |
+| [ ] | R-21 | P1 | 待修复 | 保证发布备份和回滚不会丢失最后一个可用版本。 | 当前 `scripts/release-local.sh:168-206` 在更新前删除 `v2-backup` 再移动新备份，中断窗口可能留下无回滚副本。 | 使用同目录原子 rename 或保留带 release-id 的 last-good 备份；模拟 rsync/进程中断后仍能完成 rollback。 |
+| [ ] | R-22 | P2 | 待补门禁 | 固定 GitHub Actions 依赖并补 shell/action 静态检查。 | `ci.yml`、`release.yml` 使用浮动 `@v4` action；当前环境没有可用的 actionlint/shellcheck 复验。 | 关键 action 使用审计过的 commit SHA；CI 执行 actionlint、shellcheck，并保存结果。 |
+| [ ] | R-23 | P1 | 待验收 | 确认带 cookie API 的 CSRF 防护契约。 | `request.ts` 默认 `withCredentials=true`；多处管理 API 仍以 GET 执行 logout/invalidate/delete/apply/quit，前端没有 CSRF token/header。 | 后端提供 SameSite、Origin/Referer 或 CSRF token 的明确契约，并以跨站请求 fixture 验证；必要时把有副作用操作迁移为 POST/DELETE。 |
+| [ ] | R-24 | P2 | 待验收 | 为静态站点补 CSP、frame、referrer 和 permissions policy 等安全响应头。 | `public/index.html` 没有 CSP 等响应头声明；最终安全边界由反代配置决定，当前仓库没有验收证据。 | 在 production-like 反代中检查关键响应头和违规报告；确认编辑器、WebSocket、图片与 API 不因策略回归。 |
+| [ ] | R-25 | P1 | 待验收 | 验证无权限账号的后端管理 API 边界。 | `MLayout` 只按前端 roles 显示 403；现有 E2E 主要证明页面不挂载请求，不能证明直接调用 manage read/write/delete 会被拒绝。 | 用无权限 cookie 直接请求代表性读写删接口全部得到 401/403；角色过期或变更后前端清空权限并停止旧请求。 |
+| [ ] | R-26 | P1 | 待验收 | 防止同一构建产物在错误环境访问生产 API。 | `.env.production` 在构建期写入生产 API、前端和 WebSocket 域名；`SDUOJ_RELEASE_URL` 只改变 smoke URL，不改变已编译地址。 | staging/备用域名必须按环境生成 artifact 或注入受控 runtime config；smoke 断言 API/WS host 与当前环境一致。 |
+| [ ] | R-27 | P2 | 待整理 | 标注并同步历史审计文档中的过期基线。 | `docs/FRONTEND_AUDIT.md`、`docs/FRONTEND_FOLLOWUP.md` 仍写旧的 77/367、format 通过和 4.04 MiB；`docs/audit/DEPENDENCIES.json` 是历史公告基线，容易被误读为当前漏洞。 | 明确 historical/current 标签和日期；所有当前数字只引用本文件或最新复验；历史公告与当前 lockfile audit 分开展示。 |
+| [ ] | R-28 | P2 | 待修复 | 避免批量导入用户页面把明文密码长期渲染到 DOM。 | `src/Component/user/AutoImportUsers.tsx:144-158,258-263` 将 password 放入 display rows 并直接作为表格列渲染；失败/重置前仍保留在页面状态。 | 默认掩码或只显示校验状态；提交成功/失败和取消后立即清理；E2E 断言页面源码、快照和日志不含明文密码，传输仍强制 HTTPS。 |
+| [ ] | R-29 | P2 | 待修复 | 取消或自动校验写死的 hero 图片 hash preload。 | `public/index.html:19` 固定引用 `ban1news.76b1e974.jpg`；图片 hash 变化后可能产生无效 preload 或 404，构建没有检查该目标。 | 由构建模板注入当前资源，或在构建门禁中校验 preload 目标存在并在资源变更时失败。 |
+| [ ] | R-30 | P2 | 待修复 | 明确 Vditor 编辑器的 HTML sanitize 配置并补恶意标记回归。 | `MarkdownPreview.ts` 显式设置 `sanitize:true`，但 `Editor.tsx` 依赖 Vditor 默认值；上游默认变化可能放宽编辑器预览边界。 | 编辑器和预览都显式启用审计过的 sanitize；覆盖 `<script>`、`javascript:`、`data:`、SVG 和事件属性 fixture。 |
+| [ ] | R-31 | P2 | 待验收 | 建立前端生产错误可观测性。 | `ErrorBoundary` 只调用可选 `onError`，当前挂载点没有统一上报器；缺少 route chunk、window error 和 unhandledrejection 的脱敏关联信息。 | 提供带 release id、路由和错误类型的采样上报；不记录用户敏感数据；覆盖 ErrorBoundary、lazy chunk 和 API 网络失败。 |
+| [ ] | R-32 | P2 | 待修复 | 将错误边界 fallback 文本纳入国际化。 | `src/Utils/ErrorBoundary.tsx:36-40` 的标题、说明、重试和返回文本硬编码中文，英文环境会混入中文。 | 切换语言后全局和路由错误 fallback 随 locale 更新；按钮保留可访问名称和键盘操作。 |
+| [ ] | R-33 | P1 | 待修复 | 统一主观题附件下载 URL 的编码和权限边界。 | `src/Component/problemSet/SubjectivePreview.tsx:26-30` 手工拼接下载路径，`fileId` 未编码；含 `/`、`..`、`?` 或 `#` 的 ID 可能造成路径/查询混淆。 | 统一使用下载 helper；补恶意 fileId、鉴权失败和跨对象访问 fixture，确认服务端拒绝越权资源。 |
+| [ ] | R-34 | P2 | 待补门禁 | 为发布质量、构建、部署和回滚任务设置超时。 | 历史 `release.yml` 和当前发布说明没有为 production job 设置 `timeout-minutes`；自托管 runner 或 curl/rsync 卡住会长期占用发布并发。 | 每个 job 有按阶段设置的上限；挂起步骤自动失败并保留日志，且回滚路径仍可执行。 |
+| [ ] | R-35 | P2 | 待验收 | 补齐标记为未知或空对象的 API 契约。 | `src/Utils/API/c-api.ts:180-183` 标注 `publicQuestion` 正确性未知；`m-api.ts:128-140` 和 `src/Type/types.ts:110-118` 仍有 `{}`/TODO 参数或 judgeTemplate 类型。 | 为 endpoint 保存请求/响应 fixture 或真实后端测试；补 DTO，禁止用 `{}`/默认 `any` 掩盖字段差异。 |
+| [ ] | R-36 | P1 | 待修复 | 隔离并清理 AI 面试录音/屏幕片段的 IndexedDB 缓存。 | `interview-media.ts:16-95` 将 Blob 持久化到共享 origin；失败/离线条目可能跨登出和账号切换保留，媒体 URL 还手工拼接 ID。 | 按用户/资源绑定存储，登出、过期和账号切换清理；设置 TTL/容量上限或加密；验证 A 录制失败后登出、B 登录不可读取 A 片段，并统一媒体 URL 编码。 |
+| [ ] | R-37 | P2 | 待修复 | 收敛 AI 管理页的硬编码中文并补英文 locale 覆盖。 | `IntelligentManagement.tsx`、`AIAdmin.tsx`、`ExaminationWorkbench.tsx`、`InterviewSession.tsx` 等直接渲染状态、标题和错误文本，`en.json` 没有对应 key。 | 抽取双语资源；切换 English 的页面、表格、错误和空状态不出现未翻译中文；增加 locale smoke 断言。 |
+| [ ] | R-38 | P2 | 待迁移 | 合并重复的路由、菜单和移动端路由来源。 | `router.tsx`、`routerC.tsx`、`routerC_M` 和 `routerM.tsx` 分别维护路径、页面、移动路由和菜单；新增/下线入口需要多处同步，存在重复或注释残留。 | 建立单一 typed route tree 生成导航、菜单和 Switch；路径唯一性、组件映射和移动/桌面覆盖有自动测试。 |
 
 ## 未关闭项目
 
-这些项目需要真实后端、部署配置或专门性能工作，当前代码提交不能单方面关闭。
+以下详细说明与待办表对应；其中 R-01、R-02、R-03、R-10、R-13、R-16、R-17、R-19、R-22、R-27、R-28、R-29、R-30、R-32、R-33、R-34、R-35、R-36、R-37、R-38 可在当前前端仓库推进，R-04、R-05、R-06、R-07、R-08、R-11、R-12、R-15、R-18、R-20、R-21、R-23、R-24、R-25、R-26、R-31 需要服务、部署或专项验证，R-09 属于持续迁移，R-14 由改动所有者处理。
 
 ### A-19：首屏和编辑器资源体积
 
@@ -73,11 +118,21 @@
 
 ### Node 与格式门禁
 
-本机 Node 20 与仓库要求 Node 24 不一致，本轮所有本地命令使用 `YARN_IGNORE_ENGINES=1`。CI 应在 Node 24 重跑 typecheck、lint、单测、构建和 audit。格式脚本仍可能调用系统 `git` 并受 Xcode license 限制；CI 需验证标准工具链。
+本机 Node 22.22.0 与仓库要求 Node 24 不一致，本轮历史命令使用过 `YARN_IGNORE_ENGINES=1`。CI 应在 Node 24 重跑 typecheck、lint、单测、构建和 audit。格式脚本仍可能调用系统 `git` 并受 Xcode license 限制；CI 需验证标准工具链。
 
-### 类型债务与低风险 render-prop warning
+### 类型债务与 render-prop / nested-component warning
 
-源文件仍有约 1,685 个 `any`，API envelope、分页、认证、文件下载和 AI job/resource DTO 仍需逐域收敛。剩余 13 条 nested-component warning 都是表格、下拉或列表的 render-prop 回调；它们不再伴随 effect/key warning，但可以在后续把回调提取为稳定组件以减少 remount 风险。
+生产源文件仍有约 1,800 个 `any`（包含测试约 1,875 个），API envelope、分页、认证、文件下载和 AI job/resource DTO 仍需逐域收敛。剩余 warning 不能统一视为低风险 render-prop：`SummaryExport` 和 `SubjectiveReview` 的触发器被 `AutoTaskFramework` 当作组件类型渲染，至少应按 R-02 处理；其余 warning 需要按 R-03 逐条确认。
+
+### 发布、PWA 与静态资源
+
+发布 workflow 和脚本目前只验证入口 HTML，尚未验证每个 JS/CSS 资源、深链 fallback、健康接口和可恢复回滚。`manifest.json` 还引用了构建产物中不存在的图标。Vditor 资源的 URL 前缀、缓存策略和发布目录也没有形成同一契约：前端使用根域 `/vditor`，产物位于 `/v2/vditor`，文件名又没有 content hash。这些问题分别对应 R-15、R-17、R-18 和 R-20。
+
+### CI 安全与回归稳定性
+
+CI 的 `quality`、构建和 E2E 门禁没有包含依赖审计，手工得到的零漏洞结果不会阻断发布（R-19）。全量 Jest 最近出现 `ExaminationWorkbench` 超时，而单文件重跑通过，说明当前测试基线仍存在间歇性失败（R-16）。
+
+权限、环境和历史记录也存在验收边界：前端角色判断不能替代后端 401/403，构建期生产域名不能直接复用于 staging，旧审计文档的数字需要标明历史日期（R-25、R-26、R-27）。
 
 ## 提交和验证记录
 
@@ -100,7 +155,7 @@
 
 ```text
 YARN_IGNORE_ENGINES=1 yarn typecheck                         PASS
-YARN_IGNORE_ENGINES=1 yarn test --runInBand                 PASS: 81 suites / 371 tests
+YARN_IGNORE_ENGINES=1 yarn test --runInBand                 UNSTABLE: 80 suites / 371 tests, 1 timeout in ExaminationWorkbench (focused rerun passed)
 YARN_IGNORE_ENGINES=1 yarn lint                             PASS: 0 errors / 13 intentional warnings
 YARN_IGNORE_ENGINES=1 yarn audit --groups dependencies ...  PASS: 0 vulnerabilities
 YARN_IGNORE_ENGINES=1 yarn build                            PASS: main entrypoint 3.91 MiB
@@ -109,13 +164,14 @@ Playwright /v2/unknown                                      PASS: 404, 0 console
 Playwright protected deep link                             PASS: login `to` 保留 query/hash
 ```
 
+上述记录没有包含 `format:check`：当前环境直接执行该命令会在脚本调用系统 `git` 时被 Xcode license 错误中断，因此不能把格式门禁视为已通过；详见 R-07。
+
 ## 工作树说明
 
-修复提交均已提交。当前仍有以下用户已有改动，已刻意保留且没有加入修复 commit：
+修复提交均已提交。当前复核时仍有以下用户已有改动，已刻意保留且没有加入本次文档 commit：
 
-- `.github/workflows/release.yml`
-- `docs/RELEASE_CI.md`
-- `.github/actionlint.yaml`
-- `scripts/deploy-production.sh`
+- `.github/workflows/release.yml`：已删除
+- `docs/RELEASE_CI.md`：已修改
+- `scripts/release-local.sh`：未跟踪
 
-因此最终工作树不会显示为完全 clean；这些文件不是本轮生成，也没有被回滚或覆盖。后续合并前应由其所有者决定是否提交、拆分或丢弃。
+因此最终工作树不会显示为完全 clean；这些发布改动不是本次审计生成，也没有被回滚或覆盖。后续合并前应由其所有者决定提交、拆分或丢弃，并同步更新 R-15、R-21 和发布说明。
