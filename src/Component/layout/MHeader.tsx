@@ -46,15 +46,6 @@ class MHeader extends Component<any, any> {
           className="mheader-ops"
           style={{ display: 'flex', gap: isMobile ? 8 : 24, alignItems: 'center', flexShrink: 0 }}
         >
-          <Button
-            type="text"
-            onClick={() => {
-              this.props.history.replace(UrlPrefix + '/manage');
-              window.location.reload();
-            }}
-          >
-            {this.props.t('backToOldVersion', { defaultValue: '返回老版' })}
-          </Button>
           <ChangeLang />
           {this.props.isLogin ? (
             <UserAccountDropdown

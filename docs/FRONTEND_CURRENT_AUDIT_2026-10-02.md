@@ -62,7 +62,7 @@
 | [x] | R-03 | P1 | 已修复 | 重新核对 lint warning 基线，区分真正的 nested component 与第三方 render-prop。 | 重新导出后 11 条 nested-component warning 均位于表格、表单、下拉等 render callback 属性；R-02 的两个真实组件已提取稳定 adapter；`.eslintrc.cjs` 对该规则启用 `allowAsProps`，FormModal 依赖警告也已清除。`YARN_IGNORE_ENGINES=1 yarn lint`：0 errors/0 warnings。 | warning 分类、规则配置和当前输出一致；新增 warning 会使 lint 门禁失败。 |
 | [ ] | R-04 | P1 | 待验收 | 完成 standalone exam 的真实生命周期回归。 | 当前工作区没有对应 Java 后端 checkout，前端 mock 不能证明考试创建、开始、保存、重连、到时交卷和权限变化。 | 提供隔离服务、账号、fixture 和清理日志；覆盖上述场景，并保留可重复运行的 dev/CI 命令。 |
 | [ ] | R-05 | P1 | 待验收 | 完成上传、摄像头和 AutoLab 考勤的真实接口矩阵。 | 题单拍照、文件提交、签到/签退、座位和外部作业目前主要由 mock 或边界测试覆盖。 | 每个流程覆盖成功、失败、取消、重复提交、权限拒绝、超时和资源清理；真实 fixture 接入 dev 验收或 CI。 |
-| [ ] | R-06 | P1 | 待决策 | 处理“返回老版”入口。 | `src/Component/layout/MHeader.tsx:49-57` 仍显示按钮，但跳转到当前管理入口，没有已确认的旧版部署地址。 | 产品确认旧版 URL 并实现受控跳转，或移除按钮并提供迁移说明；补导航验收。 |
+| [x] | R-06 | P1 | 已修复 | 处理“返回老版”入口。 | 没有已确认的旧版部署地址；已从 `MHeader` 移除会跳转到当前管理入口的误导性按钮。`Logout.test.tsx`、typecheck 和 lint 通过。 | 管理端不再显示无法验证的旧版入口；若未来恢复旧版，必须提供受控 URL 和导航测试。 |
 | [ ] | R-07 | P2 | 待验收 | 在 Node 24 上重跑完整质量门禁并固定格式工具链。 | `package.json` 要求 Node `>=24 <25`，本机当前为 Node 22.22.0，历史复验还使用过 `YARN_IGNORE_ENGINES=1`；当前直接运行 `yarn format:check` 会因系统 `git` 触发 Xcode license 错误，格式门禁没有得到有效复验。 | Node 24 CI 通过 format、typecheck、lint、unit、build、audit；标准 runner 不依赖本机 Xcode license，并保存实际结果。 |
 | [ ] | R-08 | P2 | 待优化 | 拆分首屏和编辑器资源，建立真实性能预算。 | 生产入口约 3.91 MiB，Vditor、MathJax、Mermaid、Graphviz、ECharts、Lute 仍在大入口或关联资源中。 | 按路由/功能懒加载；记录桌面和移动网络的 gzip、LCP、首屏可交互时间；预算和实测结果达标。 |
 | [ ] | R-09 | P2 | 待迁移 | 收敛 API envelope、分页、认证、下载和 AI job/resource 的 `any` 类型。 | 当前生产源文件约 1,800 个 `any`（包含测试约 1,875 个），类型债务集中在 API 适配层和页面组件。 | 按业务域建立 DTO 和 adapter；每个域有类型检查与契约测试；迁移期间不得用不准确类型掩盖运行时差异。 |
