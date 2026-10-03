@@ -1,235 +1,232 @@
-import {AxiosRequestConfig} from "axios";
-import {Sex} from "./Iuser";
-import React from "react";
+import { AxiosRequestConfig } from 'axios';
+import { Sex } from './Iuser';
+import React from 'react';
 
 export interface Get {
-    <T = any>(url: string, params?: object, config?: AxiosRequestConfig): Promise<T>;
+  <T = any>(url: string, params?: object, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface Post {
-    <T = any>(url: string, data: object, config?: AxiosRequestConfig): Promise<T>
+  <T = any>(url: string, data: object, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface GetError {
-    (url: string, data?: object, config?: AxiosRequestConfig): void
+  (url: string, data?: object, config?: AxiosRequestConfig): void;
 }
 
 export enum rolesInString {
-    S = 'superadmin',
-    A = 'admin',
-    U = 'user'
+  S = 'superadmin',
+  A = 'admin',
+  U = 'user',
 }
 
 export interface query {
-    pageNow: number,
-    pageSize: number,
-    sortBy?: string
+  pageNow: number;
+  pageSize: number;
+  sortBy?: string;
 }
 
 export interface studentBasic {
-    username: string,
-    nickname?: string,
-    email?: string,
-    studentId?: number | string,
-    emailVerified?: boolean,
-    roles: rolesInString[],
-    features?: {
-        banThirdParty: any,
-        banEmailUpdate: any,
-        banInfoUpdate: any
-    }
+  username: string;
+  nickname?: string;
+  email?: string;
+  studentId?: number | string;
+  emailVerified?: boolean;
+  roles: rolesInString[];
+  features?: {
+    banThirdParty: any;
+    banEmailUpdate: any;
+    banInfoUpdate: any;
+  };
 }
 
 export interface functionTemplate {
-    judgeTemplateId: number,
-    isShowFunctionTemplate: number,
-    functionTemplate?: string,
-    initialTemplate?: string
+  judgeTemplateId: number;
+  isShowFunctionTemplate: number;
+  functionTemplate?: string;
+  initialTemplate?: string;
 }
 
 export interface problemBasic {
-    problemCode: string,
-    isPublic?: boolean,
-    problemTitle?: string,
-    source?: string,
-    languages?: string[],
-    memoryLimit?: string | number,
-    timeLimit?: string | number,
-    defaultDescriptionId?: number,
-    judgeTemplates?: number[],
-    managerGroups?: number[],
-    functionTemplates?: functionTemplate[]
+  problemCode: string;
+  isPublic?: boolean;
+  problemTitle?: string;
+  source?: string;
+  languages?: string[];
+  memoryLimit?: string | number;
+  timeLimit?: string | number;
+  defaultDescriptionId?: number;
+  judgeTemplates?: number[];
+  managerGroups?: number[];
+  functionTemplates?: functionTemplate[];
 }
 
 export interface problemDescription {
-    problemCode?: string,
-    id?: string | number
-    title?: string,
-    markdownDescription?: string
-    isPublic?: number
+  problemCode?: string;
+  id?: string | number;
+  title?: string;
+  markdownDescription?: string;
+  isPublic?: number;
 }
 
 export interface checkPointData {
-    input: string,
-    output: string,
-    mode: string
+  input: string;
+  output: string;
+  mode: string;
 }
 
 export interface multiCheckpointFileUpload {
-    files: any[],
-    mode: string
+  files: any[];
+  mode: string;
 }
 
 export interface modifyProblemsCheckPoint {
-    problemCode: string,
-    checkpoints: {
-        checkpointId: string | number,
-        checkpointScore: number
-    }[],
-    checkpointCases: string[]
+  problemCode: string;
+  checkpoints: {
+    checkpointId: string | number;
+    checkpointScore: number;
+  }[];
+  checkpointCases: string[];
 }
 
 export type problemListQuery = query & {
-    ascending?: boolean,
-    remoteOj?: any
-}
+  ascending?: boolean;
+  remoteOj?: any;
+};
 
 export type groupListQuery = query & {
-    title?: string
-}
+  title?: string;
+};
 
 export type userListQuery = query & {
-    username: string,
-    studentId?: number | string,
-    phone?: number | string,
-    email?: string,
-    sduld?: any,
-    searchKey?: string
-}
+  username: string;
+  studentId?: number | string;
+  phone?: number | string;
+  email?: string;
+  sduld?: any;
+  searchKey?: string;
+};
 
 export interface judgeTemplate {
-    type: number,
-    title: string,
-    shellScript: string,
-    zipFileId: number | string,
-    acceptFileExtensions: string[],
-    comment: string,
+  type: number;
+  title: string;
+  shellScript: string;
+  zipFileId: number | string;
+  acceptFileExtensions: string[];
+  comment: string;
 }
 
 export interface contestVisibility {
-    displayPeerSubmission: number,
-    displayRank: number,
-    displayJudgeScore: number,
-    displayCheckpointResult: number,
-    allowToSubmit: number,
+  displayPeerSubmission: number;
+  displayRank: number;
+  displayJudgeScore: number;
+  displayCheckpointResult: number;
+  allowToSubmit: number;
 }
 
 export interface contestFeatures {
-    mode: 'acm' | 'oi' | 'ioi',
-    openness: 'public' | 'protected' | 'private',
-    frozenTime: number,
-    contestRunning?: contestVisibility,
-    contestEnd?: contestVisibility,
+  mode: 'acm' | 'oi' | 'ioi';
+  openness: 'public' | 'protected' | 'private';
+  frozenTime: number;
+  contestRunning?: contestVisibility;
+  contestEnd?: contestVisibility;
 }
 
 export interface contestProblem {
-    problemCode: string,
-    problemTitle?: string,
-    problemDescriptionId?: number,
-    problemWeight?: number,
-    problemColor?: string,
-    submitNumber?: number,
+  problemCode: string;
+  problemTitle?: string;
+  problemDescriptionId?: number;
+  problemWeight?: number;
+  problemColor?: string;
+  submitNumber?: number;
 }
 
 /** Payload shared by the manage contest create, update and fork forms. */
 export interface contestManagePayload {
-    contestId?: number,
-    contestTitle: string,
-    isPublic: number,
-    password?: string,
-    gmtStart: number,
-    gmtEnd: number,
-    source?: string,
-    markdownDescription?: string,
-    features: contestFeatures,
-    participants?: string[],
-    unofficialParticipants?: string[],
-    groupId?: number,
-    participatingGroups?: number[],
-    problems: contestProblem[],
+  contestId?: number;
+  contestTitle: string;
+  isPublic: number;
+  password?: string;
+  gmtStart: number;
+  gmtEnd: number;
+  source?: string;
+  markdownDescription?: string;
+  features: contestFeatures;
+  participants?: string[];
+  unofficialParticipants?: string[];
+  groupId?: number;
+  participatingGroups?: number[];
+  problems: contestProblem[];
 }
 
 export interface contestComprehensiveExportParams {
-    contestId: number,
+  contestId: number;
 }
 
 export type loginInfo = {
-    username: string,
-    password: string
-}
+  username: string;
+  password: string;
+};
 
 export type registerInfo = {
-    username: string,
-    password: string,
-    email: string,
-    emailCode: string
-}
+  username: string;
+  password: string;
+  email: string;
+  emailCode: string;
+};
 
 export interface groupInfo {
-    openness: number,
-    title: string,
-    description: string,
-    markdown: string,
-    groupId?: number,
-    features?: {
-        isAbleQuit: boolean
-    }
+  openness: number;
+  title: string;
+  description: string;
+  markdown: string;
+  groupId?: number;
+  features?: {
+    isAbleQuit: boolean;
+  };
 }
 
 export type updateUserStates = {
-    groupId: number,
-    userIds: number[],
-    status: number
-}
+  groupId: number;
+  userIds: number[];
+  status: number;
+};
 
 export type forgetInfo = {
-    username: string,
-    email: string,
-    captchaId: string,
-    captcha: string
-}
+  username: string;
+  email: string;
+  captchaId: string;
+  captcha: string;
+};
 
 export type profileInfo = {
-    nickname: string,
-    phone: string,
-    gender: Sex,
-    studentId: number
-}
+  nickname: string;
+  phone: string;
+  gender: Sex;
+  studentId: number;
+};
 
-export type emailType = "login" | "register" | "thirdPartyRegisterOrBinding" | "updateEmail"
+export type emailType = 'login' | 'register' | 'thirdPartyRegisterOrBinding' | 'updateEmail';
 
 export type verificationEmail = {
-    email: string,
-    captcha: string,
-    captchaId: string,
-    event: emailType
-}
+  email: string;
+  captcha: string;
+  captchaId: string;
+  event: emailType;
+};
 
 export type updatePassWord = {
-    password: string,
-    newPassword: string
-}
+  password: string;
+  newPassword: string;
+};
 
-
-export type examID = string | number
-
+export type examID = string | number;
 
 export type ProblemID = {
-    pid: string
-}
-
+  pid: string;
+};
 
 export type thirdPartyLogin = {
-    thirdParty: string
-    ticket: string
-}
+  thirdParty: string;
+  ticket: string;
+};
