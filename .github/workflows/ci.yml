@@ -10,12 +10,16 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .nvmrc
       - run: npm install --global yarn@1.22.22
       - run: yarn install --frozen-lockfile
+      - name: Check workflow and shell contracts
+        run: |
+          node scripts/check-workflow-pins.cjs
+          bash -n scripts/*.sh
       - name: Audit production dependencies
         run: yarn audit --groups dependencies --level moderate --json > dependency-audit.json
       - run: yarn quality
@@ -23,7 +27,7 @@ jobs:
       - run: yarn bundle:check
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: frontend-test-results
