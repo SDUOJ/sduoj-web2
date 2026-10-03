@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import i18n from '../Config/i18n';
+import { reportError } from './errorReporter';
 
 type Props = {
   fallback?: ReactNode;
@@ -22,7 +23,11 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     this.props.onError && this.props.onError(error, info);
-    // 可在此处上报日志
+    reportError({
+      source: 'error-boundary',
+      error,
+      componentStack: info.componentStack ?? undefined,
+    });
   }
 
   componentDidUpdate(prevProps: Props) {

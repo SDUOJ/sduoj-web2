@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { UrlPrefix } from '../../Config/constValue';
 import { requestConstraintError } from '../../Config/validation/requests';
 import { loginRedirect } from '../authReturn';
+import { reportApiFailure } from '../errorReporter';
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api';
 
@@ -151,6 +152,9 @@ const dealResponse = async (resp: any, url: string) => {
     if (axios.isCancel(error) || error instanceof CanceledError) throw error;
 
     const response = (error as AxiosError)?.response;
+    if (response === undefined || Number(response.status) >= 500) {
+      reportApiFailure(error, url);
+    }
     if (response === undefined) {
       // respect silence list for network unreachable as well
       if (messageDisabledList.indexOf(url) === -1) message.error('服务器不可达');

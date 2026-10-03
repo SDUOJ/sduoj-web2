@@ -2,12 +2,15 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 
-import axios from "axios";
+import axios from 'axios';
 
 declare namespace NodeJS {
   interface ProcessEnv {
     readonly NODE_ENV: 'development' | 'production' | 'test';
     readonly PUBLIC_URL: string;
+    readonly REACT_APP_RELEASE_ID?: string;
+    readonly REACT_APP_GIT_SHA?: string;
+    readonly REACT_APP_ERROR_REPORT_SAMPLE_RATE?: string;
   }
 }
 
@@ -42,16 +45,16 @@ declare module '*.png' {
 }
 
 declare module '*.webp' {
-    const src: string;
-    export default src;
+  const src: string;
+  export default src;
 }
 
 declare module '*.svg' {
   import * as React from 'react';
 
-  export const ReactComponent: React.FunctionComponent<React.SVGProps<
-    SVGSVGElement
-  > & { title?: string }>;
+  export const ReactComponent: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & { title?: string }
+  >;
 
   const src: string;
   export default src;
@@ -73,11 +76,11 @@ declare module '*.module.sass' {
 }
 
 declare module 'axios' {
-    export interface CustomSuccessData<T = any> {
-        headers?: any;
-        code: number,
-        message: string,
-        timestamp?: string,
-        data?: T,
-    }
+  export interface CustomSuccessData<T = any> {
+    headers?: any;
+    code: number;
+    message: string;
+    timestamp?: string;
+    data?: T;
+  }
 }
