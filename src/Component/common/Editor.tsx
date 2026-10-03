@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { ConfigState } from '../../Type/IConfig';
-import apiAddress from '../../Utils/API/apiAddress';
 import cApi from '../../Utils/API/c-api';
 import { isValueEmpty } from '../../Utils/empty';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintError } from '../../Config/validation/constraints';
 import saveIcon from '../../Assert/img/save.svg';
 import { UserState } from '../../Type/Iuser';
+import { getVditorResourceUrls } from '../../Utils/vditorResources';
 
 export interface EditorProps {
   value?: string;
@@ -75,8 +75,6 @@ export const CopiedButton = (props: any) => {
   );
 };
 
-// Use unified front server host from apiAddress
-const host = apiAddress().FRONT_SERVER;
 export const Editor = (props: EditorProps & any) => {
   const [readyVersion, setReadyVersion] = useState(0);
   const [VditorConstructor, setVditorConstructor] = useState<typeof import('vditor').default>();
@@ -117,6 +115,7 @@ export const Editor = (props: EditorProps & any) => {
 
     const initialExternalValue = initialValueRef.current;
     lastExternalValueRef.current = initialExternalValue;
+    const { cdn, emojiPath, themePath } = getVditorResourceUrls();
     let vditor0: InstanceType<typeof VditorConstructor>;
     vditor0 = new VditorConstructor(editorElementRef.current, {
       height: props.height === undefined ? 800 : props.height,
@@ -125,16 +124,17 @@ export const Editor = (props: EditorProps & any) => {
       cache: cacheEnabled ? { enable: true, id: cacheId } : { enable: false },
       placeholder: t('editorPlaceholder'),
       lang: props.langCode,
-      cdn: host + '/vditor',
+      cdn,
       outline: {
         enable: false,
         position: 'left',
       },
       hint: {
-        emojiPath: host + '/vditor/dist/images/emoji',
+        emojiPath,
       },
       preview: {
         delay: 500,
+        theme: { current: 'light', path: themePath },
         hljs: {
           lineNumber: false,
         },

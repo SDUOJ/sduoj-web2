@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { ConfigState } from '../../Type/IConfig';
-import apiAddress from '../../Utils/API/apiAddress';
 import { isValueEmpty } from '../../Utils/empty';
 import { Button, Modal } from 'antd';
+import { getVditorResourceUrls } from '../../Utils/vditorResources';
 
 export const MD2export = (props: any) => {
   const [vis, setVis] = useState<boolean>(false);
@@ -26,21 +26,23 @@ export const MD2export = (props: any) => {
 
   const setEditor = useCallback(() => {
     if (!VditorConstructor) return undefined;
+    const { cdn, emojiPath, themePath } = getVditorResourceUrls();
     const vditor0 = new VditorConstructor(id ?? 'vditor-export', {
       height: height === undefined ? 800 : height,
       mode: 'ir',
       placeholder: '',
       lang: langCode,
-      cdn: apiAddress().FRONT_SERVER + '/vditor',
+      cdn,
       outline: {
         enable: true,
         position: 'left',
       },
       hint: {
-        emojiPath: apiAddress().FRONT_SERVER + '/vditor/dist/images/emoji',
+        emojiPath,
       },
       preview: {
         delay: 500,
+        theme: { current: 'light', path: themePath },
         hljs: {
           lineNumber: false,
         },

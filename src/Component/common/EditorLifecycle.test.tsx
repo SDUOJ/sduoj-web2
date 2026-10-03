@@ -169,6 +169,26 @@ it('enables markdown sanitization in the editor preview', async () => {
   expect(options[0].preview.markdown.sanitize).toBe(true);
 });
 
+it('uses PUBLIC_URL for editor and export runtime, emoji and theme resources', async () => {
+  const previousPublicUrl = process.env.PUBLIC_URL;
+  process.env.PUBLIC_URL = '/preview/sduoj/';
+  try {
+    render(<Editor langCode="en_US" value="draft" />);
+    const view = render(<MD2export value="answer" langCode="en_US" t={(key: string) => key} />);
+    fireEvent.click(view.getByRole('button', { name: 'markdownText' }));
+    await waitForEditor(2);
+
+    for (const config of options) {
+      expect(config.cdn).toBe('/preview/sduoj/vditor');
+      expect(config.hint.emojiPath).toBe('/preview/sduoj/vditor/dist/images/emoji');
+      expect(config.preview.theme.path).toBe('/preview/sduoj/vditor/dist/css/content-theme');
+    }
+  } finally {
+    if (previousPublicUrl === undefined) delete process.env.PUBLIC_URL;
+    else process.env.PUBLIC_URL = previousPublicUrl;
+  }
+});
+
 it('reports upload failures instead of leaving an unhandled promise', async () => {
   const { fileUpload } = jest.requireMock('../../Utils/fileUpload') as {
     fileUpload: jest.Mock;

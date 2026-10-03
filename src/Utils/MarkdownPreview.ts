@@ -1,10 +1,7 @@
 // 全局引入 markdown 预览所需样式（仅在预览工具中引入，避免全局污染）
 import 'vditor/dist/index.css';
 import { isValueEmpty } from './empty';
-import apiAddress from './API/apiAddress';
-
-// Use unified front server host from apiAddress
-const host = apiAddress().FRONT_SERVER;
+import { getVditorResourceUrls } from './vditorResources';
 
 export async function MarkdownPreview(code: string | null | undefined, id: string) {
   // Preview is used on demand by markdown-heavy views; keep the renderer out of
@@ -15,13 +12,14 @@ export async function MarkdownPreview(code: string | null | undefined, id: strin
   code = code?.replaceAll(/`{3}\n([-|0-9a-zA-Z])/g, '```plaintext\n$1');
   // 针对原本 $ 换行的公式，加以修正
   code = code?.replaceAll(/\$\n(.*)\n\$/g, '$ $1 $');
+  const { cdn, emojiPath, themePath } = getVditorResourceUrls();
   const config = {
     mode: 'both',
-    cdn: host + '/vditor',
-    emojiPath: host + '/vditor/dist/images/emoji',
+    cdn,
+    emojiPath,
     theme: {
       current: 'light',
-      path: host + '/vditor/dist/css/content-theme',
+      path: themePath,
     },
     hljs: {
       style: 'github',
