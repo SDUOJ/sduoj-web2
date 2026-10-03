@@ -48,7 +48,7 @@
 
 - AI 工作区导航实现共享 navigation、规范 heading 和 canonical links；桌面恢复双栏，移动端单列。
 - AI 页面硬编码 `/v2` 改用 `UrlPrefix`；AI 导航在 Router 外部独立渲染时回退为普通链接，避免业务测试和嵌入场景崩溃。
-- Loading、LoadingData、ErrorBoundary、验证码、邮箱错误、主导航、语言选择、HTML lang、manifest 基础元数据和键盘可操作链接补齐了主要反馈；manifest 图标资源仍有 R-17 缺口。
+- Loading、LoadingData、ErrorBoundary、验证码、邮箱错误、主导航、语言选择、HTML lang、manifest 基础元数据和键盘可操作链接补齐了主要反馈；manifest 图标资源已按 R-17 修复并由自动测试校验。
 - `TableWithSelection` 正式支持 `useAllData`，兼容旧拼写 `uesAlldata`，调用点已迁移。
 
 ## 当前剩余问题待办表
