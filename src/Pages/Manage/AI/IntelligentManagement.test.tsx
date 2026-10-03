@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import IntelligentManagement from './IntelligentManagement';
 import { managementAgent } from '../../../Utils/API/management-agent';
+import i18n from '../../../Config/i18n';
 jest.mock('../../../Utils/API/management-agent', () => ({
   managementAgent: {
     list: jest.fn(),
@@ -33,7 +34,8 @@ const session = {
   actions: [action],
   plan: [],
 };
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   jest.clearAllMocks();
   (managementAgent.list as jest.Mock).mockResolvedValue([session]);
   (managementAgent.presets as jest.Mock).mockResolvedValue([
@@ -57,4 +59,18 @@ it('allows refusal without executing or approving the operation', async () => {
   fireEvent.click(await screen.findByRole('button', { name: '继续会话' }));
   fireEvent.click(await screen.findByRole('button', { name: /拒\s*绝/ }));
   await waitFor(() => expect(managementAgent.decide).toHaveBeenCalledWith('s1', action, false));
+});
+
+it('localizes the management workspace in English', async () => {
+  await i18n.changeLanguage('en');
+  try {
+    const { unmount } = render(<IntelligentManagement />);
+    expect(await screen.findByText('Intelligent management')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search my sessions')).toBeInTheDocument();
+    expect(screen.getByText('New')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Session name' })).toBeInTheDocument();
+    unmount();
+  } finally {
+    await i18n.changeLanguage('zh');
+  }
 });

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -31,20 +32,21 @@ import {
 } from '../../../Utils/API/management-agent';
 import './intelligent-management.css';
 
-const labels: Record<string, string> = {
-  ready: '就绪',
-  running: '执行中',
-  approval: '等待确认',
-  disconnected: '已断开',
-  pending: '等待确认',
-  executing: '正在执行',
-  completed: '已完成',
-  rejected: '已拒绝',
-  failed: '失败 / 待核对',
-  expired: '已失效',
-  unknown: '结果待核对',
-};
 export default function IntelligentManagement() {
+  const { t } = useTranslation();
+  const labels: Record<string, string> = {
+    ready: t('aiMgmtStateReady'),
+    running: t('aiMgmtStateRunning'),
+    approval: t('aiMgmtStateApproval'),
+    disconnected: t('aiMgmtStateDisconnected'),
+    pending: t('aiMgmtStateApproval'),
+    executing: t('aiMgmtStateExecuting'),
+    completed: t('aiMgmtStateCompleted'),
+    rejected: t('aiMgmtStateRejected'),
+    failed: t('aiMgmtStateFailed'),
+    expired: t('aiMgmtStateExpired'),
+    unknown: t('aiMgmtStateUnknown'),
+  };
   const [rows, setRows] = useState<
     Array<Pick<AgentSession, 'id' | 'title' | 'state' | 'updated_at'>>
   >([]);
@@ -122,7 +124,7 @@ export default function IntelligentManagement() {
   return (
     <Card
       size="small"
-      title="智能管理"
+      title={t('aiMgmtTitle')}
       extra={
         <Space>
           {selected && (
@@ -135,11 +137,11 @@ export default function IntelligentManagement() {
                 void refresh();
               }}
             >
-              会话列表
+              {t('aiMgmtSessionList')}
             </Button>
           )}
           <Button
-            aria-label="刷新"
+            aria-label={t('aiMgmtRefresh')}
             icon={<ReloadOutlined />}
             onClick={() => void perform(refresh)}
           />
@@ -149,7 +151,7 @@ export default function IntelligentManagement() {
             disabled={busy}
             onClick={() => setCreating(true)}
           >
-            新建
+            {t('aiMgmtCreate')}
           </Button>
         </Space>
       }
@@ -160,7 +162,11 @@ export default function IntelligentManagement() {
       {!selected ? (
         <>
           <div className="management-search">
-            <Input.Search placeholder="搜索我的会话" allowClear onSearch={setKeyword} />
+            <Input.Search
+              placeholder={t('aiMgmtSearchPlaceholder')}
+              allowClear
+              onSearch={setKeyword}
+            />
           </div>
           <Table
             size="small"
@@ -168,14 +174,17 @@ export default function IntelligentManagement() {
             dataSource={rows.filter((row) => row.title.includes(keyword))}
             pagination={{ pageSize: 20 }}
             columns={[
-              { title: '会话名称', dataIndex: 'title' },
-              { title: '状态', render: (_, row) => <Tag>{labels[row.state] || row.state}</Tag> },
+              { title: t('aiMgmtSessionName'), dataIndex: 'title' },
               {
-                title: '更新时间',
+                title: t('aiMgmtStatus'),
+                render: (_, row) => <Tag>{labels[row.state] || row.state}</Tag>,
+              },
+              {
+                title: t('aiMgmtUpdatedAt'),
                 render: (_, row) => new Date(row.updated_at + 'Z').toLocaleString(),
               },
               {
-                title: '操作',
+                title: t('aiMgmtActions'),
                 render: (_, row) => (
                   <Button
                     type="link"
@@ -185,7 +194,7 @@ export default function IntelligentManagement() {
                       setMessage('');
                     }}
                   >
-                    继续会话
+                    {t('aiMgmtContinue')}
                   </Button>
                 ),
               },
@@ -197,7 +206,7 @@ export default function IntelligentManagement() {
           <aside>
             <List
               size="small"
-              header="我的会话"
+              header={t('aiMgmtMySessions')}
               dataSource={rows}
               renderItem={(row) => (
                 <List.Item>
@@ -229,7 +238,7 @@ export default function IntelligentManagement() {
               items={[
                 {
                   key: 'instructions',
-                  label: '预设说明与步骤',
+                  label: t('aiMgmtPresetSteps'),
                   children: (
                     <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
                       {session.instructions}
@@ -254,18 +263,19 @@ export default function IntelligentManagement() {
               />
             )}
             <div className="management-messages" aria-live="polite">
-              {!session.events.length && (
-                <Empty description="描述管理目标，Agent 将按预设步骤提出计划和操作。" />
-              )}
+              {!session.events.length && <Empty description={t('aiMgmtEmptyDescription')} />}
               {session.events.map((entry) => (
                 <Card
                   size="small"
                   key={entry.id}
                   className={`management-message management-message-${entry.kind}`}
                   title={
-                    { user: '我', assistant: 'Agent', error: '执行异常', system: '系统' }[
-                      entry.kind
-                    ] || entry.kind
+                    {
+                      user: t('aiMgmtRoleUser'),
+                      assistant: t('aiMgmtRoleAgent'),
+                      error: t('aiMgmtRoleError'),
+                      system: t('aiMgmtRoleSystem'),
+                    }[entry.kind] || entry.kind
                   }
                 >
                   <Typography.Paragraph style={{ whiteSpace: 'pre-wrap', marginBottom: 0 }}>
@@ -274,7 +284,7 @@ export default function IntelligentManagement() {
                 </Card>
               ))}
               {session.stream && (
-                <Card size="small" title="Agent">
+                <Card size="small" title={t('aiMgmtRoleAgent')}>
                   <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
                     {session.stream}
                   </Typography.Paragraph>
@@ -289,7 +299,9 @@ export default function IntelligentManagement() {
                       <Tag color={action.status === 'pending' ? 'warning' : undefined}>
                         {labels[action.status]}
                       </Tag>
-                      {action.action.method === 'GET' ? '读取数据' : '提交操作'}
+                      {action.action.method === 'GET'
+                        ? t('aiMgmtReadData')
+                        : t('aiMgmtSubmitAction')}
                     </Space>
                   }
                 >
@@ -303,7 +315,7 @@ export default function IntelligentManagement() {
                   {action.status === 'pending' && (
                     <Space>
                       <Button type="primary" disabled={busy} onClick={() => setApproval(action)}>
-                        审阅并确认
+                        {t('aiMgmtReviewConfirm')}
                       </Button>
                       <Button
                         disabled={busy}
@@ -314,7 +326,7 @@ export default function IntelligentManagement() {
                           })
                         }
                       >
-                        拒绝
+                        {t('aiMgmtReject')}
                       </Button>
                     </Space>
                   )}
@@ -324,7 +336,7 @@ export default function IntelligentManagement() {
                       items={[
                         {
                           key: 'result',
-                          label: '执行结果',
+                          label: t('aiMgmtExecutionResult'),
                           children: (
                             <pre className="management-parameters">
                               {JSON.stringify(action.result, null, 2)}
@@ -341,7 +353,7 @@ export default function IntelligentManagement() {
               rows={4}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="描述管理目标或继续补充要求；聊天中的同意不会代替操作确认"
+              placeholder={t('aiMgmtMessagePlaceholder')}
               disabled={busy}
             />
             <Space>
@@ -358,7 +370,7 @@ export default function IntelligentManagement() {
                   })
                 }
               >
-                发送
+                {t('aiMgmtSend')}
               </Button>
               {running && (
                 <Button
@@ -371,7 +383,7 @@ export default function IntelligentManagement() {
                     })
                   }
                 >
-                  停止
+                  {t('aiMgmtStop')}
                 </Button>
               )}
             </Space>
@@ -381,11 +393,11 @@ export default function IntelligentManagement() {
         <Card loading />
       )}
       <Modal
-        title="新建会话"
+        title={t('aiMgmtCreateSession')}
         open={creating}
         confirmLoading={busy}
-        okText="新建"
-        cancelText="取消"
+        okText={t('aiMgmtCreate')}
+        cancelText={t('aiMgmtCancel')}
         onCancel={() => setCreating(false)}
         onOk={() =>
           void form
@@ -409,27 +421,31 @@ export default function IntelligentManagement() {
         >
           <Form.Item
             name="title"
-            label="会话名称"
+            label={t('aiMgmtSessionName')}
             rules={[{ required: true, whitespace: true, max: 100 }]}
           >
             <Input maxLength={100} />
           </Form.Item>
-          <Form.Item name="preset" label="预设流程" rules={[{ required: true }]}>
+          <Form.Item name="preset" label={t('aiMgmtPreset')} rules={[{ required: true }]}>
             <Select options={presets.map((item) => ({ value: item.id, label: item.title }))} />
           </Form.Item>
           <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
             {presets.find((item) => item.id === preset)?.instructions}
           </Typography.Paragraph>
-          <Form.Item name="instructions" label="补充说明" rules={[{ max: 12000 }]}>
+          <Form.Item
+            name="instructions"
+            label={t('aiMgmtAdditionalInstructions')}
+            rules={[{ max: 12000 }]}
+          >
             <Input.TextArea rows={4} maxLength={12000} />
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title="确认执行本次操作"
+        title={t('aiMgmtConfirmTitle')}
         open={Boolean(approval)}
-        okText="确认执行"
-        cancelText="返回检查"
+        okText={t('aiMgmtConfirm')}
+        cancelText={t('aiMgmtBackToReview')}
         confirmLoading={busy}
         onCancel={() => setApproval(undefined)}
         onOk={() => {
@@ -444,8 +460,8 @@ export default function IntelligentManagement() {
         <Alert
           showIcon
           type="warning"
-          message="将使用你当前的管理员登录身份执行以下操作"
-          description="本次确认仅对下方操作和参数有效，后续操作仍需逐项确认。"
+          message={t('aiMgmtConfirmMessage')}
+          description={t('aiMgmtConfirmDescription')}
         />
         <Typography.Paragraph>{approval?.action.reason}</Typography.Paragraph>
         <Typography.Text code>
