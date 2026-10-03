@@ -1,4 +1,7 @@
-# Frontend Follow-up, 2026-09-06
+# Frontend Follow-up, 2026-09-06 (historical)
+
+This is a historical verification snapshot. For the current status and latest
+quality numbers, use [FRONTEND_CURRENT_AUDIT_2026-10-02.md](FRONTEND_CURRENT_AUDIT_2026-10-02.md).
 
 For the subsequent multi-agent scan and current issue status, see
 [FRONTEND_AUDIT.md](FRONTEND_AUDIT.md).

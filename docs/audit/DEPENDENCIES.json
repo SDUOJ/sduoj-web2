@@ -2,7 +2,7 @@
   "auditedAt": "2026-09-05T14:17:50.271Z",
   "baseline": "fced08d",
   "source": "yarn audit --json; npm advisory service",
-  "note": "Path occurrences are not independent vulnerabilities. Dependency declaration does not prove browser reachability. No exploit was established by this package inventory.",
+  "note": "Historical snapshot from 2026-09-05. Path occurrences are not independent vulnerabilities. Dependency declaration does not prove browser reachability. No exploit was established by this package inventory. Use the current audit document and lockfile audit for present status.",
   "reportedOccurrences": {
     "info": 0,
     "low": 51,
