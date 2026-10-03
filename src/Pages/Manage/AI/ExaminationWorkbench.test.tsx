@@ -88,7 +88,10 @@ beforeEach(() => {
 async function selectExam(label: string) {
   fireEvent.click((await screen.findAllByRole('button', { name: '查看' }))[0]);
   await waitFor(
-    () => expect(screen.getByRole('heading', { name: /期末实验考试|正式考试|已发布考试/ })).toBeVisible(),
+    () =>
+      expect(
+        screen.getByRole('heading', { name: /期末实验考试|正式考试|已发布考试/ }),
+      ).toBeVisible(),
     { timeout: 10000 },
   );
 }

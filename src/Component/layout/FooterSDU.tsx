@@ -11,7 +11,7 @@ import { sanitizeHtml } from '../../Utils/sanitizeHtml';
 const { Footer } = Layout;
 
 const FooterSDU = (props: any) => {
-  const {copyRight, setCopyRight} = props;
+  const { copyRight, setCopyRight } = props;
   useEffect(() => {
     if (typeof copyRight !== 'string' || copyRight.length === 0) {
       cApi

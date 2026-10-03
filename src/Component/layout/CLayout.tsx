@@ -26,22 +26,26 @@ export default function CLayout() {
   return (
     <>
       <LoginCheck />
-      {authStatus === 'unknown' && pathname !== UrlPrefix + '/login' ? <Loading /> : <Layout className="client-layout">
-        <CHeader />
-        <Layout.Content className="client-content">
-          <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
-            <Suspense fallback={<Loading />}>
-              <Switch>
-                {routerC.map(({ id, path, exact, component }) => (
-                  <Route key={id} path={path} exact={exact} component={component} />
-                ))}
-                <Route component={NotFound} />
-              </Switch>
-            </Suspense>
-          </div>
-        </Layout.Content>
-        <FooterSDU />
-      </Layout>}
+      {authStatus === 'unknown' && pathname !== UrlPrefix + '/login' ? (
+        <Loading />
+      ) : (
+        <Layout className="client-layout">
+          <CHeader />
+          <Layout.Content className="client-content">
+            <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
+              <Suspense fallback={<Loading />}>
+                <Switch>
+                  {routerC.map(({ id, path, exact, component }) => (
+                    <Route key={id} path={path} exact={exact} component={component} />
+                  ))}
+                  <Route component={NotFound} />
+                </Switch>
+              </Suspense>
+            </div>
+          </Layout.Content>
+          <FooterSDU />
+        </Layout>
+      )}
     </>
   );
 }

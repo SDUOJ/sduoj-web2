@@ -11,7 +11,7 @@ import { Button, Modal } from 'antd';
 export const MD2export = (props: any) => {
   const [vis, setVis] = useState<boolean>(false);
   const editorRef = useRef<Vditor>();
-  const {height, id, langCode, value} = props;
+  const { height, id, langCode, value } = props;
 
   const setEditor = useCallback(() => {
     const vditor0 = new Vditor(id ?? 'vditor-export', {

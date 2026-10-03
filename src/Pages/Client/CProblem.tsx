@@ -68,8 +68,12 @@ class CProblem extends Component<any, any> {
                             >
                               {text}
                             </Button>
-                            {this.state.ACList.indexOf(row.problemCode) !== -1 && <CheckOutlined style={{ color: 'green' }} />}
-                            {row.isPublic === 0 && <Tag color={'orange'}>{this.props.t('private')}</Tag>}
+                            {this.state.ACList.indexOf(row.problemCode) !== -1 && (
+                              <CheckOutlined style={{ color: 'green' }} />
+                            )}
+                            {row.isPublic === 0 && (
+                              <Tag color={'orange'}>{this.props.t('private')}</Tag>
+                            )}
                           </Space>
                         </>
                       );

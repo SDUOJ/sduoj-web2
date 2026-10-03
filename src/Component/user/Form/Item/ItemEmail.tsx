@@ -85,7 +85,9 @@ const ItemEmail = (props: ItemEmailProps & any) => {
                   setModalVis(false);
                 })
                 .catch(() => {
-                  message.error(props.t('sendVerificationFailed', {defaultValue: '验证码发送失败，请重试'}));
+                  message.error(
+                    props.t('sendVerificationFailed', { defaultValue: '验证码发送失败，请重试' }),
+                  );
                 })
                 .finally(() => {
                   pending.current = false;

@@ -1,492 +1,492 @@
 /* antd v5 uses CSS-in-JS; global reset is imported in index.tsx */
 /* ProComponents v5 合并为 @ant-design/pro-components，且 antd v5 使用 CSS-in-JS，无需单独引入这些 CSS */
 
-
 .logo {
-    height: 32px;
-    margin: 16px 16px 16px 35px;
-
+  height: 32px;
+  margin: 16px 16px 16px 35px;
 }
 
 .site-layout-sub-header-background {
-    background: #fff;
+  background: #fff;
 }
 
 .site-layout-background {
-    background: #fff;
+  background: #fff;
 }
 
-#root, body, html {
-    height: 100%;
+#root,
+body,
+html {
+  height: 100%;
 }
 
 .steps-content {
-    margin-top: 16px;
-    text-align: center;
-    background-color: #fafafa;
-    border: 1px dashed #e9e9e9;
-    border-radius: 2px;
+  margin-top: 16px;
+  text-align: center;
+  background-color: #fafafa;
+  border: 1px dashed #e9e9e9;
+  border-radius: 2px;
 }
 
 .steps-content-pending {
-    padding-left: 40px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    overflow: hidden;
+  padding-left: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  overflow: hidden;
 }
 
 .steps-content-compile {
-    padding: 30px;
-    text-align: left;
-    min-height: 600px;
+  padding: 30px;
+  text-align: left;
+  min-height: 600px;
 }
 
 .steps-content-compile-spin {
-    min-height: 100px;
+  min-height: 100px;
 }
 
-.test-case, .test-case-e {
-    margin-top: 6px;
-    padding-left: 10px;
-    padding-bottom: 10px;
+.test-case,
+.test-case-e {
+  margin-top: 6px;
+  padding-left: 10px;
+  padding-bottom: 10px;
 }
 
 .test-case .ant-tag {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 .test-case-e .ant-tag {
-    padding-top: 3px;
-    text-align: left;
-    font-size: 15px;
-    min-width: 130px;
-    min-height: 30px;
+  padding-top: 3px;
+  text-align: left;
+  font-size: 15px;
+  min-width: 130px;
+  min-height: 30px;
 }
 
 .steps-content-evaluation {
-    overflow: hidden;
-    text-align: left;
-    padding-left: 20px;
-    padding-top: 10px;
+  overflow: hidden;
+  text-align: left;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 
 .steps-content-summary {
-    padding-left: 20px;
-    padding-top: 10px;
-    padding-right: 20px;
-    overflow: hidden;
-    text-align: left;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-right: 20px;
+  overflow: hidden;
+  text-align: left;
 }
 
 .steps-content-summary .card {
-    padding-bottom: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+  padding-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .Progress-set {
-    display: inline-grid;
-    text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-    width: auto;
+  display: inline-grid;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: auto;
 }
 
 .card .ant-card-body {
-    text-align: center;
+  text-align: center;
 }
 
 /* 全局 .ant-card-bordered 边框改由 theme.components.Card.colorBorderSecondary 控制 */
 
 .ant-layout-header {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid #f0f0f0;
 }
 
-
 .ant-layout {
-    background: #ffffff;
+  background: #ffffff;
 }
 
 .ant-layout-footer {
-    padding: 50px 50px 24px;
-    background: #ffffff;
+  padding: 50px 50px 24px;
+  background: #ffffff;
 }
 
 .Progress-set-Statistic {
-    text-align: center;
+  text-align: center;
 }
 
 .Progress-set-Statistic-cell {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .tag-simple {
-    line-height: 1.4;
-    margin-right: 0;
+  line-height: 1.4;
+  margin-right: 0;
 }
 
 .TestCase-text {
-    text-align: left;
+  text-align: left;
 }
 
 h3.TestCase-text {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 h4.TestCase-text {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 h5.TestCase-text {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .JudgeResult-tab .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab {
-    padding: 0 8px;
-    margin-top: 4px;
+  padding: 0 8px;
+  margin-top: 4px;
 }
 
 .Problem-card .ant-card-body {
-    padding-top: 0;
-    height: 100%;
+  padding-top: 0;
+  height: 100%;
 }
 
 .Problem-card {
-    height: 100%;
+  height: 100%;
 }
 
 .Database-list-card .ant-card-body {
-    padding: 0;
+  padding: 0;
 }
 
 .Database-list-card .ant-tree .ant-tree-treenode {
-    padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 .Progress-set .ant-progress-circle .ant-progress-text {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 .Timer .ant-statistic-title {
-    color: #282c34;
-    font-size: 20px;
+  color: #282c34;
+  font-size: 20px;
 }
 
 .Timer .ant-statistic-content-value {
-    color: #e10000;
-    font-size: 17px;
+  color: #e10000;
+  font-size: 17px;
 }
 
 .contestTimer .ant-statistic-content {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .contestHeaderTimer .ant-statistic-content {
-    font-size: 14px;
-    color: blue;
+  font-size: 14px;
+  color: blue;
 }
 
 .Timer .ant-card {
-    /*max-width: 350px;*/
-    margin: 0 auto;
-    text-align: center;
+  /*max-width: 350px;*/
+  margin: 0 auto;
+  text-align: center;
 }
 
 .Ewait .Ewait-content {
-    width: 550px;
-    margin: 0 auto;
-    margin-inline-end: auto !important;
+  width: 550px;
+  margin: 0 auto;
+  margin-inline-end: auto !important;
 }
 
-
-.ProTag .ant-badge-count, .ant-badge-dot, .ant-badge .ant-scroll-number-custom-component {
-    right: 10px;
+.ProTag .ant-badge-count,
+.ant-badge-dot,
+.ant-badge .ant-scroll-number-custom-component {
+  right: 10px;
 }
 
 .ProTag {
-    float: left;
+  float: left;
 }
 
 .ProTag .ant-tag {
-    text-align: center;
-    min-width: 30px;
-    font-size: 15px;
+  text-align: center;
+  min-width: 30px;
+  font-size: 15px;
 }
 
 .ProTag-active {
-    border: 4px #40a9ff;
+  border: 4px #40a9ff;
 }
 
 .ExamAnswerSheet {
-    width: 100%;
-    margin: 20px auto 0;
+  width: 100%;
+  margin: 20px auto 0;
 }
 
 .ExamAnswerSheet .ant-card-meta-title {
-    text-align: center;
-    font-size: 20px;
+  text-align: center;
+  font-size: 20px;
 }
 
 .ProTagGroup .ant-card-meta-title {
-    text-align: left;
-    font-size: 16px;
+  text-align: left;
+  font-size: 16px;
 }
 
 .ProTagGroup {
-    margin-top: 10px;
-    margin-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .ProTagGroup .ant-card-body {
-    padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 .Problem {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    -ms-user-select: none;
-    min-width: 600px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -ms-user-select: none;
+  min-width: 600px;
 }
 
 .Problem .ant-card-head {
-    background: #f7f7f7;
-    font-size: 17px;
+  background: #f7f7f7;
+  font-size: 17px;
 }
 
-
 .Choice .ant-card-head {
-    border-bottom: 0;
-    font-size: 17px;
-    margin-left: 25px;
-    background: none;
+  border-bottom: 0;
+  font-size: 17px;
+  margin-left: 25px;
+  background: none;
 }
 
 .Choice-title {
-    margin-left: 20px;
-    margin-bottom: 20px;
-    font-size: 17px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  font-size: 17px;
 }
 
 .Choice-pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .preAutoLine {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .mgb0 {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
-
 .ExamPageCtrl {
-    margin-top: 20px;
-    text-align: center;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .ExamPageCtrl-Number {
-    margin-left: 40px;
-    margin-right: 40px;
-    font-size: 16px;
+  margin-left: 40px;
+  margin-right: 40px;
+  font-size: 16px;
 }
 
 .ExamRun {
-    margin: clamp(8px, 3vw, 50px);
-    min-width: 0;
-    width: 100%;
+  margin: clamp(8px, 3vw, 50px);
+  min-width: 0;
+  width: 100%;
 }
 
 .ExamRun-ExamAnswerSheet .Timer .Timer-inline-card {
-    width: 100%;
+  width: 100%;
 }
 
 .ExamRun-ExamAnswerSheet {
-    margin-left: 0;
+  margin-left: 0;
 }
 
-
 .Timer-inline-card .ant-card-body {
-    padding: 5px;
+  padding: 5px;
 }
 
 .Timer-inline {
-    font-size: 16px;
-    margin-top: 6px;
+  font-size: 16px;
+  margin-top: 6px;
 }
 
 .exam-container {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
 }
 
 .exam-content {
-    width: 100%;
-    flex: 1 0 auto;
+  width: 100%;
+  flex: 1 0 auto;
 }
 
 .Problem-Program .ant-card-head {
-    background: white;
-    font-weight: bold;
-    font-size: 22px;
+  background: white;
+  font-weight: bold;
+  font-size: 22px;
 }
 
 .exam-wait-tip .ant-card-meta-description {
-    color: black;
-    text-align: left;
+  color: black;
+  text-align: left;
 }
 
 .exam-wait-tip .ant-list-items {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .exam-wait-tip .ant-card-meta-title {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .exam-wait-card {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .exam-wait-card .ant-card-meta-title {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .page-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .row-dragging {
-    background: #fafafa;
-    border: 1px solid #ccc;
-    z-index: 1001;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  z-index: 1001;
 }
 
 .row-dragging td {
-    padding: 16px;
+  padding: 16px;
 }
 
 .row-dragging .drag-visible {
-    visibility: visible;
+  visibility: visible;
 }
 
 .exam-form .ant-modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    width: min(1100px, calc(100vw - 24px));
-    min-width: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: min(1100px, calc(100vw - 24px));
+  min-width: 0;
 }
 
 .exam-form-preview .ant-card-meta-title {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .ant-form-item-control-input .ant-checkbox-group-item {
-    float: left;
-    margin-left: 10px;
+  float: left;
+  margin-left: 10px;
 }
 
 .exam-form-card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 58px;
-    text-align: right;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  text-align: right;
 }
 
 .exam-card-img {
-    position: absolute;
-    top: 21px;
-    right: 20px;
+  position: absolute;
+  top: 21px;
+  right: 20px;
 }
 
 .ant-form-item-explain {
-    text-align: left;
+  text-align: left;
 }
 
 .center {
-    text-align: center;
-    margin: 0 auto;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .nowPro {
-    position: relative;
-    bottom: 28px;
-    height: 22px;
-    width: 30px;
-    border: 2px solid red;
+  position: relative;
+  bottom: 28px;
+  height: 22px;
+  width: 30px;
+  border: 2px solid red;
 }
 
 .tag-div {
-    height: 22px;
+  height: 22px;
 }
 
 .Problem {
-    max-width: 1400px;
+  max-width: 1400px;
 }
 
 .ExamRun-ExamAnswerSheet .Recent-submission {
-    min-width: 0;
-    width: 100%;
-    margin: 20px auto 0;
+  min-width: 0;
+  width: 100%;
+  margin: 20px auto 0;
 }
 
 .Recent-submission {
-    width: 100%;
-    max-width: 1200px;
-    min-width: 0;
-    margin-top: 30px;
+  width: 100%;
+  max-width: 1200px;
+  min-width: 0;
+  margin-top: 30px;
 }
 
-.SyntaxHighlighter-Copy .ant-typography-expand, .ant-typography-edit, .ant-typography-copy {
-    color: white;
+.SyntaxHighlighter-Copy .ant-typography-expand,
+.ant-typography-edit,
+.ant-typography-copy {
+  color: white;
 }
 
 .SyntaxHighlighter-Copy {
-    position: relative;
-    float: right;
-    right: 50px;
-    top: 10px;
-    width: 50px;
-    margin: 0;
-    font-size: 18px;
+  position: relative;
+  float: right;
+  right: 50px;
+  top: 10px;
+  width: 50px;
+  margin: 0;
+  font-size: 18px;
 }
 
 .Badge-Tooltip-Program {
-    background-color: red;
-    color: white;
-    border-radius: 20px;
-    padding: 1px 3px;
+  background-color: red;
+  color: white;
+  border-radius: 20px;
+  padding: 1px 3px;
 }
 
 .Processing-SyncJudging {
-    position: relative;
-    top: -62px;
-    left: 85%;
+  position: relative;
+  top: -62px;
+  left: 85%;
 }
 
 .CodeMirror {
-    min-height: 500px;
+  min-height: 500px;
 }
 
 .ProblemAddChecker .CodeMirror {
-    min-height: 200px;
+  min-height: 200px;
 }
 
-.JudgeTemplateCodeEditor .CodeMirror{
-    min-height: 100px;
+.JudgeTemplateCodeEditor .CodeMirror {
+  min-height: 100px;
 }
 
 /* .ant-message z-index 由 theme.token.zIndexPopupBase 控制 */
@@ -494,134 +494,133 @@ h5.TestCase-text {
 /* 已移除对 .ant-card-extra 的深层结构覆盖；请在具体 <Card extra> 内容中使用内联样式或 headStyle 控制间距 */
 
 .problemBody .ant-card-body {
-    padding-top: 0;
+  padding-top: 0;
 }
 
 .smallBodyPaddingTop .ant-card-body {
-    padding-top: 1px;
-    padding-bottom: 10px;
+  padding-top: 1px;
+  padding-bottom: 10px;
 }
 
 .smallBodyPadding .ant-card-body {
-    padding: 5px;
+  padding: 5px;
 }
 
 .zeroBodyPadding .ant-card-body {
-    padding: 0;
+  padding: 0;
 }
 
 .zeroBodyPaddingLeft .ant-card-body {
-    padding: 5px 15px 30px 0;
+  padding: 5px 15px 30px 0;
 }
 
 .ListPage .ant-list-item {
-    padding-top: 0;
-    padding-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .ListPage .ant-form-item {
-    margin-top: 5px;
-    margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .GroupPage .ant-form-item {
-    margin-top: 16px;
-    margin-bottom: 10px;
+  margin-top: 16px;
+  margin-bottom: 10px;
 }
 
 .ListPage .ant-list-item-meta-title {
-    font-size: 17px;
-    margin-top: 10px;
-    margin-bottom: 0;
-    margin-left: 15px;
+  font-size: 17px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  margin-left: 15px;
 }
 
 .ListPage .ant-list-item-meta-description {
-    font-size: 15px;
-    margin-top: 10px;
-    margin-left: 15px;
+  font-size: 15px;
+  margin-top: 10px;
+  margin-left: 15px;
 }
 
 .ListPage .ant-list-item-meta {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .bodyCenter .ant-card-body {
-    text-align: center;
+  text-align: center;
 }
 
 .circle {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 1px solid #000;
-    display: inline-block;
-    vertical-align: middle;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Keep wide tables inside their column without clipping access to later columns. */
 .ant-table-wrapper {
-    min-width: 0;
-    max-width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .ant-table-wrapper .ant-table-content {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 .table-title-button.ant-btn {
-    max-width: 100%;
-    height: auto;
-    white-space: normal;
-    text-align: left;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  text-align: left;
 }
 
 .table-title-button.ant-btn > span {
-    min-width: 0;
-    overflow-wrap: anywhere;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .overview-table .ant-table-cell {
-    text-align: center;
-    margin: 0 auto;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .overview-table .TestCase-text {
-    text-align: center;
+  text-align: center;
 }
 
 .Problem-Program .ant-typography-copy {
-    color: black;
+  color: black;
 }
 
 /*滚动条高宽度*/
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 /*滚动条滑块*/
 ::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    background: #c7c4c4;
+  border-radius: 3px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #c7c4c4;
 }
 
 /*滚动条里面轨道*/
 ::-webkit-scrollbar-track {
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2) inset;
-
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2) inset;
 }
 
 /*滚动条的小边角*/
 ::-webkit-scrollbar-corner {
-    background: transparent;
+  background: transparent;
 }
 
 /* GroupListItemCard 样式迁移到组件 props (styles/body & style.borderRadius) */
 
 .GroupPage .ant-card-head {
-    border-bottom: 0;
+  border-bottom: 0;
 }
 
 /*.GroupPage .ant-card-body{*/
@@ -629,7 +628,7 @@ h5.TestCase-text {
 /*}*/
 
 .GroupPage .ant-list-pagination {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 /* ========== Group Page Card 边框 & 圆角修复 ==========
@@ -637,21 +636,21 @@ h5.TestCase-text {
    2. 修复内部单元卡片底部左/右角边框缺失（actions 区域未继承圆角导致视觉缺口）
 */
 .GroupPage .ant-list-item .ant-card.ant-card-bordered {
-    border: 1px solid var(--ant-color-border, #d9d9d9);
-    border-radius: 12px;
-    overflow: hidden; /* 确保子元素不溢出截断圆角 */
+  border: 1px solid var(--ant-color-border, #d9d9d9);
+  border-radius: 12px;
+  overflow: hidden; /* 确保子元素不溢出截断圆角 */
 }
 
 .GroupPage .ant-list-item .ant-card .ant-card-actions {
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    overflow: hidden;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  overflow: hidden;
 }
 
 /* 确保 actions 与主体之间的分隔线存在且不盖住两侧竖线 */
 .GroupPage .ant-list-item .ant-card .ant-card-actions > li {
-    /* antd 默认使用 flex:1; 这里不改动布局，只补强边框衔接 */
-    position: relative;
+  /* antd 默认使用 flex:1; 这里不改动布局，只补强边框衔接 */
+  position: relative;
 }
 
 /* 全局统一去除 Card 阴影；若个别需要阴影可在组件 style 中单独添加 boxShadow */
@@ -660,10 +659,10 @@ h5.TestCase-text {
 .ant-card-hoverable:hover,
 .ant-card-bordered,
 .ant-card-bordered:hover {
-    box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 /* 覆盖代码高亮背景 */
 .hljs {
-    background: #f8f8f8 !important;
+  background: #f8f8f8 !important;
 }

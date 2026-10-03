@@ -1,151 +1,157 @@
-import React from "react";
-import {Link, withRouter} from "react-router-dom";
-import {Card, Form, Input, List, Select, Space, Tag, Typography} from "antd";
-import cApi from "Utils/API/c-api"
-import {ClockCircleOutlined, UserOutlined} from "@ant-design/icons";
-import {unix2Date} from "../../Utils/Time";
-import Avatar from "../../Component/user/Avatar";
-import {isValueEmpty} from "../../Utils/empty";
-import QuitGroupBtn from "../../Component/group/QuitGroupBtn";
-import JoinGroupBtn from "../../Component/group/JoinGroupBtn";
-import {UrlPrefix} from "../../Config/constValue";
-import TableWithPagination from "../../Component/common/Table/TableWithPagination";
-import {useTranslation} from "react-i18next";
-import Search from "antd/es/input/Search";
+import React from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { Card, Form, Input, List, Select, Space, Tag, Typography } from 'antd';
+import cApi from 'Utils/API/c-api';
+import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { unix2Date } from '../../Utils/Time';
+import Avatar from '../../Component/user/Avatar';
+import { isValueEmpty } from '../../Utils/empty';
+import QuitGroupBtn from '../../Component/group/QuitGroupBtn';
+import JoinGroupBtn from '../../Component/group/JoinGroupBtn';
+import { UrlPrefix } from '../../Config/constValue';
+import TableWithPagination from '../../Component/common/Table/TableWithPagination';
+import { useTranslation } from 'react-i18next';
+import Search from 'antd/es/input/Search';
 
 const CGroup = (props: any) => {
+  const { t } = useTranslation();
 
-    const {t} = useTranslation()
+  return (
+    <>
+      <div style={{ textAlign: 'center', margin: '0 auto' }}>
+        <div style={{ textAlign: 'left', maxWidth: '1500px', margin: '0 auto' }}>
+          {/*<Button onClick={() => {*/}
+          {/*    props.history.push("/group")*/}
+          {/*    window.location.reload()*/}
+          {/*}}>*/}
+          {/*    返回老版 Group*/}
+          {/*</Button>*/}
+          <div className={'GroupPage'}>
+            <TableWithPagination
+              useList={true}
+              // 需求: 保留 Group 页面外层列表卡片边框
+              listCardBordered={true}
+              name={'GroupList'}
+              title={t('group')}
+              API={cApi.getGroupList}
+              size={'small'}
+              grid={{ gutter: 8, column: 4, md: 2, lg: 3, xl: 3, sm: 2, xs: 1 }}
+              initRequestProps={{ isParticipating: '1' }}
+              getForm={(onFinish: any) => {
+                return (
+                  <Space size={30}>
+                    <Form.Item label={t('Search')} name={'title'}>
+                      <Search
+                        onSearch={() => {
+                          onFinish();
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item label={t('Classification')} name={'isParticipating'}>
+                      <Select onChange={onFinish} style={{ width: 80 }} defaultValue={'1'}>
+                        <Select.Option value={'1'}>{t('Mine')}</Select.Option>
+                        <Select.Option value={'0'}>{t('All')}</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Space>
+                );
+              }}
+              useFormBtn={false}
+              defaultPageSize={12}
+              renderItem={(item: any) => {
+                if (item.status === null) item.status = 0;
+                return (
+                  <List.Item key={item.groupId}>
+                    <Card
+                      variant="outlined"
+                      styles={{
+                        body: { paddingBottom: 0 },
+                      }}
+                      style={{ borderRadius: 12 }}
+                      extra={
+                        <>
+                          {item.status === 1 && (
+                            <Tag color={'green'}>{t('ApplicationInProgress')}</Tag>
+                          )}
+                          {item.status === 2 && (
+                            <QuitGroupBtn groupId={item.groupId} groupName={item.title} />
+                          )}
+                          {item.status === 3 && (
+                            <Tag color={'orange'}>{t('ApplicationRejected')}</Tag>
+                          )}
+                          {(item.status === 0 || item.status === 3) && item.openness !== 2 && (
+                            <JoinGroupBtn groupId={item.groupId} groupName={item.title} />
+                          )}
+                          {item.status === 0 && item.openness === 2 && (
+                            <Tag color={'red'}>{t('private')}</Tag>
+                          )}
+                        </>
+                      }
+                      title={
+                        <Link to={UrlPrefix + '/group/' + item.groupId}>
+                          <Typography.Title
+                            translate="no"
+                            level={5}
+                            ellipsis={{ rows: 1, tooltip: item.title }}
+                            style={{ marginBottom: 0 }}
+                          >
+                            {item.title}
+                          </Typography.Title>
+                        </Link>
+                      }
+                      size={'small'}
+                      className={'GroupListItemCard'}
+                      actions={[
+                        <span key="created">
+                          {' '}
+                          <ClockCircleOutlined /> {unix2Date(item.gmtCreate)}
+                        </span>,
+                        <span key="members">
+                          {' '}
+                          <UserOutlined /> {item.memberNum}
+                        </span>,
+                      ]}
+                    >
+                      <List.Item.Meta
+                        style={{ padding: 12, margin: 0 }}
+                        avatar={
+                          <Link to={UrlPrefix + '/group/' + item.groupId} aria-label={item.title}>
+                            <Avatar email={item.owner.email} shape={'square'} size={60} />
+                          </Link>
+                        }
+                        description={
+                          <>
+                            <div>
+                              {t('creator:')}
+                              {item.owner.username}
+                            </div>
+                            <div>
+                              <Typography.Paragraph
+                                translate="no"
+                                ellipsis={{
+                                  rows: 2,
+                                  expandable: true,
+                                  symbol: t('more'),
+                                }}
+                                style={{ marginBottom: 0, color: 'rgba(0, 0, 0, 0.45)' }}
+                              >
+                                {t('introduction:')}
+                                {isValueEmpty(item.description) ? t('none') : item.description}
+                              </Typography.Paragraph>
+                            </div>
+                          </>
+                        }
+                      />
+                    </Card>
+                  </List.Item>
+                );
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-    return (
-        <>
-            <div style={{textAlign: "center", margin: "0 auto"}}>
-                <div style={{textAlign: "left", maxWidth: "1500px", margin: "0 auto"}}>
-                    {/*<Button onClick={() => {*/}
-                    {/*    props.history.push("/group")*/}
-                    {/*    window.location.reload()*/}
-                    {/*}}>*/}
-                    {/*    返回老版 Group*/}
-                    {/*</Button>*/}
-                    <div className={"GroupPage"}>
-                        <TableWithPagination
-                            useList={true}
-                            // 需求: 保留 Group 页面外层列表卡片边框
-                            listCardBordered={true}
-                            name={"GroupList"}
-                            title={t("group")}
-                            API={cApi.getGroupList}
-                            size={"small"}
-                            grid={{gutter: 8, column: 4, md: 2, lg: 3, xl: 3, sm: 2, xs: 1}}
-                            initRequestProps={{isParticipating: "1"}}
-                            getForm={(onFinish: any) => {
-                                return (
-                                    <Space size={30}>
-                                        <Form.Item label={t("Search")} name={"title"}>
-                                            <Search
-                                                onSearch={() => {
-                                                    onFinish()
-                                                }}
-                                            />
-                                        </Form.Item>
-                                        <Form.Item label={t("Classification")} name={"isParticipating"}>
-                                            <Select onChange={onFinish} style={{width: 80}}
-                                                    defaultValue={"1"}>
-                                                <Select.Option value={"1"}>{t("Mine")}</Select.Option>
-                                                <Select.Option value={"0"}>{t("All")}</Select.Option>
-                                            </Select>
-                                        </Form.Item>
-                                    </Space>
-                                )
-                            }}
-                            useFormBtn={false}
-                            defaultPageSize={12}
-                            renderItem={(item: any) => {
-                                if (item.status === null)
-                                    item.status = 0
-                                return (
-                                    <List.Item
-                                        key={item.groupId}
-                                    >
-                                        <Card
-                                            variant="outlined"
-                                            styles={{
-                                                body: {paddingBottom: 0},
-                                            }}
-                                            style={{borderRadius: 12}}
-                                            extra={
-                                                <>
-                                                    {item.status === 1 && (
-                                                        <Tag color={"green"}>{t("ApplicationInProgress")}</Tag>
-                                                    )}
-                                                    {item.status === 2 && (
-                                                        <QuitGroupBtn groupId={item.groupId} groupName={item.title}/>
-                                                    )}
-                                                    {item.status === 3 && (
-                                                        <Tag color={"orange"}>{t("ApplicationRejected")}</Tag>
-                                                    )}
-                                                    {(item.status === 0 || item.status === 3) && item.openness !== 2 && (
-                                                        <JoinGroupBtn groupId={item.groupId} groupName={item.title}/>
-                                                    )}
-                                                    {item.status === 0 && item.openness === 2 && (
-                                                        <Tag color={"red"}>{t("private")}</Tag>
-                                                    )}
-                                                </>
-                                            }
-                                            title={
-                                                <Link to={UrlPrefix + "/group/" + item.groupId}>
-                                                    <Typography.Title
-                                                        translate="no"
-                                                        level={5}
-                                                        ellipsis={{rows: 1, tooltip: item.title}}
-                                                        style={{marginBottom: 0}}
-                                                    >{item.title}</Typography.Title>
-                                                </Link>
-                                            }
-                                            size={"small"}
-                                            className={"GroupListItemCard"}
-                                            actions={[
-                                                <span key="created"> <ClockCircleOutlined/> {unix2Date(item.gmtCreate)}</span>,
-                                                <span key="members"> <UserOutlined/> {item.memberNum}</span>
-                                            ]}
-                                        >
-                                            <List.Item.Meta
-                                                style={{padding: 12, margin: 0}}
-                                                avatar={
-                                                    <Link to={UrlPrefix + "/group/" + item.groupId} aria-label={item.title}>
-                                                        <Avatar email={item.owner.email} shape={"square"} size={60}/>
-                                                    </Link>
-                                                }
-                                                description={
-                                                    <>
-                                                        <div>{t("creator:")}{item.owner.username}</div>
-                                                        <div>
-                                                            <Typography.Paragraph
-                                                                translate="no"
-                                                                ellipsis={{
-                                                                    rows: 2,
-                                                                    expandable: true,
-                                                                    symbol: t("more")
-                                                                }}
-                                                                style={{marginBottom: 0, color: "rgba(0, 0, 0, 0.45)"}}
-                                                            >
-                                                                {t("introduction:")}{isValueEmpty(item.description) ? t("none") : item.description}
-                                                            </Typography.Paragraph>
-                                                        </div>
-                                                    </>
-                                                }
-                                            />
-                                        </Card>
-                                    </List.Item>
-                                )
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-
-}
-
-export default withRouter(CGroup)
+export default withRouter(CGroup);

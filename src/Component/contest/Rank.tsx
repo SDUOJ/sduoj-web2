@@ -77,12 +77,7 @@ export const useContestRankRows = (
 export const Rank = (props: any) => {
   const contestId = props.match.params.contestId;
   const contestInfo = props.ContestInfo[contestId];
-  const {
-    afterContestSubmission,
-    openSliderMove,
-    setExportData,
-    sliderTime,
-  } = props;
+  const { afterContestSubmission, openSliderMove, setExportData, sliderTime } = props;
   const [data, setData] = useState<any>();
   const timeState =
     contestInfo !== undefined
@@ -195,8 +190,7 @@ export const Rank = (props: any) => {
 
           for (let i = 0; i < value.submissions.length; i++) {
             const sbm = value.submissions[i];
-            if (!afterContestSubmission && parseInt(sbm[1]) > parseInt(contestInfo.gmtEnd))
-              break;
+            if (!afterContestSubmission && parseInt(sbm[1]) > parseInt(contestInfo.gmtEnd)) break;
             // 控制提交时间筛选
             if (openSliderMove && parseInt(sbm[1]) > currentSliderTime) break;
             const proId = sbm[0];
@@ -292,7 +286,15 @@ export const Rank = (props: any) => {
       setData(afterSort);
       setExportData(afterSort);
     }
-  }, [afterContestSubmission, contestInfo, lastSliderTime, openSliderMove, rankInfo, setExportData, sliderTime]);
+  }, [
+    afterContestSubmission,
+    contestInfo,
+    lastSliderTime,
+    openSliderMove,
+    rankInfo,
+    setExportData,
+    sliderTime,
+  ]);
 
   const problemColumns: any = [
     {
@@ -532,7 +534,11 @@ export const Rank = (props: any) => {
                   {contestInfo.problems.map((x: any) => {
                     const i = parseInt(x.problemCode) - 1;
                     return (
-                      <Table.Summary.Cell key={x.problemCode} index={2 + i} className={'RankSummary-Pro'}>
+                      <Table.Summary.Cell
+                        key={x.problemCode}
+                        index={2 + i}
+                        className={'RankSummary-Pro'}
+                      >
                         <div>
                           <FileTextOutlined /> {SummaryInfo[`ac_${i}`]}/{SummaryInfo[`submit_${i}`]}
                         </div>

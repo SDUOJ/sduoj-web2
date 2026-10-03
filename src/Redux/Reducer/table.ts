@@ -1,5 +1,5 @@
-import {TableAction} from "../Action/table";
-import {TableState} from "../../Type/ITable";
+import { TableAction } from '../Action/table';
+import { TableState } from '../../Type/ITable';
 
 // interface MTableState {
 //     Data: []
@@ -7,56 +7,58 @@ import {TableState} from "../../Type/ITable";
 // }
 
 const initState: TableState = {
-    tableData: {}
-}
+  tableData: {},
+};
 
 export const TableReduce = (state: TableState = initState, action: TableAction) => {
-    let State = {...state}
-    State.tableData = {...State.tableData}
-    const initTableData = (name: string) => {
-        if (State.tableData[name] === undefined)
-            State.tableData[name] = {
-                selectedRowKeys: [],
-                dataSource: [],
-                tableVersion: 0,
-                tableInfo: {}
-            }
-        else State.tableData[name] = {...State.tableData[name]}
+  let State = { ...state };
+  State.tableData = { ...State.tableData };
+  const initTableData = (name: string) => {
+    if (State.tableData[name] === undefined)
+      State.tableData[name] = {
+        selectedRowKeys: [],
+        dataSource: [],
+        tableVersion: 0,
+        tableInfo: {},
+      };
+    else State.tableData[name] = { ...State.tableData[name] };
+  };
+
+  switch (action.type) {
+    case 'setSelectedRowKeys':
+      initTableData(action.name);
+      State.tableData[action.name].selectedRowKeys = [...action.data];
+      break;
+
+    case 'addTableVersion': {
+      initTableData(action.name);
+      const nv = State.tableData[action.name].tableVersion;
+      State.tableData[action.name].tableVersion = Math.abs(nv) + 1;
+      break;
     }
 
-    switch (action.type) {
-        case "setSelectedRowKeys":
-            initTableData(action.name)
-            State.tableData[action.name].selectedRowKeys = [...action.data]
-            break
+    case 'setDataSource':
+      initTableData(action.name);
+      State.tableData[action.name].dataSource = Array.isArray(action.data)
+        ? [...action.data]
+        : action.data;
+      if (action.add) {
+        const nv = State.tableData[action.name].tableVersion;
+        State.tableData[action.name].tableVersion = -(Math.abs(nv) + 1);
+      }
+      break;
 
-        case "addTableVersion": {
-            initTableData(action.name)
-            const nv = State.tableData[action.name].tableVersion
-            State.tableData[action.name].tableVersion = Math.abs(nv) + 1
-            break
-        }
+    case 'setTableInfo':
+      initTableData(action.name);
+      State.tableData[action.name].tableInfo = { ...action.data };
+      break;
+    case 'clearRedux':
+      return {
+        tableData: {},
+      };
 
-        case "setDataSource":
-            initTableData(action.name)
-            State.tableData[action.name].dataSource = Array.isArray(action.data) ? [...action.data] : action.data
-            if(action.add) {
-                const nv = State.tableData[action.name].tableVersion
-                State.tableData[action.name].tableVersion = -(Math.abs(nv) + 1)
-            }
-            break
-
-        case "setTableInfo":
-            initTableData(action.name)
-            State.tableData[action.name].tableInfo = {...action.data}
-            break
-        case "clearRedux":
-            return {
-                tableData: {}
-            };
-
-        default:
-            return state
-    }
-    return State
-}
+    default:
+      return state;
+  }
+  return State;
+};

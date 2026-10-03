@@ -27,7 +27,7 @@ import problemSetSubmit from '../../Component/problemSet/dataConvert/problemSetS
 import { UrlPrefix } from '../../Config/constValue';
 
 const MProblemSet = (props: any) => {
-  const {t} = props;
+  const { t } = props;
   const [type, setType] = useState();
   const [useGlobalTime, setUseGlobalTime] = useState(1);
   const [useReport, setUseReport] = useState();
@@ -362,7 +362,8 @@ const MProblemSet = (props: any) => {
               rowKey={'id'}
               toolBar={(actionRef: any) => {
                 return [
-                  <Button key="add-problem-group"
+                  <Button
+                    key="add-problem-group"
                     type={'dashed'}
                     block
                     icon={<PlusOutlined />}

@@ -143,9 +143,7 @@
           "type": "integer"
         }
       },
-      "required": [
-        "bs_id"
-      ]
+      "required": ["bs_id"]
     },
     "GET /ps/screen_record/getVideo": {
       "type": "object",
@@ -155,9 +153,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "token"
-      ]
+      "required": ["token"]
     },
     "GET /ps/screen_record/deleteVideo": {
       "type": "object",
@@ -167,9 +163,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "token"
-      ]
+      "required": ["token"]
     },
     "GET /ps/screen_record/deleteAll": {
       "type": "object",
@@ -179,9 +173,7 @@
           "type": "integer"
         }
       },
-      "required": [
-        "bs_id"
-      ]
+      "required": ["bs_id"]
     },
     "POST /ps/auto-task/subjective/review": {
       "$ref": "#/components/schemas/SubjectiveTaskRequest"
@@ -233,9 +225,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "citation"
-      ]
+      "required": ["citation"]
     },
     "POST /ps/auto-task/ai/resources/list": {
       "$ref": "#/components/schemas/PageRequest"
@@ -386,9 +376,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "subject_id"
-      ]
+      "required": ["subject_id"]
     },
     "GET /ps/auto-task/ai/admin/storage/orphans": {
       "type": "object",
@@ -454,9 +442,7 @@
           "type": "integer"
         }
       },
-      "required": [
-        "course_id"
-      ]
+      "required": ["course_id"]
     },
     "POST /ps/auto-task/ai/exams/{resource_id}/bind-course": {
       "$ref": "#/components/schemas/BindCourse"
@@ -623,12 +609,7 @@
     "schemas": {
       "AccountAccessChange": {
         "title": "AccountAccessChange",
-        "required": [
-          "subject_id",
-          "suspended",
-          "operation_key",
-          "reason"
-        ],
+        "required": ["subject_id", "suspended", "operation_key", "reason"],
         "type": "object",
         "properties": {
           "subject_id": {
@@ -657,10 +638,7 @@
       },
       "AdoptGrade": {
         "title": "AdoptGrade",
-        "required": [
-          "version",
-          "reason"
-        ],
+        "required": ["version", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -683,10 +661,7 @@
       },
       "Approval": {
         "title": "Approval",
-        "required": [
-          "version",
-          "reason"
-        ],
+        "required": ["version", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -709,10 +684,7 @@
       },
       "AssignmentCreate": {
         "title": "AssignmentCreate",
-        "required": [
-          "assignee_id",
-          "title"
-        ],
+        "required": ["assignee_id", "title"],
         "type": "object",
         "properties": {
           "assignee_id": {
@@ -796,10 +768,7 @@
       },
       "AttendanceRecordItem": {
         "title": "AttendanceRecordItem",
-        "required": [
-          "username",
-          "status"
-        ],
+        "required": ["username", "status"],
         "type": "object",
         "properties": {
           "username": {
@@ -828,9 +797,7 @@
       },
       "AttendanceRecordRequest": {
         "title": "AttendanceRecordRequest",
-        "required": [
-          "records"
-        ],
+        "required": ["records"],
         "type": "object",
         "properties": {
           "records": {
@@ -845,10 +812,7 @@
       },
       "AttendanceStudentRecord": {
         "title": "AttendanceStudentRecord",
-        "required": [
-          "username",
-          "status"
-        ],
+        "required": ["username", "status"],
         "type": "object",
         "properties": {
           "username": {
@@ -898,9 +862,7 @@
       },
       "AutoAssignRequest": {
         "title": "AutoAssignRequest",
-        "required": [
-          "course_id"
-        ],
+        "required": ["course_id"],
         "type": "object",
         "properties": {
           "course_id": {
@@ -1046,11 +1008,7 @@
       },
       "BatchInput": {
         "title": "BatchInput",
-        "required": [
-          "title",
-          "operation_key",
-          "questions"
-        ],
+        "required": ["title", "operation_key", "questions"],
         "type": "object",
         "properties": {
           "title": {
@@ -1085,11 +1043,7 @@
       },
       "BindCourse": {
         "title": "BindCourse",
-        "required": [
-          "version",
-          "course_id",
-          "reason"
-        ],
+        "required": ["version", "course_id", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -1116,10 +1070,7 @@
       },
       "Body_addFrame_screen_record_addFrame_post": {
         "title": "Body_addFrame_screen_record_addFrame_post",
-        "required": [
-          "token",
-          "pic"
-        ],
+        "required": ["token", "pic"],
         "type": "object",
         "properties": {
           "token": {
@@ -1135,9 +1086,7 @@
       },
       "Body_upload_auto_task_ai_files_upload_post": {
         "title": "Body_upload_auto_task_ai_files_upload_post",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "type": "object",
         "properties": {
           "file": {
@@ -1171,9 +1120,7 @@
       },
       "ClassroomAssignRequest": {
         "title": "ClassroomAssignRequest",
-        "required": [
-          "c_ids"
-        ],
+        "required": ["c_ids"],
         "type": "object",
         "properties": {
           "c_ids": {
@@ -1188,11 +1135,7 @@
       },
       "ClassroomCreateRequest": {
         "title": "ClassroomCreateRequest",
-        "required": [
-          "c_name",
-          "address",
-          "c_seat_num"
-        ],
+        "required": ["c_name", "address", "c_seat_num"],
         "type": "object",
         "properties": {
           "c_name": {
@@ -1315,11 +1258,7 @@
       },
       "CourseCreateRequest": {
         "title": "CourseCreateRequest",
-        "required": [
-          "course_name",
-          "group_id",
-          "tag"
-        ],
+        "required": ["course_name", "group_id", "tag"],
         "type": "object",
         "properties": {
           "course_name": {
@@ -1428,12 +1367,7 @@
       },
       "CourseListResponse": {
         "title": "CourseListResponse",
-        "required": [
-          "total",
-          "page_now",
-          "page_size",
-          "courses"
-        ],
+        "required": ["total", "page_now", "page_size", "courses"],
         "type": "object",
         "properties": {
           "total": {
@@ -1463,13 +1397,7 @@
       },
       "CourseResponse": {
         "title": "CourseResponse",
-        "required": [
-          "course_id",
-          "course_name",
-          "group_id",
-          "tag",
-          "create_time"
-        ],
+        "required": ["course_id", "course_name", "group_id", "tag", "create_time"],
         "type": "object",
         "properties": {
           "course_id": {
@@ -1527,10 +1455,7 @@
       },
       "CourseTimeItemAddRequest": {
         "title": "CourseTimeItemAddRequest",
-        "required": [
-          "start_time",
-          "end_time"
-        ],
+        "required": ["start_time", "end_time"],
         "type": "object",
         "properties": {
           "start_time": {
@@ -1761,10 +1686,7 @@
       },
       "CriterionEdit": {
         "title": "CriterionEdit",
-        "required": [
-          "name",
-          "score"
-        ],
+        "required": ["name", "score"],
         "type": "object",
         "properties": {
           "name": {
@@ -1780,10 +1702,7 @@
       },
       "CriterionScore": {
         "title": "CriterionScore",
-        "required": [
-          "name",
-          "score"
-        ],
+        "required": ["name", "score"],
         "type": "object",
         "properties": {
           "name": {
@@ -1802,10 +1721,7 @@
       },
       "Decision": {
         "title": "Decision",
-        "required": [
-          "action_hash",
-          "approve"
-        ],
+        "required": ["action_hash", "approve"],
         "type": "object",
         "properties": {
           "action_hash": {
@@ -1822,10 +1738,7 @@
       },
       "ExamAction": {
         "title": "ExamAction",
-        "required": [
-          "version",
-          "reason"
-        ],
+        "required": ["version", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -1843,11 +1756,7 @@
       },
       "Figure": {
         "title": "Figure",
-        "required": [
-          "source_image",
-          "caption",
-          "bbox"
-        ],
+        "required": ["source_image", "caption", "bbox"],
         "type": "object",
         "properties": {
           "source_image": {
@@ -1876,9 +1785,7 @@
       },
       "FileAnswerType": {
         "title": "FileAnswerType",
-        "required": [
-          "fileId"
-        ],
+        "required": ["fileId"],
         "type": "object",
         "properties": {
           "fileId": {
@@ -1901,10 +1808,7 @@
       },
       "FollowupRequest": {
         "title": "FollowupRequest",
-        "required": [
-          "operation_key",
-          "task_type"
-        ],
+        "required": ["operation_key", "task_type"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -1934,11 +1838,7 @@
       },
       "GenerateRequest": {
         "title": "GenerateRequest",
-        "required": [
-          "version",
-          "operation_key",
-          "instruction"
-        ],
+        "required": ["version", "operation_key", "instruction"],
         "type": "object",
         "properties": {
           "version": {
@@ -1962,12 +1862,7 @@
       },
       "GradeEdit": {
         "title": "GradeEdit",
-        "required": [
-          "version",
-          "criteria",
-          "comment",
-          "reason"
-        ],
+        "required": ["version", "criteria", "comment", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -2010,9 +1905,7 @@
       },
       "InitAttendanceRequest": {
         "title": "InitAttendanceRequest",
-        "required": [
-          "group_id"
-        ],
+        "required": ["group_id"],
         "type": "object",
         "properties": {
           "group_id": {
@@ -2108,9 +2001,7 @@
       },
       "InterviewInput": {
         "title": "InterviewInput",
-        "required": [
-          "operation_key"
-        ],
+        "required": ["operation_key"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -2156,11 +2047,7 @@
           },
           "scope": {
             "title": "Scope",
-            "enum": [
-              "all",
-              "assigned",
-              "managed"
-            ],
+            "enum": ["all", "assigned", "managed"],
             "type": "string",
             "default": "all"
           },
@@ -2191,12 +2078,7 @@
       },
       "InterviewResponse": {
         "title": "InterviewResponse",
-        "required": [
-          "operation_key",
-          "sequence",
-          "text",
-          "file_ids"
-        ],
+        "required": ["operation_key", "sequence", "text", "file_ids"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -2242,12 +2124,7 @@
       },
       "InvitationCreate": {
         "title": "InvitationCreate",
-        "required": [
-          "operation_key",
-          "student_id",
-          "student_username",
-          "title"
-        ],
+        "required": ["operation_key", "student_id", "student_username", "title"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -2332,11 +2209,7 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "enum": [
-                "audio",
-                "video",
-                "screen"
-              ],
+              "enum": ["audio", "video", "screen"],
               "type": "string"
             }
           },
@@ -2376,12 +2249,7 @@
       },
       "LatePermissionBase": {
         "title": "LatePermissionBase",
-        "required": [
-          "psid",
-          "username",
-          "expire_time",
-          "discount"
-        ],
+        "required": ["psid", "username", "expire_time", "discount"],
         "type": "object",
         "properties": {
           "psid": {
@@ -2415,13 +2283,7 @@
       },
       "LatePermissionBatchAdd": {
         "title": "LatePermissionBatchAdd",
-        "required": [
-          "groupId",
-          "psids",
-          "username",
-          "expire_time",
-          "discount"
-        ],
+        "required": ["groupId", "psids", "username", "expire_time", "discount"],
         "type": "object",
         "properties": {
           "groupId": {
@@ -2462,9 +2324,7 @@
       },
       "LatePermissionList": {
         "title": "LatePermissionList",
-        "required": [
-          "page"
-        ],
+        "required": ["page"],
         "type": "object",
         "properties": {
           "psid": {
@@ -2507,10 +2367,7 @@
       },
       "LatePermissionUpdate": {
         "title": "LatePermissionUpdate",
-        "required": [
-          "id",
-          "psid"
-        ],
+        "required": ["id", "psid"],
         "type": "object",
         "properties": {
           "id": {
@@ -2569,9 +2426,7 @@
       },
       "LeaveRequest": {
         "title": "LeaveRequest",
-        "required": [
-          "leave_message"
-        ],
+        "required": ["leave_message"],
         "type": "object",
         "properties": {
           "leave_message": {
@@ -2598,10 +2453,7 @@
       },
       "LeaveReviewRequest": {
         "title": "LeaveReviewRequest",
-        "required": [
-          "username",
-          "approved"
-        ],
+        "required": ["username", "approved"],
         "type": "object",
         "properties": {
           "username": {
@@ -2643,11 +2495,7 @@
           },
           "track": {
             "title": "Track",
-            "enum": [
-              "audio",
-              "video",
-              "screen"
-            ],
+            "enum": ["audio", "video", "screen"],
             "type": "string"
           },
           "segment_index": {
@@ -2683,11 +2531,7 @@
       },
       "MemberInvite": {
         "title": "MemberInvite",
-        "required": [
-          "subject_id",
-          "username",
-          "role"
-        ],
+        "required": ["subject_id", "username", "role"],
         "type": "object",
         "properties": {
           "subject_id": {
@@ -2723,9 +2567,7 @@
       },
       "Message": {
         "title": "Message",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "type": "object",
         "properties": {
           "text": {
@@ -2776,13 +2618,7 @@
       },
       "NativeFinalizeRequest": {
         "title": "NativeFinalizeRequest",
-        "required": [
-          "version",
-          "group_id",
-          "problem_code",
-          "judge_template_id",
-          "checkpoints"
-        ],
+        "required": ["version", "group_id", "problem_code", "judge_template_id", "checkpoints"],
         "type": "object",
         "properties": {
           "version": {
@@ -2826,13 +2662,7 @@
       },
       "NativeGrade": {
         "title": "NativeGrade",
-        "required": [
-          "psid",
-          "gid",
-          "pid",
-          "username",
-          "operation_key"
-        ],
+        "required": ["psid", "gid", "pid", "username", "operation_key"],
         "type": "object",
         "properties": {
           "psid": {
@@ -2863,10 +2693,7 @@
       },
       "NativeImport": {
         "title": "NativeImport",
-        "required": [
-          "group_id",
-          "pid"
-        ],
+        "required": ["group_id", "pid"],
         "type": "object",
         "properties": {
           "group_id": {
@@ -2917,12 +2744,7 @@
       },
       "NativePlagiarismCreate": {
         "title": "NativePlagiarismCreate",
-        "required": [
-          "psid",
-          "group_id",
-          "pid",
-          "operation_key"
-        ],
+        "required": ["psid", "group_id", "pid", "operation_key"],
         "type": "object",
         "properties": {
           "psid": {
@@ -2974,10 +2796,7 @@
       },
       "NativePlanRequest": {
         "title": "NativePlanRequest",
-        "required": [
-          "version",
-          "judge_template_id"
-        ],
+        "required": ["version", "judge_template_id"],
         "type": "object",
         "properties": {
           "version": {
@@ -3021,11 +2840,7 @@
       },
       "NativeSource": {
         "title": "NativeSource",
-        "required": [
-          "gid",
-          "pid",
-          "student_username"
-        ],
+        "required": ["gid", "pid", "student_username"],
         "type": "object",
         "properties": {
           "gid": {
@@ -3046,10 +2861,7 @@
       },
       "NewSession": {
         "title": "NewSession",
-        "required": [
-          "title",
-          "preset"
-        ],
+        "required": ["title", "preset"],
         "type": "object",
         "properties": {
           "title": {
@@ -3072,11 +2884,7 @@
       },
       "Option": {
         "title": "Option",
-        "required": [
-          "label",
-          "original",
-          "zh"
-        ],
+        "required": ["label", "original", "zh"],
         "type": "object",
         "properties": {
           "label": {
@@ -3230,13 +3038,7 @@
       },
       "PairReview": {
         "title": "PairReview",
-        "required": [
-          "version",
-          "left",
-          "right",
-          "decision",
-          "reason"
-        ],
+        "required": ["version", "left", "right", "decision", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -3266,10 +3068,7 @@
       },
       "PlagiarismWriteback": {
         "title": "PlagiarismWriteback",
-        "required": [
-          "version",
-          "reason"
-        ],
+        "required": ["version", "reason"],
         "type": "object",
         "properties": {
           "version": {
@@ -3297,12 +3096,7 @@
       },
       "PointAdjustment": {
         "title": "PointAdjustment",
-        "required": [
-          "subject_id",
-          "amount",
-          "operation_key",
-          "reason"
-        ],
+        "required": ["subject_id", "amount", "operation_key", "reason"],
         "type": "object",
         "properties": {
           "subject_id": {
@@ -3331,11 +3125,7 @@
       },
       "ProgramBind": {
         "title": "ProgramBind",
-        "required": [
-          "version",
-          "group_id",
-          "problem_code"
-        ],
+        "required": ["version", "group_id", "problem_code"],
         "type": "object",
         "properties": {
           "version": {
@@ -3364,10 +3154,7 @@
       },
       "ProgramPlan": {
         "title": "ProgramPlan",
-        "required": [
-          "version",
-          "title"
-        ],
+        "required": ["version", "title"],
         "type": "object",
         "properties": {
           "version": {
@@ -3406,10 +3193,7 @@
       },
       "ProgrammingProblemRef": {
         "title": "ProgrammingProblemRef",
-        "required": [
-          "gid",
-          "pid"
-        ],
+        "required": ["gid", "pid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -3424,10 +3208,7 @@
       },
       "PublishExam": {
         "title": "PublishExam",
-        "required": [
-          "version",
-          "problem_set"
-        ],
+        "required": ["version", "problem_set"],
         "type": "object",
         "properties": {
           "version": {
@@ -3464,11 +3245,7 @@
       },
       "PublishQuestion": {
         "title": "PublishQuestion",
-        "required": [
-          "version",
-          "group_id",
-          "score"
-        ],
+        "required": ["version", "group_id", "score"],
         "type": "object",
         "properties": {
           "version": {
@@ -3502,12 +3279,7 @@
       },
       "Question": {
         "title": "Question",
-        "required": [
-          "question_type",
-          "language",
-          "original",
-          "zh"
-        ],
+        "required": ["question_type", "language", "original", "zh"],
         "type": "object",
         "properties": {
           "question_type": {
@@ -3573,10 +3345,7 @@
       },
       "RenewInvitation": {
         "title": "RenewInvitation",
-        "required": [
-          "operation_key",
-          "version"
-        ],
+        "required": ["operation_key", "version"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -3601,9 +3370,7 @@
       },
       "ResourceCreate": {
         "title": "ResourceCreate",
-        "required": [
-          "kind"
-        ],
+        "required": ["kind"],
         "type": "object",
         "properties": {
           "kind": {
@@ -3664,10 +3431,7 @@
       },
       "ResourceUpdate": {
         "title": "ResourceUpdate",
-        "required": [
-          "version",
-          "data"
-        ],
+        "required": ["version", "data"],
         "type": "object",
         "properties": {
           "version": {
@@ -3683,9 +3447,7 @@
       },
       "RetryInput": {
         "title": "RetryInput",
-        "required": [
-          "operation_key"
-        ],
+        "required": ["operation_key"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -3698,9 +3460,7 @@
       },
       "RetryTask": {
         "title": "RetryTask",
-        "required": [
-          "operation_key"
-        ],
+        "required": ["operation_key"],
         "type": "object",
         "properties": {
           "operation_key": {
@@ -3713,19 +3473,12 @@
       },
       "ReviewUpdate": {
         "title": "ReviewUpdate",
-        "required": [
-          "decision",
-          "reason"
-        ],
+        "required": ["decision", "reason"],
         "type": "object",
         "properties": {
           "decision": {
             "title": "Decision",
-            "enum": [
-              "normal",
-              "warning",
-              "violation"
-            ],
+            "enum": ["normal", "warning", "violation"],
             "type": "string"
           },
           "reason": {
@@ -3738,9 +3491,7 @@
       },
       "RevisionRestore": {
         "title": "RevisionRestore",
-        "required": [
-          "version"
-        ],
+        "required": ["version"],
         "type": "object",
         "properties": {
           "version": {
@@ -3764,9 +3515,7 @@
       },
       "RosterInput": {
         "title": "RosterInput",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "type": "object",
         "properties": {
           "text": {
@@ -3795,10 +3544,7 @@
       },
       "RubricItem": {
         "title": "RubricItem",
-        "required": [
-          "name",
-          "max_score"
-        ],
+        "required": ["name", "max_score"],
         "type": "object",
         "properties": {
           "name": {
@@ -3817,11 +3563,7 @@
       },
       "RunReconciliation": {
         "title": "RunReconciliation",
-        "required": [
-          "input_tokens",
-          "output_tokens",
-          "reason"
-        ],
+        "required": ["input_tokens", "output_tokens", "reason"],
         "type": "object",
         "properties": {
           "input_tokens": {
@@ -3853,12 +3595,7 @@
       },
       "ScheduleAddRequest": {
         "title": "ScheduleAddRequest",
-        "required": [
-          "course_id",
-          "sequence",
-          "start_time",
-          "end_time"
-        ],
+        "required": ["course_id", "sequence", "start_time", "end_time"],
         "type": "object",
         "properties": {
           "course_id": {
@@ -3977,12 +3714,7 @@
       },
       "ScheduleListResponse": {
         "title": "ScheduleListResponse",
-        "required": [
-          "total",
-          "page_now",
-          "page_size",
-          "schedules"
-        ],
+        "required": ["total", "page_now", "page_size", "schedules"],
         "type": "object",
         "properties": {
           "total": {
@@ -4012,13 +3744,7 @@
       },
       "ScheduleResponse": {
         "title": "ScheduleResponse",
-        "required": [
-          "schedule_id",
-          "course_id",
-          "sequence",
-          "start_time",
-          "end_time"
-        ],
+        "required": ["schedule_id", "course_id", "sequence", "start_time", "end_time"],
         "type": "object",
         "properties": {
           "schedule_id": {
@@ -4168,10 +3894,7 @@
       },
       "SeatAssignRequest": {
         "title": "SeatAssignRequest",
-        "required": [
-          "username",
-          "seat_number"
-        ],
+        "required": ["username", "seat_number"],
         "type": "object",
         "properties": {
           "username": {
@@ -4200,11 +3923,7 @@
       },
       "SeatMapResponse": {
         "title": "SeatMapResponse",
-        "required": [
-          "course_id",
-          "seat_bindings",
-          "classrooms"
-        ],
+        "required": ["course_id", "seat_bindings", "classrooms"],
         "type": "object",
         "properties": {
           "course_id": {
@@ -4229,10 +3948,7 @@
       },
       "SeatResponse": {
         "title": "SeatResponse",
-        "required": [
-          "username",
-          "seat_number"
-        ],
+        "required": ["username", "seat_number"],
         "type": "object",
         "properties": {
           "username": {
@@ -4254,11 +3970,7 @@
       },
       "SettingsUpdate": {
         "title": "SettingsUpdate",
-        "required": [
-          "base_url",
-          "model",
-          "expected_version"
-        ],
+        "required": ["base_url", "model", "expected_version"],
         "type": "object",
         "properties": {
           "provider": {
@@ -4420,10 +4132,7 @@
       },
       "SignInRequest": {
         "title": "SignInRequest",
-        "required": [
-          "username",
-          "sign_type"
-        ],
+        "required": ["username", "sign_type"],
         "type": "object",
         "properties": {
           "username": {
@@ -4440,9 +4149,7 @@
       },
       "SignModeUpdateRequest": {
         "title": "SignModeUpdateRequest",
-        "required": [
-          "sign_mode"
-        ],
+        "required": ["sign_mode"],
         "type": "object",
         "properties": {
           "sign_mode": {
@@ -4559,14 +4266,7 @@
       },
       "StudentAttendanceRecordsResponse": {
         "title": "StudentAttendanceRecordsResponse",
-        "required": [
-          "username",
-          "total",
-          "page_now",
-          "page_size",
-          "statistics",
-          "records"
-        ],
+        "required": ["username", "total", "page_now", "page_size", "statistics", "records"],
         "type": "object",
         "properties": {
           "username": {
@@ -4609,12 +4309,7 @@
       },
       "SubjectiveTaskItem": {
         "title": "SubjectiveTaskItem",
-        "required": [
-          "psid",
-          "gid",
-          "pid",
-          "username"
-        ],
+        "required": ["psid", "gid", "pid", "username"],
         "type": "object",
         "properties": {
           "psid": {
@@ -4645,9 +4340,7 @@
       },
       "SubjectiveTaskRequest": {
         "title": "SubjectiveTaskRequest",
-        "required": [
-          "tasks"
-        ],
+        "required": ["tasks"],
         "type": "object",
         "properties": {
           "tasks": {
@@ -4661,9 +4354,7 @@
       },
       "SummaryReportRequest": {
         "title": "SummaryReportRequest",
-        "required": [
-          "groupId"
-        ],
+        "required": ["groupId"],
         "type": "object",
         "properties": {
           "groupId": {
@@ -4690,9 +4381,7 @@
       },
       "TAAddRequest": {
         "title": "TAAddRequest",
-        "required": [
-          "ta_name"
-        ],
+        "required": ["ta_name"],
         "type": "object",
         "properties": {
           "ta_name": {
@@ -4731,11 +4420,7 @@
       },
       "TAResponse": {
         "title": "TAResponse",
-        "required": [
-          "TA_id",
-          "TA_name",
-          "course_id"
-        ],
+        "required": ["TA_id", "TA_name", "course_id"],
         "type": "object",
         "properties": {
           "TA_id": {
@@ -4775,10 +4460,7 @@
       },
       "TAStudentBindRequest": {
         "title": "TAStudentBindRequest",
-        "required": [
-          "TA_id",
-          "usernames"
-        ],
+        "required": ["TA_id", "usernames"],
         "type": "object",
         "properties": {
           "TA_id": {
@@ -4843,9 +4525,7 @@
       },
       "TagInput": {
         "title": "TagInput",
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
@@ -4866,11 +4546,7 @@
       },
       "TaskCreate": {
         "title": "TaskCreate",
-        "required": [
-          "task_type",
-          "operation_key",
-          "resource_id"
-        ],
+        "required": ["task_type", "operation_key", "resource_id"],
         "type": "object",
         "properties": {
           "task_type": {
@@ -4912,11 +4588,7 @@
       },
       "TeacherReview": {
         "title": "TeacherReview",
-        "required": [
-          "version",
-          "decision",
-          "notes"
-        ],
+        "required": ["version", "decision", "notes"],
         "type": "object",
         "properties": {
           "version": {
@@ -4926,10 +4598,7 @@
           },
           "decision": {
             "title": "Decision",
-            "enum": [
-              "approve",
-              "reject"
-            ],
+            "enum": ["approve", "reject"],
             "type": "string"
           },
           "notes": {
@@ -4950,9 +4619,7 @@
       },
       "TokenRequest": {
         "title": "TokenRequest",
-        "required": [
-          "username"
-        ],
+        "required": ["username"],
         "type": "object",
         "properties": {
           "username": {
@@ -4964,9 +4631,7 @@
       },
       "TokenVerifyRequest": {
         "title": "TokenVerifyRequest",
-        "required": [
-          "token"
-        ],
+        "required": ["token"],
         "type": "object",
         "properties": {
           "token": {
@@ -4990,10 +4655,7 @@
       },
       "UploadedCheckpoint": {
         "title": "UploadedCheckpoint",
-        "required": [
-          "index",
-          "checkpoint_id"
-        ],
+        "required": ["index", "checkpoint_id"],
         "type": "object",
         "properties": {
           "index": {
@@ -5068,11 +4730,7 @@
       },
       "ValidationError": {
         "title": "ValidationError",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "type": "object",
         "properties": {
           "loc": {
@@ -5101,9 +4759,7 @@
       },
       "checkpointListType": {
         "title": "checkpointListType",
-        "required": [
-          "checkpointId"
-        ],
+        "required": ["checkpointId"],
         "type": "object",
         "properties": {
           "checkpointId": {
@@ -5136,11 +4792,7 @@
       },
       "configInfo": {
         "title": "configInfo",
-        "required": [
-          "name",
-          "score",
-          "answer"
-        ],
+        "required": ["name", "score", "answer"],
         "type": "object",
         "properties": {
           "name": {
@@ -5159,11 +4811,7 @@
       },
       "fileInfo": {
         "title": "fileInfo",
-        "required": [
-          "name",
-          "maxSizeMB",
-          "fileType"
-        ],
+        "required": ["name", "maxSizeMB", "fileType"],
         "type": "object",
         "properties": {
           "name": {
@@ -5182,11 +4830,7 @@
       },
       "groupInfoItem": {
         "title": "groupInfoItem",
-        "required": [
-          "gid",
-          "name",
-          "score"
-        ],
+        "required": ["gid", "name", "score"],
         "type": "object",
         "properties": {
           "gid": {
@@ -5219,11 +4863,7 @@
       },
       "judgeListType": {
         "title": "judgeListType",
-        "required": [
-          "pageSize",
-          "pageNow",
-          "psid"
-        ],
+        "required": ["pageSize", "pageNow", "psid"],
         "type": "object",
         "properties": {
           "pageSize": {
@@ -5319,11 +4959,7 @@
       },
       "judgeLogType": {
         "title": "judgeLogType",
-        "required": [
-          "name",
-          "score",
-          "jScore"
-        ],
+        "required": ["name", "score", "jScore"],
         "type": "object",
         "properties": {
           "name": {
@@ -5342,12 +4978,7 @@
       },
       "newRecord": {
         "title": "newRecord",
-        "required": [
-          "bs_id",
-          "u_name",
-          "u_id",
-          "token"
-        ],
+        "required": ["bs_id", "u_name", "u_id", "token"],
         "type": "object",
         "properties": {
           "bs_id": {
@@ -5370,11 +5001,7 @@
       },
       "objective_base": {
         "title": "objective_base",
-        "required": [
-          "type",
-          "content",
-          "answer"
-        ],
+        "required": ["type", "content", "answer"],
         "type": "object",
         "properties": {
           "type": {
@@ -5395,10 +5022,7 @@
       },
       "objective_content": {
         "title": "objective_content",
-        "required": [
-          "description",
-          "choice"
-        ],
+        "required": ["description", "choice"],
         "type": "object",
         "properties": {
           "description": {
@@ -5416,13 +5040,7 @@
       },
       "objective_edit": {
         "title": "objective_edit",
-        "required": [
-          "gid",
-          "pid",
-          "type",
-          "content",
-          "answer"
-        ],
+        "required": ["gid", "pid", "type", "content", "answer"],
         "type": "object",
         "properties": {
           "gid": {
@@ -5451,10 +5069,7 @@
       },
       "objective_info": {
         "title": "objective_info",
-        "required": [
-          "gid",
-          "pid"
-        ],
+        "required": ["gid", "pid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -5469,10 +5084,7 @@
       },
       "page": {
         "title": "page",
-        "required": [
-          "pageSize",
-          "pageNow"
-        ],
+        "required": ["pageSize", "pageNow"],
         "type": "object",
         "properties": {
           "pageSize": {
@@ -5487,9 +5099,7 @@
       },
       "personal_tag_summary": {
         "title": "personal_tag_summary",
-        "required": [
-          "groupId"
-        ],
+        "required": ["groupId"],
         "type": "object",
         "properties": {
           "groupId": {
@@ -5516,11 +5126,7 @@
       },
       "problem_group": {
         "title": "problem_group",
-        "required": [
-          "name",
-          "type",
-          "problemInfo"
-        ],
+        "required": ["name", "type", "problemInfo"],
         "type": "object",
         "properties": {
           "name": {
@@ -5553,9 +5159,7 @@
       },
       "problem_group_edit": {
         "title": "problem_group_edit",
-        "required": [
-          "gid"
-        ],
+        "required": ["gid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -5613,9 +5217,7 @@
       },
       "problem_group_id": {
         "title": "problem_group_id",
-        "required": [
-          "gid"
-        ],
+        "required": ["gid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -5626,10 +5228,7 @@
       },
       "problem_group_info": {
         "title": "problem_group_info",
-        "required": [
-          "pid",
-          "score"
-        ],
+        "required": ["pid", "score"],
         "type": "object",
         "properties": {
           "pid": {
@@ -5688,10 +5287,7 @@
       },
       "problem_group_list_page": {
         "title": "problem_group_list_page",
-        "required": [
-          "pageSize",
-          "pageNow"
-        ],
+        "required": ["pageSize", "pageNow"],
         "type": "object",
         "properties": {
           "pageSize": {
@@ -5728,14 +5324,7 @@
       },
       "problem_set_base": {
         "title": "problem_set_base",
-        "required": [
-          "name",
-          "type",
-          "groupInfo",
-          "config",
-          "groupId",
-          "tag"
-        ],
+        "required": ["name", "type", "groupInfo", "config", "groupId", "tag"],
         "type": "object",
         "properties": {
           "name": {
@@ -5928,9 +5517,7 @@
       },
       "problem_set_edit": {
         "title": "problem_set_edit",
-        "required": [
-          "psid"
-        ],
+        "required": ["psid"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6064,9 +5651,7 @@
       },
       "problem_set_psid": {
         "title": "problem_set_psid",
-        "required": [
-          "psid"
-        ],
+        "required": ["psid"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6077,10 +5662,7 @@
       },
       "problem_set_summary": {
         "title": "problem_set_summary",
-        "required": [
-          "psid",
-          "code"
-        ],
+        "required": ["psid", "code"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6095,10 +5677,7 @@
       },
       "programSubmitType": {
         "title": "programSubmitType",
-        "required": [
-          "judgeTemplateId",
-          "problemSetId"
-        ],
+        "required": ["judgeTemplateId", "problemSetId"],
         "type": "object",
         "properties": {
           "judgeTemplateId": {
@@ -6146,9 +5725,7 @@
       },
       "psidOnlyType": {
         "title": "psidOnlyType",
-        "required": [
-          "psid"
-        ],
+        "required": ["psid"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6159,10 +5736,7 @@
       },
       "publicCheckPointType": {
         "title": "publicCheckPointType",
-        "required": [
-          "checkpoints",
-          "type"
-        ],
+        "required": ["checkpoints", "type"],
         "type": "object",
         "properties": {
           "checkpoints": {
@@ -6180,9 +5754,7 @@
       },
       "routerType": {
         "title": "routerType",
-        "required": [
-          "router"
-        ],
+        "required": ["router"],
         "type": "object",
         "properties": {
           "router": {
@@ -6228,11 +5800,7 @@
       },
       "routerTypeBase": {
         "title": "routerTypeBase",
-        "required": [
-          "psid",
-          "gid",
-          "pid"
-        ],
+        "required": ["psid", "gid", "pid"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6251,13 +5819,7 @@
       },
       "routerTypeBaseWithJudgeLog": {
         "title": "routerTypeBaseWithJudgeLog",
-        "required": [
-          "psid",
-          "gid",
-          "pid",
-          "username",
-          "judgeLog"
-        ],
+        "required": ["psid", "gid", "pid", "username", "judgeLog"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6309,12 +5871,7 @@
       },
       "routerTypeBaseWithUsername": {
         "title": "routerTypeBaseWithUsername",
-        "required": [
-          "psid",
-          "gid",
-          "pid",
-          "username"
-        ],
+        "required": ["psid", "gid", "pid", "username"],
         "type": "object",
         "properties": {
           "psid": {
@@ -6337,9 +5894,7 @@
       },
       "searchKey": {
         "title": "searchKey",
-        "required": [
-          "search"
-        ],
+        "required": ["search"],
         "type": "object",
         "properties": {
           "search": {
@@ -6350,12 +5905,7 @@
       },
       "search_list_page": {
         "title": "search_list_page",
-        "required": [
-          "pageSize",
-          "pageNow",
-          "groupId",
-          "tag"
-        ],
+        "required": ["pageSize", "pageNow", "groupId", "tag"],
         "type": "object",
         "properties": {
           "pageSize": {
@@ -6378,11 +5928,7 @@
       },
       "subjective_base": {
         "title": "subjective_base",
-        "required": [
-          "type",
-          "config",
-          "description"
-        ],
+        "required": ["type", "config", "description"],
         "type": "object",
         "properties": {
           "type": {
@@ -6400,9 +5946,7 @@
       },
       "subjective_config": {
         "title": "subjective_config",
-        "required": [
-          "judgeConfig"
-        ],
+        "required": ["judgeConfig"],
         "type": "object",
         "properties": {
           "maxCount": {
@@ -6455,13 +5999,7 @@
       },
       "subjective_edit": {
         "title": "subjective_edit",
-        "required": [
-          "gid",
-          "type",
-          "config",
-          "description",
-          "pid"
-        ],
+        "required": ["gid", "type", "config", "description", "pid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -6487,10 +6025,7 @@
       },
       "subjective_info": {
         "title": "subjective_info",
-        "required": [
-          "gid",
-          "pid"
-        ],
+        "required": ["gid", "pid"],
         "type": "object",
         "properties": {
           "gid": {
@@ -6505,12 +6040,7 @@
       },
       "submissionInfo": {
         "title": "submissionInfo",
-        "required": [
-          "submissionId",
-          "psid",
-          "gid",
-          "pid"
-        ],
+        "required": ["submissionId", "psid", "gid", "pid"],
         "type": "object",
         "properties": {
           "submissionId": {
@@ -6544,12 +6074,7 @@
       },
       "submissionListType": {
         "title": "submissionListType",
-        "required": [
-          "pageNow",
-          "pageSize",
-          "problemSetId",
-          "router"
-        ],
+        "required": ["pageNow", "pageSize", "problemSetId", "router"],
         "type": "object",
         "properties": {
           "pageNow": {
@@ -6685,11 +6210,7 @@
       },
       "timeSettingType": {
         "title": "timeSettingType",
-        "required": [
-          "tm_start",
-          "tm_end",
-          "weight"
-        ],
+        "required": ["tm_start", "tm_end", "weight"],
         "type": "object",
         "properties": {
           "tm_start": {
@@ -6708,9 +6229,7 @@
       },
       "userGroupId": {
         "title": "userGroupId",
-        "required": [
-          "groupId"
-        ],
+        "required": ["groupId"],
         "type": "object",
         "properties": {
           "groupId": {

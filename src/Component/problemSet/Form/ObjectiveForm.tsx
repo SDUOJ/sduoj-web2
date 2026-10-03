@@ -106,7 +106,8 @@ const ObjectiveForm = (props: any) => {
           onChange={setChoiceData}
           toolBar={(actionRef: any) => {
             return [
-              <Button key="add-objective-choice"
+              <Button
+                key="add-objective-choice"
                 type={'dashed'}
                 block
                 onClick={() => {

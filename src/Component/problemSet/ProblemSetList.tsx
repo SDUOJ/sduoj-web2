@@ -1,36 +1,44 @@
-import TableWithPagination from "../common/Table/TableWithPagination";
-import cApi from "../../Utils/API/c-api";
-import {Button} from "antd";
-import {withRouter} from "react-router-dom";
-import {withTranslation} from "react-i18next";
-import {UrlPrefix} from "../../Config/constValue";
+import TableWithPagination from '../common/Table/TableWithPagination';
+import cApi from '../../Utils/API/c-api';
+import { Button } from 'antd';
+import { withRouter } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+import { UrlPrefix } from '../../Config/constValue';
 
 const ProblemSetList = (props: any) => {
-    return (
-        <>
+  return (
+    <>
+      <TableWithPagination
+        name={`ProblemSetList-group-${props.groupId}-tag-${props.tag}`}
+        columns={[
+          { title: 'ID', dataIndex: 'psid' },
+          {
+            title: props.t('title'),
+            dataIndex: 'name',
+            render: (v: any, r: any) => {
+              return (
+                <Button
+                  className="table-title-button"
+                  type={'text'}
+                  size={'small'}
+                  onClick={() => {
+                    props.history.push(`${UrlPrefix}/problemSet/${r.psid}/overview`);
+                  }}
+                >
+                  {v}
+                </Button>
+              );
+            },
+          },
+          { title: props.t('Score'), dataIndex: 'global_score' },
+        ]}
+        API={(paras: any) => {
+          return cApi.getProblemSetList({ ...paras, groupId: props.groupId, tag: props.tag });
+        }}
+        size={'small'}
+      />
+    </>
+  );
+};
 
-            <TableWithPagination
-                name={`ProblemSetList-group-${props.groupId}-tag-${props.tag}`}
-                columns={[
-                    {title: "ID", dataIndex: "psid"},
-                    {
-                        title: props.t("title"), dataIndex: "name", render: (v: any, r: any) => {
-                            return <Button className="table-title-button" type={"text"} size={"small"} onClick={() => {
-                                props.history.push(`${UrlPrefix}/problemSet/${r.psid}/overview`)
-                            }}>
-                                {v}
-                            </Button>
-                        }
-                    },
-                    {title: props.t("Score"), dataIndex: "global_score"},
-                ]}
-                API={(paras: any) => {
-                    return cApi.getProblemSetList({...paras, groupId: props.groupId, tag: props.tag})
-                }}
-                size={"small"}
-            />
-        </>
-    )
-}
-
-export default withTranslation()(withRouter(ProblemSetList))
+export default withTranslation()(withRouter(ProblemSetList));

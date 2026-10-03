@@ -47,7 +47,7 @@ const readBlobPayload = async (value: unknown): Promise<unknown> => {
 const binaryError = async (error: any) => {
   if (error?.response?.data instanceof Blob) {
     const payload = await readBlobPayload(error.response.data);
-    error.response = {...error.response, data: payload};
+    error.response = { ...error.response, data: payload };
   }
   return error;
 };
@@ -67,7 +67,7 @@ const downloadPost = async (
     const contentType = String(response.headers?.['content-type'] ?? '').toLowerCase();
     if (contentType.includes('json') || contentType.startsWith('text/')) {
       const payload = await readBlobPayload(response.data);
-      throw {response: {...response, data: payload}};
+      throw { response: { ...response, data: payload } };
     }
     if (expectedContentType && contentType && !expectedContentType.test(contentType)) {
       throw new Error('服务器返回了无法识别的文件类型');
@@ -89,19 +89,11 @@ const downloadPost = async (
   return Promise.resolve();
 };
 
-const getZipFile = (
-  url: string,
-  data: object,
-  config?: AxiosRequestConfig,
-  filename?: string,
-) => downloadPost(url, data, config, filename, /zip|octet-stream/);
+const getZipFile = (url: string, data: object, config?: AxiosRequestConfig, filename?: string) =>
+  downloadPost(url, data, config, filename, /zip|octet-stream/);
 
-const downloadFile = (
-  url: string,
-  data: object,
-  config?: AxiosRequestConfig,
-  filename?: string,
-) => downloadPost(url, data, config, filename);
+const downloadFile = (url: string, data: object, config?: AxiosRequestConfig, filename?: string) =>
+  downloadPost(url, data, config, filename);
 
 const messageDisabledList = [
   '/user/getProfile',
@@ -177,9 +169,15 @@ const dealResponse = async (resp: any, url: string) => {
           const inApp =
             current.pathname === UrlPrefix || current.pathname.startsWith(UrlPrefix + '/');
           if (current.pathname !== UrlPrefix + '/login') {
-            window.location.replace(inApp
-              ? loginRedirect({ pathname: current.pathname, search: current.search, hash: current.hash })
-              : loginRedirect({ pathname: UrlPrefix }));
+            window.location.replace(
+              inApp
+                ? loginRedirect({
+                    pathname: current.pathname,
+                    search: current.search,
+                    hash: current.hash,
+                  })
+                : loginRedirect({ pathname: UrlPrefix }),
+            );
           }
           message.error(parseErrorMessage(payload, '未登录或登录已过期'));
         }

@@ -167,7 +167,12 @@ const Problem = (props: any) => {
   }
 
   if (problemSetInfo !== undefined && (groupInfo === undefined || problemMeta === undefined)) {
-    return <Result status="404" title={props.t('PageNotFound', { defaultValue: '题目不存在或已被移除' })} />;
+    return (
+      <Result
+        status="404"
+        title={props.t('PageNotFound', { defaultValue: '题目不存在或已被移除' })}
+      />
+    );
   }
 
   return (
@@ -322,7 +327,10 @@ const Problem = (props: any) => {
                       <Row gutter={10}>
                         {group.problemInfo.map((problem: any, index: number) => {
                           return (
-                            <Col key={`problem-${group.index ?? g_index}-${problem.index ?? index}`} span={3}>
+                            <Col
+                              key={`problem-${group.index ?? g_index}-${problem.index ?? index}`}
+                              span={3}
+                            >
                               <Button
                                 ghost={true}
                                 size={'middle'}

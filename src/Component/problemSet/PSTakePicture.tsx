@@ -36,7 +36,10 @@ const PSTakePicture = (props: any) => {
       video.srcObject = stream;
       try {
         await new Promise<void>((resolve, reject) => {
-          const timeout = window.setTimeout(() => reject(new Error('video metadata timeout')), 3000);
+          const timeout = window.setTimeout(
+            () => reject(new Error('video metadata timeout')),
+            3000,
+          );
           video.onloadedmetadata = () => {
             window.clearTimeout(timeout);
             resolve();

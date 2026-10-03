@@ -108,7 +108,7 @@ const mapGender = (v: any): number | undefined =>
 const map01 = (v: any): number => (Number(v) === 1 ? 1 : 0);
 
 const AutoImportUsers = (props: any) => {
-  const {t} = props;
+  const { t } = props;
   const [visible, setVisible] = useState(false);
   const [rows, setRows] = useState<ParsedUser[]>([]);
   const [displayRows, setDisplayRows] = useState<any[]>([]);

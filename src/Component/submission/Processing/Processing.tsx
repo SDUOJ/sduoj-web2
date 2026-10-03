@@ -88,7 +88,7 @@ const setCaseValue = (resData: any, key: string, data: TestCaseProp[]) => {
 
 export const Processing = (props: IProcessingProp & any) => {
   const requestGeneration = useRef(0);
-  const {QuerySubmissionAPI, submissionId, t} = props;
+  const { QuerySubmissionAPI, submissionId, t } = props;
 
   // 当前评测的最新到达的步骤
   const [currentStep, setCurrentStep] = useState<number>(0);

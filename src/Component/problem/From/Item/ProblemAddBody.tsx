@@ -49,11 +49,14 @@ interface ProblemAddBodyType {
 
 const ProblemAddBody = (props: ProblemAddBodyType & any) => {
   const { t } = useTranslation();
-  const {onChange} = props;
+  const { onChange } = props;
 
   // 可编辑表格的操作引用
   const actionRef = useRef<ActionType>();
-  const keyMapping = useMemo(() => ({ ...defaultKeyMapping, ...props.keyMapping }), [props.keyMapping]);
+  const keyMapping = useMemo(
+    () => ({ ...defaultKeyMapping, ...props.keyMapping }),
+    [props.keyMapping],
+  );
 
   // === State ===
   const [sortSwitch, setSortSwitch] = useState<boolean>(false); // 操作是否开启排序模式
@@ -63,11 +66,14 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
   const [TableData, setTableDataX] = useState<any[]>([]);
   const [TableDataHis, setTableDataHis] = useState<Record<string | number, string>>({});
-  const setTableData = useCallback((data: any) => {
-    // console.log("setTableData", data)
-    onChange && onChange(data);
-    setTableDataX([...data]);
-  }, [onChange]);
+  const setTableData = useCallback(
+    (data: any) => {
+      // console.log("setTableData", data)
+      onChange && onChange(data);
+      setTableDataX([...data]);
+    },
+    [onChange],
+  );
 
   const [problemInfoCache, setProblemInfoCacheX] = useState<any>({}); // 根据题号请求得到的题目信息的缓存
   const [problemDescriptionCache, setProblemDescriptionCacheX] = useState<{
@@ -84,30 +90,36 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
   // 题目信息匹配
   const ProblemType = props.problemType;
-  const strMatch = useCallback((value?: string) => {
-    if (value === undefined) return null;
-    if (ProblemType === 'single' || ProblemType === 'multi')
-      return value.match(/SDUOJ-C-[0-9]{4}$/);
-    if (ProblemType === 'program') return value.match(/SDUOJ-[0-9]{4}$/);
-  }, [ProblemType]);
+  const strMatch = useCallback(
+    (value?: string) => {
+      if (value === undefined) return null;
+      if (ProblemType === 'single' || ProblemType === 'multi')
+        return value.match(/SDUOJ-C-[0-9]{4}$/);
+      if (ProblemType === 'program') return value.match(/SDUOJ-[0-9]{4}$/);
+    },
+    [ProblemType],
+  );
 
   // 获取题目描述信息
-  const getProblemDescriptionInfo = useCallback(async (problemCode?: string) => {
-    if (problemCode === undefined) return {};
-    if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
-    return problemDescriptionRequests.current.get(problemCode, async () => {
-      const resData = await mApi.getProblemDescriptionList({ problemCode });
-      if (resData === null) throw new Error(t('ProblemNotExist'));
-      const descriptions: any = {};
-      for (const description of resData as any[]) {
-        descriptions[description.id] = { text: description.title };
-      }
-      setProblemDescriptionCacheX((current) => ({
-        ...current,
-        [problemCode]: { DescriptionInfo: descriptions },
-      }));
-    });
-  }, [strMatch, t]);
+  const getProblemDescriptionInfo = useCallback(
+    async (problemCode?: string) => {
+      if (problemCode === undefined) return {};
+      if (strMatch(problemCode) === null) return Promise.reject(t('ProblemCodeFormatError'));
+      return problemDescriptionRequests.current.get(problemCode, async () => {
+        const resData = await mApi.getProblemDescriptionList({ problemCode });
+        if (resData === null) throw new Error(t('ProblemNotExist'));
+        const descriptions: any = {};
+        for (const description of resData as any[]) {
+          descriptions[description.id] = { text: description.title };
+        }
+        setProblemDescriptionCacheX((current) => ({
+          ...current,
+          [problemCode]: { DescriptionInfo: descriptions },
+        }));
+      });
+    },
+    [strMatch, t],
+  );
 
   // 执行初始化
   useEffect(() => {
@@ -139,7 +151,10 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
 
         const check = (nameA: string, arr: any) => {
           let nowKey = value[keyMapping['ProblemCode']];
-          if (forceUpdate || (value[nameA] === undefined && get(arr[nowKey], nameA) !== undefined)) {
+          if (
+            forceUpdate ||
+            (value[nameA] === undefined && get(arr[nowKey], nameA) !== undefined)
+          ) {
             obj[nameA] = get(arr[nowKey], nameA);
             updateNum += 1;
           }
@@ -169,7 +184,15 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
     if (Object.keys(nextHistory).some((key) => nextHistory[key] !== TableDataHis[key])) {
       setTableDataHis(nextHistory);
     }
-  }, [TableData, TableDataHis, keyMapping, problemDescriptionCache, problemInfoCache, setTableData, strMatch]);
+  }, [
+    TableData,
+    TableDataHis,
+    keyMapping,
+    problemDescriptionCache,
+    problemInfoCache,
+    setTableData,
+    strMatch,
+  ]);
 
   const getProblemInfo = async (problemCode: string) => {
     // console.log("getProblemInfo", TableData, problemCode, rowID)
@@ -423,7 +446,8 @@ const ProblemAddBody = (props: ProblemAddBodyType & any) => {
             editableKeys: sortSwitch ? [] : editableKeys,
             actionRender: (row: any, config: any, defDom: any) => {
               return [
-                <Popconfirm key={row.id}
+                <Popconfirm
+                  key={row.id}
                   title={t('deleteConfirm')}
                   onConfirm={() => {
                     const data = TableData.filter((value: any) => value.id !== row.id);

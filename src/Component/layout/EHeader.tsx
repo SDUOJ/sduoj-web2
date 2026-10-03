@@ -27,9 +27,22 @@ const EHeader = (props: any) => {
       }}
     >
       <div className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={logo} style={{ width: 'clamp(88px, 32vw, 125px)', height: 'auto' }} alt="SDUOJ-logo" />
+        <img
+          src={logo}
+          style={{ width: 'clamp(88px, 32vw, 125px)', height: 'auto' }}
+          alt="SDUOJ-logo"
+        />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          minWidth: 0,
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end',
+        }}
+      >
         {props.location.pathname.match(/\/exam\/running\//) !== null && <ExamOver />}
         <ChangeLang />
         <UserAccountDropdown

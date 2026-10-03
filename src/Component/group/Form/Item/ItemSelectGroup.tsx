@@ -59,7 +59,11 @@ const ItemSelectGroup = (props: any) => {
         onSearch={(value) => onSearch(value)}
       >
         {GroupInfo.map((value: groupSelection) => {
-          return <Option key={value.groupId} value={value.groupId}>{value.groupId + ': ' + value.title}</Option>;
+          return (
+            <Option key={value.groupId} value={value.groupId}>
+              {value.groupId + ': ' + value.title}
+            </Option>
+          );
         })}
       </Select>
     </Form.Item>

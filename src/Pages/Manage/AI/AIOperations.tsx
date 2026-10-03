@@ -37,45 +37,45 @@ export default function AIOperations({ location }: { location?: { search?: strin
       <AIWorkspaceNav />
       <Typography.Title level={3}>任务与创作</Typography.Title>
       <Card
-      size="small"
-      title="任务管理"
-      extra={
-        <Button
-          aria-label="刷新"
-          icon={<ReloadOutlined />}
-          onClick={() => setRevision(revision + 1)}
-        />
-      }
-    >
-      {error && <Alert type="error" showIcon message={error} />}
-      <Table<PlatformJob>
         size="small"
-        rowKey="id"
-        dataSource={jobs}
-        scroll={{ x: 720 }}
-        pagination={{
-          current: page,
-          total,
-          pageSize: 20,
-          showSizeChanger: false,
-          onChange: setPage,
-        }}
-        columns={[
-          { title: '任务', dataIndex: 'id', ellipsis: true },
-          { title: '类别', dataIndex: 'task_type' },
-          { title: '状态', render: (_, row) => <Tag>{row.status}</Tag> },
-          { title: '尝试', dataIndex: 'attempt', width: 80 },
-          {
-            title: '操作',
-            render: (_, row) => (
-              <Button type="link" onClick={() => setTask(row.id)}>
-                查看
-              </Button>
-            ),
-          },
-        ]}
-      />
-      {task && <AITaskMonitor taskId={task} />}
+        title="任务管理"
+        extra={
+          <Button
+            aria-label="刷新"
+            icon={<ReloadOutlined />}
+            onClick={() => setRevision(revision + 1)}
+          />
+        }
+      >
+        {error && <Alert type="error" showIcon message={error} />}
+        <Table<PlatformJob>
+          size="small"
+          rowKey="id"
+          dataSource={jobs}
+          scroll={{ x: 720 }}
+          pagination={{
+            current: page,
+            total,
+            pageSize: 20,
+            showSizeChanger: false,
+            onChange: setPage,
+          }}
+          columns={[
+            { title: '任务', dataIndex: 'id', ellipsis: true },
+            { title: '类别', dataIndex: 'task_type' },
+            { title: '状态', render: (_, row) => <Tag>{row.status}</Tag> },
+            { title: '尝试', dataIndex: 'attempt', width: 80 },
+            {
+              title: '操作',
+              render: (_, row) => (
+                <Button type="link" onClick={() => setTask(row.id)}>
+                  查看
+                </Button>
+              ),
+            },
+          ]}
+        />
+        {task && <AITaskMonitor taskId={task} />}
       </Card>
     </>
   );

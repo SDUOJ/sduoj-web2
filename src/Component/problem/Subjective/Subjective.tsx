@@ -13,7 +13,13 @@ const detectSubType = (as: any, problemInfo: any): number => {
   if (problemInfo?.type !== undefined) return problemInfo.type;
   if (!as) return 1;
   if (Array.isArray(as.answer_m)) {
-    if (as.answer_m.length > 0 && typeof as.answer_m[0] === 'object' && as.answer_m[0] !== null && as.answer_m[0].fileId) return 0;
+    if (
+      as.answer_m.length > 0 &&
+      typeof as.answer_m[0] === 'object' &&
+      as.answer_m[0] !== null &&
+      as.answer_m[0].fileId
+    )
+      return 0;
     return 1;
   }
   if (typeof as.answer_m === 'string') return 2;
@@ -37,7 +43,7 @@ const normalizeToArray = (value: any) => {
 };
 
 const Subjective = (props: any) => {
-  const {getAS, problemInfo} = props;
+  const { getAS, problemInfo } = props;
   // ---------------- State ----------------
   const [answerSheet, setAnswerSheet] = useState<any>();
   const [open, setOpen] = useState<boolean>(false); // 编辑开关（文件题/文本题）

@@ -35,25 +35,31 @@ const ItemSelectClassroom = (props: any) => {
     });
   }, []);
 
-  const toOption = useCallback((row: any): ClassroomOption => ({
-    value: Number(row.c_id),
-    label: `${row.c_id}: ${row.c_name}${row.address ? ` (${row.address})` : ''}`,
-  }), []);
+  const toOption = useCallback(
+    (row: any): ClassroomOption => ({
+      value: Number(row.c_id),
+      label: `${row.c_id}: ${row.c_name}${row.address ? ` (${row.address})` : ''}`,
+    }),
+    [],
+  );
 
-  const queryClassrooms = useCallback(async (keyword: string) => {
-    setLoading(true);
-    try {
-      const res: any = await autolabApi.listClassrooms({
-        pageNow: 1,
-        pageSize: 100,
-        keyword,
-      });
-      const rows = Array.isArray(res?.rows) ? res.rows : [];
-      mergeOptions(rows.map(toOption));
-    } finally {
-      setLoading(false);
-    }
-  }, [mergeOptions, toOption]);
+  const queryClassrooms = useCallback(
+    async (keyword: string) => {
+      setLoading(true);
+      try {
+        const res: any = await autolabApi.listClassrooms({
+          pageNow: 1,
+          pageSize: 100,
+          keyword,
+        });
+        const rows = Array.isArray(res?.rows) ? res.rows : [];
+        mergeOptions(rows.map(toOption));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [mergeOptions, toOption],
+  );
 
   useEffect(() => {
     queryClassrooms('');

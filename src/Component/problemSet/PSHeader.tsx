@@ -24,64 +24,65 @@ const PSHeader = (props: any) => {
 
   const problemSetInfo = useProblemSetInfo(problemSetId, onError);
 
-  const menuData = useMemo(() => [
-    {
-      key: 'overview',
-      name: t('Overview'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/overview',
-      re: /\/problemSet\/.*\/overview/g,
-    },
-    {
-      key: 'problem',
-      name: t('Problem'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/problem/0/0',
-      re: /\/problemSet\/.*\/problem/g,
-    },
-    {
-      key: 'review',
-      name: t('Review'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/review',
-      re: /\/problemSet\/.*\/review/g,
-    },
-    {
-      key: 'rank',
-      name: t('Rank'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/rank',
-      re: /\/problemSet\/.*\/rank/g,
-    },
-    {
-      key: 'monitor',
-      name: t('RankMonitorTab'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/monitor',
-      re: /\/problemSet\/.*\/monitor/g,
-    },
-    {
-      key: 'submission',
-      name: t('SubmissionList'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/submission',
-      re: /\/problemSet\/.*\/submission/g,
-    },
-    {
-      key: 'late',
-      name: t('LatePermission'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/late',
-      re: /\/problemSet\/.*\/late/g,
-    },
-    {
-      key: 'auto-task',
-      name: t('AutoTaskTab'),
-      link: UrlPrefix + '/problemSet/' + problemSetId + '/auto-task',
-      re: /\/problemSet\/.*\/auto-task/g,
-    },
-  ], [problemSetId, t]);
+  const menuData = useMemo(
+    () => [
+      {
+        key: 'overview',
+        name: t('Overview'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/overview',
+        re: /\/problemSet\/.*\/overview/g,
+      },
+      {
+        key: 'problem',
+        name: t('Problem'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/problem/0/0',
+        re: /\/problemSet\/.*\/problem/g,
+      },
+      {
+        key: 'review',
+        name: t('Review'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/review',
+        re: /\/problemSet\/.*\/review/g,
+      },
+      {
+        key: 'rank',
+        name: t('Rank'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/rank',
+        re: /\/problemSet\/.*\/rank/g,
+      },
+      {
+        key: 'monitor',
+        name: t('RankMonitorTab'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/monitor',
+        re: /\/problemSet\/.*\/monitor/g,
+      },
+      {
+        key: 'submission',
+        name: t('SubmissionList'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/submission',
+        re: /\/problemSet\/.*\/submission/g,
+      },
+      {
+        key: 'late',
+        name: t('LatePermission'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/late',
+        re: /\/problemSet\/.*\/late/g,
+      },
+      {
+        key: 'auto-task',
+        name: t('AutoTaskTab'),
+        link: UrlPrefix + '/problemSet/' + problemSetId + '/auto-task',
+        re: /\/problemSet\/.*\/auto-task/g,
+      },
+    ],
+    [problemSetId, t],
+  );
 
   const [nowKey, setNowKey] = useState<any>();
 
   const menuList: any = ['overview', 'problem'];
   if (problemSetInfo?.isAdmin === true)
-    menuList.push(
-      'review', 'submission', 'late', 'auto-task', 'rank', 'monitor',
-    );
+    menuList.push('review', 'submission', 'late', 'auto-task', 'rank', 'monitor');
 
   useEffect(() => {
     if (path.match(/\/problemSet\/[0-9]*\/?$/g) !== null) {
@@ -106,7 +107,10 @@ const PSHeader = (props: any) => {
                     <Button size={'small'} href={`${UrlPrefix}/workspace?psid=${problemSetId}`}>
                       AI 任务中心
                     </Button>
-                    <Button size={'small'} href={`${UrlPrefix}/manage/problemSet/grading?psid=${problemSetId}`}>
+                    <Button
+                      size={'small'}
+                      href={`${UrlPrefix}/manage/problemSet/grading?psid=${problemSetId}`}
+                    >
                       AI 批阅
                     </Button>
                   </>

@@ -210,7 +210,8 @@ const ObjectiveForm = (props: any) => {
           submitButtonProps: { style: { display: 'none' } },
           render: (prop, defaultDoms) => {
             return [
-              <Button key="submit-objective"
+              <Button
+                key="submit-objective"
                 type="primary"
                 onClick={() => {
                   formRef.current
@@ -313,7 +314,8 @@ const ObjectiveForm = (props: any) => {
                 editableKeys: sortSwitch ? [] : editableKeys,
                 actionRender: (row: any, config: any, defDom: any) => {
                   return [
-                    <Popconfirm key={row.id}
+                    <Popconfirm
+                      key={row.id}
                       title={props.t('deleteConfirm')}
                       onConfirm={() => {
                         let choice = formRef.current?.getFieldValue('choice');

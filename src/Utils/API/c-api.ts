@@ -184,7 +184,7 @@ const cApi = {
 
   // 公告相关
   async getAnnouncementList(data: any) {
-    return request.get('/notice/list', {...data, filter: 'default'});
+    return request.get('/notice/list', { ...data, filter: 'default' });
   },
   async getAnnouncement(data: any) {
     return request.get('notice/query', data);

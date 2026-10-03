@@ -412,7 +412,8 @@ const ProblemAddForm = (props: any) => {
             editableKeys: sortSwitch ? [] : editableKeys,
             actionRender: (row: any, config: any, defDom: any) => {
               return [
-                <Popconfirm key={row.id}
+                <Popconfirm
+                  key={row.id}
                   title={props.t('deleteConfirm')}
                   onConfirm={() => {
                     const data = proListData.filter(

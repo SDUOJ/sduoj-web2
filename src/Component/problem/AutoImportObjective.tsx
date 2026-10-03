@@ -202,11 +202,7 @@ const AutoImportObjective = (props: any) => {
           <p className="ant-upload-hint">{props.t('UploadExcelHint')}</p>
         </Dragger>
         <div style={{ textAlign: 'right', marginTop: '10px', marginBottom: '20px' }}>
-          <a
-            href={
-              cApi.getFileDownloadUrl('262337552520937533', 'AutoImportObjective.xlsx')
-            }
-          >
+          <a href={cApi.getFileDownloadUrl('262337552520937533', 'AutoImportObjective.xlsx')}>
             {props.t('ExampleFileDownload')}
           </a>
         </div>

@@ -125,7 +125,11 @@ const ExtHwsInfo = (props: any) => {
               type={'link'}
               size={'small'}
               onClick={() => {
-                window.open(cApi.getFileDownloadUrl(rows.file_id, rows.file_name), '_blank', 'noopener,noreferrer');
+                window.open(
+                  cApi.getFileDownloadUrl(rows.file_id, rows.file_name),
+                  '_blank',
+                  'noopener,noreferrer',
+                );
               }}
             >
               {' '}
@@ -241,7 +245,11 @@ const ExtHwsInfo = (props: any) => {
               type={'link'}
               size={'small'}
               onClick={() => {
-                window.open(cApi.getFileDownloadUrl(rows.file_id, rows.file_name), '_blank', 'noopener,noreferrer');
+                window.open(
+                  cApi.getFileDownloadUrl(rows.file_id, rows.file_name),
+                  '_blank',
+                  'noopener,noreferrer',
+                );
               }}
             >
               {' '}

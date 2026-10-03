@@ -307,18 +307,21 @@ const SubjectiveConfigForm = (props: any) => {
     );
   };
 
-  const applyJudgeConfigToForm = useCallback((list: any[], silent: boolean = false) => {
-    const config = form.getFieldValue('config') || {};
-    form.setFieldsValue({
-      config: {
-        ...config,
-        judgeConfig: list,
-      },
-    });
-    if (!silent) {
-      message.success(`已生成 ${list.length} 条得分项配置`);
-    }
-  }, [form]);
+  const applyJudgeConfigToForm = useCallback(
+    (list: any[], silent: boolean = false) => {
+      const config = form.getFieldValue('config') || {};
+      form.setFieldsValue({
+        config: {
+          ...config,
+          judgeConfig: list,
+        },
+      });
+      if (!silent) {
+        message.success(`已生成 ${list.length} 条得分项配置`);
+      }
+    },
+    [form],
+  );
 
   const parseJudgeConfigFromRaw = (raw: string) => {
     const payload = parseJsonRaw(raw);
@@ -483,7 +486,8 @@ const SubjectiveConfigForm = (props: any) => {
           rowKey={'id'}
           toolBar={(actionRef: any) => {
             return [
-              <Button key="add-judge-config"
+              <Button
+                key="add-judge-config"
                 type={'dashed'}
                 block
                 icon={<PlusOutlined />}
