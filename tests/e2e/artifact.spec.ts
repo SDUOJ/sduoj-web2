@@ -26,3 +26,33 @@ test('served release metadata and entrypoint hashes match the tested checkout', 
     expect(createHash('sha256').update(body).digest('hex'), filename).toBe(file.sha256);
   }
 });
+
+test('Vditor runtime, emoji and themes use one content-addressed resource namespace', async ({
+  request,
+}) => {
+  const response = await request.get('/v2/release-manifest.json');
+  const manifest = await response.json();
+  const files: Array<{ path: string; size: number; sha256: string }> = manifest.files.filter(
+    (entry: { path: string }) => entry.path.startsWith('vditor/'),
+  );
+  const prefixes = new Set(files.map((file) => file.path.split('/').slice(0, 3).join('/')));
+  expect(prefixes.size).toBe(1);
+  const prefix = [...prefixes][0];
+  expect(prefix).toMatch(/^vditor\/[a-f0-9]{64}\/dist$/);
+  const resources = [
+    files.find((file) => file.path === `${prefix}/index.min.js`),
+    files.find((file) => file.path.endsWith('/js/lute/lute.min.js')),
+    files.find((file) => file.path.includes('/images/emoji/')),
+    files.find((file) => file.path.includes('/css/content-theme/')),
+  ];
+  for (const file of resources) {
+    expect(file).toBeDefined();
+    if (!file) throw new Error('Missing Vditor fixture');
+    const resource = await request.get(`/v2/${file.path}`);
+    expect(resource.ok()).toBe(true);
+    const bytes = await resource.body();
+    expect(bytes.length).toBe(file.size);
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(file.sha256);
+  }
+  expect((await request.get('/v2/vditor/dist/index.min.js')).status()).toBe(404);
+});

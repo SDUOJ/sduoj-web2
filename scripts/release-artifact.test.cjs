@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
+const crypto = require('node:crypto');
 const { create, verify, permitted } = require('./release-artifact.cjs');
 
 const metadata = {
@@ -13,16 +14,25 @@ const metadata = {
   createdAt: '2026-10-04T00:00:00.000Z',
   releaseId: 'audit-fixture',
 };
+const vditorRuntime = 'window.Vditor={};';
+const vditorChecksum = crypto.createHash('sha256').update(vditorRuntime).digest('hex');
+const vditorRevision = crypto
+  .createHash('sha256')
+  .update(`index.min.js\0${vditorChecksum}\n`)
+  .digest('hex');
 
 function fixture(context, prefix = '/v2/') {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sduoj-artifact-'));
   context.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   fs.mkdirSync(path.join(directory, 'static/js'), { recursive: true });
-  fs.mkdirSync(path.join(directory, 'vditor/dist'), { recursive: true });
+  fs.mkdirSync(path.join(directory, `vditor/${vditorRevision}/dist`), { recursive: true });
   const entrypoints = ['static/js/runtime-main.123abc.js', 'static/js/main.456def.js'];
   for (const filename of entrypoints)
     fs.writeFileSync(path.join(directory, filename), 'window.fixture=true;');
-  fs.writeFileSync(path.join(directory, 'vditor/dist/index.min.js'), 'window.Vditor={};');
+  fs.writeFileSync(
+    path.join(directory, `vditor/${vditorRevision}/dist/index.min.js`),
+    vditorRuntime,
+  );
   fs.writeFileSync(
     path.join(directory, 'index.html'),
     `<div id="root"></div>${entrypoints.map((entry) => `<script src="${prefix}${entry}"></script>`).join('')}`,
@@ -164,11 +174,21 @@ test('path allowlist rejects traversal, hidden files, source maps and executable
     'index.html',
     'static/js/main.abc.js',
     'static/media/font.woff2',
-    'vditor/dist/types/index.d.ts',
-    'vditor/dist/js/mathjax/LICENSE',
+    `vditor/${vditorRevision}/dist/types/index.d.ts`,
+    `vditor/${vditorRevision}/dist/js/mathjax/LICENSE`,
   ]) {
     assert.equal(permitted(filename), true, filename);
   }
+});
+
+test('rejects unversioned and falsely named Vditor distributions', (context) => {
+  assert.equal(permitted('vditor/dist/index.min.js'), false);
+  const directory = fixture(context);
+  fs.renameSync(
+    path.join(directory, 'vditor', vditorRevision),
+    path.join(directory, 'vditor', 'b'.repeat(64)),
+  );
+  assert.throws(() => create(directory, metadata), /Vditor content revision mismatch/);
 });
 
 test('standalone verifier returns a machine-readable report and fails closed', (context) => {

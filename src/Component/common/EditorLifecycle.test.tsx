@@ -179,9 +179,11 @@ it('uses PUBLIC_URL for editor and export runtime, emoji and theme resources', a
     await waitForEditor(2);
 
     for (const config of options) {
-      expect(config.cdn).toBe('/preview/sduoj/vditor');
-      expect(config.hint.emojiPath).toBe('/preview/sduoj/vditor/dist/images/emoji');
-      expect(config.preview.theme.path).toBe('/preview/sduoj/vditor/dist/css/content-theme');
+      expect(config.cdn).toBe('/preview/sduoj/vditor/development');
+      expect(config.hint.emojiPath).toBe('/preview/sduoj/vditor/development/dist/images/emoji');
+      expect(config.preview.theme.path).toBe(
+        '/preview/sduoj/vditor/development/dist/css/content-theme',
+      );
     }
   } finally {
     if (previousPublicUrl === undefined) delete process.env.PUBLIC_URL;

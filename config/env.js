@@ -96,6 +96,7 @@ function getClientEnvironment(publicUrl) {
       },
     );
   // Stringify all values so we can feed into webpack DefinePlugin
+  raw.REACT_APP_VDITOR_REVISION = require('./vditor-assets.cjs').revision;
   const stringified = {
     'process.env': Object.keys(raw).reduce((env, key) => {
       env[key] = JSON.stringify(raw[key]);

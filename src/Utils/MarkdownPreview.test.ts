@@ -24,9 +24,9 @@ it('uses PUBLIC_URL for preview runtime, emoji and theme resources', async () =>
     await MarkdownPreview('# Preview', 'markdown-assets');
 
     const config = (VditorPreview.preview as jest.Mock).mock.calls[0][2];
-    expect(config.cdn).toBe('/v2/vditor');
-    expect(config.emojiPath).toBe('/v2/vditor/dist/images/emoji');
-    expect(config.theme.path).toBe('/v2/vditor/dist/css/content-theme');
+    expect(config.cdn).toBe('/v2/vditor/development');
+    expect(config.emojiPath).toBe('/v2/vditor/development/dist/images/emoji');
+    expect(config.theme.path).toBe('/v2/vditor/development/dist/css/content-theme');
   } finally {
     if (previousPublicUrl === undefined) delete process.env.PUBLIC_URL;
     else process.env.PUBLIC_URL = previousPublicUrl;

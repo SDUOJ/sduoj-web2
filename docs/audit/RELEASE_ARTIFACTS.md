@@ -1,5 +1,7 @@
 # 发布产物校验（R-41）
 
+R-20 后续把 Vditor 发行资源迁移为 `vditor/<SHA256>/dist`；校验器重新计算目录摘要并拒绝无版本路径，详见 `VDITOR_CACHE.md`。
+
 `yarn build` 和 `yarn build:pre` 在构建后生成 `build/release-manifest.json`。清单保存完整 Git SHA、版本、release-id、生成时间、部署前缀，以及每个普通文件的大小和 SHA256。
 
 ```sh

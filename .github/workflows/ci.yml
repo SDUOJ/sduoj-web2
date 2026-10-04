@@ -27,6 +27,7 @@ jobs:
       - run: yarn build
       - run: yarn bundle:check
       - run: yarn test:artifact
+      - run: yarn test:vditor-assets
       - name: Verify release artifact
         run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ > artifact-verification.json
       - run: yarn playwright install --with-deps chromium firefox webkit

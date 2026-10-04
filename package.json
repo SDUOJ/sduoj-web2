@@ -70,6 +70,7 @@
     "build:pre": "cross-env NODE_ENV=production PUBLIC_URL=/v2-pre/ webpack --config config/webpack.config.js && node scripts/patch-build-prefix.cjs /v2-pre && node scripts/release-artifact.cjs create build /v2-pre/",
     "artifact:verify": "node scripts/release-artifact.cjs verify",
     "test:artifact": "node --test scripts/release-artifact.test.cjs",
+    "test:vditor-assets": "node --test scripts/vditor-assets.test.cjs",
     "bundle:check": "node scripts/check-initial-bundle.cjs",
     "test": "jest",
     "test:unit": "jest --runInBand",

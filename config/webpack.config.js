@@ -22,6 +22,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
+const vditorAssets = require('./vditor-assets.cjs');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 let typescriptFormatter;
@@ -720,8 +721,12 @@ module.exports = function (webpackEnv) {
               globOptions: {
                 dot: true,
                 gitignore: false,
-                ignore: ['**/index.html'],
+                ignore: ['**/index.html', '**/vditor/**'],
               },
+            },
+            {
+              from: vditorAssets.directory,
+              to: `vditor/${vditorAssets.revision}/dist`,
             },
           ],
         }),
@@ -835,12 +840,20 @@ module.exports = function (webpackEnv) {
             ],
             allowedHosts: devServerAllowedHosts,
             compress: true,
-            static: {
-              directory: paths.appPublic,
-              publicPath: '/',
-              watch: true,
-              serveIndex: false,
-            },
+            static: [
+              {
+                directory: paths.appPublic,
+                publicPath: '/',
+                watch: true,
+                serveIndex: false,
+              },
+              {
+                directory: vditorAssets.directory,
+                publicPath: `/vditor/${vditorAssets.revision}/dist`,
+                watch: true,
+                serveIndex: false,
+              },
+            ],
             hot: true,
             host: devServerHost,
             devMiddleware: {

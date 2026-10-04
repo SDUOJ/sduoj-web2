@@ -37,7 +37,7 @@ function permitted(filename) {
   return (
     rootFiles.has(filename) ||
     (/^static\/(?:js|css|media)\//.test(filename) && assetExtension.test(filename)) ||
-    (filename.startsWith('vditor/dist/') &&
+    (/^vditor\/[a-f0-9]{64}\/dist\//.test(filename) &&
       (assetExtension.test(filename) ||
         filename.endsWith('.d.ts') ||
         filename.endsWith('/LICENSE')))
@@ -94,7 +94,20 @@ function validateMetadata(manifest, expectedRef, expectedPrefix) {
 }
 
 function validateEntrypoints(directory, manifest) {
+  const vditorFiles = manifest.files.filter((file) => file.path.startsWith('vditor/'));
+  const revisions = new Set(vditorFiles.map((file) => file.path.split('/')[1]));
+  assert(revisions.size === 1, 'Expected exactly one Vditor content revision');
+  const revision = [...revisions][0];
+  const digest = crypto.createHash('sha256');
+  const resourcePaths = new Map(
+    vditorFiles.map((file) => [file.path.slice(`vditor/${revision}/dist/`.length), file.sha256]),
+  );
+  for (const filename of [...resourcePaths.keys()].sort()) {
+    digest.update(`${filename}\0${resourcePaths.get(filename)}\n`);
+  }
+  assert(digest.digest('hex') === revision, 'Vditor content revision mismatch');
   const paths = new Set(manifest.files.map((file) => file.path));
+  assert(paths.has(`vditor/${revision}/dist/index.min.js`), 'Vditor runtime missing');
   for (const required of ['index.html', 'asset-manifest.json', 'manifest.json']) {
     assert(paths.has(required), `Required resource missing: ${required}`);
   }
