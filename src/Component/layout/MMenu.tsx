@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Menu } from 'antd';
+import { Menu, MenuProps } from 'antd';
 import { Link, matchPath, RouteComponentProps, withRouter } from 'react-router-dom';
 import { IUserPropRoles } from '../../Type/Iuser';
 import { withTranslation } from 'react-i18next';
 import { routerM } from '../../Config/router/routerM';
+import { IRouter } from '../../Config/router/router';
 
 // interface IMenuState {
 //     selectedKey: string
@@ -17,7 +18,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
     const select: string[] = [];
     const opened: string[] = [];
     let leaf: string | undefined;
-    const find = (router: any[], parentMatched = false) => {
+    const find = (router: IRouter[], parentMatched = false) => {
       router.forEach((item) => {
         const matched =
           matchPath(props.location.pathname, { path: item.path, exact: false }) !== null;
@@ -37,7 +38,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
     setOpenKeys(opened);
   }, [props.location.pathname]);
 
-  const buildItems = (menuList: any[]): any[] =>
+  const buildItems = (menuList: IRouter[]): MenuProps['items'] =>
     menuList.map((r) => ({
       key: r.id,
       icon: r.icon,
