@@ -174,6 +174,9 @@ export type ProblemSetInfo = ProblemSetListRow & {
 export const isApiRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
+export const isFileReference = (value: unknown): value is FileReference =>
+  isApiRecord(value) && typeof value.id === 'string' && value.id.trim().length > 0;
+
 export const isApiEnvelope = (value: unknown): value is ApiEnvelope<unknown> =>
   isApiRecord(value) &&
   typeof value.code === 'number' &&

@@ -24,6 +24,68 @@ const makeFile = (name: string, bytes = name, arrayBuffer?: () => Promise<ArrayB
 
 beforeEach(() => jest.clearAllMocks());
 
+it.each([undefined, {}, { id: 1 }, { id: '' }, { id: '   ' }])(
+  'rejects invalid cache references before uploading or invoking callbacks: %j',
+  async (value) => {
+    api.getFileByMD5.mockResolvedValueOnce(value as never);
+    const callback = jest.fn();
+    await expect(fileUpload([makeFile('invalid.txt')], callback)).rejects.toThrow(
+      'Cached file reference is invalid',
+    );
+    expect(api.uploadFile).not.toHaveBeenCalled();
+    expect(callback).not.toHaveBeenCalled();
+  },
+);
+
+it.each([null, undefined, {}, { id: 1 }, { id: '' }])(
+  'rejects invalid single-upload references without publishing a success: %j',
+  async (value) => {
+    api.uploadSingleFile.mockResolvedValueOnce(value as never);
+    const callback = jest.fn();
+    await expect(fileUploadWithoutMD5(makeFile('invalid.txt'), callback)).rejects.toThrow(
+      'Uploaded file reference is invalid',
+    );
+    expect(callback).not.toHaveBeenCalled();
+  },
+);
+
+it.each([
+  { uploaded: [{ id: 'valid' }, null] },
+  { uploaded: [{ id: 'valid' }, { id: '' }] },
+  { uploaded: new Array(2) },
+])('does not publish partial success for an invalid batch: %j', async ({ uploaded }) => {
+  api.getFileByMD5.mockResolvedValue(null);
+  api.uploadFile.mockResolvedValueOnce(uploaded as never);
+  const callback = jest.fn();
+  await expect(fileUpload([makeFile('one.txt'), makeFile('two.txt')], callback)).rejects.toThrow(
+    /Uploaded file reference is (invalid|missing)/,
+  );
+  expect(callback).not.toHaveBeenCalled();
+});
+
+it('rejects a mismatched batch before invoking any callbacks', async () => {
+  api.getFileByMD5.mockResolvedValue(null);
+  api.uploadFile.mockResolvedValueOnce([]);
+  const callback = jest.fn();
+  await expect(fileUpload([makeFile('one.txt')], callback)).rejects.toThrow(
+    'Uploaded file count does not match the requested file count',
+  );
+  expect(callback).not.toHaveBeenCalled();
+});
+
+it('discards a successful single upload when it completes after cancellation', async () => {
+  const controller = new AbortController();
+  api.uploadSingleFile.mockImplementationOnce(async () => {
+    controller.abort();
+    return { id: 'late-file' };
+  });
+  const callback = jest.fn();
+  await expect(
+    fileUploadWithoutMD5(makeFile('late.txt'), callback, { signal: controller.signal }),
+  ).rejects.toMatchObject({ name: 'AbortError' });
+  expect(callback).not.toHaveBeenCalled();
+});
+
 it('returns and reports a cache hit without uploading it again', async () => {
   const cached = { id: 'cached' };
   api.getFileByMD5.mockResolvedValue(cached);

@@ -1,6 +1,6 @@
 import CApi from 'Utils/API/c-api';
 import md5 from 'js-md5';
-import { FileReference } from '../Type/api';
+import { FileReference, isFileReference } from '../Type/api';
 
 export interface FileUploadOptions {
   signal?: AbortSignal;
@@ -28,6 +28,9 @@ export const fileUpload = async (
       throwIfAborted(options.signal);
       const value = await CApi.getFileByMD5({ md5: md5(buffer) }, { signal: options.signal });
       throwIfAborted(options.signal);
+      if (value !== null && !isFileReference(value)) {
+        throw new Error('Cached file reference is invalid');
+      }
       return value ?? null;
     }),
   );
@@ -48,13 +51,14 @@ export const fileUpload = async (
     if (!Array.isArray(uploaded) || uploaded.length !== missingIndexes.length) {
       throw new Error('Uploaded file count does not match the requested file count');
     }
+    if (!uploaded.every(isFileReference)) throw new Error('Uploaded file reference is invalid');
     missingIndexes.forEach((inputIndex, uploadIndex) => {
       cacheResults[inputIndex] = uploaded[uploadIndex];
     });
   }
 
   const results = cacheResults.map((value) => {
-    if (value === null) throw new Error('Uploaded file reference is missing');
+    if (!isFileReference(value)) throw new Error('Uploaded file reference is missing');
     return value;
   });
   results.forEach((value) => callback?.(value));
@@ -71,6 +75,7 @@ export const fileUploadWithoutMD5 = async (
   formData.append('file', file);
   const data = await CApi.uploadSingleFile(formData, { signal: options.signal });
   throwIfAborted(options.signal);
+  if (!isFileReference(data)) throw new Error('Uploaded file reference is invalid');
   callback?.(data);
   return data;
 };
