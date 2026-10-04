@@ -20,6 +20,8 @@ const allowedTags = new Set([
   'ul',
 ]);
 
+export const MAX_RICH_TEXT_CHARACTERS = 1024 * 1024;
+
 const unsafeProtocol = /^(?:javascript|vbscript|data|file):/i;
 const urlAttributes = new Set(['href', 'src']);
 const allowedAttributes = new Set([
@@ -39,13 +41,14 @@ const controlCharacters = new RegExp(
   'g',
 );
 
-const isSafeUrl = (value: string) => {
+export const isSafeHtmlUrl = (value: string) => {
   const normalized = value.trim().replace(controlCharacters, '');
   return normalized === '' || !unsafeProtocol.test(normalized);
 };
 
 /** Sanitize server-provided rich text before inserting it into the document. */
 export function sanitizeHtml(input: unknown): string {
+  if (typeof input === 'string' && input.length > MAX_RICH_TEXT_CHARACTERS) return '';
   if (typeof input !== 'string' || input.length === 0) {
     return typeof input === 'string' ? input : '';
   }
@@ -72,7 +75,7 @@ export function sanitizeHtml(input: unknown): string {
       const name = attribute.name.toLowerCase();
       if (
         !allowedAttributes.has(name) ||
-        (urlAttributes.has(name) && !isSafeUrl(attribute.value))
+        (urlAttributes.has(name) && !isSafeHtmlUrl(attribute.value))
       ) {
         element.removeAttribute(attribute.name);
       }

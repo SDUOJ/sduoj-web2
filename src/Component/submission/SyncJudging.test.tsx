@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { SyncJudging } from './SyncJudging';
 import { judgeMessages, JudgeMessage } from './judgeMessages';
+import { message as notification } from 'antd';
 
 jest.mock('react-use-websocket', () => ({
   __esModule: true,
@@ -9,6 +10,21 @@ jest.mock('react-use-websocket', () => ({
   ReadyState: { OPEN: 1, CLOSED: 3 },
 }));
 const message: JudgeMessage = ['abc', 3, 0, 1, 0, 1, 10, 2, 1024];
+
+it('reports rejected frames once per subscriber and never forwards invalid data', () => {
+  const error = jest.spyOn(notification, 'error').mockImplementation(() => (() => {}) as never);
+  const handler = jest.fn();
+  const sendMessage = jest.fn();
+  let lastMessage = { data: '{broken' };
+  jest
+    .mocked(useWebSocket)
+    .mockImplementation(() => ({ sendMessage, lastMessage, readyState: ReadyState.OPEN }) as never);
+  const view = render(<SyncJudging open queryList={['abc']} dataHandle={handler} />);
+  lastMessage = { data: '{}' };
+  view.rerender(<SyncJudging open queryList={['abc']} dataHandle={handler} />);
+  expect(handler).not.toHaveBeenCalled();
+  expect(error).toHaveBeenCalledTimes(1);
+});
 
 it('handles live, wrapped and cumulative frames while ignoring malformed and obsolete records', () => {
   expect(judgeMessages(JSON.stringify(message))).toEqual([message]);

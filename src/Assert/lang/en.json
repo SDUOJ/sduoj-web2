@@ -1762,5 +1762,10 @@
   "aiMenuTasks": "Task management",
   "aiMenuGrading": "Assisted grading",
   "aiMenuExams": "Exam management",
-  "aiMenuPlagiarism": "Code plagiarism"
+  "aiMenuPlagiarism": "Code plagiarism",
+  "DownloadInvalidContentType": "The server returned an unsupported file type",
+  "DownloadTooLarge": "The download exceeds the 256 MiB browser limit",
+  "DownloadFailed": "Download failed",
+  "MarkdownPreviewFailed": "Unable to preview this content. It may be unavailable or exceed the preview size limit.",
+  "JudgeFrameRejected": "A judging update was rejected because its size or format is unsupported. Refresh to fetch the authoritative result."
 }

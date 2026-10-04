@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import apiAddress from '../../Utils/API/apiAddress';
-import { judgeMessages, JudgeMessage } from './judgeMessages';
+import { message } from 'antd';
+import i18n from '../../Config/i18n';
+import { parseJudgeFrame, JudgeMessage } from './judgeMessages';
 
 export interface IWebSocket {
   queryList: string[];
@@ -11,10 +13,13 @@ export interface IWebSocket {
 
 export const SyncJudging = (props: IWebSocket) => {
   const handler = useRef(props.dataHandle);
+  const queries = useRef(props.queryList);
   const completed = useRef(new Map<string, number>());
+  const rejectedFrame = useRef(false);
   useLayoutEffect(() => {
     handler.current = props.dataHandle;
-  }, [props.dataHandle]);
+    queries.current = props.queryList;
+  }, [props.dataHandle, props.queryList]);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     apiAddress().SOCKET_SERVER + '/ws/submission',
     {
@@ -28,7 +33,13 @@ export const SyncJudging = (props: IWebSocket) => {
 
   useEffect(() => {
     if (typeof lastMessage?.data !== 'string') return;
-    for (const row of judgeMessages(lastMessage.data)) {
+    const frame = parseJudgeFrame(lastMessage.data);
+    if (frame.rejection && !rejectedFrame.current) {
+      rejectedFrame.current = true;
+      message.error(i18n.t('JudgeFrameRejected'));
+    }
+    for (const row of frame.messages) {
+      if (!queries.current.includes(row[0])) continue;
       const saved = localStorage.getItem(`submissionVersion:${row[0]}`);
       const version = saved === null ? NaN : Number(saved);
       if (Number.isFinite(version) && row[1] < version) continue;

@@ -7,6 +7,9 @@ import { requestConstraintError } from '../../Config/validation/requests';
 import { loginRedirect } from '../authReturn';
 import { reportApiFailure } from '../errorReporter';
 import { notifyAuthBoundary } from '../authBoundary';
+import i18n from '../../Config/i18n';
+
+export const MAX_DOWNLOAD_BYTES = 256 * 1024 * 1024;
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api';
 
@@ -93,32 +96,50 @@ const downloadPost = async (
       service.post(url, data, { ...guardedConfig, responseType: 'blob' }),
     );
     const contentType = String(response.headers?.['content-type'] ?? '').toLowerCase();
+    const advertisedSize = Number(response.headers?.['content-length']);
+    if (
+      advertisedSize > MAX_DOWNLOAD_BYTES ||
+      (response.data instanceof Blob && response.data.size > MAX_DOWNLOAD_BYTES)
+    ) {
+      throw new Error(i18n.t('DownloadTooLarge'));
+    }
     if (contentType.includes('json') || contentType.startsWith('text/')) {
       const payload = await readBlobPayload(response.data);
       throw { response: { ...response, data: payload } };
     }
-    if (expectedContentType && contentType && !expectedContentType.test(contentType)) {
-      throw new Error('服务器返回了无法识别的文件类型');
+    if (expectedContentType && !expectedContentType.test(contentType)) {
+      throw new Error(i18n.t('DownloadInvalidContentType'));
     }
-    let blob = new Blob([response.data], { type: 'application/zip' });
+    const blob = new Blob([response.data], { type: contentType || 'application/octet-stream' });
+    if (blob.size > MAX_DOWNLOAD_BYTES) throw new Error(i18n.t('DownloadTooLarge'));
     const objectUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = filename ?? `${Date.now()}-TestCase.zip`;
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(objectUrl);
+    try {
+      link.href = objectUrl;
+      link.download = filename ?? `${Date.now()}-TestCase.zip`;
+      link.click();
+    } finally {
+      link.remove();
+      window.URL.revokeObjectURL(objectUrl);
+    }
   } catch (e) {
     if (axios.isAxiosError(e) || (e as any)?.response !== undefined) {
       return dealResponse(Promise.reject(await binaryError(e)), url);
     }
+    message.error(e instanceof Error ? e.message : i18n.t('DownloadFailed'));
     throw e;
   }
   return Promise.resolve();
 };
 
 const getZipFile = (url: string, data: object, config?: AxiosRequestConfig, filename?: string) =>
-  downloadPost(url, data, config, filename, /zip|octet-stream/);
+  downloadPost(
+    url,
+    data,
+    config,
+    filename,
+    /^application\/(?:zip|x-zip-compressed|octet-stream)(?:;|$)/,
+  );
 
 const downloadFile = (url: string, data: object, config?: AxiosRequestConfig, filename?: string) =>
   downloadPost(url, data, config, filename);

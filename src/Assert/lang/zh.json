@@ -1742,5 +1742,10 @@
   "aiMenuTasks": "任务管理",
   "aiMenuGrading": "辅助批阅",
   "aiMenuExams": "考务管理",
-  "aiMenuPlagiarism": "代码查重"
+  "aiMenuPlagiarism": "代码查重",
+  "DownloadInvalidContentType": "服务器返回了无法识别的文件类型",
+  "DownloadTooLarge": "下载超过浏览器的 256 MiB 限制",
+  "DownloadFailed": "下载失败",
+  "MarkdownPreviewFailed": "无法预览该内容，内容可能不可用或超过预览大小限制。",
+  "JudgeFrameRejected": "评测更新的大小或格式不受支持，已拒绝该更新。请刷新以获取最终评测结果。"
 }

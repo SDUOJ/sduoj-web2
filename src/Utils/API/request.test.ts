@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { message } from 'antd';
-import request, { service } from './request';
+import request, { MAX_DOWNLOAD_BYTES, service } from './request';
 import axios from 'axios';
 import { AUTH_BOUNDARY_EVENT } from '../authBoundary';
 
@@ -156,7 +156,7 @@ it('preserves request cancellation without showing an unreachable-server error',
 });
 
 it('downloads a ZIP with the requested filename and releases its object URL', async () => {
-  adapter.onPost('/zip').reply(200, new Blob(['zip']));
+  adapter.onPost('/zip').reply(200, new Blob(['zip']), { 'content-type': 'application/zip' });
   URL.createObjectURL = jest.fn(() => 'blob:test');
   URL.revokeObjectURL = jest.fn();
   let filename: string | undefined;
@@ -169,6 +169,76 @@ it('downloads a ZIP with the requested filename and releases its object URL', as
   expect(click).toHaveBeenCalledTimes(1);
   expect(filename).toBe('cases.zip');
   expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test');
+});
+
+it.each(['image/png', 'application/xhtml+xml', 'application/evilzip', ''])(
+  'rejects unsupported ZIP content type %p before creating a URL',
+  async (contentType) => {
+    adapter.onPost('/zip').reply(200, new Blob(['wrong']), { 'content-type': contentType });
+    URL.createObjectURL = jest.fn();
+    await expect(request.getZipFile('/zip', {})).rejects.toBeInstanceOf(Error);
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(message.error).toHaveBeenCalledTimes(1);
+  },
+);
+
+it('rejects oversized binary payloads before creating an object URL', async () => {
+  const size = jest.spyOn(Blob.prototype, 'size', 'get').mockReturnValue(MAX_DOWNLOAD_BYTES + 1);
+  URL.createObjectURL = jest.fn();
+  adapter.onPost('/zip').reply(200, new Blob(['large']), { 'content-type': 'application/zip' });
+  try {
+    await expect(request.getZipFile('/zip', {})).rejects.toBeInstanceOf(Error);
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(message.error).toHaveBeenCalledTimes(1);
+  } finally {
+    size.mockRestore();
+  }
+});
+
+it('releases the object URL even when the browser rejects a download click', async () => {
+  adapter.onPost('/zip').reply(200, new Blob(['zip']), { 'content-type': 'application/zip' });
+  URL.createObjectURL = jest.fn(() => 'blob:failed-click');
+  URL.revokeObjectURL = jest.fn();
+  jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {
+    throw new Error('Blocked download');
+  });
+  await expect(request.getZipFile('/zip', {})).rejects.toThrow('Blocked download');
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:failed-click');
+  expect(message.error).toHaveBeenCalledWith('Blocked download');
+});
+
+it('preserves a supported non-ZIP binary content type', async () => {
+  adapter.onPost('/report').reply(200, new Blob(['pdf']), { 'content-type': 'application/pdf' });
+  let downloaded: Blob | undefined;
+  URL.createObjectURL = jest.fn((value: Blob) => {
+    downloaded = value;
+    return 'blob:pdf';
+  });
+  URL.revokeObjectURL = jest.fn();
+  jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  await request.downloadFile('/report', {}, {}, 'report.pdf');
+  expect(downloaded?.type).toBe('application/pdf');
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:pdf');
+});
+
+it('preserves a cancelled binary request without allocating a download URL', async () => {
+  const cancellation = new axios.CanceledError('download cancelled');
+  adapter.onPost('/zip').reply(() => Promise.reject(cancellation));
+  URL.createObjectURL = jest.fn();
+  await expect(request.getZipFile('/zip', {})).rejects.toBe(cancellation);
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(message.error).not.toHaveBeenCalled();
+});
+
+it('rejects an advertised oversized response before parsing text error bodies', async () => {
+  adapter.onPost('/zip').reply(200, new Blob(['small']), {
+    'content-type': 'text/html',
+    'content-length': String(MAX_DOWNLOAD_BYTES + 1),
+  });
+  URL.createObjectURL = jest.fn();
+  await expect(request.getZipFile('/zip', {})).rejects.toBeInstanceOf(Error);
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(message.error).toHaveBeenCalledTimes(1);
 });
 
 it('routes a JSON response from a binary endpoint through the normal error contract', async () => {
