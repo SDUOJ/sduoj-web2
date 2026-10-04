@@ -6,6 +6,7 @@ import { UrlPrefix } from '../../Config/constValue';
 import { requestConstraintError } from '../../Config/validation/requests';
 import { loginRedirect } from '../authReturn';
 import { reportApiFailure } from '../errorReporter';
+import { notifyAuthBoundary } from '../authBoundary';
 
 const baseUrl = apiAddress().CLIENT_SERVER + '/api';
 
@@ -14,6 +15,33 @@ export const service = axios.create({
   timeout: 30_000,
 });
 service.defaults.withCredentials = true;
+
+const pendingManagementRequests = new Set<AbortController>();
+
+const invalidateAuthBoundary = () => {
+  pendingManagementRequests.forEach((controller) => controller.abort());
+  notifyAuthBoundary();
+};
+
+const guardedRequest = async <Result>(
+  url: string,
+  config: AxiosRequestConfig | undefined,
+  execute: (config: AxiosRequestConfig) => Promise<Result>,
+): Promise<Result> => {
+  if (!url.startsWith('/manage/')) return execute(config ?? {});
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const inheritedSignal = config?.signal;
+  if (inheritedSignal?.aborted) abort();
+  inheritedSignal?.addEventListener?.('abort', abort, { once: true });
+  pendingManagementRequests.add(controller);
+  try {
+    return await execute({ ...config, signal: controller.signal });
+  } finally {
+    pendingManagementRequests.delete(controller);
+    inheritedSignal?.removeEventListener?.('abort', abort);
+  }
+};
 
 const readBlobPayload = async (value: unknown): Promise<unknown> => {
   if (typeof value === 'string') {
@@ -61,10 +89,9 @@ const downloadPost = async (
   expectedContentType?: RegExp,
 ) => {
   try {
-    const response = await service.post(url, data, {
-      ...config,
-      responseType: 'blob',
-    });
+    const response = await guardedRequest(url, config, (guardedConfig) =>
+      service.post(url, data, { ...guardedConfig, responseType: 'blob' }),
+    );
     const contentType = String(response.headers?.['content-type'] ?? '').toLowerCase();
     if (contentType.includes('json') || contentType.startsWith('text/')) {
       const payload = await readBlobPayload(response.data);
@@ -165,9 +192,11 @@ const dealResponse = async (resp: any, url: string) => {
       message.error(errorMsg);
       return rejection(errorMsg);
     }
+    if (response.status === 403 && url.startsWith('/manage/')) invalidateAuthBoundary();
     const payload: any = response.data;
     switch (response.status === 401 ? 401 : payload?.code) {
       case 401:
+        invalidateAuthBoundary();
         if (messageDisabledList.indexOf(url) === -1) {
           const current = new URL(window.location.href);
           const inApp =
@@ -202,11 +231,13 @@ const get: Get = async (url: string, params?: object, config?: AxiosRequestConfi
     return rejection(error);
   }
   return await dealResponse(
-    service.get(url, {
-      ...{ headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' } },
-      params,
-      ...config,
-    }),
+    guardedRequest(url, config, (guardedConfig) =>
+      service.get(url, {
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+        params,
+        ...guardedConfig,
+      }),
+    ),
     url,
   );
 };
@@ -218,10 +249,12 @@ const post: Post = async (url: string, data: unknown, config?: AxiosRequestConfi
     return rejection(error);
   }
   return await dealResponse(
-    service.post(url, data, {
-      ...{ headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' } },
-      ...config,
-    }),
+    guardedRequest(url, config, (guardedConfig) =>
+      service.post(url, data, {
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+        ...guardedConfig,
+      }),
+    ),
     url,
   );
 };

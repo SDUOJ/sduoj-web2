@@ -2,6 +2,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { message } from 'antd';
 import request, { service } from './request';
 import axios from 'axios';
+import { AUTH_BOUNDARY_EVENT } from '../authBoundary';
 
 jest.mock('antd', () => ({ message: { error: jest.fn() } }));
 const adapter = new MockAdapter(service);
@@ -92,6 +93,53 @@ it('reports network errors while keeping profile checks silent', async () => {
 it('rejects server errors', async () => {
   adapter.onGet('/example').reply(500, { message: 'Server error' });
   await expect(request.get('/example')).rejects.toBe('Server error');
+});
+
+it('announces a forbidden response so protected layouts clear stale roles', async () => {
+  const boundary = jest.fn();
+  window.addEventListener(AUTH_BOUNDARY_EVENT, boundary);
+  try {
+    adapter.onGet('/manage/user/list').reply(403, { code: 403, message: 'Forbidden' });
+    await expect(request.get('/manage/user/list')).rejects.toBe('Forbidden');
+    expect(boundary).toHaveBeenCalledTimes(1);
+  } finally {
+    window.removeEventListener(AUTH_BOUNDARY_EVENT, boundary);
+  }
+});
+
+it('cancels older management requests when another request loses permission', async () => {
+  let finish!: (response: [number, unknown]) => void;
+  adapter
+    .onGet('/manage/slow')
+    .reply(() => new Promise<[number, unknown]>((resolve) => (finish = resolve)));
+  adapter.onGet('/manage/revoked').reply(403, { code: 403, message: 'Forbidden' });
+  const pending = request.get('/manage/slow').catch((error: unknown) => error);
+  await expect(request.get('/manage/revoked')).rejects.toBe('Forbidden');
+  expect(adapter.history.get[0].signal?.aborted).toBe(true);
+  finish([200, success({ private: 'stale response' })]);
+  expect(axios.isCancel(await pending)).toBe(true);
+});
+
+it('preserves caller cancellation for management requests', async () => {
+  const controller = new AbortController();
+  controller.abort();
+  const result = await request
+    .get('/manage/user/list', {}, { signal: controller.signal })
+    .catch((error: unknown) => error);
+  expect(axios.isCancel(result)).toBe(true);
+  expect(adapter.history.get).toHaveLength(0);
+});
+
+it('does not invalidate the whole session for a resource-specific forbidden response', async () => {
+  const boundary = jest.fn();
+  window.addEventListener(AUTH_BOUNDARY_EVENT, boundary);
+  try {
+    adapter.onGet('/problem/query').reply(403, { code: 403, message: 'Private problem' });
+    await expect(request.get('/problem/query')).rejects.toBe('Private problem');
+    expect(boundary).not.toHaveBeenCalled();
+  } finally {
+    window.removeEventListener(AUTH_BOUNDARY_EVENT, boundary);
+  }
 });
 
 it('normalizes an empty HTTP error without throwing a secondary TypeError', async () => {

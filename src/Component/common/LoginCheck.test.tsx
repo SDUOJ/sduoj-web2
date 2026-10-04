@@ -1,10 +1,11 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { createAppStore } from '../../Redux/Store';
 import CApi from '../../Utils/API/c-api';
 import LoginCheck from './LoginCheck';
 import '../../Config/i18n';
+import { AUTH_BOUNDARY_EVENT } from '../../Utils/authBoundary';
 
 jest.mock('../../Utils/API/c-api', () => ({
   __esModule: true,
@@ -54,6 +55,7 @@ it('does not redirect or repeat profile requests on a public anonymous page', ()
 it('leaves an authenticated protected route in place', () => {
   const store = createAppStore();
   store.dispatch({ type: 'userLogin' });
+  store.dispatch({ type: 'setKeyValue', key: 'private', value: 'cached' });
   render(
     <Provider store={store}>
       <MemoryRouter initialEntries={['/v2/exam/list']}>
@@ -80,4 +82,32 @@ it('never replaces the login route repeatedly for an anonymous session', () => {
   );
   expect(screen.getByRole('status')).toHaveTextContent(target);
   expect(CApi.getProfile).not.toHaveBeenCalled();
+});
+
+it('clears stale roles when an API reports a forbidden session', async () => {
+  const store = createAppStore();
+  store.dispatch({
+    type: 'setUserInfo',
+    data: { username: 'admin', roles: ['admin'], features: {} } as never,
+  });
+  store.dispatch({ type: 'userLogin' });
+  const target = '/v2/manage/course/classroom';
+  render(
+    <Provider store={store}>
+      <MemoryRouter initialEntries={[target]}>
+        <LoginCheck jump />
+        <Location />
+      </MemoryRouter>
+    </Provider>,
+  );
+
+  act(() => window.dispatchEvent(new Event(AUTH_BOUNDARY_EVENT)));
+  await waitFor(() => expect(store.getState().UserReducer.authStatus).toBe('anonymous'));
+  await waitFor(() =>
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '/v2/login?to=' + encodeURIComponent(target),
+    ),
+  );
+  expect(store.getState().UserReducer.userInfo).toBeUndefined();
+  expect(store.getState().CommonReducer.keyValueData).toEqual({});
 });

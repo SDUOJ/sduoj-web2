@@ -6,6 +6,7 @@ import cApi from 'Utils/API/c-api';
 import Loading from '../../Utils/Loading';
 import { loginRedirect } from '../../Utils/authReturn';
 import { UrlPrefix } from '../../Config/constValue';
+import { AUTH_BOUNDARY_EVENT } from '../../Utils/authBoundary';
 
 let profileRequest: Promise<any> | undefined;
 
@@ -13,6 +14,16 @@ const LoginCheck = (props: any) => {
   const dispatch = useDispatch();
   const isLogin = useSelector((state: any) => state.UserReducer.isLogin);
   const authStatus = useSelector((state: any) => state.UserReducer.authStatus ?? 'unknown');
+
+  useEffect(() => {
+    const handleAuthBoundary = () => {
+      cApi.clearAcceptanceQueueCache?.();
+      dispatch({ type: 'clearRedux' });
+      dispatch({ type: 'authCheckFailed' });
+    };
+    window.addEventListener(AUTH_BOUNDARY_EVENT, handleAuthBoundary);
+    return () => window.removeEventListener(AUTH_BOUNDARY_EVENT, handleAuthBoundary);
+  }, [dispatch]);
 
   useEffect(() => {
     if (isLogin === true) return;
