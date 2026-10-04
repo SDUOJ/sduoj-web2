@@ -1,6 +1,6 @@
 import { routerC, routerC_Contest_M, router_ProblemSet } from './routerC';
 import { routerE } from './routerE';
-import { routerLayout } from './router';
+import { getRouterPath, routerLayout } from './router';
 import { routerM } from './routerM';
 import { routerC_M } from './routerC';
 import { duplicateRouteIds, duplicateRoutePaths } from './routeIntegrity';
@@ -29,5 +29,10 @@ describe('route tree integrity', () => {
       expect(menuRoute.exact).toBe(canonical?.exact);
       expect(menuRoute.component).toBe(canonical?.component);
     }
+  });
+
+  it('resolves typed route paths and returns an empty path for unknown ids', () => {
+    expect(getRouterPath(routerE, 2)).toBe('/v2/exam/list');
+    expect(getRouterPath(routerLayout, 999999)).toBe('');
   });
 });

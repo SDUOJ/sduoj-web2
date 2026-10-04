@@ -218,7 +218,10 @@ export const routerLayout: IBaseRouter[] = [
   // },
 ];
 
-export function getRouterPath(router: any[], id: number) {
+export function getRouterPath<T extends Pick<IBaseRouter, 'id' | 'path'>>(
+  router: readonly T[],
+  id: number,
+) {
   for (const x of router) {
     if (x.id === id) return x.path;
   }
