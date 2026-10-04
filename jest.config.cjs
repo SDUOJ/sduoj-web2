@@ -34,5 +34,6 @@ module.exports = {
       functions: 90,
       lines: 75,
     },
+    './src/Utils/fileUpload.ts': { statements: 90, branches: 75, functions: 90, lines: 90 },
   },
 };
