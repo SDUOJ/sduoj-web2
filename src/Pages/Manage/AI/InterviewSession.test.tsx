@@ -141,4 +141,36 @@ test('renders interview status and media labels in English', async () => {
   renderSession();
   expect(await screen.findByText('Awaiting answer')).toBeInTheDocument();
   expect(screen.getAllByText('Webcam').length).toBeGreaterThan(0);
+  expect(screen.getByText('Answer and evidence')).toBeInTheDocument();
+  expect(screen.getByText('Retry pending uploads')).toBeInTheDocument();
+  expect(screen.getByText('Upload media')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Submit answer' })).toBeInTheDocument();
+  expect(screen.getByText('Evidence timeline')).toBeInTheDocument();
+  expect(screen.getAllByText('Missing segments: 1').length).toBeGreaterThan(0);
+});
+
+test('localizes teacher review controls in English', async () => {
+  await i18n.changeLanguage('en');
+  (interviewApi.session as jest.Mock).mockResolvedValue({
+    ...studentSession,
+    role: 'teacher',
+    effective_status: 'completed',
+    data: {
+      ...studentSession.data,
+      status: 'completed',
+      candidate: {
+        summary: 'Evidence checked',
+        score: 80,
+        confidence: 0.9,
+        integrity_conclusion: 'review',
+        criteria: [{ name: 'correctness', max_score: 10, score: 8, evidence: 'turn 1' }],
+      },
+    },
+  });
+  renderSession();
+  expect(await screen.findByText('Teacher review')).toBeInTheDocument();
+  expect(screen.getByText('AI candidate 80.0 / 100 · confidence 90%')).toBeInTheDocument();
+  expect(screen.getByLabelText('Review notes')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Approve candidate/ })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Return candidate/ })).toBeInTheDocument();
 });

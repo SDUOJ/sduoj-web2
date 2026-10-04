@@ -239,7 +239,7 @@ export default function InterviewSession() {
     streamRef.current?.getTracks().forEach((mediaTrack) => mediaTrack.stop());
     streamRef.current = null;
     if (!blobs.length) {
-      setError('录制没有生成可上传的媒体片段');
+      setError(t('aiInterviewNoRecording'));
       return;
     }
     const recordingId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -294,7 +294,7 @@ export default function InterviewSession() {
 
   async function retryPendingMedia() {
     if (!ownerId) {
-      setError('登录状态不可用，无法读取本地媒体缓存');
+      setError(t('aiInterviewNoAuthCache'));
       return;
     }
     const pending = await pendingFor(ownerId, id, turnSequence);
@@ -409,7 +409,7 @@ export default function InterviewSession() {
     );
   }
   if (!session) {
-    return <Alert type="error" showIcon message={error || '验收不存在'} />;
+    return <Alert type="error" showIcon message={error || t('aiInterviewNotFound')} />;
   }
 
   const { data } = session;
@@ -424,7 +424,7 @@ export default function InterviewSession() {
       <main className="ai-interview-main ai-interview-session">
         <header className="ai-interview-header">
           <Space align="start">
-            <Link to={`${UrlPrefix}/practice/interviews`} aria-label="返回验收列表">
+            <Link to={`${UrlPrefix}/practice/interviews`} aria-label={t('aiInterviewBack')}>
               <ArrowLeftOutlined />
             </Link>
             <div>
@@ -438,24 +438,24 @@ export default function InterviewSession() {
                 <Tag color={session.effective_status === 'awaiting_answer' ? 'gold' : 'blue'}>
                   {statusLabels[visibleStatus(session)] || visibleStatus(session)}
                 </Tag>
-                {nativeBound && <Tag color="green">已绑定答题卡</Tag>}
+                {nativeBound && <Tag color="green">{t('aiInterviewBound')}</Tag>}
               </Space>
             </div>
           </Space>
           <Space>
             {session.job?.status === 'failed' && (
               <Button icon={<RedoOutlined />} loading={busy} onClick={() => void retryJob()}>
-                重试生成
+                {t('aiInterviewRetryGeneration')}
               </Button>
             )}
             {canRenew(session) && (
               <Button icon={<RedoOutlined />} loading={busy} onClick={() => void renewInterview()}>
-                重新邀请
+                {t('aiInterviewReinvite')}
               </Button>
             )}
             {session.role === 'teacher' && !terminal.has(session.effective_status) && (
               <Button danger loading={busy} onClick={() => void cancelInterview()}>
-                取消验收
+                {t('aiInterviewCancel')}
               </Button>
             )}
           </Space>
@@ -465,47 +465,54 @@ export default function InterviewSession() {
           <Alert showIcon closable type="error" message={error} onClose={() => setError('')} />
         )}
         {session.job?.status === 'failed' && (
-          <Alert showIcon type="error" message="问题生成失败" description={session.job.error} />
+          <Alert
+            showIcon
+            type="error"
+            message={t('aiInterviewGenerationFailed')}
+            description={session.job.error}
+          />
         )}
         {session.job?.status === 'blocked' && (
           <Alert
             showIcon
             type="warning"
-            message="问题生成暂时阻塞"
-            description="账户、并发或额度恢复后任务会继续排队，已提交回答不会丢失。"
+            message={t('aiInterviewGenerationBlocked')}
+            description={t('aiInterviewGenerationBlockedDescription')}
           />
         )}
         {session.effective_status === 'expired' && (
-          <Alert showIcon type="warning" message="邀请已过期" />
+          <Alert showIcon type="warning" message={t('aiInterviewInvitationExpired')} />
         )}
         {session.effective_status === 'cancelled' && (
-          <Alert showIcon type="info" message="验收已取消，不再接受新的回答或媒体" />
+          <Alert showIcon type="info" message={t('aiInterviewCancelled')} />
         )}
         {session.state === 'rejected' && (
-          <Alert showIcon type="warning" message="教师已退回本次候选，可重新邀请后再次验收" />
+          <Alert showIcon type="warning" message={t('aiInterviewRejected')} />
         )}
         {session.state === 'adopted' && (
-          <Alert showIcon type="success" message="教师复核成绩已采用到原生答题卡" />
+          <Alert showIcon type="success" message={t('aiInterviewAdopted')} />
         )}
         {data.evidence_policy && (
           <Alert
             showIcon
             type="info"
-            message="验收证据隐私"
-            description="回答与媒体仅供受邀学生本人及具有当前课程或题单权限的教师复核；保留期限遵循平台配置。"
+            message={t('aiInterviewEvidencePrivacy')}
+            description={t('aiInterviewEvidencePrivacyDescription')}
           />
         )}
 
         <section className="ai-interview-band">
           <Descriptions column={{ xs: 1, sm: 2, lg: 4 }} size="small">
-            <Descriptions.Item label="学生">
+            <Descriptions.Item label={t('aiInterviewStudent')}>
               {data.student_username} · {data.student_id}
             </Descriptions.Item>
-            <Descriptions.Item label="截止">
+            <Descriptions.Item label={t('aiInterviewDeadline')}>
               {new Date(data.expires_at).toLocaleString()}
             </Descriptions.Item>
-            <Descriptions.Item label="限时">{data.duration_minutes} 分钟</Descriptions.Item>
-            <Descriptions.Item label="问题">
+            <Descriptions.Item label={t('aiInterviewDurationLabel')}>
+              {t('aiInterviewDuration', { count: data.duration_minutes })}
+            </Descriptions.Item>
+            <Descriptions.Item label={t('aiInterviewQuestionsLabel')}>
               {data.turns.length} / {data.max_questions}
             </Descriptions.Item>
           </Descriptions>
@@ -516,21 +523,25 @@ export default function InterviewSession() {
             {session.role === 'student' && data.status === 'pending' && (
               <div className="ai-interview-preflight">
                 <div className="ai-interview-section-heading">
-                  <Typography.Title level={4}>设备预检</Typography.Title>
+                  <Typography.Title level={4}>{t('aiInterviewDevicePreflight')}</Typography.Title>
                   <SafetyCertificateOutlined />
                 </div>
                 <div className="ai-interview-checks">
                   <span>
-                    {checks.https ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 安全连接
+                    {checks.https ? <CheckCircleOutlined /> : <CloseCircleOutlined />}{' '}
+                    {t('aiInterviewSecureConnection')}
                   </span>
                   <span>
-                    {checks.camera ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 摄像头
+                    {checks.camera ? <CheckCircleOutlined /> : <CloseCircleOutlined />}{' '}
+                    {t('aiInterviewCamera')}
                   </span>
                   <span>
-                    {checks.microphone ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 麦克风
+                    {checks.microphone ? <CheckCircleOutlined /> : <CloseCircleOutlined />}{' '}
+                    {t('aiInterviewMicrophone')}
                   </span>
                   <span>
-                    {checks.screen ? <CheckCircleOutlined /> : <CloseCircleOutlined />} 屏幕共享
+                    {checks.screen ? <CheckCircleOutlined /> : <CloseCircleOutlined />}{' '}
+                    {t('aiInterviewScreenShare')}
                   </span>
                 </div>
                 <Space wrap>
@@ -539,10 +550,10 @@ export default function InterviewSession() {
                     loading={busy}
                     onClick={() => void testCameraAndMicrophone()}
                   >
-                    检测摄像头与麦克风
+                    {t('aiInterviewTestCameraMicrophone')}
                   </Button>
                   <Button loading={busy} onClick={() => void testScreen()}>
-                    检测屏幕共享
+                    {t('aiInterviewTestScreenShare')}
                   </Button>
                   <Checkbox
                     checked={checks.single_display}
@@ -550,7 +561,7 @@ export default function InterviewSession() {
                       setChecks((value) => ({ ...value, single_display: event.target.checked }))
                     }
                   >
-                    单显示器
+                    {t('aiInterviewSingleDisplay')}
                   </Checkbox>
                   <Button
                     type="primary"
@@ -558,7 +569,7 @@ export default function InterviewSession() {
                     loading={busy}
                     onClick={() => void beginInterview()}
                   >
-                    开始验收
+                    {t('aiInterviewBegin')}
                   </Button>
                 </Space>
               </div>
@@ -566,7 +577,9 @@ export default function InterviewSession() {
 
             {currentTurn ? (
               <div className="ai-interview-turn">
-                <Typography.Text type="secondary">问题 {turnSequence + 1}</Typography.Text>
+                <Typography.Text type="secondary">
+                  {t('aiInterviewQuestionNumber', { number: turnSequence + 1 })}
+                </Typography.Text>
                 <Typography.Title level={3}>{currentTurn.question}</Typography.Title>
                 {currentTurn.source_type && currentTurn.source_type !== 'none' && (
                   <Tag>
@@ -580,14 +593,14 @@ export default function InterviewSession() {
             ) : data.status !== 'pending' ? (
               <div className="ai-interview-generating">
                 <Spin />
-                <Typography.Text>正在生成验收问题</Typography.Text>
+                <Typography.Text>{t('aiInterviewGeneratingQuestion')}</Typography.Text>
               </div>
             ) : null}
 
             {session.role === 'student' && data.status === 'awaiting_answer' && currentTurn && (
               <div className="ai-interview-answer-panel">
                 <Divider />
-                <Typography.Title level={4}>回答与证据</Typography.Title>
+                <Typography.Title level={4}>{t('aiInterviewAnswerEvidence')}</Typography.Title>
                 <Segmented<MediaTrack>
                   value={activeTrack}
                   options={(data.media_policy?.required_tracks || ['video']).map((track) => ({
@@ -604,18 +617,18 @@ export default function InterviewSession() {
                       icon={<PlayCircleOutlined />}
                       onClick={() => void startRecording()}
                     >
-                      录制{trackNames[activeTrack]}
+                      {t('aiInterviewRecordTrack', { track: trackNames[activeTrack] })}
                     </Button>
                   ) : (
                     <Button danger icon={<PauseCircleOutlined />} onClick={stopRecording}>
-                      停止录制
+                      {t('aiInterviewStopRecording')}
                     </Button>
                   )}
                   <Button icon={<CloudUploadOutlined />} onClick={() => void retryPendingMedia()}>
-                    重传待上传片段
+                    {t('aiInterviewRetryPending')}
                   </Button>
                   <label className="ai-interview-file-button">
-                    上传媒体
+                    {t('aiInterviewUploadMedia')}
                     <input
                       type="file"
                       accept="video/webm,video/mp4,audio/webm,audio/wav,audio/mpeg"
@@ -632,7 +645,7 @@ export default function InterviewSession() {
                 )}
                 <MediaManifest groups={turnManifest} />
                 <Input.TextArea
-                  aria-label="回答"
+                  aria-label={t('aiInterviewAnswer')}
                   value={answer}
                   onChange={(event) => setAnswer(event.target.value)}
                   autoSize={{ minRows: 4, maxRows: 12 }}
@@ -644,7 +657,7 @@ export default function InterviewSession() {
                   disabled={!answer.trim() || !requiredComplete || recording}
                   onClick={() => void submitAnswer()}
                 >
-                  提交本题
+                  {t('aiInterviewSubmitQuestion')}
                 </Button>
               </div>
             )}
@@ -661,14 +674,16 @@ export default function InterviewSession() {
           </section>
 
           <aside className="ai-interview-evidence">
-            <Typography.Title level={4}>证据时间线</Typography.Title>
+            <Typography.Title level={4}>{t('aiInterviewEvidenceTimeline')}</Typography.Title>
             {data.turns.length ? (
               <Timeline
                 items={data.turns.map((turn, index) => ({
                   color: turn.answer === null ? 'gold' : 'green',
                   children: (
                     <div className="ai-interview-timeline-item">
-                      <Typography.Text strong>问题 {index + 1}</Typography.Text>
+                      <Typography.Text strong>
+                        {t('aiInterviewQuestionNumber', { number: index + 1 })}
+                      </Typography.Text>
                       <Typography.Text>{turn.question}</Typography.Text>
                       <MediaManifest
                         compact
@@ -681,7 +696,10 @@ export default function InterviewSession() {
                 }))}
               />
             ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无问题" />
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t('aiInterviewNoQuestions')}
+              />
             )}
           </aside>
         </div>
@@ -704,7 +722,9 @@ function MediaManifest({
     screen: t('aiInterviewTrackScreen'),
   };
   if (!groups.length)
-    return compact ? null : <Alert type="warning" showIcon message="尚无媒体证据" />;
+    return compact ? null : (
+      <Alert type="warning" showIcon message={t('aiInterviewNoMediaEvidence')} />
+    );
   return (
     <div className={compact ? 'ai-interview-manifest compact' : 'ai-interview-manifest'}>
       {groups.map((group) => (
@@ -712,9 +732,15 @@ function MediaManifest({
           <div className="ai-interview-track-status">
             <Typography.Text strong>{trackNames[group.track]}</Typography.Text>
             {group.complete ? (
-              <Tag color="green">{group.present_segments.length} 片完整</Tag>
+              <Tag color="green">
+                {t('aiInterviewCompleteSegments', { count: group.present_segments.length })}
+              </Tag>
             ) : (
-              <Tag color="red">缺片 {group.missing_segments.join(', ') || '未上传'}</Tag>
+              <Tag color="red">
+                {t('aiInterviewMissingSegments', {
+                  segments: group.missing_segments.join(', ') || t('aiInterviewNotUploaded'),
+                })}
+              </Tag>
             )}
           </div>
           {!compact &&
@@ -744,6 +770,7 @@ function TeacherReviewPanel({
   onReview: (decision: 'approve' | 'reject') => Promise<void>;
   onAdopt: (overwriteManual: boolean) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const candidate = session.data.candidate!;
   const review = session.data.teacher_review;
   const [overwriteManual, setOverwriteManual] = useState(false);
@@ -751,14 +778,17 @@ function TeacherReviewPanel({
     <div className="ai-interview-review">
       <Divider />
       <div className="ai-interview-section-heading">
-        <Typography.Title level={4}>教师复核</Typography.Title>
+        <Typography.Title level={4}>{t('aiInterviewTeacherReview')}</Typography.Title>
         <Tag color={candidate.integrity_conclusion === 'pass' ? 'green' : 'gold'}>
-          完整性：{candidate.integrity_conclusion}
+          {t('aiInterviewIntegrity', { value: candidate.integrity_conclusion })}
         </Tag>
       </div>
       <Alert
         type="info"
-        message={`AI 候选 ${candidate.score.toFixed(1)} / 100 · 置信度 ${Math.round(candidate.confidence * 100)}%`}
+        message={t('aiInterviewCandidateScore', {
+          score: candidate.score.toFixed(1),
+          confidence: Math.round(candidate.confidence * 100),
+        })}
         description={candidate.summary}
       />
       {review ? (
@@ -769,7 +799,9 @@ function TeacherReviewPanel({
                 {item.score} / {item.max_score}
               </Descriptions.Item>
             ))}
-            <Descriptions.Item label="复核意见">{review.notes}</Descriptions.Item>
+            <Descriptions.Item label={t('aiInterviewReviewNotes')}>
+              {review.notes}
+            </Descriptions.Item>
           </Descriptions>
           {review.decision === 'approve' &&
             (session.data.native_source || session.data.native_source_bound) &&
@@ -779,14 +811,14 @@ function TeacherReviewPanel({
                   checked={overwriteManual}
                   onChange={(event) => setOverwriteManual(event.target.checked)}
                 >
-                  确认替换当前已有人工成绩
+                  {t('aiInterviewOverwriteManual')}
                 </Checkbox>
                 <Button type="primary" loading={busy} onClick={() => void onAdopt(overwriteManual)}>
-                  采用到原答题卡
+                  {t('aiInterviewAdoptNative')}
                 </Button>
               </Space>
             )}
-          {session.state === 'adopted' && <Tag color="green">已采用到原答题卡</Tag>}
+          {session.state === 'adopted' && <Tag color="green">{t('aiInterviewAdoptedNative')}</Tag>}
         </div>
       ) : (
         <Form form={form} layout="vertical">
@@ -812,7 +844,7 @@ function TeacherReviewPanel({
               })
             }
           </Form.List>
-          <Form.Item name="notes" label="复核意见" rules={[{ required: true }]}>
+          <Form.Item name="notes" label={t('aiInterviewReviewNotes')} rules={[{ required: true }]}>
             <Input.TextArea autoSize={{ minRows: 3, maxRows: 8 }} maxLength={4000} />
           </Form.Item>
           <Space>
@@ -822,7 +854,7 @@ function TeacherReviewPanel({
               icon={<CheckCircleOutlined />}
               onClick={() => void onReview('approve')}
             >
-              批准候选
+              {t('aiInterviewApproveCandidate')}
             </Button>
             <Button
               danger
@@ -830,7 +862,7 @@ function TeacherReviewPanel({
               icon={<CloseCircleOutlined />}
               onClick={() => void onReview('reject')}
             >
-              退回
+              {t('aiInterviewReturnCandidate')}
             </Button>
           </Space>
         </Form>
