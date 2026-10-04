@@ -36,6 +36,7 @@ jobs:
       - run: yarn test:timeouts
       - run: yarn test:security-unit
       - run: yarn test:release-recovery
+      - run: yarn test:deployment-smoke
       - name: Verify release artifact
         run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ https://oj.qd.sdu.edu.cn/v2/ > artifact-verification.json
       - run: yarn playwright install --with-deps chromium firefox webkit

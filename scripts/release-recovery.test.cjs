@@ -5,7 +5,6 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
-const project = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(__dirname, 'release-v2-pre.sh'), 'utf8');
 const functions = source.slice(0, source.lastIndexOf('\ncase '));
 const quote = (value) => `'${value.replaceAll("'", "'\\''")}'`;
@@ -59,7 +58,7 @@ fs.cpSync(source, destination, { recursive: true });
       'bash',
       [
         '-c',
-        `${functions}\nREMOTE_ROOT=${quote(root)}\nPROJECT_ROOT=${quote(project)}\nssh_run() { bash -s; }\n${body}`,
+        `${functions}\nREMOTE_ROOT=${quote(root)}\nPROJECT_ROOT=${quote(root)}\nSCRIPT_DIR=${quote(__dirname)}\ngit() { printf '%s\\n' ${'a'.repeat(40)}; }\nssh_run() { bash -s; }\n${body}`,
       ],
       {
         encoding: 'utf8',
@@ -143,11 +142,24 @@ test('reused release id cannot delete retained recovery files', (context) => {
 test('smoke failure returns to the caller instead of exiting before its rollback branch', (context) => {
   const { run } = fixture(context);
   const result = run(
-    `curl() { printf 'invalid HTML'; }\nif ! smoke; then echo rollback-reachable; fi`,
+    `node() { echo 'smoke fixture failed' >&2; return 1; }\nif ! smoke; then echo rollback-reachable; fi`,
   );
   assert.equal(result.status, 0);
   assert.match(result.stdout, /rollback-reachable/);
-  assert.match(result.stderr, /smoke test failed/);
+  assert.match(result.stderr, /smoke fixture failed/);
+});
+
+test('deploy cannot overwrite evidence for an existing release id', (context) => {
+  const { root, run, version } = fixture(context);
+  const evidence = path.join(root, 'output/release-smoke/case1/before.json');
+  fs.mkdirSync(path.dirname(evidence), { recursive: true });
+  fs.writeFileSync(evidence, 'retained smoke evidence');
+  const result = run('build_pre() { :; }\nplan() { :; }\ndeploy case1');
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /smoke evidence already exists/);
+  assert.equal(fs.readFileSync(evidence, 'utf8'), 'retained smoke evidence');
+  assert.equal(version('v2-pre'), 'current');
+  assert.equal(version('v2-pre-backup'), 'older');
 });
 
 test('post-deploy smoke failure actually restores the backup and still fails the deployment', (context) => {
@@ -155,7 +167,7 @@ test('post-deploy smoke failure actually restores the backup and still fails the
   const result = run(`
 build_pre() { :; }
 plan() { :; }
-node() { :; }
+node() { if [ "$1" = -p ]; then printf '%s\\n' ${'b'.repeat(64)}; fi; }
 rsync_remote() { :; }
 ssh_run() { if [ "$1" = timeout ]; then bash -s; fi; }
 smoke_count=0
@@ -175,7 +187,7 @@ test('deploy does not remove stage after apply and automatic recovery both fail'
     `
 build_pre() { :; }
 plan() { :; }
-node() { :; }
+node() { if [ "$1" = -p ]; then printf '%s\\n' ${'b'.repeat(64)}; fi; }
 rsync_remote() { :; }
 ssh_run() { if [ "$1" = timeout ]; then bash -s; else printf '%s\\n' "$*" >> "$REMOTE_ROOT/ssh-commands"; fi; }
 smoke() { :; }

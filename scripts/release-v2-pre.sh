@@ -47,7 +47,6 @@ plan() {
   require_user
   need_cmd ssh
   need_cmd rsync
-  need_cmd curl
   ssh_run "test -d '${REMOTE_ROOT}' &&
     test -d '${REMOTE_ROOT}/v2-pre' &&
     test -d '${REMOTE_ROOT}/v2-pre-backup' &&
@@ -85,11 +84,8 @@ build_pre() {
 }
 
 smoke() {
-  need_cmd curl
-  curl --fail --silent --show-error --location --connect-timeout 10 --max-time 45 --retry 3 --retry-delay 2 --retry-max-time 180 "${RELEASE_URL}" |
-    grep -q '<div id="root"></div>' ||
-    { echo "smoke test failed: ${RELEASE_URL}" >&2; return 1; }
-  echo "smoke OK: ${RELEASE_URL}"
+  need_cmd node
+  node "${SCRIPT_DIR}/deployment-smoke.cjs" "${RELEASE_URL}" "$@"
 }
 
 remote_apply() {
@@ -156,9 +152,15 @@ deploy() {
   require_user
   build_pre
   plan
-  smoke || die "pre-deploy smoke failed; remote releases were not changed"
   local release_id="${1:-$(date -u +%Y%m%d%H%M%S)-$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD 2>/dev/null || echo local)}"
   [[ "${release_id}" =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid release id"
+  local smoke_directory="${PROJECT_ROOT}/output/release-smoke/${release_id}"
+  [[ ! -e "${smoke_directory}" ]] || die "release-id smoke evidence already exists; use a new release id"
+  mkdir -p "${smoke_directory}"
+  smoke > "${smoke_directory}/before.json" || die "pre-deploy smoke failed; remote releases were not changed"
+  local before_manifest_sha
+  before_manifest_sha="$(node -p "require(process.argv[1]).manifestSha256" "${smoke_directory}/before.json")"
+  [[ "${before_manifest_sha}" =~ ^[a-f0-9]{64}$ ]] || die "pre-deploy smoke did not record a valid known-good manifest"
   local source_ref
   source_ref="$(git -C "${PROJECT_ROOT}" rev-parse HEAD)"
   [[ "${source_ref}" =~ ^[a-f0-9]{40}$ ]] || die "invalid source ref"
@@ -182,14 +184,15 @@ deploy() {
   if ! remote_apply "${release_id}"; then
     die "remote apply failed; staging and recovery copies retained; formal /v2 was not touched"
   fi
-  if ! smoke; then
+  if ! smoke --expected-manifest "${PROJECT_ROOT}/build/release-manifest.json" > "${smoke_directory}/after.json"; then
     echo "post-deploy smoke failed; restoring v2-pre from v2-pre-backup" >&2
     ssh_run timeout "${COMMAND_TIMEOUT}" bash -s <<EOF
 set -Eeuo pipefail
 root="${REMOTE_ROOT}"
 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
 EOF
-    smoke || die "post-rollback smoke failed; backup retained for manual recovery"
+    smoke --expected-sha256 "${before_manifest_sha}" > "${smoke_directory}/rollback.json" ||
+      die "post-rollback smoke failed; backup retained for manual recovery"
     die "post-deploy smoke failed; rollback attempted"
   fi
   echo "v2-pre deploy complete: ${RELEASE_URL}"

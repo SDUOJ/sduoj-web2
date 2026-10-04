@@ -277,7 +277,7 @@ PROJECT_ROOT="$AUDIT_PROJECT"
 REMOTE_USER=isolated
 build_pre() { :; }
 plan() { :; }
-smoke() { :; }
+smoke() { printf '{"manifestSha256":"%s"}\\n' ${'b'.repeat(64)}; }
 git() { printf '%s\\n' "$AUDIT_REF"; }
 rsync_remote() { printf 'UPLOAD\\n'; }
 ssh_run() { if [[ "$*" == node* ]]; then printf 'REMOTE_REJECTED\\n'; return 1; fi; }
