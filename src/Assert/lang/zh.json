@@ -1204,5 +1204,20 @@
   "aiAdminCleanupApplied": "孤儿文件清理已执行",
   "aiAdminCleanupWarning": "该操作会删除磁盘上的未登记文件",
   "aiAdminCleanupWarningDescription": "仅删除满足年龄阈值且 inode/大小未变化的文件。",
-  "aiAdminCleanupReasonPlaceholder": "请输入本次清理原因"
+  "aiAdminCleanupReasonPlaceholder": "请输入本次清理原因",
+  "aiExamTitle": "考试与考务",
+  "aiExamNew": "新建",
+  "aiExamRefresh": "刷新",
+  "aiExamListName": "考试名称",
+  "aiExamListStatus": "状态",
+  "aiExamListActions": "操作",
+  "aiExamView": "查看",
+  "aiExamStateDraft": "草稿",
+  "aiExamStatePending": "编排中",
+  "aiExamStateReview": "待复核",
+  "aiExamStateApproved": "已批准",
+  "aiExamStatePublished": "已发布",
+  "aiExamSubmissionNotStarted": "未开始",
+  "aiExamSubmissionWorking": "进行中",
+  "aiExamSubmissionSubmitted": "已交卷"
 }

@@ -1229,5 +1229,20 @@
   "aiAdminCleanupApplied": "Orphan file cleanup applied",
   "aiAdminCleanupWarning": "This operation deletes unregistered files from disk",
   "aiAdminCleanupWarningDescription": "Only files older than the age threshold with unchanged inode and size are deleted.",
-  "aiAdminCleanupReasonPlaceholder": "Enter a reason for this cleanup"
+  "aiAdminCleanupReasonPlaceholder": "Enter a reason for this cleanup",
+  "aiExamTitle": "Exams and invigilation",
+  "aiExamNew": "New exam",
+  "aiExamRefresh": "Refresh",
+  "aiExamListName": "Exam name",
+  "aiExamListStatus": "Status",
+  "aiExamListActions": "Actions",
+  "aiExamView": "View",
+  "aiExamStateDraft": "Draft",
+  "aiExamStatePending": "Planning",
+  "aiExamStateReview": "Awaiting review",
+  "aiExamStateApproved": "Approved",
+  "aiExamStatePublished": "Published",
+  "aiExamSubmissionNotStarted": "Not started",
+  "aiExamSubmissionWorking": "In progress",
+  "aiExamSubmissionSubmitted": "Submitted"
 }

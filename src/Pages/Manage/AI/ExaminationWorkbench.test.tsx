@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ExaminationWorkbench from './ExaminationWorkbench';
 import request from '../../../Utils/API/request';
 import { aiPlatform, PlatformResource } from '../../../Utils/API/ai-platform';
+import i18n from '../../../Config/i18n';
 
 jest.mock('antd', () => {
   const actual = jest.requireActual('antd');
@@ -76,7 +77,8 @@ const plannedExam = (overrides: Partial<PlatformResource> = {}): PlatformResourc
 
 let current: PlatformResource;
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   jest.clearAllMocks();
   current = plannedExam();
   (aiPlatform.list as jest.Mock).mockImplementation(async () => ({ rows: [current], totalNum: 1 }));
@@ -257,4 +259,15 @@ test('monitors submissions and resets replace-seat confirmation between exams', 
   await screen.findByRole('heading', { name: '已发布考试二' });
   expect(screen.getByLabelText('替换现有考试座位')).not.toBeChecked();
   expect(screen.getByRole('button', { name: /绑定原生座位/ })).toBeDisabled();
+});
+
+test('renders the exam list in English', async () => {
+  await i18n.changeLanguage('en');
+  render(<ExaminationWorkbench />);
+  expect(
+    await screen.findByRole('heading', { name: 'Exams and invigilation' }),
+  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /New exam/ })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+  await i18n.changeLanguage('zh');
 });

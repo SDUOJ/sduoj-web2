@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -52,20 +53,6 @@ type ExamData = {
   course_binding?: { course_id: number };
 };
 
-const stateLabels: Record<string, string> = {
-  draft: '草稿',
-  pending: '编排中',
-  review: '待复核',
-  approved: '已批准',
-  published: '已发布',
-};
-
-const submissionLabels: Record<string, string> = {
-  NOT_STARTED: '未开始',
-  WORKING: '进行中',
-  SUBMITTED: '已交卷',
-};
-
 function operationKey(prefix: string) {
   const value =
     globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -73,6 +60,7 @@ function operationKey(prefix: string) {
 }
 
 export default function ExaminationWorkbench({ location }: { location?: { search?: string } }) {
+  const { t } = useTranslation();
   const [createOpen, setCreateOpen] = useState(false);
   const [resources, setResources] = useState<PlatformResource[]>([]);
   const [current, setCurrent] = useState<PlatformResource>();
@@ -102,6 +90,18 @@ export default function ExaminationWorkbench({ location }: { location?: { search
   const working = rows.filter((row) => row.submission === 'WORKING').length;
   const currentId = current?.id;
   const nativePsid = data?.native_psid;
+  const stateLabels: Record<string, string> = {
+    draft: t('aiExamStateDraft'),
+    pending: t('aiExamStatePending'),
+    review: t('aiExamStateReview'),
+    approved: t('aiExamStateApproved'),
+    published: t('aiExamStatePublished'),
+  };
+  const submissionLabels: Record<string, string> = {
+    NOT_STARTED: t('aiExamSubmissionNotStarted'),
+    WORKING: t('aiExamSubmissionWorking'),
+    SUBMITTED: t('aiExamSubmissionSubmitted'),
+  };
   async function load() {
     setResources((await aiPlatform.list('exam')).rows);
   }
@@ -160,13 +160,13 @@ export default function ExaminationWorkbench({ location }: { location?: { search
       <div className="ai-workspace-body">
         <AIWorkspaceNav />
         <div className="ai-workspace-heading">
-          <Typography.Title level={3}>考试与考务</Typography.Title>
+          <Typography.Title level={3}>{t('aiExamTitle')}</Typography.Title>
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-              新建
+              {t('aiExamNew')}
             </Button>
             <Button
-              aria-label="刷新"
+              aria-label={t('aiExamRefresh')}
               icon={<ReloadOutlined />}
               loading={busy}
               onClick={() =>
@@ -187,20 +187,23 @@ export default function ExaminationWorkbench({ location }: { location?: { search
               dataSource={resources}
               pagination={{ pageSize: 10 }}
               columns={[
-                { title: '考试名称', render: (_, row) => String(row.data.title || row.id) },
-                { title: '状态', dataIndex: 'state' },
                 {
-                  title: '操作',
+                  title: t('aiExamListName'),
+                  render: (_, row) => String(row.data.title || row.id),
+                },
+                { title: t('aiExamListStatus'), dataIndex: 'state' },
+                {
+                  title: t('aiExamListActions'),
                   render: (_, row) => (
                     <Button type="link" onClick={() => void action(() => selectExam(row.id))}>
-                      查看
+                      {t('aiExamView')}
                     </Button>
                   ),
                 },
               ]}
             />
             <Modal
-              title="新建考试"
+              title={t('aiExamNew')}
               open={createOpen}
               onCancel={() => setCreateOpen(false)}
               footer={null}
