@@ -6,6 +6,9 @@ export type AiResource = {
   version: number;
   state: string;
   course_id?: number | null;
+  psid?: number | null;
+  parent_id?: string | null;
+  created_at?: string;
   data: {
     zh?: string;
     original?: string;

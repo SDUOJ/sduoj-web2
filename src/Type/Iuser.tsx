@@ -55,9 +55,17 @@ export interface UserInfo {
   groups?: string[];
   ipv4?: string;
   userAgent?: string;
-  features?: any;
-  gender?: any;
+  features?: UserFeatures;
+  gender?: Sex | null;
+  phone?: string | null;
 }
+
+export type UserFeatures = {
+  banThirdParty?: number | boolean;
+  banEmailUpdate?: number | boolean;
+  banInfoUpdate?: number | boolean;
+  requirePasswordChange?: number | boolean;
+};
 
 export interface UserState {
   isLogin: boolean;
@@ -82,5 +90,5 @@ export interface thirdPartyLoginResponse {
   sduRealName: string;
   thirdParty: string;
   token: string;
-  user: any;
+  user: UserInfo | null;
 }

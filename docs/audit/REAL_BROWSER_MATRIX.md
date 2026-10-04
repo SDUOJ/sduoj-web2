@@ -1,6 +1,6 @@
 # R-12 真实开发浏览器矩阵
 
-验收日期：2026-10-05（Asia/Shanghai）。本文件记录可重复的真实服务回归，不将 mock、限时题单或 AI 考务页面视为 standalone exam 生命周期验收。
+验收日期：2026-10-04（UTC；原始报告保留时区时间）。本文件记录可重复的真实服务回归，不将 mock、限时题单或 AI 考务页面视为 standalone exam 生命周期验收。
 
 ## 运行
 
@@ -45,6 +45,6 @@ LOCAL_BASE_URL=http://127.0.0.1:3001 yarn test:dev-regression
 
 每轮报告记录 frontend HEAD/补丁 SHA256、回归源 SHA256、Java/AutoLab checkout HEAD、运行容器名/ID/镜像 tag、Java 服务不可变镜像 ID、AutoLab 实际 OpenAPI 路径 SHA256和时间。checkout 版本仅说明本地源码，不冒充实际服务镜像版本。
 
-2026-10-05 本机 Java checkout 为 `d70c76deb8f915ba84f3c9351d5904e6273a6e1e`，AutoLab checkout 为 `da27fc81b796e766eba3990ae3b541fced5d1c23`。`/api/exam/getInfos` 返回 HTTP 200 / envelope code 404，另外只读探测 `/api/exam/getInfo?examId=1` 和 `/api/manage/exam/getInfo/1` 同样为 code 404。报告将 standalone exam 标记为 `lifecycle: not-verified`；R-04 和 R-12 的 standalone exam 部分保持待验收。
+2026-10-04 本机 Java checkout 为 `d70c76deb8f915ba84f3c9351d5904e6273a6e1e`，AutoLab checkout 为 `da27fc81b796e766eba3990ae3b541fced5d1c23`。`/api/exam/getInfos` 返回 HTTP 200 / envelope code 404，另外只读探测 `/api/exam/getInfo?examId=1` 和 `/api/manage/exam/getInfo/1` 同样为 code 404。报告将 standalone exam 标记为 `lifecycle: not-verified`；R-04 和 R-12 的 standalone exam 部分保持待验收。
 
 独立考试服务、生命周期 fixture 和账号权限契约补齐后，需要另外覆盖创建、开始、保存、重连、自动交卷和权限变化。这里的限时题单页面回归不是替代品。

@@ -3,11 +3,11 @@ import { Sex } from './Iuser';
 import React from 'react';
 
 export interface Get {
-  <T = any>(url: string, params?: object, config?: AxiosRequestConfig): Promise<T>;
+  <T = unknown>(url: string, params?: object, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface Post {
-  <T = any>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T>;
+  <T = unknown>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface GetError {

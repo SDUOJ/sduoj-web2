@@ -5,8 +5,10 @@ export type PlatformResource = {
   kind: string;
   version: number;
   state: string;
-  course_id?: number;
-  psid?: number;
+  course_id?: number | null;
+  psid?: number | null;
+  parent_id?: string | null;
+  created_at?: string;
   data: Record<string, unknown>;
 };
 export type JobStatus = 'pending' | 'blocked' | 'running' | 'success' | 'failed' | 'cancelled';
@@ -19,14 +21,14 @@ export type PlatformJob = {
   id: string;
   task_type: string;
   status: JobStatus;
-  resource_id?: string;
+  resource_id?: string | null;
   attempt: number;
   max_attempts?: number;
   created_at?: string;
-  finished_at?: string;
+  finished_at?: string | null;
   review_required?: boolean;
-  error?: string;
-  result?: Record<string, unknown>;
+  error?: string | null;
+  result?: Record<string, unknown> | null;
   next_cursor?: number;
   ai_runs?: Array<{
     id: string;
@@ -227,7 +229,7 @@ export const aiPlatform = {
       operation_key,
       payload,
     }),
-  cancel: (id: string) => request.post(base + '/jobs/' + id + '/cancel', {}),
+  cancel: (id: string) => request.post<{ status: JobStatus }>(base + '/jobs/' + id + '/cancel', {}),
   retry: (id: string, operation_key: string) =>
     request.post<{ taskId: string }>(base + '/jobs/' + id + '/retry', { operation_key }),
   settings: () => request.get<ProviderSettings>(base + '/settings'),

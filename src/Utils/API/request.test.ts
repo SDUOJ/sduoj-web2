@@ -3,6 +3,7 @@ import { message } from 'antd';
 import request, { MAX_DOWNLOAD_BYTES, service } from './request';
 import axios from 'axios';
 import { AUTH_BOUNDARY_EVENT } from '../authBoundary';
+import i18n from '../../Config/i18n';
 
 jest.mock('antd', () => ({ message: { error: jest.fn() } }));
 const adapter = new MockAdapter(service);
@@ -23,6 +24,40 @@ it('unwraps GET results and preserves query parameters and credentials', async (
 it('preserves POST bodies and unwraps results', async () => {
   adapter.onPost('/example', { title: 'Draft' }).reply(200, success({ id: 1 }));
   await expect(request.post('/example', { title: 'Draft' })).resolves.toEqual({ id: 1 });
+});
+
+it.each([
+  null,
+  [],
+  'html response',
+  {},
+  { code: '0', data: {} },
+  { code: 0.5, data: {} },
+  { code: 0 },
+  { code: 0, data: {}, message: [] },
+  { code: 0, data: {}, timestamp: {} },
+  { code: 0, data: {}, timestamp: true },
+])(
+  'rejects malformed success envelopes without a secondary transport failure: %j',
+  async (payload) => {
+    adapter.onGet('/example').reply(200, payload);
+    await expect(request.get('/example')).rejects.toBe(i18n.t('InvalidApiResponse'));
+    expect(message.error).toHaveBeenCalledTimes(1);
+  },
+);
+
+it('preserves explicit null success data and Java string pagination counters', async () => {
+  const page = {
+    rows: [],
+    totalNum: '9007199254740993',
+    totalPage: '1',
+    pageIndex: '1',
+    pageSize: '20',
+  };
+  adapter.onGet('/java-page').reply(200, success(page));
+  adapter.onPost('/empty').reply(200, success(null));
+  await expect(request.get('/java-page')).resolves.toEqual(page);
+  await expect(request.post('/empty', {})).resolves.toBeNull();
 });
 
 it.each([undefined, null, '', 'not-a-number'])(
@@ -264,7 +299,7 @@ it('redirects for expired sessions and excessive clock skew', async () => {
     expect(replace).toHaveBeenCalledWith(
       '/v2/login?to=' + encodeURIComponent('/v2/problem?tag=a%26b&page=2#results'),
     );
-    adapter.onGet('/example').reply(200, { code: 0, timestamp: Date.now() - 120000 });
+    adapter.onGet('/example').reply(200, { code: 0, data: null, timestamp: Date.now() - 120000 });
     await expect(request.get('/example')).rejects.toBe('本地时间异常');
     expect(replace).toHaveBeenCalledWith('/v2/error/time');
   } finally {

@@ -20,6 +20,13 @@ import {
 import { SubmissionQueryType } from '../../Type/IManage';
 
 import request from './request';
+import {
+  ContestInfo,
+  ContestListRow,
+  FileDownloadRequest,
+  JavaPage,
+  ProblemDescriptionListRow,
+} from '../../Type/api';
 import { IAddCodesToHub } from '../../Type/IAnti-cheating';
 
 const mApi = {
@@ -79,7 +86,7 @@ const mApi = {
   // ---------------------- 题面相关 ----------------------
   // 查询题目的描述列表
   getProblemDescriptionList: async function (params: { problemCode: string }) {
-    return request.get('/manage/problem/queryDescriptionList', params);
+    return request.get<ProblemDescriptionListRow[]>('/manage/problem/queryDescriptionList', params);
   },
   // 查询题目描述
   getProblemDescription: async function (params: { descriptionId: number }) {
@@ -102,7 +109,7 @@ const mApi = {
     return request.post('/checkpoint/upload', data);
   },
   // checkpoint批量上传
-  uploadCheckpointFiles: async function (data: any) {
+  uploadCheckpointFiles: async function (data: FormData) {
     return request.post('/checkpoint/uploadFiles', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -122,11 +129,11 @@ const mApi = {
   // ---------------------- 比赛相关 ----------------------
   // 获取比赛列表
   getContestList: async function (params: query) {
-    return request.get('/manage/contest/page', params);
+    return request.get<JavaPage<ContestListRow>>('/manage/contest/page', params);
   },
   // 获取单个比赛详情
   getContest: async function (params: { contestId: number }) {
-    return request.get('/manage/contest/query', params);
+    return request.get<ContestInfo>('/manage/contest/query', params);
   },
   // 更新比赛信息
   updateContest: async function (data: contestManagePayload) {
@@ -150,7 +157,7 @@ const mApi = {
   },
   // ----------------- 评测模板相关 -------------------
   // 查询单个评测模板
-  getOneTemplate: async function (params: any) {
+  getOneTemplate: async function (params: { id: string | number }) {
     return request.get('/manage/judgetemplate/query', params);
   },
   // 查询多页评测模板
@@ -186,11 +193,11 @@ const mApi = {
   //     return request.get('/filesys/queryByMd5', {md5});
   // },
   // 以zip包下载多个文件
-  zipDownload: async function (data: any, filename?: string) {
+  zipDownload: async function (data: FileDownloadRequest[], filename?: string) {
     return request.getZipFile('/filesys/zipDownload', data, {}, filename);
   },
   // 以较低地压缩率，较高的速度完成压缩
-  zipDownloadFast: async function (data: any, filename?: string) {
+  zipDownloadFast: async function (data: FileDownloadRequest[], filename?: string) {
     return request.getZipFile('/filesys/zipDownloadWithoutCompression', data, {}, filename);
   },
   /* ************ group ****************** */

@@ -5,6 +5,7 @@ import { legacy_createStore as createStore } from 'redux';
 import { rootReducers } from '../../../Redux/Store/rootReducer';
 import cApi from '../../../Utils/API/c-api';
 import useProblemSetInfo from './getProblemSetInfo';
+import { ProblemSetInfo } from '../../../Type/api';
 
 jest.mock('../../../Utils/API/c-api', () => ({
   __esModule: true,
@@ -13,6 +14,32 @@ jest.mock('../../../Utils/API/c-api', () => ({
 
 function Probe({ psid, onError }: { psid: string; onError?: (error: unknown) => void }) {
   return <div>{useProblemSetInfo(psid, onError)?.name ?? 'loading'}</div>;
+}
+
+function problemSet(name: string): ProblemSetInfo {
+  return {
+    psid: 1,
+    name,
+    description: null,
+    type: 0,
+    global_score: 100,
+    tm_start: null,
+    tm_end: null,
+    groupId: 1,
+    manageGroupId: null,
+    tag: 'test',
+    username: 'alice',
+    isAdmin: false,
+    groupInfo: [],
+    latePermission: null,
+    config: {
+      useSameSE: 1,
+      showReport: 0,
+      showScoreInRunning: 1,
+      showProgramScoreInRunning: 1,
+      mergerSubjectiveGroup: 0,
+    },
+  };
 }
 
 function deferred<T>() {
@@ -24,8 +51,8 @@ function deferred<T>() {
 }
 
 it('publishes a fresh response for multiple consumers when the session hydrates', async () => {
-  const guest = deferred<{ name: string }>();
-  const authenticated = deferred<{ name: string }>();
+  const guest = deferred<ProblemSetInfo>();
+  const authenticated = deferred<ProblemSetInfo>();
   jest
     .mocked(cApi.getProblemSetInfo)
     .mockReturnValueOnce(guest.promise)
@@ -44,17 +71,17 @@ it('publishes a fresh response for multiple consumers when the session hydrates'
     });
     store.dispatch({ type: 'userLogin' });
   });
-  await act(async () => authenticated.resolve({ name: 'Authenticated set' }));
+  await act(async () => authenticated.resolve(problemSet('Authenticated set')));
   expect(screen.getAllByText('Authenticated set')).toHaveLength(2);
-  await act(async () => guest.resolve({ name: 'Old guest set' }));
+  await act(async () => guest.resolve(problemSet('Old guest set')));
   expect(screen.queryByText('Old guest set')).not.toBeInTheDocument();
 });
 
 it('does not reuse an already cached problem set after the user session changes', async () => {
   jest
     .mocked(cApi.getProblemSetInfo)
-    .mockResolvedValueOnce({ name: 'Guest set' })
-    .mockResolvedValueOnce({ name: 'Authenticated set' });
+    .mockResolvedValueOnce(problemSet('Guest set'))
+    .mockResolvedValueOnce(problemSet('Authenticated set'));
   const store = createStore(rootReducers);
   render(
     <Provider store={store}>
@@ -78,8 +105,8 @@ it('does not reuse an already cached problem set after the user session changes'
 });
 
 it('shares a request between consumers and never displays an old problem set after navigation', async () => {
-  const oldRequest = deferred<{ name: string }>();
-  const newRequest = deferred<{ name: string }>();
+  const oldRequest = deferred<ProblemSetInfo>();
+  const newRequest = deferred<ProblemSetInfo>();
   jest
     .mocked(cApi.getProblemSetInfo)
     .mockReturnValueOnce(oldRequest.promise)
@@ -100,10 +127,10 @@ it('shares a request between consumers and never displays an old problem set aft
     </Provider>,
   );
   expect(cApi.getProblemSetInfo).toHaveBeenCalledTimes(2);
-  oldRequest.resolve({ name: 'Old set' });
+  oldRequest.resolve(problemSet('Old set'));
   await Promise.resolve();
   expect(screen.queryByText('Old set')).not.toBeInTheDocument();
-  newRequest.resolve({ name: 'New set' });
+  newRequest.resolve(problemSet('New set'));
   expect(await screen.findAllByText('New set')).toHaveLength(2);
 });
 
@@ -111,7 +138,7 @@ it('allows a fresh mount to retry after a failed request', async () => {
   jest
     .mocked(cApi.getProblemSetInfo)
     .mockRejectedValueOnce(new Error('offline'))
-    .mockResolvedValueOnce({ name: 'Recovered' });
+    .mockResolvedValueOnce(problemSet('Recovered'));
   const store = createStore(rootReducers);
   const first = render(
     <Provider store={store}>
@@ -133,8 +160,8 @@ it('retries a failed id after navigating away and back in the same component', a
   jest
     .mocked(cApi.getProblemSetInfo)
     .mockRejectedValueOnce(new Error('offline'))
-    .mockResolvedValueOnce({ name: 'Other set' })
-    .mockResolvedValueOnce({ name: 'Recovered set' });
+    .mockResolvedValueOnce(problemSet('Other set'))
+    .mockResolvedValueOnce(problemSet('Recovered set'));
   const store = createStore(rootReducers);
   const view = render(
     <Provider store={store}>
@@ -167,7 +194,7 @@ it('does not report an old route failure through its former consumer', async () 
   jest
     .mocked(cApi.getProblemSetInfo)
     .mockReturnValueOnce(oldRequest)
-    .mockResolvedValueOnce({ name: 'Current set' });
+    .mockResolvedValueOnce(problemSet('Current set'));
   const onError = jest.fn();
   const store = createStore(rootReducers);
   const view = render(
@@ -186,7 +213,7 @@ it('does not report an old route failure through its former consumer', async () 
 });
 
 it('does not repopulate cleared state when a logged-out route unmounts', async () => {
-  const request = deferred<{ name: string }>();
+  const request = deferred<ProblemSetInfo>();
   jest.mocked(cApi.getProblemSetInfo).mockReturnValueOnce(request.promise);
   const store = createStore(rootReducers);
   store.dispatch({
@@ -204,7 +231,7 @@ it('does not repopulate cleared state when a logged-out route unmounts', async (
     store.dispatch({ type: 'clearRedux' });
     view.unmount();
   });
-  request.resolve({ name: 'Alice data' });
+  request.resolve(problemSet('Alice data'));
   await Promise.resolve();
   expect(store.getState().ProblemSetReducer.problemSetInfo['6']).toBeUndefined();
 });

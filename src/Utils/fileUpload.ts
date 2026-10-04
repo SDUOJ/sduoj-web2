@@ -1,11 +1,12 @@
 import CApi from 'Utils/API/c-api';
 import md5 from 'js-md5';
+import { FileReference } from '../Type/api';
 
 export interface FileUploadOptions {
   signal?: AbortSignal;
 }
 
-export type FileUploadCallback<T = any> = (value: T) => void;
+export type FileUploadCallback = (value: FileReference) => void;
 
 const throwIfAborted = (signal?: AbortSignal) => {
   if (signal?.aborted) {
@@ -13,20 +14,19 @@ const throwIfAborted = (signal?: AbortSignal) => {
   }
 };
 
-export const fileUpload = async <T = any>(
+export const fileUpload = async (
   files: File[],
-  callback?: FileUploadCallback<T>,
+  callback?: FileUploadCallback,
   options: FileUploadOptions = {},
-): Promise<T[]> => {
+): Promise<FileReference[]> => {
   throwIfAborted(options.signal);
 
-  const cacheResults: (T | null)[] = await Promise.all(
+  const cacheResults: (FileReference | null)[] = await Promise.all(
     files.map(async (file) => {
       throwIfAborted(options.signal);
       const buffer = await file.arrayBuffer();
       throwIfAborted(options.signal);
-      const value = (await CApi.getFileByMD5({ md5: md5(buffer) }, { signal: options.signal })) as
-        T | null | undefined;
+      const value = await CApi.getFileByMD5({ md5: md5(buffer) }, { signal: options.signal });
       throwIfAborted(options.signal);
       return value ?? null;
     }),
@@ -43,7 +43,7 @@ export const fileUpload = async <T = any>(
 
   if (missingIndexes.length > 0) {
     throwIfAborted(options.signal);
-    const uploaded = (await CApi.uploadFile(formData, { signal: options.signal })) as T[];
+    const uploaded = await CApi.uploadFile(formData, { signal: options.signal });
     throwIfAborted(options.signal);
     if (!Array.isArray(uploaded) || uploaded.length !== missingIndexes.length) {
       throw new Error('Uploaded file count does not match the requested file count');
@@ -53,20 +53,23 @@ export const fileUpload = async <T = any>(
     });
   }
 
-  const results = cacheResults as T[];
+  const results = cacheResults.map((value) => {
+    if (value === null) throw new Error('Uploaded file reference is missing');
+    return value;
+  });
   results.forEach((value) => callback?.(value));
   return results;
 };
 
-export const fileUploadWithoutMD5 = async <T = any>(
+export const fileUploadWithoutMD5 = async (
   file: File,
-  callback?: FileUploadCallback<T>,
+  callback?: FileUploadCallback,
   options: FileUploadOptions = {},
-): Promise<T> => {
+): Promise<FileReference> => {
   throwIfAborted(options.signal);
   const formData = new FormData();
   formData.append('file', file);
-  const data = (await CApi.uploadSingleFile(formData, { signal: options.signal })) as T;
+  const data = await CApi.uploadSingleFile(formData, { signal: options.signal });
   throwIfAborted(options.signal);
   callback?.(data);
   return data;

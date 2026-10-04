@@ -5,7 +5,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ThirdPartyLoginSDUCAS from './ThirdPartyLoginSDUCAS';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../Redux/Store/hooks';
-import { loginInfo } from '../../Type/types';
+import { UserInfo } from '../../Type/Iuser';
 import Logo from 'Assert/img/sduoj.png';
 import ForgetPass from './Form/ForgetPass';
 import ItemEmail from './Form/Item/ItemEmail';
@@ -23,7 +23,7 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const pending = useRef(false);
   const dispatch = useAppDispatch();
-  const afterLogin = (data: loginInfo) => {
+  const afterLogin = (data: UserInfo) => {
     dispatch({ type: 'userLogin' });
     dispatch({ type: 'setUserInfo', data: data });
   };
@@ -36,9 +36,7 @@ const Login = () => {
       );
       if (!value) return;
       setSubmitting(true);
-      const data: loginInfo = await (type === 'account'
-        ? CApi.login(value)
-        : CApi.emailLogin(value));
+      const data = await (type === 'account' ? CApi.login(value) : CApi.emailLogin(value));
       afterLogin(data);
     } catch {
       // Field validation and transport already present errors; preserve credentials for retry.

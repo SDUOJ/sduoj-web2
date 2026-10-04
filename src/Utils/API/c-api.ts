@@ -36,6 +36,17 @@ import {
 import request from './request';
 import apiAddress from './apiAddress';
 import { AxiosRequestConfig } from 'axios';
+import {
+  AutoLabPage,
+  ContestInfo,
+  ContestListRow,
+  ContestRankRow,
+  FileReference,
+  JavaPage,
+  ProblemSetListRow,
+  ProblemSetInfo,
+} from '../../Type/api';
+import { UserInfo, thirdPartyLoginResponse } from '../../Type/Iuser';
 
 type AcceptanceQueueCache = {
   psid: number;
@@ -53,43 +64,43 @@ const cApi = {
 
   // User
   async login(data: loginInfo) {
-    return request.post('/user/login', data);
+    return request.post<UserInfo>('/user/login', data);
   },
   async emailLogin(data: { email: string; emailCode: string }) {
-    return request.post('/user/emailLogin', data);
+    return request.post<UserInfo>('/user/emailLogin', data);
   },
   async logout() {
-    return request.get('/user/logout');
+    return request.get<null>('/user/logout');
   },
   async register(data: registerInfo) {
-    return request.post('/user/register', data);
+    return request.post<UserInfo>('/user/register', data);
   },
   async forgetPassword(data: forgetInfo) {
-    return request.post('/user/forgetPassword', data);
+    return request.post<string>('/user/forgetPassword', data);
   },
   async getProfile() {
-    return request.get('/user/getProfile');
+    return request.get<UserInfo>('/user/getProfile');
   },
   async updateProfile(data: profileInfo) {
-    return request.post('/user/updateProfile', data);
+    return request.post<null>('/user/updateProfile', data);
   },
   async updatePassword(data: updatePassWord) {
-    return request.post('/user/updatePassword', data);
+    return request.post<null>('/user/updatePassword', data);
   },
   async updateEmail(data: updateEmailInfo) {
-    return request.post('/user/updateEmail', data);
+    return request.post<null>('/user/updateEmail', data);
   },
   async sendVerificationEmail(data: verificationEmail) {
-    return request.post('/user/sendVerificationEmail', data);
+    return request.post<number>('/user/sendVerificationEmail', data);
   },
   async resetPassword(data: resetPasswordInfo) {
-    return request.post('/user/resetPassword', data);
+    return request.post<null>('/user/resetPassword', data);
   },
   async getCaptcha() {
-    return request.get('/user/getCaptcha');
+    return request.get<{ captchaId: string; captcha: string }>('/user/getCaptcha');
   },
   async isExist(data: userExistQuery) {
-    return request.get('/user/isExist', data);
+    return request.get<boolean>('/user/isExist', data);
   },
   async queryParticipateContest() {
     return request.get('/user/queryParticipateContest');
@@ -105,35 +116,35 @@ const cApi = {
     //     user: null,
     //     token: "1111111"
     // })
-    return request.get('/user/thirdPartyLogin', data);
+    return request.get<thirdPartyLoginResponse>('/user/thirdPartyLogin', data);
   },
   async thirdPartyUnbinding(data: { thirdParty: string }) {
     return request.get('/user/thirdPartyUnbinding', data);
   },
   //// 注册新账号并绑定已有账号
   async thirdPartyRegister(data: thirdPartyRegisterInfo) {
-    return request.post('/user/thirdPartyRegister', data);
+    return request.post<UserInfo>('/user/thirdPartyRegister', data);
   },
   //// 绑定已有账号
   async thirdPartyBinding(data: thirdPartyBindingInfo) {
-    return request.post('/user/thirdPartyBinding', data);
+    return request.post<UserInfo>('/user/thirdPartyBinding', data);
   },
 
   // 文件相关
   async uploadFile(data: FormData, config?: AxiosRequestConfig) {
-    return request.post('/filesys/uploadFiles', data, {
+    return request.post<FileReference[]>('/filesys/uploadFiles', data, {
       ...config,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
   async uploadSingleFile(data: FormData, config?: AxiosRequestConfig) {
-    return request.post('/filesys/upload', data, {
+    return request.post<FileReference>('/filesys/upload', data, {
       ...config,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
   async getFileByMD5(data: { md5: string }, config?: AxiosRequestConfig) {
-    return request.get('/filesys/queryByMd5', data, config);
+    return request.get<FileReference | null>('/filesys/queryByMd5', data, config);
   },
   getFileDownloadUrl(id: string, name: string) {
     return (
@@ -147,7 +158,7 @@ const cApi = {
 
   // 比赛相关
   async getContestList(data: contestListQuery) {
-    return request.get('/contest/list', data);
+    return request.get<JavaPage<ContestListRow>>('/contest/list', data);
   },
   async invalidateContestSubmission(data: { submissionId: string; contestId: string }) {
     return request.get('/contest/invalidateSubmission', data);
@@ -168,7 +179,7 @@ const cApi = {
     return request.post('/contest/createSubmission', data);
   },
   async getContestInfo(data: { contestId: string }) {
-    return request.get('/contest/query', data);
+    return request.get<ContestInfo>('/contest/query', data);
   },
   async getContestSubmissionList(data: contestSubmissionQuery) {
     return request.get('/contest/listSubmission', data);
@@ -180,7 +191,7 @@ const cApi = {
     return request.get('/contest/querySubmission', data);
   },
   async getRank(data: { contestId: string }) {
-    return request.get('/contest/rank', data);
+    return request.get<ContestRankRow[]>('/contest/rank', data);
   },
   async submitInContest(data: contestSubmissionPayload) {
     return request.post('/contest/createSubmission', data);
@@ -271,7 +282,7 @@ const cApi = {
 
   // 题单相关
   async getProblemSetInfo(data: { psid: number | string }) {
-    return request.post('/ps/problem_set/info_c', data);
+    return request.post<ProblemSetInfo>('/ps/problem_set/info_c', data);
   },
   // 获取全局 upcoming 题单（running/upcoming）
   async getUpcomingProblemSet() {
@@ -362,7 +373,7 @@ const cApi = {
   },
   // 获取题单列表
   async getProblemSetList(data: problemSetSearchQuery) {
-    return request.post('/ps/problem_set/search', data);
+    return request.post<AutoLabPage<ProblemSetListRow>>('/ps/problem_set/search', data);
   },
   // 获取题目组下所有题单（按标签组织）
   async getProblemSetListByGroup(data: { groupId: number }) {

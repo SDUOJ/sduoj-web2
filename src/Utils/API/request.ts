@@ -1,5 +1,5 @@
 import apiAddress from './apiAddress';
-import axios, { AxiosError, AxiosRequestConfig, CanceledError } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, CanceledError } from 'axios';
 import { Get, Post } from '../../Type/types';
 import { message } from 'antd';
 import { UrlPrefix } from '../../Config/constValue';
@@ -8,6 +8,7 @@ import { loginRedirect } from '../authReturn';
 import { reportApiFailure } from '../errorReporter';
 import { notifyAuthBoundary } from '../authBoundary';
 import i18n from '../../Config/i18n';
+import { isApiEnvelope, isApiRecord } from '../../Type/api';
 
 export const MAX_DOWNLOAD_BYTES = 256 * 1024 * 1024;
 
@@ -57,8 +58,8 @@ const readBlobPayload = async (value: unknown): Promise<unknown> => {
   if (!(value instanceof Blob)) return value;
   try {
     const text =
-      typeof (value as any).text === 'function'
-        ? await (value as any).text()
+      typeof value.text === 'function'
+        ? await value.text()
         : await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(String(reader.result ?? ''));
@@ -76,8 +77,13 @@ const readBlobPayload = async (value: unknown): Promise<unknown> => {
   }
 };
 
-const binaryError = async (error: any) => {
-  if (error?.response?.data instanceof Blob) {
+const hasErrorResponse = (
+  error: unknown,
+): error is { response: { status: number; data: unknown } } =>
+  isApiRecord(error) && isApiRecord(error.response) && typeof error.response.status === 'number';
+
+const binaryError = async (error: unknown) => {
+  if (hasErrorResponse(error) && error.response.data instanceof Blob) {
     const payload = await readBlobPayload(error.response.data);
     error.response = { ...error.response, data: payload };
   }
@@ -93,7 +99,10 @@ const downloadPost = async (
 ) => {
   try {
     const response = await guardedRequest(url, config, (guardedConfig) =>
-      service.post(url, data, { ...guardedConfig, responseType: 'blob' }),
+      service.post<Blob | ArrayBuffer | string>(url, data, {
+        ...guardedConfig,
+        responseType: 'blob',
+      }),
     );
     const contentType = String(response.headers?.['content-type'] ?? '').toLowerCase();
     const advertisedSize = Number(response.headers?.['content-length']);
@@ -123,7 +132,7 @@ const downloadPost = async (
       window.URL.revokeObjectURL(objectUrl);
     }
   } catch (e) {
-    if (axios.isAxiosError(e) || (e as any)?.response !== undefined) {
+    if (axios.isAxiosError(e) || hasErrorResponse(e)) {
       return dealResponse(Promise.reject(await binaryError(e)), url);
     }
     message.error(e instanceof Error ? e.message : i18n.t('DownloadFailed'));
@@ -151,31 +160,43 @@ const messageDisabledList = [
   '/problem_set/upcoming',
 ];
 
-const parseErrorMessage = (payload: any, fallback = '请求失败') => {
+const parseErrorMessage = (payload: unknown, fallback = '请求失败') => {
   if (payload === undefined || payload === null) return fallback;
   if (typeof payload === 'string' && payload.trim() !== '') return payload.trim();
-  if (typeof payload?.message === 'string' && payload.message.trim() !== '')
+  if (!isApiRecord(payload)) return fallback;
+  if (typeof payload.message === 'string' && payload.message.trim() !== '')
     return payload.message.trim();
-  if (typeof payload?.msg === 'string' && payload.msg.trim() !== '') return payload.msg.trim();
+  if (typeof payload.msg === 'string' && payload.msg.trim() !== '') return payload.msg.trim();
 
-  const detail = payload?.detail;
+  const detail = payload.detail;
   if (typeof detail === 'string' && detail.trim() !== '') return detail.trim();
   if (Array.isArray(detail) && detail.length > 0) {
     const first = detail[0];
     if (typeof first === 'string' && first.trim() !== '') return first.trim();
-    if (typeof first?.msg === 'string' && first.msg.trim() !== '') return first.msg.trim();
+    if (isApiRecord(first) && typeof first.msg === 'string' && first.msg.trim() !== '')
+      return first.msg.trim();
   }
-  if (typeof detail?.msg === 'string' && detail.msg.trim() !== '') return detail.msg.trim();
+  if (isApiRecord(detail) && typeof detail.msg === 'string' && detail.msg.trim() !== '')
+    return detail.msg.trim();
 
   return fallback;
 };
 
 const rejection = (message: string) => Promise.reject(message);
 
-const dealResponse = async (resp: any, url: string) => {
+const dealResponse = async <Payload>(
+  resp: Promise<AxiosResponse<unknown>>,
+  url: string,
+): Promise<Payload> => {
   try {
     const response = await resp;
-    const rawTimestamp = response.data?.timestamp;
+    if (!isApiEnvelope(response.data)) {
+      const invalidResponse = i18n.t('InvalidApiResponse');
+      message.error(invalidResponse);
+      reportApiFailure(new Error(invalidResponse), url);
+      return rejection(invalidResponse);
+    }
+    const rawTimestamp = response.data.timestamp;
     const timestamp = rawTimestamp === null || rawTimestamp === '' ? NaN : Number(rawTimestamp);
     if (Number.isFinite(timestamp)) {
       try {
@@ -191,7 +212,7 @@ const dealResponse = async (resp: any, url: string) => {
     }
     switch (response.data.code) {
       case 0:
-        return response.data.data;
+        return response.data.data as Payload;
       default:
         message.error(parseErrorMessage(response.data));
         return rejection(parseErrorMessage(response.data));
@@ -199,7 +220,7 @@ const dealResponse = async (resp: any, url: string) => {
   } catch (error: unknown) {
     if (axios.isCancel(error) || error instanceof CanceledError) throw error;
 
-    const response = (error as AxiosError)?.response;
+    const response = hasErrorResponse(error) ? error.response : undefined;
     if (response === undefined || Number(response.status) >= 500) {
       reportApiFailure(error, url);
     }
@@ -214,8 +235,8 @@ const dealResponse = async (resp: any, url: string) => {
       return rejection(errorMsg);
     }
     if (response.status === 403 && url.startsWith('/manage/')) invalidateAuthBoundary();
-    const payload: any = response.data;
-    switch (response.status === 401 ? 401 : payload?.code) {
+    const payload = response.data;
+    switch (response.status === 401 ? 401 : isApiRecord(payload) ? payload.code : undefined) {
       case 401:
         invalidateAuthBoundary();
         if (messageDisabledList.indexOf(url) === -1) {
@@ -245,15 +266,15 @@ const dealResponse = async (resp: any, url: string) => {
   }
 };
 
-const get: Get = async (url: string, params?: object, config?: AxiosRequestConfig) => {
+const get: Get = async <Payload>(url: string, params?: object, config?: AxiosRequestConfig) => {
   const error = requestConstraintError(url, config?.params ?? params, 'GET');
   if (error) {
     message.error(error);
     return rejection(error);
   }
-  return await dealResponse(
+  return await dealResponse<Payload>(
     guardedRequest(url, config, (guardedConfig) =>
-      service.get(url, {
+      service.get<unknown>(url, {
         headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
         params,
         ...guardedConfig,
@@ -263,15 +284,15 @@ const get: Get = async (url: string, params?: object, config?: AxiosRequestConfi
   );
 };
 
-const post: Post = async (url: string, data: unknown, config?: AxiosRequestConfig) => {
+const post: Post = async <Payload>(url: string, data: unknown, config?: AxiosRequestConfig) => {
   const error = requestConstraintError(url, data);
   if (error) {
     message.error(error);
     return rejection(error);
   }
-  return await dealResponse(
+  return await dealResponse<Payload>(
     guardedRequest(url, config, (guardedConfig) =>
-      service.post(url, data, {
+      service.post<unknown>(url, data, {
         headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
         ...guardedConfig,
       }),

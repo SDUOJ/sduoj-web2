@@ -1,6 +1,8 @@
 import MockAdapter from 'axios-mock-adapter';
 import cApi from './c-api';
 import { service } from './request';
+import { ContestRankRow, JavaPage, ContestListRow, FileReference } from '../../Type/api';
+import { UserInfo } from '../../Type/Iuser';
 
 const adapter = new MockAdapter(service);
 const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
@@ -8,6 +10,65 @@ const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
 beforeEach(() => cApi.clearAcceptanceQueueCache());
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
+
+test('returns profile flags and oversized Java IDs without coercing them to numbers', async () => {
+  const profile: UserInfo = {
+    userId: '9007199254740993',
+    username: 'contract-user',
+    nickname: 'Contract user',
+    studentId: '',
+    roles: ['user'],
+    email: null,
+    phone: null,
+    gender: null,
+    features: { requirePasswordChange: 0, banEmailUpdate: false },
+  };
+  adapter.onGet('/user/getProfile').reply(200, success(profile));
+  await expect(cApi.getProfile()).resolves.toEqual(profile);
+});
+
+test('keeps Java page counters as strings and absent rank results as empty tuples', async () => {
+  const contests: JavaPage<ContestListRow> = {
+    rows: [],
+    totalNum: '9007199254740993',
+    totalPage: '1',
+    pageSize: '20',
+    pageIndex: '1',
+  };
+  const rank: ContestRankRow[] = [
+    {
+      userId: '9007199254740993',
+      username: 'contract-user',
+      nickname: 'Contract user',
+      official: true,
+      problemNum: 2,
+      submissions: [['A', '2026-10-04T00:00:00Z', 100, 0]],
+      problemResults: [[], ['2026-10-04T00:00:00Z', 100, 0, 1, 0]],
+    },
+  ];
+  adapter.onGet('/contest/list').reply(200, success(contests));
+  adapter.onGet('/contest/rank').reply(200, success(rank));
+  await expect(cApi.getContestList({ pageNow: 1, pageSize: 20 })).resolves.toEqual(contests);
+  await expect(cApi.getRank({ contestId: '379' })).resolves.toEqual(rank);
+});
+
+test('returns nullable MD5 lookups and string file metadata', async () => {
+  const reference: FileReference = {
+    id: '9007199254740993',
+    size: '126607',
+    name: 'fixture.zip',
+    extensionName: 'zip',
+    md5: '0123456789abcdef0123456789abcdef',
+    gmtCreate: '2026-10-04T00:00:00Z',
+    gmtModified: '2026-10-04T00:00:00Z',
+  };
+  adapter
+    .onGet('/filesys/queryByMd5', { params: { md5: reference.md5 } })
+    .reply(200, success(reference));
+  adapter.onGet('/filesys/queryByMd5', { params: { md5: 'missing' } }).reply(200, success(null));
+  await expect(cApi.getFileByMD5({ md5: reference.md5! })).resolves.toEqual(reference);
+  await expect(cApi.getFileByMD5({ md5: 'missing' })).resolves.toBeNull();
+});
 
 test('uses typed account lifecycle payloads for email and password changes', async () => {
   adapter.onPost('/user/updateEmail').reply(200, success(true));

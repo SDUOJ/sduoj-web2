@@ -111,7 +111,7 @@ export const plagiarismApi = {
       },
     ),
   downloadReport: async (resourceId: string) => {
-    const response = await service.get(base + '/plagiarism/' + resourceId + '/report', {
+    const response = await service.get<Blob>(base + '/plagiarism/' + resourceId + '/report', {
       responseType: 'blob',
     });
     const url = window.URL.createObjectURL(response.data);

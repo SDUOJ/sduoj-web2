@@ -1,5 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
-import { aiPlatform, ProviderSettings } from './ai-platform';
+import { aiPlatform, PlatformJob, PlatformResource, ProviderSettings } from './ai-platform';
 import { service } from './request';
 
 const adapter = new MockAdapter(service);
@@ -7,6 +7,40 @@ const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
 
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
+
+test('keeps nullable job fields and event cursors from the AutoLab response', async () => {
+  const job: PlatformJob = {
+    id: 'job-contract',
+    task_type: 'contract',
+    status: 'pending',
+    resource_id: null,
+    attempt: 0,
+    finished_at: null,
+    error: null,
+    result: null,
+    events: [{ id: 5, tag: 'queued', content: { status: 'pending' } }],
+    next_cursor: 5,
+  };
+  adapter
+    .onGet('/ps/auto-task/ai/jobs/job-contract', { params: { after: 4 } })
+    .reply(200, success(job));
+  await expect(aiPlatform.job(job.id, 4)).resolves.toEqual(job);
+});
+
+test('keeps absent resource scopes null rather than inventing a course or problem set', async () => {
+  const resource: PlatformResource = {
+    id: 'resource-contract',
+    kind: 'document',
+    version: 2,
+    state: 'draft',
+    course_id: null,
+    psid: null,
+    parent_id: null,
+    data: {},
+  };
+  adapter.onGet('/ps/auto-task/ai/resources/resource-contract').reply(200, success(resource));
+  await expect(aiPlatform.get(resource.id)).resolves.toEqual(resource);
+});
 
 test('saves provider settings with the version used for optimistic locking', async () => {
   const settings: ProviderSettings = {
