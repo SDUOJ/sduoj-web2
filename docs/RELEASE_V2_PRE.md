@@ -59,5 +59,8 @@
 
     /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/v2-pre
     /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/v2-pre-backup
+    /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/.v2-pre-release-*
+    /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/.v2-pre-backup-*
+    /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/rollback-v2-pre.sh
 
 正式目录 /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/v2 从未作为目标路径传给 rsync。首次使用前应由管理员人工验证 Nginx 路由、目录 ACL、SSH host key 和 SDUOJ_RELEASE_URL；本次仓库变更没有连接服务器，也没有执行任何生产写操作。
