@@ -166,3 +166,23 @@ test('preserves typed list and detail query parameters', async () => {
     { url: '/group/page', params: { pageNow: 1, pageSize: 12, isParticipating: '1' } },
   ]);
 });
+
+test('preserves typed problem-set router and answer payloads', async () => {
+  adapter.onPost('/ps/problem_set/pro_info').reply(200, success({ id: 1 }));
+  adapter.onPost('/ps/answer_sheet/answer').reply(200, success({ hasAnswer: true }));
+  adapter.onPost('/ps/answer_sheet/mark').reply(200, success({ hasAnswer: true }));
+  adapter.onPost('/ps/answer_sheet/finish').reply(200, success(true));
+
+  const router = { psid: 10, gid: 2, pid: 3 };
+  await cApi.getProblemSetProblem({ router });
+  await cApi.submitProblemSetProblem({ router, data: 'answer-A' });
+  await cApi.markObjectiveProblem({ router, data: 'choice-1' });
+  await cApi.finishProblemSet({ router: { psid: 10, gid: 0, pid: 0 } });
+
+  expect(adapter.history.post.map(({ url, data }) => ({ url, data: JSON.parse(data) }))).toEqual([
+    { url: '/ps/problem_set/pro_info', data: { router } },
+    { url: '/ps/answer_sheet/answer', data: { router, data: 'answer-A' } },
+    { url: '/ps/answer_sheet/mark', data: { router, data: 'choice-1' } },
+    { url: '/ps/answer_sheet/finish', data: { router: { psid: 10, gid: 0, pid: 0 } } },
+  ]);
+});

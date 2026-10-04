@@ -7,7 +7,7 @@ export interface Get {
 }
 
 export interface Post {
-  <T = any>(url: string, data: object, config?: AxiosRequestConfig): Promise<T>;
+  <T = any>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface GetError {
@@ -113,6 +113,39 @@ export type submissionListQuery = query & {
   language?: string;
   status?: string;
 };
+
+export interface problemSetRouter {
+  psid: number | string;
+  gid: number | string;
+  pid: number | string;
+}
+
+export interface problemSetRouterQuery {
+  router: problemSetRouter;
+}
+
+export interface problemSetAnswerPayload extends problemSetRouterQuery {
+  data: unknown;
+}
+
+export interface problemSetSubmissionQuery {
+  router: problemSetRouter;
+  problemSetId?: number | string;
+  username?: string;
+  pageNow?: number;
+  pageSize?: number;
+}
+
+export interface problemSetSubmissionInfoQuery {
+  psid: number | string;
+  gid: number | string;
+  pid: number | string;
+  submissionId: string;
+}
+
+export interface problemSetPublicQuery {
+  psid: number | string;
+}
 
 export type userListQuery = query & {
   username: string;

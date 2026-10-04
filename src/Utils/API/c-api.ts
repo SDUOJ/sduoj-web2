@@ -21,6 +21,11 @@ import {
   announcementListQuery,
   announcementQuery,
   submissionListQuery,
+  problemSetRouterQuery,
+  problemSetAnswerPayload,
+  problemSetSubmissionQuery,
+  problemSetSubmissionInfoQuery,
+  problemSetPublicQuery,
 } from '../../Type/types';
 import request from './request';
 import apiAddress from './apiAddress';
@@ -255,7 +260,7 @@ const cApi = {
   },
 
   // 题单相关
-  async getProblemSetInfo(data: any) {
+  async getProblemSetInfo(data: { psid: number | string }) {
     return request.post('/ps/problem_set/info_c', data);
   },
   // 获取全局 upcoming 题单（running/upcoming）
@@ -263,33 +268,33 @@ const cApi = {
     return request.get('/ps/problem_set/upcoming');
   },
   // 获取单个题目信息
-  async getProblemSetProblem(data: any) {
+  async getProblemSetProblem(data: problemSetRouterQuery) {
     return request.post('/ps/problem_set/pro_info', data);
   },
 
   // 提交题目答案
-  async submitProblemSetProblem(data: any) {
+  async submitProblemSetProblem(data: problemSetAnswerPayload) {
     return request.post('/ps/answer_sheet/answer', data);
   },
   // 获取答题卡信息
-  async getProblemSetProblemAS(data: any) {
+  async getProblemSetProblemAS(data: problemSetRouterQuery) {
     return request.post('/ps/answer_sheet/info', data);
   },
   // 标记客观题选项
-  async markObjectiveProblem(data: any) {
+  async markObjectiveProblem(data: problemSetAnswerPayload) {
     return request.post('/ps/answer_sheet/mark', data);
   },
   // 标记题目
-  async updateProblemSetProblemCollect(data: any) {
+  async updateProblemSetProblemCollect(data: problemSetRouterQuery) {
     return request.post('/ps/answer_sheet/collect', data);
   },
 
   // 编程题提交列表
-  async getProblemSetSubmissionList(data: any) {
+  async getProblemSetSubmissionList(data: problemSetSubmissionQuery) {
     return request.post('/ps/answer_sheet/submissionList', data);
   },
   // 编程题提交详情
-  async getProblemSetSubmissionInfo(data: any) {
+  async getProblemSetSubmissionInfo(data: problemSetSubmissionInfoQuery) {
     return request.post('/ps/answer_sheet/submissionInfo', data);
   },
   // 导出主观题（文件题）附件
@@ -300,7 +305,7 @@ const cApi = {
     return request.getZipFile('/ps/answer_sheet/subjective/exportZip', data, {}, filename);
   },
   // 题单交卷
-  async finishProblemSet(data: any) {
+  async finishProblemSet(data: problemSetRouterQuery) {
     return request.post('/ps/answer_sheet/finish', data);
   },
 
@@ -354,7 +359,7 @@ const cApi = {
     return request.post('/ps/problem_set/list_by_group', data);
   },
   // 获取题单公开信息
-  async getProblemSetPublic(data: any) {
+  async getProblemSetPublic(data: problemSetPublicQuery) {
     return request.post('/ps/problem_set/public', data);
   },
   // 自动化任务 - 创建主观题评阅任务

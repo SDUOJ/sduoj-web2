@@ -211,7 +211,7 @@ const get: Get = async (url: string, params?: object, config?: AxiosRequestConfi
   );
 };
 
-const post: Post = async (url: string, data: object, config?: AxiosRequestConfig) => {
+const post: Post = async (url: string, data: unknown, config?: AxiosRequestConfig) => {
   const error = requestConstraintError(url, data);
   if (error) {
     message.error(error);
