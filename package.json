@@ -71,6 +71,7 @@
     "artifact:verify": "node scripts/release-artifact.cjs verify",
     "test:artifact": "node --test scripts/release-artifact.test.cjs",
     "test:vditor-assets": "node --test scripts/vditor-assets.test.cjs",
+    "test:timeouts": "node --test scripts/timed-command.test.cjs",
     "bundle:check": "node scripts/check-initial-bundle.cjs",
     "test": "jest",
     "test:unit": "jest --runInBand",

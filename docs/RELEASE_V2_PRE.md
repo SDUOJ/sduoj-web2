@@ -21,6 +21,8 @@
 
 不要修改现有 / 或 /v2 的 location。保存配置并由管理员在面板中检查配置后，再执行本机的 plan；plan 只读检查目录、权限和远端 rsync，不会创建目录或改配置。
 
+远端还必须提供 Node 和 GNU `timeout`。产物上传前及远端 staging 同步后运行同一 SHA256/ref/前缀校验器，失败不进入部署目录；验证 JSON 留在 `.v2-pre-validation-<release-id>.json`。详见 `audit/RELEASE_ARTIFACTS.md`。
+
 ## 本机环境
 
 发布脚本要求 Node 24 和 Yarn 1.22.22。建议使用仓库的 .nvmrc 或等价的 Node 24 环境。脚本不会保存 SSH 密码；优先使用仅限该目录权限的 SSH key，也可以在交互式终端中输入密码。
@@ -52,6 +54,16 @@
 远端一键回滚：
 
     ssh sducs@10.102.33.79 /opt/1panel/www/sites/oj.qd.sdu.edu.cn/index/rollback-v2-pre.sh
+
+## 超时和中断（R-34）
+
+质量 CI 上限 30 分钟，visual 上限 20 分钟，GitHub Pages publish 上限 15 分钟。CI 执行 `yarn test:timeouts` 防止新增 runner job 遗漏超时；取消或失败仍保存既有测试报告。
+
+本地依赖安装和预发布构建各限 900 秒。SSH 与 rsync 使用 `timed-command.cjs`，默认每条命令 600 秒，可通过 `SDUOJ_RELEASE_COMMAND_TIMEOUT_SECONDS` 设置为 1..3600 秒。超时返回 124，先终止整个子进程组，一秒后强制结束；外部 SIGINT/SIGTERM 返回 130/143 并清理子进程。
+
+SSH 连接限 15 秒，keepalive 每 15 秒检查、连续三次失败退出；rsync 无数据传输限 60 秒。HTTP smoke 连接限 10 秒，单次限 45 秒，重试窗口限 180 秒。远端 apply/rollback 使用 GNU `timeout`，远端一键回滚 rsync 限 300 秒，避免仅结束客户端但远端脚本仍无限运行。
+
+超时不会删除备份，也不意味着远端目录自动恢复；中断后仍需执行独立 `rollback` 并确认 smoke。本地挂起进程、后代进程、忽略 SIGTERM、SSH 中断与可单独调用的回滚入口已由隔离测试覆盖；真实远端中断/备份恢复属于 R-15/R-21，不能用这些测试替代。恢复用户隔离的正式发布脚本后也必须接入相同边界，R-14 继续跟踪其归属。
 
 ## 安全边界
 

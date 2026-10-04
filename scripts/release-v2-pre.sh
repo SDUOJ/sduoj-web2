@@ -9,9 +9,10 @@ REMOTE_HOST="${SDUOJ_DEPLOY_HOST:-10.102.33.79}"
 REMOTE_USER="${SDUOJ_DEPLOY_USER:-}"
 REMOTE_PORT="${SDUOJ_DEPLOY_PORT:-22}"
 REMOTE_KEY="${SDUOJ_DEPLOY_KEY:-}"
+COMMAND_TIMEOUT="${SDUOJ_RELEASE_COMMAND_TIMEOUT_SECONDS:-600}"
 RELEASE_URL="${SDUOJ_RELEASE_URL:-https://oj.qd.sdu.edu.cn/v2-pre/}"
 REMOTE="${REMOTE_USER}@${REMOTE_HOST}"
-SSH_ARGS=(-p "${REMOTE_PORT}" -o StrictHostKeyChecking=yes)
+SSH_ARGS=(-p "${REMOTE_PORT}" -o StrictHostKeyChecking=yes -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 if [[ -n "${REMOTE_KEY}" ]]; then
   SSH_ARGS+=(-i "${REMOTE_KEY}")
 fi
@@ -26,16 +27,18 @@ need_cmd() {
 }
 
 ssh_run() {
-  ssh "${SSH_ARGS[@]}" "${REMOTE}" "$@"
+  node "${SCRIPT_DIR}/timed-command.cjs" "${COMMAND_TIMEOUT}" ssh "${SSH_ARGS[@]}" "${REMOTE}" "$@"
 }
 
 rsync_remote() {
-  rsync -rlptDc --delete --no-owner --no-group \
+  node "${SCRIPT_DIR}/timed-command.cjs" "${COMMAND_TIMEOUT}" rsync -rlptDc --timeout=60 --delete --no-owner --no-group \
     -e "ssh ${SSH_ARGS[*]}" "$@"
 }
 
 require_user() {
   [[ -n "${REMOTE_USER}" ]] || die "set SDUOJ_DEPLOY_USER before running this script"
+  [[ "${COMMAND_TIMEOUT}" =~ ^[0-9]+$ ]] && (( COMMAND_TIMEOUT >= 1 && COMMAND_TIMEOUT <= 3600 )) || die "command timeout must be 1..3600 seconds"
+  need_cmd node
 }
 
 plan() {
@@ -49,7 +52,8 @@ plan() {
     test -w '${REMOTE_ROOT}/v2-pre' &&
     test -w '${REMOTE_ROOT}/v2-pre-backup' &&
     command -v rsync >/dev/null &&
-    command -v node >/dev/null"
+    command -v node >/dev/null &&
+    command -v timeout >/dev/null"
   echo "remote plan OK: ${REMOTE} (${REMOTE_ROOT}/v2-pre)"
   echo "release URL: ${RELEASE_URL}"
   echo "formal /v2 is never touched by this script"
@@ -71,8 +75,8 @@ build_pre() {
   if [[ -d build ]]; then
     find build -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
   fi
-  yarn install --frozen-lockfile --non-interactive
-  yarn build:pre
+  node "${SCRIPT_DIR}/timed-command.cjs" 900 yarn install --frozen-lockfile --non-interactive
+  node "${SCRIPT_DIR}/timed-command.cjs" 900 yarn build:pre
   [[ -s build/index.html ]] || die "build/index.html is missing"
   grep -q '/v2-pre/' build/index.html || die "build/index.html does not contain /v2-pre/"
   node -e "const m=require('./build/manifest.json'); if(m.start_url !== '/v2-pre/home') process.exit(1)"
@@ -80,7 +84,7 @@ build_pre() {
 
 smoke() {
   need_cmd curl
-  curl --fail --silent --show-error --location --retry 3 --retry-delay 2 "${RELEASE_URL}" |
+  curl --fail --silent --show-error --location --connect-timeout 10 --max-time 45 --retry 3 --retry-delay 2 --retry-max-time 180 "${RELEASE_URL}" |
     grep -q '<div id="root"></div>' ||
     die "smoke test failed: ${RELEASE_URL}"
   echo "smoke OK: ${RELEASE_URL}"
@@ -91,7 +95,7 @@ remote_apply() {
   local stage=".v2-pre-release-${release_id}"
   local backup_new=".v2-pre-backup-new-${release_id}"
   local backup_old=".v2-pre-backup-old-${release_id}"
-  ssh_run bash -s <<EOF
+  ssh_run timeout "${COMMAND_TIMEOUT}" bash -s <<EOF
 set -Eeuo pipefail
 root="${REMOTE_ROOT}"
 stage="${stage}"
@@ -103,7 +107,7 @@ test -s "\$root/\$stage/index.html"
 grep -q '/v2-pre/' "\$root/\$stage/index.html"
 
 rm -rf "\$root/\$backup_new" "\$root/\$backup_old"
-if ! rsync -rlptDc --delete --no-owner --no-group "\$current/" "\$root/\$backup_new/"; then
+if ! rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$current/" "\$root/\$backup_new/"; then
   rm -rf "\$root/\$backup_new"
   exit 1
 fi
@@ -120,15 +124,15 @@ cat > "\$root/rollback-v2-pre.sh" <<'ROLLBACK'
 set -Eeuo pipefail
 root="/opt/1panel/www/sites/oj.qd.sdu.edu.cn/index"
 test -s "$root/v2-pre-backup/index.html"
-rsync -rlptDc --delete --no-owner --no-group "$root/v2-pre-backup/" "$root/v2-pre/"
+timeout 300 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "$root/v2-pre-backup/" "$root/v2-pre/"
 test -s "$root/v2-pre/index.html"
 grep -q '/v2-pre/' "$root/v2-pre/index.html"
 echo "v2-pre rollback complete"
 ROLLBACK
 chmod 0755 "\$root/rollback-v2-pre.sh"
 
-if ! rsync -rlptDc --delete --no-owner --no-group "\$root/\$stage/" "\$current/"; then
-  rsync -rlptDc --delete --no-owner --no-group "\$backup/" "\$current/" || true
+if ! rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/\$stage/" "\$current/"; then
+  rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$backup/" "\$current/" || true
   rm -rf "\$backup"
   if [ -e "\$root/\$backup_old" ]; then mv "\$root/\$backup_old" "\$backup"; fi
   rm -rf "\$root/\$stage"
@@ -172,10 +176,10 @@ deploy() {
   fi
   if ! smoke; then
     echo "post-deploy smoke failed; restoring v2-pre from v2-pre-backup" >&2
-    ssh_run bash -s <<EOF
+    ssh_run timeout "${COMMAND_TIMEOUT}" bash -s <<EOF
 set -Eeuo pipefail
 root="${REMOTE_ROOT}"
-rsync -rlptDc --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
+rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
 EOF
     smoke
     die "post-deploy smoke failed; rollback attempted"
@@ -187,11 +191,11 @@ EOF
 rollback() {
   require_user
   plan
-  ssh_run bash -s <<EOF
+  ssh_run timeout "${COMMAND_TIMEOUT}" bash -s <<EOF
 set -Eeuo pipefail
 root="${REMOTE_ROOT}"
 test -s "\$root/v2-pre-backup/index.html"
-rsync -rlptDc --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
+rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
 test -s "\$root/v2-pre/index.html"
 grep -q '/v2-pre/' "\$root/v2-pre/index.html"
 EOF
@@ -213,6 +217,7 @@ Optional environment:
   SDUOJ_DEPLOY_PORT       default: 22
   SDUOJ_DEPLOY_KEY        SSH private-key path; without it, ssh may prompt for a password
   SDUOJ_RELEASE_URL       default: https://oj.qd.sdu.edu.cn/v2-pre/
+  SDUOJ_RELEASE_COMMAND_TIMEOUT_SECONDS  per SSH/rsync command, default: 600 (1..3600)
 USAGE
 }
 
