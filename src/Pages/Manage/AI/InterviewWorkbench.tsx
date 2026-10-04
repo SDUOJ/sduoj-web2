@@ -23,23 +23,11 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AIWorkspaceNav from './AIWorkspaceNav';
 import { UrlPrefix } from '../../../Config/constValue';
 import { interviewApi, InterviewResource, MediaTrack, operationKey } from './interview-api';
 import './interview-workbench.css';
-
-const statusText: Record<string, string> = {
-  pending: '待开始',
-  running: '生成问题',
-  awaiting_answer: '待回答',
-  completed: '待复核',
-  expired: '已过期',
-  cancelled: '已取消',
-  adopted: '已采用',
-  rejected: '已退回',
-  approved: '已批准',
-  failed: '失败',
-};
 
 const statusColor: Record<string, string> = {
   pending: 'blue',
@@ -69,6 +57,7 @@ function canRenew(row: InterviewResource) {
 type Scope = 'all' | 'assigned' | 'managed';
 
 export default function InterviewWorkbench({ location }: { location?: { search?: string } }) {
+  const { t } = useTranslation();
   const history = useHistory();
   const [form] = Form.useForm();
   const nativeSource = Form.useWatch('bindNative', form);
@@ -82,6 +71,18 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
   const [inviteOpen, setInviteOpen] = useState(false);
   const [error, setError] = useState('');
   const loadSequence = useRef(0);
+  const statusText: Record<string, string> = {
+    pending: t('aiInterviewListStatusPending'),
+    running: t('aiInterviewListStatusRunning'),
+    awaiting_answer: t('aiInterviewListStatusAwaitingAnswer'),
+    completed: t('aiInterviewListStatusCompleted'),
+    expired: t('aiInterviewListStatusExpired'),
+    cancelled: t('aiInterviewListStatusCancelled'),
+    adopted: t('aiInterviewListStatusAdopted'),
+    rejected: t('aiInterviewListStatusRejected'),
+    approved: t('aiInterviewListStatusApproved'),
+    failed: t('aiInterviewListStatusFailed'),
+  };
 
   const load = useCallback(async () => {
     const sequence = ++loadSequence.current;
@@ -165,18 +166,20 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
       <main className="ai-interview-main">
         <header className="ai-interview-header">
           <div>
-            <Typography.Title level={2}>实验验收</Typography.Title>
-            <Typography.Text type="secondary">{total} 场验收</Typography.Text>
+            <Typography.Title level={2}>{t('aiInterviewListTitle')}</Typography.Title>
+            <Typography.Text type="secondary">
+              {t('aiInterviewListTotal', { count: total })}
+            </Typography.Text>
           </div>
           <Space>
             <Button
               icon={<ReloadOutlined />}
-              aria-label="刷新"
+              aria-label={t('aiInterviewListRefresh')}
               loading={loading}
               onClick={() => void load()}
             />
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setInviteOpen(true)}>
-              发起验收
+              {t('aiInterviewListInvite')}
             </Button>
           </Space>
         </header>
@@ -189,9 +192,9 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
           <Segmented<Scope>
             value={scope}
             options={[
-              { label: '全部', value: 'all' },
-              { label: '分配给我', value: 'assigned' },
-              { label: '我发起的', value: 'managed' },
+              { label: t('aiInterviewListScopeAll'), value: 'all' },
+              { label: t('aiInterviewListScopeAssigned'), value: 'assigned' },
+              { label: t('aiInterviewListScopeManaged'), value: 'managed' },
             ]}
             onChange={(value: Scope) => {
               setScope(value);
@@ -199,22 +202,22 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
             }}
           />
           <Select
-            aria-label="验收状态"
+            aria-label={t('aiInterviewListStatusAria')}
             value={status || undefined}
             allowClear
-            placeholder="全部状态"
+            placeholder={t('aiInterviewListStatusPlaceholder')}
             style={{ width: 160 }}
             options={[
-              { value: 'pending', label: '待开始' },
-              { value: 'running', label: '生成问题' },
-              { value: 'awaiting_answer', label: '待回答' },
-              { value: 'completed', label: '已完成回答' },
-              { value: 'expired', label: '已过期' },
-              { value: 'cancelled', label: '已取消' },
-              { value: 'approved', label: '已复核通过' },
-              { value: 'rejected', label: '已驳回' },
-              { value: 'adopted', label: '成绩已采用' },
-              { value: 'failed', label: '任务失败' },
+              { value: 'pending', label: t('aiInterviewListStatusPending') },
+              { value: 'running', label: t('aiInterviewListStatusRunning') },
+              { value: 'awaiting_answer', label: t('aiInterviewListStatusAwaitingAnswer') },
+              { value: 'completed', label: t('aiInterviewListStatusCompleted') },
+              { value: 'expired', label: t('aiInterviewListStatusExpired') },
+              { value: 'cancelled', label: t('aiInterviewListStatusCancelled') },
+              { value: 'approved', label: t('aiInterviewListStatusApproved') },
+              { value: 'rejected', label: t('aiInterviewListStatusRejected') },
+              { value: 'adopted', label: t('aiInterviewListStatusAdopted') },
+              { value: 'failed', label: t('aiInterviewListStatusFailed') },
             ]}
             onChange={(value) => {
               setStatus(value || '');
@@ -240,7 +243,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
           }}
           columns={[
             {
-              title: '验收',
+              title: t('aiInterviewListColumnInterview'),
               key: 'title',
               render: (_, row) => (
                 <div className="ai-interview-title-cell">
@@ -252,13 +255,16 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
               ),
             },
             {
-              title: '身份',
+              title: t('aiInterviewListColumnRole'),
               dataIndex: 'role',
               width: 100,
-              render: (role: InterviewResource['role']) => (role === 'student' ? '学生' : '教师'),
+              render: (role: InterviewResource['role']) =>
+                role === 'student'
+                  ? t('aiInterviewListRoleStudent')
+                  : t('aiInterviewListRoleTeacher'),
             },
             {
-              title: '截止时间',
+              title: t('aiInterviewListColumnDeadline'),
               key: 'expires',
               width: 190,
               render: (_, row) => (
@@ -269,7 +275,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
               ),
             },
             {
-              title: '状态',
+              title: t('aiInterviewListColumnStatus'),
               key: 'status',
               width: 120,
               render: (_, row) => (
@@ -292,10 +298,10 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
                       void renew(row);
                     }}
                   >
-                    重新邀请
+                    {t('aiInterviewListReinvite')}
                   </Button>
                 ) : (
-                  <RightOutlined aria-label="打开验收" />
+                  <RightOutlined aria-label={t('aiInterviewListOpen')} />
                 ),
             },
           ]}
@@ -303,7 +309,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
       </main>
 
       <Modal
-        title="发起实验验收"
+        title={t('aiInterviewListInviteTitle')}
         open={inviteOpen}
         width={760}
         onCancel={() => !busy && setInviteOpen(false)}
@@ -322,8 +328,8 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
             expiresInHours: 72,
             requiredTracks: ['video'],
             rubric: [
-              { name: '实现正确性', max_score: 60 },
-              { name: '理解与表达', max_score: 40 },
+              { name: t('aiInterviewRubricCorrectness'), max_score: 60 },
+              { name: t('aiInterviewRubricExpression'), max_score: 40 },
             ],
             bindNative: false,
           }}
@@ -331,79 +337,103 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
           <Alert
             type="info"
             showIcon
-            message="验收证据可见范围"
-            description="回答与媒体仅供受邀学生本人及具有当前课程或题单权限的教师验收复核；保留期限遵循平台配置。"
+            message={t('aiInterviewEvidenceScope')}
+            description={t('aiInterviewEvidenceScopeDescription')}
           />
           <div className="ai-interview-form-grid">
-            <Form.Item name="title" label="验收名称" rules={[{ required: true }]}>
+            <Form.Item name="title" label={t('aiInterviewFieldTitle')} rules={[{ required: true }]}>
               <Input maxLength={200} />
             </Form.Item>
-            <Form.Item name="studentUsername" label="学生用户名" rules={[{ required: true }]}>
+            <Form.Item
+              name="studentUsername"
+              label={t('aiInterviewFieldStudentUsername')}
+              rules={[{ required: true }]}
+            >
               <Input maxLength={100} />
             </Form.Item>
             <Form.Item
               name="studentId"
-              label="学生 ID"
+              label={t('aiInterviewFieldStudentId')}
               rules={[{ required: true, pattern: /^\d+$/ }]}
             >
               <Input maxLength={64} />
             </Form.Item>
-            <Form.Item name="language" label="编程语言">
+            <Form.Item name="language" label={t('aiInterviewFieldLanguage')}>
               <Input maxLength={40} />
             </Form.Item>
-            <Form.Item name="psid" label="题单 ID">
+            <Form.Item name="psid" label={t('aiInterviewFieldProblemSetId')}>
               <InputNumber min={1} precision={0} />
             </Form.Item>
-            <Form.Item name="courseId" label="课程 ID">
+            <Form.Item name="courseId" label={t('aiInterviewFieldCourseId')}>
               <InputNumber min={1} precision={0} />
             </Form.Item>
-            <Form.Item name="maxQuestions" label="最多问题" rules={[{ required: true }]}>
+            <Form.Item
+              name="maxQuestions"
+              label={t('aiInterviewFieldMaxQuestions')}
+              rules={[{ required: true }]}
+            >
               <InputNumber min={1} max={20} precision={0} />
             </Form.Item>
-            <Form.Item name="durationMinutes" label="限时（分钟）" rules={[{ required: true }]}>
+            <Form.Item
+              name="durationMinutes"
+              label={t('aiInterviewFieldDurationMinutes')}
+              rules={[{ required: true }]}
+            >
               <InputNumber min={1} max={120} precision={0} />
             </Form.Item>
             <Form.Item
               name="expiresInHours"
-              label="邀请有效期（小时）"
+              label={t('aiInterviewFieldExpiresInHours')}
               rules={[{ required: true }]}
             >
               <InputNumber min={1} max={720} precision={0} />
             </Form.Item>
-            <Form.Item name="requiredTracks" label="必需媒体" rules={[{ required: true }]}>
+            <Form.Item
+              name="requiredTracks"
+              label={t('aiInterviewFieldRequiredMedia')}
+              rules={[{ required: true }]}
+            >
               <Checkbox.Group
                 options={[
-                  { label: '摄像头', value: 'video' },
-                  { label: '麦克风', value: 'audio' },
-                  { label: '屏幕', value: 'screen' },
+                  { label: t('aiInterviewTrackVideo'), value: 'video' },
+                  { label: t('aiInterviewTrackAudio'), value: 'audio' },
+                  { label: t('aiInterviewTrackScreen'), value: 'screen' },
                 ]}
               />
             </Form.Item>
           </div>
-          <Form.Item name="question" label="实验题目">
+          <Form.Item name="question" label={t('aiInterviewFieldQuestion')}>
             <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
           </Form.Item>
-          <Form.Item name="code" label="代码">
+          <Form.Item name="code" label={t('aiInterviewFieldCode')}>
             <Input.TextArea
               className="ai-interview-code-input"
               autoSize={{ minRows: 3, maxRows: 10 }}
             />
           </Form.Item>
-          <Form.Item name="report" label="实验报告">
+          <Form.Item name="report" label={t('aiInterviewFieldReport')}>
             <Input.TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
           </Form.Item>
           <div className="ai-interview-native-toggle">
-            <Typography.Text strong>绑定原生主观题答题卡</Typography.Text>
+            <Typography.Text strong>{t('aiInterviewFieldBindNative')}</Typography.Text>
             <Form.Item name="bindNative" valuePropName="checked" noStyle>
               <Switch />
             </Form.Item>
           </div>
           {nativeSource && (
             <div className="ai-interview-form-grid">
-              <Form.Item name="gid" label="题组 ID" rules={[{ required: true }]}>
+              <Form.Item
+                name="gid"
+                label={t('aiInterviewFieldGroupId')}
+                rules={[{ required: true }]}
+              >
                 <InputNumber min={1} precision={0} />
               </Form.Item>
-              <Form.Item name="pid" label="主观题 ID" rules={[{ required: true }]}>
+              <Form.Item
+                name="pid"
+                label={t('aiInterviewFieldSubjectiveProblemId')}
+                rules={[{ required: true }]}
+              >
                 <InputNumber min={1} precision={0} />
               </Form.Item>
             </div>
@@ -413,13 +443,13 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
               {(fields, { add, remove }) => (
                 <div className="ai-interview-rubric-editor">
                   <div className="ai-interview-row-heading">
-                    <Typography.Text strong>评分项</Typography.Text>
+                    <Typography.Text strong>{t('aiInterviewRubric')}</Typography.Text>
                     <Button
                       size="small"
                       icon={<PlusOutlined />}
                       onClick={() => add({ name: '', max_score: 10 })}
                     >
-                      添加
+                      {t('aiInterviewAddRubric')}
                     </Button>
                   </div>
                   {fields.map((field) => (
@@ -430,7 +460,7 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
                         name={[field.name, 'name']}
                         rules={[{ required: true }]}
                       >
-                        <Input placeholder="评分项" />
+                        <Input placeholder={t('aiInterviewRubricPlaceholder')} />
                       </Form.Item>
                       <Form.Item
                         {...field}
@@ -438,10 +468,14 @@ export default function InterviewWorkbench({ location }: { location?: { search?:
                         name={[field.name, 'max_score']}
                         rules={[{ required: true }]}
                       >
-                        <InputNumber min={0.1} max={10000} placeholder="满分" />
+                        <InputNumber
+                          min={0.1}
+                          max={10000}
+                          placeholder={t('aiInterviewFullScore')}
+                        />
                       </Form.Item>
                       <Button danger type="text" onClick={() => remove(field.name)}>
-                        删除
+                        {t('aiInterviewDelete')}
                       </Button>
                     </Space>
                   ))}
