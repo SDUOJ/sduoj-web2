@@ -113,13 +113,6 @@ if ! mv "\$root/\$backup_new" "\$backup"; then
   if [ -e "\$root/\$backup_old" ]; then mv "\$root/\$backup_old" "\$backup"; fi
   exit 1
 fi
-if ! rsync -rlptDc --delete --no-owner --no-group "\$root/\$stage/" "\$current/"; then
-  rsync -rlptDc --delete --no-owner --no-group "\$backup/" "\$current/" || true
-  rm -rf "\$backup"
-  if [ -e "\$root/\$backup_old" ]; then mv "\$root/\$backup_old" "\$backup"; fi
-  rm -rf "\$root/\$stage"
-  exit 1
-fi
 
 cat > "\$root/rollback-v2-pre.sh" <<'ROLLBACK'
 #!/usr/bin/env bash
@@ -132,6 +125,14 @@ grep -q '/v2-pre/' "$root/v2-pre/index.html"
 echo "v2-pre rollback complete"
 ROLLBACK
 chmod 0755 "\$root/rollback-v2-pre.sh"
+
+if ! rsync -rlptDc --delete --no-owner --no-group "\$root/\$stage/" "\$current/"; then
+  rsync -rlptDc --delete --no-owner --no-group "\$backup/" "\$current/" || true
+  rm -rf "\$backup"
+  if [ -e "\$root/\$backup_old" ]; then mv "\$root/\$backup_old" "\$backup"; fi
+  rm -rf "\$root/\$stage"
+  exit 1
+fi
 rm -rf "\$root/\$backup_old" "\$root/\$stage"
 test -s "\$current/index.html"
 EOF
