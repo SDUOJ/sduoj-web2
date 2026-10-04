@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { MemoryRouter } from 'react-router-dom';
 import AIAdmin from './AIAdmin';
 import { aiPlatform } from '../../../Utils/API/ai-platform';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-platform', () => ({
   aiPlatform: {
@@ -23,7 +24,8 @@ jest.mock('../../../Utils/API/ai-platform', () => ({
   },
 }));
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   jest.clearAllMocks();
   (aiPlatform.account as jest.Mock).mockResolvedValue({
     subject_id: '42',
@@ -85,6 +87,10 @@ beforeEach(() => {
     invalid_database_paths: [],
     results_truncated: false,
   });
+});
+
+afterEach(async () => {
+  await i18n.changeLanguage('zh');
 });
 
 test('renders empty admin panes and keeps key write-only', async () => {
@@ -164,4 +170,22 @@ test('loads without unconnected Form warnings', async () => {
     errors.mockRestore();
     warnings.mockRestore();
   }
+});
+
+test('renders the admin workspace in English', async () => {
+  await i18n.changeLanguage('en');
+  render(
+    <MemoryRouter>
+      <AIAdmin />
+    </MemoryRouter>,
+  );
+  await waitFor(() =>
+    expect(screen.getByRole('heading', { name: 'Account and administration' })).toBeInTheDocument(),
+  );
+  expect(screen.getByRole('tab', { name: 'Account' })).toBeInTheDocument();
+  expect(screen.getByText('OJ user ID 42')).toBeInTheDocument();
+  expect(screen.getByRole('tab', { name: 'Model' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Queue and storage' }));
+  expect(screen.getByText('Task queue')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Refresh audit' })).toBeInTheDocument();
 });

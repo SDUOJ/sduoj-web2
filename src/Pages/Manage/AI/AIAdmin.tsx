@@ -17,6 +17,7 @@ import {
   Typography,
 } from 'antd';
 import { CheckOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import AIWorkspaceNav from './AIWorkspaceNav';
 import { operationKey } from './operation-key';
 import AIAdminAccess, { AITagManagement } from './AIAdminAccess';
@@ -32,6 +33,7 @@ import {
 import './ai-admin.css';
 
 export default function AIAdmin() {
+  const { t } = useTranslation();
   const [account, setAccount] = useState<Account>();
   const [admin, setAdmin] = useState(false);
   const [settings, setSettings] = useState<ProviderSettings>();
@@ -55,6 +57,13 @@ export default function AIAdmin() {
   const [pointsForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
   const [usageForm] = Form.useForm();
+  const priceLabels = [t('aiAdminInput'), t('aiAdminCachedInput'), t('aiAdminOutput')];
+  const purposeLabels: Record<string, string> = {
+    moderation: t('aiAdminModerationModel'),
+    grading: t('aiAdminGradingModel'),
+    authoring: t('aiAdminAuthoringModel'),
+    tutor: t('aiAdminTutorModel'),
+  };
 
   async function refresh() {
     setError('');
@@ -103,10 +112,12 @@ export default function AIAdmin() {
   const accountView = (
     <>
       <Space wrap>
-        <Typography.Text>OJ 用户 {account?.subject_id}</Typography.Text>
+        <Typography.Text>
+          {t('aiAdminUserId')} {account?.subject_id}
+        </Typography.Text>
         <Tag>{account?.status}</Tag>
         {account?.balance !== undefined && (
-          <Typography.Text>余额 {account.balance} 积分</Typography.Text>
+          <Typography.Text>{t('aiAdminBalance', { balance: account.balance })}</Typography.Text>
         )}
       </Space>
       <Table
@@ -114,10 +125,10 @@ export default function AIAdmin() {
         dataSource={entries}
         scroll={{ x: 640 }}
         columns={[
-          { title: '变动积分', dataIndex: 'amount' },
-          { title: '费用 USD', dataIndex: 'cost_usd' },
-          { title: '原因', dataIndex: 'reason' },
-          { title: '任务', dataIndex: 'task_id', ellipsis: true },
+          { title: t('aiAdminChangedPoints'), dataIndex: 'amount' },
+          { title: t('aiAdminCostUsd'), dataIndex: 'cost_usd' },
+          { title: t('aiAdminReason'), dataIndex: 'reason' },
+          { title: t('aiAdminTask'), dataIndex: 'task_id', ellipsis: true },
         ]}
       />
       {admin && (
@@ -130,23 +141,27 @@ export default function AIAdmin() {
             void execute(async () => {
               await aiPlatform.adjust({ ...values, operation_key: key });
               pointsForm.resetFields();
-            }, '积分调整已记录');
+            }, t('aiAdminAdjustmentRecorded'));
           }}
         >
-          <Form.Item name="subject_id" label="OJ 用户 ID" rules={[{ required: true }]}>
+          <Form.Item name="subject_id" label={t('aiAdminUserId')} rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="amount" label="调整积分" rules={[{ required: true }]}>
+          <Form.Item name="amount" label={t('aiAdminAdjustPoints')} rules={[{ required: true }]}>
             <InputNumber />
           </Form.Item>
-          <Form.Item name="reason" label="调整原因" rules={[{ required: true }]}>
+          <Form.Item
+            name="reason"
+            label={t('aiAdminAdjustmentReason')}
+            rules={[{ required: true }]}
+          >
             <Input.TextArea />
           </Form.Item>
           <Form.Item name="operation_key" hidden>
             <Input />
           </Form.Item>
           <Button htmlType="submit" type="primary" icon={<SaveOutlined />} loading={busy}>
-            记录调整
+            {t('aiAdminRecordAdjustment')}
           </Button>
         </Form>
       )}
@@ -171,10 +186,10 @@ export default function AIAdmin() {
           } as ProviderSettings);
           setSettings(next);
           providerForm.setFieldValue('api_key', '');
-        }, '模型设置已保存')
+        }, t('aiAdminSettingsSaved'))
       }
     >
-      <Form.Item name="provider" label="提供者协议" rules={[{ required: true }]}>
+      <Form.Item name="provider" label={t('aiAdminProviderProtocol')} rules={[{ required: true }]}>
         <Select
           options={[
             { value: 'codex', label: 'Codex Responses' },
@@ -182,13 +197,17 @@ export default function AIAdmin() {
           ]}
         />
       </Form.Item>
-      <Form.Item name="base_url" label="API 地址" rules={[{ required: true }, { type: 'url' }]}>
+      <Form.Item
+        name="base_url"
+        label={t('aiAdminApiUrl')}
+        rules={[{ required: true }, { type: 'url' }]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item name="model" label="模型" rules={[{ required: true }]}>
+      <Form.Item name="model" label={t('aiAdminModel')} rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="reasoning_effort" label="思考强度">
+      <Form.Item name="reasoning_effort" label={t('aiAdminReasoningEffort')}>
         <Select
           options={['none', 'minimal', 'low', 'medium', 'high', 'xhigh'].map((value) => ({
             value,
@@ -196,63 +215,55 @@ export default function AIAdmin() {
           }))}
         />
       </Form.Item>
-      <Form.Item name="api_key" label={settings?.has_api_key ? 'API Key（已配置）' : 'API Key'}>
+      <Form.Item
+        name="api_key"
+        label={settings?.has_api_key ? t('aiAdminApiKeyConfigured') : 'API Key'}
+      >
         <Input.Password autoComplete="new-password" />
       </Form.Item>
       {(['input', 'cached', 'output'] as const).map((name, i) => (
         <Form.Item
           key={name}
           name={name + '_usd_per_million'}
-          label={['输入', '缓存输入', '输出'][i] + '价格 USD / 百万 token'}
+          label={t('aiAdminPricePerMillion', { type: priceLabels[i] })}
           rules={[{ required: true }]}
         >
           <InputNumber min={0} />
         </Form.Item>
       ))}
-      <Form.Item name="max_task_cost_usd" label="任务费用限额 USD">
+      <Form.Item name="max_task_cost_usd" label={t('aiAdminMaxTaskCost')}>
         <InputNumber min={0.001} max={100} />
       </Form.Item>
-      <Form.Item name="max_concurrency" label="全局并发">
+      <Form.Item name="max_concurrency" label={t('aiAdminGlobalConcurrency')}>
         <InputNumber min={1} max={64} />
       </Form.Item>
-      <Form.Item name="per_user_concurrency" label="个人并发">
+      <Form.Item name="per_user_concurrency" label={t('aiAdminUserConcurrency')}>
         <InputNumber min={1} max={8} />
       </Form.Item>
-      <Form.Item name="max_storage_mb" label="个人上传配额 MiB">
+      <Form.Item name="max_storage_mb" label={t('aiAdminUploadQuota')}>
         <InputNumber min={1} max={102400} />
       </Form.Item>
-      <Form.Item name="monthly_user_budget_usd" label="个人月度预算 USD（0 为不限制）">
+      <Form.Item name="monthly_user_budget_usd" label={t('aiAdminUserMonthlyBudget')}>
         <InputNumber min={0} max={100000} />
       </Form.Item>
-      <Form.Item name="monthly_course_budget_usd" label="课程月度预算 USD（0 为不限制）">
+      <Form.Item name="monthly_course_budget_usd" label={t('aiAdminCourseMonthlyBudget')}>
         <InputNumber min={0} max={100000} />
       </Form.Item>
-      <Form.Item name="max_output_tokens" label="单次最大输出 token">
+      <Form.Item name="max_output_tokens" label={t('aiAdminMaxOutputTokens')}>
         <InputNumber min={128} max={65536} />
       </Form.Item>
-      <Form.Item name="max_prompt_bytes" label="最大输入字节">
+      <Form.Item name="max_prompt_bytes" label={t('aiAdminMaxPromptBytes')}>
         <InputNumber min={1024} max={2000000} />
       </Form.Item>
       {['moderation', 'grading', 'authoring', 'tutor'].map((purpose) => (
         <React.Fragment key={purpose}>
-          <Typography.Title level={5}>
-            {
-              (
-                {
-                  moderation: '审核模型',
-                  grading: '评分模型',
-                  authoring: '命题模型',
-                  tutor: '助教模型',
-                } as Record<string, string>
-              )[purpose]
-            }
-          </Typography.Title>
-          <Form.Item name={['model_overrides', purpose, 'model']} label="模型覆盖">
+          <Typography.Title level={5}>{purposeLabels[purpose]}</Typography.Title>
+          <Form.Item name={['model_overrides', purpose, 'model']} label={t('aiAdminModelOverride')}>
             <Input />
           </Form.Item>
           <Form.Item
             name={['model_overrides', purpose, 'reasoning_effort']}
-            label="思考强度"
+            label={t('aiAdminReasoningEffort')}
             initialValue="medium"
           >
             <Select
@@ -266,7 +277,7 @@ export default function AIAdmin() {
             <Form.Item
               key={rate}
               name={['model_overrides', purpose, rate + '_usd_per_million']}
-              label={['输入', '缓存', '输出'][index] + '费率'}
+              label={t('aiAdminRate', { type: priceLabels[index] })}
             >
               <InputNumber min={0} />
             </Form.Item>
@@ -275,7 +286,7 @@ export default function AIAdmin() {
       ))}
       <Space>
         <Button htmlType="submit" type="primary" icon={<SaveOutlined />} loading={busy}>
-          保存
+          {t('aiAdminSave')}
         </Button>
         <Button
           icon={<CheckOutlined />}
@@ -284,15 +295,19 @@ export default function AIAdmin() {
             void execute(async () => {
               const result = await aiPlatform.health();
               setHealth(result);
-              if (!result.ready) throw new Error(result.reason || '提供者未就绪');
-            }, '提供者连接正常')
+              if (!result.ready) throw new Error(result.reason || t('aiAdminProviderNotReady'));
+            }, t('aiAdminConnectionOk'))
           }
         >
-          检查连接
+          {t('aiAdminCheckConnection')}
         </Button>
         {health && (
           <Tag color={health.ready ? 'green' : 'red'}>
-            {health.ready ? '提供者就绪' : `未就绪：${health.reason || '连接失败'}`}
+            {health.ready
+              ? t('aiAdminProviderReady')
+              : t('aiAdminProviderUnavailable', {
+                  reason: health.reason || t('aiAdminConnectionFailed'),
+                })}
           </Tag>
         )}
       </Space>
@@ -303,9 +318,9 @@ export default function AIAdmin() {
       <div className="ai-workspace-body">
         <AIWorkspaceNav />
         <div className="ai-workspace-heading">
-          <Typography.Title level={3}>账户与管理</Typography.Title>
+          <Typography.Title level={3}>{t('aiNavAccount')}</Typography.Title>
           <Button
-            aria-label="刷新"
+            aria-label={t('aiAdminRefresh')}
             icon={<ReloadOutlined />}
             onClick={() => void execute(refresh, '')}
             loading={busy}
@@ -320,19 +335,28 @@ export default function AIAdmin() {
             <Spin />
           </div>
         ) : account?.status === 'suspended' ? (
-          <Alert type="warning" message="AI 使用资格已暂停" description={account.reason} />
+          <Alert
+            type="warning"
+            message={t('aiAdminAccessSuspended')}
+            description={account.reason}
+          />
         ) : (
           <Tabs
             items={[
-              { key: 'account', label: '账户', children: accountView },
+              { key: 'account', label: t('aiAdminAccountTab'), children: accountView },
               ...(admin
                 ? [
-                    { key: 'provider', label: '模型', children: providerView, forceRender: true },
-                    { key: 'access', label: '使用资格', children: <AIAdminAccess /> },
-                    { key: 'tags', label: '标签治理', children: <AITagManagement /> },
+                    {
+                      key: 'provider',
+                      label: t('aiAdminModelTab'),
+                      children: providerView,
+                      forceRender: true,
+                    },
+                    { key: 'access', label: t('aiAdminAccessTab'), children: <AIAdminAccess /> },
+                    { key: 'tags', label: t('aiAdminTagsTab'), children: <AITagManagement /> },
                     {
                       key: 'reviews',
-                      label: '内容复核',
+                      label: t('aiAdminReviewsTab'),
                       children: (
                         <Table
                           rowKey="id"
@@ -340,26 +364,28 @@ export default function AIAdmin() {
                             emptyText: (
                               <Empty
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                description="暂无复核记录"
+                                description={t('aiAdminNoReviews')}
                               />
                             ),
                           }}
                           dataSource={reviews}
                           scroll={{ x: 600 }}
                           columns={[
-                            { title: '用户', dataIndex: 'subject_id' },
-                            { title: '结论', dataIndex: 'decision' },
-                            { title: '原因', dataIndex: 'reason', ellipsis: true },
+                            { title: t('aiAdminUser'), dataIndex: 'subject_id' },
+                            { title: t('aiAdminDecision'), dataIndex: 'decision' },
+                            { title: t('aiAdminReason'), dataIndex: 'reason', ellipsis: true },
                             {
-                              title: 'AI 状态',
+                              title: t('aiAdminAiStatus'),
                               render: (_, row: Review) => (
                                 <Tag color={row.account_status === 'suspended' ? 'red' : 'green'}>
-                                  {row.account_status === 'suspended' ? '已停用' : '可用'}
+                                  {row.account_status === 'suspended'
+                                    ? t('aiAdminSuspended')
+                                    : t('aiAdminAvailable')}
                                 </Tag>
                               ),
                             },
                             {
-                              title: '操作',
+                              title: t('aiAdminActions'),
                               render: (_, row: Review) => (
                                 <Button
                                   disabled={row.subject_id === account?.subject_id}
@@ -368,7 +394,7 @@ export default function AIAdmin() {
                                     reviewForm.setFieldsValue(row);
                                   }}
                                 >
-                                  复核
+                                  {t('aiAdminReview')}
                                 </Button>
                               ),
                             },
@@ -378,7 +404,7 @@ export default function AIAdmin() {
                     },
                     {
                       key: 'usage',
-                      label: '待对账',
+                      label: t('aiAdminUnsettledTab'),
                       children: (
                         <Table
                           rowKey="id"
@@ -386,23 +412,23 @@ export default function AIAdmin() {
                             emptyText: (
                               <Empty
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                description="暂无未知用量"
+                                description={t('aiAdminNoUnsettled')}
                               />
                             ),
                           }}
                           dataSource={runs}
                           scroll={{ x: 600 }}
                           columns={[
-                            { title: '调用', dataIndex: 'id', ellipsis: true },
-                            { title: '模型', dataIndex: 'model' },
-                            { title: '任务', dataIndex: 'task_id', ellipsis: true },
+                            { title: t('aiAdminCall'), dataIndex: 'id', ellipsis: true },
+                            { title: t('aiAdminModel'), dataIndex: 'model' },
+                            { title: t('aiAdminTask'), dataIndex: 'task_id', ellipsis: true },
                             {
-                              title: '用量',
+                              title: t('aiAdminUsage'),
                               render: (_, row) =>
                                 `${row.usage?.input_tokens ?? '?'} / ${row.usage?.cached_input_tokens ?? '?'} / ${row.usage?.output_tokens ?? '?'}`,
                             },
                             {
-                              title: '操作',
+                              title: t('aiAdminActions'),
                               render: (_, row: { id: string }) => (
                                 <Button
                                   onClick={() => {
@@ -410,7 +436,7 @@ export default function AIAdmin() {
                                     usageForm.resetFields();
                                   }}
                                 >
-                                  对账
+                                  {t('aiAdminReconcile')}
                                 </Button>
                               ),
                             },
@@ -420,21 +446,21 @@ export default function AIAdmin() {
                     },
                     {
                       key: 'operations',
-                      label: '队列与存储',
+                      label: t('aiAdminOperationsTab'),
                       children: (
                         <div className="ai-admin-operations">
                           <Descriptions
                             bordered
                             size="small"
                             column={{ xs: 1, sm: 2, md: 3 }}
-                            title="任务队列"
+                            title={t('aiAdminTaskQueue')}
                           >
                             {Object.entries(queue?.counts || {}).map(([status, count]) => (
                               <Descriptions.Item key={status} label={status}>
                                 {count}
                               </Descriptions.Item>
                             ))}
-                            <Descriptions.Item label="累计费用 USD">
+                            <Descriptions.Item label={t('aiAdminAccumulatedCost')}>
                               {queue?.cost_usd || '0'}
                             </Descriptions.Item>
                           </Descriptions>
@@ -442,25 +468,27 @@ export default function AIAdmin() {
                             bordered
                             size="small"
                             column={{ xs: 1, sm: 2, md: 3 }}
-                            title="文件一致性审计"
+                            title={t('aiAdminStorageAudit')}
                           >
-                            <Descriptions.Item label="扫描时间">
-                              {storage?.scanned_at || '未扫描'}
+                            <Descriptions.Item label={t('aiAdminScanTime')}>
+                              {storage?.scanned_at || t('aiAdminNotScanned')}
                             </Descriptions.Item>
-                            <Descriptions.Item label="孤儿文件">
-                              {storage?.orphan_file_count ?? 0}（可清理{' '}
-                              {storage?.eligible_orphan_file_count ?? 0}）
+                            <Descriptions.Item label={t('aiAdminOrphanFiles')}>
+                              {t('aiAdminOrphanFilesValue', {
+                                count: storage?.orphan_file_count ?? 0,
+                                eligible: storage?.eligible_orphan_file_count ?? 0,
+                              })}
                             </Descriptions.Item>
-                            <Descriptions.Item label="孤儿大小">
+                            <Descriptions.Item label={t('aiAdminOrphanBytes')}>
                               {storage?.orphan_bytes ?? 0} bytes
                             </Descriptions.Item>
-                            <Descriptions.Item label="缺失文件">
+                            <Descriptions.Item label={t('aiAdminMissingFiles')}>
                               {storage?.missing_file_count ?? 0}
                             </Descriptions.Item>
-                            <Descriptions.Item label="元数据不一致">
+                            <Descriptions.Item label={t('aiAdminMetadataMismatch')}>
                               {storage?.metadata_mismatch_count ?? 0}
                             </Descriptions.Item>
-                            <Descriptions.Item label="非法路径">
+                            <Descriptions.Item label={t('aiAdminInvalidPaths')}>
                               {storage?.invalid_database_path_count ?? 0}
                             </Descriptions.Item>
                           </Descriptions>
@@ -468,8 +496,8 @@ export default function AIAdmin() {
                             <Alert
                               type="warning"
                               showIcon
-                              message="审计结果已截断"
-                              description="仅展示有限条目，请分批处理。"
+                              message={t('aiAdminAuditTruncated')}
+                              description={t('aiAdminAuditTruncatedDescription')}
                             />
                           )}
                           <Space wrap>
@@ -477,12 +505,12 @@ export default function AIAdmin() {
                               onClick={() =>
                                 void execute(
                                   async () => setStorage(await aiPlatform.storageAudit()),
-                                  '存储审计已刷新',
+                                  t('aiAdminStorageAuditRefreshed'),
                                 )
                               }
                               loading={busy}
                             >
-                              刷新审计
+                              {t('aiAdminRefreshAudit')}
                             </Button>
                             <Button
                               onClick={() =>
@@ -491,12 +519,12 @@ export default function AIAdmin() {
                                     setCleanupPreview(
                                       await aiPlatform.cleanupOrphans({ apply: false }),
                                     ),
-                                  '已生成清理预览',
+                                  t('aiAdminCleanupPreviewCreated'),
                                 )
                               }
                               loading={busy}
                             >
-                              生成 dry-run 预览
+                              {t('aiAdminGenerateCleanupPreview')}
                             </Button>
                             <Button
                               danger
@@ -506,17 +534,20 @@ export default function AIAdmin() {
                                 setCleanupOpen(true);
                               }}
                             >
-                              执行计划清理
+                              {t('aiAdminApplyCleanup')}
                             </Button>
                           </Space>
                           {cleanupPreview && (
                             <Alert
                               type="info"
                               showIcon
-                              message={`dry-run：${cleanupPreview.planned_file_count} 个文件，${cleanupPreview.planned_bytes} bytes`}
+                              message={t('aiAdminDryRunSummary', {
+                                count: cleanupPreview.planned_file_count,
+                                bytes: cleanupPreview.planned_bytes,
+                              })}
                               description={
                                 cleanupPreview.planned_files.map((item) => item.path).join('、') ||
-                                '没有符合条件的孤儿文件'
+                                t('aiAdminNoEligibleOrphans')
                               }
                             />
                           )}
@@ -529,7 +560,7 @@ export default function AIAdmin() {
           />
         )}
         <Modal
-          title="内容复核"
+          title={t('aiAdminReviewsTab')}
           forceRender
           open={!!selectedReview}
           onCancel={() => setSelectedReview(undefined)}
@@ -544,10 +575,10 @@ export default function AIAdmin() {
                 if (!selectedReview) return;
                 await aiPlatform.review(selectedReview.id, values.decision, values.reason);
                 setSelectedReview(undefined);
-              }, '复核已记录')
+              }, t('aiAdminReviewRecorded'))
             }
           >
-            <Form.Item name="decision" label="结论" rules={[{ required: true }]}>
+            <Form.Item name="decision" label={t('aiAdminDecision')} rules={[{ required: true }]}>
               <Select
                 options={['normal', 'warning', 'violation'].map((value) => ({
                   value,
@@ -555,13 +586,13 @@ export default function AIAdmin() {
                 }))}
               />
             </Form.Item>
-            <Form.Item name="reason" label="依据" rules={[{ required: true }]}>
+            <Form.Item name="reason" label={t('aiAdminEvidence')} rules={[{ required: true }]}>
               <Input.TextArea />
             </Form.Item>
           </Form>
         </Modal>
         <Modal
-          title="供应商用量对账"
+          title={t('aiAdminReconcileTitle')}
           forceRender
           open={!!selectedRun}
           onCancel={() => setSelectedRun(undefined)}
@@ -576,29 +607,33 @@ export default function AIAdmin() {
                 if (!selectedRun) return;
                 await aiPlatform.reconcile(selectedRun, values);
                 setSelectedRun(undefined);
-              }, '对账已记录')
+              }, t('aiAdminReconcileRecorded'))
             }
           >
             {['input_tokens', 'cached_input_tokens', 'output_tokens'].map((name, index) => (
               <Form.Item
                 key={name}
                 name={name}
-                label={['输入 token', '缓存输入 token', '输出 token'][index]}
+                label={t('aiAdminTokenType', { type: priceLabels[index] })}
                 rules={[{ required: true }]}
               >
                 <InputNumber min={0} precision={0} />
               </Form.Item>
             ))}
-            <Form.Item name="reason" label="账单依据" rules={[{ required: true }]}>
+            <Form.Item
+              name="reason"
+              label={t('aiAdminBillingEvidence')}
+              rules={[{ required: true }]}
+            >
               <Input.TextArea />
             </Form.Item>
           </Form>
         </Modal>
         <Modal
-          title="执行有界孤儿清理"
+          title={t('aiAdminCleanupTitle')}
           open={cleanupOpen}
           onCancel={() => setCleanupOpen(false)}
-          okText="确认删除"
+          okText={t('aiAdminConfirmDelete')}
           okButtonProps={{ danger: true, disabled: !cleanupReason.trim() }}
           confirmLoading={cleanupBusy}
           onOk={() => {
@@ -614,7 +649,7 @@ export default function AIAdmin() {
               .then((result) => {
                 setCleanupPreview(result);
                 setCleanupOpen(false);
-                setNotice('孤儿文件清理已执行');
+                setNotice(t('aiAdminCleanupApplied'));
                 return aiPlatform.storageAudit();
               })
               .then(setStorage)
@@ -625,14 +660,14 @@ export default function AIAdmin() {
           <Alert
             type="warning"
             showIcon
-            message="该操作会删除磁盘上的未登记文件"
-            description="仅删除满足年龄阈值且 inode/大小未变化的文件。"
+            message={t('aiAdminCleanupWarning')}
+            description={t('aiAdminCleanupWarningDescription')}
           />
           <Input.TextArea
             rows={3}
             value={cleanupReason}
             onChange={(event) => setCleanupReason(event.target.value)}
-            placeholder="请输入本次清理原因"
+            placeholder={t('aiAdminCleanupReasonPlaceholder')}
           />
         </Modal>
       </div>
