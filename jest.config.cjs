@@ -35,5 +35,25 @@ module.exports = {
       lines: 75,
     },
     './src/Utils/fileUpload.ts': { statements: 90, branches: 75, functions: 90, lines: 90 },
+    // Keep the interview and examination workbench pages from regressing while
+    // their real-service/browser paths are still outside the unit-test gate.
+    './src/Pages/Manage/AI/ExaminationWorkbench.tsx': {
+      statements: 70,
+      branches: 70,
+      functions: 60,
+      lines: 72,
+    },
+    './src/Pages/Manage/AI/InterviewWorkbench.tsx': {
+      statements: 62,
+      branches: 58,
+      functions: 52,
+      lines: 65,
+    },
+    './src/Pages/Manage/AI/InterviewSession.tsx': {
+      statements: 27,
+      branches: 38,
+      functions: 25,
+      lines: 29,
+    },
   },
 };
