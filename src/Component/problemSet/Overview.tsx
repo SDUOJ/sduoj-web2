@@ -157,7 +157,7 @@ const Overview = (props: any) => {
               });
             }
             return (
-              <Row key={problemSetInfo.psid ?? 'overview'} gutter={24}>
+              <Row key={`${problemSetInfo.psid}-${value.index}`} gutter={24}>
                 <Col span={problemSetInfo.config.useSameSE === 1 ? 24 : 16}>
                   <Table
                     className={'problemSet-overview-table'}
@@ -181,6 +181,7 @@ const Overview = (props: any) => {
                       }
                     }}
                     dataSource={value.problemInfo}
+                    rowKey={(row: any) => row.index}
                     pagination={false}
                     columns={[
                       {
@@ -307,7 +308,7 @@ const TimeCard = (props: TimeCardProps) => {
   let timeState = TimeRangeState(props.start, props.end);
   return (
     <>
-      <Card bordered={props.bordered}>
+      <Card variant={props.bordered ? 'outlined' : 'borderless'}>
         <div className={'center'}>
           <div style={{ float: 'left' }}>
             <div style={{ fontWeight: 'bold' }}>{t('StartTimeLabel')}</div>
@@ -337,7 +338,7 @@ const TimeCard = (props: TimeCardProps) => {
         {timeState !== 'wait' && (
           <Slider
             style={{ marginTop: 50 }}
-            tipFormatter={null}
+            tooltip={{ formatter: null }}
             min={props.start}
             max={props.end}
             value={Math.max(Math.min(nowSliderTime, props.end), props.start)}

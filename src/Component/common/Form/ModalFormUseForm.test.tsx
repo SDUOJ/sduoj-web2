@@ -20,6 +20,7 @@ function renderForm(submit: jest.Mock) {
       <MemoryRouter>
         <ModalForm
           type="create"
+          width={600}
           title="Edit record"
           btnName="Open editor"
           dataSubmitter={submit}
@@ -56,6 +57,9 @@ it('blocks invalid data, submits valid data once, and closes on success', async 
   const submit = jest.fn().mockResolvedValue({});
   renderForm(submit);
   await user.click(screen.getByRole('button', { name: /Open editor/ }));
+  expect(screen.getByRole('dialog')).toHaveStyle({
+    minWidth: 'min(600px, calc(100vw - 32px))',
+  });
   await user.click(screen.getByRole('button', { name: /Submit/ }));
   expect(await screen.findByText('Name is required')).toBeVisible();
   expect(submit).not.toHaveBeenCalled();

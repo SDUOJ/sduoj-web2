@@ -60,7 +60,7 @@ const StepsFormModal = ({
     open={open}
     maskClosable={false}
     width={width ?? 1200}
-    style={{ minWidth: width }}
+    style={{ minWidth: width === undefined ? undefined : `min(${width}px, calc(100vw - 32px))` }}
     onCancel={onCancel}
     footer={footer}
   >
@@ -285,7 +285,10 @@ const ModalForm = (props: ModalFormProps & any) => {
         {props.subForm.length === 1 && (
           <Modal
             width={props.width}
-            style={{ minWidth: props.width }}
+            style={{
+              minWidth:
+                props.width === undefined ? undefined : `min(${props.width}px, calc(100vw - 32px))`,
+            }}
             destroyOnHidden={true}
             title={props.title}
             className={props.className}

@@ -41,6 +41,8 @@ const Announcement = (props: any) => {
         className={'Announcement-Card'}
       >
         <TableWithPagination
+          name={'HomeAnnouncementList'}
+          rowKey={'noticeId'}
           size={'small'}
           defaultPageSize={10}
           columns={[

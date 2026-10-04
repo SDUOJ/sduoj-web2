@@ -108,7 +108,7 @@ const ContestHeader = (props: any) => {
             {timeState !== 'wait' && (
               <Slider
                 style={{ marginTop: 25 }}
-                tipFormatter={null}
+                tooltip={{ formatter: null }}
                 min={parseInt(contestInfo.gmtStart)}
                 max={parseInt(contestInfo.gmtEnd)}
                 value={

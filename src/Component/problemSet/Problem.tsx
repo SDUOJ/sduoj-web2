@@ -323,7 +323,7 @@ const Problem = (props: any) => {
               {problemSetInfo?.groupInfo.map((group: any, g_index: number) => {
                 return (
                   <div key={`group-${group.index ?? g_index}`}>
-                    <Card size={'small'} title={group.name} bordered={false}>
+                    <Card size={'small'} title={group.name} variant={'borderless'}>
                       <Row gutter={10}>
                         {group.problemInfo.map((problem: any, index: number) => {
                           return (
