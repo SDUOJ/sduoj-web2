@@ -3,7 +3,11 @@ import { routerE } from './routerE';
 import { getRouterPath, routerLayout } from './router';
 import { routerM } from './routerM';
 import { routerC_M } from './routerC';
-import { duplicateRouteIds, duplicateRoutePaths } from './routeIntegrity';
+import {
+  duplicateRouteIds,
+  duplicateRoutePaths,
+  flattenRoutesWithComponents,
+} from './routeIntegrity';
 
 describe('route tree integrity', () => {
   const routeSets = [
@@ -34,5 +38,23 @@ describe('route tree integrity', () => {
   it('resolves typed route paths and returns an empty path for unknown ids', () => {
     expect(getRouterPath(routerE, 2)).toBe('/v2/exam/list');
     expect(getRouterPath(routerLayout, 999999)).toBe('');
+  });
+
+  it('flattens menu routes with parent exact boundaries for rendering', () => {
+    const parent = {
+      id: 1,
+      path: '/manage',
+      exact: false,
+      component: () => null,
+      children: [
+        { id: 2, path: '/manage/users', exact: true, component: () => null, title_i18n: 'users' },
+      ],
+      title_i18n: 'manage',
+    };
+    const routes = flattenRoutesWithComponents([parent]);
+    expect(routes.map((route) => [route.id, route.exact])).toEqual([
+      [1, true],
+      [2, true],
+    ]);
   });
 });

@@ -10,6 +10,7 @@ import { withRouter } from 'react-router';
 import { routerM } from '../../Config/router/routerM';
 import { UrlPrefix } from '../../Config/constValue';
 import { IRouter } from '../../Config/router/router';
+import { flattenRoutesWithComponents } from '../../Config/router/routeIntegrity';
 import LoginCheck from '../common/LoginCheck';
 import { Role, UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
@@ -47,12 +48,7 @@ const MLayout = (props: any) => {
     setMenuOpen(false);
   }, [props.location.pathname, isMobile]);
 
-  const flattenRoutes = (router: IRouter[]): IRouter[] =>
-    router.flatMap((r) => [
-      ...(r.component ? [{ ...r, exact: r.children ? true : r.exact }] : []),
-      ...(r.children ? flattenRoutes(r.children) : []),
-    ]);
-  const manageRoutes = flattenRoutes(routerM);
+  const manageRoutes = flattenRoutesWithComponents(routerM);
   const hasManageAccess = canAccessManage(props.roles);
   const menu = <MMenu id={1} roles={['superadmin']} />;
 

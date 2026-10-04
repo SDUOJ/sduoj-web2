@@ -2,6 +2,14 @@ import { IBaseRouter, IRouter } from './router';
 
 export type RouteNode = IBaseRouter | IRouter;
 
+/** Flatten a menu route tree into renderable routes while preserving parent boundaries. */
+export function flattenRoutesWithComponents(routes: readonly IRouter[]): IRouter[] {
+  return routes.flatMap((route) => [
+    ...(route.component ? [{ ...route, exact: route.children ? true : route.exact }] : []),
+    ...(route.children ? flattenRoutesWithComponents(route.children) : []),
+  ]);
+}
+
 /** Return all route nodes, including menu nodes that have children. */
 export function flattenRouteTree(routes: readonly RouteNode[]): RouteNode[] {
   return routes.flatMap((route) => [
