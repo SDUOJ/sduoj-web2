@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import GradingWorkbench from './GradingWorkbench';
 import { aiPlatform, PlatformResource } from '../../../Utils/API/ai-platform';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-platform', () => ({
   aiPlatform: {
@@ -47,6 +48,7 @@ const candidateResource = (version = 3, state = 'review'): PlatformResource => (
 let current: PlatformResource;
 
 beforeEach(() => {
+  void i18n.changeLanguage('zh');
   jest.clearAllMocks();
   current = candidateResource();
   (aiPlatform.list as jest.Mock).mockImplementation(async () => ({ rows: [current], totalNum: 1 }));
@@ -162,4 +164,17 @@ test('surfaces a native adoption conflict without claiming success', async () =>
   expect(await screen.findByText('候选、原答案或人工成绩已发生变化')).toBeInTheDocument();
   expect(screen.getByText(/Answer\/rubric\/grade changed/)).toBeInTheDocument();
   expect(screen.queryByText('正式成绩已采用')).not.toBeInTheDocument();
+});
+
+test('renders the grading shell in English without Chinese UI labels', async () => {
+  await i18n.changeLanguage('en');
+  (aiPlatform.list as jest.Mock).mockResolvedValue({ rows: [], totalNum: 0 });
+  render(<GradingWorkbench />);
+
+  expect(await screen.findByText('Subjective grading')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /New/ })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+  expect(screen.queryByText(/[一-龥]/)).not.toBeInTheDocument();
+
+  await i18n.changeLanguage('zh');
 });
