@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -39,6 +40,7 @@ import './course-knowledge-workbench.css';
 type Props = { initialCourseId?: number; location?: { search?: string } };
 
 export default function CourseKnowledgeWorkbench({ initialCourseId, location }: Props) {
+  const { t } = useTranslation();
   const routeCourseId = positiveIntParam(location?.search, 'course_id');
   const selectedCourseId = initialCourseId || routeCourseId || null;
   const [courseIdInput, setCourseIdInput] = useState<number | null>(selectedCourseId);
@@ -197,14 +199,14 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
       <AIWorkspaceNav />
       <div className="ai-workspace-body">
         <header className="ai-course-header">
-          <Typography.Title level={3}>课程知识库</Typography.Title>
+          <Typography.Title level={3}>{t('aiKnowledgeTitle')}</Typography.Title>
           <Space.Compact>
             <InputNumber
               min={1}
               value={courseIdInput}
               onChange={(value) => setCourseIdInput(value)}
-              placeholder="课程 ID"
-              aria-label="课程 ID"
+              placeholder={t('aiKnowledgeCourseId')}
+              aria-label={t('aiKnowledgeCourseId')}
             />
             <Button
               type="primary"
@@ -214,7 +216,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                 setCourseId(courseIdInput);
               }}
             >
-              打开课程
+              {t('aiKnowledgeOpenCourse')}
             </Button>
           </Space.Compact>
         </header>
@@ -228,7 +230,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
             action={
               conflict && courseId ? (
                 <Button size="small" onClick={() => void load()}>
-                  刷新课程数据
+                  {t('aiKnowledgeRefreshCourse')}
                 </Button>
               ) : undefined
             }
@@ -236,18 +238,18 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
           />
         )}
         {!courseId ? (
-          <Empty description="请选择课程" />
+          <Empty description={t('aiKnowledgeSelectCourse')} />
         ) : (
           <main className="ai-course-content">
             <section aria-labelledby="knowledge-documents-title">
               <div className="ai-course-section-header">
                 <Typography.Title level={4} id="knowledge-documents-title">
-                  课程资料
+                  {t('aiKnowledgeDocuments')}
                 </Typography.Title>
                 <Space>
                   <Button
                     icon={<ReloadOutlined />}
-                    aria-label="刷新课程资料"
+                    aria-label={t('aiKnowledgeRefreshDocuments')}
                     loading={loading}
                     onClick={() => void load()}
                   />
@@ -256,7 +258,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                     icon={<CloudUploadOutlined />}
                     onClick={() => setUploadOpen(true)}
                   >
-                    上传资料
+                    {t('aiKnowledgeUploadDocuments')}
                   </Button>
                 </Space>
               </div>
@@ -273,24 +275,31 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                   onChange: setPage,
                 }}
                 columns={[
-                  { title: '资料', key: 'title', render: (_, row) => row.data.title || row.id },
                   {
-                    title: '索引',
+                    title: t('aiKnowledgeDocumentColumn'),
+                    key: 'title',
+                    render: (_, row) => row.data.title || row.id,
+                  },
+                  {
+                    title: t('aiKnowledgeIndexColumn'),
                     key: 'index',
                     width: 130,
                     render: (_, row) => {
                       const state = jobStates[row.id];
-                      if (state === 'uploading') return <Tag color="processing">上传中</Tag>;
-                      if (state === 'indexing') return <Tag color="processing">索引中</Tag>;
-                      if (state === 'failed') return <Tag color="error">失败</Tag>;
+                      if (state === 'uploading')
+                        return <Tag color="processing">{t('aiKnowledgeUploading')}</Tag>;
+                      if (state === 'indexing')
+                        return <Tag color="processing">{t('aiKnowledgeIndexing')}</Tag>;
+                      if (state === 'failed')
+                        return <Tag color="error">{t('aiKnowledgeFailed')}</Tag>;
                       if (row.data.indexed_version === row.version)
-                        return <Tag color="success">可检索</Tag>;
-                      return <Tag>待索引</Tag>;
+                        return <Tag color="success">{t('aiKnowledgeSearchable')}</Tag>;
+                      return <Tag>{t('aiKnowledgePendingIndex')}</Tag>;
                     },
                   },
-                  { title: '版本', dataIndex: 'version', width: 80 },
+                  { title: t('aiKnowledgeVersionColumn'), dataIndex: 'version', width: 80 },
                   {
-                    title: '操作',
+                    title: t('aiKnowledgeActionsColumn'),
                     key: 'actions',
                     width: 120,
                     render: (_, row) => (
@@ -299,7 +308,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                         loading={jobStates[row.id] === 'indexing'}
                         onClick={() => void reindex(row)}
                       >
-                        重新索引
+                        {t('aiKnowledgeReindex')}
                       </Button>
                     ),
                   },
@@ -309,12 +318,12 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
 
             <section aria-labelledby="knowledge-chat-title" className="ai-course-chat">
               <Typography.Title level={4} id="knowledge-chat-title">
-                资料问答
+                {t('aiKnowledgeQATitle')}
               </Typography.Title>
               <div className="ai-course-chat-options">
-                <Typography.Text>允许课外检索</Typography.Text>
+                <Typography.Text>{t('aiKnowledgeExternalResearch')}</Typography.Text>
                 <Switch
-                  aria-label="允许课外检索"
+                  aria-label={t('aiKnowledgeExternalResearch')}
                   checked={externalResearch}
                   disabled={asking}
                   onChange={setExternalResearch}
@@ -322,7 +331,10 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
               </div>
               <div className="ai-course-messages" aria-live="polite">
                 {messages.length === 0 ? (
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无问答记录" />
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={t('aiKnowledgeNoMessages')}
+                  />
                 ) : (
                   <List<KnowledgeMessage>
                     dataSource={messages}
@@ -330,7 +342,9 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                       <List.Item className={`ai-course-message ai-course-message-${item.role}`}>
                         <div>
                           <Typography.Text type="secondary">
-                            {item.role === 'user' ? '提问' : '回答'}
+                            {item.role === 'user'
+                              ? t('aiKnowledgeQuestionRole')
+                              : t('aiKnowledgeAnswerRole')}
                           </Typography.Text>
                           <Typography.Paragraph>{item.text}</Typography.Paragraph>
                           {item.role === 'assistant' &&
@@ -349,7 +363,9 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                                 onClick={() => void openCitation(detail.citation)}
                               >
                                 {detail.file_name || detail.citation}
-                                {detail.page ? ` · 第 ${detail.page} 页` : ''}
+                                {detail.page
+                                  ? ` · ${t('aiKnowledgePage', { page: detail.page })}`
+                                  : ''}
                               </Button>
                             ))}
                         </div>
@@ -369,8 +385,8 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                     }
                   }}
                   autoSize={{ minRows: 2, maxRows: 6 }}
-                  aria-label="课程资料问题"
-                  placeholder="输入问题"
+                  aria-label={t('aiKnowledgeQuestionLabel')}
+                  placeholder={t('aiKnowledgeQuestionPlaceholder')}
                 />
                 <Button
                   type="primary"
@@ -378,7 +394,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                   loading={asking}
                   disabled={!question.trim()}
                   onClick={() => void ask()}
-                  aria-label="发送问题"
+                  aria-label={t('aiKnowledgeSendQuestion')}
                 />
               </Space.Compact>
             </section>
@@ -387,7 +403,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
       </div>
 
       <Modal
-        title="上传课程资料"
+        title={t('aiKnowledgeUploadTitle')}
         open={uploadOpen}
         onCancel={() => !busy && setUploadOpen(false)}
         onOk={() => void uploadAndIndex()}
@@ -396,7 +412,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
         destroyOnHidden
       >
         <Form form={uploadForm} layout="vertical">
-          <Form.Item name="title" label="资料名称" rules={[{ required: true }]}>
+          <Form.Item name="title" label={t('aiKnowledgeDocumentName')} rules={[{ required: true }]}>
             <Input maxLength={120} />
           </Form.Item>
           <Upload.Dragger
@@ -407,13 +423,13 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
             onChange={({ fileList }) => setFiles(fileList.slice(-20))}
           >
             <CloudUploadOutlined />
-            <Typography.Text>选择资料文件</Typography.Text>
+            <Typography.Text>{t('aiKnowledgeChooseFiles')}</Typography.Text>
           </Upload.Dragger>
         </Form>
       </Modal>
 
       <Drawer
-        title="引用原文"
+        title={t('aiKnowledgeCitationTitle')}
         open={Boolean(source)}
         onClose={() => setSource(null)}
         width={520}
@@ -422,17 +438,27 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
         {source && (
           <>
             <Descriptions column={1} size="small">
-              <Descriptions.Item label="文件">{source.file_name || '资源正文'}</Descriptions.Item>
-              <Descriptions.Item label="页码">{source.page || '-'}</Descriptions.Item>
-              <Descriptions.Item label="偏移">{source.offset ?? '-'}</Descriptions.Item>
-              <Descriptions.Item label="版本">{source.resource_version || '-'}</Descriptions.Item>
-              <Descriptions.Item label="引用">{source.citation}</Descriptions.Item>
+              <Descriptions.Item label={t('aiKnowledgeFile')}>
+                {source.file_name || t('aiKnowledgeResourceText')}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiKnowledgePageLabel')}>
+                {source.page || '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiKnowledgeOffset')}>
+                {source.offset ?? '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiKnowledgeVersionLabel')}>
+                {source.resource_version || '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiKnowledgeCitation')}>
+                {source.citation}
+              </Descriptions.Item>
             </Descriptions>
             <Typography.Paragraph className="ai-course-source-text">
-              {source.text || source.source || '该引用没有可显示的文本片段'}
+              {source.text || source.source || t('aiKnowledgeNoCitationText')}
             </Typography.Paragraph>
             {source.evidence_confidence === 'requires_review' && (
-              <Alert type="warning" showIcon message="该引用与问题的词面重合较弱，需要人工核对" />
+              <Alert type="warning" showIcon message={t('aiKnowledgeCitationNeedsReview')} />
             )}
             {source.file_id && source.file_id !== 'text' && (
               <Button
@@ -441,7 +467,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                 target="_blank"
                 rel="noreferrer"
               >
-                打开源文件
+                {t('aiKnowledgeOpenSource')}
               </Button>
             )}
           </>

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import CourseKnowledgeWorkbench from './CourseKnowledgeWorkbench';
 import { courseKnowledgeApi, KnowledgeResource } from '../../../Utils/API/course-knowledge';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/course-knowledge', () => ({
   courseKnowledgeApi: {
@@ -30,13 +31,19 @@ const documentResource: KnowledgeResource = {
   data: { title: 'Queue lecture', file_ids: ['file-1'], indexed_version: 2 },
 };
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
+  jest.clearAllMocks();
   (courseKnowledgeApi.listDocuments as jest.Mock).mockResolvedValue({
     rows: [documentResource],
     totalNum: 1,
   });
   (courseKnowledgeApi.listConversations as jest.Mock).mockResolvedValue({ rows: [], totalNum: 0 });
   (courseKnowledgeApi.indexDocument as jest.Mock).mockResolvedValue({ status: 'success' });
+});
+
+afterEach(async () => {
+  await i18n.changeLanguage('zh');
 });
 
 test('loads a course index and opens the exact cited source from persisted history', async () => {
@@ -236,4 +243,33 @@ test('keeps a failed question available for an explicit retry', async () => {
   await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('任务冲突，请刷新'));
   expect(screen.getByRole('alert')).toHaveClass('ant-alert-warning');
   expect(input).toHaveValue('不要丢失这个问题');
+});
+
+test('translates the course knowledge workbench in English', async () => {
+  await i18n.changeLanguage('en');
+  try {
+    render(
+      <MemoryRouter>
+        <CourseKnowledgeWorkbench initialCourseId={12} />
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByRole('heading', { name: 'Course knowledge base' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Open course/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Upload materials/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Course materials' })).toBeInTheDocument();
+    expect(await screen.findByText('Searchable')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Material Q&A' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Allow external research' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Course material question')).toHaveAttribute(
+      'placeholder',
+      'Enter a question',
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Upload materials/ }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('Choose material files');
+    expect(screen.getByLabelText('Material name')).toBeInTheDocument();
+  } finally {
+    await i18n.changeLanguage('zh');
+  }
 });
