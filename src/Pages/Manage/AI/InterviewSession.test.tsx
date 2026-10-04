@@ -5,6 +5,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { createAppStore } from '../../../Redux/Store';
 import InterviewSession from './InterviewSession';
 import { interviewApi, InterviewResource } from './interview-api';
+import i18n from '../../../Config/i18n';
 
 jest.mock('./interview-api', () => ({
   interviewApi: {
@@ -96,6 +97,11 @@ function renderSession() {
   );
 }
 
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
+  jest.clearAllMocks();
+});
+
 test('shows missing media and blocks answer submission', async () => {
   (interviewApi.session as jest.Mock).mockResolvedValue(studentSession);
   renderSession();
@@ -127,4 +133,12 @@ test('shows teacher candidate criteria and native adoption state', async () => {
   await waitFor(() => expect(screen.getByText(/AI 候选 80.0/)).toBeInTheDocument());
   expect(screen.getByText('已绑定答题卡')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /批准候选/ })).toBeEnabled();
+});
+
+test('renders interview status and media labels in English', async () => {
+  await i18n.changeLanguage('en');
+  (interviewApi.session as jest.Mock).mockResolvedValue(studentSession);
+  renderSession();
+  expect(await screen.findByText('Awaiting answer')).toBeInTheDocument();
+  expect(screen.getAllByText('Webcam').length).toBeGreaterThan(0);
 });

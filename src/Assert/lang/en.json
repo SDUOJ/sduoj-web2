@@ -1244,5 +1244,20 @@
   "aiExamStatePublished": "Published",
   "aiExamSubmissionNotStarted": "Not started",
   "aiExamSubmissionWorking": "In progress",
-  "aiExamSubmissionSubmitted": "Submitted"
+  "aiExamSubmissionSubmitted": "Submitted",
+  "aiInterviewTrackAudio": "Microphone",
+  "aiInterviewTrackVideo": "Webcam",
+  "aiInterviewTrackScreen": "Screen",
+  "aiInterviewStatusPending": "Not started",
+  "aiInterviewStatusRunning": "Generating question",
+  "aiInterviewStatusAwaitingAnswer": "Awaiting answer",
+  "aiInterviewStatusCompleted": "Awaiting review",
+  "aiInterviewStatusExpired": "Expired",
+  "aiInterviewStatusCancelled": "Cancelled",
+  "aiInterviewStatusApproved": "Approved",
+  "aiInterviewStatusRejected": "Returned",
+  "aiInterviewStatusAdopted": "Adopted",
+  "aiInterviewStatusFailed": "Failed",
+  "aiInterviewRoleStudent": "Student",
+  "aiInterviewRoleTeacher": "Teacher"
 }

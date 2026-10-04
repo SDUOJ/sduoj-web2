@@ -1219,5 +1219,20 @@
   "aiExamStatePublished": "已发布",
   "aiExamSubmissionNotStarted": "未开始",
   "aiExamSubmissionWorking": "进行中",
-  "aiExamSubmissionSubmitted": "已交卷"
+  "aiExamSubmissionSubmitted": "已交卷",
+  "aiInterviewTrackAudio": "麦克风",
+  "aiInterviewTrackVideo": "摄像头",
+  "aiInterviewTrackScreen": "屏幕",
+  "aiInterviewStatusPending": "待开始",
+  "aiInterviewStatusRunning": "生成问题",
+  "aiInterviewStatusAwaitingAnswer": "待回答",
+  "aiInterviewStatusCompleted": "待复核",
+  "aiInterviewStatusExpired": "已过期",
+  "aiInterviewStatusCancelled": "已取消",
+  "aiInterviewStatusApproved": "已批准",
+  "aiInterviewStatusRejected": "已退回",
+  "aiInterviewStatusAdopted": "已采用",
+  "aiInterviewStatusFailed": "失败",
+  "aiInterviewRoleStudent": "学生端",
+  "aiInterviewRoleTeacher": "教师端"
 }

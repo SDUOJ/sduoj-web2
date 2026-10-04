@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -37,26 +38,7 @@ import { pendingFor, PendingMedia, savePending, uploadPending } from './intervie
 import { UrlPrefix } from '../../../Config/constValue';
 import './interview-workbench.css';
 
-const trackNames: Record<MediaTrack, string> = {
-  audio: '麦克风',
-  video: '摄像头',
-  screen: '屏幕',
-};
-
 const terminal = new Set(['completed', 'expired', 'cancelled', 'approved', 'rejected', 'adopted']);
-
-const statusLabels: Record<string, string> = {
-  pending: '待开始',
-  running: '生成问题',
-  awaiting_answer: '待回答',
-  completed: '待复核',
-  expired: '已过期',
-  cancelled: '已取消',
-  approved: '已批准',
-  rejected: '已退回',
-  adopted: '已采用',
-  failed: '失败',
-};
 
 function visibleStatus(session: InterviewResource) {
   if (['approved', 'rejected', 'adopted', 'failed'].includes(session.state)) return session.state;
@@ -71,6 +53,7 @@ function canRenew(session: InterviewResource) {
 }
 
 export default function InterviewSession() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const ownerId = useAppSelector((state) => state.UserReducer.userInfo?.userId ?? '');
@@ -96,6 +79,23 @@ export default function InterviewSession() {
   const recordingStartedRef = useRef(0);
   const chunksRef = useRef<Blob[]>([]);
   const loadSequence = useRef(0);
+  const trackNames: Record<MediaTrack, string> = {
+    audio: t('aiInterviewTrackAudio'),
+    video: t('aiInterviewTrackVideo'),
+    screen: t('aiInterviewTrackScreen'),
+  };
+  const statusLabels: Record<string, string> = {
+    pending: t('aiInterviewStatusPending'),
+    running: t('aiInterviewStatusRunning'),
+    awaiting_answer: t('aiInterviewStatusAwaitingAnswer'),
+    completed: t('aiInterviewStatusCompleted'),
+    expired: t('aiInterviewStatusExpired'),
+    cancelled: t('aiInterviewStatusCancelled'),
+    approved: t('aiInterviewStatusApproved'),
+    rejected: t('aiInterviewStatusRejected'),
+    adopted: t('aiInterviewStatusAdopted'),
+    failed: t('aiInterviewStatusFailed'),
+  };
 
   const load = useCallback(
     async (quiet = false) => {
@@ -430,7 +430,11 @@ export default function InterviewSession() {
             <div>
               <Typography.Title level={2}>{data.title}</Typography.Title>
               <Space wrap>
-                <Tag>{session.role === 'student' ? '学生端' : '教师端'}</Tag>
+                <Tag>
+                  {session.role === 'student'
+                    ? t('aiInterviewRoleStudent')
+                    : t('aiInterviewRoleTeacher')}
+                </Tag>
                 <Tag color={session.effective_status === 'awaiting_answer' ? 'gold' : 'blue'}>
                   {statusLabels[visibleStatus(session)] || visibleStatus(session)}
                 </Tag>
@@ -693,6 +697,12 @@ function MediaManifest({
   groups: ManifestGroup[];
   compact?: boolean;
 }) {
+  const { t } = useTranslation();
+  const trackNames: Record<MediaTrack, string> = {
+    audio: t('aiInterviewTrackAudio'),
+    video: t('aiInterviewTrackVideo'),
+    screen: t('aiInterviewTrackScreen'),
+  };
   if (!groups.length)
     return compact ? null : <Alert type="warning" showIcon message="尚无媒体证据" />;
   return (
