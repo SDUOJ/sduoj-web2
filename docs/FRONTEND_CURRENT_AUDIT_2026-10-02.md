@@ -140,6 +140,15 @@ CI 的 `quality`、构建和 E2E 门禁没有包含依赖审计，手工得到�
 
 ## 提交和验证记录
 
+### 2026-10-04 20:30:56 UTC：剩余依赖复核
+
+- 当前表格仍有 42 项，其中 34 项关闭、8 项未关闭；不把 R-15/R-21 的本地改进当作正式发布验收完成。
+- 专用本地 `ai_dev_` 账号登录后，三个 standalone exam 只读接口再次返回 HTTP 200 / code 404；探测后登出返回 code 0。服务在线不等于考试生命周期已实现，R-04/R-12 仍需对应服务、权限 fixture 和清理协议。
+- R-05 的 AutoLab 实现仍明确拒绝单独签退，已有考勤阻止删除课程/时间；filesys 公共 controller 没有新文件删除接口。没有借用非测试所有者的课程、创建不可清理的考勤或猜测拍照绑定协议。
+- 登录响应仅记录无凭证的 cookie 属性：HTTPOnly、SameSite=Lax；这不是跨站防护验收，R-23 仍需后端明确契约和跨站 fixture。R-31 仍没有实际 collector/adapter 配置，单测 adapter 不能代替留存及告警链路。
+- 三个用户发布 stash SHA 与本页工作树说明一致，工作树干净；没有收到快照恢复/拆分确认、非生产部署目标及执行授权。R-14/R-15/R-21 保持原验收边界，不自动恢复用户发布文件或执行线上发布。
+- 脱敏复核证据：`output/audit/remaining-blockers-2026-10-04.json`。只有路径、HTTP/业务码、cookie 属性、Git/stash SHA 和配置存在性，没有密码、session cookie、原始响应体或用户资料。
+
 ### R-15：2026-10-04 制品级 smoke 和回滚版本绑定（部分完成）
 
 - `yarn test:deployment-smoke`：17 PASS；恢复控制流 10 PASS，artifact 13 PASS，静态 shell/action 检查通过。更新旧测试夹具的 smoke 报告契约；子进程去除冲突的 FORCE_COLOR，不忽略其他 stderr。
