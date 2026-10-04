@@ -34,10 +34,15 @@ jobs:
       - run: yarn test:artifact
       - run: yarn test:vditor-assets
       - run: yarn test:timeouts
+      - run: yarn test:security-unit
       - name: Verify release artifact
         run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ https://oj.qd.sdu.edu.cn/v2/ > artifact-verification.json
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
+      - name: Validate production-like nginx security policies
+        run: |
+          docker pull nginx:1.28-alpine
+          yarn playwright test -c playwright.security.config.ts
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -47,6 +52,7 @@ jobs:
             dependency-audit.json
             artifact-verification.json
             static-analysis.json
+            output/audit/R-24/proxy/manifest.json
             playwright-report/
             test-results/
           retention-days: 14

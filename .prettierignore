@@ -6,3 +6,4 @@ yarn.lock
 test-results/
 playwright-report/
 output/
+src/Config/validation/generated/autolab-validators.js

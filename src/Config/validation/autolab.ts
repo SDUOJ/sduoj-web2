@@ -1,13 +1,7 @@
-import Ajv, { ValidateFunction } from 'ajv';
-import addFormats from 'ajv-formats';
+import { routes as validators } from './generated/autolab-validators';
 import spec from './autolab.json';
 
-export const ajv = new Ajv({ strict: false, allErrors: false, coerceTypes: true });
-addFormats(ajv);
-ajv.addFormat('binary', true);
-ajv.addSchema({ $id: 'urn:sduoj:autolab', components: spec.components });
-
-const routes = Object.entries(spec.routes).map(([route, schema]) => {
+const routes = Object.keys(spec.routes).map((route) => {
   const [method, path] = route.split(' ');
   const pattern = path
     .split('/')
@@ -16,24 +10,9 @@ const routes = Object.entries(spec.routes).map(([route, schema]) => {
   return {
     method,
     pattern: new RegExp(`^${pattern}$`),
-    schema,
-    validate: undefined as ValidateFunction | undefined,
+    validate: validators[route],
   };
 });
-
-export function externalReferences(schema: unknown): unknown {
-  if (Array.isArray(schema)) return schema.map(externalReferences);
-  if (schema && typeof schema === 'object')
-    return Object.fromEntries(
-      Object.entries(schema).map(([key, value]) => [
-        key,
-        key === '$ref' && typeof value === 'string' && value.startsWith('#')
-          ? `urn:sduoj:autolab${value}`
-          : externalReferences(value),
-      ]),
-    );
-  return schema;
-}
 
 export function autolabSchemaError(
   path: string,
@@ -42,7 +21,7 @@ export function autolabSchemaError(
 ): string | undefined {
   const route = routes.find((route) => route.method === method && route.pattern.test(path));
   if (!route) return;
-  if (!route.validate) route.validate = ajv.compile(externalReferences(route.schema) as object);
+  if (!route.validate) throw new Error(`Missing standalone validator: ${method} ${path}`);
   // Match JSON serialization and Pydantic coercion without mutating the caller's draft.
   let copy;
   try {

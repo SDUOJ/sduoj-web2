@@ -87,6 +87,7 @@ const hasJsxRuntime = (() => {
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function (webpackEnv) {
+  require('../scripts/compile-autolab-validators.cjs').verify();
   // Webpack CLI 常把 env 当作对象传入；仅当其为字符串时才使用，否则回退到 NODE_ENV
   const resolvedEnv =
     (typeof webpackEnv === 'string' && webpackEnv) || process.env.NODE_ENV || 'development';
@@ -254,10 +255,7 @@ module.exports = function (webpackEnv) {
           ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
       // Prevents conflicts when multiple webpack runtimes (from different apps)
       // are used on the same page.
-      // webpack 5 uses a single runtime; jsonpFunction removed
-      // this defaults to 'window', but by setting it to 'this' then
-      // module chunks which are built will work in web workers as well.
-      globalObject: 'this',
+      globalObject: 'self',
     },
     optimization: {
       minimize: isEnvProduction,

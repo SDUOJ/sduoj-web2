@@ -1,7 +1,6 @@
 import type { Rule } from 'antd/es/form';
-import type { AnySchema } from 'ajv';
 import spec from './autolab.json';
-import { ajv, externalReferences } from './autolab';
+import { fields as validators } from './generated/autolab-validators';
 import i18n from '../i18n';
 
 interface Schema {
@@ -50,12 +49,14 @@ export function autolabFieldRules(
   path: string | readonly (string | number)[],
   transform?: (value: unknown) => unknown,
 ): Rule[] {
-  const { schema, required } = autolabFieldSchema(model, typeof path === 'string' ? [path] : path);
-  const validate = ajv.compile({
-    type: 'object',
-    properties: { value: externalReferences(schema) },
-    ...(required ? { required: ['value'] } : {}),
-  } as AnySchema);
+  const parts = typeof path === 'string' ? [path] : path;
+  const { required } = autolabFieldSchema(model, parts);
+  const key = JSON.stringify([
+    model,
+    ...parts.map((part) => (typeof part === 'number' ? '*' : part)),
+  ]);
+  const validate = validators[key];
+  if (!validate) throw new Error(`Missing standalone field validator: ${model}.${parts.join('.')}`);
   return [
     {
       required,
