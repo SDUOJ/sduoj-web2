@@ -30,6 +30,7 @@ fs.writeFileSync(
 );
 assert.deepStrictEqual(checkWorkflowPins(root), [
   'invalid.yml:4: external action must use a 40-character commit SHA (actions/checkout@v4)',
+  'release.yml:4: external action must use a 40-character commit SHA (actions/checkout@v4)',
 ]);
 
 fs.rmSync(root, { recursive: true, force: true });

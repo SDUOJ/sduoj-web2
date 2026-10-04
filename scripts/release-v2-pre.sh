@@ -37,7 +37,9 @@ rsync_remote() {
 
 require_user() {
   [[ -n "${REMOTE_USER}" ]] || die "set SDUOJ_DEPLOY_USER before running this script"
-  [[ "${COMMAND_TIMEOUT}" =~ ^[0-9]+$ ]] && (( COMMAND_TIMEOUT >= 1 && COMMAND_TIMEOUT <= 3600 )) || die "command timeout must be 1..3600 seconds"
+  if ! [[ "${COMMAND_TIMEOUT}" =~ ^[1-9][0-9]{0,3}$ ]] || (( COMMAND_TIMEOUT > 3600 )); then
+    die "command timeout must be 1..3600 seconds"
+  fi
   need_cmd node
 }
 
@@ -123,10 +125,10 @@ cat > "\$root/rollback-v2-pre.sh" <<'ROLLBACK'
 #!/usr/bin/env bash
 set -Eeuo pipefail
 root="/opt/1panel/www/sites/oj.qd.sdu.edu.cn/index"
-test -s "$root/v2-pre-backup/index.html"
-timeout 300 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "$root/v2-pre-backup/" "$root/v2-pre/"
-test -s "$root/v2-pre/index.html"
-grep -q '/v2-pre/' "$root/v2-pre/index.html"
+test -s "\$root/v2-pre-backup/index.html"
+timeout 300 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
+test -s "\$root/v2-pre/index.html"
+grep -q '/v2-pre/' "\$root/v2-pre/index.html"
 echo "v2-pre rollback complete"
 ROLLBACK
 chmod 0755 "\$root/rollback-v2-pre.sh"

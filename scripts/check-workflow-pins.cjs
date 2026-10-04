@@ -4,16 +4,11 @@ const fs = require('fs');
 const path = require('path');
 
 const shaRef = /^[0-9a-f]{40}$/;
-// The release workflow is owned by the separate release worktree/stash and is
-// intentionally excluded until that change set is restored for review.
-const excludedWorkflowFiles = new Set(['release.yml']);
 
 function checkWorkflowPins(rootDir = process.cwd()) {
   const workflowDir = path.join(rootDir, '.github', 'workflows');
   const errors = [];
-  for (const file of fs
-    .readdirSync(workflowDir)
-    .filter((name) => /\.(yml|yaml)$/.test(name) && !excludedWorkflowFiles.has(name))) {
+  for (const file of fs.readdirSync(workflowDir).filter((name) => /\.(yml|yaml)$/.test(name))) {
     const source = fs.readFileSync(path.join(workflowDir, file), 'utf8');
     for (const [lineNumber, line] of source.split(/\r?\n/).entries()) {
       const match = line.match(/\buses:\s*([^\s#]+)/);

@@ -17,10 +17,14 @@ jobs:
           node-version-file: .nvmrc
       - run: npm install --global yarn@1.22.22
       - run: yarn install --frozen-lockfile
+      - name: Install pinned static checkers
+        run: node scripts/install-static-checkers.cjs
       - name: Check workflow and shell contracts
         run: |
           node scripts/check-workflow-pins.cjs
           node scripts/check-workflow-pins.test.cjs
+          node --test scripts/check-static.test.cjs
+          node scripts/check-static.cjs > static-analysis.json
           find scripts -type f -name '*.sh' -print0 | xargs -0 -r bash -n
       - name: Audit production dependencies
         run: yarn audit --groups dependencies --level moderate --json > dependency-audit.json
@@ -42,6 +46,7 @@ jobs:
             coverage/
             dependency-audit.json
             artifact-verification.json
+            static-analysis.json
             playwright-report/
             test-results/
           retention-days: 14
