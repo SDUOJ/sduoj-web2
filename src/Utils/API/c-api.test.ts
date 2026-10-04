@@ -5,6 +5,7 @@ import { service } from './request';
 const adapter = new MockAdapter(service);
 const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
 
+beforeEach(() => cApi.clearAcceptanceQueueCache());
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
 
@@ -185,4 +186,30 @@ test('preserves typed problem-set router and answer payloads', async () => {
     { url: '/ps/answer_sheet/mark', data: { router, data: 'choice-1' } },
     { url: '/ps/answer_sheet/finish', data: { router: { psid: 10, gid: 0, pid: 0 } } },
   ]);
+});
+
+test('caches acceptance queues per problem set for 30 seconds', async () => {
+  adapter.onPost('/ps/answer_sheet/acceptanceQueueList').reply(200, success(['queue-a']));
+
+  await expect(cApi.getAcceptanceQueueList({ psid: 10 })).resolves.toEqual(['queue-a']);
+  await expect(cApi.getAcceptanceQueueList({ psid: 10 })).resolves.toEqual(['queue-a']);
+
+  expect(adapter.history.post).toHaveLength(1);
+});
+
+test('clears acceptance queue cache and isolates different problem sets', async () => {
+  adapter
+    .onPost('/ps/answer_sheet/acceptanceQueueList')
+    .replyOnce(200, success(['queue-a']))
+    .onPost('/ps/answer_sheet/acceptanceQueueList')
+    .replyOnce(200, success(['queue-b']))
+    .onPost('/ps/answer_sheet/acceptanceQueueList')
+    .replyOnce(200, success(['queue-a']));
+
+  await expect(cApi.getAcceptanceQueueList({ psid: 10 })).resolves.toEqual(['queue-a']);
+  await expect(cApi.getAcceptanceQueueList({ psid: 11 })).resolves.toEqual(['queue-b']);
+  cApi.clearAcceptanceQueueCache();
+  await expect(cApi.getAcceptanceQueueList({ psid: 10 })).resolves.toEqual(['queue-a']);
+
+  expect(adapter.history.post).toHaveLength(3);
 });

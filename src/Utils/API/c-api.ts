@@ -31,6 +31,14 @@ import request from './request';
 import apiAddress from './apiAddress';
 import { AxiosRequestConfig } from 'axios';
 
+type AcceptanceQueueCache = {
+  psid: number;
+  data: string[];
+  ts: number;
+};
+
+let acceptanceQueueCache: AcceptanceQueueCache | undefined;
+
 const cApi = {
   // Config
   async getCopyright() {
@@ -315,20 +323,20 @@ const cApi = {
   },
   // 查询题单内所有验收题可用队列（去重排序）缓存30s
   async getAcceptanceQueueList(data: { psid: number }) {
-    // 简单前端缓存（模块级变量）
-    if ((cApi as any)._acceptanceQueueCache) {
-      const cache = (cApi as any)._acceptanceQueueCache;
-      if (cache.psid === data.psid && Date.now() - cache.ts < 30000) {
-        return Promise.resolve(cache.data);
-      }
+    if (
+      acceptanceQueueCache &&
+      acceptanceQueueCache.psid === data.psid &&
+      Date.now() - acceptanceQueueCache.ts < 30000
+    ) {
+      return acceptanceQueueCache.data;
     }
-    return request.post('/ps/answer_sheet/acceptanceQueueList', data).then((res: any) => {
-      (cApi as any)._acceptanceQueueCache = { psid: data.psid, data: res, ts: Date.now() };
+    return request.post<string[]>('/ps/answer_sheet/acceptanceQueueList', data).then((res) => {
+      acceptanceQueueCache = { psid: data.psid, data: res, ts: Date.now() };
       return res;
     });
   },
   clearAcceptanceQueueCache() {
-    delete (cApi as any)._acceptanceQueueCache;
+    acceptanceQueueCache = undefined;
   },
   // 获取评阅信息
   async getJudgeInfo(data: any) {
