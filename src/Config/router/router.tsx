@@ -2,57 +2,15 @@ import { lazy } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import { UrlPrefix } from '../constValue';
+import { routerC } from './routerC';
+import { projectClientLayouts } from './layoutProjection';
+import type { IBaseRouter, RouteLocationProps } from './types';
+export type { IBaseRouter, IRouter } from './types';
 
-export interface IBaseRouter {
-  id: number;
-  path: string;
-  exact?: boolean;
-  component?: any;
-}
+const clientLayout = lazy(() => import('../../Component/layout/CLayout'));
+const routerCLayout = projectClientLayouts(routerC, UrlPrefix, clientLayout);
 
-export interface IRouter extends IBaseRouter {
-  title_i18n: string;
-  exact?: boolean;
-  icon?: any;
-  children?: IRouter[];
-}
-
-// 名称，是否为独立页面
-const routerCLayoutData: any = [
-  ['home', false],
-  ['workspace', false],
-  ['courses', false],
-  ['practice', false],
-  ['account', false],
-  ['problem', false],
-  ['contest', false],
-  ['problemSet', false],
-  ['problemSetPublic', false],
-  ['submission', false],
-  ['group', false],
-  // 用户信息页面
-  ['user', true],
-  // 账户相关的单独页面
-  ['login', true],
-  ['thirdPartyLogin', true],
-  ['resetpass', true],
-  ['test', false],
-  ['hws', false],
-  ['studentMutualEvaluation', true],
-];
-let routerCLayout: IBaseRouter[] = [];
-let num = 100;
-for (const x of routerCLayoutData) {
-  num += 1;
-  routerCLayout.push({
-    id: num,
-    path: UrlPrefix + '/' + x[0],
-    exact: x[1],
-    component: lazy(() => import('../../Component/layout/CLayout')),
-  });
-}
-
-export const routerLayout: IBaseRouter[] = [
+export const routerLayout: readonly IBaseRouter[] = [
   {
     id: 9490,
     path: UrlPrefix + '/manage/problem/program/authoring',
@@ -63,19 +21,26 @@ export const routerLayout: IBaseRouter[] = [
     id: 9100,
     path: UrlPrefix + '/ai-workbench',
     exact: true,
-    component: (props: any) => (
-      <Redirect to={{ pathname: UrlPrefix + '/workspace', search: props.location.search }} />
+    component: (props: RouteLocationProps) => (
+      <Redirect
+        to={{
+          pathname: UrlPrefix + '/workspace',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
+      />
     ),
   },
   {
     id: 9101,
     path: UrlPrefix + '/ai-bank',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
         to={{
           pathname: UrlPrefix + '/manage/problemSet/problem_group',
           search: props.location.search,
+          hash: props.location.hash,
         }}
       />
     ),
@@ -84,11 +49,12 @@ export const routerLayout: IBaseRouter[] = [
     id: 9102,
     path: UrlPrefix + '/ai-authoring',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
         to={{
           pathname: UrlPrefix + '/manage/intelligent',
           search: props.location.search,
+          hash: props.location.hash,
         }}
       />
     ),
@@ -97,9 +63,13 @@ export const routerLayout: IBaseRouter[] = [
     id: 9103,
     path: UrlPrefix + '/ai-grading',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={{ pathname: UrlPrefix + '/manage/problemSet/grading', search: props.location.search }}
+        to={{
+          pathname: UrlPrefix + '/manage/problemSet/grading',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
       />
     ),
   },
@@ -107,9 +77,13 @@ export const routerLayout: IBaseRouter[] = [
     id: 9104,
     path: UrlPrefix + '/ai-exams',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={{ pathname: UrlPrefix + '/manage/problemSet/exams', search: props.location.search }}
+        to={{
+          pathname: UrlPrefix + '/manage/problemSet/exams',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
       />
     ),
   },
@@ -117,9 +91,13 @@ export const routerLayout: IBaseRouter[] = [
     id: 9105,
     path: UrlPrefix + '/ai-course',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={{ pathname: UrlPrefix + '/courses/knowledge', search: props.location.search }}
+        to={{
+          pathname: UrlPrefix + '/courses/knowledge',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
       />
     ),
   },
@@ -127,11 +105,12 @@ export const routerLayout: IBaseRouter[] = [
     id: 9106,
     path: UrlPrefix + '/ai-plagiarism',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
         to={{
           pathname: UrlPrefix + '/manage/problemSet/plagiarism',
           search: props.location.search,
+          hash: props.location.hash,
         }}
       />
     ),
@@ -140,9 +119,13 @@ export const routerLayout: IBaseRouter[] = [
     id: 9107,
     path: UrlPrefix + '/ai-interviews',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={{ pathname: UrlPrefix + '/practice/interviews', search: props.location.search }}
+        to={{
+          pathname: UrlPrefix + '/practice/interviews',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
       />
     ),
   },
@@ -150,9 +133,13 @@ export const routerLayout: IBaseRouter[] = [
     id: 9108,
     path: UrlPrefix + '/ai-admin',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={{ pathname: UrlPrefix + '/account/assistant', search: props.location.search }}
+        to={{
+          pathname: UrlPrefix + '/account/assistant',
+          search: props.location.search,
+          hash: props.location.hash,
+        }}
       />
     ),
   },
@@ -160,9 +147,15 @@ export const routerLayout: IBaseRouter[] = [
     id: 9199,
     path: UrlPrefix + '/ai-interviews/:id',
     exact: true,
-    component: (props: any) => (
+    component: (props: RouteLocationProps) => (
       <Redirect
-        to={UrlPrefix + '/practice/interviews/' + props.match.params.id + props.location.search}
+        to={
+          UrlPrefix +
+          '/practice/interviews/' +
+          encodeURIComponent(props.match.params.id ?? '') +
+          props.location.search +
+          props.location.hash
+        }
       />
     ),
   },

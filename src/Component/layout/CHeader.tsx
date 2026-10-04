@@ -6,7 +6,7 @@ import logo from '../../Assert/img/logo.png';
 import { userLogoutTodo } from '../../Redux/Action/user';
 import { useAppDispatch, useAppSelector } from '../../Redux/Store/hooks';
 import UserAccountDropdown from './UserAccountDropdown';
-import { routerC_M } from '../../Config/router/routerC';
+import { navigationTrees } from '../../Config/router/routeTrees';
 import { UrlPrefix } from '../../Config/constValue';
 import { loginRedirect } from '../../Utils/authReturn';
 
@@ -16,7 +16,7 @@ export default function CHeader() {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { isLogin, userInfo } = useAppSelector((state) => state.UserReducer);
-  const selected = routerC_M.find(
+  const selected = navigationTrees.client.find(
     (route) => location.pathname === route.path || location.pathname.startsWith(route.path + '/'),
   );
 
@@ -40,7 +40,7 @@ export default function CHeader() {
           mode="horizontal"
           theme="light"
           selectedKeys={selected ? [String(selected.id)] : []}
-          items={routerC_M.map((route) => ({
+          items={navigationTrees.client.map((route) => ({
             key: String(route.id),
             icon: route.icon,
             label: <Link to={route.path}>{t(route.title_i18n)}</Link>,

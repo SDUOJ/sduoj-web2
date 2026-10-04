@@ -1,5 +1,5 @@
 import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router-dom';
+import { matchPath, withRouter } from 'react-router-dom';
 import { Alert, Card, Col, Divider, Menu, Row, Slider, Space, Switch } from 'antd';
 import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import getContestInfo from './API/getContestInfo';
@@ -16,6 +16,8 @@ import { UrlPrefix } from '../../Config/constValue';
 import ExportExcel from '../common/ExportExcel';
 import exportRank from './exportRank';
 import MarkdownText from '../../Utils/MarkdownText';
+import { navigationTrees } from '../../Config/router/routeTrees';
+import { navigationLinks } from '../../Config/router/navigation';
 
 const ContestHeader = (props: any) => {
   const [selectedKey, setSelectedKey] = useState<string>('');
@@ -30,38 +32,8 @@ const ContestHeader = (props: any) => {
   // console.log(contestInfo)
 
   const menuData = useMemo(
-    () => [
-      {
-        key: 'register',
-        name: 'Register',
-        link: UrlPrefix + '/contest/' + contestId + '/register',
-        re: /\/contest\/.*\/register/g,
-      },
-      {
-        key: 'overview',
-        name: 'Overview',
-        link: UrlPrefix + '/contest/' + contestId + '/overview',
-        re: /\/contest\/.*\/overview/g,
-      },
-      {
-        key: 'problem',
-        name: 'Problem',
-        link: UrlPrefix + '/contest/' + contestId + '/problem/1',
-        re: /\/contest\/.*\/problem\/.*/g,
-      },
-      {
-        key: 'status',
-        name: 'Status',
-        link: UrlPrefix + '/contest/' + contestId + '/submission',
-        re: /\/contest\/.*\/submission/g,
-      },
-      {
-        key: 'rank',
-        name: 'Rank',
-        link: UrlPrefix + '/contest/' + contestId + '/rank',
-        re: /\/contest\/.*\/rank/g,
-      },
-    ],
+    () =>
+      navigationLinks(navigationTrees.contest, { contestId, problemCode: '1' }, [5, 1, 2, 3, 4]),
     [contestId],
   );
 
@@ -84,9 +56,10 @@ const ContestHeader = (props: any) => {
       else history.replace(menuData[1].link);
     }
     // 若已经注册，则不能访问注册页面
-    if (url.match(menuData[0].re) !== null && isPractice) history.replace(menuData[1].link);
+    if (matchPath(url, { path: menuData[0].pattern, exact: true }) && isPractice)
+      history.replace(menuData[1].link);
     menuData.map((value) => {
-      if (url.match(value.re) !== null) setSelectedKey(value.key);
+      if (matchPath(url, { path: value.pattern, exact: true })) setSelectedKey(value.key);
     });
   }, [history, isPractice, menuData, openness, url]);
 

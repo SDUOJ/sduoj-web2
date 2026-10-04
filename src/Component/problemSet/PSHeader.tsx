@@ -1,4 +1,4 @@
-import { Link, withRouter } from 'react-router-dom';
+import { Link, matchPath, withRouter } from 'react-router-dom';
 import { Button, Card, Space, Tabs } from 'antd';
 import { isValueEmpty } from '../../Utils/empty';
 import MarkdownText from '../../Utils/MarkdownText';
@@ -12,6 +12,8 @@ import PSTakePicture from './PSTakePicture';
 import { LeftOutlined } from '@ant-design/icons';
 import '../../Assert/css/problemSetHeader.css';
 import LatePermissionNotice from './LatePermissionNotice';
+import { navigationTrees } from '../../Config/router/routeTrees';
+import { navigationLinks } from '../../Config/router/navigation';
 
 const PSHeader = (props: any) => {
   const problemSetId = props.match.params.problemSetId;
@@ -25,62 +27,18 @@ const PSHeader = (props: any) => {
   const problemSetInfo = useProblemSetInfo(problemSetId, onError);
 
   const menuData = useMemo(
-    () => [
-      {
-        key: 'overview',
-        name: t('Overview'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/overview',
-        re: /\/problemSet\/.*\/overview/g,
-      },
-      {
-        key: 'problem',
-        name: t('Problem'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/problem/0/0',
-        re: /\/problemSet\/.*\/problem/g,
-      },
-      {
-        key: 'review',
-        name: t('Review'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/review',
-        re: /\/problemSet\/.*\/review/g,
-      },
-      {
-        key: 'rank',
-        name: t('Rank'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/rank',
-        re: /\/problemSet\/.*\/rank/g,
-      },
-      {
-        key: 'monitor',
-        name: t('RankMonitorTab'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/monitor',
-        re: /\/problemSet\/.*\/monitor/g,
-      },
-      {
-        key: 'submission',
-        name: t('SubmissionList'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/submission',
-        re: /\/problemSet\/.*\/submission/g,
-      },
-      {
-        key: 'late',
-        name: t('LatePermission'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/late',
-        re: /\/problemSet\/.*\/late/g,
-      },
-      {
-        key: 'auto-task',
-        name: t('AutoTaskTab'),
-        link: UrlPrefix + '/problemSet/' + problemSetId + '/auto-task',
-        re: /\/problemSet\/.*\/auto-task/g,
-      },
-    ],
+    () =>
+      navigationLinks(
+        navigationTrees.problemSet,
+        { problemSetId, problemGroupId: 0, problemId: 0 },
+        [13, 14, 16, 15, 151, 17, 18, 19],
+      ).map((item) => ({ ...item, name: t(item.name) })),
     [problemSetId, t],
   );
 
-  const [nowKey, setNowKey] = useState<any>();
+  const [nowKey, setNowKey] = useState<string>();
 
-  const menuList: any = ['overview', 'problem'];
+  const menuList: string[] = ['overview', 'problem'];
   if (problemSetInfo?.isAdmin === true)
     menuList.push('review', 'submission', 'late', 'auto-task', 'rank', 'monitor');
 
@@ -89,7 +47,7 @@ const PSHeader = (props: any) => {
       props.history.replace(menuData[0].link);
     }
     menuData.map((value) => {
-      if (path.match(value.re) !== null) setNowKey(value.key);
+      if (matchPath(path, { path: value.pattern, exact: true })) setNowKey(value.key);
       return undefined;
     });
   }, [menuData, path, props.history]);

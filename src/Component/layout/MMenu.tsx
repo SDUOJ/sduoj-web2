@@ -3,7 +3,7 @@ import { Menu, MenuProps } from 'antd';
 import { Link, matchPath, RouteComponentProps, withRouter } from 'react-router-dom';
 import { IUserPropRoles } from '../../Type/Iuser';
 import { withTranslation } from 'react-i18next';
-import { routerM } from '../../Config/router/routerM';
+import { navigationTrees } from '../../Config/router/routeTrees';
 import { IRouter } from '../../Config/router/router';
 
 // interface IMenuState {
@@ -18,7 +18,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
     const select: string[] = [];
     const opened: string[] = [];
     let leaf: string | undefined;
-    const find = (router: IRouter[], parentMatched = false) => {
+    const find = (router: readonly IRouter[], parentMatched = false) => {
       router.forEach((item) => {
         const matched =
           matchPath(props.location.pathname, { path: item.path, exact: false }) !== null;
@@ -32,13 +32,13 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
         }
       });
     };
-    find(routerM);
+    find(navigationTrees.manage);
     if (leaf !== undefined) select.push(leaf);
     setSelectedKey(select);
     setOpenKeys(opened);
   }, [props.location.pathname]);
 
-  const buildItems = (menuList: IRouter[]): MenuProps['items'] =>
+  const buildItems = (menuList: readonly IRouter[]): MenuProps['items'] =>
     menuList.map((r) => ({
       key: r.id,
       icon: r.icon,
@@ -63,7 +63,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
           }}
           mode="inline"
           theme="dark"
-          items={buildItems(routerM)}
+          items={buildItems(navigationTrees.manage)}
         />
       </div>
     </>

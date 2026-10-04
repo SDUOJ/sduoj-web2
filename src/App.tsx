@@ -7,10 +7,10 @@ import { ConfigProvider } from 'antd';
 import { appTheme } from './Config/theme';
 import { useAppSelector } from './Redux/Store/hooks';
 import ErrorBoundary from './Utils/ErrorBoundary';
-import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import Loading from './Utils/Loading';
-import { routerLayout } from './Config/router/router';
-import NotFound from './Pages/Error/NotFound';
+import { routeTrees } from './Config/router/routeTrees';
+import RouteSwitch from './Config/router/RouteSwitch';
 const SubmissionModal = lazy(() => import('./Component/submission/Processing/ModalProcessing'));
 const RequirePassChange = lazy(() => import('./Component/common/RequirePassChange'));
 
@@ -19,12 +19,7 @@ const RoutedContent = () => {
   return (
     <ErrorBoundary resetKey={location.pathname + location.search + location.hash}>
       <Suspense fallback={<Loading />}>
-        <Switch>
-          {routerLayout.map((r) => (
-            <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />
-          ))}
-          <Route component={NotFound} />
-        </Switch>
+        <RouteSwitch routes={routeTrees.layout} />
       </Suspense>
     </ErrorBoundary>
   );

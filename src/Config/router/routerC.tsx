@@ -1,9 +1,9 @@
 import { lazy } from 'react';
 import { aiPage } from './ai-page';
-import { IBaseRouter, IRouter } from './router';
+import type { IBaseRouter, IRouter } from './types';
 import { UrlPrefix } from '../constValue';
 
-export const routerC: IBaseRouter[] = [
+export const routerC: readonly IBaseRouter[] = [
   {
     id: 9300,
     path: UrlPrefix + '/workspace',
@@ -144,62 +144,79 @@ export const routerC: IBaseRouter[] = [
   // },
 ];
 
-export const router_ProblemSet: IBaseRouter[] = [
+export const router_ProblemSet: readonly IRouter[] = [
   {
     id: 13,
     path: UrlPrefix + '/problemSet/:problemSetId/overview',
+    title_i18n: 'Overview',
+    navigationKey: 'overview',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Overview')),
   },
   {
     id: 14,
     path: UrlPrefix + '/problemSet/:problemSetId/problem/:problemGroupId/:problemId',
+    title_i18n: 'Problem',
+    navigationKey: 'problem',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Problem')),
   },
   {
     id: 15,
     path: UrlPrefix + '/problemSet/:problemSetId/rank',
+    title_i18n: 'Rank',
+    navigationKey: 'rank',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Rank')),
   },
   {
     id: 151,
     path: UrlPrefix + '/problemSet/:problemSetId/monitor',
+    title_i18n: 'RankMonitorTab',
+    navigationKey: 'monitor',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Monitor')),
   },
   {
     id: 16,
     path: UrlPrefix + '/problemSet/:problemSetId/review',
+    title_i18n: 'Review',
+    navigationKey: 'review',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Review')),
   },
   {
     id: 17,
     path: UrlPrefix + '/problemSet/:problemSetId/submission',
+    title_i18n: 'SubmissionList',
+    navigationKey: 'submission',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/Submission')),
   },
   {
     id: 18,
     path: UrlPrefix + '/problemSet/:problemSetId/late',
+    title_i18n: 'LatePermission',
+    navigationKey: 'late',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/LatePermission')),
   },
   {
     id: 19,
     path: UrlPrefix + '/problemSet/:problemSetId/auto-task',
+    title_i18n: 'AutoTaskTab',
+    navigationKey: 'auto-task',
     exact: true,
     component: lazy(() => import('../../Component/problemSet/AutoTask')),
   },
 ];
 
-export const routerC_Contest_M: IRouter[] = [
+export const routerC_Contest_M: readonly IRouter[] = [
   {
     id: 1,
     title_i18n: 'Overview',
     path: UrlPrefix + '/contest/:contestId/overview',
+    navigationKey: 'overview',
     exact: true,
     component: lazy(() => import('../../Component/contest/Overview')),
   },
@@ -207,6 +224,7 @@ export const routerC_Contest_M: IRouter[] = [
     id: 2,
     title_i18n: 'Problem',
     path: UrlPrefix + '/contest/:contestId/problem/:problemCode',
+    navigationKey: 'problem',
     exact: true,
     component: lazy(() => import('../../Component/contest/Problem')),
   },
@@ -214,6 +232,7 @@ export const routerC_Contest_M: IRouter[] = [
     id: 3,
     title_i18n: 'Status',
     path: UrlPrefix + '/contest/:contestId/submission',
+    navigationKey: 'status',
     exact: true,
     component: lazy(() => import('../../Component/contest/Status')),
   },
@@ -221,6 +240,7 @@ export const routerC_Contest_M: IRouter[] = [
     id: 4,
     title_i18n: 'Rank',
     path: UrlPrefix + '/contest/:contestId/rank',
+    navigationKey: 'rank',
     exact: true,
     component: lazy(() => import('../../Component/contest/Rank')),
   },
@@ -228,6 +248,7 @@ export const routerC_Contest_M: IRouter[] = [
     id: 5,
     title_i18n: 'Register',
     path: UrlPrefix + '/contest/:contestId/register',
+    navigationKey: 'register',
     exact: true,
     component: lazy(() => import('../../Component/contest/Register')),
   },
@@ -244,10 +265,16 @@ const clientNavigation = [
   { id: 8, title_i18n: 'Group' },
 ] as const;
 
-export const routerC_M: IRouter[] = clientNavigation.map(({ id, title_i18n }) => {
+export const routerC_M: readonly IRouter[] = clientNavigation.map(({ id, title_i18n }) => {
   const route = routerC.find((candidate) => candidate.id === id);
   if (!route) {
     throw new Error(`Missing client navigation route ${id}`);
   }
-  return { ...route, title_i18n };
+  return {
+    id: route.id,
+    path: route.path,
+    exact: route.exact,
+    component: route.component,
+    title_i18n,
+  };
 });

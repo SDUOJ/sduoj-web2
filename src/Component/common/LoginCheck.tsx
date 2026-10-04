@@ -5,6 +5,7 @@ import { withTranslation } from 'react-i18next';
 import cApi from 'Utils/API/c-api';
 import Loading from '../../Utils/Loading';
 import { loginRedirect } from '../../Utils/authReturn';
+import { UrlPrefix } from '../../Config/constValue';
 
 let profileRequest: Promise<any> | undefined;
 
@@ -14,7 +15,13 @@ const LoginCheck = (props: any) => {
   const authStatus = useSelector((state: any) => state.UserReducer.authStatus ?? 'unknown');
 
   useEffect(() => {
-    if (isLogin === true || authStatus === 'anonymous') return;
+    if (isLogin === true) return;
+    if (authStatus === 'anonymous') {
+      if (props.jump && props.location.pathname !== UrlPrefix + '/login') {
+        props.history.replace(loginRedirect(props.location));
+      }
+      return;
+    }
     if (!profileRequest) {
       profileRequest = cApi.getProfile().finally(() => {
         profileRequest = undefined;

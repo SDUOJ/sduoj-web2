@@ -1,7 +1,8 @@
 import { withTranslation } from 'react-i18next';
-import { Route, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import ContestHeader from '../../Component/contest/ContestHeader';
-import { routerC_Contest_M } from '../../Config/router/routerC';
+import { routeTrees } from '../../Config/router/routeTrees';
+import RouteSwitch from '../../Config/router/RouteSwitch';
 import React, { Dispatch, Suspense, useEffect, useState } from 'react';
 import Loading from '../../Utils/Loading';
 import LoginCheck from '../../Component/common/LoginCheck';
@@ -56,9 +57,7 @@ const CContestInfo = (props: any) => {
           {contestInfo !== undefined && timeState !== 'wait' && (
             <div style={{ marginTop: 25 }}>
               <Suspense fallback={<Loading />}>
-                {routerC_Contest_M.map((r) => {
-                  return <Route key={r.id} path={r.path} exact={r.exact} component={r.component} />;
-                })}
+                <RouteSwitch routes={routeTrees.contest} />
               </Suspense>
             </div>
           )}

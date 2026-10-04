@@ -13,11 +13,11 @@ import {
 } from '@ant-design/icons';
 
 import { lazy } from 'react';
-import { IRouter } from './router';
+import type { IRouter } from './types';
 import { aiPage } from './ai-page';
 import { UrlPrefix } from '../constValue';
 
-export const routerM: IRouter[] = [
+export const routerM: readonly IRouter[] = [
   {
     id: 0,
     path: UrlPrefix + '/manage/user',

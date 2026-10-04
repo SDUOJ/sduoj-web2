@@ -1,7 +1,8 @@
-import { Route, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import PSHeader from './PSHeader';
 import Loading from '../../Utils/Loading';
-import { router_ProblemSet } from '../../Config/router/routerC';
+import { routeTrees } from '../../Config/router/routeTrees';
+import RouteSwitch from '../../Config/router/RouteSwitch';
 import React, { Dispatch, Suspense, useEffect, useState } from 'react';
 import LoginCheck from '../common/LoginCheck';
 import { useSelector } from 'react-redux';
@@ -41,9 +42,7 @@ const PSLayout = (props: any) => {
     <ErrorBoundary>
       <PSHeader />
       <Suspense fallback={<Loading />}>
-        {router_ProblemSet.map(({ id, path, exact, component }) => (
-          <Route key={id} path={path} exact={exact} component={component} />
-        ))}
+        <RouteSwitch routes={routeTrees.problemSet} />
       </Suspense>
     </ErrorBoundary>
   );
