@@ -33,7 +33,7 @@ const ItemUpload = (props: ItemUploadPropsType & any) => {
   );
 };
 
-const UploadFile = (props: any) => {
+export const UploadFile = (props: any) => {
   const { value, onChange } = props;
   const [filename, setFilename] = useState<string>('');
 

@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router-dom';
 import useProblemSetInfo from './API/getProblemSetInfo';
 
-const ProblemSetPageCtrl = (props: any) => {
+export const ProblemSetPageCtrl = (props: any) => {
   const psid = props.match.params.problemSetId;
   const gid = parseInt(props.match.params.problemGroupId);
   const pid = parseInt(props.match.params.problemId);

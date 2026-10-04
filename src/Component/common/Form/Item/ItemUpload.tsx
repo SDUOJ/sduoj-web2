@@ -42,7 +42,7 @@ export const uploadItemFile = async (
   return result;
 };
 
-const UploadFile = (props: any) => {
+export const UploadFile = (props: any) => {
   const { value, onChange } = props;
 
   let nameList: string[] = [];

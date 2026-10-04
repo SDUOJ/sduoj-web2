@@ -55,5 +55,41 @@ module.exports = {
       functions: 25,
       lines: 29,
     },
+    './src/Component/exam/ExamUtils.ts': {
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90,
+    },
+    './src/Component/exam/ExamPageCtrl.tsx': {
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90,
+    },
+    './src/Component/problemSet/ProblemSetPageCtrl.tsx': {
+      statements: 80,
+      branches: 80,
+      functions: 90,
+      lines: 85,
+    },
+    './src/Component/common/Form/Item/ItemUpload.tsx': {
+      statements: 55,
+      branches: 55,
+      functions: 20,
+      lines: 55,
+    },
+    './src/Component/common/Form/Item/ItemUploadMulti.tsx': {
+      statements: 90,
+      branches: 45,
+      functions: 70,
+      lines: 90,
+    },
+    './src/Component/common/Form/Item/ItemUploadUser.tsx': {
+      statements: 80,
+      branches: 70,
+      functions: 55,
+      lines: 80,
+    },
   },
 };
