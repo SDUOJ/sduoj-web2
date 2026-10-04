@@ -86,6 +86,7 @@
     "validation:compile": "node scripts/compile-autolab-validators.cjs",
     "validation:check": "node scripts/compile-autolab-validators.cjs --check",
     "test:security-unit": "node --test scripts/security-*.test.cjs scripts/compile-autolab-validators.test.cjs",
+    "test:release-recovery": "node --test scripts/release-recovery.test.cjs",
     "test:security": "yarn build:test && cross-env SDUOJ_SECURITY_REAL_SERVICES=1 playwright test -c playwright.security.config.ts",
     "test:visual": "yarn build:test && cross-env VISUAL_REGRESSION=1 playwright test --project chromium --project mobile-chromium --grep visual",
     "test:e2e:update": "playwright test --update-snapshots",

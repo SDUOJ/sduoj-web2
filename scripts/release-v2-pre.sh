@@ -88,7 +88,7 @@ smoke() {
   need_cmd curl
   curl --fail --silent --show-error --location --connect-timeout 10 --max-time 45 --retry 3 --retry-delay 2 --retry-max-time 180 "${RELEASE_URL}" |
     grep -q '<div id="root"></div>' ||
-    die "smoke test failed: ${RELEASE_URL}"
+    { echo "smoke test failed: ${RELEASE_URL}" >&2; return 1; }
   echo "smoke OK: ${RELEASE_URL}"
 }
 
@@ -108,7 +108,12 @@ backup="\$root/v2-pre-backup"
 test -s "\$root/\$stage/index.html"
 grep -q '/v2-pre/' "\$root/\$stage/index.html"
 
-rm -rf "\$root/\$backup_new" "\$root/\$backup_old"
+if [ -e "\$root/\$backup_new" ] || [ -e "\$root/\$backup_old" ]; then
+  echo "backup paths already exist; use a new release id; existing recovery copies retained" >&2
+  exit 1
+fi
+test -s "\$current/index.html"
+grep -q '/v2-pre/' "\$current/index.html"
 if ! rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$current/" "\$root/\$backup_new/"; then
   rm -rf "\$root/\$backup_new"
   exit 1
@@ -124,7 +129,7 @@ fi
 cat > "\$root/rollback-v2-pre.sh" <<'ROLLBACK'
 #!/usr/bin/env bash
 set -Eeuo pipefail
-root="/opt/1panel/www/sites/oj.qd.sdu.edu.cn/index"
+root="${REMOTE_ROOT}"
 test -s "\$root/v2-pre-backup/index.html"
 timeout 300 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
 test -s "\$root/v2-pre/index.html"
@@ -134,9 +139,11 @@ ROLLBACK
 chmod 0755 "\$root/rollback-v2-pre.sh"
 
 if ! rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/\$stage/" "\$current/"; then
-  rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$backup/" "\$current/" || true
-  rm -rf "\$backup"
-  if [ -e "\$root/\$backup_old" ]; then mv "\$root/\$backup_old" "\$backup"; fi
+  if ! rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$backup/" "\$current/"; then
+    echo "apply and recovery failed; backup, older backup and stage retained for manual recovery" >&2
+    exit 1
+  fi
+  echo "apply failed; current restored; both recovery copies retained" >&2
   rm -rf "\$root/\$stage"
   exit 1
 fi
@@ -149,7 +156,7 @@ deploy() {
   require_user
   build_pre
   plan
-  smoke
+  smoke || die "pre-deploy smoke failed; remote releases were not changed"
   local release_id="${1:-$(date -u +%Y%m%d%H%M%S)-$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD 2>/dev/null || echo local)}"
   [[ "${release_id}" =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid release id"
   local source_ref
@@ -173,8 +180,7 @@ deploy() {
   fi
   ssh_run "rm -f '${REMOTE_ROOT}/${validator}'"
   if ! remote_apply "${release_id}"; then
-    ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'" || true
-    die "remote apply failed; formal /v2 was not touched"
+    die "remote apply failed; staging and recovery copies retained; formal /v2 was not touched"
   fi
   if ! smoke; then
     echo "post-deploy smoke failed; restoring v2-pre from v2-pre-backup" >&2
@@ -183,7 +189,7 @@ set -Eeuo pipefail
 root="${REMOTE_ROOT}"
 rsync -rlptDc --timeout=60 --delete --no-owner --no-group "\$root/v2-pre-backup/" "\$root/v2-pre/"
 EOF
-    smoke
+    smoke || die "post-rollback smoke failed; backup retained for manual recovery"
     die "post-deploy smoke failed; rollback attempted"
   fi
   echo "v2-pre deploy complete: ${RELEASE_URL}"
