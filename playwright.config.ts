@@ -27,6 +27,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'node scripts/serve-build.cjs',
+    env: { BUILD_PATH: 'build-test' },
     url: 'http://127.0.0.1:4173/v2/login',
     reuseExistingServer: false,
     timeout: 15000,

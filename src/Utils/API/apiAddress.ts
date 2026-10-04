@@ -1,8 +1,8 @@
 import approvedHosts from '../../../config/production-service-hosts.json';
 
-export default function apiAddress() {
-  const origin = window.location.origin;
+export default function apiAddress(origin = window.location.origin) {
   const isProduction = process.env.NODE_ENV === 'production';
+  const isTestBuild = process.env.REACT_APP_DEPLOYMENT_ENV === 'test';
   const allowedHosts = new Set(approvedHosts);
   const validateOrigin = (value: string, field: string, protocol: 'https:' | 'wss:') => {
     let parsed: URL;
@@ -11,14 +11,15 @@ export default function apiAddress() {
     } catch {
       throw new Error(`${field} must be an absolute URL`);
     }
-    if (isProduction && parsed.protocol !== protocol) {
+    if (isProduction && !isTestBuild && parsed.protocol !== protocol) {
       throw new Error(`${field} must use ${protocol}`);
     }
-    if (isProduction && !allowedHosts.has(parsed.hostname.toLowerCase())) {
+    if (isProduction && !isTestBuild && !allowedHosts.has(parsed.hostname.toLowerCase())) {
       throw new Error(`${field} host is not in the approved host list`);
     }
     if (
       isProduction &&
+      !isTestBuild &&
       (parsed.username ||
         parsed.password ||
         parsed.port ||
@@ -44,6 +45,21 @@ export default function apiAddress() {
     'REACT_APP_SOCKET_ORIGIN',
     'wss:',
   );
+  if (isProduction) {
+    if (
+      isTestBuild &&
+      (frontServer !== 'http://127.0.0.1:4173' ||
+        clientServer !== frontServer ||
+        socketServer !== 'ws://127.0.0.1:4173')
+    ) {
+      throw new Error('Test builds must use isolated loopback services');
+    }
+    if (origin !== frontServer) {
+      throw new Error(
+        'Deployment environment mismatch: this build cannot access services from this page origin',
+      );
+    }
+  }
   return {
     CLIENT_SERVER: clientServer,
     MANAGE_SERVER: clientServer,

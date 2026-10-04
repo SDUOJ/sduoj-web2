@@ -13,6 +13,12 @@ const metadata = {
   version: '0.1.0',
   createdAt: '2026-10-04T00:00:00.000Z',
   releaseId: 'audit-fixture',
+  deployment: {
+    environment: 'production',
+    apiOrigin: 'https://oj.qd.sdu.edu.cn',
+    frontOrigin: 'https://oj.qd.sdu.edu.cn',
+    socketOrigin: 'wss://oj.qd.sdu.edu.cn',
+  },
 };
 const vditorRuntime = 'window.Vditor={};';
 const vditorChecksum = crypto.createHash('sha256').update(vditorRuntime).digest('hex');
@@ -35,7 +41,7 @@ function fixture(context, prefix = '/v2/') {
   );
   fs.writeFileSync(
     path.join(directory, 'index.html'),
-    `<div id="root"></div>${entrypoints.map((entry) => `<script src="${prefix}${entry}"></script>`).join('')}`,
+    `<meta name="sduoj-environment" content="${encodeURIComponent(JSON.stringify(metadata.deployment))}"><div id="root"></div>${entrypoints.map((entry) => `<script src="${prefix}${entry}"></script>`).join('')}`,
   );
   fs.writeFileSync(
     path.join(directory, 'asset-manifest.json'),
@@ -189,6 +195,40 @@ test('rejects unversioned and falsely named Vditor distributions', (context) => 
     path.join(directory, 'vditor', 'b'.repeat(64)),
   );
   assert.throws(() => create(directory, metadata), /Vditor content revision mismatch/);
+});
+
+test('rejects deployment to the wrong host or prefix and test artifact promotion', (context) => {
+  const directory = fixture(context);
+  create(directory, metadata);
+  assert.equal(
+    verify(directory, metadata.sourceRef, '/v2/', 'https://oj.qd.sdu.edu.cn/v2/').status,
+    'verified',
+  );
+  assert.throws(
+    () => verify(directory, metadata.sourceRef, '/v2/', 'https://staging.example/v2/'),
+    /target origin mismatch/,
+  );
+  assert.throws(
+    () => verify(directory, metadata.sourceRef, '/v2/', 'https://oj.qd.sdu.edu.cn/v2-pre/'),
+    /target prefix mismatch/,
+  );
+  const filename = path.join(directory, 'release-manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(filename, 'utf8'));
+  manifest.deployment = {
+    environment: 'test',
+    apiOrigin: 'http://127.0.0.1:4173',
+    frontOrigin: 'http://127.0.0.1:4173',
+    socketOrigin: 'ws://127.0.0.1:4173',
+  };
+  fs.writeFileSync(filename, JSON.stringify(manifest));
+  assert.throws(
+    () => verify(directory, metadata.sourceRef, '/v2/', 'https://oj.qd.sdu.edu.cn/v2/'),
+    /cannot be deployed/,
+  );
+  assert.throws(
+    () => verify(directory, metadata.sourceRef, '/v2/'),
+    /HTML deployment metadata mismatch/,
+  );
 });
 
 test('standalone verifier returns a machine-readable report and fails closed', (context) => {

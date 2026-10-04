@@ -10,6 +10,12 @@ test('served release metadata and entrypoint hashes match the tested checkout', 
   const manifest = await response.json();
   expect(manifest.schemaVersion).toBe(1);
   expect(manifest.publicPath).toBe('/v2/');
+  expect(manifest.deployment).toEqual({
+    environment: 'test',
+    apiOrigin: 'http://127.0.0.1:4173',
+    frontOrigin: 'http://127.0.0.1:4173',
+    socketOrigin: 'ws://127.0.0.1:4173',
+  });
   expect(manifest.sourceRef).toBe(
     execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   );

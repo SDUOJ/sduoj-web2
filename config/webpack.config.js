@@ -642,6 +642,14 @@ module.exports = function (webpackEnv) {
         Object.assign(
           {},
           {
+            deploymentMetadata: encodeURIComponent(
+              JSON.stringify({
+                environment: env.raw.REACT_APP_DEPLOYMENT_ENV,
+                apiOrigin: env.raw.REACT_APP_API_ORIGIN || '',
+                frontOrigin: env.raw.REACT_APP_FRONT_ORIGIN || '',
+                socketOrigin: env.raw.REACT_APP_SOCKET_ORIGIN || '',
+              }),
+            ),
             inject: true,
             template: paths.appHtml,
           },

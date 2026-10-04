@@ -155,7 +155,7 @@ deploy() {
   local source_ref
   source_ref="$(git -C "${PROJECT_ROOT}" rev-parse HEAD)"
   [[ "${source_ref}" =~ ^[a-f0-9]{40}$ ]] || die "invalid source ref"
-  node "${PROJECT_ROOT}/scripts/release-artifact.cjs" verify "${PROJECT_ROOT}/build" "${source_ref}" /v2-pre/
+  node "${PROJECT_ROOT}/scripts/release-artifact.cjs" verify "${PROJECT_ROOT}/build" "${source_ref}" /v2-pre/ "${RELEASE_URL}"
   local stage=".v2-pre-release-${release_id}"
   local validator=".v2-pre-validator-${release_id}.cjs"
   ssh_run "install -d -m 0755 '${REMOTE_ROOT}/${stage}'"
@@ -167,7 +167,7 @@ deploy() {
     ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'" || true
     die "validator upload failed; current release was not touched"
   fi
-  if ! ssh_run "node '${REMOTE_ROOT}/${validator}' verify '${REMOTE_ROOT}/${stage}' '${source_ref}' /v2-pre/ > '${REMOTE_ROOT}/.v2-pre-validation-${release_id}.json'"; then
+  if ! ssh_run "node '${REMOTE_ROOT}/${validator}' verify '${REMOTE_ROOT}/${stage}' '${source_ref}' /v2-pre/ '${RELEASE_URL}' > '${REMOTE_ROOT}/.v2-pre-validation-${release_id}.json'"; then
     ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'; rm -f '${REMOTE_ROOT}/${validator}'" || true
     die "staged artifact validation failed; current release was not touched"
   fi

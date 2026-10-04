@@ -35,7 +35,7 @@ jobs:
       - run: yarn test:vditor-assets
       - run: yarn test:timeouts
       - name: Verify release artifact
-        run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ > artifact-verification.json
+        run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ https://oj.qd.sdu.edu.cn/v2/ > artifact-verification.json
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

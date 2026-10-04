@@ -2,7 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const root = path.resolve(__dirname, '../build');
+const root = path.resolve(__dirname, '..', process.env.BUILD_PATH || 'build');
 if (!fs.existsSync(path.join(root, 'index.html'))) throw new Error('Run yarn build first');
 const mime = {
   '.html': 'text/html',

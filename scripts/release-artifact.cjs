@@ -91,6 +91,63 @@ function validateMetadata(manifest, expectedRef, expectedPrefix) {
   );
   assert(/^[A-Za-z0-9._-]{1,128}$/.test(manifest.releaseId), 'Invalid release id');
   assert(Array.isArray(manifest.files) && manifest.files.length <= maxFiles, 'Invalid file list');
+  validateDeployment(manifest.deployment);
+}
+
+function validateDeployment(deployment, targetUrl) {
+  assert(
+    deployment && ['production', 'test'].includes(deployment.environment),
+    'Missing or invalid deployment environment',
+  );
+  const fields = ['apiOrigin', 'frontOrigin', 'socketOrigin'];
+  for (const field of fields) {
+    let parsed;
+    try {
+      parsed = new URL(deployment[field]);
+    } catch {
+      throw new Error(`Invalid deployment origin: ${field}`);
+    }
+    const protocol = field === 'socketOrigin' ? 'wss:' : 'https:';
+    assert(
+      parsed.origin === deployment[field] && !parsed.username && !parsed.password,
+      `Non-canonical deployment origin: ${field}`,
+    );
+    if (deployment.environment === 'production')
+      assert(parsed.protocol === protocol, `Invalid production deployment protocol: ${field}`);
+  }
+  assert(
+    deployment.apiOrigin === deployment.frontOrigin &&
+      deployment.socketOrigin === deployment.frontOrigin.replace(/^http/, 'ws'),
+    'Deployment API/WebSocket environment mismatch',
+  );
+  if (deployment.environment === 'test') {
+    assert(
+      deployment.frontOrigin === 'http://127.0.0.1:4173',
+      'Test artifact must stay on isolated loopback',
+    );
+  }
+  if (targetUrl) {
+    const target = new URL(targetUrl);
+    assert(
+      !target.username &&
+        !target.password &&
+        !target.search &&
+        !target.hash &&
+        targetUrl === target.origin + target.pathname,
+      'Deployment target must be a canonical URL without credentials, query or hash',
+    );
+    assert(deployment.environment === 'production', 'Test artifacts cannot be deployed');
+    assert(target.origin === deployment.frontOrigin, 'Artifact target origin mismatch');
+  }
+}
+
+function readDeployment(directory) {
+  const html = fs.readFileSync(path.join(directory, 'index.html'), 'utf8');
+  const match = html.match(
+    /<meta\b[^>]*name=["']sduoj-environment["'][^>]*content=["']([^"']+)["']/,
+  );
+  assert(match, 'Missing build deployment metadata');
+  return JSON.parse(decodeURIComponent(match[1]));
 }
 
 function validateEntrypoints(directory, manifest) {
@@ -134,6 +191,10 @@ function validateEntrypoints(directory, manifest) {
     'Missing main entrypoint',
   );
   const html = fs.readFileSync(path.join(directory, 'index.html'), 'utf8');
+  assert(
+    JSON.stringify(readDeployment(directory)) === JSON.stringify(manifest.deployment),
+    'HTML deployment metadata mismatch',
+  );
   assert(/<div\s+id=["']root["']\s*>/.test(html), 'Missing React root');
   const scripts = Array.from(html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/g), (match) =>
     resolveResource(match[1]),
@@ -146,13 +207,16 @@ function validateEntrypoints(directory, manifest) {
   assert(pwa.start_url === `${manifest.publicPath}home`, 'PWA public path mismatch');
 }
 
-function verify(directory, expectedRef, expectedPrefix) {
+function verify(directory, expectedRef, expectedPrefix, targetUrl) {
   assert(/^[a-f0-9]{40}$/.test(expectedRef), 'Expected source ref must be a full Git SHA');
   const manifestPath = path.join(directory, manifestName);
   assert(fs.lstatSync(manifestPath).isFile(), 'Manifest must be a regular file');
   assert(fs.statSync(manifestPath).size <= 8 * 1024 * 1024, 'Manifest size limit exceeded');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   validateMetadata(manifest, expectedRef, expectedPrefix);
+  validateDeployment(manifest.deployment, targetUrl);
+  if (targetUrl)
+    assert(new URL(targetUrl).pathname === expectedPrefix, 'Deployment target prefix mismatch');
   const actual = inventory(directory);
   assert(manifest.files.length === actual.length, 'Artifact file count mismatch');
   for (let index = 0; index < actual.length; index++) {
@@ -174,6 +238,7 @@ function verify(directory, expectedRef, expectedPrefix) {
     manifestSha256: crypto.createHash('sha256').update(fs.readFileSync(manifestPath)).digest('hex'),
     fileCount: actual.length,
     totalBytes: actual.reduce((sum, file) => sum + file.size, 0),
+    deployment: manifest.deployment,
   };
 }
 
@@ -189,7 +254,7 @@ function create(directory, metadata) {
 }
 
 function main() {
-  const [command, directory = 'build', sourceRef, publicPath] = process.argv.slice(2);
+  const [command, directory = 'build', sourceRef, publicPath, targetUrl] = process.argv.slice(2);
   let report;
   if (command === 'create') {
     const project = path.resolve(__dirname, '..');
@@ -207,13 +272,14 @@ function main() {
       version: JSON.parse(fs.readFileSync(path.join(project, 'package.json'), 'utf8')).version,
       createdAt: new Date().toISOString(),
       releaseId: process.env.SDUOJ_RELEASE_ID || `${Date.now()}-${ref.slice(0, 12)}`,
+      deployment: readDeployment(path.resolve(directory)),
     });
   } else {
     assert(
       command === 'verify',
       'Usage: release-artifact.cjs create|verify [directory] [expected-ref] [public-path]',
     );
-    report = verify(path.resolve(directory), sourceRef, publicPath);
+    report = verify(path.resolve(directory), sourceRef, publicPath, targetUrl);
   }
   console.log(JSON.stringify(report, null, 2));
 }
