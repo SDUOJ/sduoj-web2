@@ -23,6 +23,12 @@ import {
   submissionListQuery,
   problemSetRouterQuery,
   problemSetAnswerPayload,
+  problemSetJudgeListQuery,
+  problemSetJudgeInfoQuery,
+  problemSetJudgeUpdatePayload,
+  problemSetSummaryQuery,
+  problemSetLabelListQuery,
+  problemSetSearchQuery,
   problemSetSubmissionQuery,
   problemSetSubmissionInfoQuery,
   problemSetPublicQuery,
@@ -318,7 +324,7 @@ const cApi = {
   },
 
   // 获取评阅列表
-  async getJudgeList(data: any) {
+  async getJudgeList(data: problemSetJudgeListQuery) {
     return request.post('/ps/judge/list', data);
   },
   // 查询题单内所有验收题可用队列（去重排序）缓存30s
@@ -339,27 +345,27 @@ const cApi = {
     acceptanceQueueCache = undefined;
   },
   // 获取评阅信息
-  async getJudgeInfo(data: any) {
+  async getJudgeInfo(data: problemSetJudgeInfoQuery) {
     return request.post('/ps/judge/info', data);
   },
   // 更新评阅信息
-  async updateJudgeInfo(data: any) {
+  async updateJudgeInfo(data: problemSetJudgeUpdatePayload) {
     return request.post('/ps/judge/add', data);
   },
   // 显示题单总结信息，用于显示 Rank
-  async getProblemSummary(data: any) {
+  async getProblemSummary(data: problemSetSummaryQuery) {
     return request.post('/ps/summary/summary', data);
   },
   // 获取榜单的题目预览数据
-  async getProblemSetProPreview(data: any) {
+  async getProblemSetProPreview(data: problemSetJudgeInfoQuery) {
     return request.post('/ps/summary/preview', data);
   },
   // 获取题单的标签列表
-  async getProblemSetLabelList(data: any) {
+  async getProblemSetLabelList(data: problemSetLabelListQuery) {
     return request.post('/ps/problem_set/key', data);
   },
   // 获取题单列表
-  async getProblemSetList(data: any) {
+  async getProblemSetList(data: problemSetSearchQuery) {
     return request.post('/ps/problem_set/search', data);
   },
   // 获取题目组下所有题单（按标签组织）

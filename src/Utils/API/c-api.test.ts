@@ -213,3 +213,88 @@ test('clears acceptance queue cache and isolates different problem sets', async 
 
   expect(adapter.history.post).toHaveLength(3);
 });
+
+test('preserves typed problem-set review payloads', async () => {
+  adapter.onPost('/ps/judge/list').reply(200, success({ rows: [], totalNum: 0 }));
+  adapter.onPost('/ps/judge/info').reply(200, success({ judgeLog: [] }));
+  adapter.onPost('/ps/judge/add').reply(200, success(true));
+
+  await cApi.getJudgeList({
+    pageNow: 1,
+    pageSize: 20,
+    psid: 10,
+    proStr: null,
+    gid: 2,
+    pid: 3,
+    username: 'alice',
+    judgeLock: null,
+    hasJudge: 0,
+    review_queue: 'queue-a',
+  });
+  await cApi.getJudgeInfo({ psid: 10, gid: 2, pid: 3, username: 'alice' });
+  await cApi.updateJudgeInfo({
+    psid: 10,
+    gid: 2,
+    pid: 3,
+    username: 'alice',
+    judgeLog: [{ name: 'correctness', score: 10, jScore: 9 }],
+    judgeComment: 'reviewed',
+    cancel: null,
+  });
+
+  expect(adapter.history.post.map(({ url, data }) => ({ url, data: JSON.parse(data) }))).toEqual([
+    {
+      url: '/ps/judge/list',
+      data: {
+        pageNow: 1,
+        pageSize: 20,
+        psid: 10,
+        proStr: null,
+        gid: 2,
+        pid: 3,
+        username: 'alice',
+        judgeLock: null,
+        hasJudge: 0,
+        review_queue: 'queue-a',
+      },
+    },
+    { url: '/ps/judge/info', data: { psid: 10, gid: 2, pid: 3, username: 'alice' } },
+    {
+      url: '/ps/judge/add',
+      data: {
+        psid: 10,
+        gid: 2,
+        pid: 3,
+        username: 'alice',
+        judgeLog: [{ name: 'correctness', score: 10, jScore: 9 }],
+        judgeComment: 'reviewed',
+        cancel: null,
+      },
+    },
+  ]);
+});
+
+test('preserves typed problem-set summary and search payloads', async () => {
+  adapter.onPost('/ps/summary/summary').reply(200, success({}));
+  adapter.onPost('/ps/summary/preview').reply(200, success({}));
+  adapter.onPost('/ps/problem_set/key').reply(200, success({ label: [] }));
+  adapter.onPost('/ps/problem_set/search').reply(200, success({ rows: [], totalNum: 0 }));
+
+  await cApi.getProblemSummary({ psid: 10, code: 0 });
+  await cApi.getProblemSetProPreview({ psid: 10, gid: 2, pid: 3, username: 'alice' });
+  await cApi.getProblemSetLabelList({ groupId: 7 });
+  await cApi.getProblemSetList({ pageNow: 1, pageSize: 20, groupId: 7, tag: 'algorithm' });
+
+  expect(adapter.history.post.map(({ url, data }) => ({ url, data: JSON.parse(data) }))).toEqual([
+    { url: '/ps/summary/summary', data: { psid: 10, code: 0 } },
+    {
+      url: '/ps/summary/preview',
+      data: { psid: 10, gid: 2, pid: 3, username: 'alice' },
+    },
+    { url: '/ps/problem_set/key', data: { groupId: 7 } },
+    {
+      url: '/ps/problem_set/search',
+      data: { pageNow: 1, pageSize: 20, groupId: 7, tag: 'algorithm' },
+    },
+  ]);
+});

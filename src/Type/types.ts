@@ -128,6 +128,54 @@ export interface problemSetAnswerPayload extends problemSetRouterQuery {
   data: unknown;
 }
 
+export interface problemSetJudgeListQuery {
+  pageNow: number;
+  pageSize: number;
+  psid: number;
+  proStr?: string | null;
+  gid?: number | null;
+  pid?: number | null;
+  username?: string | null;
+  judgeLock?: string | null;
+  hasJudge?: number | null;
+  review_queue?: string | null;
+}
+
+export interface problemSetJudgeInfoQuery {
+  psid: number;
+  gid: number;
+  pid: number;
+  username: string;
+}
+
+export interface problemSetJudgeLog {
+  name: string;
+  score: number;
+  jScore: number;
+}
+
+export interface problemSetJudgeUpdatePayload extends problemSetJudgeInfoQuery {
+  judgeLog: problemSetJudgeLog[];
+  judgeComment?: string | null;
+  cancel?: number | null;
+}
+
+export interface problemSetSummaryQuery {
+  psid: number;
+  code: number;
+}
+
+export interface problemSetLabelListQuery {
+  groupId: number;
+}
+
+export interface problemSetSearchQuery {
+  pageNow: number;
+  pageSize: number;
+  groupId: number;
+  tag: string;
+}
+
 export interface problemSetSubmissionQuery {
   router: problemSetRouter;
   problemSetId?: number | string;
