@@ -260,6 +260,11 @@ export interface contestComprehensiveExportParams {
   contestId: number;
 }
 
+export interface contestQuestionVisibilityPayload {
+  clarificationId: string;
+  opt: 0 | 1;
+}
+
 export type contestListQuery = query & {
   groupId?: number | string;
   mode?: contestFeatures['mode'];

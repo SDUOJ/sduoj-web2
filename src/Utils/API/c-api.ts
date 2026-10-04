@@ -210,10 +210,6 @@ const cApi = {
   async getQuestionDetail(data: { clarificationId: string }) {
     return request.get('/contest/questionDetail', data);
   },
-  async publicQuestion(data: { clarificationId: string }) {
-    //// TODO 此处正确性未知
-    return request.post('/contest/publicQuestion', data);
-  },
 
   // 公告相关
   async getAnnouncementList(data: announcementListQuery) {

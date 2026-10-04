@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "path": "/manage/contest/publicIt",
+  "request": { "clarificationId": "144", "opt": 1 },
+  "response": { "code": 0, "data": null },
+  "observed": [
+    { "opt": 1, "code": 0, "data": null },
+    { "opt": 0, "code": 0, "data": null }
+  ],
+  "provenance": {
+    "date": "2026-10-04",
+    "environment": "local Java service through development proxy",
+    "requestId": "replaced with a representative decimal ID; no existing question was modified",
+    "cleanup": "created question deleted; complete question list matched the original list"
+  }
+}

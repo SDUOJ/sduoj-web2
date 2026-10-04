@@ -142,6 +142,25 @@ export const requestContracts: RequestContract[] = [
   },
   { match: /^\/contest\/participate$/, fields: { password: c.contest.password } },
   {
+    match: /^\/manage\/contest\/publicIt$/,
+    fields: {
+      clarificationId: {
+        kind: 'integer',
+        required: true,
+        min: 1,
+        max: '9223372036854775807',
+        source: 'ContestPublicDTO @NotNull Long clarificationId',
+      },
+      opt: {
+        kind: 'integer',
+        required: true,
+        values: [0, 1],
+        source: 'ContestPublicDTO @NotNull Integer opt; ContestClarificationDO isPublic',
+      },
+    },
+    requireMissing: true,
+  },
+  {
     match: /^\/contest\/(createQuestion|reply)$/,
     fields: { title: c.contest.questionTitle, message: c.contest.questionMessage },
   },

@@ -2,6 +2,7 @@ import {
   checkPointData,
   contestComprehensiveExportParams,
   contestManagePayload,
+  contestQuestionVisibilityPayload,
   examID,
   groupInfo,
   groupListQuery,
@@ -127,7 +128,6 @@ const mApi = {
   getContest: async function (params: { contestId: number }) {
     return request.get('/manage/contest/query', params);
   },
-  // TODO
   // 更新比赛信息
   updateContest: async function (data: contestManagePayload) {
     return request.post('/manage/contest/update', data);
@@ -136,7 +136,6 @@ const mApi = {
   createContest: async function (data: contestManagePayload) {
     return request.post('/manage/contest/create', data);
   },
-  // TODO
   // 综合报表
   exportComprehensive: async function (data: contestComprehensiveExportParams) {
     return request.downloadFile(
@@ -145,6 +144,9 @@ const mApi = {
       {},
       `${Date.now()}.xlsx`,
     );
+  },
+  publicQuestion: async function (data: contestQuestionVisibilityPayload): Promise<null> {
+    return request.post<null>('/manage/contest/publicIt', data);
   },
   // ----------------- 评测模板相关 -------------------
   // 查询单个评测模板
