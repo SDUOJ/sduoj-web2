@@ -7,6 +7,7 @@ import {
   AuthoringNativePlan,
   AuthoringResource,
 } from '../../../Utils/API/ai-authoring';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-authoring', () => ({
   authoringApi: {
@@ -90,7 +91,8 @@ const resource = (state = 'review'): AuthoringResource => ({
 
 let current: AuthoringResource;
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   jest.clearAllMocks();
   sessionStorage.clear();
   current = resource();
@@ -104,6 +106,10 @@ beforeEach(() => {
     current = resource('approved');
     return { state: 'approved', version: 4 };
   });
+});
+
+afterEach(async () => {
+  await i18n.changeLanguage('zh');
 });
 
 function renderPage() {
@@ -220,4 +226,28 @@ test('shows a recoverable state when the authoring version conflicts', async () 
   expect(screen.getByRole('alert')).toHaveClass('ant-alert-warning');
   fireEvent.click(refresh);
   await waitFor(() => expect(authoringApi.list).toHaveBeenCalledTimes(2));
+});
+
+test('translates the authoring workbench in English', async () => {
+  await i18n.changeLanguage('en');
+  try {
+    renderPage();
+    expect(
+      await screen.findByRole('heading', { name: 'Programming problem authoring' }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Authoring project').length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: /New authoring project/ })).toBeInTheDocument();
+    expect(screen.getByText('Revision 2')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Download authoring package/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Return/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Approve/ })).toBeInTheDocument();
+    expect(screen.getByLabelText('Revision requirements')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Generate revision/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /New authoring project/ }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('Authoring requirements');
+    expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Topics')).toBeInTheDocument();
+  } finally {
+    await i18n.changeLanguage('zh');
+  }
 });
