@@ -102,7 +102,7 @@
 
 ## 未关闭项目
 
-以下说明补充待办表中的证据边界。当前仍未关闭的是 R-04、R-05、R-09、R-12、R-14、R-15、R-21、R-23、R-24、R-31（10 项）；其中 R-09 属于持续迁移，R-14 由改动所有者处理，其余条目需要服务、部署或专项验证。已关闭条目保留后续说明作为实现证据。当前已关闭 32 项，不能将剩余 10 项也视为已通过验收。
+以下说明补充待办表中的证据边界。当前仍未关闭的是 R-04、R-05、R-12、R-14、R-15、R-21、R-23、R-24、R-31（9 项）；R-14 由改动所有者处理，其余条目需要服务、部署或专项验证。已关闭条目保留后续说明作为实现证据。当前已关闭 33 项，不能将剩余 9 项也视为已通过验收。
 
 ### A-19：首屏和编辑器资源体积
 
@@ -114,7 +114,7 @@
 
 ### A-23：真实上传、摄像头和考勤环境
 
-题单拍照、文件提交、AutoLab 签到/签退、座位和外部作业下载目前只有前端边界测试。需要真实接口的成功、失败、取消、重复提交、权限和清理 fixture，并接入 CI 或可复现的 dev 验收环境。
+R-12 已验证既有 ZIP 的真实去重上传与页面缓存命中；题单拍照、AutoLab 签到/签退、座位和外部作业下载仍缺完整真实业务矩阵。需要成功、失败、取消、重复提交、权限和清理 fixture，并接入 CI 或可复现的 dev 验收环境。R-09 的真实 API 契约测试只覆盖读取型 DTO 和既有 fixture，不替代本项的业务生命周期验收。
 
 ### “返回老版”按钮
 
@@ -126,7 +126,7 @@
 
 ### 类型债务与 render-prop / nested-component warning
 
-生产源文件仍有约 1,800 个 `any`（包含测试约 1,875 个）。本轮已收敛 `c-api` 用户账号和文件上传的一小批 payload，并保留契约测试；API envelope、分页、contest/problem set、认证响应和 AI job/resource DTO 仍需逐域收敛。剩余 warning 不能统一视为低风险 render-prop：`SummaryExport` 和 `SubjectiveReview` 的触发器被 `AutoTaskFramework` 当作组件类型渲染，至少应按 R-02 处理；其余 warning 需要按 R-03 逐条确认。
+R-09 已按后端源码和真实接口收敛 API envelope、分页、核心 contest/problem set、认证、文件引用及 AI job/resource DTO；类型契约和运行日志见 `docs/audit/API_TYPE_CONTRACTS.md`。通用请求默认 `unknown`，历史页面与未迁移 CRUD 输入仍有 `any`，不宣称全仓类型债务已消失。R-02 已稳定 `SummaryExport` 和 `SubjectiveReview` 的组件类型；R-03 已区分剩余 render-prop 并清除 warning，当前 lint 为 0 errors/0 warnings。
 
 ### 发布、PWA 与静态资源
 
