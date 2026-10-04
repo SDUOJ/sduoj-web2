@@ -144,3 +144,25 @@ test('preserves typed contest report configuration', async () => {
     ],
   });
 });
+
+test('preserves typed list and detail query parameters', async () => {
+  adapter.onGet('/notice/list').reply(200, success({ rows: [] }));
+  adapter.onGet('/notice/query').reply(200, success({ id: 4 }));
+  adapter.onGet('/submit/list').reply(200, success({ rows: [] }));
+  adapter.onGet('/group/page').reply(200, success({ rows: [] }));
+
+  await cApi.getAnnouncementList({ pageNow: 1, pageSize: 10, title: 'notice' });
+  await cApi.getAnnouncement({ id: 4 });
+  await cApi.getSubmissionList({ pageNow: 1, pageSize: 20, problemCode: 'A' });
+  await cApi.getGroupList({ pageNow: 1, pageSize: 12, isParticipating: '1' });
+
+  expect(adapter.history.get.map(({ url, params }) => ({ url, params }))).toEqual([
+    {
+      url: '/notice/list',
+      params: { pageNow: 1, pageSize: 10, title: 'notice', filter: 'default' },
+    },
+    { url: 'notice/query', params: { id: 4 } },
+    { url: '/submit/list', params: { pageNow: 1, pageSize: 20, problemCode: 'A' } },
+    { url: '/group/page', params: { pageNow: 1, pageSize: 12, isParticipating: '1' } },
+  ]);
+});

@@ -96,6 +96,22 @@ export type problemListQuery = query & {
 
 export type groupListQuery = query & {
   title?: string;
+  isParticipating?: string;
+};
+
+export type announcementListQuery = query & {
+  title?: string;
+};
+
+export type announcementQuery = {
+  id: string | number;
+};
+
+export type submissionListQuery = query & {
+  problemCode?: string;
+  username?: string;
+  language?: string;
+  status?: string;
 };
 
 export type userListQuery = query & {

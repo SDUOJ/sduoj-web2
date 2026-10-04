@@ -17,6 +17,10 @@ import {
   contestSubmissionQuery,
   contestSubmissionPayload,
   contestReportParams,
+  groupListQuery,
+  announcementListQuery,
+  announcementQuery,
+  submissionListQuery,
 } from '../../Type/types';
 import request from './request';
 import apiAddress from './apiAddress';
@@ -193,10 +197,10 @@ const cApi = {
   },
 
   // 公告相关
-  async getAnnouncementList(data: any) {
+  async getAnnouncementList(data: announcementListQuery) {
     return request.get('/notice/list', { ...data, filter: 'default' });
   },
-  async getAnnouncement(data: any) {
+  async getAnnouncement(data: announcementQuery) {
     return request.get('notice/query', data);
   },
 
@@ -207,7 +211,7 @@ const cApi = {
   async getSubmissionInfo(data: { submissionId: string }) {
     return request.get('/submit/query', data);
   },
-  async getSubmissionList(data: any) {
+  async getSubmissionList(data: submissionListQuery) {
     return request.get('/submit/list', data);
   },
   async getACProblem() {
@@ -240,7 +244,7 @@ const cApi = {
   async getMyGroup() {
     return request.get('/group/my');
   },
-  async getGroupList(data: any) {
+  async getGroupList(data: groupListQuery) {
     return request.get('/group/page', data);
   },
   async joinGroupApply(data: { groupId: string }) {
