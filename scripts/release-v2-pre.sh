@@ -48,7 +48,8 @@ plan() {
     test -d '${REMOTE_ROOT}/v2-pre-backup' &&
     test -w '${REMOTE_ROOT}/v2-pre' &&
     test -w '${REMOTE_ROOT}/v2-pre-backup' &&
-    command -v rsync >/dev/null"
+    command -v rsync >/dev/null &&
+    command -v node >/dev/null"
   echo "remote plan OK: ${REMOTE} (${REMOTE_ROOT}/v2-pre)"
   echo "release URL: ${RELEASE_URL}"
   echo "formal /v2 is never touched by this script"
@@ -145,12 +146,26 @@ deploy() {
   smoke
   local release_id="${1:-$(date -u +%Y%m%d%H%M%S)-$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD 2>/dev/null || echo local)}"
   [[ "${release_id}" =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid release id"
+  local source_ref
+  source_ref="$(git -C "${PROJECT_ROOT}" rev-parse HEAD)"
+  [[ "${source_ref}" =~ ^[a-f0-9]{40}$ ]] || die "invalid source ref"
+  node "${PROJECT_ROOT}/scripts/release-artifact.cjs" verify "${PROJECT_ROOT}/build" "${source_ref}" /v2-pre/
   local stage=".v2-pre-release-${release_id}"
+  local validator=".v2-pre-validator-${release_id}.cjs"
   ssh_run "install -d -m 0755 '${REMOTE_ROOT}/${stage}'"
   if ! rsync_remote "${PROJECT_ROOT}/build/" "${REMOTE}:${REMOTE_ROOT}/${stage}/"; then
     ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'" || true
     die "staging rsync failed; formal /v2 was not touched"
   fi
+  if ! rsync_remote "${PROJECT_ROOT}/scripts/release-artifact.cjs" "${REMOTE}:${REMOTE_ROOT}/${validator}"; then
+    ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'" || true
+    die "validator upload failed; current release was not touched"
+  fi
+  if ! ssh_run "node '${REMOTE_ROOT}/${validator}' verify '${REMOTE_ROOT}/${stage}' '${source_ref}' /v2-pre/ > '${REMOTE_ROOT}/.v2-pre-validation-${release_id}.json'"; then
+    ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'; rm -f '${REMOTE_ROOT}/${validator}'" || true
+    die "staged artifact validation failed; current release was not touched"
+  fi
+  ssh_run "rm -f '${REMOTE_ROOT}/${validator}'"
   if ! remote_apply "${release_id}"; then
     ssh_run "rm -rf '${REMOTE_ROOT}/${stage}'" || true
     die "remote apply failed; formal /v2 was not touched"

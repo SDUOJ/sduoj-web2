@@ -26,6 +26,9 @@ jobs:
       - run: yarn quality
       - run: yarn build
       - run: yarn bundle:check
+      - run: yarn test:artifact
+      - name: Verify release artifact
+        run: yarn --silent artifact:verify build "$GITHUB_SHA" /v2/ > artifact-verification.json
       - run: yarn playwright install --with-deps chromium firefox webkit
       - run: yarn test:e2e
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -35,6 +38,7 @@ jobs:
           path: |
             coverage/
             dependency-audit.json
+            artifact-verification.json
             playwright-report/
             test-results/
           retention-days: 14
