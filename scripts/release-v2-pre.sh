@@ -125,7 +125,7 @@ cat > "\$root/rollback-v2-pre.sh" <<'ROLLBACK'
 #!/usr/bin/env bash
 set -Eeuo pipefail
 root="/opt/1panel/www/sites/oj.qd.sdu.edu.cn/index"
-test -s "\$root/v2-pre-backup/index.html"
+test -s "$root/v2-pre-backup/index.html"
 rsync -rlptDc --delete --no-owner --no-group "$root/v2-pre-backup/" "$root/v2-pre/"
 test -s "$root/v2-pre/index.html"
 grep -q '/v2-pre/' "$root/v2-pre/index.html"
