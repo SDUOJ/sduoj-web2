@@ -153,7 +153,7 @@ export default function ExaminationWorkbench({ location }: { location?: { search
     setBindingCourse(selected.course_binding?.course_id || row.course_id || null);
   }
   const requireReason = () => {
-    if (!reason.trim()) throw new Error('请填写操作依据');
+    if (!reason.trim()) throw new Error(t('aiExamReasonRequired'));
   };
   return (
     <main className="ai-workspace">
@@ -248,25 +248,29 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                   })
                 }
               >
-                <Form.Item name="title" label="考试名称" rules={[{ required: true }]}>
+                <Form.Item name="title" label={t('aiExamName')} rules={[{ required: true }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item name="course_id" label="专用考试课程 ID" rules={[{ required: true }]}>
+                <Form.Item
+                  name="course_id"
+                  label={t('aiExamDedicatedCourse')}
+                  rules={[{ required: true }]}
+                >
                   <InputNumber min={1} />
                 </Form.Item>
-                <Form.Item name="mode" label="模式">
+                <Form.Item name="mode" label={t('aiExamMode')}>
                   <Select
                     options={[
-                      { value: 'TEST', label: 'TEST 演练' },
-                      { value: 'FORMAL', label: 'FORMAL 正式' },
+                      { value: 'TEST', label: t('aiExamTestMode') },
+                      { value: 'FORMAL', label: t('aiExamFormalMode') },
                     ]}
                   />
                 </Form.Item>
-                <Form.Item name="roster" label="考生名单 CSV" rules={[{ required: true }]}>
-                  <Input.TextArea rows={7} placeholder="学号,姓名,OJ用户名" />
+                <Form.Item name="roster" label={t('aiExamRoster')} rules={[{ required: true }]}>
+                  <Input.TextArea rows={7} placeholder={t('aiExamRosterHint')} />
                 </Form.Item>
                 <Button type="primary" icon={<PlusOutlined />} htmlType="submit" loading={busy}>
-                  创建并编排
+                  {t('aiExamCreatePlan')}
                 </Button>
               </Form>
             </Modal>
@@ -293,19 +297,19 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                   }
                   message={
                     data?.native_psid
-                      ? `已发布到 OJ 题单 ${data.native_psid}`
+                      ? t('aiExamPublishedTo', { psid: data.native_psid })
                       : current.state === 'approved'
-                        ? '当前冻结版本已批准，发布前仍会校验内容哈希'
+                        ? t('aiExamApprovedDescription')
                         : data?.publication_plan
-                          ? '发布内容已冻结，等待教师复核'
+                          ? t('aiExamFrozenDescription')
                           : data?.candidate
-                            ? '座位编排已生成，正式成绩和原生座位尚未变更'
-                            : '等待座位编排任务完成'
+                            ? t('aiExamPlannedDescription')
+                            : t('aiExamPlanningDescription')
                   }
                 />
                 <Input.TextArea
-                  aria-label="操作依据"
-                  placeholder="操作依据"
+                  aria-label={t('aiExamOperationReason')}
+                  placeholder={t('aiExamOperationReason')}
                   value={reason}
                   onChange={(event) => setReason(event.target.value)}
                   rows={2}
@@ -340,18 +344,22 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                           validated_test_id: values.validated_test_id,
                         });
                         await refreshCurrent();
-                        setNotice('发布内容已准备，等待复核');
+                        setNotice(t('aiExamPreparedNotice'));
                       })
                     }
                   >
                     <Form.Item
                       name="groupId"
-                      label="考生 OJ 用户组 ID"
+                      label={t('aiExamCandidateGroup')}
                       rules={[{ required: true }]}
                     >
                       <InputNumber min={1} />
                     </Form.Item>
-                    <Form.Item name="time" label="考试起止时间" rules={[{ required: true }]}>
+                    <Form.Item
+                      name="time"
+                      label={t('aiExamTimeRange')}
+                      rules={[{ required: true }]}
+                    >
                       <DatePicker.RangePicker showTime style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.List name="groupInfo">
@@ -361,27 +369,27 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                             <Space key={field.key} align="start" wrap>
                               <Form.Item
                                 name={[field.name, 'gid']}
-                                label="题组 ID"
+                                label={t('aiExamQuestionGroupId')}
                                 rules={[{ required: true }]}
                               >
                                 <InputNumber min={1} />
                               </Form.Item>
                               <Form.Item
                                 name={[field.name, 'name']}
-                                label="题组名称"
+                                label={t('aiExamQuestionGroupName')}
                                 rules={[{ required: true }]}
                               >
                                 <Input />
                               </Form.Item>
                               <Form.Item
                                 name={[field.name, 'score']}
-                                label="分值"
+                                label={t('aiExamScore')}
                                 rules={[{ required: true }]}
                               >
                                 <InputNumber min={0} />
                               </Form.Item>
                               <Button danger onClick={() => remove(field.name)}>
-                                移除
+                                {t('aiExamRemoveGroup')}
                               </Button>
                             </Space>
                           ))}
@@ -389,7 +397,7 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                             icon={<PlusOutlined />}
                             onClick={() => add({ name: '', score: 100 })}
                           >
-                            添加题组
+                            {t('aiExamAddGroup')}
                           </Button>
                         </>
                       )}
@@ -397,14 +405,14 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                     {data?.mode === 'FORMAL' && (
                       <Form.Item
                         name="validated_test_id"
-                        label="已验证 TEST 资源 ID"
+                        label={t('aiExamVerifiedTestResource')}
                         rules={[{ required: true }]}
                       >
                         <Input />
                       </Form.Item>
                     )}
                     <Button htmlType="submit" icon={<SaveOutlined />} loading={busy}>
-                      准备发布内容
+                      {t('aiExamPrepare')}
                     </Button>
                   </Form>
                 )}
@@ -424,7 +432,7 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                         })
                       }
                     >
-                      批准当前版本
+                      {t('aiExamApprove')}
                     </Button>
                   )}
                   {data?.mode === 'FORMAL' && !data?.native_psid && (
@@ -432,7 +440,7 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                       checked={formalAck}
                       onChange={(event) => setFormalAck(event.target.checked)}
                     >
-                      确认发布正式考试
+                      {t('aiExamConfirmPublication')}
                     </Checkbox>
                   )}
                   {!data?.native_psid && (
@@ -452,11 +460,11 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                             formal_ack: formalAck,
                           });
                           await refreshCurrent();
-                          setNotice('考试已录入原生 OJ');
+                          setNotice(t('aiExamPublishedNotice'));
                         })
                       }
                     >
-                      发布到 OJ
+                      {t('aiExamPublish')}
                     </Button>
                   )}
                   {!!data?.native_psid && data.mode === 'TEST' && (
@@ -470,11 +478,11 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                             reason,
                           });
                           await refreshCurrent();
-                          setNotice('TEST 验证已记录');
+                          setNotice(t('aiExamTestValidatedNotice'));
                         })
                       }
                     >
-                      验证 TEST 交卷
+                      {t('aiExamValidateTest')}
                     </Button>
                   )}
                 </Space>
@@ -483,18 +491,18 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                     size="small"
                     bordered
                     column={{ xs: 1, sm: 2 }}
-                    title="TEST 验证证书"
+                    title={t('aiExamTestCertificate')}
                   >
-                    <Descriptions.Item label="完成答题卡">
+                    <Descriptions.Item label={t('aiExamCompletedAnswerSheets')}>
                       {data.validation_certificate.completed_sheets}
                     </Descriptions.Item>
-                    <Descriptions.Item label="验证人">
+                    <Descriptions.Item label={t('aiExamValidator')}>
                       {data.validation_certificate.actor_id}
                     </Descriptions.Item>
-                    <Descriptions.Item label="验证时间">
+                    <Descriptions.Item label={t('aiExamValidationTime')}>
                       {new Date(data.validation_certificate.at).toLocaleString()}
                     </Descriptions.Item>
-                    <Descriptions.Item label="验证依据">
+                    <Descriptions.Item label={t('aiExamValidationReason')}>
                       {data.validation_certificate.reason}
                     </Descriptions.Item>
                   </Descriptions>
@@ -505,21 +513,21 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                     pagination={{ pageSize: 10, showSizeChanger: false }}
                     dataSource={plannedRows}
                     columns={[
-                      { title: '用户名', dataIndex: 'username' },
-                      { title: '姓名', dataIndex: 'name' },
-                      { title: '考场', dataIndex: 'room' },
-                      { title: '座位', dataIndex: 'seat' },
+                      { title: t('aiExamUsername'), dataIndex: 'username' },
+                      { title: t('aiExamCandidateName'), dataIndex: 'name' },
+                      { title: t('aiExamRoom'), dataIndex: 'room' },
+                      { title: t('aiExamSeat'), dataIndex: 'seat' },
                     ]}
                   />
                 )}
                 {!data?.native_psid && data?.candidate && !plannedRows.length && (
-                  <Empty description="编排未生成可用座位，请检查考场容量与名单" />
+                  <Empty description={t('aiExamNoSeats')} />
                 )}
                 {!!data?.native_psid && (
                   <>
                     <Space wrap style={{ marginTop: 24 }}>
                       <InputNumber
-                        aria-label="座位课程 ID"
+                        aria-label={t('aiExamSeatCourse')}
                         min={1}
                         value={bindingCourse}
                         onChange={setBindingCourse}
@@ -528,7 +536,7 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                         checked={replaceSeats}
                         onChange={(event) => setReplaceSeats(event.target.checked)}
                       >
-                        替换现有考试座位
+                        {t('aiExamReplaceSeats')}
                       </Checkbox>
                       <Button
                         icon={<SaveOutlined />}
@@ -544,11 +552,11 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                               replace_existing: replaceSeats,
                             });
                             await refreshCurrent();
-                            setNotice('座位已写入原生课程');
+                            setNotice(t('aiExamSeatsBoundNotice'));
                           })
                         }
                       >
-                        绑定原生座位
+                        {t('aiExamBindSeats')}
                       </Button>
                       <Button
                         icon={<UndoOutlined />}
@@ -562,35 +570,41 @@ export default function ExaminationWorkbench({ location }: { location?: { search
                               reason,
                             });
                             await refreshCurrent();
-                            setNotice('座位已恢复');
+                            setNotice(t('aiExamSeatsRestoredNotice'));
                           })
                         }
                       >
-                        恢复绑定前座位
+                        {t('aiExamRestoreSeats')}
                       </Button>
                       <Button
                         icon={<DownloadOutlined />}
                         href={`${service.defaults.baseURL}${base}/exams/${current.id}/roster.csv`}
                       >
-                        导出名单
+                        {t('aiExamExportRoster')}
                       </Button>
                     </Space>
                     <Space wrap style={{ marginTop: 16 }}>
-                      <Tag color="green">已交卷 {submitted}</Tag>
-                      <Tag color="gold">进行中 {working}</Tag>
-                      <Tag>未开始 {Math.max(0, rows.length - submitted - working)}</Tag>
+                      <Tag color="green">
+                        {t('aiExamSubmitted')} {submitted}
+                      </Tag>
+                      <Tag color="gold">
+                        {t('aiExamWorking')} {working}
+                      </Tag>
+                      <Tag>
+                        {t('aiExamNotStarted')} {Math.max(0, rows.length - submitted - working)}
+                      </Tag>
                     </Space>
                     <Table
                       rowKey="username"
                       scroll={{ x: 600 }}
                       dataSource={rows}
                       columns={[
-                        { title: '用户名', dataIndex: 'username' },
-                        { title: '姓名', dataIndex: 'name' },
-                        { title: '考场', dataIndex: 'room' },
-                        { title: '座位', dataIndex: 'seat' },
+                        { title: t('aiExamUsername'), dataIndex: 'username' },
+                        { title: t('aiExamCandidateName'), dataIndex: 'name' },
+                        { title: t('aiExamRoom'), dataIndex: 'room' },
+                        { title: t('aiExamSeat'), dataIndex: 'seat' },
                         {
-                          title: '交卷',
+                          title: t('aiExamSubmission'),
                           dataIndex: 'submission',
                           render: (value: string) => submissionLabels[value] || value,
                         },

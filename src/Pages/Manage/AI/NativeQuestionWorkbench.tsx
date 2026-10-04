@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -27,6 +28,7 @@ export default function NativeQuestionWorkbench({
 }: {
   onSaved?: (groups: Group[]) => void;
 }) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [sourceForm] = Form.useForm();
   const [busy, setBusy] = useState(false);
@@ -76,7 +78,7 @@ export default function NativeQuestionWorkbench({
     setError('');
     setGroups([]);
     try {
-      if (!values.text?.trim() && !files.length) throw new Error('请填写原文或选择文件');
+      if (!values.text?.trim() && !files.length) throw new Error(t('aiNativeMissingSource'));
       const payload = JSON.stringify([values, files.map((f) => [f.name, f.size, f.lastModified])]);
       if (sourceIntent.current.payload && sourceIntent.current.payload !== payload)
         sourceIntent.current.key = operationKey();
@@ -101,15 +103,13 @@ export default function NativeQuestionWorkbench({
   }
   return (
     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-      <Typography.Text type="secondary">
-        按录入批次建立题组。保存后即可在原有题组列表中编辑、组卷和使用；混合题型按客观题、主观题分别成组。
-      </Typography.Text>
+      <Typography.Text type="secondary">{t('aiNativeDescription')}</Typography.Text>
       {error && <Alert type="error" showIcon message={error} />}
       {groups.length > 0 && (
         <Alert
           type="success"
           showIcon
-          message="题组已保存"
+          message={t('aiNativeSaved')}
           description={groups.map((g) => `${g.name}（#${g.gid}）`).join('、')}
         />
       )}
@@ -117,13 +117,13 @@ export default function NativeQuestionWorkbench({
         items={[
           {
             key: 'manual',
-            label: '手工录入',
+            label: t('aiNativeManual'),
             children: (
               <Form
                 form={form}
                 layout="vertical"
                 initialValues={{
-                  title: '录入批次',
+                  title: t('aiNativeBatch'),
                   score: 10,
                   questions: [{ type: 'short_answer', text: '', answer: '' }],
                 }}
@@ -131,12 +131,16 @@ export default function NativeQuestionWorkbench({
               >
                 <Form.Item
                   name="title"
-                  label="批次名称"
+                  label={t('aiNativeBatchName')}
                   rules={[{ required: true, whitespace: true, max: 55 }]}
                 >
                   <Input maxLength={55} />
                 </Form.Item>
-                <Form.Item name="score" label="每题默认分值" rules={[{ required: true }]}>
+                <Form.Item
+                  name="score"
+                  label={t('aiNativeDefaultScore')}
+                  rules={[{ required: true }]}
+                >
                   <InputNumber min={0} max={10000} />
                 </Form.Item>
                 <Form.List name="questions">
@@ -146,12 +150,12 @@ export default function NativeQuestionWorkbench({
                         <Card
                           key={field.key}
                           size="small"
-                          title={`第 ${index + 1} 题`}
+                          title={t('aiNativeQuestionNumber', { number: index + 1 })}
                           style={{ marginBottom: 12 }}
                           extra={
                             fields.length > 1 && (
                               <Button
-                                aria-label={`删除第 ${index + 1} 题`}
+                                aria-label={t('aiNativeDeleteQuestion', { number: index + 1 })}
                                 icon={<MinusCircleOutlined />}
                                 onClick={() => remove(field.name)}
                               />
@@ -160,24 +164,24 @@ export default function NativeQuestionWorkbench({
                         >
                           <Form.Item
                             name={[field.name, 'type']}
-                            label="题型"
+                            label={t('aiNativeType')}
                             rules={[{ required: true }]}
                           >
                             <Select
                               options={[
-                                { value: 'single_choice', label: '单选题' },
-                                { value: 'multiple_choice', label: '多选题' },
-                                { value: 'true_false', label: '判断题' },
-                                { value: 'short_answer', label: '主观题' },
+                                { value: 'single_choice', label: t('aiNativeSingleChoice') },
+                                { value: 'multiple_choice', label: t('aiNativeMultipleChoice') },
+                                { value: 'true_false', label: t('aiNativeTrueFalse') },
+                                { value: 'short_answer', label: t('aiNativeSubjective') },
                               ]}
                             />
                           </Form.Item>
                           <Form.Item
                             name={[field.name, 'text']}
-                            label="题目内容"
+                            label={t('aiNativeContent')}
                             rules={[{ required: true, whitespace: true }]}
                           >
-                            <Input.TextArea rows={4} placeholder="支持 Markdown 和数学公式" />
+                            <Input.TextArea rows={4} placeholder={t('aiNativeMarkdownHint')} />
                           </Form.Item>
                           <Form.Item
                             noStyle
@@ -191,7 +195,7 @@ export default function NativeQuestionWorkbench({
                               ) ? (
                                 <Form.Item
                                   name={[field.name, 'options']}
-                                  label="选项（每行一项，自动编号 A、B…）"
+                                  label={t('aiNativeOptions')}
                                   rules={[{ required: true }]}
                                 >
                                   <Input.TextArea rows={4} />
@@ -199,11 +203,8 @@ export default function NativeQuestionWorkbench({
                               ) : null
                             }
                           </Form.Item>
-                          <Form.Item name={[field.name, 'answer']} label="参考答案">
-                            <Input.TextArea
-                              rows={2}
-                              placeholder="选择题填写 A 或 A,B；判断题填写正确或错误"
-                            />
+                          <Form.Item name={[field.name, 'answer']} label={t('aiNativeAnswer')}>
+                            <Input.TextArea rows={2} placeholder={t('aiNativeAnswerHint')} />
                           </Form.Item>
                         </Card>
                       ))}
@@ -212,14 +213,14 @@ export default function NativeQuestionWorkbench({
                         icon={<PlusOutlined />}
                         onClick={() => add({ type: 'short_answer', text: '', answer: '' })}
                       >
-                        添加题目
+                        {t('aiNativeAdd')}
                       </Button>
                     </>
                   )}
                 </Form.List>
                 <Form.Item style={{ marginTop: 16 }}>
                   <Button type="primary" htmlType="submit" loading={busy}>
-                    保存到题组
+                    {t('aiNativeSave')}
                   </Button>
                 </Form.Item>
               </Form>
@@ -227,22 +228,22 @@ export default function NativeQuestionWorkbench({
           },
           {
             key: 'recognize',
-            label: '文字 / 文件识别',
+            label: t('aiNativeRecognize'),
             children: (
               <Form
                 form={sourceForm}
                 layout="vertical"
                 onFinish={recognize}
-                initialValues={{ title: '识别录入批次' }}
+                initialValues={{ title: t('aiNativeRecognitionBatch') }}
               >
                 <Form.Item
                   name="title"
-                  label="批次名称"
+                  label={t('aiNativeBatchName')}
                   rules={[{ required: true, whitespace: true, max: 55 }]}
                 >
                   <Input maxLength={55} />
                 </Form.Item>
-                <Form.Item name="text" label="原始题目">
+                <Form.Item name="text" label={t('aiNativeSource')}>
                   <Input.TextArea rows={8} />
                 </Form.Item>
                 <Upload
@@ -258,13 +259,13 @@ export default function NativeQuestionWorkbench({
                     );
                   }}
                 >
-                  <Button icon={<UploadOutlined />}>选择文件或照片</Button>
+                  <Button icon={<UploadOutlined />}>{t('aiNativeSelectFiles')}</Button>
                 </Upload>
                 <Typography.Paragraph type="secondary" style={{ marginTop: 12 }}>
-                  识别完成后自动保存到题组。模型未配置时可使用手工录入。
+                  {t('aiNativeRecognitionHint')}
                 </Typography.Paragraph>
                 <Button type="primary" htmlType="submit" loading={busy}>
-                  识别并保存到题组
+                  {t('aiNativeRecognizeSave')}
                 </Button>
               </Form>
             ),

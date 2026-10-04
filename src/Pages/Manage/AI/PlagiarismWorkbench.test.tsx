@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import PlagiarismWorkbench from './PlagiarismWorkbench';
 import { plagiarismApi, PlagiarismResource } from '../../../Utils/API/ai-plagiarism';
+import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-plagiarism', () => ({
   plagiarismApi: {
@@ -66,7 +67,8 @@ const resource = (reviewed = false): PlagiarismResource => ({
 
 let current: PlagiarismResource;
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   jest.clearAllMocks();
   current = resource(false);
   (plagiarismApi.list as jest.Mock).mockImplementation(async () => ({

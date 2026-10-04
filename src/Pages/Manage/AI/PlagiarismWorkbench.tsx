@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -35,26 +36,26 @@ import AIWorkspaceNav from './AIWorkspaceNav';
 import './plagiarism-workbench.css';
 
 const decisionLabels: Record<PlagiarismDecision, string> = {
-  CLEAR: '排除',
-  SUSPICIOUS: '存疑',
-  CONFIRMED: '确认',
+  CLEAR: 'aiPlagiarismClear',
+  SUSPICIOUS: 'aiPlagiarismSuspicious',
+  CONFIRMED: 'aiPlagiarismConfirmed',
 };
 
 const jobLabels: Record<PlagiarismJob['status'], string> = {
-  pending: '排队中',
-  blocked: '等待账户或额度恢复',
-  running: '分析中',
-  success: '候选已生成',
-  failed: '任务失败',
-  cancelled: '任务已取消',
+  pending: 'aiPlagiarismPending',
+  blocked: 'aiPlagiarismBlocked',
+  running: 'aiPlagiarismRunning',
+  success: 'aiPlagiarismSuccess',
+  failed: 'aiPlagiarismFailed',
+  cancelled: 'aiPlagiarismCancelled',
 };
 
 const resourceStateLabels: Record<string, string> = {
-  draft: '草稿',
-  pending: '分析中',
-  review: '待复核',
-  adopted: '已写入 OJ',
-  failed: '失败',
+  draft: 'aiPlagiarismDraft',
+  pending: 'aiPlagiarismRunning',
+  review: 'aiPlagiarismReview',
+  adopted: 'aiPlagiarismAdopted',
+  failed: 'aiPlagiarismFailure',
 };
 
 const operationKey = () =>
@@ -64,6 +65,7 @@ const operationKey = () =>
     : Date.now() + '-' + Math.random().toString(16).slice(2));
 
 export default function PlagiarismWorkbench() {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<PlagiarismResource[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [resource, setResource] = useState<PlagiarismResource | null>(null);
@@ -125,9 +127,9 @@ export default function PlagiarismWorkbench() {
         setActiveJob(value);
         if (value.status === 'success' && selectedId) {
           await loadResource(selectedId);
-          setNotice('查重候选已生成');
+          setNotice(t('aiPlagiarismGeneratedNotice'));
         }
-        if (value.status === 'failed') setError(value.error || '查重任务失败');
+        if (value.status === 'failed') setError(value.error || t('aiPlagiarismFailureNotice'));
       } catch (reason) {
         if (!cancelled) setError(String(reason));
       }
@@ -136,7 +138,7 @@ export default function PlagiarismWorkbench() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [activeJob, loadResource, selectedId]);
+  }, [activeJob, loadResource, selectedId, t]);
 
   const pairs = resource?.data.candidate?.pairs || [];
   const reviewedCount = pairs.filter((pair) => Boolean(pair.decisions?.length)).length;
@@ -209,7 +211,7 @@ export default function PlagiarismWorkbench() {
       await loadResource(resource.id);
       setWritebackOpen(false);
       writebackForm.resetFields();
-      setNotice('已写入 ' + result.updated + ' 份 OJ 答题记录');
+      setNotice(t('aiPlagiarismWrittenNotice', { count: result.updated }));
     } catch (reason) {
       setError(String(reason));
     } finally {
@@ -227,7 +229,7 @@ export default function PlagiarismWorkbench() {
         <Layout className="ai-plagiarism-workbench">
           <header className="ai-plagiarism-header">
             <div>
-              <Typography.Title level={3}>代码查重</Typography.Title>
+              <Typography.Title level={3}>{t('aiPlagiarismTitle')}</Typography.Title>
               {activeJob && (
                 <Tag
                   color={
@@ -238,19 +240,19 @@ export default function PlagiarismWorkbench() {
                         : 'processing'
                   }
                 >
-                  {jobLabels[activeJob.status]}
+                  {t(jobLabels[activeJob.status])}
                 </Tag>
               )}
             </div>
             <Space wrap>
               <Button
                 icon={<ReloadOutlined />}
-                aria-label="刷新"
+                aria-label={t('aiPlagiarismRefresh')}
                 loading={loading}
                 onClick={() => void load()}
               />
               <Button type="primary" icon={<PlusOutlined />} onClick={() => setScanOpen(true)}>
-                新建
+                {t('aiPlagiarismNew')}
               </Button>
             </Space>
           </header>
@@ -261,13 +263,17 @@ export default function PlagiarismWorkbench() {
             dataSource={resources}
             pagination={{ pageSize: 10 }}
             columns={[
-              { title: '查重记录', render: (_, row) => row.data.title || row.id },
+              { title: t('aiPlagiarismRecord'), render: (_, row) => row.data.title || row.id },
               {
-                title: '状态',
-                render: (_, row) => <Tag>{resourceStateLabels[row.state] || row.state}</Tag>,
+                title: t('aiPlagiarismStatus'),
+                render: (_, row) => (
+                  <Tag>
+                    {resourceStateLabels[row.state] ? t(resourceStateLabels[row.state]) : row.state}
+                  </Tag>
+                ),
               },
               {
-                title: '操作',
+                title: t('aiPlagiarismActions'),
                 render: (_, row) => (
                   <Button
                     type="link"
@@ -276,7 +282,7 @@ export default function PlagiarismWorkbench() {
                       void loadResource(row.id).catch((reason) => setError(String(reason)));
                     }}
                   >
-                    查看
+                    {t('aiPlagiarismView')}
                   </Button>
                 ),
               },
@@ -298,16 +304,16 @@ export default function PlagiarismWorkbench() {
             <Alert
               type="warning"
               showIcon
-              message="查重任务暂时阻塞"
-              description="账户、并发或额度恢复后任务会继续排队，当前快照不会改变。"
+              message={t('aiPlagiarismBlockedTitle')}
+              description={t('aiPlagiarismBlockedDescription')}
             />
           )}
           {['failed', 'cancelled'].includes(activeJob?.status || '') && (
             <Alert
               type="error"
               showIcon
-              message={jobLabels[activeJob!.status]}
-              description={activeJob?.error || '当前任务没有生成可复核候选，请重新发起查重。'}
+              message={t(jobLabels[activeJob!.status])}
+              description={activeJob?.error || t('aiPlagiarismNoCandidates')}
             />
           )}
 
@@ -317,50 +323,58 @@ export default function PlagiarismWorkbench() {
                 <Space size="large" wrap>
                   <Typography.Text strong>{resource.data.title || resource.id}</Typography.Text>
                   <Typography.Text>
-                    快照 {resource.data.native_snapshot?.count || 0} 份
+                    {t('aiPlagiarismSnapshot')} {resource.data.native_snapshot?.count || 0}{' '}
+                    {t('aiPlagiarismSubmissions')}
                   </Typography.Text>
                   <Typography.Text>
-                    候选 {candidate?.candidate_count ?? pairs.length} 对
+                    {t('aiPlagiarismCandidate')} {candidate?.candidate_count ?? pairs.length}{' '}
+                    {t('aiPlagiarismPairs')}
                   </Typography.Text>
-                  <Typography.Text>已复核 {reviewedCount} 对</Typography.Text>
-                  <Tag>{resourceStateLabels[resource.state] || resource.state}</Tag>
+                  <Typography.Text>
+                    {t('aiPlagiarismReviewed')} {reviewedCount} {t('aiPlagiarismPairs')}
+                  </Typography.Text>
+                  <Tag>
+                    {resourceStateLabels[resource.state]
+                      ? t(resourceStateLabels[resource.state])
+                      : resource.state}
+                  </Tag>
                 </Space>
                 <Space wrap>
                   {candidate?.report && (
                     <Button
                       icon={<DownloadOutlined />}
-                      aria-label="下载报告"
+                      aria-label={t('aiPlagiarismDownload')}
                       onClick={() => void plagiarismApi.downloadReport(resource.id)}
                     >
-                      下载报告
+                      {t('aiPlagiarismDownload')}
                     </Button>
                   )}
                   <Button
                     type="primary"
                     icon={<DatabaseOutlined />}
-                    aria-label="写入 OJ"
+                    aria-label={t('aiPlagiarismWriteback')}
                     disabled={!allReviewed || resource.state === 'adopted'}
                     onClick={() => setWritebackOpen(true)}
                   >
-                    写入 OJ
+                    {t('aiPlagiarismWriteback')}
                   </Button>
                 </Space>
               </section>
 
               {resource.data.native_snapshot && (
                 <Descriptions size="small" bordered column={{ xs: 1, sm: 2, lg: 4 }}>
-                  <Descriptions.Item label="题单">
+                  <Descriptions.Item label={t('aiPlagiarismProblemSet')}>
                     {resource.data.native_snapshot.psid}
                   </Descriptions.Item>
-                  <Descriptions.Item label="题组 / 题目">
+                  <Descriptions.Item label={t('aiPlagiarismGroupProblem')}>
                     {resource.data.native_snapshot.group_id} / {resource.data.native_snapshot.pid}
                   </Descriptions.Item>
-                  <Descriptions.Item label="提交选择">
+                  <Descriptions.Item label={t('aiPlagiarismSelection')}>
                     {resource.data.native_snapshot.selection_policy === 'best'
-                      ? '最高分提交'
-                      : '最后提交'}
+                      ? t('aiPlagiarismBest')
+                      : t('aiPlagiarismLatest')}
                   </Descriptions.Item>
-                  <Descriptions.Item label="快照摘要">
+                  <Descriptions.Item label={t('aiPlagiarismDigest')}>
                     {resource.data.native_snapshot.sha256.slice(0, 12)}
                   </Descriptions.Item>
                 </Descriptions>
@@ -375,7 +389,7 @@ export default function PlagiarismWorkbench() {
                     scroll={{ x: 880 }}
                     columns={[
                       {
-                        title: '提交双方',
+                        title: t('aiPlagiarismParticipants'),
                         key: 'users',
                         width: 220,
                         render: (_, pair) => (
@@ -386,7 +400,7 @@ export default function PlagiarismWorkbench() {
                         ),
                       },
                       {
-                        title: '相似度',
+                        title: t('aiPlagiarismSimilarity'),
                         dataIndex: 'similarity',
                         width: 180,
                         render: (value: number) => (
@@ -398,33 +412,38 @@ export default function PlagiarismWorkbench() {
                         ),
                       },
                       {
-                        title: '分析',
+                        title: t('aiPlagiarismAnalysis'),
                         key: 'review',
                         render: (_, pair) =>
                           pair.review?.answer ||
-                          (pair.review_status === 'manual' ? '人工复核' : '待分析'),
+                          (pair.review_status === 'manual'
+                            ? t('aiPlagiarismHumanReview')
+                            : t('aiPlagiarismAwaitingAnalysis')),
                       },
                       {
-                        title: '结论',
+                        title: t('aiPlagiarismDecision'),
                         key: 'decision',
                         width: 100,
                         render: (_, pair) => {
                           const latest = pair.decisions?.[pair.decisions.length - 1];
                           return latest ? (
-                            <Tag>{decisionLabels[latest.decision]}</Tag>
+                            <Tag>{t(decisionLabels[latest.decision])}</Tag>
                           ) : (
-                            <Tag>待复核</Tag>
+                            <Tag>{t('aiPlagiarismReview')}</Tag>
                           );
                         },
                       },
                       {
-                        title: '操作',
+                        title: t('aiPlagiarismActions'),
                         key: 'action',
                         width: 100,
                         render: (_, pair) => (
                           <Button
                             icon={<AuditOutlined />}
-                            aria-label={'复核 ' + pair.left + ' ' + pair.right}
+                            aria-label={t('aiPlagiarismReviewPair', {
+                              left: pair.left,
+                              right: pair.right,
+                            })}
                             disabled={resource.state === 'adopted'}
                             onClick={() => {
                               setReviewing(pair);
@@ -434,25 +453,29 @@ export default function PlagiarismWorkbench() {
                               );
                             }}
                           >
-                            复核
+                            {t('aiPlagiarismReviewAction')}
                           </Button>
                         ),
                       },
                     ]}
                   />
                 ) : (
-                  <Empty description="未发现超过阈值的候选" />
+                  <Empty description={t('aiPlagiarismNoMatches')} />
                 )
               ) : (
-                <Empty description={activeJob ? '查重任务执行中' : '尚未执行查重'} />
+                <Empty
+                  description={
+                    activeJob ? t('aiPlagiarismInProgress') : t('aiPlagiarismNotStarted')
+                  }
+                />
               )}
             </>
           ) : (
-            <Empty description="暂无查重记录" />
+            <Empty description={t('aiPlagiarismEmpty')} />
           )}
 
           <Modal
-            title="新建原生 OJ 查重"
+            title={t('aiPlagiarismCreate')}
             open={scanOpen}
             onCancel={() => !busy && setScanOpen(false)}
             onOk={() => void createScan()}
@@ -464,22 +487,38 @@ export default function PlagiarismWorkbench() {
               layout="vertical"
               initialValues={{ language: 'cpp', threshold: 0.7, selectionPolicy: 'latest' }}
             >
-              <Form.Item name="title" label="名称" rules={[{ required: true }]}>
+              <Form.Item name="title" label={t('aiPlagiarismName')} rules={[{ required: true }]}>
                 <Input maxLength={128} />
               </Form.Item>
               <div className="ai-plagiarism-form-grid">
-                <Form.Item name="psid" label="题单 ID" rules={[{ required: true }]}>
+                <Form.Item
+                  name="psid"
+                  label={t('aiPlagiarismProblemSetId')}
+                  rules={[{ required: true }]}
+                >
                   <InputNumber min={1} />
                 </Form.Item>
-                <Form.Item name="groupId" label="题组 ID" rules={[{ required: true }]}>
+                <Form.Item
+                  name="groupId"
+                  label={t('aiPlagiarismGroupId')}
+                  rules={[{ required: true }]}
+                >
                   <InputNumber min={1} />
                 </Form.Item>
-                <Form.Item name="pid" label="题目 ID" rules={[{ required: true }]}>
+                <Form.Item
+                  name="pid"
+                  label={t('aiPlagiarismProblemId')}
+                  rules={[{ required: true }]}
+                >
                   <InputNumber min={1} />
                 </Form.Item>
               </div>
               <div className="ai-plagiarism-form-grid ai-plagiarism-form-grid-two">
-                <Form.Item name="language" label="语言" rules={[{ required: true }]}>
+                <Form.Item
+                  name="language"
+                  label={t('aiPlagiarismLanguage')}
+                  rules={[{ required: true }]}
+                >
                   <Select
                     options={[
                       { value: 'c', label: 'C' },
@@ -489,23 +528,31 @@ export default function PlagiarismWorkbench() {
                     ]}
                   />
                 </Form.Item>
-                <Form.Item name="selectionPolicy" label="提交选择" rules={[{ required: true }]}>
+                <Form.Item
+                  name="selectionPolicy"
+                  label={t('aiPlagiarismSelection')}
+                  rules={[{ required: true }]}
+                >
                   <Select
                     options={[
-                      { value: 'latest', label: '最后提交' },
-                      { value: 'best', label: '最高分提交' },
+                      { value: 'latest', label: t('aiPlagiarismLatest') },
+                      { value: 'best', label: t('aiPlagiarismBest') },
                     ]}
                   />
                 </Form.Item>
               </div>
-              <Form.Item name="threshold" label="相似度阈值" rules={[{ required: true }]}>
+              <Form.Item
+                name="threshold"
+                label={t('aiPlagiarismThreshold')}
+                rules={[{ required: true }]}
+              >
                 <InputNumber min={0} max={1} step={0.05} />
               </Form.Item>
             </Form>
           </Modal>
 
           <Modal
-            title="复核候选"
+            title={t('aiPlagiarismReviewModal')}
             open={Boolean(reviewing)}
             onCancel={() => !busy && setReviewing(null)}
             onOk={() => void saveReview()}
@@ -514,57 +561,69 @@ export default function PlagiarismWorkbench() {
           >
             {reviewing && (
               <Descriptions size="small" bordered column={1}>
-                <Descriptions.Item label="提交双方">
+                <Descriptions.Item label={t('aiPlagiarismParticipants')}>
                   {reviewing.left_username || reviewing.left} /{' '}
                   {reviewing.right_username || reviewing.right}
                 </Descriptions.Item>
-                <Descriptions.Item label="原生提交">
+                <Descriptions.Item label={t('aiPlagiarismNativeSubmission')}>
                   {reviewing.left_submission_id || '-'} / {reviewing.right_submission_id || '-'}
                 </Descriptions.Item>
-                <Descriptions.Item label="相似度">
+                <Descriptions.Item label={t('aiPlagiarismSimilarity')}>
                   {Math.round(reviewing.similarity * 100)}%
                 </Descriptions.Item>
-                <Descriptions.Item label="AI 分析">
-                  {reviewing.review?.answer || '无 AI 分析，需人工核对报告与匹配区间'}
+                <Descriptions.Item label={t('aiPlagiarismAiAnalysis')}>
+                  {reviewing.review?.answer || t('aiPlagiarismNoAiAnalysis')}
                 </Descriptions.Item>
               </Descriptions>
             )}
             {!!reviewing?.matches.length && (
               <div className="ai-plagiarism-evidence">
-                <Typography.Text strong>JPlag 匹配区间</Typography.Text>
+                <Typography.Text strong>{t('aiPlagiarismMatchingRanges')}</Typography.Text>
                 <pre>{JSON.stringify(reviewing.matches, null, 2)}</pre>
               </div>
             )}
             <Form form={reviewForm} layout="vertical">
-              <Form.Item name="decision" label="结论" rules={[{ required: true }]}>
+              <Form.Item
+                name="decision"
+                label={t('aiPlagiarismDecision')}
+                rules={[{ required: true }]}
+              >
                 <Select
                   options={Object.entries(decisionLabels).map(([value, label]) => ({
                     value,
-                    label,
+                    label: t(label),
                   }))}
                 />
               </Form.Item>
-              <Form.Item name="reason" label="复核依据" rules={[{ required: true, min: 1 }]}>
+              <Form.Item
+                name="reason"
+                label={t('aiPlagiarismReviewReason')}
+                rules={[{ required: true, min: 1 }]}
+              >
                 <Input.TextArea rows={4} maxLength={2000} />
               </Form.Item>
             </Form>
           </Modal>
 
           <Modal
-            title="写入 OJ 查重结果"
+            title={t('aiPlagiarismWriteModal')}
             open={writebackOpen}
             onCancel={() => !busy && setWritebackOpen(false)}
             onOk={() => void writeback()}
             confirmLoading={busy}
-            okText="确认写入"
+            okText={t('aiPlagiarismConfirmWrite')}
             destroyOnHidden
           >
             <Form form={writebackForm} layout="vertical">
-              <Form.Item name="reason" label="写入依据" rules={[{ required: true, min: 1 }]}>
+              <Form.Item
+                name="reason"
+                label={t('aiPlagiarismWriteReason')}
+                rules={[{ required: true, min: 1 }]}
+              >
                 <Input.TextArea rows={4} maxLength={2000} />
               </Form.Item>
               <Form.Item name="overwriteExisting" valuePropName="checked">
-                <Checkbox>覆盖已有 OJ 查重结果</Checkbox>
+                <Checkbox>{t('aiPlagiarismOverwrite')}</Checkbox>
               </Form.Item>
             </Form>
           </Modal>

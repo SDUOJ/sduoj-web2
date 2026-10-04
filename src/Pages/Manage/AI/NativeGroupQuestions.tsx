@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Drawer, Input, Space, Table, Typography } from 'antd';
 import request from '../../../Utils/API/request';
 import { aiWorkbench } from '../../../Utils/API/ai-workbench';
@@ -13,6 +14,7 @@ type Row = {
 };
 
 export default function NativeGroupQuestions({ gid, name }: { gid: number; name: string }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [selected, setSelected] = useState<Row>();
@@ -53,7 +55,7 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
   return (
     <>
       <Button type="link" onClick={() => setOpen(true)}>
-        题目与解答
+        {t('aiNativeGroupTitle')}
       </Button>
       <Drawer
         title={name}
@@ -64,15 +66,15 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
       >
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
           {error && <Alert type="error" showIcon message={error} />}
-          <Input.Search placeholder="搜索本题组" allowClear onSearch={setKeyword} />
+          <Input.Search placeholder={t('aiNativeGroupSearch')} allowClear onSearch={setKeyword} />
           <Table<Row>
             rowKey="pid"
             dataSource={rows.filter((row) => row.question.zh.includes(keyword))}
             pagination={{ pageSize: 10 }}
             columns={[
-              { title: '题号', dataIndex: 'pid', width: 80 },
+              { title: t('aiNativeGroupNumber'), dataIndex: 'pid', width: 80 },
               {
-                title: '题目',
+                title: t('aiNativeGroupQuestion'),
                 render: (_, row) => (
                   <Button
                     type="link"
@@ -84,14 +86,14 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
                 ),
               },
               {
-                title: '操作',
+                title: t('aiNativeGroupActions'),
                 render: (_, row) => (
                   <Space>
                     <Button loading={busy} onClick={() => void run(row, 'question.solve')}>
-                      生成解答
+                      {t('aiNativeGroupSolve')}
                     </Button>
                     <Button loading={busy} onClick={() => void run(row, 'question.verify')}>
-                      验证答案
+                      {t('aiNativeGroupVerify')}
                     </Button>
                   </Space>
                 ),
@@ -99,7 +101,7 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
             ]}
           />
           {selected && (
-            <Card size="small" title={`题目 ${selected.pid}`}>
+            <Card size="small" title={t('aiNativeGroupQuestionTitle', { pid: selected.pid })}>
               <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
                 {selected.question.zh}
               </Typography.Paragraph>
@@ -109,12 +111,13 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
                 </Typography.Paragraph>
               ))}
               <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                参考答案：{selected.question.answer || '尚未填写'}
+                {t('aiNativeGroupReferenceAnswer')}
+                {selected.question.answer || t('aiNativeGroupMissingAnswer')}
               </Typography.Paragraph>
               <Input.TextArea
                 value={followup}
                 onChange={(e) => setFollowup(e.target.value)}
-                placeholder="围绕本题继续提问"
+                placeholder={t('aiNativeGroupFollowupHint')}
                 rows={3}
               />
               <Button
@@ -123,7 +126,7 @@ export default function NativeGroupQuestions({ gid, name }: { gid: number; name:
                 onClick={() => void run(selected, 'question.chat')}
                 style={{ marginTop: 12 }}
               >
-                追问
+                {t('aiNativeGroupFollowup')}
               </Button>
             </Card>
           )}

@@ -2,11 +2,15 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import NativeQuestionWorkbench from './NativeQuestionWorkbench';
 import request from '../../../Utils/API/request';
+import i18n from '../../../Config/i18n';
 jest.mock('../../../Utils/API/request', () => ({ __esModule: true, default: { post: jest.fn() } }));
 jest.mock('./AITaskMonitor', () => () => null);
 jest.mock('./operation-key', () => ({ operationKey: () => 'batch-test' }));
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
+  jest.clearAllMocks();
+});
 
 test('saves directly to native groups and retries with the same operation key', async () => {
   (request.post as jest.Mock)

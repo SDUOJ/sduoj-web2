@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -38,6 +39,7 @@ import {
 type Props = { questions: AiResource[]; onChanged: () => Promise<void> };
 
 export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [files, setFiles] = useState<UploadFile[]>([]);
@@ -370,9 +372,9 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
   return (
     <>
       <Button icon={<BranchesOutlined />} onClick={() => void openPanel()}>
-        录题与修订
+        {t('aiWorkflowTitle')}
       </Button>
-      <Drawer title="录题与修订" open={open} onClose={() => setOpen(false)} width={760}>
+      <Drawer title={t('aiWorkflowTitle')} open={open} onClose={() => setOpen(false)} width={760}>
         {error && (
           <Alert
             type={conflict ? 'warning' : 'error'}
@@ -381,7 +383,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
             action={
               conflict ? (
                 <Button size="small" onClick={() => void refreshPanel()}>
-                  刷新当前数据
+                  {t('aiWorkflowRefresh')}
                 </Button>
               ) : undefined
             }
@@ -391,12 +393,12 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
         )}
         <Space wrap>
           <Button type="primary" icon={<CloudUploadOutlined />} onClick={() => setIntakeOpen(true)}>
-            自动录题
+            {t('aiWorkflowIntake')}
           </Button>
           <Select
-            aria-label="选择题目"
+            aria-label={t('aiWorkflowSelect')}
             showSearch
-            placeholder="选择题目"
+            placeholder={t('aiWorkflowSelect')}
             style={{ width: 320 }}
             value={selected?.id}
             onChange={(id) =>
@@ -413,31 +415,35 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
           <section>
             <Divider />
             <Descriptions column={1} size="small">
-              <Descriptions.Item label="题面">{selected.data.zh}</Descriptions.Item>
-              <Descriptions.Item label="答案">{selected.data.answer || '未生成'}</Descriptions.Item>
-              <Descriptions.Item label="解释">
-                {selected.data.explanation || '未生成'}
+              <Descriptions.Item label={t('aiWorkflowStatement')}>
+                {selected.data.zh}
               </Descriptions.Item>
-              <Descriptions.Item label="校验">
+              <Descriptions.Item label={t('aiWorkflowAnswer')}>
+                {selected.data.answer || t('aiWorkflowNotGenerated')}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiWorkflowExplanation')}>
+                {selected.data.explanation || t('aiWorkflowNotGenerated')}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiWorkflowVerification')}>
                 {selected.data.verification ? (
                   <Tag color={selected.data.verification.passed ? 'success' : 'warning'}>
                     {selected.data.verification.execution_blocked
-                      ? '等待人工批准执行'
+                      ? t('aiWorkflowAwaitingApproval')
                       : selected.data.verification.passed
-                        ? '通过'
-                        : '未通过'}
+                        ? t('aiWorkflowPassed')
+                        : t('aiWorkflowFailed')}
                   </Tag>
                 ) : (
-                  '未校验'
+                  t('aiWorkflowNotVerified')
                 )}
               </Descriptions.Item>
             </Descriptions>
             <Space wrap>
               <Button loading={busy} onClick={() => void runTask('question.solve')}>
-                解答
+                {t('aiWorkflowSolve')}
               </Button>
               <Button loading={busy} onClick={() => void runTask('question.verify')}>
-                验证
+                {t('aiWorkflowVerify')}
               </Button>
               <Button
                 icon={<EditOutlined />}
@@ -449,25 +455,25 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                   setEditing(true);
                 }}
               >
-                编辑
+                {t('aiWorkflowEdit')}
               </Button>
               <Button icon={<HistoryOutlined />} onClick={() => void openHistory()}>
-                历史
+                {t('aiWorkflowHistory')}
               </Button>
             </Space>
             <Space.Compact block style={{ marginTop: 12 }}>
               <Input
-                aria-label="题目追问"
+                aria-label={t('aiWorkflowFollowup')}
                 value={followup}
                 onChange={(event) => setFollowup(event.target.value)}
-                placeholder="输入针对当前题目的追问"
+                placeholder={t('aiWorkflowFollowupHint')}
               />
               <Button
                 loading={busy}
                 disabled={!followup.trim()}
                 onClick={() => void runTask('question.chat')}
               >
-                发送追问
+                {t('aiWorkflowSend')}
               </Button>
             </Space.Compact>
             {retryTask && (
@@ -477,7 +483,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                 loading={busy}
                 onClick={() => void runTask(retryTask.type, retryTask.message)}
               >
-                重试上一步
+                {t('aiWorkflowRetry')}
               </Button>
             )}
             {Boolean(selected.data.messages?.length) && (
@@ -487,7 +493,9 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                 renderItem={(message) => (
                   <List.Item>
                     <Typography.Text type={message.role === 'user' ? 'secondary' : undefined}>
-                      {message.role === 'user' ? '提问：' : '回答：'}
+                      {message.role === 'user'
+                        ? t('aiWorkflowUserMessage')
+                        : t('aiWorkflowAssistantMessage')}
                       {message.text}
                     </Typography.Text>
                   </List.Item>
@@ -497,11 +505,11 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
           </section>
         )}
 
-        <Divider>题集批次</Divider>
+        <Divider>{t('aiWorkflowBatches')}</Divider>
         <List
           loading={collectionsLoading}
           dataSource={collections}
-          locale={{ emptyText: '暂无题集' }}
+          locale={{ emptyText: t('aiWorkflowEmpty') }}
           renderItem={(item) => (
             <List.Item
               actions={[
@@ -512,23 +520,23 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                     loading={busy}
                     onClick={() => void acceptCollaboration(item.id)}
                   >
-                    接受邀请
+                    {t('aiWorkflowAcceptInvitation')}
                   </Button>
                 ) : (
                   <Button key="manifest" onClick={() => void openManifest(item)}>
-                    查看编号
+                    {t('aiWorkflowViewNumbers')}
                   </Button>
                 ),
                 collaborations.find((entry) => entry.id === item.id)?.role !== 'pending' ? (
                   <Button key="collaboration" onClick={() => void openCollaboration(item)}>
-                    协作
+                    {t('aiWorkflowCollaborate')}
                   </Button>
                 ) : null,
               ]}
             >
               <List.Item.Meta
                 title={item.data.title || item.id}
-                description={`版本 ${item.version}`}
+                description={t('aiWorkflowVersion', { version: item.version })}
               />
             </List.Item>
           )}
@@ -536,7 +544,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
       </Drawer>
 
       <Modal
-        title="自动录题"
+        title={t('aiWorkflowIntake')}
         open={intakeOpen}
         onCancel={() => !busy && setIntakeOpen(false)}
         onOk={() => void submitIntake()}
@@ -546,15 +554,15 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
         <Form
           form={intakeForm}
           layout="vertical"
-          initialValues={{ title: '题目录入批次', autoSolve: true, autoVerify: true }}
+          initialValues={{ title: t('aiWorkflowIntakeBatch'), autoSolve: true, autoVerify: true }}
         >
-          <Form.Item name="collectionId" label="追加到题集">
+          <Form.Item name="collectionId" label={t('aiWorkflowAppend')}>
             <Select
               mode="tags"
               maxCount={1}
               allowClear
               tokenSeparators={[',']}
-              placeholder="可选择或输入题集 ID"
+              placeholder={t('aiWorkflowCollectionHint')}
               onChange={(values) => {
                 const resource = collections.find((item) => item.id === values?.[0]);
                 if (resource) void openCollaboration(resource);
@@ -565,33 +573,33 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
               }))}
             />
           </Form.Item>
-          <Form.Item name="courseId" label="课程 ID">
+          <Form.Item name="courseId" label={t('aiWorkflowCourseId')}>
             <Input
               type="number"
               min={1}
-              placeholder="课程协作题集填写"
+              placeholder={t('aiWorkflowCourseHint')}
               onBlur={(event) => {
                 const value = Number(event.target.value);
                 if (value > 0) void loadCollections(value);
               }}
             />
           </Form.Item>
-          <Form.Item name="title" label="新题集名称" rules={[{ required: true }]}>
+          <Form.Item name="title" label={t('aiWorkflowNewCollection')} rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="batchId" label="批次号">
-            <Input placeholder="留空时按内容生成" />
+          <Form.Item name="batchId" label={t('aiWorkflowBatchId')}>
+            <Input placeholder={t('aiWorkflowBatchHint')} />
           </Form.Item>
-          <Form.Item name="assignmentId" label="分工">
+          <Form.Item name="assignmentId" label={t('aiWorkflowAssignments')}>
             <Select
               allowClear
-              placeholder="选择分配给你的任务"
+              placeholder={t('aiWorkflowAssignmentHint')}
               options={collaboration?.assignments
                 .filter((item) => item.status === 'open')
                 .map((item) => ({ value: item.id, label: item.title }))}
             />
           </Form.Item>
-          <Form.Item name="text" label="题目文本">
+          <Form.Item name="text" label={t('aiWorkflowText')}>
             <Input.TextArea rows={8} />
           </Form.Item>
           <Upload
@@ -603,7 +611,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
             beforeUpload={() => false}
             onChange={({ fileList }) => setFiles(fileList.slice(-20))}
           >
-            <Button icon={<CameraOutlined />}>拍照录题</Button>
+            <Button icon={<CameraOutlined />}>{t('aiWorkflowCamera')}</Button>
           </Upload>
           <Upload.Dragger
             multiple
@@ -613,13 +621,13 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
             onChange={({ fileList }) => setFiles(fileList.slice(-20))}
           >
             <CloudUploadOutlined />
-            <Typography.Text>选择照片或文档</Typography.Text>
+            <Typography.Text>{t('aiWorkflowFiles')}</Typography.Text>
           </Upload.Dragger>
           <Space>
-            <Form.Item name="autoSolve" label="自动解答" valuePropName="checked">
+            <Form.Item name="autoSolve" label={t('aiWorkflowAutoSolve')} valuePropName="checked">
               <Switch />
             </Form.Item>
-            <Form.Item name="autoVerify" label="自动验证" valuePropName="checked">
+            <Form.Item name="autoVerify" label={t('aiWorkflowAutoVerify')} valuePropName="checked">
               <Switch />
             </Form.Item>
           </Space>
@@ -627,7 +635,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
       </Modal>
 
       <Modal
-        title="编辑题目"
+        title={t('aiWorkflowEditModal')}
         open={editing}
         onCancel={() => setEditing(false)}
         onOk={() => void saveEdit()}
@@ -635,26 +643,26 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
         destroyOnHidden
       >
         <Form form={editForm} layout="vertical">
-          <Form.Item name="original" label="原题" rules={[{ required: true }]}>
+          <Form.Item name="original" label={t('aiWorkflowOriginal')} rules={[{ required: true }]}>
             <Input.TextArea rows={5} />
           </Form.Item>
-          <Form.Item name="zh" label="中文题面" rules={[{ required: true }]}>
+          <Form.Item name="zh" label={t('aiWorkflowChineseStatement')} rules={[{ required: true }]}>
             <Input.TextArea rows={5} />
           </Form.Item>
-          <Form.Item name="answer" label="答案">
+          <Form.Item name="answer" label={t('aiWorkflowAnswer')}>
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="explanation" label="解释">
+          <Form.Item name="explanation" label={t('aiWorkflowExplanation')}>
             <Input.TextArea rows={4} />
           </Form.Item>
-          <Form.Item name="tags" label="标签">
-            <Input placeholder="使用逗号分隔" />
+          <Form.Item name="tags" label={t('aiWorkflowTags')}>
+            <Input placeholder={t('aiWorkflowTagsHint')} />
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title="修订历史"
+        title={t('aiWorkflowRevisionHistory')}
         open={Boolean(history)}
         onCancel={() => setHistory(null)}
         footer={null}
@@ -664,7 +672,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
         <List
           loading={historyLoading}
           dataSource={history?.rows || []}
-          locale={{ emptyText: '暂无修订历史' }}
+          locale={{ emptyText: t('aiWorkflowNoRevisions') }}
           renderItem={(revision) => (
             <List.Item
               actions={[
@@ -674,12 +682,12 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                   loading={busy}
                   onClick={() => void restoreVersion(revision.version, revision.id)}
                 >
-                  恢复此版本
+                  {t('aiWorkflowRestoreVersion')}
                 </Button>,
               ]}
             >
               <List.Item.Meta
-                title={`版本 ${revision.version}`}
+                title={t('aiWorkflowVersion', { version: revision.version })}
                 description={revision.data.zh || revision.data.original}
               />
             </List.Item>
@@ -689,7 +697,11 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
 
       <Modal
         title={
-          collaborationOwner ? `${collaborationOwner.data.title || '题集'} · 协作` : '题集协作'
+          collaborationOwner
+            ? t('aiWorkflowCollaborationTitle', {
+                title: collaborationOwner.data.title || t('aiWorkflowCollection'),
+              })
+            : t('aiWorkflowCollaboration')
         }
         open={Boolean(collaborationOwner)}
         onCancel={() => {
@@ -703,15 +715,17 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
         {collaboration && (
           <>
             <Descriptions size="small" column={2}>
-              <Descriptions.Item label="你的角色">{collaboration.role}</Descriptions.Item>
-              <Descriptions.Item label="课程">
-                {collaboration.course_id || '个人题集'}
+              <Descriptions.Item label={t('aiWorkflowYourRole')}>
+                {collaboration.role}
+              </Descriptions.Item>
+              <Descriptions.Item label={t('aiWorkflowCourse')}>
+                {collaboration.course_id || t('aiWorkflowPersonal')}
               </Descriptions.Item>
             </Descriptions>
-            <Divider>分工</Divider>
+            <Divider>{t('aiWorkflowAssignments')}</Divider>
             <List
               size="small"
-              locale={{ emptyText: '暂无分工' }}
+              locale={{ emptyText: t('aiWorkflowNoAssignments') }}
               dataSource={collaboration.assignments}
               renderItem={(assignment) => (
                 <List.Item>
@@ -726,7 +740,11 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
               <>
                 <Form form={assignmentForm} layout="vertical">
                   <Space wrap align="end">
-                    <Form.Item name="assigneeId" label="协作者" rules={[{ required: true }]}>
+                    <Form.Item
+                      name="assigneeId"
+                      label={t('aiWorkflowCollaborator')}
+                      rules={[{ required: true }]}
+                    >
                       <Select
                         style={{ width: 180 }}
                         options={collaboration.members
@@ -739,20 +757,24 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                           }))}
                       />
                     </Form.Item>
-                    <Form.Item name="title" label="任务" rules={[{ required: true }]}>
+                    <Form.Item
+                      name="title"
+                      label={t('aiWorkflowTask')}
+                      rules={[{ required: true }]}
+                    >
                       <Input />
                     </Form.Item>
-                    <Form.Item name="description" label="说明">
+                    <Form.Item name="description" label={t('aiWorkflowDescription')}>
                       <Input />
                     </Form.Item>
                     <Form.Item>
                       <Button type="primary" loading={busy} onClick={() => void assignWork()}>
-                        分配
+                        {t('aiWorkflowAssign')}
                       </Button>
                     </Form.Item>
                   </Space>
                 </Form>
-                <Divider>成员</Divider>
+                <Divider>{t('aiWorkflowMembers')}</Divider>
                 <List
                   size="small"
                   dataSource={collaboration.members}
@@ -768,7 +790,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                                 loading={busy}
                                 onClick={() => void revokeCollaborator(member.subject_id)}
                               >
-                                撤权
+                                {t('aiWorkflowRevoke')}
                               </Button>,
                             ]
                           : []
@@ -786,22 +808,26 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                     <Form.Item name="subjectId" label="OJ ID" rules={[{ required: true }]}>
                       <Input />
                     </Form.Item>
-                    <Form.Item name="username" label="OJ 用户名" rules={[{ required: true }]}>
+                    <Form.Item
+                      name="username"
+                      label={t('aiWorkflowUsername')}
+                      rules={[{ required: true }]}
+                    >
                       <Input />
                     </Form.Item>
-                    <Form.Item name="role" label="角色" initialValue="contributor">
+                    <Form.Item name="role" label={t('aiWorkflowRole')} initialValue="contributor">
                       <Select
                         style={{ width: 140 }}
                         options={[
-                          { value: 'viewer', label: '查看' },
-                          { value: 'contributor', label: '录题' },
-                          { value: 'editor', label: '编辑' },
+                          { value: 'viewer', label: t('aiWorkflowViewer') },
+                          { value: 'contributor', label: t('aiWorkflowContributor') },
+                          { value: 'editor', label: t('aiWorkflowEdit') },
                         ]}
                       />
                     </Form.Item>
                     <Form.Item>
                       <Button loading={busy} onClick={() => void inviteCollaborator()}>
-                        邀请
+                        {t('aiWorkflowInvite')}
                       </Button>
                     </Form.Item>
                   </Space>
@@ -813,7 +839,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
       </Modal>
 
       <Modal
-        title={manifestOwner?.data.title || '题集编号'}
+        title={manifestOwner?.data.title || t('aiWorkflowNumbering')}
         open={Boolean(manifestOwner)}
         onCancel={() => setManifestOwner(null)}
         footer={null}
@@ -824,15 +850,15 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
           loading={manifestLoading}
           rowKey="number"
           dataSource={manifest}
-          locale={{ emptyText: '当前题集没有题目' }}
+          locale={{ emptyText: t('aiWorkflowNoQuestions') }}
           pagination={false}
           columns={[
-            { title: '编号', dataIndex: 'number', width: 72 },
-            { title: '题目 ID', dataIndex: 'question_id' },
-            { title: '批次', dataIndex: 'batch_id', width: 120 },
-            { title: '状态', dataIndex: 'status', width: 90 },
+            { title: t('aiWorkflowNumber'), dataIndex: 'number', width: 72 },
+            { title: t('aiWorkflowQuestionId'), dataIndex: 'question_id' },
+            { title: t('aiWorkflowBatch'), dataIndex: 'batch_id', width: 120 },
+            { title: t('aiWorkflowStatus'), dataIndex: 'status', width: 90 },
             {
-              title: '操作',
+              title: t('aiWorkflowActions'),
               key: 'action',
               width: 230,
               render: (_, item) => (
@@ -848,7 +874,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                         setManifestOwner(null);
                       }}
                     >
-                      打开题目
+                      {t('aiWorkflowOpenQuestion')}
                     </Button>
                   )}
                   {item.status === 'active' ? (
@@ -857,7 +883,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                       disabled={busy}
                       onClick={() => void changeManifest(item, 'detach')}
                     >
-                      移出
+                      {t('aiWorkflowDetach')}
                     </Button>
                   ) : (
                     <Button
@@ -865,7 +891,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                       disabled={busy}
                       onClick={() => void changeManifest(item, 'restore')}
                     >
-                      恢复
+                      {t('aiWorkflowRestore')}
                     </Button>
                   )}
                   {item.duplicate_of && !item.duplicate_detached && (
@@ -874,7 +900,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                       disabled={busy}
                       onClick={() => void changeManifest(item, 'split')}
                     >
-                      拆分重复
+                      {t('aiWorkflowDetachDuplicate')}
                     </Button>
                   )}
                   {item.duplicate_of && item.duplicate_detached && (
@@ -883,7 +909,7 @@ export default function QuestionWorkflowPanel({ questions, onChanged }: Props) {
                       disabled={busy}
                       onClick={() => void changeManifest(item, 'relink')}
                     >
-                      恢复重复关联
+                      {t('aiWorkflowRestoreDuplicate')}
                     </Button>
                   )}
                 </Space>

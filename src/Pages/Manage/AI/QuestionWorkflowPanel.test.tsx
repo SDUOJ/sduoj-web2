@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import QuestionWorkflowPanel from './QuestionWorkflowPanel';
 import { AiResource, aiWorkbench } from '../../../Utils/API/ai-workbench';
+import i18n from '../../../Config/i18n';
 
 // The panel intentionally exercises several Ant Design transitions and async reloads.
 // Keep enough headroom for instrumented coverage runs while retaining a finite bound.
@@ -54,7 +55,8 @@ const collection: AiResource = {
   data: { title: '数据结构题集' },
 };
 
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
   (aiWorkbench.listCollections as jest.Mock).mockResolvedValue({ rows: [collection], totalNum: 1 });
   (aiWorkbench.listCollaborations as jest.Mock).mockResolvedValue([
     { id: 'c-1', title: '数据结构题集', role: 'owner', version: 3 },

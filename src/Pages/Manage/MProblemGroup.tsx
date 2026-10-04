@@ -145,7 +145,7 @@ const MProblemGroup = (props: any) => {
   return (
     <>
       <Drawer
-        title="批量录题"
+        title={props.t('aiNativeBatchIntake')}
         width={880}
         open={intakeOpen}
         onClose={() => setIntakeOpen(false)}
@@ -161,7 +161,7 @@ const MProblemGroup = (props: any) => {
           extra={
             <Space>
               <Button type="primary" onClick={() => setIntakeOpen(true)}>
-                批量录题
+                {props.t('aiNativeBatchIntake')}
               </Button>
               <ModalFormUseForm
                 TableName={'ProblemGroupList'}

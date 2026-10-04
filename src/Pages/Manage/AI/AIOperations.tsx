@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Table, Tag, Typography } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { aiPlatform, PlatformJob } from '../../../Utils/API/ai-platform';
@@ -7,6 +8,7 @@ import { positiveIntParam } from './route-context';
 import AIWorkspaceNav from './AIWorkspaceNav';
 
 export default function AIOperations({ location }: { location?: { search?: string } }) {
+  const { t } = useTranslation();
   const [jobs, setJobs] = useState<PlatformJob[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -35,13 +37,13 @@ export default function AIOperations({ location }: { location?: { search?: strin
   return (
     <>
       <AIWorkspaceNav />
-      <Typography.Title level={3}>任务与创作</Typography.Title>
+      <Typography.Title level={3}>{t('aiOperationsTitle')}</Typography.Title>
       <Card
         size="small"
-        title="任务管理"
+        title={t('aiOperationsManagement')}
         extra={
           <Button
-            aria-label="刷新"
+            aria-label={t('aiOperationsRefresh')}
             icon={<ReloadOutlined />}
             onClick={() => setRevision(revision + 1)}
           />
@@ -61,15 +63,15 @@ export default function AIOperations({ location }: { location?: { search?: strin
             onChange: setPage,
           }}
           columns={[
-            { title: '任务', dataIndex: 'id', ellipsis: true },
-            { title: '类别', dataIndex: 'task_type' },
-            { title: '状态', render: (_, row) => <Tag>{row.status}</Tag> },
-            { title: '尝试', dataIndex: 'attempt', width: 80 },
+            { title: t('aiOperationsTask'), dataIndex: 'id', ellipsis: true },
+            { title: t('aiOperationsCategory'), dataIndex: 'task_type' },
+            { title: t('aiOperationsStatus'), render: (_, row) => <Tag>{row.status}</Tag> },
+            { title: t('aiOperationsAttempts'), dataIndex: 'attempt', width: 80 },
             {
-              title: '操作',
+              title: t('aiOperationsActions'),
               render: (_, row) => (
                 <Button type="link" onClick={() => setTask(row.id)}>
-                  查看
+                  {t('aiOperationsView')}
                 </Button>
               ),
             },

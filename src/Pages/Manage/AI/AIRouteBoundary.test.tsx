@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AIRouteBoundary from './AIRouteBoundary';
 import { aiPlatform } from '../../../Utils/API/ai-platform';
+import i18n from '../../../Config/i18n';
+beforeEach(async () => {
+  await i18n.changeLanguage('zh');
+});
 jest.mock('../../../Utils/API/ai-platform', () => ({ aiPlatform: { account: jest.fn() } }));
 test('does not mount protected content before authentication finishes', async () => {
   let complete: (value: unknown) => void = () => {};
