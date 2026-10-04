@@ -1,6 +1,6 @@
 // 表格中的默认页数
 export const defaultPageSize = 20;
-export const UrlPrefix = '/v2';
+export const UrlPrefix = (process.env.PUBLIC_URL || '/v2').replace(/\/$/, '');
 
 export const PREDEFINED_CHECKERS = [
   {

@@ -67,6 +67,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config config/webpack.config.js --port 3000",
     "build": "cross-env NODE_ENV=production PUBLIC_URL=/v2/ webpack --config config/webpack.config.js",
+    "build:pre": "cross-env NODE_ENV=production PUBLIC_URL=/v2-pre/ webpack --config config/webpack.config.js && node scripts/patch-build-prefix.cjs /v2-pre",
     "bundle:check": "node scripts/check-initial-bundle.cjs",
     "test": "jest",
     "test:unit": "jest --runInBand",
