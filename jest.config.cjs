@@ -25,5 +25,14 @@ module.exports = {
     // AutoLab has a smaller but stable component-test baseline; keep the gate
     // below the measured report while preventing coverage regressions.
     './src/Component/autolab/': { statements: 45, branches: 30, functions: 30, lines: 48 },
+    // Problem-set adapters are pure payload transforms with a stable unit-test
+    // surface; keep their gate below the measured baseline while the UI remains
+    // on a separate coverage track.
+    './src/Component/problemSet/dataConvert/': {
+      statements: 75,
+      branches: 50,
+      functions: 90,
+      lines: 75,
+    },
   },
 };
