@@ -1,11 +1,9 @@
 import React, { Component, Dispatch } from 'react';
-import ExamForm from '../../Component/exam/Form/ExamForm';
-import { Card } from 'antd';
+import DeprecatedJavaExam from '../Exam/DeprecatedJavaExam';
 import { UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
-import ExamList from '../../Component/exam/ExamList';
 import { loginRedirect } from '../../Utils/authReturn';
 
 class MExam extends Component<any, any> {
@@ -22,18 +20,7 @@ class MExam extends Component<any, any> {
   }
 
   render() {
-    return (
-      <>
-        <Card
-          size={'small'}
-          bordered={true}
-          title={this.props.t('examList')}
-          extra={[<ExamForm key="create-exam" type={'create'} />]}
-        >
-          <ExamList type={'manage'} />
-        </Card>
-      </>
-    );
+    return <DeprecatedJavaExam />;
   }
 }
 

@@ -12,6 +12,18 @@ const routerCLayout = projectClientLayouts(routerC, UrlPrefix, clientLayout);
 
 export const routerLayout: readonly IBaseRouter[] = [
   {
+    id: 9510,
+    path: UrlPrefix + '/manage/exam',
+    exact: true,
+    component: lazy(() => import('../../Pages/Exam/DeprecatedJavaExam')),
+  },
+  {
+    id: 9511,
+    path: UrlPrefix + '/manage/problemSet/exam',
+    exact: true,
+    component: lazy(() => import('../../Pages/Exam/DeprecatedJavaExam')),
+  },
+  {
     id: 9490,
     path: UrlPrefix + '/manage/problem/program/authoring',
     exact: true,
