@@ -200,12 +200,10 @@ test('#51 removing a sample still preserves an unsaved score', async ({ page }, 
   }
 });
 
-test('#17 @known-issue problem titles expose a browser-native link', async ({ page }) => {
+test('#17 problem titles expose a browser-native link', async ({ page }) => {
   await page.goto('/v2/problem');
   const row = page.locator('.ant-table-row').first();
   await expect(row).toBeVisible();
-  await expect(row.getByRole('button').first()).toBeVisible();
-  test.fail(true, 'GitHub #17: problem titles are buttons, not links');
   await expect(row.locator('a[href*="/problem/"]')).toHaveCount(1);
 });
 

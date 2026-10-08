@@ -19,7 +19,7 @@ import {
 import { SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import cApi from '../../Utils/API/c-api';
 import { UserState } from '../../Type/Iuser';
 import { UrlPrefix } from '../../Config/constValue';
@@ -208,12 +208,7 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({
           dataIndex: 'name',
           key: 'name',
           render: (text: string, record: any) => (
-            <a
-              onClick={() => history.push(`${UrlPrefix}/problem/${record.pid}`)}
-              style={{ cursor: 'pointer', color: '#1890ff' }}
-            >
-              {text}
-            </a>
+            <Link to={`${UrlPrefix}/problem/${encodeURIComponent(record.pid)}`}>{text}</Link>
           ),
         },
         {

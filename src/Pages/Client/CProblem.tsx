@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { Button, Card, Space, Tag } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
+import { Card, Space, Tag } from 'antd';
 import CApi from 'Utils/API/c-api';
 import TableWithPagination from '../../Component/common/Table/TableWithPagination';
 import { CheckOutlined } from '@ant-design/icons';
@@ -59,15 +59,12 @@ class CProblem extends Component<any, any> {
                       return (
                         <>
                           <Space size={3}>
-                            <Button
-                              size={'small'}
-                              type={'text'}
-                              onClick={() => {
-                                this.props.history.push(UrlPrefix + '/problem/' + row.problemCode);
-                              }}
+                            <Link
+                              to={`${UrlPrefix}/problem/${encodeURIComponent(row.problemCode)}`}
+                              style={{ fontSize: 12 }}
                             >
                               {text}
-                            </Button>
+                            </Link>
                             {this.state.ACList.indexOf(row.problemCode) !== -1 && (
                               <CheckOutlined style={{ color: 'green' }} />
                             )}
