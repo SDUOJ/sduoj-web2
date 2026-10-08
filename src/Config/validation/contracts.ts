@@ -225,16 +225,11 @@ export const contracts = {
     content: column('oj', 'oj_choice_problem', 'cp_description'),
   },
   submission: { code: column('oj', 'oj_submission', 's_code') },
-  objective: {
-    description: column('autolab', 'problem_objective', 'content', {
-      required: true,
-      source:
-        'ser/objective.py objective_content.description; enclosing JSON is checked on submission',
-    }),
-  },
   subjective: {
     maxCount: {
       kind: 'integer',
+      min: 0,
+      max: 1024,
       source:
         'ser/subjective.py subjective_config.maxCount; stored inside LONGTEXT JSON without an integer ceiling',
     } as Constraint,
@@ -242,6 +237,39 @@ export const contracts = {
       required: true,
       source: 'ser/subjective.py subjective_base.description',
     }),
+    // Frontend-only bounds that keep JSON payloads inside sane DB/JSON limits.
+    wordLimit: {
+      kind: 'integer',
+      min: 1,
+      max: 10_000_000,
+      source: 'subjective_config.wordLimit (LONGTEXT JSON; bounded to avoid DB bloat)',
+    } as Constraint,
+    fileSizeLimit: {
+      kind: 'integer',
+      min: 1,
+      max: 2048,
+      source: 'subjective_config.fileSizeLimit MB (LONGTEXT JSON)',
+    } as Constraint,
+    fileType: {
+      kind: 'string',
+      maxUtf16: 255,
+      source: 'subjective_config.fileType comma list (LONGTEXT JSON)',
+    } as Constraint,
+  },
+  objective: {
+    description: column('autolab', 'problem_objective', 'content', {
+      required: true,
+      source:
+        'ser/objective.py objective_content.description; enclosing JSON is checked on submission',
+    }),
+    answer: {
+      kind: 'array',
+      required: true,
+      minItems: 1,
+      maxItems: 128,
+      items: { kind: 'string', maxUtf16: 63, source: 'autolab.problem_objective.answer varchar(63)' },
+      source: 'ser/objective.py objective_base.answer List[str]',
+    } as Constraint,
   },
   problemSet: {
     name: column('autolab', 'problem_set', 'name', {
@@ -268,6 +296,8 @@ export const contracts = {
   problemGroup: {
     name: column('autolab', 'problem_group', 'name', {
       required: true,
+      notBlank: true,
+      trim: true,
       source: 'ser/problem_group.py problem_group',
     }),
   },
@@ -316,6 +346,31 @@ export const contracts = {
       notBlank: true,
       trim: true,
       source: 'model/course.py add_ta; oj_course.ext_config LONGTEXT',
+    } as Constraint,
+    ta_contact: {
+      kind: 'string',
+      maxUtf16: 128,
+      trim: true,
+      source: 'model/course.py add_ta ext_info.contact; oj_course.ext_config LONGTEXT',
+    } as Constraint,
+    ta_email: {
+      kind: 'string',
+      maxUtf16: 128,
+      trim: true,
+      pattern: /^[^\s@]*@[^\s@]*$|^[^\s@]*$/,
+      source: 'model/course.py add_ta ext_info.email; oj_course.ext_config LONGTEXT',
+    } as Constraint,
+    ta_office: {
+      kind: 'string',
+      maxUtf16: 128,
+      trim: true,
+      source: 'model/course.py add_ta ext_info.office; oj_course.ext_config LONGTEXT',
+    } as Constraint,
+    ta_remark: {
+      kind: 'string',
+      maxUtf16: 255,
+      trim: true,
+      source: 'model/course.py add_ta ext_info.remark; oj_course.ext_config LONGTEXT',
     } as Constraint,
   },
   attendance: {

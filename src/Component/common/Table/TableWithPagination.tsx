@@ -266,15 +266,15 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
           // 默认无边框，若需要显示边框通过 listCardBordered 设为 true
           variant={props.listCardBordered ? 'outlined' : 'borderless'}
           size={'default'}
-          className={
+          className={`unified-table-card ${
             props.cardClassName ??
             (typeof props.cardProps === 'string' ? props.cardProps : 'zeroBodyPaddingLeft')
-          }
+          }`}
           style={
             props.cardStyle ?? (typeof props.cardProps === 'object' ? props.cardProps : undefined)
           }
           styles={{
-            header: { background: 'transparent', boxShadow: 'none' },
+            header: { background: 'transparent', boxShadow: 'none', borderBottom: 'none' },
             body: { background: 'transparent', boxShadow: 'none', paddingTop: 0 },
           }}
           extra={
@@ -351,8 +351,9 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
         <Card
           variant="borderless"
           size={'small'}
+          className="unified-table-card"
           styles={{
-            header: { background: 'transparent', boxShadow: 'none' },
+            header: { background: 'transparent', boxShadow: 'none', borderBottom: 'none' },
             body: { background: 'transparent', boxShadow: 'none', paddingTop: 0 },
           }}
           extra={

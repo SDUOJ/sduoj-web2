@@ -602,6 +602,12 @@ h5.TestCase-text {
   border-top: none !important;
 }
 
+/* TableWithPagination cards: the head only hosts right-aligned filters,
+   so its bottom border reads as a stray dash above the table. */
+.unified-table-card > .ant-card-head {
+  border-bottom: none !important;
+}
+
 .overview-table .ant-table-cell {
   text-align: center;
   margin: 0 auto;

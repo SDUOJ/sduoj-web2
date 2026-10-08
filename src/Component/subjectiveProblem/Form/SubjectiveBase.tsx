@@ -5,6 +5,8 @@ import {Col, Form, InputNumber, Row, Select} from "antd";
 import ItemSelectGroup from "../../group/Form/Item/ItemSelectGroup";
 import React, {useState} from "react";
 import FormExtraInfo from "../../common/Form/FormExtraInfo";
+import { contracts } from "../../../Config/validation/contracts";
+import { constraintRules, numericProps } from "../../../Config/validation/constraints";
 
 const SubjectiveBase = (props: any) => {
 
@@ -23,7 +25,7 @@ const SubjectiveBase = (props: any) => {
 
     return (
         <>
-            <ItemTitle/>
+            <ItemTitle constraint={contracts.description.title} />
             <ItemSwitch01 name={"isPublic"} label={"是否公开"} ck={"是"} unck={"否"}/>
             <Form.Item name={"allowFile"} hidden>
                 <FormExtraInfo v={fileType} setV={setFileType} eqs={(a: any, b: any) => a === b}/>
@@ -38,8 +40,12 @@ const SubjectiveBase = (props: any) => {
             </Form.Item>
             {fileType === 0 && (
                 <>
-                    <Form.Item name={"wordLimit"} label={"文本最大长度"}>
-                        <InputNumber/>
+                    <Form.Item
+                        name={"wordLimit"}
+                        label={"文本最大长度"}
+                        rules={constraintRules(contracts.subjective.wordLimit)}
+                    >
+                        <InputNumber {...numericProps(contracts.subjective.wordLimit)} />
                     </Form.Item>
                 </>
             )}
@@ -52,7 +58,7 @@ const SubjectiveBase = (props: any) => {
                             }}>
                             </Select>
                         </Form.Item>
-                        <Form.Item name={"fileType"} hidden>
+                        <Form.Item name={"fileType"} hidden rules={constraintRules(contracts.subjective.fileType)}>
                             <FormExtraInfo
                                 v={getAcceptString()}
                                 setV={(v: any) => {
@@ -68,8 +74,12 @@ const SubjectiveBase = (props: any) => {
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name={"fileSizeLimit"} label={"文件大小限制(MB)"}>
-                            <InputNumber/>
+                        <Form.Item
+                            name={"fileSizeLimit"}
+                            label={"文件大小限制(MB)"}
+                            rules={constraintRules(contracts.subjective.fileSizeLimit)}
+                        >
+                            <InputNumber {...numericProps(contracts.subjective.fileSizeLimit)} />
                         </Form.Item>
                     </Col>
                 </Row>
