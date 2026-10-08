@@ -109,30 +109,27 @@ class MProblem extends Component<any, any> {
       },
     ];
 
+    // 列结构跨断点保持稳定：responsive 增删列会让行内 Modal 整棵卸载（#29）
     let colData: any[] = [
       {
         title: 'ID',
         dataIndex: 'problemId',
         width: 50,
-        responsive: ['lg', 'sm'],
       },
       {
         title: this.props.t('problemCode'),
         dataIndex: 'problemCode',
         width: 'auto',
-        responsive: ['lg', 'sm', 'xs'],
       },
       {
         title: this.props.t('title'),
         dataIndex: 'problemTitle',
         width: 'auto',
-        responsive: ['lg', 'sm', 'xs'],
       },
       {
         title: this.props.t('TimeLimit'),
         dataIndex: 'timeLimit',
         width: 'auto',
-        responsive: ['lg', 'sm'],
         render: (text: string) => {
           return (
             <>
@@ -145,7 +142,6 @@ class MProblem extends Component<any, any> {
         title: this.props.t('MemoryLimit'),
         dataIndex: 'memoryLimit',
         width: 'auto',
-        responsive: ['lg', 'sm'],
         render: (text: string) => {
           return (
             <>
@@ -157,7 +153,6 @@ class MProblem extends Component<any, any> {
       {
         title: 'AC/Submit',
         width: 'auto',
-        responsive: ['lg'],
         render: (text: string, row: any) => {
           return (
             <>
@@ -170,18 +165,17 @@ class MProblem extends Component<any, any> {
         title: this.props.t('source'),
         dataIndex: 'source',
         width: 'auto',
-        responsive: ['lg'],
       },
       {
         title: this.props.t('Owner'),
         dataIndex: 'username',
         width: 'auto',
-        responsive: ['lg'],
       },
       {
         title: this.props.t('operator'),
         width: 'auto',
-        responsive: ['lg', 'sm'],
+        // 操作列必须跨断点保持挂载，否则响应式切换会卸载行内 Modal
+        shouldCellUpdate: () => false,
         render: (text: any, rows: any) => {
           return (
             <Space size={3}>

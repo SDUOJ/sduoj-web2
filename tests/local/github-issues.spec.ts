@@ -120,9 +120,7 @@ async function descriptionEditor(page: Page) {
   return { dialog, editor };
 }
 
-test('#29 @known-issue description dialog survives a responsive breakpoint', async ({
-  page,
-}, testInfo) => {
+test('#29 description dialog survives a responsive breakpoint', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/v2/manage/problem/program');
   await page.getByRole('button', { name: '题目描述', exact: true }).first().click();
@@ -132,7 +130,6 @@ test('#29 @known-issue description dialog survives a responsive breakpoint', asy
     body: await page.screenshot(),
     contentType: 'image/png',
   });
-  test.fail(true, 'GitHub #29: responsive columns unmount the open dialog');
   await expect(page.getByRole('dialog')).toBeVisible({ timeout: 3000 });
 });
 

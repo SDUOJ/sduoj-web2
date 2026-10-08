@@ -45,6 +45,7 @@ const ProDescriptions = (props: any) => {
         onCancel={() => setVis(false)}
         open={vis}
         destroyOnHidden={true}
+        forceRender
         width={1200}
         footer={
           <>
