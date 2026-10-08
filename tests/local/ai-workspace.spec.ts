@@ -17,7 +17,12 @@ test.beforeEach(async ({ page, baseURL }) => {
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  const logout = await page.request.get('/api/user/logout');
+  let logout = await page.request.get('/api/user/logout');
+  // 登出接口限流时清理会 429；等一秒再试一次，不掩盖业务断言失败
+  if (logout.status() === 429) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    logout = await page.request.get('/api/user/logout');
+  }
   const body = await logout.json();
   await testInfo.attach('logout-cleanup', {
     contentType: 'application/json',
@@ -183,7 +188,7 @@ test('real Gateway SSE replays durable cancellation events for an isolated task'
   }
 });
 
-test('B-01 @known-issue deleted resources do not leave unqueryable tasks in the visible list', async ({
+test('B-01 deleted resources do not leave unqueryable tasks in the visible list', async ({
   page,
 }, testInfo) => {
   const user = JSON.parse(
@@ -246,7 +251,6 @@ test('B-01 @known-issue deleted resources do not leave unqueryable tasks in the 
     }),
   });
   expect(detail.status()).toBe(404);
-  test.fail(true, 'AutoLab job list includes a deleted-resource task whose detail is inaccessible');
   expect(envelope.data.rows.some((row: { id: string }) => row.id === taskId)).toBe(false);
 });
 

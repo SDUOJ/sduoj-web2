@@ -294,7 +294,7 @@ test('#54 real CodeMirror accepts a 512 KiB clipboard paste without submission',
   page,
 }, testInfo) => {
   await page.goto('/v2/problem');
-  await page.locator('.ant-table-row').first().getByRole('button').first().click();
+  await page.locator('.ant-table-row').first().locator('a[href*="/problem/"]').first().click();
   await page
     .getByRole('button', { name: /^提\s*交$/ })
     .first()
