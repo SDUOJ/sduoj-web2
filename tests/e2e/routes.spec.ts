@@ -19,7 +19,14 @@ test('management and exam trees use the same unknown-route fallback without moun
       await route.fulfill({ json: { code: 0, data: [] } });
     }
   });
-  for (const route of ['/v2/manage/not-a-route', '/v2/exam/not-a-route']) {
+  for (const route of [
+    '/v2/manage/not-a-route',
+    '/v2/exam/not-a-route',
+    // Anti-cheating management was retired; its routes must stay on the 404 fallback.
+    '/v2/manage/anti-cheating/hub',
+    '/v2/manage/anti-cheating/task',
+    '/v2/manage/anti-cheating/core',
+  ]) {
     await page.goto(route);
     await expect(page.getByText('404', { exact: true })).toBeVisible();
   }

@@ -115,6 +115,7 @@ const MUser = (props: any) => {
               initData={rows}
               updateAppendProps={{ userId: rows.userId }}
               dataSubmitter={(value: any) => {
+                value.features = value.features ?? {};
                 value.features.banThirdParty = value.features.banThirdParty ? 1 : 0;
                 value.features.banEmailUpdate = value.features.banEmailUpdate ? 1 : 0;
                 value.features.banInfoUpdate = value.features.banInfoUpdate ? 1 : 0;

@@ -50,8 +50,14 @@ const MProblemSet = (props: any) => {
         else if (tp === 2) return t('ProgrammingQuestions');
       };
       mApi.getProblemGroupSearch({ search: '' }).then((res: any) => {
+        // Accept both a bare array and a paged { rows } envelope.
+        const list: any[] = Array.isArray(res)
+          ? res
+          : Array.isArray(res?.rows)
+            ? res.rows
+            : [];
         let data: any = [];
-        for (let x of res) {
+        for (let x of list) {
           data.push({
             label: x.name + '(' + getType(x.type) + ')',
             value: x.gid,

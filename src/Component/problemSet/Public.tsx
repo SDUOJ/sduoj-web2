@@ -34,7 +34,7 @@ const Public = (props: any) => {
   }, [problemSetId]);
 
   const getStartText = () => {
-    if (info === undefined) return '';
+    if (info == null) return '';
     if (info.finish === 1) return props.t('submitted');
     if (info.tm_end < Date.now()) return props.t('ended');
     return props.t('StartAnswering');
