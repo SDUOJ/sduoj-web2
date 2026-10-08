@@ -1,13 +1,10 @@
 import { test, expect } from '@playwright/test';
 
-test('classroom form blocks storage overflow and submits a valid boundary value', async ({
-  page,
-  isMobile,
-}) => {
+async function openClassroomDialog(page: import('@playwright/test').Page) {
+  await page.addInitScript(() => localStorage.setItem('language', 'en'));
   let submitted: unknown;
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.addInitScript(() => localStorage.setItem('language', 'en'));
   await page.route('**/api/**', async (route) => {
     const path = new URL(route.request().url()).pathname.replace(/^\/api/, '');
     let data: unknown;
@@ -33,16 +30,28 @@ test('classroom form blocks storage overflow and submits a valid boundary value'
   await page.goto('/v2/manage/course/classroom');
   await page.getByRole('button', { name: /Create/ }).click();
   const dialog = page.getByRole('dialog');
+  return {
+    dialog,
+    getSubmitted: () => submitted,
+    errors,
+  };
+}
+
+test('classroom form blocks storage overflow and submits a valid boundary value', async ({
+  page,
+  isMobile,
+}) => {
+  const { dialog, getSubmitted, errors } = await openClassroomDialog(page);
   await dialog.getByLabel('教室名称').fill('a'.repeat(51));
   await dialog.getByLabel('教室地点').fill('Local room');
   await dialog.getByLabel('座位数量').fill('1');
   await dialog.getByRole('button', { name: /Submit/ }).click();
   await expect(dialog.getByText(/50 characters/)).toBeVisible();
-  expect(submitted).toBeUndefined();
+  expect(getSubmitted()).toBeUndefined();
   await dialog.getByLabel('教室名称').fill('中'.repeat(50));
   await dialog.getByRole('button', { name: /Submit/ }).click();
   await expect(dialog).not.toBeVisible();
-  expect(submitted).toMatchObject({
+  expect(getSubmitted()).toMatchObject({
     c_name: '中'.repeat(50),
     address: 'Local room',
     c_seat_num: 1,
@@ -52,6 +61,41 @@ test('classroom form blocks storage overflow and submits a valid boundary value'
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
   }
+  expect(errors).toEqual([]);
+});
+
+test('classroom seat input never submits a non-positive or non-integer seat', async ({ page }) => {
+  const { dialog, getSubmitted, errors } = await openClassroomDialog(page);
+  await dialog.getByLabel('教室名称').fill('Lab');
+  await dialog.getByLabel('教室地点').fill('A-101');
+  await dialog.getByLabel('座位数量').fill('0');
+  await dialog.getByRole('button', { name: /Submit/ }).click();
+  // InputNumber(min=1) 会钳位或拦截；无论是否提交，都不得写出非法座位
+  const payload = getSubmitted() as { c_seat_num?: number } | undefined;
+  if (payload) {
+    expect(Number.isInteger(payload.c_seat_num)).toBe(true);
+    expect(payload.c_seat_num).toBeGreaterThanOrEqual(1);
+    await expect(dialog).not.toBeVisible();
+  } else {
+    await expect(dialog).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});
+
+test('classroom form rejects empty required name and overlong names', async ({ page }) => {
+  const { dialog, getSubmitted, errors } = await openClassroomDialog(page);
+  await dialog.getByRole('button', { name: /Submit/ }).click();
+  await expect(dialog).toBeVisible();
+  expect(getSubmitted()).toBeUndefined();
+  await expect(dialog.locator('.ant-form-item-explain-error').first()).toBeVisible();
+
+  await dialog.getByLabel('教室名称').fill('a'.repeat(51));
+  await dialog.getByLabel('教室地点').fill('A-101');
+  await dialog.getByLabel('座位数量').fill('1');
+  await dialog.getByRole('button', { name: /Submit/ }).click();
+  await expect(dialog).toBeVisible();
+  expect(getSubmitted()).toBeUndefined();
+  await expect(dialog.getByText(/50 characters/)).toBeVisible();
   expect(errors).toEqual([]);
 });
 
