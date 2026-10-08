@@ -4,7 +4,6 @@ import { InboxOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import Dragger from 'antd/lib/upload/Dragger';
 import mApi from '../../Utils/API/m-api';
 import cApi from '../../Utils/API/c-api';
-import deepClone from 'Utils/deepClone';
 import { withTranslation } from 'react-i18next';
 import { matrixToRecords, parseXlsxMatrices, SpreadsheetCell } from '../../Utils/spreadsheetXlsx';
 
@@ -35,6 +34,15 @@ type ObjectiveSubmitRecord = {
   answer: string[];
   managerGroups: SpreadsheetCell | string[];
 };
+
+/** 不可变更新上传状态，避免 setUploadState(deepClone(...)) 全量深拷贝 */
+export function applyUploadStatus(uploadState: number[], index: number, status: number): number[] {
+  return uploadState.map((value, i) => (i === index ? status : value));
+}
+
+export function markAllPendingUploading(uploadState: number[]): number[] {
+  return uploadState.map((value) => (value === 0 ? 1 : value));
+}
 
 export function convertObjectiveRecords(
   data: ObjectiveImportRecord[],
@@ -150,9 +158,8 @@ const AutoImportObjective = (props: any) => {
                   message.error(props.t('ProblemInfoNotLoaded'));
                   return;
                 }
-                for (let i = 0; i < uploadState.length; i++)
-                  if (uploadState[i] === 0) uploadState[i] = 1;
-                setUploadState(deepClone(uploadState));
+                const next = markAllPendingUploading(uploadState);
+                setUploadState(next);
                 setCanSubmitAll(false);
 
                 const waitTime = (time: number = 100) => {
@@ -164,16 +171,17 @@ const AutoImportObjective = (props: any) => {
                 };
 
                 const run = async () => {
+                  const status = [...next];
                   for (let idx = 0; idx < submitProData.length; idx++) {
-                    if (uploadState[idx] === 2) continue;
+                    if (status[idx] === 2) continue;
                     const payload = submitProData[idx];
                     try {
                       await mApi.createChoiceProblem(payload);
-                      uploadState[idx] = 2;
+                      status[idx] = 2;
                     } catch (e) {
-                      uploadState[idx] = 0;
+                      status[idx] = 0;
                     }
-                    setUploadState(deepClone(uploadState));
+                    setUploadState([...status]);
                     await waitTime(200);
                   }
                   setCanSubmitAll(true);
@@ -249,19 +257,16 @@ const AutoImportObjective = (props: any) => {
                     <Button
                       type={'link'}
                       onClick={() => {
-                        uploadState[index] = 1;
-                        setUploadState(deepClone(uploadState));
+                        setUploadState((prev) => applyUploadStatus(prev, index, 1));
                         mApi
                           .createChoiceProblem(submitProData[index])
                           .then((resData) => {
                             message.success(props.t('SubmitSuccess'));
-                            uploadState[index] = 2;
-                            setUploadState(deepClone(uploadState));
+                            setUploadState((prev) => applyUploadStatus(prev, index, 2));
                           })
                           .catch(() => {
                             message.success(props.t('SubmitFailed'));
-                            uploadState[index] = 0;
-                            setUploadState(deepClone(uploadState));
+                            setUploadState((prev) => applyUploadStatus(prev, index, 0));
                           });
                       }}
                     >

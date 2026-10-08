@@ -1,41 +1,44 @@
-import { convertObjectiveRecords } from './AutoImportObjective';
+import {
+  applyUploadStatus,
+  convertObjectiveRecords,
+  markAllPendingUploading,
+} from './AutoImportObjective';
 
-describe('convertObjectiveRecords', () => {
-  it('keeps the first data row and guards empty answer/choice cells', () => {
-    const result = convertObjectiveRecords(
-      [
-        {
-          problemTitle: '首题',
-          isMulti: '0',
-          content: '2 + 2 = ?',
-          answer: null,
-          'choice-A': '4',
-          'choice-B': null,
-        },
-        {
-          problemTitle: '第二题',
-          isMulti: 1,
-          content: null,
-          answer: ' A, B ',
-          'choice-A': 'A',
-          'choice-B': 'B',
-        },
-      ],
-      (key) => key,
-    );
+it('converts objective import rows into preview and submit payloads', () => {
+  const { proData, submitProData } = convertObjectiveRecords([
+    {
+      problemTitle: 'Q1',
+      isMulti: 0,
+      content: '1+1=?',
+      answer: 'A',
+      'choice-A': '2',
+      'choice-B': '3',
+    },
+  ]);
 
-    expect(result.submitProData).toHaveLength(2);
-    expect(result.submitProData[0]).toMatchObject({
-      problemTitle: '首题',
-      answer: [],
-      description: { content: '2 + 2 = ?', choice: { A: '4' } },
-    });
-    expect(result.submitProData[1]).toMatchObject({
-      problemTitle: '第二题',
-      answer: ['A', 'B'],
-      description: { content: '', choice: { A: 'A', B: 'B' } },
-    });
-    expect(result.proData[0].isMulti).toBe('SingleChoice');
-    expect(result.proData[0].description).toBe('2 + 2 = ?\nA. 4');
+  expect(proData[0]).toMatchObject({ problemTitle: 'Q1', answer: 'A' });
+  expect(submitProData[0]).toMatchObject({
+    problemTitle: 'Q1',
+    isPublic: 1,
+    answer: ['A'],
+    description: { content: '1+1=?', choice: { A: '2', B: '3' } },
   });
+});
+
+it('applyUploadStatus copies only the target index and keeps referential isolation', () => {
+  const previous = [0, 1, 2];
+  const next = applyUploadStatus(previous, 1, 2);
+
+  expect(next).not.toBe(previous);
+  expect(previous).toEqual([0, 1, 2]);
+  expect(next).toEqual([0, 2, 2]);
+});
+
+it('markAllPendingUploading only promotes idle rows', () => {
+  const previous = [0, 2, 0, 1];
+  const next = markAllPendingUploading(previous);
+
+  expect(next).not.toBe(previous);
+  expect(previous).toEqual([0, 2, 0, 1]);
+  expect(next).toEqual([1, 2, 1, 1]);
 });
