@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Modal, Space, Tag } from 'antd';
-import React, { Dispatch, useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import mApi from 'Utils/API/m-api';
 import { connect } from 'react-redux';
 import { TableState } from '../../Type/ITable';
@@ -31,20 +31,35 @@ const ProCheckPoints = (props: any) => {
 
   const { t } = useTranslation();
   const [form] = useForm();
+  // 已写入过初值的字段：之后只允许用户/显式操作改分，避免样例切换时 setFieldsValue 覆盖脏值
+  const initializedScoresRef = useRef<Set<string>>(new Set());
 
-  // 维护当前总分
+  useEffect(() => {
+    initializedScoresRef.current = new Set();
+  }, [name]);
+
+  // 维护当前总分：仅首次同步服务端分数，保留用户正在输入的草稿
   useEffect(() => {
     const data = tableDataForName?.dataSource;
     if (data !== undefined) {
-      let formData: any = {},
-        score = 0;
-      let ckData: any = {};
-      for (let x of data) {
-        formData[x.checkpointId] = x.checkpointScore;
-        ckData[x.checkpointId] = x.caseIndex;
-        score += x.checkpointScore;
+      const formData: Record<string, unknown> = {};
+      let score = 0;
+      let needsSync = false;
+      for (const x of data) {
+        const fieldName = x.checkpointId;
+        const key = String(fieldName);
+        if (!initializedScoresRef.current.has(key)) {
+          formData[fieldName] = x.checkpointScore;
+          initializedScoresRef.current.add(key);
+          needsSync = true;
+          score += Number(x.checkpointScore) || 0;
+        } else {
+          const draft = form.getFieldValue(fieldName);
+          formData[fieldName] = draft;
+          score += Number(draft) || 0;
+        }
       }
-      form.setFieldsValue(formData);
+      if (needsSync) form.setFieldsValue(formData);
       setSumScore(score);
     }
   }, [form, name, tableDataForName]);
