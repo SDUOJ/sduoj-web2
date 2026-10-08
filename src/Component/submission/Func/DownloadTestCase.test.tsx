@@ -1,6 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DownloadTestCaseInner } from './DownloadTestCase';
+import {
+  buildCaseFileNames,
+  buildZipFileRequests,
+  DownloadTestCaseInner,
+  resolveManagedTargets,
+} from './DownloadTestCase';
 import mApi from 'Utils/API/m-api';
 
 jest.mock('Utils/API/m-api', () => ({
@@ -40,17 +45,88 @@ beforeEach(() => {
       checkpointId: 'cp-1',
       inputFileId: 'in-1',
       outputFileId: 'out-1',
-      inputFilename: '1.in',
-      outputFilename: '1.out',
+      inputFilename: 'a.in',
+      outputFilename: 'a.out',
+      caseIndex: null,
     },
     {
       checkpointId: 'cp-2',
       inputFileId: 'in-2',
       outputFileId: 'out-2',
-      inputFilename: '2.in',
-      outputFilename: '2.out',
+      inputFilename: 'b.in',
+      outputFilename: 'b.out',
+      caseIndex: null,
     },
   ]);
+});
+
+it('names zip entries by test case number', () => {
+  expect(
+    buildCaseFileNames([
+      { scope: 'private', caseIndex: 1, caseID: 'cp-1' },
+      { scope: 'private', caseIndex: 2, caseID: 'cp-2' },
+    ]),
+  ).toEqual(['1', '2']);
+});
+
+it('disambiguates colliding private/public case numbers', () => {
+  expect(
+    buildCaseFileNames([
+      { scope: 'private', caseIndex: 1 },
+      { scope: 'public', caseIndex: 1 },
+    ]),
+  ).toEqual(['private-1', 'public-1']);
+});
+
+it('resolves managed file ids without per-case preview calls', () => {
+  const resolved = resolveManagedTargets(
+    [
+      {
+        key: 'private-cp-1',
+        scope: 'private',
+        caseIndex: 1,
+        caseID: 'cp-1',
+        result: 'WrongAnswer',
+      },
+    ],
+    [
+      {
+        checkpointId: 'cp-1',
+        inputFileId: 'in-1',
+        outputFileId: 'out-1',
+        caseIndex: null,
+      },
+    ],
+  );
+  expect(resolved).toHaveLength(1);
+  expect(buildZipFileRequests(resolved)).toEqual([
+    { id: 'in-1', downloadFilename: '1.in' },
+    { id: 'out-1', downloadFilename: '1.out' },
+  ]);
+});
+
+it('falls back to caseIndex for public samples when checkpointId mismatches', () => {
+  const resolved = resolveManagedTargets(
+    [
+      {
+        key: 'public-x',
+        scope: 'public',
+        caseIndex: 1,
+        caseID: 'missing',
+        result: 'Accepted',
+      },
+    ],
+    [
+      {
+        checkpointId: 'sample-1',
+        inputFileId: 's-in',
+        outputFileId: 's-out',
+        caseIndex: 0,
+      },
+    ],
+  );
+  expect(resolved).toHaveLength(1);
+  expect(resolved[0].inputFileId).toBe('s-in');
 });
 
 it('hides the download button without a problem code', async () => {
@@ -106,7 +182,7 @@ it('opens a checkpoint data picker dialog from the download button', async () =>
   expect(screen.getByText('cp-2')).toBeInTheDocument();
 });
 
-it('downloads the first failing checkpoint through manage file ids', async () => {
+it('downloads the first failing checkpoint as a numbered zip without preview', async () => {
   const user = userEvent.setup();
   render(
     <DownloadTestCaseInner t={t} problemCode="SDUOJ-1" TestCaseStateList={privateCases as any} />,
@@ -117,12 +193,67 @@ it('downloads the first failing checkpoint through manage file ids', async () =>
 
   await user.click(screen.getByRole('button', { name: /downloadData|下载数据/ }));
   await user.click(await screen.findByRole('button', { name: /DownloadFirstRejectCase/ }));
-  // Managed checkpoints already carry file ids — no per-case preview call needed.
   await waitFor(() =>
-    expect(mApi.zipDownload).toHaveBeenCalledWith([
-      { id: 'in-1', downloadFilename: '1.in' },
-      { id: 'out-1', downloadFilename: '1.out' },
-    ]),
+    expect(mApi.zipDownload).toHaveBeenCalledWith(
+      [
+        { id: 'in-1', downloadFilename: '1.in' },
+        { id: 'out-1', downloadFilename: '1.out' },
+      ],
+      'SDUOJ-1-testcases.zip',
+    ),
   );
+  expect(mApi.getCheckpointPreview).not.toHaveBeenCalled();
+});
+
+it('allows single-case download of a private checkpoint via the row button', async () => {
+  const user = userEvent.setup();
+  render(
+    <DownloadTestCaseInner t={t} problemCode="SDUOJ-1" TestCaseStateList={privateCases as any} />,
+  );
+  await waitFor(() =>
+    expect(screen.getByRole('button', { name: /downloadData|下载数据/ })).toBeVisible(),
+  );
+  await user.click(screen.getByRole('button', { name: /downloadData|下载数据/ }));
+  const dialog = await screen.findByRole('dialog');
+  const rowButtons = dialog.querySelectorAll('button.ant-btn-link');
+  expect(rowButtons.length).toBeGreaterThanOrEqual(2);
+  await user.click(rowButtons[1] as HTMLElement);
+  await waitFor(() =>
+    expect(mApi.zipDownload).toHaveBeenCalledWith(
+      [
+        { id: 'in-2', downloadFilename: '2.in' },
+        { id: 'out-2', downloadFilename: '2.out' },
+      ],
+      'SDUOJ-1-testcases.zip',
+    ),
+  );
+});
+
+it('batch-downloads selected rows through a single zip call', async () => {
+  const user = userEvent.setup();
+  render(
+    <DownloadTestCaseInner t={t} problemCode="SDUOJ-1" TestCaseStateList={privateCases as any} />,
+  );
+  await waitFor(() =>
+    expect(screen.getByRole('button', { name: /downloadData|下载数据/ })).toBeVisible(),
+  );
+  await user.click(screen.getByRole('button', { name: /downloadData|下载数据/ }));
+  const dialog = await screen.findByRole('dialog');
+  const checkboxes = dialog.querySelectorAll('input[type="checkbox"]');
+  await user.click(checkboxes[1] as HTMLElement);
+  await user.click(checkboxes[2] as HTMLElement);
+  await user.click(screen.getByRole('button', { name: /BatchDownload/ }));
+  await waitFor(() =>
+    expect(mApi.zipDownload).toHaveBeenCalledWith(
+      [
+        { id: 'in-1', downloadFilename: '1.in' },
+        { id: 'out-1', downloadFilename: '1.out' },
+        { id: 'in-2', downloadFilename: '2.in' },
+        { id: 'out-2', downloadFilename: '2.out' },
+      ],
+      'SDUOJ-1-testcases.zip',
+    ),
+  );
+  expect(mApi.zipDownload).toHaveBeenCalledTimes(1);
   expect(mApi.getCheckpointPreview).not.toHaveBeenCalled();
 });

@@ -149,18 +149,23 @@ const PublicCheckpointsFormModal = (props: any) => {
                         size={'small'}
                         type={'link'}
                         onClick={() => {
-                          mApi.zipDownload([
-                            {
-                              id: row.checkpoint.inputFileId,
-                              downloadFilename:
-                                row.checkpoint.inputFilename ?? `${row.checkpointId}.in`,
-                            },
-                            {
-                              id: row.checkpoint.outputFileId,
-                              downloadFilename:
-                                row.checkpoint.outputFilename ?? `${row.checkpointId}.out`,
-                            },
-                          ]);
+                          const base =
+                            row.caseIndex != null
+                              ? String(row.caseIndex)
+                              : String(row.checkpointId);
+                          mApi.zipDownload(
+                            [
+                              {
+                                id: row.checkpoint.inputFileId,
+                                downloadFilename: `${base}.in`,
+                              },
+                              {
+                                id: row.checkpoint.outputFileId,
+                                downloadFilename: `${base}.out`,
+                              },
+                            ],
+                            `${base}.zip`,
+                          );
                         }}
                       >
                         <DownloadOutlined />

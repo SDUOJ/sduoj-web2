@@ -21,7 +21,8 @@ const JudgeResult = (props: IJudgeResult) => {
     let numList = Array(StateList.length);
     let scoreAC = 0,
       ACNumber = 0,
-      firstRejectId: string = '';
+      firstRejectId: string = '',
+      firstRejectIndex: number | undefined;
     for (let i = 0; i < StateList.length; i++) numList[i] = [];
     for (let i = 0; i < data.length; i++) {
       const add: number = data[i].caseScore ?? 0;
@@ -30,7 +31,10 @@ const JudgeResult = (props: IJudgeResult) => {
       if (data[i].caseType === TestCaseStates.Accepted) {
         ACNumber++;
       } else {
-        if (firstRejectId.length === 0) firstRejectId = data[i].caseID ?? '';
+        if (firstRejectId.length === 0) {
+          firstRejectId = data[i].caseID ?? '';
+          firstRejectIndex = data[i].caseIndex;
+        }
       }
     }
     return {
@@ -40,6 +44,7 @@ const JudgeResult = (props: IJudgeResult) => {
       ACNumber: ACNumber,
       CaseNumber: data.length,
       firstRejectId: firstRejectId,
+      firstRejectIndex: firstRejectIndex,
     };
   };
   const info = getInfo();
@@ -58,16 +63,20 @@ const JudgeResult = (props: IJudgeResult) => {
               danger
               onClick={() => {
                 mApi.getCheckpointPreview(info.firstRejectId).then((checkpoint: any) => {
-                  mApi.zipDownload([
-                    {
-                      id: checkpoint.inputFileId,
-                      downloadFilename: checkpoint.inputFilename ?? `${info.firstRejectId}.in`,
-                    },
-                    {
-                      id: checkpoint.outputFileId,
-                      downloadFilename: checkpoint.outputFilename ?? `${info.firstRejectId}.out`,
-                    },
-                  ]);
+                  const base = String(info.firstRejectIndex ?? info.firstRejectId);
+                  mApi.zipDownload(
+                    [
+                      {
+                        id: checkpoint.inputFileId,
+                        downloadFilename: `${base}.in`,
+                      },
+                      {
+                        id: checkpoint.outputFileId,
+                        downloadFilename: `${base}.out`,
+                      },
+                    ],
+                    `${base}.zip`,
+                  );
                 });
               }}
             >

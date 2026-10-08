@@ -196,16 +196,21 @@ const ProCheckPoints = (props: any) => {
             <Button
               type={'link'}
               onClick={() => {
-                mApi.zipDownload([
-                  {
-                    id: row.inputFileId,
-                    downloadFilename: row.inputFilename ?? `${row.checkpointId}.in`,
-                  },
-                  {
-                    id: row.outputFileId,
-                    downloadFilename: row.outputFilename ?? `${row.checkpointId}.out`,
-                  },
-                ]);
+                const base =
+                  row.caseIndex != null ? String(row.caseIndex) : String(row.checkpointId);
+                mApi.zipDownload(
+                  [
+                    {
+                      id: row.inputFileId,
+                      downloadFilename: `${base}.in`,
+                    },
+                    {
+                      id: row.outputFileId,
+                      downloadFilename: `${base}.out`,
+                    },
+                  ],
+                  `${base}.zip`,
+                );
               }}
             >
               <DownloadOutlined />
@@ -324,22 +329,29 @@ const ProCheckPoints = (props: any) => {
               <Button
                 type={'primary'}
                 onClick={() => {
+                  if (selectedRowKeys.length === 0) {
+                    message.warning(t('noItemSelected'));
+                    return;
+                  }
                   let data: any = [];
                   selectedRowKeys.map((value: any) => {
                     const pos = dataSource.findIndex((it: any) => it.checkpointId === value);
+                    if (pos < 0) return undefined;
+                    const base =
+                      dataSource[pos].caseIndex != null
+                        ? String(dataSource[pos].caseIndex)
+                        : String(dataSource[pos].checkpointId);
                     data.push({
                       id: dataSource[pos].inputFileId,
-                      downloadFilename:
-                        dataSource[pos].inputFilename ?? `${dataSource[pos].checkpointId}.in`,
+                      downloadFilename: `${base}.in`,
                     });
                     data.push({
                       id: dataSource[pos].outputFileId,
-                      downloadFilename:
-                        dataSource[pos].outputFilename ?? `${dataSource[pos].checkpointId}.out`,
+                      downloadFilename: `${base}.out`,
                     });
                     return undefined;
                   });
-                  mApi.zipDownload(data).catch((e: any) => {
+                  mApi.zipDownload(data, `${props.problemCode}-checkpoints.zip`).catch((e: any) => {
                     message.error(e);
                   });
                 }}

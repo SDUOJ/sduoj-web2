@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { Button, message, Modal, Space, Table } from 'antd';
+import { Button, message, Modal, Space, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import mApi from 'Utils/API/m-api';
+import { FileDownloadRequest } from '../../../Type/api';
 import { TestCaseProp } from '../TestCase';
 import { StateList } from '../../../Type/ISubmission';
 
@@ -30,6 +31,12 @@ type ManageCheckpoint = {
   outputFileId?: string | number | null;
   inputFilename?: string | null;
   outputFilename?: string | null;
+  caseIndex?: number | null;
+};
+
+type ResolvedTarget = CheckpointRow & {
+  inputFileId: string | number;
+  outputFileId: string | number;
 };
 
 const toRows = (cases: TestCaseProp[] | undefined, scope: string): CheckpointRow[] =>
@@ -37,12 +44,96 @@ const toRows = (cases: TestCaseProp[] | undefined, scope: string): CheckpointRow
     key: `${scope}-${item.caseID ?? item.caseIndex ?? index}`,
     scope,
     caseIndex: item.caseIndex,
-    caseID: item.caseID === undefined ? undefined : String(item.caseID),
+    caseID: item.caseID === undefined || item.caseID === null ? undefined : String(item.caseID),
     result: StateList[item.caseType] ?? String(item.caseType),
     score: item.caseScore,
     time: item.caseTime,
     memory: item.caseMemory,
   }));
+
+/** zip 内文件名：优先使用 test case 编号（1.in / 1.out），重名时加 scope 前缀。 */
+export const buildCaseFileNames = (
+  targets: Array<{ scope: string; caseIndex?: number; caseID?: string }>,
+): string[] => {
+  const numOf = (row: { caseIndex?: number; caseID?: string }) =>
+    String(row.caseIndex ?? row.caseID ?? 'case');
+  const counts = new Map<string, number>();
+  for (const row of targets) {
+    const num = numOf(row);
+    counts.set(num, (counts.get(num) ?? 0) + 1);
+  }
+  return targets.map((row) => {
+    const num = numOf(row);
+    return (counts.get(num) ?? 0) > 1 ? `${row.scope}-${num}` : num;
+  });
+};
+
+/**
+ * 将提交里的测试点映射到 manage/checkpoint/list 的文件 id。
+ * 仅使用一次列表接口，避免逐条 /checkpoint/query 触发网关限流。
+ */
+export const resolveManagedTargets = (
+  rows: CheckpointRow[],
+  manageCheckpoints: ManageCheckpoint[],
+): ResolvedTarget[] => {
+  const usable = manageCheckpoints.filter(
+    (item) => item.inputFileId != null && item.outputFileId != null,
+  );
+  const used = new Set<string>();
+  const resolved: ResolvedTarget[] = [];
+  const claim = (row: CheckpointRow, managed: ManageCheckpoint) => {
+    used.add(String(managed.checkpointId));
+    resolved.push({
+      ...row,
+      inputFileId: managed.inputFileId!,
+      outputFileId: managed.outputFileId!,
+    });
+  };
+
+  for (const row of rows) {
+    if (!row.caseID) continue;
+    const managed = usable.find(
+      (item) => !used.has(String(item.checkpointId)) && String(item.checkpointId) === String(row.caseID),
+    );
+    if (managed) claim(row, managed);
+  }
+
+  // 公开样例点：用 caseIndex 对齐（后端 manage 列表为 0 基，提交侧为 1 基）
+  for (const row of rows) {
+    if (resolved.some((item) => item.key === row.key) || row.caseIndex == null) continue;
+    const rowIndex: number = row.caseIndex;
+    const managed = usable.find(
+      (item) =>
+        !used.has(String(item.checkpointId)) &&
+        (item.caseIndex === rowIndex || item.caseIndex === rowIndex - 1),
+    );
+    if (managed) claim(row, managed);
+  }
+
+  // 私有点：按顺序对齐 caseIndex 为空的 manage 记录
+  const privateManage = usable.filter(
+    (item) => !used.has(String(item.checkpointId)) && (item.caseIndex == null || item.caseIndex === undefined),
+  );
+  let cursor = 0;
+  for (const row of rows) {
+    if (resolved.some((item) => item.key === row.key) || row.scope !== 'private') continue;
+    if (cursor >= privateManage.length) break;
+    claim(row, privateManage[cursor++]);
+  }
+
+  return resolved;
+};
+
+export const buildZipFileRequests = (targets: ResolvedTarget[]): FileDownloadRequest[] => {
+  const names = buildCaseFileNames(targets);
+  const files: FileDownloadRequest[] = [];
+  targets.forEach((target, index) => {
+    const base = names[index];
+    files.push({ id: target.inputFileId, downloadFilename: `${base}.in` });
+    files.push({ id: target.outputFileId, downloadFilename: `${base}.out` });
+  });
+  return files;
+};
 
 const DownloadTestCase = (props: DownloadTestCaseProps) => {
   const [open, setOpen] = useState(false);
@@ -89,56 +180,27 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
     };
   }, [props.problemCode]);
 
-  const checkpointById = useMemo(() => {
-    const map = new Map<string, ManageCheckpoint>();
-    for (const item of manageCheckpoints ?? []) {
-      map.set(String(item.checkpointId), item);
-    }
-    return map;
-  }, [manageCheckpoints]);
-
-  const downloadByCaseIds = async (caseIds: string[]) => {
-    const targets = rows.filter((row) => row.caseID && caseIds.includes(row.caseID));
+  const downloadByRowKeys = async (rowKeys: React.Key[]) => {
+    const targets = rows.filter((row) => rowKeys.includes(row.key));
     if (targets.length === 0) {
-      message.warning(props.t('Download'));
+      message.warning(props.t('noItemSelected'));
       return;
+    }
+    const resolved = resolveManagedTargets(targets, manageCheckpoints ?? []);
+    if (resolved.length === 0) {
+      message.error(props.t('DownloadFailed'));
+      return;
+    }
+    if (resolved.length < targets.length) {
+      message.warning(props.t('noItemSelected'));
     }
     setDownloading(true);
     try {
-      const files = await Promise.all(
-        targets.map(async (row) => {
-          const managed = checkpointById.get(row.caseID!);
-          let inputFileId = managed?.inputFileId;
-          let outputFileId = managed?.outputFileId;
-          let inputFilename = managed?.inputFilename;
-          let outputFilename = managed?.outputFilename;
-          if (inputFileId == null || outputFileId == null) {
-            const checkpoint = (await mApi.getCheckpointPreview(row.caseID!)) as {
-              inputFileId: string;
-              outputFileId: string;
-              inputFilename?: string;
-              outputFilename?: string;
-            };
-            inputFileId = checkpoint.inputFileId;
-            outputFileId = checkpoint.outputFileId;
-            inputFilename = checkpoint.inputFilename;
-            outputFilename = checkpoint.outputFilename;
-          }
-          return [
-            {
-              id: inputFileId,
-              downloadFilename:
-                inputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.in`,
-            },
-            {
-              id: outputFileId,
-              downloadFilename:
-                outputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.out`,
-            },
-          ];
-        }),
-      );
-      await mApi.zipDownload(files.flat());
+      const files = buildZipFileRequests(resolved);
+      const zipName = props.problemCode
+        ? `${props.problemCode}-testcases.zip`
+        : 'testcases.zip';
+      await mApi.zipDownload(files, zipName);
     } catch (error) {
       message.error(props.t('DownloadFailed'));
     } finally {
@@ -170,7 +232,7 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
               <Button
                 danger
                 loading={downloading}
-                onClick={() => downloadByCaseIds([firstError.caseID!])}
+                onClick={() => downloadByRowKeys([firstError.key])}
               >
                 {props.t('DownloadFirstRejectCase')}
               </Button>
@@ -180,12 +242,7 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
               icon={<DownloadOutlined />}
               loading={downloading}
               disabled={selectedKeys.length === 0}
-              onClick={() => {
-                const ids = rows
-                  .filter((row) => selectedKeys.includes(row.key) && row.caseID)
-                  .map((row) => row.caseID!);
-                void downloadByCaseIds(ids);
-              }}
+              onClick={() => downloadByRowKeys(selectedKeys)}
             >
               {props.t('BatchDownload')}
             </Button>
@@ -194,6 +251,7 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
       >
         <Table
           size="small"
+          rowKey="key"
           rowSelection={{
             selectedRowKeys: selectedKeys,
             onChange: setSelectedKeys,
@@ -224,6 +282,22 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
             {
               title: props.t('Memory'),
               dataIndex: 'memory',
+            },
+            {
+              title: props.t('Download'),
+              key: 'download',
+              width: 80,
+              render: (_: unknown, row: CheckpointRow) => (
+                <Tooltip title={props.t('clickToDownload')}>
+                  <Button
+                    type="link"
+                    size="small"
+                    icon={<DownloadOutlined />}
+                    loading={downloading}
+                    onClick={() => downloadByRowKeys([row.key])}
+                  />
+                </Tooltip>
+              ),
             },
           ]}
           dataSource={rows}

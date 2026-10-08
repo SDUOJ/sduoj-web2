@@ -34,14 +34,22 @@ export const applyCheckpointUpdate = (
   judgeScore: number,
   usedTime: number,
   usedMemory: number,
+  caseID?: string | number | null,
 ) => {
   const next = [...current];
+  const prev = next[checkpointIndex];
+  const normalizedId =
+    caseID == null || caseID === '' || Number(caseID) === 0
+      ? prev?.caseID
+      : String(caseID);
   next[checkpointIndex] = {
+    ...prev,
     caseIndex: checkpointIndex + 1,
     caseType: StateList.indexOf(SubmissionMap[judgeResult.toString()]),
     caseScore: judgeScore,
     caseTime: usedTime,
     caseMemory: usedMemory,
+    caseID: normalizedId,
   };
   return next;
 };
@@ -81,7 +89,10 @@ const setCaseValue = (resData: any, key: string, data: TestCaseProp[]) => {
       caseScore: resData[key][i].Score,
       caseTime: resData[key][i].Time,
       caseMemory: resData[key][i].Memory,
-      caseID: resData[key][i].Index,
+      caseID:
+        resData[key][i].Index == null || resData[key][i].Index === ''
+          ? undefined
+          : String(resData[key][i].Index),
     });
   }
 };
@@ -183,7 +194,8 @@ export const Processing = (props: IProcessingProp & any) => {
     const submissionVersion = data[1];
     const checkpointType = data[2];
     const checkpointIndex = data[3];
-    // const checkpointId = data[4]
+    // 历史 websocket 帧的 checkpointId 恒为 0；非 0 时才写入
+    const checkpointId = data[4];
     const judgeResult = data[5];
     const judgeScore = data[6];
     const usedTime = data[7];
@@ -212,6 +224,7 @@ export const Processing = (props: IProcessingProp & any) => {
             judgeScore,
             usedTime,
             usedMemory,
+            checkpointId,
           ),
         );
       } else if (checkpointType === 1) {
@@ -223,6 +236,7 @@ export const Processing = (props: IProcessingProp & any) => {
             judgeScore,
             usedTime,
             usedMemory,
+            checkpointId,
           ),
         );
       }
