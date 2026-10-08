@@ -220,3 +220,78 @@ it('destroys the export editor when its modal closes', async () => {
   fireEvent.click(view.getByRole('button', { name: 'Close' }));
   expect(instances[0].destroy).toHaveBeenCalledTimes(1);
 });
+
+function dispatchBeforeUnload() {
+  const event = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+  window.dispatchEvent(event);
+  return event.defaultPrevented || (event.returnValue as unknown) === '';
+}
+
+it('warns before leaving when the editor draft differs from the saved value', async () => {
+  render(
+    <Editor
+      value="server"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  await waitForEditor();
+  act(() => options[0].after?.());
+
+  expect(dispatchBeforeUnload()).toBe(false);
+
+  act(() => {
+    instances[0].setValue('draft-not-saved');
+  });
+  expect(dispatchBeforeUnload()).toBe(true);
+});
+
+it('does not warn after the external value catches up with the draft', async () => {
+  const view = render(
+    <Editor
+      value="server"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  await waitForEditor();
+  act(() => options[0].after?.());
+  act(() => {
+    instances[0].setValue('draft-not-saved');
+  });
+  expect(dispatchBeforeUnload()).toBe(true);
+
+  view.rerender(
+    <Editor
+      value="draft-not-saved"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  expect(dispatchBeforeUnload()).toBe(false);
+});
+
+it('stops guarding after unmount', async () => {
+  const view = render(
+    <Editor
+      value="server"
+      langCode="en_US"
+      userIdentity="alice"
+      documentIdentity="problem:1"
+      fieldIdentity="description"
+    />,
+  );
+  await waitForEditor();
+  act(() => options[0].after?.());
+  act(() => {
+    instances[0].setValue('draft-not-saved');
+  });
+  view.unmount();
+  expect(dispatchBeforeUnload()).toBe(false);
+});

@@ -333,9 +333,7 @@ test('#54 real CodeMirror accepts a 512 KiB clipboard paste without submission',
     .click();
 });
 
-test('#32 @known-issue unsaved Markdown changes warn before leaving the page', async ({
-  page,
-}, testInfo) => {
+test('#32 unsaved Markdown changes warn before leaving the page', async ({ page }, testInfo) => {
   const { editor } = await descriptionEditor(page);
   await editor.fill('AUDIT-UNSAVED-LEAVE');
   await editor.press('End');
@@ -349,7 +347,6 @@ test('#32 @known-issue unsaved Markdown changes warn before leaving the page', a
     contentType: 'application/json',
     body: JSON.stringify({ guarded, saved: false }),
   });
-  test.fail(true, 'GitHub #32: dirty Markdown does not register an unload guard');
   expect(guarded).toBe(true);
 });
 

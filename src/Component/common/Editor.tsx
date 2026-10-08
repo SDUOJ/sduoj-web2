@@ -315,6 +315,21 @@ export const Editor = (props: EditorProps & any) => {
     }
   }, [props.value, readyVersion]);
 
+  // 未保存草稿：关闭/刷新前拦截，避免用户误以为已写入服务端
+  useEffect(() => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      const external = lastExternalValueRef.current ?? '';
+      if (editor.getValue() !== external) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
+
   return <div ref={editorElementRef} id={domId} className="vditor" />;
 };
 
