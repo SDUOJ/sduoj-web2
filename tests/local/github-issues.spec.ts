@@ -209,15 +209,12 @@ test('#17 @known-issue problem titles expose a browser-native link', async ({ pa
   await expect(row.locator('a[href*="/problem/"]')).toHaveCount(1);
 });
 
-test('#33 @known-issue completed CE submissions allow their summary', async ({
-  page,
-}, testInfo) => {
+test('#33 completed CE submissions allow their summary', async ({ page }, testInfo) => {
   const { summary } = await submission(page, '编译错误');
   await testInfo.attach('ce-summary-step', {
     contentType: 'application/json',
     body: JSON.stringify({ className: await summary.getAttribute('class') }),
   });
-  test.fail(true, 'GitHub #33: completed CE summaries are disabled');
   await expect(summary).not.toHaveClass(/ant-steps-item-disabled/);
   await summary.click();
   await expect(page.getByRole('dialog').getByText('总览', { exact: true })).toBeVisible();

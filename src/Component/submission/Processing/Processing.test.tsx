@@ -5,9 +5,35 @@ let handleJudgeMessage: ((message: any[]) => void) | undefined;
 
 jest.mock('antd', () => ({
   Skeleton: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  Steps: Object.assign(({ children }: { children: React.ReactNode }) => <>{children}</>, {
-    Step: () => null,
-  }),
+  Steps: Object.assign(
+    ({
+      children,
+      current,
+      onChange,
+    }: {
+      children: React.ReactNode;
+      current: number;
+      onChange: (index: number) => void;
+    }) => (
+      <div data-testid="steps" data-current={current}>
+        <button type="button" onClick={() => onChange(2)}>
+          go-summary
+        </button>
+        {children}
+      </div>
+    ),
+    {
+      Step: ({ title, disabled, status }: any) => (
+        <div
+          data-testid={`step-${title}`}
+          data-disabled={disabled ? '1' : '0'}
+          data-status={status}
+        >
+          {title}
+        </div>
+      ),
+    },
+  ),
 }));
 jest.mock('@ant-design/icons', () => ({ LoadingOutlined: () => null }));
 jest.mock('../../common/CodeHighlight', () => () => null);
@@ -33,7 +59,10 @@ jest.mock(
     ),
 );
 jest.mock('./Summary', () => ({ submissionInfo }: any) => (
-  <div>{submissionInfo?.problemTitle}</div>
+  <div data-testid="summary-panel">
+    {submissionInfo?.problemTitle}
+    <span data-testid="summary-log">{submissionInfo?.judgeLog ?? ''}</span>
+  </div>
 ));
 
 const deferred = <T,>() => {
@@ -114,4 +143,60 @@ it('preserves synchronous private and public checkpoint frames', async () => {
 
   expect(screen.getByLabelText('private-cases')).toHaveTextContent('10,20');
   expect(screen.getByLabelText('public-cases')).toHaveTextContent('30');
+});
+
+it.each([
+  [8, 'CE'],
+  [5, 'System Error'],
+])('allows the summary step for finished judge result %s (%s)', async (judgeResult) => {
+  const query = jest.fn().mockResolvedValue({
+    submissionId: 'ce',
+    problemTitle: 'CE submission',
+    judgeResult,
+    judgeLog: 'compile failed: unexpected token',
+    checkpointNum: 0,
+    publicCheckpointNum: 0,
+    checkpointResults: [],
+    publicCheckpointResults: [],
+  });
+  render(
+    <Processing
+      TimeLimit={1000}
+      MemoryLimit={256}
+      submissionId="ce"
+      QuerySubmissionAPI={query}
+      t={(key: string) => key}
+    />,
+  );
+
+  await screen.findByTestId('summary-panel');
+  const summaryStep = screen.getByTestId('step-Summary');
+  expect(summaryStep).toHaveAttribute('data-disabled', '0');
+  expect(summaryStep).toHaveAttribute('data-status', 'process');
+  // running 仍标记为错误步骤
+  expect(screen.getByTestId('step-run')).toHaveAttribute('data-status', 'error');
+  expect(screen.getByTestId('summary-log')).toHaveTextContent('compile failed');
+});
+
+it('keeps summary disabled while a submission is still running', async () => {
+  const query = jest.fn().mockResolvedValue({
+    submissionId: 'running',
+    problemTitle: 'Running submission',
+    judgeResult: -1,
+    checkpointNum: 1,
+    publicCheckpointNum: 0,
+    checkpointResults: [],
+    publicCheckpointResults: [],
+  });
+  render(
+    <Processing
+      TimeLimit={1000}
+      MemoryLimit={256}
+      submissionId="running"
+      QuerySubmissionAPI={query}
+      t={(key: string) => key}
+    />,
+  );
+  await screen.findByText('Running submission');
+  expect(screen.getByTestId('step-Summary')).toHaveAttribute('data-disabled', '1');
 });

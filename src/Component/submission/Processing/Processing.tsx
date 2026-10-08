@@ -125,10 +125,10 @@ export const Processing = (props: IProcessingProp & any) => {
       let TestCaseInit: TestCaseProp[] = [];
       let PublicTestCaseInit: TestCaseProp[] = [];
       if (resData.judgeResult === 8 || resData.judgeResult === 5) {
-        // 当前状态为 系统错误 或 编译错误
+        // 系统错误或编译错误：流程已结束，仍允许进入总结查看编译日志与结论
         setSubmissionInfo(resData);
-        setCurrentStep(1);
-        setShowStep(1);
+        setCurrentStep(2);
+        setShowStep(2);
         setRunningState('-1');
         setRunningResult(resData.judgeResult.toString());
       } else if (resData.judgeResult <= 0) {
