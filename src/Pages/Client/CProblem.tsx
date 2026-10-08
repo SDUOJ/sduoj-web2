@@ -61,7 +61,7 @@ class CProblem extends Component<any, any> {
                           <Space size={3}>
                             <Link
                               to={`${UrlPrefix}/problem/${encodeURIComponent(row.problemCode)}`}
-                              style={{ fontSize: 12 }}
+                              className="table-title-link"
                             >
                               {text}
                             </Link>

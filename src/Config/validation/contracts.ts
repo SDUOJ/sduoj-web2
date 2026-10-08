@@ -10,8 +10,18 @@ const list = (maxItems: number, source: string): Constraint => ({
 });
 
 export const contestFeatureContracts = {
-  mode: { kind: 'string', required: true, source: 'ContestFeatureDTO.mode @NotNull' },
-  openness: { kind: 'string', required: true, source: 'ContestFeatureDTO.openness @NotNull' },
+  mode: {
+    kind: 'string',
+    required: true,
+    values: ['acm', 'oi', 'ioi'],
+    source: 'ContestFeatureDTO.mode @NotNull',
+  },
+  openness: {
+    kind: 'string',
+    required: true,
+    values: ['public', 'protected', 'private'],
+    source: 'ContestFeatureDTO.openness @NotNull',
+  },
   visibility: {
     kind: 'integer',
     required: true,
@@ -236,10 +246,14 @@ export const contracts = {
   problemSet: {
     name: column('autolab', 'problem_set', 'name', {
       required: true,
+      notBlank: true,
+      trim: true,
       source: 'ser/problem_set.py problem_set_base',
     }),
     tag: column('autolab', 'problem_set', 'tag', {
       required: true,
+      notBlank: true,
+      trim: true,
       source: 'ser/problem_set.py problem_set_base',
     }),
     description: column('autolab', 'problem_set', 'description'),

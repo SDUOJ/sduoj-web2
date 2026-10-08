@@ -1,7 +1,6 @@
 import TableWithPagination from '../common/Table/TableWithPagination';
 import cApi from '../../Utils/API/c-api';
-import { Button } from 'antd';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 import { UrlPrefix } from '../../Config/constValue';
 
@@ -17,16 +16,12 @@ const ProblemSetList = (props: any) => {
             dataIndex: 'name',
             render: (v: any, r: any) => {
               return (
-                <Button
-                  className="table-title-button"
-                  type={'text'}
-                  size={'small'}
-                  onClick={() => {
-                    props.history.push(`${UrlPrefix}/problemSet/${r.psid}/overview`);
-                  }}
+                <Link
+                  className="table-title-link"
+                  to={`${UrlPrefix}/problemSet/${r.psid}/overview`}
                 >
                   {v}
-                </Button>
+                </Link>
               );
             },
           },

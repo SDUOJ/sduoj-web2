@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Button, message, Modal, Space, Table } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ interface DownloadTestCaseProps {
   t: (key: string) => string;
   TestCaseStateList?: TestCaseProp[];
   PublicTestCaseStateList?: TestCaseProp[];
+  problemCode?: string;
 }
 
 type CheckpointRow = {
@@ -21,6 +22,14 @@ type CheckpointRow = {
   score?: number;
   time?: number;
   memory?: number;
+};
+
+type ManageCheckpoint = {
+  checkpointId: string | number;
+  inputFileId?: string | number | null;
+  outputFileId?: string | number | null;
+  inputFilename?: string | null;
+  outputFilename?: string | null;
 };
 
 const toRows = (cases: TestCaseProp[] | undefined, scope: string): CheckpointRow[] =>
@@ -39,10 +48,54 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
   const [open, setOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [downloading, setDownloading] = useState(false);
-  const rows = [
-    ...toRows(props.TestCaseStateList, 'private'),
-    ...toRows(props.PublicTestCaseStateList, 'public'),
-  ];
+  const [manageCheckpoints, setManageCheckpoints] = useState<ManageCheckpoint[] | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
+  const rows = useMemo(
+    () => [
+      ...toRows(props.TestCaseStateList, 'private'),
+      ...toRows(props.PublicTestCaseStateList, 'public'),
+    ],
+    [props.TestCaseStateList, props.PublicTestCaseStateList],
+  );
+
+  // Gate the button on the manage checkpoint API: only problem managers/admins
+  // with download rights get a non-null list; anything else stays hidden.
+  useEffect(() => {
+    let active = true;
+    const problemCode = props.problemCode;
+    if (!problemCode) {
+      setManageCheckpoints(null);
+      setPermissionDenied(true);
+      return () => {
+        active = false;
+      };
+    }
+    setManageCheckpoints(null);
+    setPermissionDenied(false);
+    Promise.resolve(mApi.getCheckpointList(problemCode))
+      .then((res: any) => {
+        if (!active) return;
+        const list = Array.isArray(res) ? res : [];
+        setManageCheckpoints(list);
+        if (list.length === 0) setPermissionDenied(true);
+      })
+      .catch(() => {
+        if (!active) return;
+        setManageCheckpoints(null);
+        setPermissionDenied(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [props.problemCode]);
+
+  const checkpointById = useMemo(() => {
+    const map = new Map<string, ManageCheckpoint>();
+    for (const item of manageCheckpoints ?? []) {
+      map.set(String(item.checkpointId), item);
+    }
+    return map;
+  }, [manageCheckpoints]);
 
   const downloadByCaseIds = async (caseIds: string[]) => {
     const targets = rows.filter((row) => row.caseID && caseIds.includes(row.caseID));
@@ -54,22 +107,33 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
     try {
       const files = await Promise.all(
         targets.map(async (row) => {
-          const checkpoint = (await mApi.getCheckpointPreview(row.caseID!)) as {
-            inputFileId: string;
-            outputFileId: string;
-            inputFilename?: string;
-            outputFilename?: string;
-          };
+          const managed = checkpointById.get(row.caseID!);
+          let inputFileId = managed?.inputFileId;
+          let outputFileId = managed?.outputFileId;
+          let inputFilename = managed?.inputFilename;
+          let outputFilename = managed?.outputFilename;
+          if (inputFileId == null || outputFileId == null) {
+            const checkpoint = (await mApi.getCheckpointPreview(row.caseID!)) as {
+              inputFileId: string;
+              outputFileId: string;
+              inputFilename?: string;
+              outputFilename?: string;
+            };
+            inputFileId = checkpoint.inputFileId;
+            outputFileId = checkpoint.outputFileId;
+            inputFilename = checkpoint.inputFilename;
+            outputFilename = checkpoint.outputFilename;
+          }
           return [
             {
-              id: checkpoint.inputFileId,
+              id: inputFileId,
               downloadFilename:
-                checkpoint.inputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.in`,
+                inputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.in`,
             },
             {
-              id: checkpoint.outputFileId,
+              id: outputFileId,
               downloadFilename:
-                checkpoint.outputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.out`,
+                outputFilename ?? `${row.scope}-${row.caseIndex ?? row.caseID}.out`,
             },
           ];
         }),
@@ -83,6 +147,11 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
   };
 
   const firstError = rows.find((row) => row.result !== 'Accepted' && row.caseID);
+
+  // Hide entirely when the current user cannot download this problem's data.
+  if (permissionDenied || manageCheckpoints === null) {
+    return null;
+  }
 
   return (
     <>

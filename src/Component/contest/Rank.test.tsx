@@ -27,6 +27,15 @@ it('copies and sorts submission rows without mutating the API response', () => {
   expect(rows[0].submissions.map((item: any[]) => item[1])).toEqual(['20', '10']);
 });
 
+it('tolerates rank rows that have neither submissions nor problemResults', () => {
+  const rows = Object.freeze([
+    Object.freeze({ username: 'bob', submissions: null, problemResults: null }),
+  ]) as unknown as any[];
+  const normalized = normalizeRankRows(rows);
+  expect(normalized[0].username).toBe('bob');
+  expect(normalized[0].submissions).toBeNull();
+});
+
 it('ignores a stale contest response after navigation', async () => {
   const first = deferred<any[]>();
   const second = deferred<any[]>();

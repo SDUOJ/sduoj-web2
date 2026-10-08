@@ -22,8 +22,12 @@ const Register = (props: any) => {
                         {contestInfoX.features.openness !== "public" && (
                             <>
                                 <Form layout={"vertical"} form={form}>
-                                    <Form.Item label={props.t("ContestPassword")} name={"password"}>
-                                        <Input required/>
+                                    <Form.Item
+                                        label={props.t("ContestPassword")}
+                                        name={"password"}
+                                        rules={[{ required: true, message: props.t("ValidationRequired") }]}
+                                    >
+                                        <Input type={"password"} />
                                     </Form.Item>
                                 </Form>
                                 <div style={{float: "right"}}>
@@ -37,6 +41,8 @@ const Register = (props: any) => {
                                                 props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
                                                 window.location.reload()
                                             })
+                                        }).catch(() => {
+                                            // keep the dialog open when the password is missing
                                         })
                                     }}>{props.t("Register")}</Button>
                                 </div>

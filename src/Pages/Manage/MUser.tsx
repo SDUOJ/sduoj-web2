@@ -228,6 +228,7 @@ const MUser = (props: any) => {
                 { component: <UserFormAdditional />, label: props.t('AdditionalConfiguration') },
               ]}
               dataSubmitter={(value: any) => {
+                value.features = value.features ?? {};
                 value.features.banThirdParty = value.features.banThirdParty ? 1 : 0;
                 value.features.banEmailUpdate = value.features.banEmailUpdate ? 1 : 0;
                 value.features.banInfoUpdate = value.features.banInfoUpdate ? 1 : 0;

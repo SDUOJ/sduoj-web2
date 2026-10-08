@@ -208,7 +208,12 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({
           dataIndex: 'name',
           key: 'name',
           render: (text: string, record: any) => (
-            <Link to={`${UrlPrefix}/problem/${encodeURIComponent(record.pid)}`}>{text}</Link>
+            <Link
+              className="table-title-link"
+              to={`${UrlPrefix}/problem/${encodeURIComponent(record.pid)}`}
+            >
+              {text}
+            </Link>
           ),
         },
         {

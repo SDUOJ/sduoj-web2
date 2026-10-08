@@ -311,6 +311,11 @@ module.exports = function (webpackEnv) {
           },
         }),
         // 压缩图片资源，减小 jpg/png/svg 体积
+        // SKIP_IMAGE_MINIFY=true lets CI/local test bundles avoid native imagemin
+        // binaries that may be missing or fail to spawn on some platforms.
+        ...(process.env.SKIP_IMAGE_MINIFY === 'true'
+          ? []
+          : [
         new ImageMinimizerPlugin({
           // Only optimize images emitted under static/, skip assets copied to root like vditor/**
           include: /^(static[\\/])/,
@@ -340,6 +345,7 @@ module.exports = function (webpackEnv) {
             },
           },
         }),
+          ]),
       ],
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474

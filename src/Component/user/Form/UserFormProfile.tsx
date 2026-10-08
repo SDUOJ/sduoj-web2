@@ -18,7 +18,7 @@ const UserFormProfile = (props: any) => {
       <ItemGender />
       <ItemStudentId />
       <ItemPhone />
-      <ItemEmail needVerify={false} required={false} />
+      <ItemEmail needVerify={false} required={props.needPassword === true} />
       <ItemRoles />
     </>
   );

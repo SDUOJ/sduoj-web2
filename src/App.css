@@ -581,6 +581,27 @@ h5.TestCase-text {
   overflow-wrap: anywhere;
 }
 
+/* Native links used as table titles: keep middle-click new-tab, but inherit text color. */
+.table-title-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.table-title-link:hover {
+  color: #1677ff;
+}
+
+/* Unified tables: drop the extra top line that doubles with the header edge. */
+.ant-table-thead > tr:first-child > th,
+.ant-table-thead > tr:first-child > td {
+  border-top: none !important;
+}
+
+.ant-table-container > .ant-table {
+  border-top: none !important;
+}
+
 .overview-table .ant-table-cell {
   text-align: center;
   margin: 0 auto;

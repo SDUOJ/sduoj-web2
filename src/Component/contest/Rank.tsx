@@ -182,7 +182,7 @@ export const Rank = (props: any) => {
         };
 
         if (value.submissions === null) {
-          value.problemResults.map((val: any, index: number) => convertValue(val, index));
+          (value.problemResults ?? []).map((val: any, index: number) => convertValue(val, index));
         } else {
           const currentSliderTime = Math.max(sliderTime, parseInt(contestInfo.gmtStart));
 

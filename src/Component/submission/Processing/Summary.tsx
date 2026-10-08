@@ -155,6 +155,7 @@ const Summary = (props: any) => {
                             3. 选择测试点进行下载（弹窗，可以多选，可以单点下载）
                             */}
                 <DownloadTestCase
+                  problemCode={submissionInfo.problemCode}
                   TestCaseStateList={TestCaseStateList}
                   PublicTestCaseStateList={PublicTestCaseStateList}
                 />
