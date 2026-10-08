@@ -224,7 +224,7 @@ test('#33 RE summary shows its result and public error-data entry', async ({ pag
   await expect(dialog.getByText('下载首个错误测试点', { exact: true })).toBeVisible();
 });
 
-test('#47 @known-issue administrator data-download entry opens checkpoint information', async ({
+test('#47 administrator data-download entry opens checkpoint information', async ({
   page,
 }, testInfo) => {
   const { dialog, summary } = await submission(page, '运行时错误');
@@ -236,7 +236,6 @@ test('#47 @known-issue administrator data-download entry opens checkpoint inform
     body: await page.screenshot(),
     contentType: 'image/png',
   });
-  test.fail(true, 'GitHub #47: DownloadTestCase renders an inert button without a data picker');
   await expect(page.getByRole('dialog')).toHaveCount(2, { timeout: 3000 });
 });
 

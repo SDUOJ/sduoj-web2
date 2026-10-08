@@ -154,7 +154,10 @@ const Summary = (props: any) => {
                             2. 打包下载全部测试点（弹窗确认）
                             3. 选择测试点进行下载（弹窗，可以多选，可以单点下载）
                             */}
-                <DownloadTestCase />
+                <DownloadTestCase
+                  TestCaseStateList={TestCaseStateList}
+                  PublicTestCaseStateList={PublicTestCaseStateList}
+                />
               </Space>
             </Card>
           )}
