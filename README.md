@@ -7,6 +7,25 @@ findings, constraints and the migration sequence.
 
 ## Development
 
+Current issue contents, reproduction evidence and backend ownership are tracked in
+[the remaining-issues audit](docs/audit/GITHUB_ISSUES_AND_REMAINING.md).
+The Java standalone exam backend and legacy frontend routes are retired; AutoLab
+exams and timed problem sets remain supported.
+
+Run the real local browser regressions against the existing Java/AutoLab dev stack:
+
+```sh
+LOCAL_BASE_URL=http://127.0.0.1:3001 yarn test:issues --headed
+LOCAL_BASE_URL=http://127.0.0.1:3001 yarn test:issues --grep-invert @known-issue
+LOCAL_BASE_URL=http://127.0.0.1:3001 yarn test:dev-regression
+```
+
+The issue suite uses the dedicated local `ai_dev_` account. Known defects are
+marked as expected failures, not successful functionality; an unexpected pass
+requires removing the marker after verification. GitHub UI checks block business
+writes; the SSE/deletion contract tests create and soft-delete only their own
+isolated AutoLab resource fixtures. They do not use production credentials.
+
 Use Node 24 LTS and Yarn Classic 1.22.22. With nvm installed:
 
 ```sh
@@ -18,8 +37,8 @@ yarn start
 ```
 
 Open `http://localhost:3000/v2/`. A working backend is required for actual
-business operations. Development hosts remain in `src/Utils/API/apiAddress.ts`;
-match your DNS/hosts and gateway setup to those values. Production defaults
+business operations. API origins are configured through environment variables in
+`src/Utils/API/apiAddress.ts`; development defaults to the same-origin proxy. Production defaults
 continue to point at the existing SDUOJ domain. Do not use production services
 for automated write tests.
 

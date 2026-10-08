@@ -1,5 +1,7 @@
 # Domain Workflow Audit
 
+Scope update, 2026-10-05: the project owner retired the Java standalone exam backend and its frontend pages. Historical exam findings below are retained as history, not active service blockers. AutoLab exams, timed problem sets, attendance and Rank/IP checks remain supported. See `GITHUB_ISSUES_AND_REMAINING.md` for the current issue inventory and real development regressions.
+
 Audit date: 2026-09-05. Scope: Autolab, groups, problem sets, contests, exams,
 problems, and management pages other than the in-progress AI workbench. Findings
 were checked against the current `feature/upgrade-antd-v5` working tree.

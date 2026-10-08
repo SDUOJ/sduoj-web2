@@ -40,4 +40,4 @@ Java filesys `FileController` 暴露上传/查询/下载，没有客户端删除
 - `output/audit/R-05/preflight.log`：真实服务路径清单及非所有者课程元信息；没有凭证。
 - `output/audit/R-05/real-upload.log`：真实上传拒绝、匿名权限、两文件去重、元数据不变。
 - `output/audit/R-05/{typecheck.log,upload-unit.log,quality.log,build.log,bundle.log,e2e.log,dev-regression.log}`：定向和必要回归。
-- 日志为忽略的本地产物；本文件及主审计文档保存提交内摘要。R-05 不因这些局部通过而关闭，R-04/R-12 的独立考试与业务生命周期缺口仍保留。
+- 日志为忽略的本地产物；本文件及主审计文档保存提交内摘要。R-05 不因这些局部通过而关闭。2026-10-05 已确认 Java exam 退役，R-04 按废弃处置；R-12 跟踪活跃 AutoLab 考务/题单与业务生命周期，不再等待弃用 Java exam 服务。
