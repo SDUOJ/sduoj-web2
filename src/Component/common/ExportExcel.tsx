@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React from 'react';
 import { Button, message } from 'antd';
 import type { ButtonProps } from 'antd';
 import { downloadXlsxRecords } from '../../Utils/spreadsheetXlsx';
@@ -13,40 +13,38 @@ interface IButtonText {
   getJson?: any;
 }
 
-class ExportExcel extends Component<IButtonText> {
-  handleExportAll = async (colMap: any, nowData: any[], fileName: string) => {
+const ExportExcel = (props: IButtonText) => {
+  const handleExportAll = async (colMap: any, nowData: any[], fileName: string) => {
     const records = nowData.map((item: Record<string, unknown>) =>
       Object.fromEntries(Object.entries(item).map(([key, value]) => [colMap[key] || key, value])),
     );
     await downloadXlsxRecords(records, `${fileName}.xlsx`);
   };
 
-  handleExportAllJson = async (records: Record<string, unknown>[], fileName: string) => {
+  const handleExportAllJson = async (records: Record<string, unknown>[], fileName: string) => {
     await downloadXlsxRecords(records, `${fileName}.xlsx`);
   };
 
-  render() {
-    return (
-      <Button
-        type={this.props.ButtonType}
-        {...this.props.ButtonProps}
-        onClick={async () => {
-          try {
-            if (this.props.getJson !== undefined) {
-              await this.handleExportAllJson(await this.props.getJson(), this.props.fileName);
-            } else {
-              const nowData = this.props.nowData();
-              await this.handleExportAll(this.props.colMap(nowData), nowData, this.props.fileName);
-            }
-          } catch (error) {
-            message.error(String(error));
+  return (
+    <Button
+      type={props.ButtonType}
+      {...props.ButtonProps}
+      onClick={async () => {
+        try {
+          if (props.getJson !== undefined) {
+            await handleExportAllJson(await props.getJson(), props.fileName);
+          } else {
+            const nowData = props.nowData();
+            await handleExportAll(props.colMap(nowData), nowData, props.fileName);
           }
-        }}
-      >
-        {this.props.ButtonText}
-      </Button>
-    );
-  }
-}
+        } catch (error) {
+          message.error(String(error));
+        }
+      }}
+    >
+      {props.ButtonText}
+    </Button>
+  );
+};
 
 export default ExportExcel;

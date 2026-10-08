@@ -1,18 +1,15 @@
-import React, {Component} from "react";
-import {withRouter} from "react-router";
-import ExamList from "../../Component/exam/ExamList";
-import LoginCheck from "../../Component/common/LoginCheck";
+import React from 'react';
+import { withRouter } from 'react-router';
+import ExamList from '../../Component/exam/ExamList';
+import LoginCheck from '../../Component/common/LoginCheck';
 
+const EList = () => {
+  return (
+    <>
+      <LoginCheck />
+      <ExamList />
+    </>
+  );
+};
 
-class EList extends Component<any, any> {
-    render() {
-        return (
-            <>
-                <LoginCheck/>
-                <ExamList/>
-            </>
-        )
-    }
-}
-
-export default withRouter(EList)
+export default withRouter(EList);

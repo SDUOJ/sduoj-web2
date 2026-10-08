@@ -13,13 +13,14 @@ const Register = (props: any) => {
     const contestId = props.match.params.contestId
     // const contestInfo = getContestInfo(contestId, update)
     const contestInfoX = getContestInfo(contestId)
+    const openness = contestInfoX?.features?.openness
 
     return (
         <>
             <div style={{textAlign: "center", margin: "0 auto"}}>
                 <div style={{textAlign: "left", maxWidth: "600px", margin: "0 auto"}}>
                     <Card>
-                        {contestInfoX.features.openness !== "public" && (
+                        {openness !== undefined && openness !== "public" && (
                             <>
                                 <Form layout={"vertical"} form={form}>
                                     <Form.Item
@@ -39,7 +40,8 @@ const Register = (props: any) => {
                                             }).then(() => {
                                                 message.success(props.t("RegisterSuccess"))
                                                 props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
-                                                window.location.reload()
+                                            }).catch(() => {
+                                                message.error(props.t("failed"))
                                             })
                                         }).catch(() => {
                                             // keep the dialog open when the password is missing
@@ -48,14 +50,15 @@ const Register = (props: any) => {
                                 </div>
                             </>
                         )}
-                        {contestInfoX.features.openness === "public" && (
+                        {openness === "public" && (
                             <>
                                 <div style={{width: "50%", textAlign: "center", margin: "0 auto"}}>
                     <Button type={"primary"} block onClick={() => {
                                         cApi.participateContest({contestId: contestId}).then(() => {
                         message.success(props.t("RegisterSuccess"))
                                             props.history.replace(UrlPrefix + "/contest/" + contestId + "/overview")
-                                            window.location.reload()
+                                        }).catch(() => {
+                                            message.error(props.t("failed"))
                                         })
                     }}>{props.t("Register")}</Button>
                                 </div>

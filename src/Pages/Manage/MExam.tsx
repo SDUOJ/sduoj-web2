@@ -1,28 +1,23 @@
-import React, { Component, Dispatch } from 'react';
+import React, { useEffect } from 'react';
 import DeprecatedJavaExam from '../Exam/DeprecatedJavaExam';
 import { UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import { loginRedirect } from '../../Utils/authReturn';
 
-class MExam extends Component<any, any> {
-  componentDidMount() {
-    if (!this.props.isLogin) {
-      this.props.history.replace(loginRedirect(this.props.location));
-    }
-  }
+const MExam = (props: any) => {
+  const { isLogin } = props;
+  const history = useHistory();
+  const location = useLocation();
 
-  componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-    if (!this.props.isLogin) {
-      this.props.history.replace(loginRedirect(this.props.location));
+  useEffect(() => {
+    if (!isLogin) {
+      history.replace(loginRedirect(location));
     }
-  }
+  }, [isLogin, history, location]);
 
-  render() {
-    return <DeprecatedJavaExam />;
-  }
-}
+  return <DeprecatedJavaExam />;
+};
 
 const mapStateToProps = (state: any) => {
   const UState: UserState = state.UserReducer;
@@ -31,6 +26,4 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(MExam)));
+export default connect(mapStateToProps)(MExam);

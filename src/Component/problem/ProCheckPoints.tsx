@@ -363,16 +363,19 @@ const ProCheckPoints = (props: any) => {
                     return mApi.uploadSingleCheckpoint(value);
                   } else if (value.type === 'm') {
                     const formData = new FormData();
-                    for (let file of value.files) formData.append('files', file);
+                    const files = Array.isArray(value.files) ? value.files : [];
+                    if (files.length === 0) return Promise.reject(new Error('files required'));
+                    for (let file of files) formData.append('files', file);
                     formData.append('mode', value.mode);
                     return mApi.uploadCheckpointFiles(formData);
                   }
+                  return Promise.reject(new Error('unknown upload type'));
                 }}
                 afterSubmit={(res: any) => {
                   let newData = [...dataSource];
                   if (Array.isArray(res)) {
                     for (let x of res) newData.push({ ...x, caseIndex: null, checkpointScore: 0 });
-                  } else newData.push({ ...res, caseIndex: null, checkpointScore: 0 });
+                  } else if (res) newData.push({ ...res, caseIndex: null, checkpointScore: 0 });
                   props.setDataSource(newData, name);
                 }}
               />

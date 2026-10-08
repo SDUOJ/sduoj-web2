@@ -254,14 +254,19 @@ const Review = (props: any) => {
                         setQueueOptions(cache.data.map((q: string) => ({ label: q, value: q })));
                       } else {
                         cApi.getAcceptanceQueueList({ psid }).then((qs: any) => {
-                          const opts = qs.map((q: string) => ({ label: q, value: q }));
+                          const list: string[] = Array.isArray(qs)
+                            ? qs
+                            : Array.isArray(qs?.rows)
+                              ? qs.rows
+                              : [];
+                          const opts = list.map((q: string) => ({ label: q, value: q }));
                           setQueueOptions(opts);
                           (window as any)._ps_acceptance_queue_cache = {
                             psid,
-                            data: qs,
+                            data: list,
                             ts: Date.now(),
                           };
-                        });
+                        }).catch(() => setQueueOptions([]));
                       }
                     }
                   }}

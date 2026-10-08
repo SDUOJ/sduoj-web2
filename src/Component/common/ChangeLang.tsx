@@ -1,4 +1,4 @@
-import React, { Component, Dispatch } from 'react';
+import React, { useMemo } from 'react';
 import { Select, Space } from 'antd';
 import lang from 'Assert/img/language.png';
 import i18n from 'i18next';
@@ -13,61 +13,62 @@ import { initLanguage } from '../../Utils/initLanguage';
 
 const { Option } = Select;
 
-class ChangeLang extends Component<any, any> {
-  defLang: string = initLanguage();
-
-  constructor(props: any) {
-    super(props);
-    i18n.languages.map((value): void => {
+const ChangeLang = (props: any) => {
+  const defLang = useMemo(() => {
+    let value = initLanguage();
+    i18n.languages.map((langId): void => {
       if (
         language.filter((v) => {
-          return v.id === value;
+          return v.id === langId;
         }).length !== 0
       ) {
-        if (this.defLang.length === 0) this.defLang = value;
+        if (value.length === 0) value = langId;
       }
       return undefined;
     });
-    this.changeLang = this.changeLang.bind(this);
-    this.changeLang(this.defLang);
-  }
+    return value;
+  }, []);
 
-  changeLang(value: string) {
+  const changeLang = (value: string) => {
     i18n.changeLanguage(value);
     const id = language.findIndex((item) => {
       return item.id === value;
     });
-    this.props.ChangeLanguage(languageMap[value], language[id].code);
+    props.ChangeLanguage(languageMap[value], language[id].code);
     dayjs.locale(language[id].time);
     document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en';
     localStorage.setItem('language', language[id].code);
-  }
+  };
 
-  render() {
-    return (
-      <>
-        <Space>
-          <img src={lang} alt={'lang'} width={20} />
-          <Select
-            aria-label="Language"
-            onChange={this.changeLang}
-            defaultValue={this.defLang}
-            variant={'borderless'}
-            style={{ marginLeft: -15 }}
-          >
-            {language.map((r, i) => {
-              return (
-                <Option key={i.toString()} value={r.id}>
-                  {r.name}
-                </Option>
-              );
-            })}
-          </Select>
-        </Space>
-      </>
-    );
-  }
-}
+  // apply the resolved language once on mount
+  useMemo(() => {
+    changeLang(defLang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <>
+      <Space>
+        <img src={lang} alt={'lang'} width={20} />
+        <Select
+          aria-label="Language"
+          onChange={changeLang}
+          defaultValue={defLang}
+          variant={'borderless'}
+          style={{ marginLeft: -15 }}
+        >
+          {language.map((r, i) => {
+            return (
+              <Option key={i.toString()} value={r.id}>
+                {r.name}
+              </Option>
+            );
+          })}
+        </Select>
+      </Space>
+    </>
+  );
+};
 
 const mapStateToProps = (state: any) => {
   const State: ConfigState = state.ConfigReducer;
@@ -76,7 +77,7 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<ConfigAction>) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   ChangeLanguage: (lang: Locale, langCode: string) =>
     dispatch({
       type: 'updateLanguage',

@@ -42,7 +42,10 @@ const ContestHeader = (props: any) => {
       ? TimeRangeState(contestInfo.gmtStart, contestInfo.gmtEnd)
       : undefined;
   const isPractice =
-    contestInfo !== undefined ? contestInfo.participants.indexOf(props.username) !== -1 : undefined;
+    contestInfo !== undefined
+      ? Array.isArray(contestInfo.participants) &&
+        contestInfo.participants.indexOf(props.username) !== -1
+      : undefined;
   const openness = contestInfo !== undefined ? contestInfo.features.openness : undefined;
 
   useEffect(() => {

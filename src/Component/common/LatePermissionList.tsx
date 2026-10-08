@@ -223,7 +223,7 @@ const LatePermissionList: React.FC<LatePermissionListProps> = (props) => {
           id: permissionId,
           expire_time: expireTime,
           discount: values.discount,
-          is_active: values.enabled,
+          is_active: values.enabled === true || values.enabled === 1,
           note: values.note,
         });
       } else {

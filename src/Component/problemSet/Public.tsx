@@ -36,7 +36,7 @@ const Public = (props: any) => {
   const getStartText = () => {
     if (info == null) return '';
     if (info.finish === 1) return props.t('submitted');
-    if (info.tm_end < Date.now()) return props.t('ended');
+    if (State === 'end') return props.t('ended');
     return props.t('StartAnswering');
   };
 

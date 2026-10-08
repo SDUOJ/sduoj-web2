@@ -1,90 +1,87 @@
-import React, { Component, Dispatch } from 'react';
-import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import TableWithPagination from './TableWithPagination';
 import { TableState } from '../../../Type/ITable';
 import { ck } from '../../../Utils/empty';
 import TableWithAllData from './TableWithAllData';
 
-class TableWithSelection extends Component<any, any> {
-  componentDidMount() {}
+const TableWithSelection = (props: any) => {
+  const { t } = useTranslation();
+  const selectedRowKeys = ck(props.tableData[props.name]?.selectedRowKeys, []);
+  const useAllData = props.useAllData ?? props.uesAlldata;
 
-  setSelectedRowKeys = (data: any) => {
-    this.props.setSelectedRowKeys(data, this.props.name);
+  const setSelectedRowKeys = (data: any) => {
+    props.setSelectedRowKeys(data, props.name);
   };
 
-  render() {
-    const selectedRowKeys = ck(this.props.tableData[this.props.name]?.selectedRowKeys, []);
-    const useAllData = this.props.useAllData ?? this.props.uesAlldata;
-    let rowSelection: any = {
-      selectedRowKeys,
-      onChange: (selectedRowKeys: React.Key[]) => {
-        this.setSelectedRowKeys(selectedRowKeys);
-      },
-      // 多选时的下拉选项
-      selections: [
-        {
-          key: 'all',
-          text: this.props.t('selectedAll'),
-          onSelect: (changeableRowKeys: React.Key[]) => {
-            let newSelectedRowKeys = changeableRowKeys;
-            newSelectedRowKeys = newSelectedRowKeys.concat(
-              selectedRowKeys.filter((key: React.Key) => {
-                return !changeableRowKeys.includes(key);
-              }),
-            );
-            this.setSelectedRowKeys(newSelectedRowKeys);
-          },
-        },
-        {
-          key: 'clear',
-          text: this.props.t('clear'),
-          onSelect: (changeableRowKeys: React.Key[]) => {
-            let newSelectedRowKeys = selectedRowKeys.filter((key: React.Key) => {
+  let rowSelection: any = {
+    selectedRowKeys,
+    onChange: (selectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(selectedRowKeys);
+    },
+    // 多选时的下拉选项
+    selections: [
+      {
+        key: 'all',
+        text: t('selectedAll'),
+        onSelect: (changeableRowKeys: React.Key[]) => {
+          let newSelectedRowKeys = changeableRowKeys;
+          newSelectedRowKeys = newSelectedRowKeys.concat(
+            selectedRowKeys.filter((key: React.Key) => {
               return !changeableRowKeys.includes(key);
-            });
-            this.setSelectedRowKeys(newSelectedRowKeys);
-          },
+            }),
+          );
+          setSelectedRowKeys(newSelectedRowKeys);
         },
-        {
-          key: 'invert',
-          text: this.props.t('invert'),
-          onSelect: (changeableRowKeys: React.Key[]) => {
-            let newSelectedRowKeys = changeableRowKeys.filter((key: React.Key) => {
-              return !selectedRowKeys.includes(key);
-            });
-            newSelectedRowKeys = newSelectedRowKeys.concat(
-              selectedRowKeys.filter((key: React.Key) => {
-                return !changeableRowKeys.includes(key);
-              }),
-            );
-            this.setSelectedRowKeys(newSelectedRowKeys);
-          },
+      },
+      {
+        key: 'clear',
+        text: t('clear'),
+        onSelect: (changeableRowKeys: React.Key[]) => {
+          let newSelectedRowKeys = selectedRowKeys.filter((key: React.Key) => {
+            return !changeableRowKeys.includes(key);
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
         },
-      ],
-    };
+      },
+      {
+        key: 'invert',
+        text: t('invert'),
+        onSelect: (changeableRowKeys: React.Key[]) => {
+          let newSelectedRowKeys = changeableRowKeys.filter((key: React.Key) => {
+            return !selectedRowKeys.includes(key);
+          });
+          newSelectedRowKeys = newSelectedRowKeys.concat(
+            selectedRowKeys.filter((key: React.Key) => {
+              return !changeableRowKeys.includes(key);
+            }),
+          );
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+    ],
+  };
 
-    return (
-      <>
-        {useAllData && (
-          <TableWithAllData
-            {...this.props}
-            name={this.props.name}
-            API={this.props.API}
-            rowSelection={this.props.disableSelection ? undefined : rowSelection}
-          />
-        )}
-        {useAllData !== true && (
-          <TableWithPagination
-            {...this.props}
-            rowSelection={this.props.disableSelection ? undefined : rowSelection}
-          />
-        )}
-      </>
-    );
-  }
-}
+  return (
+    <>
+      {useAllData && (
+        <TableWithAllData
+          {...props}
+          name={props.name}
+          API={props.API}
+          rowSelection={props.disableSelection ? undefined : rowSelection}
+        />
+      )}
+      {useAllData !== true && (
+        <TableWithPagination
+          {...props}
+          rowSelection={props.disableSelection ? undefined : rowSelection}
+        />
+      )}
+    </>
+  );
+};
 
 const mapStateToProps = (state: any) => {
   const TState: TableState = state.TableReduce;
@@ -93,12 +90,9 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   setSelectedRowKeys: (data: React.Key[], name: string) =>
     dispatch({ type: 'setSelectedRowKeys', data: data, name: name }),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTranslation()(withRouter(TableWithSelection)));
+export default connect(mapStateToProps, mapDispatchToProps)(TableWithSelection);

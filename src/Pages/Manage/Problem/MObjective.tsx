@@ -1,47 +1,44 @@
-import React, { Component, Dispatch } from 'react';
+import React, { useEffect } from 'react';
 import ObjectiveForm from '../../../Component/problem/ObjectiveForm';
 import { UserState } from '../../../Type/Iuser';
 import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Card, Space } from 'antd';
 import ProblemList from '../../../Component/problem/ProblemList';
 import AutoImportObjective from '../../../Component/problem/AutoImportObjective';
 import { loginRedirect } from '../../../Utils/authReturn';
 
-class MObjective extends Component<any, any> {
-  componentDidMount() {
-    if (!this.props.isLogin) {
-      this.props.history.replace(loginRedirect(this.props.location));
-    }
-  }
+const MObjective = (props: any) => {
+  const { t } = useTranslation();
+  const { isLogin } = props;
+  const history = useHistory();
+  const location = useLocation();
 
-  componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-    if (!this.props.isLogin) {
-      this.props.history.replace(loginRedirect(this.props.location));
+  useEffect(() => {
+    if (!isLogin) {
+      history.replace(loginRedirect(location));
     }
-  }
+  }, [isLogin, history, location]);
 
-  render() {
-    return (
-      <>
-        <Card
-          size={'small'}
-          bordered={true}
-          title={this.props.t('ObjectiveProblemList')}
-          extra={
-            <Space>
-              <ObjectiveForm isDataLoad={true} type={'create'} />
-              <AutoImportObjective />
-            </Space>
-          }
-        >
-          <ProblemList type="objective" />
-        </Card>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Card
+        size={'small'}
+        bordered={true}
+        title={t('ObjectiveProblemList')}
+        extra={
+          <Space>
+            <ObjectiveForm isDataLoad={true} type={'create'} />
+            <AutoImportObjective />
+          </Space>
+        }
+      >
+        <ProblemList type="objective" />
+      </Card>
+    </>
+  );
+};
 
 const mapStateToProps = (state: any) => {
   const UState: UserState = state.UserReducer;
@@ -50,9 +47,4 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTranslation()(withRouter(MObjective)));
+export default connect(mapStateToProps)(MObjective);

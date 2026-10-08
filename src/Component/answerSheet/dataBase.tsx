@@ -1,5 +1,5 @@
-import {Component} from "react";
-import {WithTranslation, withTranslation} from "react-i18next";
+import React, {useState} from "react";
+import {useTranslation} from "react-i18next";
 import {Badge, Button, Card, Col, Collapse, Row, Space, Table, Tabs, Tree} from 'antd';
 
 import Problem from "../problem/Exam/ExamProblem";
@@ -16,27 +16,11 @@ require('codemirror/mode/sql/sql');
 const {TabPane} = Tabs;
 const {Panel} = Collapse;
 
-interface IDataBaseAnswerSheet extends WithTranslation {
-
-}
-
-interface SDataBaseAnswerSheet {
-    columns: any
-    data: any
-}
-
-class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswerSheet> {
-
-
-    constructor(props: Readonly<IDataBaseAnswerSheet> | IDataBaseAnswerSheet) {
-        super(props);
-        this.state = {
-            columns: [],
-            data: []
-        }
-    }
-
-    render() {
+const DataBaseAnswerSheet = () => {
+    const { t } = useTranslation();
+    const [columns] = useState<any[]>([]);
+    const [data] = useState<any[]>([]);
+    {
 
         let md: string = "## Description\n" +
             "给定两个整数 $x$ 和 $y$，打印它们的和\n" +
@@ -166,13 +150,13 @@ class DataBaseAnswerSheet extends Component<IDataBaseAnswerSheet, SDataBaseAnswe
                     </Col>
                     <Col span={19} style={{height: "100%"}}>
                         <Card title="查询结果" style={{height: "100%"}}>
-                            <Table columns={this.state.columns} dataSource={this.state.data}/>
+                            <Table columns={columns} dataSource={data}/>
                         </Card>
                     </Col>
                 </Row>
             </div>
         )
     }
-}
+};
 
-export default withTranslation()(DataBaseAnswerSheet)
+export default DataBaseAnswerSheet

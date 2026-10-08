@@ -1,12 +1,12 @@
-import React, { Component, Dispatch } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Card, Col, Divider, Form, FormInstance, message, Row } from 'antd';
 import Avatar from '../../Component/user/Avatar';
 import ItemEmail from '../../Component/user/Form/Item/ItemEmail';
 import ItemUsername from '../../Component/user/Form/Item/ItemUsername';
 import { UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ItemNickname from '../../Component/user/Form/Item/ItemNickname';
 import ItemStudentId from '../../Component/user/Form/Item/ItemStudentId';
 import ItemGender from '../../Component/user/Form/Item/ItemGender';
@@ -20,199 +20,185 @@ import { isValueEmpty } from '../../Utils/empty';
 import LoadingData from '../../Component/common/LoadingData';
 import { loginRedirect } from '../../Utils/authReturn';
 
-class CUser extends Component<any, any> {
-  ref1 = React.createRef<FormInstance<any>>();
-  ref2 = React.createRef<FormInstance<any>>();
-  ref3 = React.createRef<FormInstance<any>>();
+const CUser = (props: any) => {
+  const { t } = useTranslation();
+  const { isLogin, userInfo, setUserInfo } = props;
+  const history = useHistory();
+  const location = useLocation();
+  const ref1 = useRef<FormInstance<any>>(null);
+  const ref2 = useRef<FormInstance<any>>(null);
+  const ref3 = useRef<FormInstance<any>>(null);
 
-  componentDidMount() {
-    if (!this.props.isLogin) {
-      console.log('not login');
-      this.props.history.replace(loginRedirect(this.props.location));
+  useEffect(() => {
+    if (!isLogin) {
+      history.replace(loginRedirect(location));
     }
-  }
+  }, [isLogin, history, location]);
 
-  componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-    if (!this.props.isLogin) {
-      this.props.history.replace(loginRedirect(this.props.location));
-    }
-  }
-
-  render() {
-    return (
-      <>
-        <LoadingData
-          loading={this.props.userInfo === undefined}
-          content={
-            <div style={{ textAlign: 'center', margin: '0 auto' }}>
-              <div style={{ textAlign: 'left', maxWidth: '1500px', margin: '0 auto' }}>
-                <Row style={{ marginTop: 0 }}>
-                  <Col span={16}>
-                    <Card title={this.props.t('Profile')}>
-                      <Form initialValues={this.props.userInfo} ref={this.ref1}>
-                        <Row>
-                          <Col span={11}>
-                            <ItemUsername editable={false} />
-                            <ItemNickname required />
-                            <ItemStudentId />
-                            <SubmitButton
-                              API={async () => {
-                                return this.ref1.current
-                                  ?.validateFields()
-                                  .then((data: any) => {
-                                    return CApi.updateProfile(data).then((res) => {
-                                      CApi.getProfile().then((res: any) => {
-                                        this.props.setUserInfo(res);
-                                      });
-                                      return Promise.resolve(this.props.t('success'));
+  return (
+    <>
+      <LoadingData
+        loading={userInfo === undefined}
+        content={
+          <div style={{ textAlign: 'center', margin: '0 auto' }}>
+            <div style={{ textAlign: 'left', maxWidth: '1500px', margin: '0 auto' }}>
+              <Row style={{ marginTop: 0 }}>
+                <Col span={16}>
+                  <Card title={t('Profile')}>
+                    <Form initialValues={userInfo} ref={ref1}>
+                      <Row>
+                        <Col span={11}>
+                          <ItemUsername editable={false} />
+                          <ItemNickname required />
+                          <ItemStudentId />
+                          <SubmitButton
+                            API={async () => {
+                              return ref1.current
+                                ?.validateFields()
+                                .then((data: any) => {
+                                  return CApi.updateProfile(data).then(() => {
+                                    CApi.getProfile().then((res: any) => {
+                                      setUserInfo(res);
                                     });
-                                  })
-                                  .catch((e: any) => {
-                                    return Promise.reject(e);
+                                    return Promise.resolve(t('success'));
                                   });
-                              }}
-                              btnProps={{ type: 'default' }}
-                              btnText={this.props.t('update')}
-                            />
-                          </Col>
-                          <Col span={11} offset={1}>
-                            <ItemGender />
-                            <ItemPhone />
-                            <ItemEmail needVerify={false} editable={false} />
-                            <ItemRoles editable={false} />
-                          </Col>
-                        </Row>
-                      </Form>
-                    </Card>
-                    <Card style={{ marginTop: 30 }} title={this.props.t('ChangePass')}>
-                      <Form ref={this.ref2} layout={'vertical'}>
-                        <Row>
-                          <Col span={11}>
-                            <ItemPassword oldpass={true} />
-                            <SubmitButton
-                              API={async () => {
-                                return this.ref2.current
-                                  ?.validateFields()
-                                  .then((data: any) => {
-                                    return CApi.updatePassword(data).then((res) => {
-                                      this.ref2.current?.resetFields();
-                                      return Promise.resolve(this.props.t('success'));
-                                    });
-                                  })
-                                  .catch((e: any) => {
-                                    return Promise.reject(e);
+                                })
+                                .catch((e: any) => {
+                                  return Promise.reject(e);
+                                });
+                            }}
+                            btnProps={{ type: 'default' }}
+                            btnText={t('update')}
+                          />
+                        </Col>
+                        <Col span={11} offset={1}>
+                          <ItemGender />
+                          <ItemPhone />
+                          <ItemEmail needVerify={false} editable={false} />
+                          <ItemRoles editable={false} />
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Card>
+                  <Card style={{ marginTop: 30 }} title={t('ChangePass')}>
+                    <Form ref={ref2} layout={'vertical'}>
+                      <Row>
+                        <Col span={11}>
+                          <ItemPassword oldpass={true} />
+                          <SubmitButton
+                            API={async () => {
+                              return ref2.current
+                                ?.validateFields()
+                                .then((data: any) => {
+                                  return CApi.updatePassword(data).then(() => {
+                                    ref2.current?.resetFields();
+                                    return Promise.resolve(t('success'));
                                   });
-                              }}
-                              btnProps={{ type: 'default' }}
-                              btnText={this.props.t('update')}
-                            />
-                          </Col>
-                          <Col offset={1} span={11}>
-                            <ItemPassword newpass={true} />
-                          </Col>
-                        </Row>
-                      </Form>
-                    </Card>
-                    <Card style={{ marginTop: 30 }} title={this.props.t('modifyEmail')}>
-                      <Form ref={this.ref3} layout={'vertical'}>
-                        <Row>
-                          <Col span={11}>
-                            <ItemPassword noConfirm={true} />
-                            <SubmitButton
-                              API={async () => {
-                                return this.ref3.current
-                                  ?.validateFields()
-                                  .then((data: any) => {
-                                    // console.log(data)
-                                    return CApi.updateEmail(data).then((res) => {
-                                      this.ref3.current?.resetFields();
-                                      return Promise.resolve(this.props.t('success'));
-                                    });
-                                  })
-                                  .catch((e: any) => {
-                                    return Promise.reject(e);
+                                })
+                                .catch((e: any) => {
+                                  return Promise.reject(e);
+                                });
+                            }}
+                            btnProps={{ type: 'default' }}
+                            btnText={t('update')}
+                          />
+                        </Col>
+                        <Col offset={1} span={11}>
+                          <ItemPassword newpass={true} />
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Card>
+                  <Card style={{ marginTop: 30 }} title={t('modifyEmail')}>
+                    <Form ref={ref3} layout={'vertical'}>
+                      <Row>
+                        <Col span={11}>
+                          <ItemPassword noConfirm={true} />
+                          <SubmitButton
+                            API={async () => {
+                              return ref3.current
+                                ?.validateFields()
+                                .then((data: any) => {
+                                  return CApi.updateEmail(data).then(() => {
+                                    ref3.current?.resetFields();
+                                    return Promise.resolve(t('success'));
                                   });
-                              }}
-                              btnProps={{ type: 'default' }}
-                              btnText={this.props.t('update')}
-                            />
-                          </Col>
-                          <Col offset={1} span={11}>
-                            <ItemEmail
-                              needVerify={true}
-                              emailVerifyType={'updateEmail'}
-                              getEmail={async () => {
-                                return this.ref3.current
-                                  ?.validateFields(['email'])
-                                  .then((data: any) => {
-                                    return Promise.resolve(data.email);
-                                  })
-                                  .catch(() => {
-                                    return Promise.reject();
-                                  });
-                              }}
-                            />
-                          </Col>
-                        </Row>
-                      </Form>
-                    </Card>
-                  </Col>
-                  <Col span={7} style={{ marginLeft: '30px' }}>
-                    <Card>
+                                })
+                                .catch((e: any) => {
+                                  return Promise.reject(e);
+                                });
+                            }}
+                            btnProps={{ type: 'default' }}
+                            btnText={t('update')}
+                          />
+                        </Col>
+                        <Col offset={1} span={11}>
+                          <ItemEmail
+                            needVerify={true}
+                            emailVerifyType={'updateEmail'}
+                            getEmail={async () => {
+                              return ref3.current
+                                ?.validateFields(['email'])
+                                .then((data: any) => {
+                                  return Promise.resolve(data.email);
+                                })
+                                .catch(() => {
+                                  return Promise.reject();
+                                });
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Card>
+                </Col>
+                <Col span={7} style={{ marginLeft: '30px' }}>
+                  <Card>
+                    <div style={{ textAlign: 'center', margin: '0 auto' }}>
+                      <div>
+                        <Avatar email={userInfo?.email} size={150} />
+                        <br />
+                      </div>
+                      <div style={{ marginTop: 25 }}>
+                        {t('weUse')} <a href={'https://cravatar.cn/'}>Cravatar</a>{' '}
+                        {t('toPresentYourAvatarIcon')}
+                      </div>
+                    </div>
+                  </Card>
+                  {!isValueEmpty(userInfo?.sduId) && (
+                    <Card
+                      title={`SDUCAS（${t('sduUnifiedIdentityPlatform')}）`}
+                      style={{ marginTop: 30 }}
+                    >
                       <div style={{ textAlign: 'center', margin: '0 auto' }}>
-                        <div>
-                          <Avatar email={this.props.userInfo?.email} size={150} />
-                          <br />
-                        </div>
-                        <div style={{ marginTop: 25 }}>
-                          {this.props.t('weUse')} <a href={'https://cravatar.cn/'}>Cravatar</a>{' '}
-                          {this.props.t('toPresentYourAvatarIcon')}
-                        </div>
+                        {userInfo.sduId}
+                        <Divider type={'vertical'} />
+                        <Reconfirm
+                          btnProps={{ size: 'small', type: 'link' }}
+                          btnText={t('unbinding')}
+                          todo={t('unbindSdusForUnifiedAuthentication')}
+                          confirm={userInfo.sduId}
+                          API={() => {
+                            CApi.thirdPartyUnbinding({ thirdParty: 'SDUCAS' }).then(() => {
+                              CApi.getProfile().then((res: any) => {
+                                setUserInfo(res);
+                              });
+                              message.success(t('unwindingSuccessful'));
+                            });
+                          }}
+                        />
                       </div>
                     </Card>
-                    {[''].map(() => {
-                      if (!isValueEmpty(this.props.userInfo?.sduId)) {
-                        return (
-                          <Card
-                            key="sdu-cas"
-                            title={`SDUCAS（${this.props.t('sduUnifiedIdentityPlatform')}）`}
-                            style={{ marginTop: 30 }}
-                          >
-                            <div style={{ textAlign: 'center', margin: '0 auto' }}>
-                              {this.props.userInfo.sduId}
-                              <Divider type={'vertical'} />
-                              <Reconfirm
-                                btnProps={{ size: 'small', type: 'link' }}
-                                btnText={this.props.t('unbinding')}
-                                todo={this.props.t('unbindSdusForUnifiedAuthentication')}
-                                confirm={this.props.userInfo.sduId}
-                                API={() => {
-                                  CApi.thirdPartyUnbinding({ thirdParty: 'SDUCAS' }).then(
-                                    (res: any) => {
-                                      CApi.getProfile().then((res: any) => {
-                                        this.props.setUserInfo(res);
-                                      });
-                                      message.success(this.props.t('unwindingSuccessful'));
-                                    },
-                                  );
-                                }}
-                              />
-                            </div>
-                          </Card>
-                        );
-                      }
-                      return undefined;
-                    })}
-                  </Col>
-                </Row>
-              </div>
+                  )}
+                </Col>
+              </Row>
             </div>
-          }
-        />
-      </>
-    );
-  }
-}
+          </div>
+        }
+      />
+    </>
+  );
+};
 
 const mapStateToProps = (state: any) => {
   const UState: UserState = state.UserReducer;
@@ -222,8 +208,8 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   setUserInfo: (data: any) => dispatch({ type: 'setUserInfo', data: data }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(CUser)));
+export default connect(mapStateToProps, mapDispatchToProps)(CUser);

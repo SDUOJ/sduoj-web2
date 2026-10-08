@@ -14,11 +14,15 @@ const JoinGroupBtn = (props: any) => {
                 title={`你确定要申请加入${props.groupName}吗？`}
                 open={visible}
                 onConfirm={()=>{
+                    setConfirmLoading(true);
                     cApi.joinGroupApply({groupId: props.groupId}).then(()=>{
                         setVisible(false);
-                        setConfirmLoading(false);
                         props.addTableVersion("GroupList")
                         message.success("申请成功");
+                    }).catch(()=>{
+                        message.error(props.t ? props.t("failed") : "failed");
+                    }).finally(()=>{
+                        setConfirmLoading(false);
                     })
                 }}
                 okButtonProps={{ loading: confirmLoading }}

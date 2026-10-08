@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Button, Card, Space } from 'antd';
 import MApi from '../../../Utils/API/m-api';
 import mApi from '../../../Utils/API/m-api';
 import TableWithPagination from '../../../Component/common/Table/TableWithPagination';
-import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ModalFormUseForm from '../../../Component/common/Form/ModalFormUseForm';
 import ItemTitle from '../../../Component/common/Form/Item/ItemTitle';
 import ItemSwitch from '../../../Component/common/Form/Item/ItemSwitch';
@@ -16,8 +15,9 @@ import ProCheckPoints from '../../../Component/problem/ProCheckPoints';
 import { contracts } from '../../../Config/validation/contracts';
 import { UrlPrefix } from '../../../Config/constValue';
 
-class MProblem extends Component<any, any> {
-  render() {
+const MProblem = () => {
+  const { t } = useTranslation();
+  {
     const beforeSubmit = (value: any) => {
       value.isPublic = value.isPublic ? 1 : 0;
       if (value.functionTemplates === undefined) value.functionTemplates = {};
@@ -54,58 +54,58 @@ class MProblem extends Component<any, any> {
           <>
             <ItemTitle
               name={'problemTitle'}
-              label={this.props.t('title')}
+              label={t('title')}
               constraint={contracts.problem.problemTitle}
             />
-            <ItemSwitch name={'isPublic'} label={this.props.t('public')} />
+            <ItemSwitch name={'isPublic'} label={t('public')} />
             <ItemText
               name={'source'}
-              label={this.props.t('source')}
+              label={t('source')}
               required={false}
               constraint={contracts.problem.source}
             />
             <ItemSelectGroup
               name={'managerGroups'}
               constraint={contracts.problem.managerGroups}
-              label={this.props.t('ManagementGroup')}
+              label={t('ManagementGroup')}
               mode={'multiple'}
               formName={'ProblemInfo'}
             />
           </>
         ),
-        label: this.props.t('BasicInformation'),
+        label: t('BasicInformation'),
       },
       {
         component: (
           <>
             <ItemText
               name={'timeLimit'}
-              label={this.props.t('TimeLimit')}
+              label={t('TimeLimit')}
               suffix={'ms'}
               constraint={contracts.problem.timeLimit}
               initialValue={1000}
             />
             <ItemText
               name={'memoryLimit'}
-              label={this.props.t('MemoryLimit')}
+              label={t('MemoryLimit')}
               suffix={'KB'}
               constraint={contracts.problem.memoryLimit}
               initialValue={256 * 1024}
             />
             <ItemText
               name={'outputLimit'}
-              label={this.props.t('OutputLimit')}
+              label={t('OutputLimit')}
               suffix={'KB'}
               constraint={contracts.problem.outputLimit}
               initialValue={100 * 1024}
             />
           </>
         ),
-        label: this.props.t('JudgeLimit'),
+        label: t('JudgeLimit'),
       },
       {
         component: <FormJudgeType />,
-        label: this.props.t('JudgeMethod'),
+        label: t('JudgeMethod'),
       },
     ];
 
@@ -117,17 +117,17 @@ class MProblem extends Component<any, any> {
         width: 50,
       },
       {
-        title: this.props.t('problemCode'),
+        title: t('problemCode'),
         dataIndex: 'problemCode',
         width: 'auto',
       },
       {
-        title: this.props.t('title'),
+        title: t('title'),
         dataIndex: 'problemTitle',
         width: 'auto',
       },
       {
-        title: this.props.t('TimeLimit'),
+        title: t('TimeLimit'),
         dataIndex: 'timeLimit',
         width: 'auto',
         render: (text: string) => {
@@ -139,7 +139,7 @@ class MProblem extends Component<any, any> {
         },
       },
       {
-        title: this.props.t('MemoryLimit'),
+        title: t('MemoryLimit'),
         dataIndex: 'memoryLimit',
         width: 'auto',
         render: (text: string) => {
@@ -162,17 +162,17 @@ class MProblem extends Component<any, any> {
         },
       },
       {
-        title: this.props.t('source'),
+        title: t('source'),
         dataIndex: 'source',
         width: 'auto',
       },
       {
-        title: this.props.t('Owner'),
+        title: t('Owner'),
         dataIndex: 'username',
         width: 'auto',
       },
       {
-        title: this.props.t('operator'),
+        title: t('operator'),
         width: 'auto',
         // 操作列必须跨断点保持挂载，否则响应式切换会卸载行内 Modal
         shouldCellUpdate: () => false,
@@ -201,7 +201,7 @@ class MProblem extends Component<any, any> {
               <ModalFormUseForm
                 TableName={'ProblemList'}
                 width={600}
-                title={this.props.t('CreateProblemFrom', { name: rows.problemCode })}
+                title={t('CreateProblemFrom', { name: rows.problemCode })}
                 type={'fork'}
                 formName={'ProblemInfo'}
                 subForm={ProblemForm}
@@ -233,7 +233,7 @@ class MProblem extends Component<any, any> {
         <Card
           size={'small'}
           variant="outlined"
-          title={this.props.t('ProblemList')}
+          title={t('ProblemList')}
           extra={
             <Space wrap>
               <Button href={UrlPrefix + '/manage/problemSet/problem_group'}>
@@ -243,7 +243,7 @@ class MProblem extends Component<any, any> {
               <ModalFormUseForm
                 TableName={'ProblemList'}
                 width={600}
-                title={this.props.t('CreateProblem')}
+                title={t('CreateProblem')}
                 type={'create'}
                 subForm={ProblemForm}
                 dataSubmitter={(value: any) => {
@@ -266,6 +266,6 @@ class MProblem extends Component<any, any> {
       </div>
     );
   }
-}
+};
 
-export default withTranslation()(withRouter(MProblem));
+export default MProblem;

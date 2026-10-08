@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Button } from 'antd';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import apiAddress from '../../Utils/API/apiAddress';
 import { ck } from '../../Utils/empty';
 import { UrlPrefix } from '../../Config/constValue';
@@ -16,18 +16,17 @@ export const buildSduCasLoginUrl = (frontServer: string) => {
   return cas.toString();
 };
 
-class ThirdPartyLoginSDUCAS extends Component<any, any> {
-  render() {
-    return (
-      <>
-        <a href={buildSduCasLoginUrl(server)}>
-          <Button danger type={'primary'}>
-            {this.props.t(ck(this.props.title, 'SDUAuth'))}
-          </Button>
-        </a>
-      </>
-    );
-  }
-}
+const ThirdPartyLoginSDUCAS = (props: any) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <a href={buildSduCasLoginUrl(server)}>
+        <Button danger type={'primary'}>
+          {t(ck(props.title, 'SDUAuth'))}
+        </Button>
+      </a>
+    </>
+  );
+};
 
-export default withTranslation()(ThirdPartyLoginSDUCAS);
+export default ThirdPartyLoginSDUCAS;

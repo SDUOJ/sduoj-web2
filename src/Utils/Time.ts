@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export function TimeRangeState(start: number | string, end: number | string) {
+export function TimeRangeState(start: number | string | null | undefined, end: number | string | null | undefined) {
   const startMs = toMillis(start);
   const endMs = toMillis(end);
   if (startMs > Date.now()) return 'wait';
@@ -9,7 +9,8 @@ export function TimeRangeState(start: number | string, end: number | string) {
 }
 
 /** 支持 Unix 毫秒与 ISO/日期字符串；禁止 parseInt 截断 ISO 串（如 '2026-10-05T…'） */
-function toMillis(value: number | string): number {
+function toMillis(value: number | string | null | undefined): number {
+  if (value === null || value === undefined) return 0;
   if (typeof value === 'number') return value;
   const trimmed = value.trim();
   if (/^-?\d+$/.test(trimmed)) return parseInt(trimmed, 10);

@@ -1,49 +1,38 @@
-import React, {Component, Dispatch} from 'react';
-import {TestCase} from "../../Type/IProblem";
-import {connect} from "react-redux";
-import {withTranslation} from "react-i18next";
-import {Col, Row, Skeleton} from "antd";
-import CopyableCode from "../submission/CopyableCode";
-import Title from "antd/lib/typography/Title";
+import React from 'react';
+import { TestCase } from '../../Type/IProblem';
+import { useTranslation } from 'react-i18next';
+import { Col, Row, Skeleton } from 'antd';
+import CopyableCode from '../submission/CopyableCode';
+import Title from 'antd/lib/typography/Title';
 
-
-class SampleTestCase extends Component<any, any> {
-    render() {
-        return (
-            <Skeleton active loading={this.props.testCase === undefined}>
-                {
-                    this.props.testCase !== undefined && (
-                        this.props.testCase.map((value: TestCase, index: number) => {
-                            return (
-                                <>
-                                    <Title level={4}> {this.props.t("Sample") + " " + (index + 1)} </Title>
-                                    <Row align={"top"} style={{fontSize: "16px"}}>
-                                        <Col span={11}>
-                                            {this.props.t("Input")}:
-                                            <CopyableCode code={value.input}/>
-                                        </Col>
-                                        <Col span={11} offset={1}>
-                                            {this.props.t("Output")}:
-                                            <CopyableCode code={value.output}/>
-                                        </Col>
-                                    </Row>
-                                </>
-                            )
-                        })
-                    )
-                }
-            </Skeleton>
-        )
-    }
+interface SampleTestCaseProps {
+  testCase?: TestCase[];
 }
 
-const mapStateToProps = (state: any) => {
-    return {}
-}
+const SampleTestCase = (props: SampleTestCaseProps) => {
+  const { t } = useTranslation();
+  return (
+    <Skeleton active loading={props.testCase === undefined}>
+      {props.testCase !== undefined &&
+        props.testCase.map((value: TestCase, index: number) => {
+          return (
+            <React.Fragment key={index}>
+              <Title level={4}> {t('Sample') + ' ' + (index + 1)} </Title>
+              <Row align={'top'} style={{ fontSize: '16px' }}>
+                <Col span={11}>
+                  {t('Input')}:
+                  <CopyableCode code={value.input} />
+                </Col>
+                <Col span={11} offset={1}>
+                  {t('Output')}:
+                  <CopyableCode code={value.output} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          );
+        })}
+    </Skeleton>
+  );
+};
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withTranslation()(SampleTestCase))
+export default SampleTestCase;

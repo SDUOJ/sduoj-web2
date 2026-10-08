@@ -1,50 +1,53 @@
-import React, {Component} from "react";
-import {Button, Divider, Dropdown, Menu, Space} from "antd";
-import {withRouter} from "react-router-dom";
-import {DownOutlined, RightOutlined} from '@ant-design/icons';
-import {withTranslation} from "react-i18next";
-import UserAvatar from "./Avatar";
-import {UrlPrefix} from "../../Config/constValue";
+import React from 'react';
+import { Button, Divider, Dropdown, Menu, Space } from 'antd';
+import { useHistory } from 'react-router-dom';
+import { DownOutlined, RightOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import UserAvatar from './Avatar';
+import { UrlPrefix } from '../../Config/constValue';
 
-
-class UserAvatarBack extends Component<any, any> {
-    render() {
-        return (
-            <>
-                <Dropdown overlay={
-                    <Menu>
-
-                        <Menu.Item
-                            key="0"
-                            icon={<RightOutlined/>}
-                            onClick={() => {
-                                this.props.history.push(UrlPrefix + "/")
-                            }}
-                        >
-                            {this.props.t("backToOJ")}
-                        </Menu.Item>
-                    </Menu>
-                }>
-                    <Button type="text" size={"large"}>
-                        <Space>
-                            <div style={{marginTop: -10}}>
-                                {
-                                    this.props.email !== null && (
-                                        <>
-                                            <UserAvatar email={this.props.email}/>
-                                            <Divider type="vertical"/>
-                                        </>
-                                    )
-                                }
-                                {this.props.username}
-                            </div>
-                            <DownOutlined style={{fontSize: 10, marginBottom: 20}}/>
-                        </Space>
-                    </Button>
-                </Dropdown>
-            </>
-        )
-    }
+interface UserAvatarBackProps {
+  email?: string | null;
+  username?: string;
 }
 
-export default withTranslation()(withRouter(UserAvatarBack))
+const UserAvatarBack = (props: UserAvatarBackProps) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  return (
+    <>
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item
+              key="0"
+              icon={<RightOutlined />}
+              onClick={() => {
+                history.push(UrlPrefix + '/');
+              }}
+            >
+              {t('backToOJ')}
+            </Menu.Item>
+          </Menu>
+        }
+      >
+        <Button type="text" size={'large'}>
+          <Space>
+            <div style={{ marginTop: -10 }}>
+              {props.email !== null && props.email !== undefined && (
+                <>
+                  <UserAvatar email={props.email} />
+                  <Divider type="vertical" />
+                </>
+              )}
+              {props.username}
+            </div>
+            <DownOutlined style={{ fontSize: 10, marginBottom: 20 }} />
+          </Space>
+        </Button>
+      </Dropdown>
+    </>
+  );
+};
+
+export default UserAvatarBack;

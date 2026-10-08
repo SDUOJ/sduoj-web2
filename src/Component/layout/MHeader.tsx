@@ -1,11 +1,11 @@
-import React, { Component, Dispatch } from 'react';
-import { Button, Layout, message, Space } from 'antd';
+import React from 'react';
+import { Button, Layout, message } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import ChangeLang from '../common/ChangeLang';
 import { UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { useHistory, useLocation } from 'react-router-dom';
 import UserAccountDropdown from './UserAccountDropdown';
 import { userLogoutTodo } from '../../Redux/Action/user';
 import { UrlPrefix } from '../../Config/constValue';
@@ -13,83 +13,83 @@ import { loginRedirect } from '../../Utils/authReturn';
 
 const { Header } = Layout;
 
-class MHeader extends Component<any, any> {
-  render() {
-    const isMobile = this.props.isMobile === true;
-    return (
-      <Header
-        className="site-layout-sub-header-background"
-        style={{
-          minWidth: 0,
-          position: 'fixed',
-          top: 0,
-          left: isMobile ? 0 : 200,
-          width: isMobile ? '100%' : 'calc(100% - 200px)',
-          display: 'flex',
-          alignItems: 'center',
-          height: 64,
-          padding: isMobile ? '0 8px' : '0 20px',
-          boxSizing: 'border-box',
-          zIndex: 100,
-        }}
+const MHeader = (props: any) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const location = useLocation();
+  const isMobile = props.isMobile === true;
+
+  return (
+    <Header
+      className="site-layout-sub-header-background"
+      style={{
+        minWidth: 0,
+        position: 'fixed',
+        top: 0,
+        left: isMobile ? 0 : 200,
+        width: isMobile ? '100%' : 'calc(100% - 200px)',
+        display: 'flex',
+        alignItems: 'center',
+        height: 64,
+        padding: isMobile ? '0 8px' : '0 20px',
+        boxSizing: 'border-box',
+        zIndex: 100,
+      }}
+    >
+      {isMobile && (
+        <Button
+          type="text"
+          icon={<MenuOutlined />}
+          aria-label={t('openMenu', { defaultValue: 'Open menu' })}
+          onClick={props.onMenuToggle}
+        />
+      )}
+      <div style={{ flex: 1 }} />
+      <div
+        className="mheader-ops"
+        style={{ display: 'flex', gap: isMobile ? 8 : 24, alignItems: 'center', flexShrink: 0 }}
       >
-        {isMobile && (
+        <ChangeLang />
+        {props.isLogin ? (
+          <UserAccountDropdown
+            isLogin={true}
+            mode="manage"
+            username={props.username}
+            email={props.email}
+            roles={props.roles}
+            onBackToOJ={() => history.push(UrlPrefix + '/')}
+            onToManage={undefined}
+            onToProfile={() => history.push(UrlPrefix + '/user')}
+            onLogout={async () => {
+              try {
+                await props.userLogout();
+                history.push(UrlPrefix + '/home');
+                message.info(t('LogoutSuccess', { defaultValue: t('Logout') }));
+              } catch {
+                // Transport reports the failed logout.
+              }
+            }}
+          />
+        ) : (
           <Button
             type="text"
-            icon={<MenuOutlined />}
-            aria-label={this.props.t('openMenu', { defaultValue: 'Open menu' })}
-            onClick={this.props.onMenuToggle}
-          />
+            onClick={() => {
+              const loginPath = UrlPrefix + '/login';
+              const { pathname, search, hash } = location;
+              // 如果已经在登录页，则不要修改已有重定向地址（也不再跳转）
+              if (pathname === loginPath) return;
+              history.push(loginRedirect({ pathname, search, hash }));
+            }}
+          >
+            {t('LoginOrRegister', {
+              defaultValue: t('Login') + ' / ' + t('Register'),
+            })}
+          </Button>
         )}
-        <div style={{ flex: 1 }} />
-        <div
-          className="mheader-ops"
-          style={{ display: 'flex', gap: isMobile ? 8 : 24, alignItems: 'center', flexShrink: 0 }}
-        >
-          <ChangeLang />
-          {this.props.isLogin ? (
-            <UserAccountDropdown
-              isLogin={true}
-              mode="manage"
-              username={this.props.username}
-              email={this.props.email}
-              roles={this.props.roles}
-              onBackToOJ={() => this.props.history.push(UrlPrefix + '/')}
-              onToManage={undefined}
-              onToProfile={() => this.props.history.push(UrlPrefix + '/user')}
-              onLogout={async () => {
-                try {
-                  await this.props.userLogout();
-                  this.props.history.push(UrlPrefix + '/home');
-                  message.info(
-                    this.props.t('LogoutSuccess', { defaultValue: this.props.t('Logout') }),
-                  );
-                } catch {
-                  // Transport reports the failed logout.
-                }
-              }}
-            />
-          ) : (
-            <Button
-              type="text"
-              onClick={() => {
-                const loginPath = UrlPrefix + '/login';
-                const { pathname, search, hash } = this.props.location;
-                // 如果已经在登录页，则不要修改已有重定向地址（也不再跳转）
-                if (pathname === loginPath) return;
-                this.props.history.push(loginRedirect({ pathname, search, hash }));
-              }}
-            >
-              {this.props.t('LoginOrRegister', {
-                defaultValue: this.props.t('Login') + ' / ' + this.props.t('Register'),
-              })}
-            </Button>
-          )}
-        </div>
-      </Header>
-    );
-  }
-}
+      </div>
+    </Header>
+  );
+};
 
 const mapStateToProps = (state: any) => {
   const UState: UserState = state.UserReducer;
@@ -101,8 +101,8 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: any) => ({
   userLogout: () => dispatch(userLogoutTodo()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(MHeader)));
+export default connect(mapStateToProps, mapDispatchToProps)(MHeader);

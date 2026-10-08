@@ -10,16 +10,22 @@ export const getExamGroupListFunc = (
   isActive: () => boolean = () => true,
 ) => {
   if (!isActive()) return;
+  const groups: any[] = Array.isArray(res)
+    ? res
+    : Array.isArray(res?.rows)
+      ? res.rows
+      : [];
   let data: { [key: string]: SExamProListInfo } = {};
   let plistIndex = 0;
-  for (const x of res) {
+  for (const x of groups) {
     x.index = x.index ?? plistIndex;
     plistIndex += 1;
   }
-  for (const x of res) {
+  for (const x of groups) {
     const proList: SProList[] = [];
     let cnt = 0;
-    for (const y of x.problems) {
+    const problems = Array.isArray(x?.problems) ? x.problems : [];
+    for (const y of problems) {
       proList.push({
         index: cnt,
         score: y.problemScore,
