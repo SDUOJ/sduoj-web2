@@ -81,6 +81,7 @@
     "test:coverage": "jest --runInBand --coverage",
     "test:e2e": "yarn build:test && playwright test",
     "test:local": "playwright test -c playwright.local.config.ts",
+    "test:issues": "playwright test -c playwright.issues.config.ts",
     "test:dev-regression": "playwright test -c playwright.dev-regression.config.ts",
     "validation:snapshot": "node scripts/snapshot-validation-schema.cjs",
     "validation:compile": "node scripts/compile-autolab-validators.cjs",

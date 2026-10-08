@@ -1,6 +1,7 @@
 import { test, expect, APIRequestContext } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
+
 import {
   ApiEnvelope,
   AutoLabPage,
@@ -12,6 +13,14 @@ import {
 } from '../../src/Type/api';
 import { UserInfo } from '../../src/Type/Iuser';
 import { PlatformJob, PlatformResource } from '../../src/Utils/API/ai-platform';
+
+test.use({ trace: 'off' });
+
+test.afterEach(async ({ request }) => {
+  const logout = await request.get('/api/user/logout');
+  expect(logout.ok()).toBe(true);
+  expect((await logout.json()).code).toBe(0);
+});
 
 test.use({ trace: 'off' });
 
@@ -83,7 +92,7 @@ test('real local API responses keep Java strings, AutoLab numbers, nullable file
   const resources = await read<AutoLabPage<PlatformResource>>(
     request,
     '/ps/auto-task/ai/resources/list',
-    { pageNow: 1, pageSize: 1 },
+    { pageNow: 1, pageSize: 100 },
   );
   expect(typeof resources.totalNum).toBe('number');
   const resource = resources.rows[0];
@@ -93,9 +102,14 @@ test('real local API responses keep Java strings, AutoLab numbers, nullable file
   const jobs = await read<{ rows: PlatformJob[]; totalNum: number }>(
     request,
     '/ps/auto-task/ai/jobs/list',
-    { pageNow: 1, pageSize: 1 },
+    { pageNow: 1, pageSize: 100 },
   );
-  const job = await read<PlatformJob>(request, `/ps/auto-task/ai/jobs/${jobs.rows[0].id}`);
+  const activeResources = new Set(resources.rows.map((row) => row.id));
+  const existingJob = jobs.rows.find(
+    (row) => row.resource_id && activeResources.has(row.resource_id),
+  );
+  expect(existingJob, 'A job linked to a visible, non-deleted resource is required').toBeDefined();
+  const job = await read<PlatformJob>(request, `/ps/auto-task/ai/jobs/${existingJob!.id}`);
   expect(job).toMatchObject({
     id: expect.any(String),
     attempt: expect.any(Number),

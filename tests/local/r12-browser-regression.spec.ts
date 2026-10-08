@@ -143,13 +143,10 @@ test('desktop/mobile real regression covers management, contest, problem set, up
     info: { title: string; version: string };
     paths: object;
   };
-  const examProbe = await page.request.post('/api/exam/getInfos', {
-    data: { pageNow: 1, pageSize: 1 },
-  });
-  const examEnvelope = (await examProbe.json()) as Envelope<unknown>;
   testInfo.annotations.push({
     type: 'boundary',
-    description: `Standalone exam lifecycle is not covered: service code ${examEnvelope.code}. Timed problem-set coverage is a separate contract.`,
+    description:
+      'Java standalone exam is retired. AutoLab exams and timed problem sets remain separate active contracts.',
   });
   await testInfo.attach('local-service-manifest', {
     contentType: 'application/json',
@@ -190,9 +187,7 @@ test('desktop/mobile real regression covers management, contest, problem set, up
         .trim()
         .split('\n'),
       standaloneExam: {
-        httpStatus: examProbe.status(),
-        code: examEnvelope.code,
-        lifecycle: 'not-verified',
+        lifecycle: 'deprecated-by-owner-2026-10-05',
       },
       timestamp: new Date().toISOString(),
       baseURL,

@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 
 for (const route of [
   '/v2/manage/course/classroom?filter=a%26b#result',
-  '/v2/exam/list?filter=a%26b#result',
   '/v2/problemSet/999999/overview?filter=a%26b#result',
 ]) {
   test(`real development authentication preserves the protected deep link: ${route}`, async ({
