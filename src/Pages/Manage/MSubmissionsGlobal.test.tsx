@@ -78,7 +78,7 @@ it('uses the seven-day bounded query, excludes tasks from rejudge and exports fo
   await waitFor(() =>
     expect(mApi.globalExport).toHaveBeenCalledWith(expect.objectContaining({ includeTasks: true })),
   );
-}, 15_000);
+});
 it('applies user and problem filters only when requested and renders formal results as columns', async () => {
   jest.mocked(mApi.globalSubmissionDetail).mockResolvedValue({
     submissionId: 'formal1',

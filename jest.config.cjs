@@ -1,6 +1,8 @@
 module.exports = {
   roots: ['<rootDir>/src'],
   testEnvironment: 'jsdom',
+  // Real Ant Design component flows run with coverage on shared CI runners.
+  testTimeout: 15_000,
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   moduleDirectories: ['node_modules', '<rootDir>/src'],

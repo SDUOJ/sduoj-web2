@@ -166,7 +166,9 @@ it('translates exam creation fields and selected-exam publishing controls', asyn
   expect(await screen.findByLabelText('Operation reason')).toBeVisible();
   expect(screen.getByRole('button', { name: /Prepare publication content/ })).toBeVisible();
   fireEvent.click(screen.getByRole('button', { name: /New exam/ }));
-  await waitFor(() => expect(screen.getByLabelText('Exam name')).toBeVisible());
+  await waitFor(() => expect(screen.getByLabelText('Exam name')).toBeVisible(), {
+    timeout: 5000,
+  });
   expect(screen.getByPlaceholderText('Student ID,Name,OJ username')).toBeVisible();
   expectEnglishMarkup();
 });
