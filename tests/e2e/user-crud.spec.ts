@@ -91,12 +91,12 @@ async function advanceSteps(page: Page, dialog: ReturnType<Page['getByRole']>) {
   for (let i = 0; i < 4; i += 1) {
     const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
     if (!(await next.count())) break;
-    await next.first().click({ force: true });
+    await next.first().click();
     await page.waitForTimeout(120);
   }
   const finish = dialog.getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ });
   if (await finish.count()) {
-    await finish.first().click({ force: true });
+    await finish.first().click();
     return true;
   }
   return false;
