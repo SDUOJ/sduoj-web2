@@ -78,8 +78,15 @@ describe('backend and database boundaries', () => {
     expect(constraintError(contracts.course.tag, '实验')).toBeUndefined();
     expect(constraintError(contracts.course.tag, 'Other')).toBeDefined();
     expect(constraintError(contracts.problem.judgeTemplates, Array(21).fill(1))).toBeDefined();
+    const maxBytes = contracts.problem.checkerConfig.maxBytes!;
+    const overhead = JSON.stringify({ source: '' }).length;
     expect(
-      constraintError(contracts.problem.checkerConfig, { source: 'a'.repeat(65535) }),
+      constraintError(contracts.problem.checkerConfig, { source: 'a'.repeat(maxBytes - overhead) }),
+    ).toBeUndefined();
+    expect(
+      constraintError(contracts.problem.checkerConfig, {
+        source: 'a'.repeat(maxBytes - overhead + 1),
+      }),
     ).toBeDefined();
   });
 });

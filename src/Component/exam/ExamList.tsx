@@ -131,7 +131,12 @@ const ExamList = (props: any) => {
         const isStart = record.gmtStart < Date.now();
         return (
           <Space>
-            <ExamForm type={'update'} title={record.examTitle} examID={record.examId} isStart={isStart} />
+            <ExamForm
+              type={'update'}
+              title={record.examTitle}
+              examID={record.examId}
+              isStart={isStart}
+            />
             <ExportExcel
               ButtonText={'导出结果'}
               ButtonType={'link'}

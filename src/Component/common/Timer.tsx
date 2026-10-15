@@ -24,7 +24,11 @@ const Timer = (props: ITimer) => {
                   <ClockCircleOutlined />
                   {t('Countdown')} :
                 </Space>
-                <AntdTimer value={props.deadline} format={t('TimeFormat')} onFinish={props.onFinish} />
+                <AntdTimer
+                  value={props.deadline}
+                  format={t('TimeFormat')}
+                  onFinish={props.onFinish}
+                />
               </Space>
             </Card>
           );

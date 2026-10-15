@@ -56,9 +56,12 @@ test('unified table card keeps its head free of the stray top divider', async ({
   expect(headBorder === 'no-head' || headBorder === '0px').toBe(true);
 
   // Thead must not grow an extra top border either.
-  const theadBorder = await page.locator('.ant-table-thead').first().evaluate((el) => {
-    return getComputedStyle(el).borderTopWidth;
-  });
+  const theadBorder = await page
+    .locator('.ant-table-thead')
+    .first()
+    .evaluate((el) => {
+      return getComputedStyle(el).borderTopWidth;
+    });
   expect(theadBorder).toBe('0px');
 
   expect(errors).toEqual([]);

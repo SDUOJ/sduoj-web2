@@ -1,7 +1,12 @@
 import { contracts, contestFeatureContracts } from './contracts';
 import { constraintError } from './constraints';
 
-type Case = { name: string; rule: Parameters<typeof constraintError>[0]; value: unknown; ok: boolean };
+type Case = {
+  name: string;
+  rule: Parameters<typeof constraintError>[0];
+  value: unknown;
+  ok: boolean;
+};
 
 const cases: Case[] = [
   // contest

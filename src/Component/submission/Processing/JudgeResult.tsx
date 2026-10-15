@@ -111,7 +111,9 @@ const JudgeResult = (props: IJudgeResult) => {
                           }}
                         >
                           {value.map((val: any) => {
-                            return <TestCase key={val.caseIndex ?? val.Index} type={'index'} {...val} />;
+                            return (
+                              <TestCase key={val.caseIndex ?? val.Index} type={'index'} {...val} />
+                            );
                           })}
                         </div>
                       </Card>

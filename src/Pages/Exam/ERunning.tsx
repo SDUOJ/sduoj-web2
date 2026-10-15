@@ -32,8 +32,11 @@ const mapStateToProps = (state: any) => {
   return {
     isLogin: UState.isLogin,
     realName:
-      realName === undefined || realName === null ? UState.userInfo?.nickname : UState.userInfo?.realName,
-    sduId: sduId === undefined || sduId === null ? UState.userInfo?.studentId : UState.userInfo?.sduId,
+      realName === undefined || realName === null
+        ? UState.userInfo?.nickname
+        : UState.userInfo?.realName,
+    sduId:
+      sduId === undefined || sduId === null ? UState.userInfo?.studentId : UState.userInfo?.sduId,
   };
 };
 

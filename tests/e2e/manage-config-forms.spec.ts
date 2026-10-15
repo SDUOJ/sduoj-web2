@@ -91,7 +91,10 @@ async function openPage(
 
 test('problem set create rejects blank name/tag before submit', async ({ page }) => {
   const { errors, calls } = await openPage(page, '/v2/manage/problemSet/problem_set');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
 
@@ -113,10 +116,16 @@ test('problem set create rejects blank name/tag before submit', async ({ page })
 
 test('problem group create requires a non-blank name', async ({ page }) => {
   const { errors, calls } = await openPage(page, '/v2/manage/problemSet/problem_group');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: /Submit|Finish/i }).first().click();
+  await dialog
+    .getByRole('button', { name: /Submit|Finish/i })
+    .first()
+    .click();
   await expect(dialog).toBeVisible();
   expect(calls.createProblemGroup).toEqual([]);
   expect(errors).toEqual([]);
@@ -129,7 +138,10 @@ test('course create rejects blank name and invalid tag', async ({ page }) => {
       '/manage/course/list': { rows: [], totalNum: 0, pageIndex: 1, pageSize: 20 },
     },
   });
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: /^Submit$/i }).click();

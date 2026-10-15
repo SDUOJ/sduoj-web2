@@ -97,7 +97,9 @@ async function openContestAs(
   return { errors };
 }
 
-test('student participant sees rank and problems but no admin export controls', async ({ page }) => {
+test('student participant sees rank and problems but no admin export controls', async ({
+  page,
+}) => {
   const { errors } = await openContestAs(page, '/v2/contest/42/rank', {
     username: 'student_a',
     roles: ['user'],

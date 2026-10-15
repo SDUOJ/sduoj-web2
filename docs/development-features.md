@@ -4,11 +4,11 @@
 
 环境判断统一使用 `developmentFeaturesEnabled()`：
 
-| 构建 | 开发中功能 |
-| --- | --- |
-| 本地 development | 显示，入口带 DEV 标签 |
-| Jest / 隔离的 deployment=test 构建 | 显示，供回归测试 |
-| production / release | 隐藏；直接访问对应路径返回 404 |
+| 构建                               | 开发中功能                     |
+| ---------------------------------- | ------------------------------ |
+| 本地 development                   | 显示，入口带 DEV 标签          |
+| Jest / 隔离的 deployment=test 构建 | 显示，供回归测试               |
+| production / release               | 隐藏；直接访问对应路径返回 404 |
 
 构建环境由 Webpack 注入，不从 URL、localStorage 或用户权限读取。隔离 test 构建仍遵循已有的本地测试域名限制。普通 release 构建无需额外参数即可关闭开发中功能。
 

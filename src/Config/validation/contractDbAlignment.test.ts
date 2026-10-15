@@ -9,13 +9,18 @@ function columnType(scope: 'oj' | 'autolab', table: string, field: string) {
   return db[scope][table]?.[field]?.[0];
 }
 
-function sourceParts(source: string): { scope: 'oj' | 'autolab'; table: string; field: string } | null {
+function sourceParts(
+  source: string,
+): { scope: 'oj' | 'autolab'; table: string; field: string } | null {
   const match = /(?:^|;\s*)(oj|autolab)\.([a-z0-9_]+)\.([a-zA-Z0-9_]+)/.exec(source);
   if (!match) return null;
   return { scope: match[1] as 'oj' | 'autolab', table: match[2], field: match[3] };
 }
 
-function collectConstraints(node: unknown, path: string[] = []): Array<{ path: string; rule: Constraint }> {
+function collectConstraints(
+  node: unknown,
+  path: string[] = [],
+): Array<{ path: string; rule: Constraint }> {
   if (!node || typeof node !== 'object') return [];
   const maybe = node as Constraint;
   if (typeof maybe.source === 'string' && maybe.source.length > 0) {
@@ -68,10 +73,11 @@ it('integer constraints stay inside the database integer range', () => {
     if (!parsed) continue;
     const type = columnType(parsed.scope, parsed.table, parsed.field);
     if (!type) continue;
-    const integer =
-      /^(tinyint|smallint|mediumint|int|bigint)(?:\(\d+\))?( unsigned)?$/.exec(type);
+    const integer = /^(tinyint|smallint|mediumint|int|bigint)(?:\(\d+\))?( unsigned)?$/.exec(type);
     if (!integer) continue;
-    const bits = { tinyint: 8, smallint: 16, mediumint: 24, int: 32, bigint: 64 }[integer[1] as 'int'];
+    const bits = { tinyint: 8, smallint: 16, mediumint: 24, int: 32, bigint: 64 }[
+      integer[1] as 'int'
+    ];
     const unsigned = Boolean(integer[2]);
     const max = unsigned ? 2 ** bits - 1 : 2 ** (bits - 1) - 1;
     const min = unsigned ? 0 : -(2 ** (bits - 1));

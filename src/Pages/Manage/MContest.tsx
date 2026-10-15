@@ -199,7 +199,12 @@ const MContest = () => {
           </>
         }
       >
-        <TableWithPagination name={'ContestList'} columns={colData} API={MApi.getContestList} size={'small'} />
+        <TableWithPagination
+          name={'ContestList'}
+          columns={colData}
+          API={MApi.getContestList}
+          size={'small'}
+        />
       </Card>
     </div>
   );

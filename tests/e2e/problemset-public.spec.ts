@@ -64,7 +64,9 @@ test('public problem set running window offers start answering', async ({ page }
   expect(errors).toEqual([]);
 });
 
-test('public problem set wait window keeps start disabled and shows countdown', async ({ page }) => {
+test('public problem set wait window keeps start disabled and shows countdown', async ({
+  page,
+}) => {
   const { errors } = await openPublic(
     page,
     publicInfo({ tm_start: String(now + DAY), tm_end: String(now + 2 * DAY) }),

@@ -52,12 +52,7 @@ type LateMatrixOptions = {
 async function openProblemSet(
   page: Page,
   path: string,
-  {
-    problemSet,
-    username = 'test_admin',
-    roles = ['admin'],
-    lateRows = [],
-  }: LateMatrixOptions,
+  { problemSet, username = 'test_admin', roles = ['admin'], lateRows = [] }: LateMatrixOptions,
 ) {
   await page.addInitScript(() => localStorage.setItem('language', 'en'));
   const errors: string[] = [];

@@ -330,7 +330,10 @@ async function openContestCreateDialog(page: Page) {
     });
   });
   await page.goto('/v2/manage/contest');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   return {
@@ -376,13 +379,19 @@ test('contest management dialog rejects overflowing frozenTime and accepts a val
   await expect(frozen).toBeVisible();
   await frozen.fill('2147483648');
   // Next on the management step must refuse the overflowing value.
-  await dialog.getByRole('button', { name: /^(Next|下一步)$/ }).first().click({ force: true });
+  await dialog
+    .getByRole('button', { name: /^(Next|下一步)$/ })
+    .first()
+    .click({ force: true });
   await page.waitForTimeout(200);
   await expect(frozen).toBeVisible();
   expect(getSubmitted()).toBeUndefined();
 
   await frozen.fill('30');
-  await dialog.getByRole('button', { name: /^(Next|下一步)$/ }).first().click({ force: true });
+  await dialog
+    .getByRole('button', { name: /^(Next|下一步)$/ })
+    .first()
+    .click({ force: true });
   await page.waitForTimeout(200);
   // Management step is left behind (form kept mounted but hidden).
   await expect(frozen).toBeHidden();
@@ -407,7 +416,10 @@ test('contest running-time submit switch is part of the management payload', asy
   await expect(switches).toHaveCount(10);
   await switches.nth(4).click();
 
-  await dialog.getByRole('button', { name: /^(Next|下一步)$/ }).first().click({ force: true });
+  await dialog
+    .getByRole('button', { name: /^(Next|下一步)$/ })
+    .first()
+    .click({ force: true });
   await page.waitForTimeout(200);
   await dialog
     .getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ })

@@ -253,20 +253,23 @@ const Review = (props: any) => {
                       if (cache && cache.psid === psid && Date.now() - cache.ts < 30000) {
                         setQueueOptions(cache.data.map((q: string) => ({ label: q, value: q })));
                       } else {
-                        cApi.getAcceptanceQueueList({ psid }).then((qs: any) => {
-                          const list: string[] = Array.isArray(qs)
-                            ? qs
-                            : Array.isArray(qs?.rows)
-                              ? qs.rows
-                              : [];
-                          const opts = list.map((q: string) => ({ label: q, value: q }));
-                          setQueueOptions(opts);
-                          (window as any)._ps_acceptance_queue_cache = {
-                            psid,
-                            data: list,
-                            ts: Date.now(),
-                          };
-                        }).catch(() => setQueueOptions([]));
+                        cApi
+                          .getAcceptanceQueueList({ psid })
+                          .then((qs: any) => {
+                            const list: string[] = Array.isArray(qs)
+                              ? qs
+                              : Array.isArray(qs?.rows)
+                                ? qs.rows
+                                : [];
+                            const opts = list.map((q: string) => ({ label: q, value: q }));
+                            setQueueOptions(opts);
+                            (window as any)._ps_acceptance_queue_cache = {
+                              psid,
+                              data: list,
+                              ts: Date.now(),
+                            };
+                          })
+                          .catch(() => setQueueOptions([]));
                       }
                     }
                   }}

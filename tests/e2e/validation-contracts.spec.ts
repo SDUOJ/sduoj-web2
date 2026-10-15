@@ -12,7 +12,10 @@ type Captured = {
 
 const WRITE_RE = /create|update|add|delete|edit/i;
 
-async function withMock(page: Page, handler: (p: string, method: string, body: unknown) => unknown) {
+async function withMock(
+  page: Page,
+  handler: (p: string, method: string, body: unknown) => unknown,
+) {
   const captured: Captured = { posts: [], errors: [] };
   page.on('pageerror', (e) => captured.errors.push(e.message));
   await page.addInitScript(() => localStorage.setItem('language', 'en'));
@@ -44,7 +47,10 @@ test('announcement overlong title never posts', async ({ page }) => {
     return undefined;
   });
   await page.goto('/v2/manage/announcement');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Title').fill('t'.repeat(46));
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
@@ -60,7 +66,10 @@ test('classroom overlong name never posts', async ({ page }) => {
     return undefined;
   });
   await page.goto('/v2/manage/course/classroom');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('教室名称').fill('a'.repeat(51));
   await dialog.getByLabel('教室地点').fill('Local');
@@ -121,7 +130,10 @@ test('judge template overlong title never posts', async ({ page }) => {
     return undefined;
   });
   await page.goto('/v2/manage/template/io');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel(/^Title$/i).fill('t'.repeat(33));
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
