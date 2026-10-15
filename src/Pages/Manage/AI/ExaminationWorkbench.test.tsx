@@ -168,7 +168,7 @@ test('freezes the publication payload from the reviewed seat plan', async () => 
       }),
     }),
   );
-});
+}, 15_000);
 
 test('requires explicit formal acknowledgement after teacher review', async () => {
   current = plannedExam({

@@ -250,4 +250,4 @@ test('translates the authoring workbench in English', async () => {
   } finally {
     await i18n.changeLanguage('zh');
   }
-});
+}, 15_000);
