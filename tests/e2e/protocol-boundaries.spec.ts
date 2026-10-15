@@ -59,6 +59,9 @@ async function installApi(page: Page, markdown = '') {
       case '/submit/queryACProblem':
         data = [];
         break;
+      case '/run/capabilities':
+        data = { enabled: false };
+        break;
       case '/problem/query':
         data = problem(markdown);
         break;

@@ -10,6 +10,9 @@
 /test-results
 /playwright-report
 /output
+/dependency-audit.json
+/static-analysis.json
+/artifact-verification.json
 
 # production
 /build

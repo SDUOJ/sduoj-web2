@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 type GroupRow = {
@@ -119,7 +120,7 @@ test('group list renders mine/all filter and member cards', async ({ page }) => 
   await page.keyboard.press('Escape');
   // private group shows lock tag instead of join
   await expect(page.getByText('Private').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('group list join button applies and quits a joined group', async ({ page }) => {
@@ -142,7 +143,7 @@ test('group list join button applies and quits a joined group', async ({ page })
   const exitBtn = page.getByRole('button', { name: /^(Exit|退出)$/ }).first();
   await expect(exitBtn).toBeVisible();
   expect(getQuitCalls()).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('group detail shows announcement tabs and member list', async ({ page }) => {
@@ -164,7 +165,7 @@ test('group detail shows announcement tabs and member list', async ({ page }) =>
   await expect(page.getByRole('tab', { name: /Announcement/i })).toBeVisible();
   await expect(page.getByRole('tab', { name: /Contest/i })).toBeVisible();
   await expect(page.getByRole('tab', { name: /User|Member/i })).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('group detail join/quit respects membership status', async ({ page }) => {
@@ -174,5 +175,5 @@ test('group detail join/quit respects membership status', async ({ page }) => {
     username: 'visitor',
   });
   await expect(page.getByRole('button', { name: /^(Join|加入)$/ })).toBeVisible();
-  expect(open.errors).toEqual([]);
+  await expectNoBrowserErrors(open.errors);
 });

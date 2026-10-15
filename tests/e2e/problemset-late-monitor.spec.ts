@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 const now = Date.now();
@@ -168,7 +169,7 @@ test('late permission page denies non-admins with a 403 result', async ({ page }
   });
   await expect(page.getByText('403')).toBeVisible();
   await expect(page.getByText(/do not have permission/i)).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('late permission list renders granted rows for admins', async ({ page }) => {
@@ -191,7 +192,7 @@ test('late permission list renders granted rows for admins', async ({ page }) =>
   await expect(page.getByRole('button', { name: /Grant Late Permission/i })).toBeVisible();
   await expect(page.getByRole('cell', { name: 'yhf2000' })).toBeVisible();
   await expect(page.getByRole('cell', { name: 'extension' })).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('late permission add rejects empty username and out-of-range discount', async ({ page }) => {
@@ -231,7 +232,7 @@ test('late permission add rejects empty username and out-of-range discount', asy
     discount: 0.01,
   });
   expect(getAddCalls()[0].expire_time).toBeGreaterThan(Date.now());
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('late permission edit updates discount', async ({ page }) => {
@@ -265,7 +266,7 @@ test('late permission edit updates discount', async ({ page }) => {
     id: 7,
     discount: 0.25,
   });
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('monitor page surfaces multi-ip users', async ({ page }) => {
@@ -274,7 +275,7 @@ test('monitor page surfaces multi-ip users', async ({ page }) => {
   });
   await expect(page.getByRole('cell', { name: 'Alice', exact: true })).toBeVisible();
   await expect(page.getByRole('cell', { name: 'alice', exact: true })).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('review page stays reachable for admins', async ({ page }) => {
@@ -282,5 +283,5 @@ test('review page stays reachable for admins', async ({ page }) => {
     problemSet: problemSetFixture(),
   });
   await expect(page.getByText(/Late Matrix PS|Review/i).first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

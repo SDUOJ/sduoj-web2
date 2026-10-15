@@ -19,6 +19,18 @@ async function openAiPage(page: Page, path: string) {
   await page.route('**/api/**', async (route) => {
     const p = new URL(route.request().url()).pathname.replace(/^\/api/, '');
     let data: unknown = { rows: [], totalNum: 0, totalPage: 0, items: [], jobs: [] };
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'access-control-allow-origin': 'http://127.0.0.1:4173',
+          'access-control-allow-credentials': 'true',
+          'access-control-allow-methods': 'GET,POST,PUT,DELETE,OPTIONS',
+          'access-control-allow-headers': 'content-type',
+        },
+      });
+      return;
+    }
     if (p === '/user/getProfile') {
       data = { username: 'test_admin', roles: ['admin', 'superadmin'], features: {} };
     } else if (p === '/site/getCopyright') {
@@ -40,24 +52,15 @@ async function openAiPage(page: Page, path: string) {
   return { errors };
 }
 
-test('core AI workspaces mount without runtime errors', async ({ page }) => {
-  for (const route of [
-    '/v2/ai-workbench',
-    '/v2/ai-bank',
-    '/v2/ai-authoring',
-    '/v2/ai-grading',
-    '/v2/ai-exams',
-    '/v2/ai-plagiarism',
-    '/v2/ai-interviews',
-    '/v2/ai-course',
-    '/v2/ai-admin',
-  ]) {
+for (const route of AI_ROUTES) {
+  test(`AI workspace ${route} mounts without runtime errors`, async ({ page }) => {
     const { errors } = await openAiPage(page, route);
     // page shell renders at least one control
     await expect(page.getByRole('button').first()).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('networkidle');
     expect(errors, route).toEqual([]);
-  }
-});
+  });
+}
 
 test('AI admin settings page exposes configuration controls', async ({ page }) => {
   const { errors } = await openAiPage(page, '/v2/ai-admin');

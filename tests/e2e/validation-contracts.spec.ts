@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 /**
@@ -56,7 +57,7 @@ test('announcement overlong title never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('notice'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectNoBrowserErrors(cap.errors);
 });
 
 test('classroom overlong name never posts', async ({ page }) => {
@@ -77,7 +78,7 @@ test('classroom overlong name never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('class'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectNoBrowserErrors(cap.errors);
 });
 
 test('late permission discount zero never posts', async ({ page }) => {
@@ -120,7 +121,7 @@ test('late permission discount zero never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^OK$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('late/add'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectNoBrowserErrors(cap.errors);
 });
 
 test('judge template overlong title never posts', async ({ page }) => {
@@ -139,5 +140,5 @@ test('judge template overlong title never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('judgetemplate'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectNoBrowserErrors(cap.errors);
 });

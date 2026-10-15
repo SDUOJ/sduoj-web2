@@ -147,7 +147,9 @@ test('advanced template form gates create the same way', async ({ page }) => {
 
 test('template edit dialog loads existing row and updates', async ({ page }) => {
   const { errors, getUpdateCalls } = await openTemplate(page, 'io');
-  const row = page.getByRole('row', { name: /Standard IO/ });
+  const row = page
+    .getByRole('row')
+    .filter({ has: page.getByRole('cell', { name: '1', exact: true }) });
   await row
     .getByRole('button', { name: /^Edit$/i })
     .first()

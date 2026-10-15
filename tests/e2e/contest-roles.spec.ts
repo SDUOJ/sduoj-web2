@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 const now = Date.now();
@@ -110,7 +111,7 @@ test('student participant sees rank and problems but no admin export controls', 
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toBeVisible();
   // non-admin should not get export controls
   await expect(page.getByRole('button', { name: /^Export$/i })).toHaveCount(0);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('admin organizer sees export controls on rank', async ({ page }) => {
@@ -134,7 +135,7 @@ test('admin organizer sees export controls on rank', async ({ page }) => {
   await expect(page.getByText('Alice')).toBeVisible();
   // admin export button is present for organizers
   await expect(page.getByRole('button', { name: /Export/i }).first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('unregistered visitor on private contest is locked to register', async ({ page }) => {
@@ -166,7 +167,7 @@ test('unregistered visitor on private contest is locked to register', async ({ p
   });
   await expect(page).toHaveURL(/\/contest\/42\/register/);
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toHaveCount(0);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('auditor without membership still browses public contest overview', async ({ page }) => {
@@ -177,5 +178,5 @@ test('auditor without membership still browses public contest overview', async (
   });
   await expect(page.getByText('Role Matrix Contest')).toBeVisible();
   await expect(page.getByText('A+B')).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
