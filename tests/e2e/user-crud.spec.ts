@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 type UserRow = {
@@ -126,7 +127,7 @@ test('user list renders rows and opens edit dialog', async ({ page }) => {
   await advanceSteps(page, dialog);
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
   expect(getUpdateCalls()[0]).toMatchObject({ username: 'fe_94', userId: '13667' });
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('user create validates username and submits a full profile', async ({ page }) => {
@@ -157,7 +158,7 @@ test('user create validates username and submits a full profile', async ({ page 
   await expect.poll(() => getAddCalls().length, { timeout: 5000 }).toBe(1);
   const payload = Array.isArray(getAddCalls()[0]) ? getAddCalls()[0][0] : getAddCalls()[0];
   expect(String(payload.username)).toContain('valid_user');
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('user password change dialog submits admin password', async ({ page }) => {
@@ -183,7 +184,7 @@ test('user password change dialog submits admin password', async ({ page }) => {
     .first()
     .click();
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('batch delete sends selected usernames', async ({ page }) => {
@@ -199,5 +200,5 @@ test('batch delete sends selected usernames', async ({ page }) => {
   // DeleteConfirm is a Popconfirm with Yes/No
   await page.getByRole('button', { name: /^Yes$/i }).first().click();
   await expect.poll(() => getDeleteCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

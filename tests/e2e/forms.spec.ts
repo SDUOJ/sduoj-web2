@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect } from '@playwright/test';
 
 async function openClassroomDialog(page: import('@playwright/test').Page) {
@@ -61,7 +62,7 @@ test('classroom form blocks storage overflow and submits a valid boundary value'
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
   }
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('classroom seat input never submits a non-positive or non-integer seat', async ({ page }) => {
@@ -79,7 +80,7 @@ test('classroom seat input never submits a non-positive or non-integer seat', as
   } else {
     await expect(dialog).toBeVisible();
   }
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('classroom form rejects empty required name and overlong names', async ({ page }) => {
@@ -96,7 +97,7 @@ test('classroom form rejects empty required name and overlong names', async ({ p
   await expect(dialog).toBeVisible();
   expect(getSubmitted()).toBeUndefined();
   await expect(dialog.getByText(/50 characters/)).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('mobile management navigation opens as a drawer and keeps the form usable', async ({

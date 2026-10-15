@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 async function openSubmissionList(page: Page) {
@@ -64,5 +65,5 @@ test('unified table card keeps its head free of the stray top divider', async ({
     });
   expect(theadBorder).toBe('0px');
 
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

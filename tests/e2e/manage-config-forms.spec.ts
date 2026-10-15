@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 type ApiCalls = {
@@ -102,16 +103,16 @@ test('problem set create rejects blank name/tag before submit', async ({ page })
   for (let i = 0; i < 4; i += 1) {
     const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
     if (!(await next.count())) break;
-    await next.first().click({ force: true });
+    await next.first().click();
     await page.waitForTimeout(100);
     if (calls.createProblemSet.length) break;
   }
   const finish = dialog.getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ });
   if (await finish.count()) {
-    await finish.first().click({ force: true });
+    await finish.first().click();
   }
   expect(calls.createProblemSet).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('problem group create requires a non-blank name', async ({ page }) => {
@@ -128,7 +129,7 @@ test('problem group create requires a non-blank name', async ({ page }) => {
     .click();
   await expect(dialog).toBeVisible();
   expect(calls.createProblemGroup).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('course create rejects blank name and invalid tag', async ({ page }) => {
@@ -147,14 +148,14 @@ test('course create rejects blank name and invalid tag', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(calls.createCourse).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('intelligent management page is reachable for admins', async ({ page }) => {
   const { errors } = await openPage(page, '/v2/manage/intelligent');
   // page shell should render without crash
   await expect(page.getByRole('button').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('assistant settings page is reachable for admins', async ({ page }) => {
@@ -165,5 +166,5 @@ test('assistant settings page is reachable for admins', async ({ page }) => {
     },
   });
   await expect(page.getByRole('button').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

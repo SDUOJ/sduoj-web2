@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 const AI_ROUTES = [
@@ -65,5 +66,5 @@ for (const route of AI_ROUTES) {
 test('AI admin settings page exposes configuration controls', async ({ page }) => {
   const { errors } = await openAiPage(page, '/v2/ai-admin');
   await expect(page.getByRole('button').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

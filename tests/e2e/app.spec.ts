@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -73,7 +74,7 @@ test('login validation and successful login preserve the return route', async ({
   await login.click();
   await expect(page).toHaveURL(baseURL + target);
   await expect(page.getByText('Example problem 1', { exact: true })).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('problem pagination remains usable after the React upgrade', async ({ page }) => {
@@ -91,7 +92,7 @@ test('submission page renders the empty state without a runtime exception', asyn
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/v2/submission');
   await expect(page.locator('.ant-empty')).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('login visual baseline and image assets', async ({ page, browserName }, testInfo) => {

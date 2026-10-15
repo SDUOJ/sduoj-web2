@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 type TemplateRow = {
@@ -117,7 +118,7 @@ test('io template form rejects blank title and overlong comment', async ({ page 
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(getCreateCalls()).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('io template form accepts a valid payload', async ({ page }) => {
@@ -133,7 +134,7 @@ test('io template form accepts a valid payload', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect.poll(() => getCreateCalls().length, { timeout: 5000 }).toBe(1);
   expect(getCreateCalls()[0]).toMatchObject({ title: 'Valid IO', type: 0 });
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('advanced template form gates create the same way', async ({ page }) => {
@@ -142,7 +143,7 @@ test('advanced template form gates create the same way', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(getCreateCalls()).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 test('template edit dialog loads existing row and updates', async ({ page }) => {
@@ -161,5 +162,5 @@ test('template edit dialog loads existing row and updates', async ({ page }) => 
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBe(1);
   expect(getUpdateCalls()[0]).toMatchObject({ title: 'Standard IO v2', id: '1' });
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect, Page } from '@playwright/test';
 
 async function openAnnouncementManage(page: Page) {
@@ -73,7 +74,7 @@ test('announcement form blocks blank titles and accepts a valid notice', async (
   await dialog.getByRole('button', { name: /^Submit$/ }).click();
   await expect.poll(() => getCreated(), { timeout: 5000 }).toBeTruthy();
   expect(getCreated()).toMatchObject({ title: 'Maintenance window' });
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
 
 async function openUserManage(page: Page) {
@@ -135,7 +136,7 @@ async function advanceUserDialog(page: Page, dialog: ReturnType<Page['getByRole'
   for (let i = 0; i < 4; i += 1) {
     const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
     if (!(await next.count())) break;
-    await next.first().click({ force: true });
+    await next.first().click();
     // Step 2 owns the feature switches; wait for them before finishing.
     if (i === 0) {
       await expect(dialog.getByText(/Third|Email|Info/i).first()).toBeVisible({ timeout: 3000 });
@@ -143,7 +144,7 @@ async function advanceUserDialog(page: Page, dialog: ReturnType<Page['getByRole'
   }
   const finish = dialog.getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ });
   if (await finish.count()) {
-    await finish.first().click({ force: true });
+    await finish.first().click();
     return true;
   }
   return false;
@@ -166,5 +167,5 @@ test('user management create rejects weak usernames and accepts a valid profile'
   const payload = getCreated();
   const flat = Array.isArray(payload) ? payload[0] : payload;
   expect(String(flat?.username ?? '')).toContain('valid_user');
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { test, expect } from '@playwright/test';
 
 test('management and exam trees use the same unknown-route fallback without mounting data APIs', async ({
@@ -31,5 +32,5 @@ test('management and exam trees use the same unknown-route fallback without moun
     await expect(page.getByText('404', { exact: true })).toBeVisible();
   }
   expect(dataRequests).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });

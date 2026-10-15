@@ -1,3 +1,4 @@
+import { expectNoBrowserErrors } from './browser-errors';
 import { expect, Page, test, TestInfo, WebSocketRoute } from '@playwright/test';
 
 const problem = (markdown: string) => ({
@@ -156,5 +157,5 @@ test('judging rejects unsupported frames, reconnects, and deduplicates legacy ch
   await expect(row.getByRole('cell', { name: '100%', exact: true })).toBeVisible();
   await expect.poll(() => closed).toBeGreaterThan(0);
   expect(await page.evaluate(() => localStorage.getItem('submissionVersion:abc'))).toBe('3');
-  expect(errors).toEqual([]);
+  await expectNoBrowserErrors(errors);
 });
