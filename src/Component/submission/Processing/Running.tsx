@@ -1,17 +1,17 @@
 import { withTranslation } from 'react-i18next';
-import { Alert, Progress, Steps } from 'antd';
+import { Progress, Steps } from 'antd';
 import { ClimbingBoxLoader } from 'react-spinners';
 import Title from 'antd/es/typography/Title';
 import { RunningStateType, SubmissionState, TestCaseStates } from '../../../Type/ISubmission';
 import TestCase from '../TestCase';
 import { LoadingOutlined } from '@ant-design/icons';
-import { isValueEmpty } from '../../../Utils/empty';
 import cApi from '../../../Utils/API/c-api';
 import ReJudge from '../Func/ReJudge';
 import judgeAuth from '../../../Utils/judgeAhtu';
 import { connect } from 'react-redux';
 import { UserState } from '../../../Type/Iuser';
 import { Dispatch } from 'react';
+import JudgeLog from '../JudgeLog';
 
 const Running = (props: any) => {
   const { Step } = Steps;
@@ -75,34 +75,13 @@ const Running = (props: any) => {
         />
       </Steps>
 
-      {/*
-                显示评测 log
-            */}
-      <div style={{ marginTop: '30px' }}>
-        {[''].map(() => {
-          if (submissionInfo !== undefined) {
-            if (!isValueEmpty(submissionInfo.judgeLog)) {
-              let obj: {
-                message: string;
-                type: 'error' | 'info' | 'success' | 'warning' | undefined;
-              };
-              if (RunningResult === '8') obj = { message: props.t('CompileFailed'), type: 'error' };
-              else if (RunningResult === '5')
-                obj = { message: props.t('SystemError'), type: 'error' };
-              else obj = { message: props.t('judgingLog'), type: 'info' };
-              return (
-                <Alert
-                  key="judge-log"
-                  description={<pre className="preAutoLine">{submissionInfo.judgeLog}</pre>}
-                  showIcon={true}
-                  {...obj}
-                />
-              );
-            }
-          }
-          return undefined;
-        })}
-      </div>
+      {submissionInfo?.judgeLog && (
+        <JudgeLog
+          title={props.t(RunningResult === '8' ? 'answerIde.compileLog' : 'judgingLog')}
+          log={submissionInfo.judgeLog}
+          error={RunningResult === '8' || RunningResult === '5'}
+        />
+      )}
 
       {judgeAuth(props.roles, ['admin', 'superadmin']) &&
         RunningState !== '-4' &&

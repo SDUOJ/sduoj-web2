@@ -1,4 +1,4 @@
-import { Collapse, Form, Input, Radio, Select, Space, Switch, Table } from 'antd';
+import { Alert, Collapse, Empty, Form, Input, Radio, Select, Space, Table } from 'antd';
 import React, { Dispatch, useEffect, useState } from 'react';
 import BodyChecker from './Item/BodyChecker';
 import mApi from 'Utils/API/m-api';
@@ -12,6 +12,7 @@ import { isValueEmpty } from '../../../Utils/empty';
 import TemplateMForm from '../../judgeTemplate/Form/TemplateMForm';
 import ModalFormUseForm from '../../common/Form/ModalFormUseForm';
 import FormExtraInfo from '../../common/Form/FormExtraInfo';
+import './judgeType.css';
 
 const FormJudgeType = (props: any) => {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ const FormJudgeType = (props: any) => {
   }, []);
 
   const updateAdvanced = () => {
-    const initData = props.initData['ProblemInfo'];
+    const initData = props.initData?.['ProblemInfo'];
     const problemCode = initData.problemCode;
 
     mApi.getJudgeTemplateList({ type: 2, problemCode: problemCode }).then((value: any) => {
@@ -46,8 +47,8 @@ const FormJudgeType = (props: any) => {
 
   useEffect(() => {
     // console.log("props.initData", props.initData)
-    if (props.initData !== undefined && props.initData['ProblemInfo'] !== undefined) {
-      const initData = props.initData['ProblemInfo'];
+    if (props.initData !== undefined && props.initData?.['ProblemInfo'] !== undefined) {
+      const initData = props.initData?.['ProblemInfo'];
 
       // 设定当前评测模板
       if (!isValueEmpty(initData.judgeTemplates)) setSelectJudgeTemplate(initData.judgeTemplates);
@@ -78,7 +79,8 @@ const FormJudgeType = (props: any) => {
       if (judgeTemplateInfo.length !== 0) {
         if (!isValueEmpty(initData.judgeTemplates) && initData.judgeTemplates.length !== 0) {
           const jt = initData.judgeTemplates[0];
-          if (judgeTemplateInfo.findIndex((value) => value.id === jt) === -1) loadAdvanced();
+          if (judgeTemplateInfo.findIndex((value) => String(value.id) === String(jt)) === -1)
+            loadAdvanced();
         } else {
           loadAdvanced();
         }
@@ -87,22 +89,38 @@ const FormJudgeType = (props: any) => {
   }, [props.initData, judgeTemplateInfo]);
 
   return (
-    <>
-      <Form.Item label={t('Type')} required>
-        <Radio.Group onChange={onChange} value={JudgeType}>
-          <Radio value={0}>{t('IOMode')}</Radio>
-          <Radio value={2}>{t('AdvancedMode')}</Radio>
-        </Radio.Group>
-      </Form.Item>
+    <div className="judge-method-form">
+      <section className="judge-section">
+        <h3>{t('judgeSetup.mode')}</h3>
+        <Form.Item className="judge-mode-field" required>
+          <Radio.Group
+            aria-label={t('judgeSetup.mode')}
+            onChange={onChange}
+            value={JudgeType}
+            optionType="button"
+            buttonStyle="solid"
+          >
+            <Radio.Button value={0}>{t('IOMode')}</Radio.Button>
+            <Radio.Button value={2}>{t('AdvancedMode')}</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+        <p className="judge-hint">
+          {t(JudgeType === 0 ? 'judgeSetup.ioHint' : 'judgeSetup.advancedHint')}
+        </p>
+      </section>
       {JudgeType === 0 && (
-        <>
+        <section className="judge-section">
+          <h3>{t('judgeSetup.languages')}</h3>
           <Form.Item
-            label={t('Language')}
             name={'judgeTemplates'}
             rules={[{ required: true, message: t('LanguageNotSet') }]}
           >
             <Select
               mode={'multiple'}
+              aria-label={t('judgeSetup.languages')}
+              placeholder={t('judgeSetup.chooseLanguages')}
+              maxTagCount="responsive"
+              optionFilterProp="children"
               value={selectedJudgeTemplate}
               onChange={setSelectJudgeTemplate}
             >
@@ -110,77 +128,102 @@ const FormJudgeType = (props: any) => {
                 judgeTemplateInfo.map((value: any) => {
                   return (
                     <Select.Option key={value.id} value={value.id}>
-                      {value.id + ': ' + value.title}
+                      {value.title}
                     </Select.Option>
                   );
                 })}
             </Select>
           </Form.Item>
 
-          <div style={{ marginBottom: 20 }}>
-            {t('FunctionTemplate')}
-            <br />
-            <Switch
-              checked={useFuncTemplate}
-              onChange={setUseFuncTemplate}
-              checkedChildren={t('Use')}
-              unCheckedChildren={t('NotUse')}
-            />
-          </div>
-          {useFuncTemplate && (
-            <>
-              <Collapse accordion className={'ProblemAddChecker'} style={{ marginBottom: 20 }}>
-                {selectedJudgeTemplate.map((value: any) => {
-                  let templateName = '';
-                  judgeTemplateInfo.forEach(
-                    (v) => value === v.id && (templateName = v.id + ': ' + v.title),
-                  );
-                  return (
-                    <Collapse.Panel header={templateName} key={value} forceRender={true}>
-                      <ItemSwitch
-                        name={['functionTemplates', value, 'isShowFunctionTemplate']}
-                        label={t('TemplateCodeVisibility')}
-                        InitValue={true}
-                        ck={t('Show')}
-                        unck={t('Hide')}
+          <Collapse
+            className="judge-optional-panel"
+            activeKey={useFuncTemplate ? ['functions'] : []}
+            onChange={(keys) => setUseFuncTemplate(keys.includes('functions'))}
+            items={[
+              {
+                key: 'functions',
+                label: (
+                  <span className="judge-collapse-title">
+                    {t('FunctionTemplate')}
+                    <span className="judge-optional-label">{t('judgeSetup.optional')}</span>
+                  </span>
+                ),
+                children: (
+                  <>
+                    <p className="judge-hint">{t('judgeSetup.functionsHint')}</p>
+                    {selectedJudgeTemplate.length === 0 && (
+                      <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={t('judgeSetup.chooseLanguagesFirst')}
                       />
-                      <ItemCodeEditor
-                        label={t('TemplateCode')}
-                        lang={'text'}
-                        name={['functionTemplates', value, 'functionTemplate']}
-                      />
-                      <ItemCodeEditor
-                        label={t('InitialCode')}
-                        lang={'text'}
-                        name={['functionTemplates', value, 'initialTemplate']}
-                      />
-                      <Form.Item
-                        name={['functionTemplates', value, 'judgeTemplateId']}
-                        initialValue={value}
-                        style={{ display: 'none' }}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Collapse.Panel>
-                  );
-                })}
-              </Collapse>
-            </>
-          )}
-        </>
+                    )}
+                    <Collapse
+                      accordion
+                      className={'ProblemAddChecker'}
+                      style={{ marginBottom: 20 }}
+                    >
+                      {selectedJudgeTemplate.map((value: any) => {
+                        let templateName = '';
+                        judgeTemplateInfo.forEach(
+                          (v) => String(value) === String(v.id) && (templateName = v.title),
+                        );
+                        return (
+                          <Collapse.Panel header={templateName} key={value} forceRender={true}>
+                            <ItemSwitch
+                              name={['functionTemplates', value, 'isShowFunctionTemplate']}
+                              label={t('TemplateCodeVisibility')}
+                              InitValue={true}
+                              ck={t('Show')}
+                              unck={t('Hide')}
+                            />
+                            <ItemCodeEditor
+                              label={t('TemplateCode')}
+                              lang={'text'}
+                              height="220px"
+                              name={['functionTemplates', value, 'functionTemplate']}
+                            />
+                            <ItemCodeEditor
+                              label={t('InitialCode')}
+                              lang={'text'}
+                              height="220px"
+                              name={['functionTemplates', value, 'initialTemplate']}
+                            />
+                            <Form.Item
+                              name={['functionTemplates', value, 'judgeTemplateId']}
+                              initialValue={value}
+                              style={{ display: 'none' }}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Collapse.Panel>
+                        );
+                      })}
+                    </Collapse>
+                  </>
+                ),
+              },
+            ]}
+          />
+        </section>
       )}
       {JudgeType === 0 && (
         <>
-          <Form.Item label={t('Comparator')} name={'checkerConfig'} required>
-            <BodyChecker />
+          <Form.Item name={'checkerConfig'} initialValue={{ source: 'lcmp.cpp', spj: null }}>
+            <BodyChecker
+              languageTemplates={judgeTemplateInfo.filter((template) =>
+                selectedJudgeTemplate.some((id) => String(id) === String(template.id)),
+              )}
+            />
           </Form.Item>
         </>
       )}
       {JudgeType === 2 && (
-        <>
-          {props.initData['ProblemInfo']?.problemCode === undefined &&
-            t('AdvancedJudgeTemplateHint')}
-          {props.initData['ProblemInfo']?.problemCode !== undefined && (
+        <section className="judge-section">
+          <h3>{t('judgeSetup.advancedTemplates')}</h3>
+          {props.initData?.['ProblemInfo']?.problemCode === undefined && (
+            <Alert type="info" showIcon message={t('AdvancedJudgeTemplateHint')} />
+          )}
+          {props.initData?.['ProblemInfo']?.problemCode !== undefined && (
             <>
               <Table
                 size={'small'}
@@ -230,7 +273,7 @@ const FormJudgeType = (props: any) => {
                             afterSubmit={updateAdvanced}
                             dataSubmitter={(value: any) => {
                               return mApi.createTemplate({
-                                problemCode: props.initData['ProblemInfo'].problemCode,
+                                problemCode: props.initData?.['ProblemInfo'].problemCode,
                                 type: 2,
                                 ...value,
                               });
@@ -253,7 +296,7 @@ const FormJudgeType = (props: any) => {
                   afterSubmit={updateAdvanced}
                   dataSubmitter={(value: any) => {
                     return mApi.createTemplate({
-                      problemCode: props.initData['ProblemInfo'].problemCode,
+                      problemCode: props.initData?.['ProblemInfo'].problemCode,
                       type: 2,
                       ...value,
                     });
@@ -269,9 +312,9 @@ const FormJudgeType = (props: any) => {
               eqs={(a: any, b: any) => JSON.stringify(a) === JSON.stringify(b)}
             />
           </Form.Item>
-        </>
+        </section>
       )}
-    </>
+    </div>
   );
 };
 

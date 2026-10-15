@@ -3,7 +3,7 @@ import CodeEditor from '../../CodeEditor';
 import { constraintRules } from '../../../../Config/validation/constraints';
 
 const ItemEditor = (props: any) => {
-  const { constraint, ...formProps } = props;
+  const { constraint, height, ...formProps } = props;
   return (
     <Form.Item
       label={props.label}
@@ -11,7 +11,7 @@ const ItemEditor = (props: any) => {
       {...formProps}
       rules={[...(constraint ? constraintRules(constraint) : []), ...(props.rules ?? [])]}
     >
-      <CodeEditor lang={props.lang} />
+      <CodeEditor lang={props.lang} height={height} />
     </Form.Item>
   );
 };

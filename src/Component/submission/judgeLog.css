@@ -1,0 +1,38 @@
+.judge-log {
+  margin-block: 12px;
+  overflow: hidden;
+  border: 1px solid #e3e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.judge-log-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e3e8f0;
+  color: #475569;
+  font-size: 13px;
+}
+
+.judge-log-error .judge-log-heading {
+  color: #b42318;
+  background: #fff7f6;
+}
+
+.judge-log pre,
+.ide-run-results .judge-log pre {
+  max-height: 280px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #172033;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre;
+}

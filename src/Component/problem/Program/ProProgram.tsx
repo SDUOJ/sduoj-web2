@@ -12,6 +12,7 @@ import { isValueEmpty } from '../../../Utils/empty';
 import { TableState } from '../../../Type/ITable';
 import MD2export from '../../common/Md2export';
 import MarkdownText from '../../../Utils/MarkdownText';
+import { IdeContext } from '../../answerIde/runTypes';
 import PublicCheckpointsFormModal from '../../submission/publicCheckpoints/FormModal';
 
 interface ProProgramProps {
@@ -27,6 +28,11 @@ interface ProProgramProps {
   name: string;
   GetProblemInfoAPI: any;
   SubmitAPI?: any;
+  hideSubmit?: boolean;
+  headerExtra?: React.ReactNode;
+  headerBefore?: (actions: React.ReactNode) => React.ReactNode;
+  ideProblemCode?: string;
+  ideContext?: IdeContext;
   SubmissionListAPI: any;
   QuerySubmissionAPI: any;
   LeftSubmitCount?: number;
@@ -36,6 +42,7 @@ interface ProProgramProps {
 
   tableData: any; // 表格数据
   isLogin: boolean;
+  isManager?: boolean;
   showInfo: boolean; // 是否展示题目详情
   enableLeftSubmitCount?: boolean;
 
@@ -77,9 +84,38 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
     }
   }, [props.name, props.tableData]);
 
+  const publicCheckpoints = problemInfo !== undefined &&
+    problemInfo.isAccepted !== 0 &&
+    props.AddPublicCheckpointsAPI &&
+    props.GetPublicCheckpointAPI && (
+      <PublicCheckpointsFormModal
+        addPublicCheckpoints={props.AddPublicCheckpointsAPI}
+        getPublicCheckpoints={props.GetPublicCheckpointAPI}
+        delPublicCheckpoints={props.DelPublicCheckpointAPI}
+        updPublicCheckpoints={props.UpdPublicCheckpointAPI}
+        btnProps={{ type: 'default' }}
+        title={problemInfo?.problemTitle}
+        refreshKey={problemInfo?.problemId}
+        problemCode={props.ideProblemCode}
+        ideContext={props.ideContext}
+        isManager={props.isManager}
+      />
+    );
+
   const ProgramHeader = (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: '26px', marginBottom: '20px', marginTop: '10px' }}>
+    <div
+      className="program-heading"
+      style={{ textAlign: props.ideProblemCode ? 'left' : 'center' }}
+    >
+      {props.headerBefore?.(publicCheckpoints)}
+      <div
+        className="program-title"
+        style={
+          props.ideProblemCode
+            ? undefined
+            : { fontSize: '26px', marginBottom: '20px', marginTop: '10px' }
+        }
+      >
         {[''].map(() => {
           if (
             !isValueEmpty(problemInfo?.problemCode) &&
@@ -105,6 +141,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
 
         <span>{problemInfo?.problemTitle}</span>
       </div>
+      {props.headerExtra}
       {props.showInfo && (
         <>
           <div style={{ marginTop: '5px', fontSize: '16px' }}>
@@ -135,52 +172,42 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
           </div>
         </>
       )}
-      <div style={{ marginTop: '12px', marginBottom: '8px' }}>
-        <Space size={25}>
-          {props.SubmitAPI !== undefined && (
-            <Submit
-              name={'Submit-' + props.name}
-              SubmissionListName={'Pro-SubmissionList-Recent-' + props.name}
-              API={props.SubmitAPI}
-              title={problemInfo?.problemTitle}
-              LeftSubmitCount={
-                props.enableLeftSubmitCount && problemInfo?.submitNum
-                  ? problemInfo?.submitNum - totalSubmission
-                  : undefined
-              }
-              TopSubmissionInfo={{
-                title: problemInfo?.problemTitle,
-                scoreMod: 'show',
-                testcaseMod: 'show',
-                QuerySubmissionAPI: props.QuerySubmissionAPI,
-              }}
-              JudgeTemplates={problemInfo?.judgeTemplates}
-              FuncTemplates={problemInfo?.functionTemplates}
-            />
-          )}
-          {/*<ModalSubmissionList*/}
-          {/*    btnProps={{type: "default", disabled: !props.isLogin}}*/}
-          {/*    btnText={props.t("records")}*/}
-          {/*    name={"Pro-SubmissionList-" + props.name}*/}
-          {/*    API={props.SubmissionListAPI}*/}
-          {/*    QuerySubmissionAPI={props.QuerySubmissionAPI}*/}
-          {/*/>*/}
-          {problemInfo !== undefined &&
-            problemInfo.isAccepted !== 0 &&
-            props.AddPublicCheckpointsAPI &&
-            props.GetPublicCheckpointAPI && (
-              <PublicCheckpointsFormModal
-                addPublicCheckpoints={props.AddPublicCheckpointsAPI}
-                getPublicCheckpoints={props.GetPublicCheckpointAPI}
-                delPublicCheckpoints={props.DelPublicCheckpointAPI}
-                updPublicCheckpoints={props.UpdPublicCheckpointAPI}
-                btnProps={{ type: 'default' }}
+      {((props.SubmitAPI !== undefined && !props.hideSubmit) ||
+        (!props.headerBefore && publicCheckpoints)) && (
+        <div style={{ marginTop: '12px', marginBottom: '8px' }}>
+          <Space size={25}>
+            {props.SubmitAPI !== undefined && !props.hideSubmit && (
+              <Submit
+                name={'Submit-' + props.name}
+                SubmissionListName={'Pro-SubmissionList-Recent-' + props.name}
+                API={props.SubmitAPI}
                 title={problemInfo?.problemTitle}
-                refreshKey={problemInfo?.problemId}
+                LeftSubmitCount={
+                  props.enableLeftSubmitCount && problemInfo?.submitNum
+                    ? problemInfo?.submitNum - totalSubmission
+                    : undefined
+                }
+                TopSubmissionInfo={{
+                  title: problemInfo?.problemTitle,
+                  scoreMod: 'show',
+                  testcaseMod: 'show',
+                  QuerySubmissionAPI: props.QuerySubmissionAPI,
+                }}
+                JudgeTemplates={problemInfo?.judgeTemplates}
+                FuncTemplates={problemInfo?.functionTemplates}
               />
             )}
-        </Space>
-      </div>
+            {/*<ModalSubmissionList*/}
+            {/*    btnProps={{type: "default", disabled: !props.isLogin}}*/}
+            {/*    btnText={props.t("records")}*/}
+            {/*    name={"Pro-SubmissionList-" + props.name}*/}
+            {/*    API={props.SubmissionListAPI}*/}
+            {/*    QuerySubmissionAPI={props.QuerySubmissionAPI}*/}
+            {/*/>*/}
+            {!props.headerBefore && publicCheckpoints}
+          </Space>
+        </div>
+      )}
     </div>
   );
 
@@ -217,24 +244,26 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
       {/*    } else return ProgramHeader*/}
       {/*})}*/}
       {ProgramHeader}
-      {/*题目主干*/}
-      <Card variant="borderless" className={'problemBody'}>
-        {props.showMdExport && (
-          <div style={{ right: '24px', position: 'absolute' }}>
-            <MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription} />
-          </div>
-        )}
-        <MarkdownText
-          id={'problem-content'}
-          text={problemInfo?.problemDescriptionDTO.markdownDescription}
-        />
-      </Card>
-      {/*测试用例*/}
-      {testCase !== undefined && testCase.length !== 0 && (
-        <Card variant="borderless" title={props.t('SampleTestCase')} style={{ marginTop: '5px' }}>
-          <SampleTestCase testCase={testCase} />
+      <div className={props.hideSubmit ? 'ide-statement-content' : undefined}>
+        {/*题目主干*/}
+        <Card variant="borderless" className={'problemBody'}>
+          {props.showMdExport && (
+            <div style={{ right: '24px', position: 'absolute' }}>
+              <MD2export value={problemInfo?.problemDescriptionDTO.markdownDescription} />
+            </div>
+          )}
+          <MarkdownText
+            id={'problem-content'}
+            text={problemInfo?.problemDescriptionDTO.markdownDescription}
+          />
         </Card>
-      )}
+        {/*测试用例*/}
+        {testCase !== undefined && testCase.length !== 0 && (
+          <Card variant="borderless" title={props.t('SampleTestCase')} style={{ marginTop: '5px' }}>
+            <SampleTestCase testCase={testCase} />
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
@@ -244,6 +273,7 @@ const mapStateToProps = (state: any) => {
   const TState: TableState = state.TableReduce;
   return {
     isLogin: State.isLogin,
+    isManager: State.userInfo?.roles?.some((role) => role === 'admin' || role === 'superadmin'),
     ProblemInfo: PState.ProblemInfo,
     tableData: { ...TState.tableData },
   };

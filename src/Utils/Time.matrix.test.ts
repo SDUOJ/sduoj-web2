@@ -43,5 +43,6 @@ describe('time adapters accept/reject matrix', () => {
     const ms = Date.parse(iso);
     expect(unix2Time(iso)).toBe(unix2Time(ms));
     expect(unix2Date(iso)).toBe(unix2Date(ms));
+    expect(unix2Date(ms)).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });

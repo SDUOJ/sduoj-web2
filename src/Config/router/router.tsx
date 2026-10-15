@@ -4,11 +4,12 @@ import { Redirect } from 'react-router-dom';
 import { UrlPrefix } from '../constValue';
 import { routerC } from './routerC';
 import { projectClientLayouts } from './layoutProjection';
+import { availableRoutes } from './developmentRoutes';
 import type { IBaseRouter, RouteLocationProps } from './types';
 export type { IBaseRouter, IRouter } from './types';
 
 const clientLayout = lazy(() => import('../../Component/layout/CLayout'));
-const routerCLayout = projectClientLayouts(routerC, UrlPrefix, clientLayout);
+const routerCLayout = projectClientLayouts(availableRoutes(routerC), UrlPrefix, clientLayout);
 
 export const routerLayout: readonly IBaseRouter[] = [
   {
@@ -25,12 +26,14 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9490,
+    devOnly: true,
     path: UrlPrefix + '/manage/problem/program/authoring',
     exact: true,
     component: () => <Redirect to={UrlPrefix + '/manage/intelligent'} />,
   },
   {
     id: 9100,
+    devOnly: true,
     path: UrlPrefix + '/ai-workbench',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -45,6 +48,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9101,
+    devOnly: true,
     path: UrlPrefix + '/ai-bank',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -59,6 +63,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9102,
+    devOnly: true,
     path: UrlPrefix + '/ai-authoring',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -73,6 +78,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9103,
+    devOnly: true,
     path: UrlPrefix + '/ai-grading',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -87,6 +93,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9104,
+    devOnly: true,
     path: UrlPrefix + '/ai-exams',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -101,6 +108,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9105,
+    devOnly: true,
     path: UrlPrefix + '/ai-course',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -115,6 +123,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9106,
+    devOnly: true,
     path: UrlPrefix + '/ai-plagiarism',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -129,6 +138,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9107,
+    devOnly: true,
     path: UrlPrefix + '/ai-interviews',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -143,6 +153,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9108,
+    devOnly: true,
     path: UrlPrefix + '/ai-admin',
     exact: true,
     component: (props: RouteLocationProps) => (
@@ -157,6 +168,7 @@ export const routerLayout: readonly IBaseRouter[] = [
   },
   {
     id: 9199,
+    devOnly: true,
     path: UrlPrefix + '/ai-interviews/:id',
     exact: true,
     component: (props: RouteLocationProps) => (

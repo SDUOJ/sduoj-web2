@@ -20,6 +20,14 @@ import {
 import { SubmissionQueryType } from '../../Type/IManage';
 
 import request from './request';
+import type {
+  GlobalSubmissionQuery,
+  GlobalSubmissionRow,
+  GlobalSubmissionDetail,
+  OpsMetrics,
+} from '../../Type/globalSubmissions';
+import type { RunDetail } from '../../Component/answerIde/runTypes';
+import type { PublicAutoGate, PublicAutoFill } from '../../Type/publicAuto';
 import {
   ContestInfo,
   ContestListRow,
@@ -30,6 +38,23 @@ import {
 import { IAddCodesToHub } from '../../Type/IAnti-cheating';
 
 const mApi = {
+  async opsMetrics(signal?: AbortSignal) {
+    return request.get<OpsMetrics>('/manage/submit/opsMetrics', undefined, { signal });
+  },
+  async globalSubmissionPage(params: GlobalSubmissionQuery, signal?: AbortSignal) {
+    return request.get<JavaPage<GlobalSubmissionRow>>('/manage/submit/globalPage', params, {
+      signal,
+    });
+  },
+  async globalSubmissionDetail(submissionId: string) {
+    return request.get<GlobalSubmissionDetail>('/manage/submit/globalDetail', { submissionId });
+  },
+  async globalRejudge(submissionIds: string[]) {
+    return request.post('/manage/submit/globalRejudge', submissionIds);
+  },
+  async globalExport(params: GlobalSubmissionQuery) {
+    return request.getCsvFile('/manage/submit/globalExport', params, 'global-submissions.csv');
+  },
   // 配置相关
   async getCopyright() {
     return request.get('/site/getCopyright');
@@ -74,6 +99,40 @@ const mApi = {
   // 查询题目
   getProblem: async function (params: { problemCode: string }) {
     return request.get('/manage/problem/query', params);
+  },
+  async validatePublicAuto(data: { problemCode: string }) {
+    return request.post<PublicAutoGate>('/manage/problem/validatePublicAuto', data);
+  },
+  async publicAutoTask(params: { submissionId: string }) {
+    return request.get<RunDetail>('/manage/problem/publicAutoTask', params);
+  },
+  async publicAutoTasks(submissionIds: string[]) {
+    return request.post<RunDetail[]>('/manage/problem/publicAutoTasks', { submissionIds });
+  },
+  async cancelPublicAutoTask(data: { submissionId: string }) {
+    return request.post('/manage/problem/cancelPublicAutoTask', data);
+  },
+  async retryPublicAutoTask(data: { submissionId: string }) {
+    return request.post<string>('/manage/problem/retryPublicAutoTask', data);
+  },
+  async publicAutoStatus(params: { problemCode: string }) {
+    return request.get<PublicAutoGate>('/manage/problem/publicAutoStatus', params);
+  },
+  async previewPublicInputs(data: { problemCode: string; inputFileIds: string[] }) {
+    return request.post<PublicAutoFill>('/manage/problem/previewPublicInputs', {
+      ...data,
+      action: 'preview',
+    });
+  },
+  async uploadPublicInputs(data: {
+    problemCode: string;
+    action: 'validate' | 'generate';
+    inputFileIds: string[];
+  }) {
+    return request.post<string>('/manage/problem/uploadPublicInputs', data);
+  },
+  async finishPublicAutoTask(submissionId: string) {
+    return request.post<PublicAutoFill>('/manage/problem/finishPublicAutoTask', { submissionId });
   },
   // 更新题目信息
   updateProblemInfo: async function (data: problemBasic) {

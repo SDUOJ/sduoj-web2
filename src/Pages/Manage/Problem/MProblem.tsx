@@ -1,3 +1,4 @@
+import DevOnly, { DevBadge } from '../../../Component/common/DevOnly';
 import React from 'react';
 import { Button, Card, Space } from 'antd';
 import MApi from '../../../Utils/API/m-api';
@@ -14,6 +15,7 @@ import ProDescriptions from '../../../Component/problem/ProDescriptions';
 import ProCheckPoints from '../../../Component/problem/ProCheckPoints';
 import { contracts } from '../../../Config/validation/contracts';
 import { UrlPrefix } from '../../../Config/constValue';
+import PublicAutoFillPanel from '../../../Component/problem/PublicAutoFillPanel';
 
 const MProblem = () => {
   const { t } = useTranslation();
@@ -181,7 +183,8 @@ const MProblem = () => {
             <Space size={3}>
               <ModalFormUseForm
                 TableName={'ProblemList'}
-                width={600}
+                width={900}
+                className="problem-editor-modal"
                 title={rows.problemCode}
                 type={'update'}
                 formName={'ProblemInfo'}
@@ -200,7 +203,8 @@ const MProblem = () => {
               />
               <ModalFormUseForm
                 TableName={'ProblemList'}
-                width={600}
+                width={900}
+                className="problem-editor-modal"
                 title={t('CreateProblemFrom', { name: rows.problemCode })}
                 type={'fork'}
                 formName={'ProblemInfo'}
@@ -222,6 +226,7 @@ const MProblem = () => {
                 defaultDescriptionId={rows.defaultDescriptionId}
               />
               <ProCheckPoints problemCode={rows.problemCode} title={rows.problemTitle} />
+              <PublicAutoFillPanel problemCode={rows.problemCode} />
             </Space>
           );
         },
@@ -239,10 +244,16 @@ const MProblem = () => {
               <Button href={UrlPrefix + '/manage/problemSet/problem_group'}>
                 客观题 / 主观题组
               </Button>
-              <Button href={UrlPrefix + '/manage/intelligent'}>智能管理</Button>
+              <DevOnly>
+                <Button href={UrlPrefix + '/manage/intelligent'}>
+                  智能管理
+                  <DevBadge />
+                </Button>
+              </DevOnly>
               <ModalFormUseForm
                 TableName={'ProblemList'}
-                width={600}
+                width={900}
+                className="problem-editor-modal"
                 title={t('CreateProblem')}
                 type={'create'}
                 subForm={ProblemForm}

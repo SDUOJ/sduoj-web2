@@ -16,6 +16,7 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin'); // disabled to allow absolute helper imports
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -316,36 +317,36 @@ module.exports = function (webpackEnv) {
         ...(process.env.SKIP_IMAGE_MINIFY === 'true'
           ? []
           : [
-        new ImageMinimizerPlugin({
-          // Only optimize images emitted under static/, skip assets copied to root like vditor/**
-          include: /^(static[\\/])/,
-          minimizer: {
-            implementation: ImageMinimizerPlugin.imageminMinify,
-            options: {
-              plugins: [
-                ['gifsicle', { interlaced: true }],
-                ...(hasBundledJpegtran ? [['jpegtran', { progressive: true }]] : []),
-                ['optipng', { optimizationLevel: 5 }],
-                [
-                  'svgo',
-                  {
+              new ImageMinimizerPlugin({
+                // Only optimize images emitted under static/, skip assets copied to root like vditor/**
+                include: /^(static[\\/])/,
+                minimizer: {
+                  implementation: ImageMinimizerPlugin.imageminMinify,
+                  options: {
                     plugins: [
-                      {
-                        name: 'preset-default',
-                        params: {
-                          overrides: {
-                            removeViewBox: false,
-                          },
+                      ['gifsicle', { interlaced: true }],
+                      ...(hasBundledJpegtran ? [['jpegtran', { progressive: true }]] : []),
+                      ['optipng', { optimizationLevel: 5 }],
+                      [
+                        'svgo',
+                        {
+                          plugins: [
+                            {
+                              name: 'preset-default',
+                              params: {
+                                overrides: {
+                                  removeViewBox: false,
+                                },
+                              },
+                            },
+                          ],
                         },
-                      },
+                      ],
                     ],
                   },
-                ],
-              ],
-            },
-          },
-        }),
-          ]),
+                },
+              }),
+            ]),
       ],
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
@@ -356,6 +357,13 @@ module.exports = function (webpackEnv) {
         minSize: 30 * 1024,
         maxSize: 300 * 1024,
         cacheGroups: {
+          monaco: {
+            test: /[\\/]node_modules[\\/](?:monaco-editor|@monaco-editor)[\\/]/,
+            name: 'monaco-vendor',
+            chunks: 'async',
+            priority: 40,
+            enforce: true,
+          },
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
             name: 'react-vendor',
@@ -390,7 +398,7 @@ module.exports = function (webpackEnv) {
           },
           vendors: {
             test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
+            name: false,
             chunks: 'all',
             priority: 10,
           },
@@ -465,6 +473,13 @@ module.exports = function (webpackEnv) {
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
           oneOf: [
+            // CSS data URLs are already assets; never turn the full URI into a filename.
+            { scheme: 'data', type: 'asset/inline' },
+            {
+              test: /\.(ttf|woff2?|eot)$/,
+              type: 'asset/resource',
+              generator: { filename: 'static/media/[name].[contenthash:8][ext]' },
+            },
             // TODO: Merge this config once `image/avif` is in the mime-db
             // https://github.com/jshttp/mime-db
             {
@@ -641,6 +656,10 @@ module.exports = function (webpackEnv) {
       ],
     },
     plugins: [
+      new MonacoWebpackPlugin({
+        languages: ['cpp', 'java', 'python', 'sql'],
+        filename: 'static/js/[name].worker.js',
+      }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(

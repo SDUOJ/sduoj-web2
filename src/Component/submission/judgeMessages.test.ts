@@ -59,3 +59,34 @@ it('keeps valid records and the latest submission version when a cumulative fram
     message,
   ]);
 });
+
+it('accepts task checkpoint types for Run and administrative tasks', () => {
+  const rows = [
+    ['run', 1, 3, 0, 0, -1, null, 10, 20],
+    ['validation', 2, 4, 0, 0, 1, null, 10, 20],
+  ];
+  expect(parseJudgeFrame(JSON.stringify(rows)).messages).toEqual(rows);
+});
+
+it.each([-4, -3, -2])(
+  'accepts real formal progress frames without a final result (%s)',
+  (stage) => {
+    const progress: JudgeMessage = ['c7870bf14801000', 0, null, stage, 0, null, null, null, null];
+    for (const frame of [progress, JSON.stringify(progress), [progress]]) {
+      expect(parseJudgeFrame(JSON.stringify(frame))).toEqual({
+        messages: [progress],
+        rejection: undefined,
+      });
+    }
+  },
+);
+
+it('still rejects missing results on case and completion records', () => {
+  for (const index of [0, -1]) {
+    const frame = ['abc', 0, null, index, 0, null, null, null, null];
+    expect(parseJudgeFrame(JSON.stringify(frame))).toEqual({
+      messages: [],
+      rejection: 'unsupported',
+    });
+  }
+});

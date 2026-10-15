@@ -39,9 +39,7 @@ export const applyCheckpointUpdate = (
   const next = [...current];
   const prev = next[checkpointIndex];
   const normalizedId =
-    caseID == null || caseID === '' || Number(caseID) === 0
-      ? prev?.caseID
-      : String(caseID);
+    caseID == null || caseID === '' || Number(caseID) === 0 ? prev?.caseID : String(caseID);
   next[checkpointIndex] = {
     ...prev,
     caseIndex: checkpointIndex + 1,
@@ -138,6 +136,10 @@ export const Processing = (props: IProcessingProp & any) => {
       if (resData.judgeResult === 8 || resData.judgeResult === 5) {
         // 系统错误或编译错误：流程已结束，仍允许进入总结查看编译日志与结论
         setSubmissionInfo(resData);
+        setTestCaseStateList([]);
+        setPublicTestCaseStateList([]);
+        setWebSocketOpen(false);
+        setWebSocketQueryList([]);
         setCurrentStep(2);
         setShowStep(2);
         setRunningState('-1');

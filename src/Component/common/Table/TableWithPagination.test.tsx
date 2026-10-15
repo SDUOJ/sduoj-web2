@@ -130,6 +130,145 @@ it('prefers initRequestProps over stale cached filters', async () => {
   expect(API.mock.calls[0][0].searchKey).toBe('old');
 });
 
+it.each([true, false])(
+  'restores form filters together with a cached page (useList=%s)',
+  async (useList) => {
+    const API = jest
+      .fn()
+      .mockResolvedValue({ rows: [{ id: 1, name: 'Restored group' }], totalNum: 40 });
+    const store = createAppStore();
+    store.dispatch({
+      type: 'setTableInfo',
+      name: 'groups',
+      data: { pageNow: 4, pageSize: 5, moreProps: { isParticipating: '0', title: 'training' } },
+    });
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <TableWithPagination
+            name="groups"
+            API={API}
+            size="small"
+            rowKey="id"
+            useList={useList}
+            initRequestProps={{ isParticipating: '1' }}
+            getForm={() => (
+              <>
+                <Form.Item name="isParticipating" label="Classification">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="title" label="Title">
+                  <Input />
+                </Form.Item>
+              </>
+            )}
+            renderItem={(item: { name: string }) => <span>{item.name}</span>}
+            columns={[{ title: 'Name', dataIndex: 'name' }]}
+          />
+        </MemoryRouter>
+      </Provider>,
+    );
+    await screen.findByText('Restored group');
+    expect(API).toHaveBeenCalledTimes(1);
+    expect(API).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        pageNow: 4,
+        pageSize: 5,
+        isParticipating: '0',
+        title: 'training',
+      }),
+    );
+    expect(screen.getByLabelText('Classification')).toHaveValue('0');
+    expect(screen.getByLabelText('Title')).toHaveValue('training');
+    expect(document.querySelector('.ant-pagination-item-active')).toHaveAttribute('title', '4');
+  },
+);
+
+it.each([true, false])(
+  'preserves submitted filters across pagination (useList=%s)',
+  async (useList) => {
+    const API = jest.fn().mockResolvedValue({ rows: [{ id: 1, name: 'Group' }], totalNum: 40 });
+    const user = userEvent.setup();
+    render(
+      <Provider store={createAppStore()}>
+        <MemoryRouter>
+          <TableWithPagination
+            name="groups"
+            API={API}
+            rowKey="id"
+            size="small"
+            useList={useList}
+            defaultPageSize={5}
+            initRequestProps={{ isParticipating: '1' }}
+            useFormBtn
+            getForm={(onFinish: () => void) => (
+              <>
+                <Form.Item name="title" label="Title">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="isParticipating" label="Classification">
+                  <select onChange={onFinish}>
+                    <option value="1">Mine</option>
+                    <option value="0">All</option>
+                  </select>
+                </Form.Item>
+              </>
+            )}
+            renderItem={(item: { id: number; name: string }) => (
+              <span key={item.id}>{item.name}</span>
+            )}
+            columns={[{ title: 'Name', dataIndex: 'name' }]}
+          />
+        </MemoryRouter>
+      </Provider>,
+    );
+    await screen.findByText('Group');
+    expect(API).toHaveBeenLastCalledWith(expect.objectContaining({ isParticipating: '1' }));
+    await user.selectOptions(screen.getByLabelText('Classification'), '0');
+    await waitFor(() =>
+      expect(API).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isParticipating: '0', pageNow: 1 }),
+      ),
+    );
+    await user.type(screen.getByLabelText('Title'), 'training');
+    await user.click(screen.getByRole('button', { name: /filtering/i }));
+    await waitFor(() =>
+      expect(API).toHaveBeenLastCalledWith(expect.objectContaining({ title: 'training' })),
+    );
+    for (const pageNow of [2, 3]) {
+      await user.click(screen.getByTitle(String(pageNow)));
+      await waitFor(() =>
+        expect(API).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            isParticipating: '0',
+            title: 'training',
+            pageNow,
+            pageSize: 5,
+          }),
+        ),
+      );
+      expect(screen.getByLabelText('Classification')).toHaveValue('0');
+      expect(screen.getByLabelText('Title')).toHaveValue('training');
+    }
+    await user.selectOptions(screen.getByLabelText('Classification'), '1');
+    await waitFor(() =>
+      expect(API).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isParticipating: '1', title: 'training', pageNow: 1 }),
+      ),
+    );
+    await user.clear(screen.getByLabelText('Title'));
+    await user.click(screen.getByRole('button', { name: /filtering/i }));
+    await waitFor(() => expect(API.mock.calls.at(-1)?.[0]).not.toHaveProperty('title'));
+    await user.click(screen.getByTitle('2'));
+    await waitFor(() =>
+      expect(API).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isParticipating: '1', pageNow: 2 }),
+      ),
+    );
+    expect(API.mock.calls.at(-1)?.[0]).not.toHaveProperty('title');
+  },
+);
+
 it('restores externally managed rows for a negative table version', async () => {
   const pending = deferred<{ rows: []; totalNum: number }>();
   const API = jest.fn().mockReturnValue(pending.promise);

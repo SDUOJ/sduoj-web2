@@ -4,7 +4,7 @@ export type JudgeMessage = [
   checkpointType: number | null,
   checkpointIndex: number,
   checkpointId: number,
-  result: number,
+  result: number | null,
   score: number | null,
   time: number | null,
   memory: number | null,
@@ -21,13 +21,16 @@ function isJudgeMessage(value: unknown): value is JudgeMessage {
     typeof value[0] === 'string' &&
     value[0].length > 0 &&
     value[0].length <= 256 &&
-    [value[1], value[3], value[4], value[5]].every(
+    [value[1], value[3], value[4]].every(
       (item) => typeof item === 'number' && Number.isSafeInteger(item),
     ) &&
     value[1] >= 0 &&
     value[3] >= -10 &&
     value[3] < MAX_JUDGE_FRAME_RECORDS &&
-    (value[2] === null || value[2] === 0 || value[2] === 1) &&
+    // Queue/compile/run notifications precede a result. Case and completion frames require one.
+    ((value[5] === null && value[3] < -1) ||
+      (typeof value[5] === 'number' && Number.isSafeInteger(value[5]))) &&
+    (value[2] === null || value[2] === 0 || value[2] === 1 || value[2] === 3 || value[2] === 4) &&
     value
       .slice(6)
       .every((item) => item === null || (typeof item === 'number' && Number.isFinite(item)))

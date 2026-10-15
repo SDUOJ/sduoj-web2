@@ -6,6 +6,8 @@ import ModalFormUseForm from '../../common/Form/ModalFormUseForm';
 import mApi from '../../../Utils/API/m-api';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import UploadForm from './UploadForm';
+import PublicCaseDetail from '../../problem/PublicCaseDetail';
+import PublicAutoFillPanel from '../../problem/PublicAutoFillPanel';
 
 const PublicCheckpointsFormModal = (props: any) => {
   const { t } = useTranslation();
@@ -115,6 +117,11 @@ const PublicCheckpointsFormModal = (props: any) => {
             </>
           }
         >
+          {props.isManager && props.problemCode && (
+            <div style={{ marginBottom: 12 }}>
+              <PublicAutoFillPanel problemCode={props.problemCode} onAdded={() => void updData()} />
+            </div>
+          )}
           <Table
             size={'small'}
             dataSource={data}
@@ -145,6 +152,14 @@ const PublicCheckpointsFormModal = (props: any) => {
                 render: (v, row: any) => {
                   return (
                     <Space size={0}>
+                      {props.problemCode && (
+                        <PublicCaseDetail
+                          problemId={String(row.problemId)}
+                          problemCode={props.problemCode}
+                          context={props.ideContext}
+                          checkpointId={String(row.checkpointId)}
+                        />
+                      )}
                       <Button
                         size={'small'}
                         type={'link'}

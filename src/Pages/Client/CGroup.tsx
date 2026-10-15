@@ -48,7 +48,7 @@ const CGroup = (props: any) => {
                       />
                     </Form.Item>
                     <Form.Item label={t('Classification')} name={'isParticipating'}>
-                      <Select onChange={onFinish} style={{ width: 80 }} defaultValue={'1'}>
+                      <Select onChange={onFinish} style={{ width: 80 }}>
                         <Select.Option value={'1'}>{t('Mine')}</Select.Option>
                         <Select.Option value={'0'}>{t('All')}</Select.Option>
                       </Select>

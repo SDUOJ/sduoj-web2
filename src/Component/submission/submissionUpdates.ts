@@ -7,6 +7,7 @@ export interface LiveSubmissionRow {
   RunningStep?: number;
   cur_cpt?: Set<string>;
   liveVersion?: number;
+  liveComplete?: boolean;
   usedTime?: number;
   usedMemory?: number;
 }
@@ -42,16 +43,17 @@ export const applyJudgeMessage = (
   const isNewVersion =
     previous.liveVersion !== undefined && submissionVersion > previous.liveVersion;
   const current = isNewVersion
-    ? { ...previous, score: 0, RunningStep: 0, cur_cpt: new Set<string>() }
+    ? { ...previous, score: 0, RunningStep: 0, liveComplete: false, cur_cpt: new Set<string>() }
     : previous;
   let next: LiveSubmissionRow;
   let version: SubmissionUpdate['version'];
   if (checkpointIndex < 0) {
     next = { ...current, result: checkpointIndex.toString(), liveVersion: submissionVersion };
-    if (checkpointIndex === -1) {
+    if (checkpointIndex === -1 && judgeResult !== null) {
       next = {
         ...next,
         result: judgeResult,
+        liveComplete: true,
         score: score ?? current.score,
         usedTime: time ?? current.usedTime,
         usedMemory: memory ?? current.usedMemory,
@@ -76,7 +78,9 @@ export const applyJudgeMessage = (
   updated[index] = next;
   return {
     rows: updated,
-    completed: updated.every((row) => Number.parseInt(String(row.result), 10) > 0),
+    completed: updated.every(
+      (row) => row.liveComplete === true || Number.parseInt(String(row.result), 10) > 0,
+    ),
     version,
   };
 };

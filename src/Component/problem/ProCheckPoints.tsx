@@ -16,6 +16,7 @@ import ModalFormUseForm from '../common/Form/ModalFormUseForm';
 import FormCheckPointsUpload from './From/FormCheckPointsUpload';
 import { contracts } from '../../Config/validation/contracts';
 import { constraintRules } from '../../Config/validation/constraints';
+import './proCheckPoints.css';
 
 function DeleteOutlined() {
   return null;
@@ -255,11 +256,14 @@ const ProCheckPoints = (props: any) => {
         {t('Checkpoint')}{' '}
       </Button>
       <Modal
+        rootClassName="problem-checkpoints-modal"
         title={`${props.problemCode} ${props.title}`}
         onCancel={() => setVis(false)}
         open={vis}
         destroyOnHidden={true}
         width={1200}
+        style={{ top: 24 }}
+        styles={{ body: { maxHeight: 'calc(100dvh - 220px)', overflowY: 'auto' } }}
         footer={
           <>
             <Button onClick={() => setVis(false)}>{t('Cancel')}</Button>
@@ -310,22 +314,24 @@ const ProCheckPoints = (props: any) => {
             setSumScore(score);
           }}
         >
-          <TableWithSelection
-            useAllData={true}
-            useDrag={true}
-            rowKey={'checkpointId'}
-            name={name}
-            size={'small'}
-            columns={tableColumns()}
-            API={() => {
-              return mApi.getCheckpointList(props.problemCode);
-            }}
-            pagination={false}
-          />
+          <div className="checkpoint-table-scroll">
+            <TableWithSelection
+              useAllData={true}
+              useDrag={true}
+              rowKey={'checkpointId'}
+              name={name}
+              size={'small'}
+              columns={tableColumns()}
+              API={() => {
+                return mApi.getCheckpointList(props.problemCode);
+              }}
+              pagination={false}
+            />
+          </div>
         </Form>
-        <div style={{ marginTop: 20, height: 20 }}>
-          <div style={{ float: 'left' }}>
-            <Space>
+        <div className="checkpoint-toolbar">
+          <div className="checkpoint-batch-actions">
+            <Space wrap>
               <Button
                 type={'primary'}
                 onClick={() => {
@@ -393,40 +399,37 @@ const ProCheckPoints = (props: any) => {
               />
             </Space>
           </div>
-          <div style={{ float: 'right' }}>
-            <Form layout={'horizontal'}>
-              <Form.Item label={t('TotalScoreShort')} style={{ width: 250 }} className={'mgb0'}>
-                <Space>
-                  <Input
-                    value={sumScore}
-                    onChange={(e) => {
-                      try {
-                        if (isValueEmpty(e.target.value)) setSumScore(0);
-                        else setSumScore(parseInt(e.target.value));
-                      } catch (ex) {}
-                    }}
-                  />
-                  <Button
-                    type={'primary'}
-                    onClick={() => {
-                      let formData: any = form.getFieldsValue(),
-                        len = Object.keys(formData).length;
-                      let score = Math.floor(sumScore / len),
-                        lftS = sumScore - score * len,
-                        cnt = 0;
-                      for (let x in formData) {
-                        cnt++;
-                        formData[x] = score + (cnt > len - lftS ? 1 : 0);
-                      }
-                      form.setFieldsValue(formData);
-                    }}
-                  >
-                    {t('AverageDistribute')}
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Form>
-          </div>
+          <Form layout="inline" className="checkpoint-score-controls">
+            <Form.Item label={t('TotalScoreShort')}>
+              <Input
+                className="checkpoint-total-score"
+                value={sumScore}
+                onChange={(e) => {
+                  try {
+                    if (isValueEmpty(e.target.value)) setSumScore(0);
+                    else setSumScore(parseInt(e.target.value));
+                  } catch (ex) {}
+                }}
+              />
+            </Form.Item>
+            <Button
+              type={'primary'}
+              onClick={() => {
+                let formData: any = form.getFieldsValue(),
+                  len = Object.keys(formData).length;
+                let score = Math.floor(sumScore / len),
+                  lftS = sumScore - score * len,
+                  cnt = 0;
+                for (let x in formData) {
+                  cnt++;
+                  formData[x] = score + (cnt > len - lftS ? 1 : 0);
+                }
+                form.setFieldsValue(formData);
+              }}
+            >
+              {t('AverageDistribute')}
+            </Button>
+          </Form>
         </div>
       </Modal>
     </>

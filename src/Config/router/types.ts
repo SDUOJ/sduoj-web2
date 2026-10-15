@@ -8,6 +8,7 @@ export interface IBaseRouter {
   readonly id: number;
   readonly path: string;
   readonly exact?: boolean;
+  readonly devOnly?: boolean;
   readonly component?: RouteComponent;
   readonly children?: readonly IBaseRouter[];
 }

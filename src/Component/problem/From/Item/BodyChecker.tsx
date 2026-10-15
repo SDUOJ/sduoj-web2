@@ -1,98 +1,105 @@
-import { withTranslation } from 'react-i18next';
-import { Button, Form, Select } from 'antd';
+import { Button, Input, Select, Tabs } from 'antd';
 import { PREDEFINED_CHECKERS, SPJ_Code, SPJ_Config } from '../../../../Config/constValue';
-import React, { Dispatch, useEffect, useState } from 'react';
+import { useId } from 'react';
+import { useTranslation } from 'react-i18next';
 import CodeEditor from '../../../common/CodeEditor';
-import { ManageState } from '../../../../Type/IManage';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { isValueEmpty } from '../../../../Utils/empty';
+import { useSelector } from 'react-redux';
+import PublicAutoSettings from './PublicAutoSettings';
+import type { CheckerConfig } from '../../../../Type/publicAuto';
 
-const BodyChecker = (props: any) => {
-  const { initData, onChange } = props;
-  const [selectValue, setSelectValue] = useState<string>('lcmp.cpp');
-  const [source, setSource] = useState<string>('');
-  const [spj, setSpj] = useState<string>('');
-
-  useEffect(() => {
-    if (selectValue === '@') {
-      onChange({
-        source: source,
-        spj: spj,
-      });
-    } else {
-      setSource('');
-      setSpj('');
-      onChange({
-        source: selectValue,
-        spj: null,
-      });
-    }
-  }, [onChange, selectValue, source, spj]);
-
-  useEffect(() => {
-    if (initData !== undefined && initData['ProblemInfo'] !== undefined) {
-      const problemInfo = initData['ProblemInfo'];
-      if (!isValueEmpty(problemInfo.checkerConfig?.spj)) {
-        setSelectValue('@');
-        setSource(problemInfo.checkerConfig.source);
-        setSpj(problemInfo.checkerConfig.spj);
-      } else if (!isValueEmpty(problemInfo.checkerConfig?.source)) {
-        setSelectValue(problemInfo.checkerConfig.source);
-      } else {
-        setSelectValue('');
-      }
-    }
-  }, [initData]);
-
+type LanguageTemplate = { id: string | number; title: string; type: number };
+const BodyChecker = (props: {
+  value?: CheckerConfig;
+  onChange?: (value: CheckerConfig) => void;
+  languageTemplates?: LanguageTemplate[];
+}) => {
+  const { t } = useTranslation();
+  const id = useId().replace(/:/g, '');
+  const problem = useSelector((state: any) => state.ManageReducer.manageInitData?.ProblemInfo);
+  const config = props.value ?? problem?.checkerConfig ?? { source: 'lcmp.cpp', spj: null };
+  const custom = config.spj != null;
+  const checkerName = (name: string) => t(`judgeSetup.checkers.${name.replace('.cpp', '')}`);
+  const change = (patch: Partial<CheckerConfig>) =>
+    props.onChange?.({
+      ...config,
+      ...patch,
+      ...(config.publicCasePolicy
+        ? { publicCasePolicy: { ...config.publicCasePolicy, autoAddEnabled: false } }
+        : {}),
+    });
   return (
     <>
-      <Select value={selectValue} onChange={setSelectValue}>
-        <Select.Option value={'@'}> 自定义 </Select.Option>
-        {PREDEFINED_CHECKERS.map(({ name, description }) => {
-          return (
-            <Select.Option key={name} value={name}>
-              {name + ' - ' + description}
-            </Select.Option>
-          );
-        })}
-      </Select>
-      {selectValue === '@' && (
-        <div className={'ProblemAddChecker'} style={{ paddingTop: 20 }}>
-          <div style={{ marginBottom: 20 }}>
-            <Button
-              type={'primary'}
-              ghost
-              size={'small'}
-              onClick={() => {
-                setSource(SPJ_Code);
-                setSpj(SPJ_Config);
-              }}
-            >
-              使用C++预设
-            </Button>
+      <section className="judge-section">
+        <h3>{t('judgeSetup.output')}</h3>
+        <p className="judge-hint">{t('judgeSetup.outputHint')}</p>
+        <label className="judge-field-label" htmlFor={id}>
+          {t('judgeSetup.outputChecker')}
+        </label>
+        <Select
+          id={id}
+          aria-label={t('judgeSetup.outputChecker')}
+          style={{ width: '100%' }}
+          value={custom ? '@' : config.source}
+          options={[
+            ...PREDEFINED_CHECKERS.map((item) => ({
+              value: item.name,
+              label: `${checkerName(item.name)} · ${item.name}`,
+            })),
+            { value: '@', label: t('judgeSetup.customChecker') },
+          ]}
+          onChange={(value) =>
+            change(
+              value === '@' ? { source: SPJ_Code, spj: SPJ_Config } : { source: value, spj: null },
+            )
+          }
+        />
+        {custom && (
+          <div className="judge-custom-checker">
+            <div className="judge-option-row">
+              <span className="judge-hint">{t('judgeSetup.customCheckerHint')}</span>
+              <Button size="small" onClick={() => change({ source: SPJ_Code, spj: SPJ_Config })}>
+                {t('judgeSetup.resetChecker')}
+              </Button>
+            </div>
+            <Tabs
+              items={[
+                {
+                  key: 'source',
+                  label: t('judgeSetup.checkerSource'),
+                  children: (
+                    <CodeEditor
+                      lang="cpp"
+                      height="260px"
+                      value={config.source}
+                      onChange={(source: string) => change({ source })}
+                    />
+                  ),
+                },
+                {
+                  key: 'config',
+                  label: t('judgeSetup.executionConfig'),
+                  children: (
+                    <Input.TextArea
+                      className="judge-config-code"
+                      aria-label={t('judgeSetup.executionConfig')}
+                      autoSize={{ minRows: 8, maxRows: 14 }}
+                      value={config.spj ?? ''}
+                      onChange={(e) => change({ spj: e.target.value })}
+                    />
+                  ),
+                },
+              ]}
+            />
           </div>
-          <Form.Item label={'代码'} required>
-            <CodeEditor lang={'cpp'} value={source} onChange={setSource} />
-          </Form.Item>
-          <Form.Item label={'配置'} required>
-            <CodeEditor lang={'cpp'} value={spj} onChange={setSpj} />
-          </Form.Item>
-        </div>
-      )}
+        )}
+      </section>
+      <PublicAutoSettings
+        value={config}
+        onChange={(value) => props.onChange?.(value)}
+        problem={problem}
+        languageTemplates={props.languageTemplates}
+      />
     </>
   );
 };
-const mapStateToProps = (state: any) => {
-  const MState: ManageState = state.ManageReducer;
-  return {
-    initData: MState.manageInitData,
-  };
-};
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTranslation()(withRouter(BodyChecker)));
+export default BodyChecker;

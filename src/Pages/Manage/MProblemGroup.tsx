@@ -15,6 +15,7 @@ import { unix2Time } from '../../Utils/Time';
 import ProblemListInGroup from '../../Component/problemSet/problemGroup/ProblemListInGroup';
 import groupSubmit from '../../Component/problemSet/dataConvert/groupSubmit';
 import groupGet from '../../Component/problemSet/dataConvert/groupGet';
+import DevOnly, { DevBadge } from '../../Component/common/DevOnly';
 
 const MProblemGroup = (props: any) => {
   const [intakeOpen, setIntakeOpen] = useState(false);
@@ -101,7 +102,11 @@ const MProblemGroup = (props: any) => {
       render: (text: any, rows: any) => {
         return (
           <Space>
-            {rows.type !== 2 && <NativeGroupQuestions gid={rows.gid} name={rows.name} />}
+            {rows.type !== 2 && (
+              <DevOnly>
+                <NativeGroupQuestions gid={rows.gid} name={rows.name} />
+              </DevOnly>
+            )}
             <ModalFormUseForm
               TableName={'ProblemGroupList'}
               width={1200}
@@ -144,15 +149,17 @@ const MProblemGroup = (props: any) => {
 
   return (
     <>
-      <Drawer
-        title={props.t('aiNativeBatchIntake')}
-        width={880}
-        open={intakeOpen}
-        onClose={() => setIntakeOpen(false)}
-        destroyOnClose
-      >
-        <NativeQuestionWorkbench onSaved={() => setRevision((v) => v + 1)} />
-      </Drawer>
+      <DevOnly>
+        <Drawer
+          title={props.t('aiNativeBatchIntake')}
+          width={880}
+          open={intakeOpen}
+          onClose={() => setIntakeOpen(false)}
+          destroyOnClose
+        >
+          <NativeQuestionWorkbench onSaved={() => setRevision((v) => v + 1)} />
+        </Drawer>
+      </DevOnly>
       <div style={{ marginTop: -20, overflow: 'hidden' }}>
         <Card
           size={'small'}
@@ -160,9 +167,12 @@ const MProblemGroup = (props: any) => {
           title={props.t('ProblemGroupList')}
           extra={
             <Space>
-              <Button type="primary" onClick={() => setIntakeOpen(true)}>
-                {props.t('aiNativeBatchIntake')}
-              </Button>
+              <DevOnly>
+                <Button type="primary" onClick={() => setIntakeOpen(true)}>
+                  {props.t('aiNativeBatchIntake')}
+                  <DevBadge />
+                </Button>
+              </DevOnly>
               <ModalFormUseForm
                 TableName={'ProblemGroupList'}
                 width={1200}

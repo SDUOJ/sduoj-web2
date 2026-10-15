@@ -121,7 +121,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
       pageNow = pageNow ?? propsTableInfo.pageNow;
       pageSize = pageSize ?? propsTableInfo.pageSize;
       searchKey = searchKey ?? propsTableInfo.searchKey;
-      moreProps = moreProps ?? props.initRequestProps ?? propsTableInfo.moreProps;
+      moreProps = moreProps ?? propsTableInfo.moreProps;
     }
     let pn = pageNow ?? PageNow;
     let ps = pageSize ?? PageSize;
@@ -193,7 +193,17 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
   const hasError = error !== undefined;
 
   useEffect(() => {
-    if (hasGetForm) form.setFieldsValue(initRequestPropsRef.current);
+    // A restored page must use the filters that produced it. Form defaults apply
+    // only to fields without a saved value, rather than replacing saved filters.
+    const initialRequestProps = hasGetForm
+      ? {
+          ...initRequestPropsRef.current,
+          ...(apiChangedRef.current
+            ? undefined
+            : tableDataStateRef.current[props.name]?.tableInfo?.moreProps),
+        }
+      : initRequestPropsRef.current;
+    if (hasGetForm) form.setFieldsValue(initialRequestProps);
     if (apiChangedRef.current) {
       apiChangedRef.current = false;
       setPageNow(1);
@@ -206,7 +216,7 @@ const TableWithPagination = (props: TableWithPaginationProps) => {
         false,
       );
     } else {
-      getInfoRef.current?.();
+      getInfoRef.current?.(undefined, undefined, undefined, initialRequestProps);
     }
     const persistedVersion = tableDataStateRef.current[props.name]?.tableVersion;
     if (persistedVersion !== undefined && persistedVersion > 0) setTableVersion(persistedVersion);

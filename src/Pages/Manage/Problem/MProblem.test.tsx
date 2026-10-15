@@ -51,3 +51,21 @@ it('keeps the operator column mounted at every responsive breakpoint', () => {
   const operator = renderedWithoutDataIndex[renderedWithoutDataIndex.length - 1];
   expect(typeof operator.render).toBe('function');
 });
+
+it('hides the intelligent management shortcut in release while retaining ordinary tools', () => {
+  jest.replaceProperty(process, 'env', {
+    ...process.env,
+    NODE_ENV: 'production',
+    REACT_APP_DEPLOYMENT_ENV: 'production',
+  });
+  render(
+    <Provider store={createAppStore()}>
+      <MemoryRouter>
+        <MProblem />
+      </MemoryRouter>
+    </Provider>,
+  );
+  expect(screen.queryByRole('link', { name: /智能管理/ })).not.toBeInTheDocument();
+  expect(screen.queryByText('DEV')).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: '客观题 / 主观题组' })).toBeVisible();
+});

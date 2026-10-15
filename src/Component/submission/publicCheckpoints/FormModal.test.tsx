@@ -25,6 +25,8 @@ jest.mock('antd', () => {
 
 jest.mock('../../common/Form/ModalFormUseForm', () => () => null);
 jest.mock('./UploadForm', () => () => null);
+jest.mock('../../problem/PublicCaseDetail', () => () => null);
+jest.mock('../../problem/PublicAutoFillPanel', () => () => null);
 jest.mock('../../../Utils/API/m-api', () => ({
   __esModule: true,
   default: { uploadSingleCheckpoint: jest.fn() },

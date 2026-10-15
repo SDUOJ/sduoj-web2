@@ -99,3 +99,33 @@ it('delivers nullable completion frames to every subscriber and ignores complete
     localStorage.removeItem('submissionVersion:abc');
   }
 });
+
+it('delivers the real Redis-wrapped formal lifecycle without a rejection notification', () => {
+  const error = jest.spyOn(notification, 'error').mockImplementation(() => (() => {}) as never);
+  error.mockClear();
+  const handler = jest.fn();
+  const stages: JudgeMessage[] = [
+    ['formal', 0, null, -4, 0, null, null, null, null],
+    ['formal', 0, null, -3, 0, null, null, null, null],
+    ['formal', 0, null, -2, 0, null, null, null, null],
+    ['formal', 0, 0, 0, 0, 1, 100, 1, 1184],
+    ['formal', 0, null, -1, 0, 1, 100, 1, 1184],
+  ];
+  let lastMessage = { data: JSON.stringify(JSON.stringify(stages[0])) };
+  jest.mocked(useWebSocket).mockImplementation(
+    () =>
+      ({
+        sendMessage: jest.fn(),
+        lastMessage,
+        readyState: ReadyState.OPEN,
+      }) as never,
+  );
+  const view = render(<SyncJudging open queryList={['formal']} dataHandle={handler} />);
+  for (const frame of stages.slice(1)) {
+    lastMessage = { data: JSON.stringify(JSON.stringify(frame)) };
+    view.rerender(<SyncJudging open queryList={['formal']} dataHandle={handler} />);
+  }
+  expect(handler.mock.calls.map(([frame]) => frame)).toEqual(stages);
+  expect(error).not.toHaveBeenCalled();
+  error.mockRestore();
+});

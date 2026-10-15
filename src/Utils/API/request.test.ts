@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { message } from 'antd';
-import request, { MAX_DOWNLOAD_BYTES, service } from './request';
+import request, { ApiRequestError, MAX_DOWNLOAD_BYTES, service } from './request';
 import axios from 'axios';
 import { AUTH_BOUNDARY_EVENT } from '../authBoundary';
 import i18n from '../../Config/i18n';
@@ -11,6 +11,19 @@ const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
 
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
+
+it('preserves status for callers that explicitly request structured failures', async () => {
+  adapter.onGet('/run/query').reply(404, { code: 404, message: 'Task missing' });
+  await expect(request.getWithErrorDetails('/run/query')).rejects.toMatchObject({
+    name: 'ApiRequestError',
+    message: 'Task missing',
+    status: 404,
+    code: 404,
+  });
+  await expect(request.get('/run/query')).rejects.toBe('Task missing');
+  adapter.onGet('/run/query').reply(200, { code: 404, message: 'Task missing' });
+  await expect(request.getWithErrorDetails('/run/query')).rejects.toBeInstanceOf(ApiRequestError);
+});
 
 it('unwraps GET results and preserves query parameters and credentials', async () => {
   adapter.onGet('/example', { params: { pageNow: 2 } }).reply(200, success({ rows: [1] }));
@@ -322,4 +335,29 @@ it.each([
   } finally {
     Object.defineProperty(window, 'location', { configurable: true, value: original });
   }
+});
+
+it('downloads CSV by GET with filters and rejects an authentication JSON envelope', async () => {
+  const click = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  URL.createObjectURL = jest.fn(() => 'blob:csv');
+  URL.revokeObjectURL = jest.fn();
+  const filters = { fromTs: 1000, toTs: 2000, includeTasks: false };
+  adapter
+    .onGet('/manage/submit/globalExport', { params: filters })
+    .reply(200, 'id,type\r\na,0\r\n', { 'content-type': 'text/csv; charset=utf-8' });
+  await request.getCsvFile('/manage/submit/globalExport', filters, 'global.csv');
+  expect(adapter.history.get[0].params).toEqual(filters);
+  expect(adapter.history.get[0].withCredentials).toBe(true);
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:csv');
+  expect(click).toHaveBeenCalledTimes(1);
+  URL.createObjectURL = jest.fn();
+  adapter.resetHandlers();
+  adapter
+    .onGet('/manage/submit/globalExport')
+    .reply(403, { code: 403, message: 'Forbidden' }, { 'content-type': 'application/json' });
+  await expect(
+    request.getCsvFile('/manage/submit/globalExport', filters, 'global.csv'),
+  ).rejects.toBeDefined();
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  click.mockRestore();
 });

@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import ANCContent from './Content';
 import TableWithPagination from '../common/Table/TableWithPagination';
 import CApi from 'Utils/API/c-api';
-import { unix2Time } from '../../Utils/Time';
+import { unix2Date } from '../../Utils/Time';
 import 'Assert/css/Announcement.css';
 
 const Announcement = (props: any) => {
@@ -79,10 +79,10 @@ const Announcement = (props: any) => {
               title: props.t('ReleaseDate'),
               dataIndex: 'gmtCreate',
               key: 'date',
-              width: 112,
+              width: 100,
               responsive: ['md'],
               render: (text: any) => {
-                return unix2Time(parseInt(text));
+                return unix2Date(text);
               },
             },
           ]}

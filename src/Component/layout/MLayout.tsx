@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from 'react';
-import { Drawer, Grid, Layout, Result } from 'antd';
+import { ConfigProvider, Drawer, Grid, Layout, Result } from 'antd';
 import logo from '../../Assert/img/logo.png';
 import MMenu from './MMenu';
 import MHeader from './MHeader';
@@ -13,6 +13,8 @@ import LoginCheck from '../common/LoginCheck';
 import { Role, UserState } from '../../Type/Iuser';
 import { connect } from 'react-redux';
 import judgeAuth from '../../Utils/judgeAhtu';
+import { manageTheme } from '../../Config/theme';
+import './manageLayout.css';
 
 const { Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -49,14 +51,15 @@ const MLayout = (props: any) => {
   const menu = <MMenu id={1} roles={['superadmin']} />;
 
   return (
-    <>
+    <ConfigProvider theme={manageTheme}>
       <LoginCheck jump={true} />
       {!props.isLogin ? null : !hasManageAccess ? (
         <Result status="403" title={props.t('NoPermission', { defaultValue: '没有权限' })} />
       ) : (
-        <Layout style={{ height: 'max-content', minHeight: '100%' }}>
+        <Layout className="manage-layout" style={{ height: 'max-content', minHeight: '100%' }}>
           {isMobile ? (
             <Drawer
+              rootClassName="manage-drawer"
               title={<img src={logo} style={{ width: '125px', height: '30px' }} alt="SDUOJ-logo" />}
               placement="left"
               width={240}
@@ -68,28 +71,27 @@ const MLayout = (props: any) => {
             </Drawer>
           ) : (
             <Sider
-              theme="dark"
+              theme="light"
+              className="manage-sidebar"
               style={{ position: 'fixed', zIndex: 50, height: '100vh', overflow: 'auto' }}
             >
-              <div className="logo">
+              <div className="manage-brand">
                 <img src={logo} style={{ width: '125px', height: '30px' }} alt="SDUOJ-logo" />
               </div>
               {menu}
             </Sider>
           )}
-          <Layout style={{ minWidth: 0, marginLeft: isMobile ? 0 : 200 }}>
+          <Layout className="manage-main" style={{ minWidth: 0, marginLeft: isMobile ? 0 : 200 }}>
             <MHeader isMobile={isMobile} onMenuToggle={() => setMenuOpen(true)} />
             <Content
+              className="manage-content"
               style={{
-                backgroundColor: '#ffffff',
-                paddingTop: 64,
-                margin: isMobile ? '20px 8px 0' : '20px 16px 0',
                 display: 'block',
                 minWidth: 0,
                 height: 'auto',
               }}
             >
-              <div className="site-layout-background" style={{ padding: isMobile ? 8 : 24 }}>
+              <div className="manage-surface">
                 <Suspense fallback={<Loading />}>
                   <RouteSwitch routes={routeTrees.manage} />
                 </Suspense>
@@ -98,7 +100,7 @@ const MLayout = (props: any) => {
           </Layout>
         </Layout>
       )}
-    </>
+    </ConfigProvider>
   );
 };
 

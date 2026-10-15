@@ -18,6 +18,7 @@ export function projectClientLayouts(
       id: previous?.id ?? 10000 + route.id,
       path,
       exact: previous ? previous.exact === true && exact : exact,
+      devOnly: previous ? previous.devOnly === true && route.devOnly === true : route.devOnly,
       component,
     });
   }

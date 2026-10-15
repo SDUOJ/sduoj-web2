@@ -1,0 +1,135 @@
+.manage-layout,
+.manage-main {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.manage-layout .manage-sidebar {
+  border-right: 1px solid #e8ecf2;
+  background: #fff;
+}
+
+.manage-brand {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f0f3f8;
+  margin-bottom: 16px;
+}
+
+.manage-sidebar .ant-menu,
+.manage-drawer .ant-menu {
+  border-inline-end: 0;
+  padding: 0 8px;
+}
+
+.manage-sidebar .ant-menu-item,
+.manage-drawer .ant-menu-item {
+  margin-block: 6px;
+}
+
+.manage-menu-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 100%;
+}
+
+.manage-menu-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manage-menu-label .ant-tag {
+  flex-shrink: 0;
+  margin-inline: 0 !important;
+}
+
+.manage-layout .manage-header {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e8ecf2;
+  backdrop-filter: blur(12px);
+  gap: 12px;
+  color: #172033;
+}
+
+.manage-page-context {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.manage-page-section {
+  color: #64748b;
+  font-size: 13px;
+  padding-right: 14px;
+  border-right: 1px solid #dce2ec;
+}
+
+.manage-page-title {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manage-content {
+  margin: 88px 24px 24px;
+}
+
+.manage-surface {
+  min-width: 0;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e8ecf2;
+  border-radius: 14px;
+  box-shadow: 0 3px 16px rgba(23, 32, 51, 0.035);
+}
+
+.manage-surface .ant-table-wrapper {
+  min-width: 0;
+}
+
+.manage-surface .ant-table-content {
+  overflow-x: auto;
+}
+
+@media (max-width: 767px) {
+  .manage-layout .manage-header {
+    gap: 8px;
+  }
+
+  .manage-header .account-name {
+    display: inline-block;
+    max-width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .manage-content {
+    margin: 80px 10px 16px;
+  }
+
+  .manage-surface {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .manage-page-section {
+    display: none;
+  }
+
+  .manage-page-title {
+    max-width: 120px;
+    font-size: 14px;
+  }
+}

@@ -228,7 +228,7 @@
     },
     "oj_problem": {
       "p_accept_num": ["int unsigned", false, null],
-      "p_checker_config": ["text", true, "utf8mb4"],
+      "p_checker_config": ["mediumtext", true, "utf8mb4"],
       "p_checkpoint_cases": ["blob", true, null],
       "p_checkpoint_num": ["int unsigned", false, null],
       "p_checkpoints": ["blob", true, null],

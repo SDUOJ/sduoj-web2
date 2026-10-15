@@ -1,0 +1,171 @@
+.judge-method-form {
+  min-width: 0;
+}
+
+.judge-method-form .judge-section {
+  padding: 0 0 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e8ecf2;
+}
+
+.judge-section h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #172033;
+}
+
+.judge-hint {
+  margin: 4px 0 12px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.judge-mode-field.ant-form-item {
+  margin-bottom: 8px;
+}
+
+.judge-field-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14px;
+}
+
+.judge-collapse-title {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.judge-optional-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64748b;
+}
+
+.judge-optional-panel.ant-collapse {
+  border-color: #e8ecf2;
+  background: #f8fafc;
+}
+
+.judge-option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.judge-option-row .ant-switch {
+  flex-shrink: 0;
+}
+
+.judge-option-row .judge-hint {
+  margin-bottom: 0;
+}
+
+.judge-custom-checker {
+  margin-top: 16px;
+}
+
+.judge-subsection + .judge-subsection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e8ecf2;
+}
+
+.judge-subsection h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #172033;
+}
+
+.judge-program-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.judge-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.judge-field {
+  min-width: 0;
+}
+
+.judge-config-code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+}
+
+.judge-self-check > .ant-alert {
+  margin: 12px 0;
+}
+
+.judge-config-panel.ant-collapse {
+  background: #fff;
+  border-color: #e8ecf2;
+}
+
+@media (max-width: 640px) {
+  .judge-field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .judge-method-form .judge-section {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .judge-custom-checker .judge-option-row {
+    flex-wrap: wrap;
+  }
+}
+
+.ant-modal.problem-editor-modal {
+  top: 24px;
+  padding-bottom: 0;
+}
+
+.problem-editor-modal .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 48px);
+}
+
+.problem-editor-modal .ant-modal-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.problem-editor-modal .ant-pro-steps-form-container {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.judge-program-editor {
+  height: 260px;
+  overflow: hidden;
+  border: 1px solid #e8ecf2;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.judge-program-editor .ide-editor,
+.judge-program-editor .ide-editor-surface {
+  height: 100%;
+  padding: 0;
+}

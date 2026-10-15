@@ -1,0 +1,43 @@
+.checkpoint-table-scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.checkpoint-table-scroll .ant-table {
+  min-width: 1000px;
+}
+
+.checkpoint-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-top: 20px;
+}
+
+.checkpoint-score-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.checkpoint-score-controls .ant-form-item {
+  margin: 0;
+}
+
+.checkpoint-score-controls .ant-form-item-label {
+  padding-bottom: 0;
+}
+
+.checkpoint-total-score {
+  width: 112px;
+}
+
+.problem-checkpoints-modal .ant-modal-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e8ecf2;
+}

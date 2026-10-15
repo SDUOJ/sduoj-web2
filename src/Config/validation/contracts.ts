@@ -121,7 +121,11 @@ export const contracts = {
     judgeTemplates: list(20, 'ProblemManageDTO @Size(max=20)'),
     checkpoints: list(1024, 'ProblemManageDTO @Size(max=1024)'),
     checkpointCases: list(20, 'ProblemManageDTO @Size(max=20)'),
-    checkerConfig: column('oj', 'oj_problem', 'p_checker_config', { kind: 'json' }),
+    checkerConfig: column('oj', 'oj_problem', 'p_checker_config', {
+      kind: 'json',
+      maxBytes: 2 * 1024 * 1024,
+      source: 'V20261014__public_auto_config.sql; PublicAutoPolicyService.validateShape',
+    }),
     functionTemplates: column('oj', 'oj_problem', 'p_function_templates', { kind: 'json' }),
   },
   description: {
@@ -267,7 +271,11 @@ export const contracts = {
       required: true,
       minItems: 1,
       maxItems: 128,
-      items: { kind: 'string', maxUtf16: 63, source: 'autolab.problem_objective.answer varchar(63)' },
+      items: {
+        kind: 'string',
+        maxUtf16: 63,
+        source: 'autolab.problem_objective.answer varchar(63)',
+      },
       source: 'ser/objective.py objective_base.answer List[str]',
     } as Constraint,
   },

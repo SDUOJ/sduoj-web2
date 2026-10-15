@@ -29,3 +29,41 @@ export const appTheme: ThemeConfig = {
     },
   },
 };
+
+/** Shared palette for the client and management workspaces. */
+export const clientTheme: ThemeConfig = {
+  token: {
+    colorPrimary: '#4f46e5',
+    colorInfo: '#4f46e5',
+    colorSuccess: '#15803d',
+    colorText: '#172033',
+    colorTextSecondary: '#596579',
+    colorBorder: '#dce2ec',
+    colorBorderSecondary: '#e8ecf2',
+    colorBgLayout: '#f5f7fb',
+    borderRadius: 10,
+    controlHeight: 36,
+    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif",
+  },
+  components: {
+    Button: { primaryShadow: '0 2px 4px rgba(79, 70, 229, 0.14)' },
+    Card: { headerFontSize: 15 },
+    Tabs: { horizontalItemGutter: 24 },
+  },
+};
+
+export const manageTheme: ThemeConfig = {
+  ...clientTheme,
+  components: {
+    ...clientTheme.components,
+    Layout: { headerBg: '#ffffff', siderBg: '#ffffff' },
+    Menu: {
+      itemBg: '#ffffff',
+      itemSelectedBg: '#eef2ff',
+      itemSelectedColor: '#4338ca',
+      itemHoverBg: '#f5f7fb',
+      itemBorderRadius: 8,
+    },
+    Table: { headerBg: '#f8fafc', headerColor: '#475569' },
+  },
+};

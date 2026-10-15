@@ -1,5 +1,5 @@
 import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Button, Card, Col, Row, Table } from 'antd';
 import ProProgram from '../problem/Program/ProProgram';
 import cApi from '../../Utils/API/c-api';
@@ -90,6 +90,13 @@ const Problem = (props: any) => {
                 );
               })}
             </Row>
+          </div>
+          <div style={{ marginTop: 25 }}>
+            <Link to={`${UrlPrefix}/contest/${contestId}/problem/${problemCode}/ide`}>
+              <Button type="primary" block>
+                {props.t('answerIde.open')}
+              </Button>
+            </Link>
           </div>
           <div style={{ marginTop: 25 }}>
             <ProProgramDetail problemInfo={problemInfo} />

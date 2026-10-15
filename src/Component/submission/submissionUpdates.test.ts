@@ -63,3 +63,22 @@ it('resets checkpoint progress for a newer rejudge version and ignores older fra
   expect(Array.from(next.rows[0].cur_cpt!)).toEqual(['1:0']);
   expect(stale.rows).toBe(next.rows);
 });
+
+it('marks an END run complete even with judge result -1', () => {
+  const row = { submissionId: 'run', result: -2, score: 0 };
+  const result = applyJudgeMessage([row], ['run', 1, 3, -1, 0, -1, null, 10, 20]);
+  expect(result.completed).toBe(true);
+});
+
+it('shows formal compile/run progress with null results until completion arrives', () => {
+  let rows: LiveSubmissionRow[] = [{ submissionId: 'formal', result: 0, score: 0 }];
+  for (const stage of [-4, -3, -2]) {
+    const next = applyJudgeMessage(rows, ['formal', 0, null, stage, 0, null, null, null, null]);
+    expect(next.completed).toBe(false);
+    expect(next.rows[0].result).toBe(String(stage));
+    rows = next.rows;
+  }
+  const complete = applyJudgeMessage(rows, ['formal', 0, null, -1, 0, 1, 100, 1, 1184]);
+  expect(complete.completed).toBe(true);
+  expect(complete.rows[0]).toMatchObject({ result: 1, score: 100 });
+});

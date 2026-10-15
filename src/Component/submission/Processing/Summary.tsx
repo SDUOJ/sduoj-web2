@@ -18,9 +18,11 @@ import { connect } from 'react-redux';
 import { UserState } from '../../../Type/Iuser';
 import { Dispatch } from 'react';
 import judgeAuth from '../../../Utils/judgeAhtu';
+import JudgeLog from '../JudgeLog';
 
-const Summary = (props: any) => {
+export const Summary = (props: any) => {
   const { TestCaseStateList, submissionInfo, PublicTestCaseStateList } = props;
+  const hasCaseResults = ![8, 99].includes(submissionInfo.judgeResult);
   const getCaseInfo = () => {
     let scoreAC = 0,
       scoreSum = 0,
@@ -59,7 +61,7 @@ const Summary = (props: any) => {
       mxTime: mxTime,
       mxMem: mxMem,
       SumTime: SumTime,
-      AvgMem: SumMem / Tcl.length,
+      AvgMem: Tcl.length ? SumMem / Tcl.length : 0,
       firstUnACCaseNumber: firstUnACCaseNumber,
     };
   };
@@ -86,6 +88,7 @@ const Summary = (props: any) => {
                         caseType={StateList.indexOf(SubmissionMap[submissionInfo.judgeResult])}
                       />
                       {props.testcaseMod !== 'disable' &&
+                        hasCaseResults &&
                         info.firstUnACCaseNumber !== undefined &&
                         submissionInfo.judgeResult !== 99 && (
                           <span>
@@ -145,26 +148,19 @@ const Summary = (props: any) => {
                   data={{ submissionId: submissionInfo.submissionId }}
                   afterSuccess={props.refresh}
                 />
-                {/*此处需要传入：
-                            1. 获取测试单信息的异步函数
-                            2. 当前的测试点信息
-
-                            实现：
-                            1. 下载第一个错误测试点的数据
-                            2. 打包下载全部测试点（弹窗确认）
-                            3. 选择测试点进行下载（弹窗，可以多选，可以单点下载）
-                            */}
                 <DownloadTestCase
                   problemCode={submissionInfo.problemCode}
-                  TestCaseStateList={TestCaseStateList}
-                  PublicTestCaseStateList={PublicTestCaseStateList}
+                  problemId={submissionInfo.problemId}
                 />
               </Space>
             </Card>
           )}
         </Col>
       </Row>
-      {props.submissionInfo.judgeResult !== 99 && TestCaseStateList.length !== 0 && (
+      {submissionInfo.judgeResult === 8 && submissionInfo.judgeLog && (
+        <JudgeLog title={props.t('answerIde.compileLog')} log={submissionInfo.judgeLog} error />
+      )}
+      {hasCaseResults && TestCaseStateList.length !== 0 && (
         <Card
           size="small"
           title={<span style={{ fontWeight: 'bold' }}>{props.t('Statistics')}</span>}
@@ -294,29 +290,27 @@ const Summary = (props: any) => {
           </Row>
         </Card>
       )}
-      {props.testcaseMod === 'show' &&
-        props.submissionInfo.judgeResult !== 99 &&
-        TestCaseStateList.length !== 0 && (
-          <>
-            <Title level={4}> {props.t('JudgeResult')}</Title>
+      {props.testcaseMod === 'show' && hasCaseResults && TestCaseStateList.length !== 0 && (
+        <>
+          <Title level={4}> {props.t('JudgeResult')}</Title>
+          <JudgeResult
+            useDownload={false}
+            title={props.t('evaluationDataSet')}
+            data={TestCaseStateList}
+            scoreMod={props.sumScore === undefined ? 'disable' : props.scoreMod}
+            sumScore={props.sumScore}
+          />
+          {PublicTestCaseStateList.length !== 0 && (
             <JudgeResult
-              useDownload={false}
-              title={props.t('evaluationDataSet')}
-              data={TestCaseStateList}
+              useDownload={true}
+              title={props.t('publicDataSet')}
+              data={PublicTestCaseStateList}
               scoreMod={props.sumScore === undefined ? 'disable' : props.scoreMod}
               sumScore={props.sumScore}
             />
-            {PublicTestCaseStateList.length !== 0 && (
-              <JudgeResult
-                useDownload={true}
-                title={props.t('publicDataSet')}
-                data={PublicTestCaseStateList}
-                scoreMod={props.sumScore === undefined ? 'disable' : props.scoreMod}
-                sumScore={props.sumScore}
-              />
-            )}
-          </>
-        )}
+          )}
+        </>
+      )}
     </>
   );
 };

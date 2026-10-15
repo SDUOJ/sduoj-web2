@@ -58,12 +58,19 @@ jest.mock(
       </div>
     ),
 );
-jest.mock('./Summary', () => ({ submissionInfo }: any) => (
-  <div data-testid="summary-panel">
-    {submissionInfo?.problemTitle}
-    <span data-testid="summary-log">{submissionInfo?.judgeLog ?? ''}</span>
-  </div>
-));
+jest.mock(
+  './Summary',
+  () =>
+    ({ submissionInfo, TestCaseStateList, PublicTestCaseStateList }: any) => (
+      <div data-testid="summary-panel">
+        {submissionInfo?.problemTitle}
+        <span data-testid="summary-log">{submissionInfo?.judgeLog ?? ''}</span>
+        <output aria-label="summary-case-count">
+          {TestCaseStateList.length + PublicTestCaseStateList.length}
+        </output>
+      </div>
+    ),
+);
 
 const deferred = <T,>() => {
   let resolve!: (value: T) => void;
@@ -199,4 +206,44 @@ it('keeps summary disabled while a submission is still running', async () => {
   );
   await screen.findByText('Running submission');
   expect(screen.getByTestId('step-Summary')).toHaveAttribute('data-disabled', '1');
+});
+
+it('clears pending cases when a live submission ends with a compilation error', async () => {
+  const query = jest
+    .fn()
+    .mockResolvedValueOnce({
+      submissionId: 'live-ce',
+      problemTitle: 'Live compile',
+      judgeResult: 0,
+      checkpointNum: 10,
+      publicCheckpointNum: 2,
+      checkpointResults: [],
+      publicCheckpointResults: [],
+    })
+    .mockResolvedValueOnce({
+      submissionId: 'live-ce',
+      problemTitle: 'Live compile',
+      judgeResult: 8,
+      judgeLog: 'compile failed',
+      checkpointNum: 10,
+      publicCheckpointNum: 2,
+      checkpointResults: [],
+      publicCheckpointResults: [],
+    });
+  render(
+    <Processing
+      TimeLimit={1000}
+      MemoryLimit={256}
+      submissionId="live-ce"
+      QuerySubmissionAPI={query}
+      t={(key: string) => key}
+    />,
+  );
+  await screen.findByText('Live compile');
+  act(() => {
+    handleJudgeMessage?.(['live-ce', 1, 0, -1]);
+  });
+  await screen.findByTestId('summary-panel');
+  expect(screen.getByLabelText('summary-case-count')).toHaveTextContent('0');
+  expect(screen.getByTestId('summary-log')).toHaveTextContent('compile failed');
 });
