@@ -268,7 +268,6 @@ const dealResponse = async <Payload>(
       message.error(errorMsg);
       return reject(errorMsg, response);
     }
-    if (response.status === 403 && url.startsWith('/manage/')) invalidateAuthBoundary();
     const payload = response.data;
     switch (response.status === 401 ? 401 : isApiRecord(payload) ? payload.code : undefined) {
       case 401:

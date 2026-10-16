@@ -143,26 +143,26 @@ it('rejects server errors', async () => {
   await expect(request.get('/example')).rejects.toBe('Server error');
 });
 
-it('announces a forbidden response so protected layouts clear stale roles', async () => {
+it('announces an unauthenticated response so protected layouts clear stale roles', async () => {
   const boundary = jest.fn();
   window.addEventListener(AUTH_BOUNDARY_EVENT, boundary);
   try {
-    adapter.onGet('/manage/user/list').reply(403, { code: 403, message: 'Forbidden' });
-    await expect(request.get('/manage/user/list')).rejects.toBe('Forbidden');
+    adapter.onGet('/user/getProfile').reply(401, { code: 401, message: 'Unauthenticated' });
+    await expect(request.get('/user/getProfile')).rejects.toBe('Unauthenticated');
     expect(boundary).toHaveBeenCalledTimes(1);
   } finally {
     window.removeEventListener(AUTH_BOUNDARY_EVENT, boundary);
   }
 });
 
-it('cancels older management requests when another request loses permission', async () => {
+it('cancels older management requests when the session becomes unauthenticated', async () => {
   let finish!: (response: [number, unknown]) => void;
   adapter
     .onGet('/manage/slow')
     .reply(() => new Promise<[number, unknown]>((resolve) => (finish = resolve)));
-  adapter.onGet('/manage/revoked').reply(403, { code: 403, message: 'Forbidden' });
+  adapter.onGet('/user/getProfile').reply(401, { code: 401, message: 'Unauthenticated' });
   const pending = request.get('/manage/slow').catch((error: unknown) => error);
-  await expect(request.get('/manage/revoked')).rejects.toBe('Forbidden');
+  await expect(request.get('/user/getProfile')).rejects.toBe('Unauthenticated');
   expect(adapter.history.get[0].signal?.aborted).toBe(true);
   finish([200, success({ private: 'stale response' })]);
   expect(axios.isCancel(await pending)).toBe(true);
@@ -178,17 +178,29 @@ it('preserves caller cancellation for management requests', async () => {
   expect(adapter.history.get).toHaveLength(0);
 });
 
-it('does not invalidate the whole session for a resource-specific forbidden response', async () => {
-  const boundary = jest.fn();
-  window.addEventListener(AUTH_BOUNDARY_EVENT, boundary);
-  try {
-    adapter.onGet('/problem/query').reply(403, { code: 403, message: 'Private problem' });
-    await expect(request.get('/problem/query')).rejects.toBe('Private problem');
-    expect(boundary).not.toHaveBeenCalled();
-  } finally {
-    window.removeEventListener(AUTH_BOUNDARY_EVENT, boundary);
-  }
-});
+it.each(['/problem/query', '/manage/problem/query'])(
+  'keeps the session and unrelated requests for a resource-specific 403 from %s',
+  async (url) => {
+    const boundary = jest.fn();
+    window.addEventListener(AUTH_BOUNDARY_EVENT, boundary);
+    let finish!: (response: [number, unknown]) => void;
+    adapter
+      .onGet('/manage/slow')
+      .reply(() => new Promise<[number, unknown]>((resolve) => (finish = resolve)));
+    const pending = request.get('/manage/slow');
+    try {
+      adapter.onGet(url).reply(403, { code: 403, message: 'Private problem' });
+      await expect(request.get(url)).rejects.toBe('Private problem');
+      expect(boundary).not.toHaveBeenCalled();
+      expect(adapter.history.get[0].signal?.aborted).toBe(false);
+      expect(message.error).toHaveBeenCalledWith('Private problem');
+    } finally {
+      finish([200, success({ retained: true })]);
+      window.removeEventListener(AUTH_BOUNDARY_EVENT, boundary);
+    }
+    await expect(pending).resolves.toEqual({ retained: true });
+  },
+);
 
 it('normalizes an empty HTTP error without throwing a secondary TypeError', async () => {
   adapter.onGet('/example').reply(503);
