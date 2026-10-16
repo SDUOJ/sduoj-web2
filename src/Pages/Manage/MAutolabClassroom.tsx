@@ -28,7 +28,13 @@ const seatBanToInput = (extConfig: any): string => {
         .map((seatNumber: number) => ({ seat_number: seatNumber, reason: '' }))
     : [];
 
-  const normalized = seatBan.length > 0 ? seatBan : disabledSeats;
+  // The backend unions both representations. Keep every disabled seat when
+  // migrating legacy config, with the modern entry's reason taking precedence.
+  const normalized = Array.from(
+    new Map<number, ISeatBan>(
+      [...disabledSeats, ...seatBan].map((item: ISeatBan) => [item.seat_number, item]),
+    ).values(),
+  );
 
   return [...normalized]
     .sort((a: ISeatBan, b: ISeatBan) => a.seat_number - b.seat_number)
@@ -83,16 +89,28 @@ const buildClassroomPayload = (values: any) => {
     return Promise.reject(new Error('invalid seat-ban'));
   }
 
+  const extConfig =
+    values.ext_config && typeof values.ext_config === 'object' && !Array.isArray(values.ext_config)
+      ? { ...values.ext_config }
+      : {};
+  delete extConfig.disabled_seats;
+
   return Promise.resolve({
     c_name: values.c_name,
     address: values.address,
     c_seat_num: values.c_seat_num,
-    ext_config: seatBan.length > 0 ? { 'seat-ban': seatBan } : undefined,
+    ext_config: { ...extConfig, 'seat-ban': seatBan },
   });
 };
 
+// Register the original JSON object without rendering it as an input value.
+const ClassroomExtConfig = (_props: { value?: Record<string, unknown> }) => null;
+
 const classroomForm = (
   <>
+    <Form.Item name="ext_config" hidden>
+      <ClassroomExtConfig />
+    </Form.Item>
     <Form.Item
       name="c_name"
       label="教室名称"
@@ -188,6 +206,7 @@ const MAutolabClassroom: React.FC = () => {
                 c_name: res?.c_name,
                 address: res?.address,
                 c_seat_num: res?.c_seat_num,
+                ext_config: res?.ext_config,
                 seat_ban_text: seatBanToInput(res?.ext_config),
               };
             }}
