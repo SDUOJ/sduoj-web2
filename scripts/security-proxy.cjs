@@ -10,6 +10,10 @@ const output = path.join(project, 'output', 'audit', 'R-24', 'proxy');
 const name = `sduoj-header-audit-${process.pid}`;
 const image = process.env.SDUOJ_SECURITY_NGINX_IMAGE || 'nginx:1.28-alpine';
 const realServices = process.env.SDUOJ_SECURITY_REAL_SERVICES === '1';
+const gatewayPortText = process.env.SDUOJ_SECURITY_GATEWAY_PORT || '8080';
+if (!/^[1-9]\d{0,4}$/.test(gatewayPortText) || Number(gatewayPortText) > 65535)
+  throw new Error('SDUOJ_SECURITY_GATEWAY_PORT must be an integer from 1 to 65535');
+const gatewayPort = Number(gatewayPortText);
 const reports = [];
 let started = false;
 const command = (executable, args) => {
@@ -114,7 +118,7 @@ async function main() {
     default_type application/octet-stream;
     include /etc/nginx/security/security-maps.conf;
     map $http_upgrade $connection_upgrade { default upgrade; '' close; }
-    upstream sduoj_gateway { server host.docker.internal:${realServices ? 8080 : 4174}; }
+    upstream sduoj_gateway { server host.docker.internal:${realServices ? gatewayPort : 4174}; }
     upstream sduoj_security_reports { server host.docker.internal:4174; }
     server { listen 8080; server_name localhost; ${locations} }
     server {
@@ -168,7 +172,7 @@ async function main() {
         nginxVersion,
         ports: [4173, 9443],
         serviceMode: realServices ? 'real-local-gateway' : 'isolated-auth-error-fixture',
-        realGateway: realServices ? 'http://host.docker.internal:8080' : null,
+        realGateway: realServices ? `http://host.docker.internal:${gatewayPort}` : null,
         fixtureEndpoints: ['/__fixture/reports', '/__fixture/ws'],
       },
       null,
