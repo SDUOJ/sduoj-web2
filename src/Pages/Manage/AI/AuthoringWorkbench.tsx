@@ -68,15 +68,24 @@ export default function AuthoringWorkbench() {
   const [reviewForm] = Form.useForm();
   const [publishForm] = Form.useForm();
   const loadSequence = useRef(0);
+  const selectionSequence = useRef(0);
 
   const selectResource = useCallback(async (id: string) => {
+    const sequence = ++selectionSequence.current;
+    if (selectedRef.current !== id) {
+      setActiveJob(null);
+      setResource(null);
+    }
     selectedRef.current = id;
     setSelectedId(id);
-    if (!id) {
-      setResource(null);
-      return;
+    setError('');
+    if (!id) return;
+    try {
+      const selected = await authoringApi.get(id);
+      if (sequence === selectionSequence.current) setResource(selected);
+    } catch (reason) {
+      if (sequence === selectionSequence.current) throw reason;
     }
-    setResource(await authoringApi.get(id));
   }, []);
 
   const load = useCallback(async () => {
@@ -102,6 +111,7 @@ export default function AuthoringWorkbench() {
     void load();
     return () => {
       loadSequence.current += 1;
+      selectionSequence.current += 1;
     };
   }, [load]);
 
@@ -169,7 +179,7 @@ export default function AuthoringWorkbench() {
       setActiveJob({ id: created.taskId, status: created.status });
       revisionForm.resetFields();
       if (created.status === 'success') {
-        await selectResource(resource.id);
+        if (selectedRef.current === resource.id) await selectResource(resource.id);
         setNotice(t('aiAuthoringRevisionGenerated'));
       } else if (created.status === 'failed' || created.status === 'cancelled') {
         const terminal = await authoringApi.getJob(created.taskId);
@@ -209,7 +219,7 @@ export default function AuthoringWorkbench() {
         reviewAction === 'approve',
         values.reason,
       );
-      await selectResource(resource.id);
+      if (selectedRef.current === resource.id) await selectResource(resource.id);
       setReviewAction(null);
       reviewForm.resetFields();
     } catch (reason) {
@@ -302,7 +312,7 @@ export default function AuthoringWorkbench() {
         })),
       });
       sessionStorage.removeItem(recoveryKey);
-      await selectResource(resource.id);
+      if (selectedRef.current === resource.id) await selectResource(resource.id);
       setPublishOpen(false);
       setNotice(t('aiAuthoringSavedProgram', { code: finalized.problem_code }));
     } catch (reason) {

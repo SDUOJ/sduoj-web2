@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AuthoringWorkbench from './AuthoringWorkbench';
 import {
@@ -251,3 +251,46 @@ test('translates the authoring workbench in English', async () => {
     await i18n.changeLanguage('zh');
   }
 });
+
+test.each(['resolve', 'reject'])(
+  'a late selected project cannot %s into the current project',
+  async (outcome) => {
+    let resolveOld!: (value: AuthoringResource) => void;
+    let rejectOld!: (reason: Error) => void;
+    const pending = new Promise<AuthoringResource>((resolve, reject) => {
+      resolveOld = resolve;
+      rejectOld = reject;
+    });
+    const first = resource();
+    first.data.title = 'Project A';
+    first.data.candidate!.title = 'Package A';
+    const second = {
+      ...resource(),
+      id: 'author-2',
+      data: {
+        ...resource().data,
+        title: 'Project B',
+        candidate: { ...resource().data.candidate!, title: 'Package B' },
+      },
+    };
+    (authoringApi.list as jest.Mock).mockResolvedValue({ rows: [first, second], totalNum: 2 });
+    (authoringApi.get as jest.Mock).mockImplementation((id: string) =>
+      id === first.id ? pending : Promise.resolve(second),
+    );
+    (authoringApi.downloadBundle as jest.Mock).mockResolvedValue(undefined);
+    renderPage();
+    await waitFor(() => expect(authoringApi.get).toHaveBeenCalledWith(first.id));
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: '命题项目' }));
+    fireEvent.click(await screen.findByText('Project B'));
+    expect(await screen.findByText('Package B')).toBeInTheDocument();
+    await act(async () => {
+      if (outcome === 'resolve') resolveOld(first);
+      else rejectOld(new Error('Old project failed'));
+    });
+    expect(screen.getByText('Package B')).toBeInTheDocument();
+    expect(screen.queryByText('Package A')).not.toBeInTheDocument();
+    expect(screen.queryByText('Error: Old project failed')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /下载命题包/ }));
+    expect(authoringApi.downloadBundle).toHaveBeenCalledWith(second.id);
+  },
+);
