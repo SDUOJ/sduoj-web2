@@ -84,12 +84,11 @@ async function openCreateDialog(page: Page) {
   return dialog;
 }
 
-async function fillShellScript(page: Page, dialog: ReturnType<Page['getByRole']>) {
+async function fillShellScript(dialog: ReturnType<Page['getByRole']>) {
   const code = dialog.locator('.cm-content[contenteditable=true]').first();
-  if (await code.count()) {
-    await code.click({ force: true });
-    await page.keyboard.type('#!/bin/bash\ncat');
-  }
+  await expect(code).toBeVisible();
+  await code.fill('#!/bin/bash\ncat');
+  await expect(code).toContainText('cat');
 }
 
 test('io template form rejects blank title and overlong comment', async ({ page }) => {
@@ -114,7 +113,7 @@ test('io template form rejects blank title and overlong comment', async ({ page 
     .getByLabel(/note|comment/i)
     .first()
     .fill('c'.repeat(256));
-  await fillShellScript(page, dialog);
+  await fillShellScript(dialog);
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(getCreateCalls()).toEqual([]);
@@ -130,7 +129,7 @@ test('io template form accepts a valid payload', async ({ page }) => {
     .getByLabel(/note|comment/i)
     .first()
     .fill('ok');
-  await fillShellScript(page, dialog);
+  await fillShellScript(dialog);
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect.poll(() => getCreateCalls().length, { timeout: 5000 }).toBe(1);
   expect(getCreateCalls()[0]).toMatchObject({ title: 'Valid IO', type: 0 });
@@ -158,7 +157,7 @@ test('template edit dialog loads existing row and updates', async ({ page }) => 
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByLabel(/^Title$/i)).toHaveValue('Standard IO');
   await dialog.getByLabel(/^Title$/i).fill('Standard IO v2');
-  await fillShellScript(page, dialog);
+  await fillShellScript(dialog);
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBe(1);
   expect(getUpdateCalls()[0]).toMatchObject({ title: 'Standard IO v2', id: '1' });
