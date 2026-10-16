@@ -601,7 +601,7 @@ const cApi = {
   },
   // 删除自动任务
   async deleteAutoTask(taskId: string) {
-    return request.post(`/auto-task/delete/${taskId}`, {});
+    return request.post(`/ps/auto-task/delete/${taskId}`, {});
   },
   // 获取小组的主观题评阅任务选项
   async getGroupSubjectiveAutoTaskOptions(groupId: number) {

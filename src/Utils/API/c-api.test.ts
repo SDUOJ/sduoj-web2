@@ -11,6 +11,13 @@ beforeEach(() => cApi.clearAcceptanceQueueCache());
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
 
+test('deletes an automatic task through the same AutoLab gateway prefix as task queries', async () => {
+  adapter.onPost('/ps/auto-task/delete/task-42', {}).reply(200, success(null));
+  await expect(cApi.deleteAutoTask('task-42')).resolves.toBeNull();
+  expect(adapter.history.post).toHaveLength(1);
+  expect(adapter.history.post[0].url).toBe('/ps/auto-task/delete/task-42');
+});
+
 test('returns profile flags and oversized Java IDs without coercing them to numbers', async () => {
   const profile: UserInfo = {
     userId: '9007199254740993',
