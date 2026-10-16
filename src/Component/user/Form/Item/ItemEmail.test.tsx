@@ -1,5 +1,5 @@
 import { Form } from 'antd';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CApi from '../../../../Utils/API/c-api';
 import ItemEmail from './ItemEmail';
@@ -17,6 +17,13 @@ const ui = () => (
   </Form>
 );
 
+async function openVerification(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('button', { name: /^verify$/i }));
+  const dialog = await screen.findByRole('dialog');
+  await waitFor(() => expect(dialog).toBeVisible());
+  return within(dialog).getByRole('button', { name: 'OK' });
+}
+
 it('handles failed verification sends and prevents duplicate requests while pending', async () => {
   let reject!: (error: Error) => void;
   (CApi.sendVerificationEmail as jest.Mock).mockReturnValueOnce(
@@ -26,9 +33,7 @@ it('handles failed verification sends and prevents duplicate requests while pend
   );
   render(ui());
   const user = userEvent.setup();
-  await user.click(screen.getByRole('button', { name: /^verify$/i }));
-  await screen.findByRole('dialog');
-  const confirm = screen.getByRole('button', { name: 'OK' });
+  const confirm = await openVerification(user);
   fireEvent.click(confirm);
   fireEvent.click(confirm);
   expect(CApi.sendVerificationEmail).toHaveBeenCalledTimes(1);
@@ -46,8 +51,7 @@ it('does not restart the cooldown clock on parent rerenders', async () => {
     (CApi.sendVerificationEmail as jest.Mock).mockResolvedValue(null);
     const view = render(ui());
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    await user.click(screen.getByRole('button', { name: /^verify$/i }));
-    await user.click(await screen.findByRole('button', { name: 'OK' }));
+    await user.click(await openVerification(user));
     expect(await screen.findByRole('button', { name: '60s' })).toBeDisabled();
     for (let i = 0; i < 4; i++) {
       act(() => jest.advanceTimersByTime(250));
