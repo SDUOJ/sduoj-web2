@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Select, Space } from 'antd';
 import lang from 'Assert/img/language.png';
 import i18n from 'i18next';
@@ -14,37 +14,27 @@ import { initLanguage } from '../../Utils/initLanguage';
 const { Option } = Select;
 
 const ChangeLang = (props: any) => {
-  const defLang = useMemo(() => {
-    let value = initLanguage();
-    i18n.languages.map((langId): void => {
-      if (
-        language.filter((v) => {
-          return v.id === langId;
-        }).length !== 0
-      ) {
-        if (value.length === 0) value = langId;
-      }
-      return undefined;
-    });
-    return value;
-  }, []);
+  const defLang = useMemo(initLanguage, []);
+  const { ChangeLanguage } = props;
 
-  const changeLang = (value: string) => {
-    i18n.changeLanguage(value);
-    const id = language.findIndex((item) => {
-      return item.id === value;
-    });
-    props.ChangeLanguage(languageMap[value], language[id].code);
-    dayjs.locale(language[id].time);
-    document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en';
-    localStorage.setItem('language', language[id].code);
-  };
+  const changeLang = useCallback(
+    (value: string) => {
+      i18n.changeLanguage(value);
+      const id = language.findIndex((item) => {
+        return item.id === value;
+      });
+      ChangeLanguage(languageMap[value], language[id].code);
+      dayjs.locale(language[id].time);
+      document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en';
+      localStorage.setItem('language', language[id].code);
+    },
+    [ChangeLanguage],
+  );
 
   // apply the resolved language once on mount
-  useMemo(() => {
+  useEffect(() => {
     changeLang(defLang);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [changeLang, defLang]);
 
   return (
     <>

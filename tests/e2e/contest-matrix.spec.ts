@@ -347,7 +347,9 @@ async function openContestCreateDialog(page: Page) {
 async function fillContestBasics(page: Page, title: string) {
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel(/^Title$/i).fill(title);
-  await dialog.getByRole('radio', { name: /^ACM$/ }).check();
+  // Firefox can deliver the controlled radio update after the click returns.
+  await dialog.getByText('ACM', { exact: true }).click();
+  await expect(dialog.getByRole('radio', { name: /^ACM$/ })).toBeChecked();
   // ItemTimeRange stores gmtStart/gmtEnd; drive the range picker inputs directly.
   const range = dialog.locator('.ant-picker-range').first();
   await expect(range).toBeVisible();
