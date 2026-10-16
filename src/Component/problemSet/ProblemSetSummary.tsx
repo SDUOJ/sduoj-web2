@@ -210,7 +210,7 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({
           render: (text: string, record: any) => (
             <Link
               className="table-title-link"
-              to={`${UrlPrefix}/problem/${encodeURIComponent(record.pid)}`}
+              to={`${UrlPrefix}/problemSet/${ps.psid}/problem/${record.groupIndex}/${record.problemIndex}`}
             >
               {text}
             </Link>
@@ -255,9 +255,11 @@ const ProblemSetSummary: React.FC<ProblemSetSummaryProps> = ({
 
       const problemTableData: any[] = [];
       ps.groups.forEach((group) => {
-        group.problems.forEach((problem) => {
+        group.problems.forEach((problem, problemIndex) => {
           problemTableData.push({
-            key: problem.pid,
+            key: `${group.gid}_${problemIndex}`,
+            groupIndex: group.gid,
+            problemIndex,
             name: problem.name,
             hasAnswer: problem.hasAnswer,
             score: problem.score,
