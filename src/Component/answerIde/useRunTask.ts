@@ -5,12 +5,12 @@ import i18n from '../../Config/i18n';
 import { IdeContext, RunDetail, RunRequest, runTerminal } from './runTypes';
 
 /** REST is authoritative. A new scope/cancel invalidates all outstanding responses. */
-export function useRunTask(identity: string, context?: IdeContext) {
+export function useRunTask(identity: string, context?: IdeContext, enabled = true) {
   const [detail, setDetail] = useState<RunDetail>();
   const [id, setId] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
-  const [recovering, setRecovering] = useState(Boolean(context));
+  const [recovering, setRecovering] = useState(enabled && Boolean(context));
   const [globalActive, setGlobalActive] = useState(false);
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [now, setNow] = useState(Date.now());
@@ -30,7 +30,7 @@ export function useRunTask(identity: string, context?: IdeContext) {
   }, []);
   const poll = useCallback(
     function query(taskId: string, epoch: number) {
-      if (generation.current !== epoch || requesting.current === epoch) return;
+      if (!enabled || generation.current !== epoch || requesting.current === epoch) return;
       clearTimeout(timer.current);
       requesting.current = epoch;
       void cApi
@@ -72,7 +72,7 @@ export function useRunTask(identity: string, context?: IdeContext) {
           timer.current = setTimeout(() => query(taskId, epoch), 3000);
         });
     },
-    [storageKey],
+    [storageKey, enabled],
   );
   useEffect(() => {
     const epoch = invalidate();
@@ -82,6 +82,10 @@ export function useRunTask(identity: string, context?: IdeContext) {
     inFlight.current = false;
     lastCreation.current = undefined;
     setError(undefined);
+    setRecovering(enabled && Boolean(contextRef.current));
+    setGlobalActive(false);
+    setCooldownUntil(0);
+    if (!enabled) return;
     let saved: string | null = null;
     try {
       saved = localStorage.getItem(storageKey);
@@ -96,9 +100,6 @@ export function useRunTask(identity: string, context?: IdeContext) {
         poll(saved, epoch);
       }
     };
-    setRecovering(Boolean(contextRef.current));
-    setGlobalActive(false);
-    setCooldownUntil(0);
     if (contextRef.current) {
       void cApi
         .getLatestRun(contextRef.current)
@@ -132,10 +133,11 @@ export function useRunTask(identity: string, context?: IdeContext) {
     return () => {
       invalidate();
     };
-  }, [storageKey, contextKey, invalidate, poll]);
+  }, [storageKey, contextKey, invalidate, poll, enabled]);
   const start = useCallback(
     async (request: RunRequest) => {
-      if (inFlight.current || recovering || globalActive || cooldownUntil > Date.now()) return;
+      if (!enabled || inFlight.current || recovering || globalActive || cooldownUntil > Date.now())
+        return;
       inFlight.current = true;
       const epoch = invalidate();
       setBusy(true);
@@ -174,10 +176,10 @@ export function useRunTask(identity: string, context?: IdeContext) {
         }
       }
     },
-    [invalidate, poll, storageKey, recovering, globalActive, cooldownUntil],
+    [enabled, invalidate, poll, storageKey, recovering, globalActive, cooldownUntil],
   );
   const cancel = useCallback(async () => {
-    if (!id) return;
+    if (!enabled || !id) return;
     const epoch = invalidate();
     try {
       await cApi.cancelRun({ submissionId: id });
@@ -185,17 +187,17 @@ export function useRunTask(identity: string, context?: IdeContext) {
       if (generation.current === epoch) setError(i18n.t('answerIde.cancelError'));
     }
     if (generation.current === epoch) poll(id, epoch);
-  }, [id, invalidate, poll]);
+  }, [enabled, id, invalidate, poll]);
   const refresh = useCallback(() => {
-    if (id && inFlight.current) poll(id, generation.current);
-  }, [id, poll]);
+    if (enabled && id && inFlight.current) poll(id, generation.current);
+  }, [enabled, id, poll]);
   useEffect(() => {
-    if (cooldownUntil <= Date.now()) return;
+    if (!enabled || cooldownUntil <= Date.now()) return;
     const tick = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(tick);
-  }, [cooldownUntil]);
+  }, [enabled, cooldownUntil]);
   useEffect(() => {
-    if (!contextRef.current || !globalActive || busy || recovering) return;
+    if (!enabled || !contextRef.current || !globalActive || busy || recovering) return;
     const check = setInterval(() => {
       const epoch = generation.current;
       void cApi
@@ -208,7 +210,7 @@ export function useRunTask(identity: string, context?: IdeContext) {
         .catch(() => undefined);
     }, 3000);
     return () => clearInterval(check);
-  }, [globalActive, busy, recovering, contextKey]);
+  }, [enabled, globalActive, busy, recovering, contextKey]);
   const cooldown = Math.max(0, Math.ceil((cooldownUntil - now) / 1000));
   return {
     detail,
@@ -216,7 +218,7 @@ export function useRunTask(identity: string, context?: IdeContext) {
     busy,
     recovering,
     cooldown,
-    blocked: busy || recovering || globalActive || cooldown > 0,
+    blocked: !enabled || busy || recovering || globalActive || cooldown > 0,
     error,
     start,
     cancel,

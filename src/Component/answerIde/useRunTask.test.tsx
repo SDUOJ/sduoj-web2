@@ -17,6 +17,53 @@ beforeEach(() => {
   localStorage.clear();
   jest.clearAllMocks();
 });
+it('does not recover, poll, create or cancel tasks when Run is disabled', async () => {
+  jest.useFakeTimers();
+  try {
+    localStorage.setItem('answerIde:active:alice:P', 'abc');
+    const view = renderHook(() => useRunTask('alice:P', { type: 0, problemCode: 'P' }, false));
+    await act(async () => {
+      await view.result.current.start(request);
+      await view.result.current.cancel();
+      view.result.current.refresh();
+      jest.advanceTimersByTime(60000);
+    });
+    expect(view.result.current.blocked).toBe(true);
+    expect(view.result.current.recovering).toBe(false);
+    expect(view.result.current.busy).toBe(false);
+    expect(cApi.getLatestRun).not.toHaveBeenCalled();
+    expect(cApi.getRunQuery).not.toHaveBeenCalled();
+    expect(cApi.runCases).not.toHaveBeenCalled();
+    expect(cApi.cancelRun).not.toHaveBeenCalled();
+    expect(localStorage.getItem('answerIde:active:alice:P')).toBe('abc');
+    view.unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it('invalidates an outstanding recovery and stops polling when Run is disabled', async () => {
+  let recover!: (value: any) => void;
+  jest.mocked(cApi.getLatestRun).mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        recover = resolve;
+      }),
+  );
+  const context = { type: 0 as const, problemCode: 'P' };
+  const view = renderHook(({ enabled }) => useRunTask('alice:P', context, enabled), {
+    initialProps: { enabled: true },
+  });
+  view.rerender({ enabled: false });
+  await act(async () => {
+    recover({ detail: { submissionId: 'abc', judgeResult: 8 }, hasActiveRun: true });
+  });
+  expect(view.result.current.id).toBeUndefined();
+  expect(view.result.current.detail).toBeUndefined();
+  expect(view.result.current.blocked).toBe(true);
+  expect(cApi.getRunQuery).not.toHaveBeenCalled();
+  view.unmount();
+});
 it.each([400, 403, 404, 410])(
   'releases a restored task after a terminal query error %s',
   async (status) => {
