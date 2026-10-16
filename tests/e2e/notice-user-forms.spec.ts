@@ -37,6 +37,7 @@ async function openAnnouncementManage(page: Page) {
     .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   return {
     dialog,
     errors,

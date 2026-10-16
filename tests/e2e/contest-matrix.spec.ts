@@ -337,6 +337,8 @@ async function openContestCreateDialog(page: Page) {
     .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
+  // The visible prepare phase can still scale controls before the entrance animation starts.
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   return {
     dialog,
     errors,
@@ -346,8 +348,9 @@ async function openContestCreateDialog(page: Page) {
 
 async function fillContestBasics(page: Page, title: string) {
   const dialog = page.getByRole('dialog');
+  await expect(dialog.locator('.vditor-ir [contenteditable="true"]')).toBeVisible();
   await dialog.getByLabel(/^Title$/i).fill(title);
-  // Firefox can deliver the controlled radio update after the click returns.
+  // Wait for the controlled radio state to commit after clicking its label.
   await dialog.getByText('ACM', { exact: true }).click();
   await expect(dialog.getByRole('radio', { name: /^ACM$/ })).toBeChecked();
   // ItemTimeRange stores gmtStart/gmtEnd; drive the range picker inputs directly.
@@ -356,19 +359,22 @@ async function fillContestBasics(page: Page, title: string) {
   const inputs = range.locator('input');
   await inputs.nth(0).fill('2025-01-01 00:00:00');
   await inputs.nth(0).press('Enter');
-  await inputs.nth(1).fill('2025-01-02 00:00:00');
-  await inputs.nth(1).press('Enter');
+  const picker = page.locator('.ant-picker-dropdown:visible');
+  await expect(picker).not.toHaveClass(/ant-slide-up-(appear|enter)/);
+  await picker.locator('.ant-picker-cell-in-view[title="2025-01-02"]').click();
+  const confirm = picker.locator('.ant-picker-ok button');
+  await expect(confirm).toBeEnabled();
+  // Keyboard confirmation also works when the desktop picker exceeds a mobile viewport.
+  await confirm.press('Enter');
+  await expect(picker).toBeHidden();
   await dialog.locator('.ant-modal-title').click();
+  await expect(inputs.nth(0)).toHaveValue('2025-01-01 00:00:00');
+  await expect(inputs.nth(1)).toHaveValue('2025-01-02 00:00:00');
 }
 
 async function goStepNext(page: Page, dialog: ReturnType<Page['getByRole']>) {
   const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
-  if (await next.count()) {
-    await next.first().click();
-    await page.waitForTimeout(200);
-    return true;
-  }
-  return false;
+  await next.first().click();
 }
 
 test('contest management dialog rejects overflowing frozenTime and accepts a valid seal window', async ({

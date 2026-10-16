@@ -118,6 +118,7 @@ test('user list renders rows and opens edit dialog', async ({ page }) => {
   await editBtn.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   await expect(dialog.getByLabel(/Username/i).first()).toBeDisabled();
   // nickname editable
   await dialog
@@ -176,6 +177,7 @@ test('user password change dialog submits admin password', async ({ page }) => {
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   // ItemPassword admin policy renders password + confirm
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   const passwords = dialog.locator('input[type="password"]');
   await passwords.nth(0).fill('Abcdef12');
   await passwords.nth(1).fill('Abcdef12');

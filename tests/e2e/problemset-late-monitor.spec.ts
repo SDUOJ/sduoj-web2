@@ -203,6 +203,7 @@ test('late permission add rejects empty username and out-of-range discount', asy
   await page.getByRole('button', { name: /Grant Late Permission/i }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   const username = dialog.locator('input').first();
   const discount = dialog.getByRole('spinbutton').first();
   await dialog.getByLabel(/Expire time/i).fill('2099-01-01 00:00:00');
@@ -257,6 +258,7 @@ test('late permission edit updates discount', async ({ page }) => {
   await row.getByRole('button', { name: /Edit/i }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   await expect(dialog.locator('input').first()).toBeDisabled();
   await dialog.getByRole('spinbutton').first().fill('0.25');
   await dialog.getByRole('button', { name: /^OK$/ }).click();

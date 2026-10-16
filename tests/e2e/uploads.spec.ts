@@ -70,6 +70,7 @@ async function openZipSubmit(page: Page) {
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByText('ZIP upload fixture')).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom-(appear|enter)/);
   return dialog;
 }
 
