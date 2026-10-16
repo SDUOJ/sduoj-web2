@@ -21,6 +21,7 @@ import SplitPane from './SplitPane';
 import { IdeContext } from './runTypes';
 import { useCloudCode } from './useCloudCode';
 import { SyncJudging } from '../submission/SyncJudging';
+import { ideCapabilities } from './capabilities';
 
 type Draft = {
   templateId: string;
@@ -86,6 +87,7 @@ export default function AnswerWorkspace(props: {
   submitCode?: (templateId: string, code: string) => Promise<string>;
 }) {
   const { t } = useTranslation();
+  const { cloudCode: cloudEnabled, run: runEnabled } = ideCapabilities();
   const samples = (Array.isArray(props.samples) ? props.samples : [])
     .filter(
       (sample) => sample && typeof sample.input === 'string' && typeof sample.output === 'string',
@@ -146,6 +148,7 @@ export default function AnswerWorkspace(props: {
     }
   }, [consoleCollapsed, consoleStorageKey]);
   const [consoleTab, setConsoleTab] = useState(() => {
+    if (!runEnabled) return props.submissionHistory ? 'history' : 'codeHistory';
     try {
       return localStorage.getItem(`answerIde:active:${identity}`) ? 'results' : 'cases';
     } catch {
@@ -163,7 +166,7 @@ export default function AnswerWorkspace(props: {
   const [savingError, setSavingError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useDispatch();
-  const run = useRunTask(identity, context);
+  const run = useRunTask(identity, context, runEnabled);
   useEffect(() => {
     if (run.id && !restoredRun.current) {
       setConsoleTab('results');
@@ -177,6 +180,7 @@ export default function AnswerWorkspace(props: {
   const code = draft.codes[templateId] ?? '';
   const template = templates.find((item) => String(item.id) === templateId);
   const cloud = useCloudCode({
+    enabled: cloudEnabled,
     identity,
     context,
     username: props.username,
@@ -294,7 +298,15 @@ export default function AnswerWorkspace(props: {
         event.stopPropagation();
         if (event.repeat) return;
         if (event.key === 'Enter') start();
-        else void cloud.save();
+        else if (cloudEnabled) void cloud.save();
+        else {
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(latestDraft.current));
+            setSavingError(false);
+          } catch {
+            setSavingError(true);
+          }
+        }
       }}
     >
       <div className="ide-workspace-toolbar">
@@ -308,18 +320,20 @@ export default function AnswerWorkspace(props: {
           />
         </div>
         <Space wrap className="ide-actions">
-          <Button
-            icon={<PlayCircleOutlined aria-hidden />}
-            loading={run.busy}
-            disabled={run.blocked || !code.trim() || !draft.cases.length || !templateId}
-            onClick={start}
-          >
-            {run.recovering
-              ? t('answerIde.restoringRun')
-              : run.cooldown > 0
-                ? t('answerIde.runCooldown', { count: run.cooldown })
-                : t('answerIde.run')}
-          </Button>
+          {runEnabled && (
+            <Button
+              icon={<PlayCircleOutlined aria-hidden />}
+              loading={run.busy}
+              disabled={run.blocked || !code.trim() || !draft.cases.length || !templateId}
+              onClick={start}
+            >
+              {run.recovering
+                ? t('answerIde.restoringRun')
+                : run.cooldown > 0
+                  ? t('answerIde.runCooldown', { count: run.cooldown })
+                  : t('answerIde.run')}
+            </Button>
+          )}
           {run.busy && (
             <Button
               icon={<StopOutlined aria-hidden />}
@@ -345,7 +359,10 @@ export default function AnswerWorkspace(props: {
           </Button>
         </Space>
         {cloud.controls}
-        <span className="ide-shortcuts">{t('answerIde.shortcuts')}</span>
+        {!cloudEnabled && <span>{t('answerIde.saved')}</span>}
+        <span className="ide-shortcuts">
+          {t(runEnabled ? 'answerIde.shortcuts' : 'answerIde.saveShortcut')}
+        </span>
       </div>
       {savingError && <Alert type="warning" message={t('answerIde.saveFailed')} />}
       {run.error && <Alert type="warning" message={run.error} />}
@@ -357,6 +374,7 @@ export default function AnswerWorkspace(props: {
         }}
       />
       <SplitPane
+        secondHidden={!runEnabled && !cloudEnabled && !props.submissionHistory}
         vertical
         label={t('answerIde.editorHeight')}
         ratio={editorRatio}
@@ -486,7 +504,11 @@ export default function AnswerWorkspace(props: {
                 label: t('answerIde.codeHistory'),
                 children: cloud.history,
               },
-            ]}
+            ].filter(
+              ({ key }) =>
+                (runEnabled || !['cases', 'results'].includes(key)) &&
+                (cloudEnabled || key !== 'codeHistory'),
+            )}
           />
         }
       />

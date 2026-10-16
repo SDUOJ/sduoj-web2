@@ -1825,6 +1825,7 @@
     "cancel": "Cancel run",
     "submit": "Submit",
     "shortcuts": "Ctrl/⌘+Enter to run · Ctrl/⌘+S to save",
+    "saveShortcut": "Ctrl/⌘+S to save",
     "cases": "Custom test cases",
     "case": "Case {{index}}",
     "input": "Input",

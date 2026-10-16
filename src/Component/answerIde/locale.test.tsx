@@ -15,6 +15,12 @@ jest.mock('../../Utils/API/c-api', () => ({
   },
 }));
 jest.mock('./AnswerEditor', () => () => <textarea aria-label="Code" />);
+beforeEach(() => {
+  process.env.REACT_APP_IDE_RUN = 'true';
+});
+afterEach(() => {
+  delete process.env.REACT_APP_IDE_RUN;
+});
 it('provides matching translation keys and displays English workspace/results', async () => {
   expect(Object.keys(en.answerIde).sort()).toEqual(Object.keys(zh.answerIde).sort());
   expect(Object.keys(en.answerIde.state).sort()).toEqual(Object.keys(zh.answerIde.state).sort());

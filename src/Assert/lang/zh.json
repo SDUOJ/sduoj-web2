@@ -1825,6 +1825,7 @@
     "cancel": "取消运行",
     "submit": "正式提交",
     "shortcuts": "Ctrl/⌘+Enter 运行 · Ctrl/⌘+S 保存",
+    "saveShortcut": "Ctrl/⌘+S 保存",
     "cases": "自定义测试用例",
     "case": "用例 {{index}}",
     "input": "输入",

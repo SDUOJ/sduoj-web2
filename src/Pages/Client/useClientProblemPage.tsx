@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Button, Card } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -35,27 +34,8 @@ export default function useClientProblemPage(props: any, hideSubmit = false) {
 
   const problemInfo = useProblemInfo(GetProblemInfoAPI, nameWithD);
 
-  const [runEnabled, setRunEnabled] = useState(false);
-  useEffect(() => {
-    let active = true;
-    if (props.username)
-      cApi
-        .runCapabilities()
-        .then((data) => {
-          if (active) setRunEnabled(data.enabled);
-        })
-        .catch(() => {
-          if (active) setRunEnabled(false);
-        });
-    else setRunEnabled(false);
-    return () => {
-      active = false;
-    };
-  }, [props.username]);
   const showWorkspace = Boolean(
-    runEnabled &&
-    props.username &&
-    problemInfo?.judgeTemplates?.some((item: any) => item.type === 0),
+    props.username && problemInfo?.judgeTemplates?.some((item: any) => item.type === 0),
   );
   const statement = (
     <>

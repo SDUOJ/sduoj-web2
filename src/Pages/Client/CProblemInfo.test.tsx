@@ -67,21 +67,19 @@ it('opens the IDE on its own route with a return link and no duplicate legacy su
   expect(screen.queryByRole('button', { name: 'legacy submit' })).not.toBeInTheDocument();
 });
 
-it('does not expose the IDE entry when the server disables Run', async () => {
-  jest.mocked(cApi.runCapabilities).mockResolvedValueOnce({ enabled: false, maxCases: 10 });
+it('opens the editor without depending on the Run capability endpoint', async () => {
   jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'P', judgeTemplates: [{ type: 0 }] });
   render(
     <MemoryRouter>
       <CProblemInfo {...route('SDUOJ-1')} />
     </MemoryRouter>,
   );
-  await waitFor(() => expect(cApi.runCapabilities).toHaveBeenCalled());
-  expect(screen.queryByRole('button', { name: /answerIde.open/ })).not.toBeInTheDocument();
+  expect(cApi.runCapabilities).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: /answerIde.open/ })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'legacy submit' })).toBeInTheDocument();
 });
 
 it('clears derived details while a new problem or session value is loading', async () => {
-  jest.mocked(cApi.runCapabilities).mockResolvedValueOnce({ enabled: false, maxCases: 10 });
   jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'Problem A' });
   const view = render(<CProblemInfo {...route('SDUOJ-1')} />);
   expect(screen.getByText('detail:Problem A')).toBeInTheDocument();
@@ -92,5 +90,23 @@ it('clears derived details while a new problem or session value is loading', asy
   expect(screen.queryByText('detail:Problem A')).not.toBeInTheDocument();
   expect(screen.getByText('detail:empty')).toBeInTheDocument();
   expect(screen.getByText('description:empty')).toBeInTheDocument();
-  await waitFor(() => expect(cApi.runCapabilities).toHaveBeenCalled());
+  expect(cApi.runCapabilities).not.toHaveBeenCalled();
 });
+
+it.each([
+  { username: undefined, judgeTemplates: [{ type: 0 }] },
+  { username: 'alice', judgeTemplates: [{ type: 1 }] },
+  { username: 'alice', judgeTemplates: [] },
+])(
+  'does not offer editing without a session and a code template (%j)',
+  ({ username, judgeTemplates }) => {
+    jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'P', judgeTemplates });
+    render(
+      <MemoryRouter>
+        <CProblemInfo {...route('SDUOJ-1')} username={username} />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole('button', { name: /answerIde.open/ })).not.toBeInTheDocument();
+    expect(cApi.runCapabilities).not.toHaveBeenCalled();
+  },
+);

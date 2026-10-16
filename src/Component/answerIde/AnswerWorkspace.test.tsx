@@ -45,10 +45,98 @@ function view(username = 'alice') {
   );
 }
 beforeEach(() => {
+  process.env.REACT_APP_IDE_CLOUD_CODE = 'true';
+  process.env.REACT_APP_IDE_RUN = 'true';
   localStorage.clear();
   actions.length = 0;
   jest.mocked(cApi.getLatestRun).mockResolvedValue({ detail: null, hasActiveRun: false });
   jest.mocked(cApi.getIdeHistory).mockResolvedValue([]);
+});
+afterEach(() => {
+  delete process.env.REACT_APP_IDE_CLOUD_CODE;
+  delete process.env.REACT_APP_IDE_RUN;
+});
+
+it('keeps the default editor local and submits through the existing API without cloud or Run requests', async () => {
+  delete process.env.REACT_APP_IDE_CLOUD_CODE;
+  delete process.env.REACT_APP_IDE_RUN;
+  localStorage.setItem('answerIde:active:alice:P', 'abc');
+  jest.mocked(cApi.submit).mockResolvedValue('formal123');
+  render(view());
+  const source = screen.getByLabelText('代码');
+  fireEvent.change(source, { target: { value: 'local source' } });
+  fireEvent.keyDown(source, { key: 's', ctrlKey: true });
+  expect(JSON.parse(localStorage.getItem('answerIde:draft:alice:P')!).codes).toEqual({
+    '6': 'local source',
+  });
+  fireEvent.keyDown(source, { key: 'Enter', ctrlKey: true });
+  window.dispatchEvent(
+    new CustomEvent('answerIde:publicCase', {
+      detail: { problemCode: 'P', input: '1', expectedOutput: '1' },
+    }),
+  );
+  expect(screen.queryByRole('button', { name: '运行自定义用例' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: '保存到云端' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('tab', { name: '代码历史' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: '正式提交' }));
+  await waitFor(() =>
+    expect(cApi.submit).toHaveBeenCalledWith({
+      problemCode: 'P',
+      judgeTemplateId: '6',
+      code: 'local source',
+    }),
+  );
+  expect(actions).toContainEqual({ type: 'setSubmissionModalVis', data: true });
+  expect(cApi.getLatestRun).not.toHaveBeenCalled();
+  expect(cApi.getRunQuery).not.toHaveBeenCalled();
+  expect(cApi.runCases).not.toHaveBeenCalled();
+  expect(cApi.cancelRun).not.toHaveBeenCalled();
+  expect(cApi.getIdeHistory).not.toHaveBeenCalled();
+  expect(cApi.getIdeCode).not.toHaveBeenCalled();
+  expect(cApi.saveIdeCode).not.toHaveBeenCalled();
+});
+
+it.each([
+  ['true', undefined],
+  [undefined, 'true'],
+])('enables cloud %s and Run %s independently', async (cloud, run) => {
+  delete process.env.REACT_APP_IDE_CLOUD_CODE;
+  delete process.env.REACT_APP_IDE_RUN;
+  if (cloud) process.env.REACT_APP_IDE_CLOUD_CODE = cloud;
+  if (run) process.env.REACT_APP_IDE_RUN = run;
+  render(view());
+  await act(async () => {
+    await Promise.resolve();
+  });
+  expect(Boolean(screen.queryByRole('button', { name: '保存到云端' }))).toBe(Boolean(cloud));
+  expect(Boolean(screen.queryByRole('button', { name: '运行自定义用例' }))).toBe(Boolean(run));
+  expect(jest.mocked(cApi.getIdeHistory).mock.calls.length > 0).toBe(Boolean(cloud));
+  expect(jest.mocked(cApi.getLatestRun).mock.calls.length > 0).toBe(Boolean(run));
+});
+
+it('retains business submission callbacks and history in local mode', async () => {
+  delete process.env.REACT_APP_IDE_CLOUD_CODE;
+  delete process.env.REACT_APP_IDE_RUN;
+  const submitCode = jest.fn().mockResolvedValue('contest123');
+  render(
+    <Provider store={store}>
+      <AnswerWorkspace
+        {...props}
+        context={{ type: 1, bizId: '77', problemCode: '1' }}
+        scopeKey="Contest-77-1"
+        submitCode={submitCode}
+        submissionHistory={<div>contest submissions</div>}
+      />
+    </Provider>,
+  );
+  fireEvent.change(screen.getByLabelText('代码'), { target: { value: 'contest code' } });
+  expect(screen.getByRole('tab', { name: '提交记录' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByText('contest submissions')).toBeVisible();
+  fireEvent.click(screen.getByRole('button', { name: '正式提交' }));
+  await waitFor(() => expect(submitCode).toHaveBeenCalledWith('6', 'contest code'));
+  expect(cApi.submit).not.toHaveBeenCalled();
+  expect(cApi.runCases).not.toHaveBeenCalled();
+  expect(cApi.getLatestRun).not.toHaveBeenCalled();
 });
 it('saves the final edit on unmount and keeps user drafts isolated', () => {
   const page = render(view());
