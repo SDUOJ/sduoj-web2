@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import {
   Button,
@@ -72,7 +72,7 @@ interface AutoTaskFrameworkProps extends WithTranslation {
   createTitle?: string;
   createHelp?: string;
 
-  // 任务类型过滤
+  // The API paginates one type at a time; multiple values bound the type selector.
   taskTypeFilter?: string[];
 
   // 自定义任务类型标签
@@ -214,12 +214,19 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
   const [resultVisible, setResultVisible] = useState<boolean>(false);
   const [createVisible, setCreateVisible] = useState<boolean>(false);
   const { current: paginationCurrent, pageSize: paginationPageSize } = pagination;
+  const requestSequence = useRef({ value: 0 });
+  const selectedTaskType = taskTypeFilter?.length
+    ? taskTypeFilter.includes(filters.taskType ?? '')
+      ? filters.taskType
+      : taskTypeFilter[0]
+    : filters.taskType;
 
   const loadTasks = useCallback(
     (pageNow?: number, pageSize?: number) => {
       if (!groupId && !psid && !contestId) return;
       const current = pageNow ?? 1;
       const size = pageSize ?? 20;
+      const sequence = ++requestSequence.current.value;
       setListLoading(true);
 
       const apiCall = groupId
@@ -228,7 +235,7 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
             pageNow: current,
             pageSize: size,
             status: filters.status,
-            taskType: filters.taskType,
+            taskType: selectedTaskType,
             username: filters.username,
             scoreLe: filters.scoreLe,
             psid: filters.psid,
@@ -239,19 +246,15 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
             pageNow: current,
             pageSize: size,
             status: filters.status,
-            taskType: filters.taskType,
+            taskType: selectedTaskType,
             username: filters.username,
             scoreLe: filters.scoreLe,
           });
 
       apiCall
         .then((res: any) => {
-          let rows = res?.rows || [];
-          // 如果有任务类型过滤，应用过滤
-          if (taskTypeFilter && taskTypeFilter.length > 0) {
-            rows = rows.filter((task: AutoTaskRecord) => taskTypeFilter.includes(task.task_type));
-          }
-          setTaskList(rows);
+          if (sequence !== requestSequence.current.value) return;
+          setTaskList(res?.rows || []);
           setPagination({
             current: res?.pageIndex ?? current,
             pageSize: res?.pageSize ?? size,
@@ -259,16 +262,17 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
           });
         })
         .catch(() => {
+          if (sequence !== requestSequence.current.value) return;
           message.error(t('failed'));
           setTaskList([]);
         })
         .finally(() => {
-          setListLoading(false);
+          if (sequence === requestSequence.current.value) setListLoading(false);
         });
     },
     [
       filters.status,
-      filters.taskType,
+      selectedTaskType,
       filters.username,
       filters.psid,
       filters.problemId,
@@ -276,13 +280,16 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
       groupId,
       psid,
       contestId,
-      taskTypeFilter,
       t,
     ],
   );
 
   useEffect(() => {
+    const sequence = requestSequence.current;
     loadTasks(1, paginationPageSize);
+    return () => {
+      sequence.value++;
+    };
   }, [loadTasks, paginationPageSize]);
 
   useEffect(() => {
@@ -735,15 +742,16 @@ const AutoTaskFramework: React.FC<AutoTaskFrameworkProps> = (props) => {
                   }}
                 />
               )}
-              {showFilters.taskType !== false &&
+              {(showFilters.taskType !== false || (taskTypeFilter?.length ?? 0) > 1) &&
                 typeFilterOptions.length > 0 &&
                 (!taskTypeFilter || taskTypeFilter.length !== 1) && (
                   <Select
-                    allowClear
+                    allowClear={!taskTypeFilter?.length}
+                    aria-label={t('AutoTaskFilterType')}
                     placeholder={t('AutoTaskFilterType')}
                     style={{ width: 200 }}
                     options={typeFilterOptions}
-                    value={filters.taskType}
+                    value={selectedTaskType}
                     onChange={(value) => {
                       setFilters((prev) => ({ ...prev, taskType: value || undefined }));
                     }}
