@@ -29,6 +29,7 @@ async function fixture(context, fault = {}) {
     .digest('hex');
   const files = {
     ...Object.fromEntries(entrypoints.map((filename) => [filename, 'window.fixture=true;'])),
+    'static/js/editor.worker.js': 'self.onmessage=()=>self.postMessage("ready");',
     [`vditor/${revision}/dist/index.min.js`]: runtime,
     'asset-manifest.json': JSON.stringify({
       files: Object.fromEntries(entrypoints.map((entry) => [entry, '/v2/' + entry])),
@@ -97,7 +98,11 @@ async function fixture(context, fault = {}) {
       'Content-Type': contentType,
       'Cache-Control':
         fault.cache ||
-        (immutable ? fault.staticCache || 'public, max-age=31536000, immutable' : 'no-cache'),
+        (relative.endsWith('.worker.js')
+          ? fault.workerCache || 'no-cache'
+          : immutable
+            ? fault.staticCache || 'public, max-age=31536000, immutable'
+            : 'no-cache'),
     });
     response.end(relative === fault.tamper ? 'window.fixture=evil;' : files[relative]);
   });
@@ -117,13 +122,26 @@ test('verifies every artifact byte, deep link, missing asset and anonymous API w
   const { manifestPath, requests } = await fixture(context);
   const report = await smoke(target, { loopbackAudit: true, expectedManifest: manifestPath });
   assert.equal(report.status, 'verified');
-  assert.equal(report.fileCount, 6);
-  assert.equal(report.requests.length, 12);
+  assert.equal(report.fileCount, 7);
+  assert.equal(report.requests.length, 13);
   assert.equal(report.sourceRef, 'a'.repeat(40));
   assert.ok(requests.includes('/v2/login'));
   assert.ok(requests.includes('/api/user/getProfile'));
   assert.equal(JSON.stringify(report).includes('"data"'), false);
+  assert.equal(
+    report.requests.find((entry) => entry.path.endsWith('/editor.worker.js')).cacheControl,
+    'no-cache',
+  );
 });
+
+for (const cache of ['public, max-age=31536000, immutable', 'no-cache, immutable'])
+  test(`rejects fixed worker cache policy ${cache}`, async (context) => {
+    await fixture(context, { workerCache: cache });
+    await assert.rejects(
+      smoke(target, { loopbackAudit: true }),
+      /must not be cached|worker must revalidate/,
+    );
+  });
 
 test('rejects unsafe targets and prevents use of the loopback escape hatch for deployment', () => {
   for (const url of [

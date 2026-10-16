@@ -658,7 +658,8 @@ module.exports = function (webpackEnv) {
     plugins: [
       new MonacoWebpackPlugin({
         languages: ['cpp', 'java', 'python', 'sql'],
-        filename: 'static/js/[name].worker.js',
+        // Change the old immutable URLs, then revalidate workers on later releases.
+        filename: 'static/js/[name].[contenthash:8].worker.js',
       }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(

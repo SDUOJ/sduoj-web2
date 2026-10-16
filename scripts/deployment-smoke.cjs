@@ -152,10 +152,19 @@ async function smoke(value, options = {}) {
           const { bytes, record } = await read(resourceUrl(file.path), file.size);
           assert(record.sha256 === file.sha256, `${file.path}: deployed content hash mismatch`);
           if (/^(?:static|vditor)\/.*\.(js|css)$/.test(file.path)) {
-            assert(
-              /immutable/.test(record.cacheControl) && /max-age=31536000/.test(record.cacheControl),
-              `${file.path}: missing immutable cache policy`,
-            );
+            if (/^static\/js\/[^/]+\.worker\.js$/.test(file.path)) {
+              noCache(record);
+              assert(
+                !/immutable/.test(record.cacheControl),
+                `${file.path}: worker must revalidate`,
+              );
+            } else {
+              assert(
+                /immutable/.test(record.cacheControl) &&
+                  /max-age=31536000/.test(record.cacheControl),
+                `${file.path}: missing immutable cache policy`,
+              );
+            }
             assert(
               file.path.endsWith('.js')
                 ? /(?:javascript|ecmascript)/.test(record.contentType)

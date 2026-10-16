@@ -88,11 +88,17 @@ test('nginx serves security headers on HTML, cached assets, errors, API and TLS 
   const html = fs.readFileSync(path.resolve(__dirname, '../../build-test/index.html'), 'utf8');
   const script = html.match(/<script[^>]+src="([^"]+\.js)"/);
   expect(script).toBeTruthy();
+  const worker = fs
+    .readdirSync(path.resolve(__dirname, '../../build-test/static/js'))
+    .find((filename) => /^editor\.[a-f0-9]{8}\.worker\.js$/.test(filename));
+  expect(worker).toBeTruthy();
+  const workerRoute = `/v2/static/js/${worker}`;
   const results: Array<{ route: string; status: number; headers: Record<string, string> }> = [];
   for (const route of [
     '/v2/login',
     '/v2/unknown-deep-link',
     script![1],
+    workerRoute,
     '/v2/static/missing.js',
     '/api/user/getProfile',
   ]) {
@@ -110,6 +116,11 @@ test('nginx serves security headers on HTML, cached assets, errors, API and TLS 
     expect(headers['permissions-policy']).toContain('geolocation=()');
     expect(headers['strict-transport-security']).toBeUndefined();
     if (route === script![1]) expect(headers['cache-control']).toContain('immutable');
+    if (route === workerRoute) {
+      expect(response.status()).toBe(200);
+      expect(headers['cache-control']).toBe('no-cache');
+      expect(headers['content-type']).toContain('javascript');
+    }
     if (route === '/v2/static/missing.js') expect(response.status()).toBe(404);
     if (route === '/api/user/getProfile') expect(response.status()).toBe(401);
     results.push({ route, status: response.status(), headers });
