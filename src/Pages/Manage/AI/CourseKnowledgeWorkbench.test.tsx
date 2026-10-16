@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import CourseKnowledgeWorkbench from './CourseKnowledgeWorkbench';
@@ -272,4 +272,112 @@ test('translates the course knowledge workbench in English', async () => {
   } finally {
     await i18n.changeLanguage('zh');
   }
+});
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
+
+const conversationFor = (id: number): KnowledgeResource => ({
+  id: 'chat-' + id,
+  kind: 'conversation',
+  version: 1,
+  state: 'ready',
+  course_id: id,
+  data: { messages: [{ role: 'assistant', text: 'History for ' + id }] },
+});
+
+function courseFixture() {
+  (courseKnowledgeApi.listConversations as jest.Mock).mockImplementation(async (id: number) => ({
+    rows: [conversationFor(id)],
+    totalNum: 1,
+  }));
+  (courseKnowledgeApi.getResource as jest.Mock).mockImplementation(async (id: string) =>
+    conversationFor(Number(id.slice(5))),
+  );
+  return render(
+    <MemoryRouter>
+      <CourseKnowledgeWorkbench initialCourseId={12} />
+    </MemoryRouter>,
+  );
+}
+
+function selectCourse(id: number) {
+  fireEvent.change(screen.getByLabelText('课程 ID'), { target: { value: String(id) } });
+  fireEvent.click(screen.getByRole('button', { name: '打开课程' }));
+}
+
+test('switching courses never sends a new question to the previous conversation while loading', async () => {
+  const loading = deferred<{ rows: KnowledgeResource[]; totalNum: number }>();
+  (courseKnowledgeApi.listDocuments as jest.Mock).mockImplementation((id: number) =>
+    id === 13 ? loading.promise : Promise.resolve({ rows: [documentResource], totalNum: 1 }),
+  );
+  (courseKnowledgeApi.ask as jest.Mock).mockResolvedValue(conversationFor(13));
+  courseFixture();
+  await screen.findByText('History for 12');
+  selectCourse(13);
+  fireEvent.change(screen.getByLabelText('课程资料问题'), { target: { value: 'Question for 13' } });
+  fireEvent.click(screen.getByRole('button', { name: '发送问题' }));
+  expect(courseKnowledgeApi.ask).not.toHaveBeenCalled();
+  await act(async () => loading.resolve({ rows: [], totalNum: 0 }));
+  await screen.findByText('History for 13');
+  fireEvent.click(screen.getByRole('button', { name: '发送问题' }));
+  await waitFor(() =>
+    expect(courseKnowledgeApi.ask).toHaveBeenCalledWith(
+      conversationFor(13),
+      'Question for 13',
+      false,
+    ),
+  );
+});
+
+test('a late answer from the previous course cannot replace the current history or draft', async () => {
+  const answer = deferred<KnowledgeResource>();
+  (courseKnowledgeApi.ask as jest.Mock).mockReturnValue(answer.promise);
+  courseFixture();
+  await screen.findByText('History for 12');
+  fireEvent.change(screen.getByLabelText('课程资料问题'), { target: { value: 'Question for 12' } });
+  fireEvent.click(screen.getByRole('button', { name: '发送问题' }));
+  await waitFor(() => expect(courseKnowledgeApi.ask).toHaveBeenCalled());
+  selectCourse(13);
+  await screen.findByText('History for 13');
+  fireEvent.change(screen.getByLabelText('课程资料问题'), { target: { value: 'Draft for 13' } });
+  await act(async () =>
+    answer.resolve({
+      ...conversationFor(12),
+      data: { messages: [{ role: 'assistant', text: 'Late answer for 12' }] },
+    }),
+  );
+  expect(screen.getByText('History for 13')).toBeInTheDocument();
+  expect(screen.queryByText('Late answer for 12')).not.toBeInTheDocument();
+  expect(screen.getByLabelText('课程资料问题')).toHaveValue('Draft for 13');
+});
+
+test('a previous course index completion cannot reload its documents into the selected course', async () => {
+  const indexing = deferred<{ status: string }>();
+  (courseKnowledgeApi.indexDocument as jest.Mock).mockReturnValue(indexing.promise);
+  (courseKnowledgeApi.listDocuments as jest.Mock).mockImplementation(async (id: number) => ({
+    rows: [
+      {
+        ...documentResource,
+        id: 'doc-' + id,
+        course_id: id,
+        data: { title: 'Documents for ' + id },
+      },
+    ],
+    totalNum: 1,
+  }));
+  courseFixture();
+  await screen.findByText('History for 12');
+  fireEvent.click(screen.getByRole('button', { name: /重新索引/ }));
+  selectCourse(13);
+  await screen.findByText('Documents for 13');
+  await act(async () => indexing.resolve({ status: 'success' }));
+  expect(screen.getByText('Documents for 13')).toBeInTheDocument();
+  expect(screen.queryByText('Documents for 12')).not.toBeInTheDocument();
+  expect(courseKnowledgeApi.listDocuments).toHaveBeenCalledTimes(2);
 });

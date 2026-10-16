@@ -62,11 +62,29 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
   const [externalResearch, setExternalResearch] = useState(false);
   const [uploadForm] = Form.useForm();
   const loadSequence = useRef(0);
+  const courseGeneration = useRef(0);
+  const currentCourse = useRef(courseId);
+  const askPending = useRef(false);
+  const isCurrentCourse = useCallback(
+    (generation: number, selectedCourse: number | null) =>
+      generation === courseGeneration.current && selectedCourse === currentCourse.current,
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      courseGeneration.current += 1;
+    },
+    [],
+  );
 
   const load = useCallback(
     async (selectedCourse = courseId, selectedPage = page) => {
-      if (!selectedCourse) return;
+      if (!selectedCourse || selectedCourse !== currentCourse.current) return;
+      const generation = courseGeneration.current;
       const sequence = ++loadSequence.current;
+      const isCurrent = () =>
+        isCurrentCourse(generation, selectedCourse) && sequence === loadSequence.current;
       setLoading(true);
       setError('');
       try {
@@ -74,24 +92,24 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
           courseKnowledgeApi.listDocuments(selectedCourse, selectedPage),
           courseKnowledgeApi.listConversations(selectedCourse),
         ]);
-        if (sequence !== loadSequence.current) return;
+        if (!isCurrent()) return;
         setDocuments(documentPage.rows);
         setTotal(documentPage.totalNum);
         if (conversations.rows[0]) {
           const currentConversation = await courseKnowledgeApi.getResource(
             conversations.rows[0].id,
           );
-          if (sequence === loadSequence.current) setConversation(currentConversation);
+          if (isCurrent()) setConversation(currentConversation);
         } else {
           setConversation(null);
         }
       } catch (reason) {
-        if (sequence === loadSequence.current) setError(String(reason));
+        if (isCurrent()) setError(String(reason));
       } finally {
-        if (sequence === loadSequence.current) setLoading(false);
+        if (isCurrent()) setLoading(false);
       }
     },
-    [courseId, page],
+    [courseId, isCurrentCourse, page],
   );
 
   useEffect(() => {
@@ -102,14 +120,17 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
   }, [courseId, page, load]);
 
   async function uploadAndIndex() {
+    const generation = courseGeneration.current;
+    const isCurrent = () => isCurrentCourse(generation, courseId);
     const values = await uploadForm.validateFields().catch(() => null);
     const selected = files.map((item) => item.originFileObj).filter(Boolean) as File[];
-    if (!values || !courseId || selected.length === 0) return;
+    if (!values || !courseId || selected.length === 0 || !isCurrent()) return;
     setBusy(true);
     setError('');
     let resource: KnowledgeResource | null = null;
     try {
       resource = await courseKnowledgeApi.createDocument(courseId, values.title);
+      if (!isCurrent()) return;
       setJobStates((states) => ({ ...states, [resource!.id]: 'uploading' }));
       const uploaded = [];
       for (let index = 0; index < selected.length; index += 1) {
@@ -121,13 +142,16 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
             `${resource.id}-${index}-${file.name}-${file.size}`,
           ),
         );
+        if (!isCurrent()) return;
       }
       resource = await courseKnowledgeApi.updateDocumentFiles(
         resource,
         uploaded.map((item) => item.id),
       );
+      if (!isCurrent()) return;
       setJobStates((states) => ({ ...states, [resource!.id]: 'indexing' }));
       await courseKnowledgeApi.indexDocument(resource);
+      if (!isCurrent()) return;
       setJobStates((states) => ({ ...states, [resource!.id]: 'success' }));
       setUploadOpen(false);
       setFiles([]);
@@ -135,21 +159,26 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
       await load(courseId, 1);
       setPage(1);
     } catch (reason) {
+      if (!isCurrent()) return;
       if (resource) setJobStates((states) => ({ ...states, [resource!.id]: 'failed' }));
       setError(String(reason));
     } finally {
-      setBusy(false);
+      if (isCurrent()) setBusy(false);
     }
   }
 
   async function reindex(resource: KnowledgeResource) {
+    const generation = courseGeneration.current;
+    const isCurrent = () => isCurrentCourse(generation, courseId);
     setJobStates((states) => ({ ...states, [resource.id]: 'indexing' }));
     setError('');
     try {
       await courseKnowledgeApi.indexDocument(resource);
+      if (!isCurrent()) return;
       setJobStates((states) => ({ ...states, [resource.id]: 'success' }));
       await load();
     } catch (reason) {
+      if (!isCurrent()) return;
       setJobStates((states) => ({ ...states, [resource.id]: 'failed' }));
       setError(String(reason));
     }
@@ -157,23 +186,36 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
 
   async function ask() {
     const message = question.trim();
-    if (!courseId || !message) return;
+    if (!courseId || !message || loading || askPending.current) return;
+    const generation = courseGeneration.current;
+    const isCurrent = () => isCurrentCourse(generation, courseId);
+    askPending.current = true;
     setAsking(true);
     setError('');
     try {
-      const active = conversation || (await courseKnowledgeApi.createConversation(courseId));
+      const active =
+        conversation?.course_id === courseId
+          ? conversation
+          : await courseKnowledgeApi.createConversation(courseId);
+      if (!isCurrent()) return;
       setConversation(active);
       const answered = await courseKnowledgeApi.ask(active, message, externalResearch);
+      if (!isCurrent()) return;
       setConversation(answered);
       setQuestion('');
     } catch (reason) {
-      setError(String(reason));
+      if (isCurrent()) setError(String(reason));
     } finally {
-      setAsking(false);
+      if (isCurrent()) {
+        askPending.current = false;
+        setAsking(false);
+      }
     }
   }
 
   async function openCitation(citation: string) {
+    const generation = courseGeneration.current;
+    const isCurrent = () => isCurrentCourse(generation, courseId);
     if (citation.startsWith('doi:')) {
       window.open(`https://doi.org/${citation.slice(4)}`, '_blank', 'noopener,noreferrer');
       return;
@@ -181,11 +223,12 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
     setSourceLoading(true);
     setError('');
     try {
-      setSource(await courseKnowledgeApi.resolveCitation(citation));
+      const resolved = await courseKnowledgeApi.resolveCitation(citation);
+      if (isCurrent()) setSource(resolved);
     } catch (reason) {
-      setError(String(reason));
+      if (isCurrent()) setError(String(reason));
     } finally {
-      setSourceLoading(false);
+      if (isCurrent()) setSourceLoading(false);
     }
   }
 
@@ -212,6 +255,24 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
               type="primary"
               onClick={() => {
                 if (!courseIdInput) return;
+                if (courseIdInput === currentCourse.current) return;
+                courseGeneration.current += 1;
+                loadSequence.current += 1;
+                currentCourse.current = courseIdInput;
+                askPending.current = false;
+                setDocuments([]);
+                setTotal(0);
+                setConversation(null);
+                setQuestion('');
+                setSource(null);
+                setSourceLoading(false);
+                setUploadOpen(false);
+                setFiles([]);
+                setJobStates({});
+                setError('');
+                setAsking(false);
+                setBusy(false);
+                setLoading(true);
                 setPage(1);
                 setCourseId(courseIdInput);
               }}
@@ -392,7 +453,7 @@ export default function CourseKnowledgeWorkbench({ initialCourseId, location }: 
                   type="primary"
                   icon={<SendOutlined />}
                   loading={asking}
-                  disabled={!question.trim()}
+                  disabled={loading || !question.trim()}
                   onClick={() => void ask()}
                   aria-label={t('aiKnowledgeSendQuestion')}
                 />
