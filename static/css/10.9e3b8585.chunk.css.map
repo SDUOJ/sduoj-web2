@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack://src/Assert/css/Reconfirm.css"],"names":[],"mappings":"AAAA,iCACI,SACJ,CAEA,uBACI,iBAAkB,CAClB,gBACJ","file":"10.9e3b8585.chunk.css","sourcesContent":[".Reconfirm-Modal .ant-modal-body {\n    padding: 0;\n}\n\n.Reconfirm-Modal-Input{\n    margin-right: 15px;\n    margin-left: 15px;\n}"]}
