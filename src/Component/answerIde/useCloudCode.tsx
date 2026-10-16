@@ -7,6 +7,7 @@ import { CodeSnapshot, IdeContext } from './runTypes';
 import { JudgeTemplateAllType } from '../../Type/IProblem';
 
 export function useCloudCode(options: {
+  enabled?: boolean;
   identity: string;
   context: IdeContext;
   username: string;
@@ -17,6 +18,7 @@ export function useCloudCode(options: {
   restore: (language: string, code: string) => void;
 }) {
   const { t, i18n } = useTranslation();
+  const enabled = options.enabled !== false;
   const latest = useRef(options);
   latest.current = options;
   const mounted = useRef(true);
@@ -53,14 +55,15 @@ export function useCloudCode(options: {
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
   useEffect(() => {
+    if (!enabled) return;
     if (cooldownUntil <= Date.now()) return;
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
-  }, [cooldownUntil]);
+  }, [cooldownUntil, enabled]);
 
   useEffect(() => {
     const language = options.templateId;
-    if (!language || loaded.current.has(language)) {
+    if (!enabled || !language || loaded.current.has(language)) {
       setLoading(false);
       return;
     }
@@ -85,9 +88,10 @@ export function useCloudCode(options: {
     return () => {
       active = false;
     };
-  }, [options.templateId, options.identity, options.context, t]);
+  }, [enabled, options.templateId, options.identity, options.context, t]);
 
   const save = async (): Promise<boolean> => {
+    if (latest.current.enabled === false) return false;
     if (inFlight.current || cooldownUntil > Date.now() || loading) return false;
     const source = latest.current;
     if (!source.code.trim()) return false;
@@ -128,6 +132,7 @@ export function useCloudCode(options: {
   const saveRef = useRef(save);
   saveRef.current = save;
   useEffect(() => {
+    if (!enabled) return;
     const timer = setInterval(
       () => {
         void saveRef.current();
@@ -135,13 +140,13 @@ export function useCloudCode(options: {
       5 * 60 * 1000,
     );
     return () => clearInterval(timer);
-  }, [options.identity]);
+  }, [enabled, options.identity]);
 
   useEffect(() => {
     const epoch = ++historyEpoch.current;
     setHistory([]);
     setHasMore(false);
-    if (!options.templateId) {
+    if (!enabled || !options.templateId) {
       setHistoryLoading(false);
       return;
     }
@@ -163,7 +168,7 @@ export function useCloudCode(options: {
     return () => {
       historyEpoch.current = epoch + 1;
     };
-  }, [options.templateId, version, options.identity, options.context, t]);
+  }, [enabled, options.templateId, version, options.identity, options.context, t]);
   const date = (time: number) => new Date(time).toLocaleString(i18n.language, { hour12: false });
   const load = (snapshot: CodeSnapshot) => {
     loaded.current.add(snapshot.judgeTemplateId);
@@ -171,6 +176,7 @@ export function useCloudCode(options: {
     latest.current.restore(snapshot.judgeTemplateId, snapshot.code ?? '');
   };
   const choose = async (snapshot: CodeSnapshot) => {
+    if (!enabled) return;
     try {
       const full = await cApi.getIdeCode(snapshot.submissionId);
       if (!mounted.current) return;
@@ -180,6 +186,7 @@ export function useCloudCode(options: {
       setError(t('answerIde.cloudLoadError'));
     }
   };
+  if (!enabled) return { save, controls: null, history: null };
   return {
     save,
     controls: (

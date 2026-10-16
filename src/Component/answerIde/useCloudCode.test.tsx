@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import i18n from '../../Config/i18n';
 import cApi from '../../Utils/API/c-api';
@@ -66,6 +66,40 @@ beforeEach(async () => {
     savedAt: Date.now(),
     code: body.code,
   }));
+});
+it('keeps a disabled cloud client idle through mount, manual save and autosave', async () => {
+  jest.useFakeTimers();
+  try {
+    const initialize = jest.fn();
+    const restore = jest.fn();
+    const page = renderHook(() =>
+      useCloudCode({
+        enabled: false,
+        identity: 'alice:P',
+        username: 'alice',
+        context,
+        templateId: '6',
+        code: 'local source',
+        templates: [],
+        initialize,
+        restore,
+      }),
+    );
+    await act(async () => {
+      expect(await page.result.current.save()).toBe(false);
+      jest.advanceTimersByTime(10 * 60 * 1000);
+    });
+    expect(cApi.getIdeHistory).not.toHaveBeenCalled();
+    expect(cApi.getIdeCode).not.toHaveBeenCalled();
+    expect(cApi.saveIdeCode).not.toHaveBeenCalled();
+    expect(initialize).not.toHaveBeenCalled();
+    expect(restore).not.toHaveBeenCalled();
+    expect(page.result.current.controls).toBeNull();
+    expect(page.result.current.history).toBeNull();
+    page.unmount();
+  } finally {
+    jest.useRealTimers();
+  }
 });
 it('restores cloud code for a new browser while preserving an existing local draft', async () => {
   const page = render(<Fixture initial="" local={false} />);
