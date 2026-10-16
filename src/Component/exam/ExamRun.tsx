@@ -10,6 +10,7 @@ import eApi from 'Utils/API/e-api';
 import useExamInfo from './API/getExamInfo';
 import RecentSubmissionList from '../submission/SubmissionList/RecentSubmissionList';
 import { UrlPrefix } from '../../Config/constValue';
+import { activateExamAnswers, examAnswerSessionKey } from '../../Redux/Action/exam';
 import { getExamGroupListFunc } from './API/getExamGroupListFunc';
 
 const ExamRun = (props: any) => {
@@ -24,18 +25,34 @@ const ExamRun = (props: any) => {
   });
   const dispatch = useDispatch();
 
+  const sessionKey = useSelector(examAnswerSessionKey);
+  const unsaved = useSelector(
+    (state: any) => Object.keys(state.ExamReducer.examAnswerDraftInfo ?? {}).length > 0,
+  );
+  useEffect(() => dispatch(activateExamAnswers(eid) as any) as any, [dispatch, eid, sessionKey]);
+  useEffect(() => {
+    if (!unsaved) return;
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => window.removeEventListener('beforeunload', beforeUnload);
+  }, [unsaved]);
+
   // 获取题组信息
   useEffect(() => {
     let active = true;
-    if (problemList === undefined) {
-      eApi.getExamGroupList(eid).then((res: any) => {
+    eApi
+      .getExamGroupList(eid)
+      .then((res: any) => {
         getExamGroupListFunc(res, eid, dispatch, false, () => active);
-      });
-    }
+      })
+      .catch(() => {});
     return () => {
       active = false;
     };
-  }, [dispatch, eid, problemList]);
+  }, [dispatch, eid, sessionKey]);
 
   // console.log("problemList", problemList)
 

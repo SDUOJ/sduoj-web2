@@ -118,6 +118,8 @@
   "Statistics": "统计",
   "MaximumTime": "最大时间",
   "MaximumMemory": "最大内存",
+  "ExamAnswerSaving": "正在保存答案…",
+  "ExamAnswerSaveFailed": "答案尚未保存，请重试后再离开或交卷。",
   "Loading": "加载中",
   "TotalRunningTime": "总运行时间",
   "AvgMemory": "平均内存",

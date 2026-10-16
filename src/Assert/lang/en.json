@@ -118,6 +118,8 @@
   "Statistics": "Statistics",
   "MaximumTime": "Maximum time",
   "MaximumMemory": "Maximum memory",
+  "ExamAnswerSaving": "Saving answers…",
+  "ExamAnswerSaveFailed": "Answers are not saved. Retry before leaving or submitting.",
   "Loading": "Loading",
   "TotalRunningTime": "Total running time",
   "AvgMemory": "Average memory",
