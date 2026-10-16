@@ -250,6 +250,104 @@ test('standalone verifier returns a machine-readable report and fails closed', (
   assert.match(rejected.stderr, /source ref mismatch/);
 });
 
+function creatorFixture(context) {
+  const build = fixture(context);
+  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'sduoj-creator-'));
+  context.after(() => fs.rmSync(project, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(project, 'scripts'));
+  const script = path.join(project, 'scripts/release-artifact.cjs');
+  fs.copyFileSync(path.join(__dirname, 'release-artifact.cjs'), script);
+  fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify({ version: '1.0.0' }));
+  const environment = Object.fromEntries(
+    Object.entries(process.env).filter(
+      ([key]) =>
+        !key.startsWith('GIT_') &&
+        !['GITHUB_SHA', 'SDUOJ_RELEASE_ID', 'SOURCE_DATE_EPOCH'].includes(key),
+    ),
+  );
+  const git = (...args) =>
+    execFileSync('git', args, { cwd: project, env: environment, encoding: 'utf8' }).trim();
+  git('init', '--quiet');
+  git('add', '.');
+  git(
+    '-c',
+    'user.name=Artifact test',
+    '-c',
+    'user.email=artifact-test@example.invalid',
+    '-c',
+    'commit.gpgsign=false',
+    'commit',
+    '--quiet',
+    '-m',
+    'fixture',
+  );
+  const ref = git('rev-parse', 'HEAD');
+  return { build, project, script, ref, environment: { ...environment, GITHUB_SHA: ref } };
+}
+
+test('actual creator and verifier reproduce manifest bytes with a fixed SOURCE_DATE_EPOCH', (context) => {
+  const { build, script, ref, environment } = creatorFixture(context);
+  const env = { ...environment, SOURCE_DATE_EPOCH: '1788534000' };
+  const createOnce = () => execFileSync(process.execPath, [script, 'create', build], { env });
+  createOnce();
+  const filename = path.join(build, 'release-manifest.json');
+  const first = fs.readFileSync(filename);
+  createOnce();
+  assert.deepEqual(fs.readFileSync(filename), first);
+  const manifest = JSON.parse(first);
+  assert.equal(manifest.createdAt, new Date(1788534000 * 1000).toISOString());
+  assert.equal(manifest.releaseId, `1788534000000-${ref.slice(0, 12)}`);
+  assert.equal(
+    JSON.parse(
+      execFileSync(process.execPath, [script, 'verify', build, ref, '/v2/'], {
+        env,
+        encoding: 'utf8',
+      }),
+    ).status,
+    'verified',
+  );
+});
+
+test('creator rejects invalid or overflowing SOURCE_DATE_EPOCH before writing metadata', (context) => {
+  const { build, script, environment } = creatorFixture(context);
+  for (const epoch of [
+    '',
+    '-1',
+    '1.5',
+    ' 1',
+    '1e3',
+    'Infinity',
+    '253402300800',
+    '8640000000001',
+    '999999999999999999999',
+  ]) {
+    const result = spawnSync(process.execPath, [script, 'create', build], {
+      env: { ...environment, SOURCE_DATE_EPOCH: epoch },
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 1, epoch);
+    assert.match(result.stderr, /SOURCE_DATE_EPOCH/);
+    assert.equal(fs.existsSync(path.join(build, 'release-manifest.json')), false);
+  }
+});
+
+test('creator accepts epoch zero and retains wall-clock defaults when no epoch is supplied', (context) => {
+  const { build, script, ref, environment } = creatorFixture(context);
+  execFileSync(process.execPath, [script, 'create', build], {
+    env: { ...environment, SOURCE_DATE_EPOCH: '0' },
+  });
+  let manifest = JSON.parse(fs.readFileSync(path.join(build, 'release-manifest.json')));
+  assert.equal(manifest.createdAt, '1970-01-01T00:00:00.000Z');
+  assert.equal(manifest.releaseId, `0-${ref.slice(0, 12)}`);
+  const before = Date.now();
+  execFileSync(process.execPath, [script, 'create', build], { env: environment });
+  manifest = JSON.parse(fs.readFileSync(path.join(build, 'release-manifest.json')));
+  assert.ok(
+    Date.parse(manifest.createdAt) >= before && Date.parse(manifest.createdAt) <= Date.now(),
+  );
+  assert.equal(manifest.releaseId, `${Date.parse(manifest.createdAt)}-${ref.slice(0, 12)}`);
+});
+
 test('deployment rejects corrupt local and remote staged artifacts before applying a release', (context) => {
   for (const corruptLocal of [true, false]) {
     const project = fixture(context, '/v2-pre/');

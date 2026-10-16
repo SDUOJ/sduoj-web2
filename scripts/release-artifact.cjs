@@ -253,6 +253,23 @@ function create(directory, metadata) {
   return verify(directory, metadata.sourceRef, metadata.publicPath);
 }
 
+function creationTime() {
+  const epoch = process.env.SOURCE_DATE_EPOCH;
+  if (epoch === undefined) return Date.now();
+  assert(/^\d+$/.test(epoch), 'Invalid SOURCE_DATE_EPOCH');
+  const seconds = Number(epoch);
+  const milliseconds = seconds * 1000;
+  const date = new Date(milliseconds);
+  assert(
+    Number.isSafeInteger(seconds) &&
+      Number.isSafeInteger(milliseconds) &&
+      Number.isFinite(date.getTime()) &&
+      date.getUTCFullYear() <= 9999,
+    'Invalid or overflowing SOURCE_DATE_EPOCH',
+  );
+  return milliseconds;
+}
+
 function main() {
   const [command, directory = 'build', sourceRef, publicPath, targetUrl] = process.argv.slice(2);
   let report;
@@ -266,12 +283,13 @@ function main() {
       !process.env.GITHUB_SHA || process.env.GITHUB_SHA === ref,
       'Checkout does not match CI source ref',
     );
+    const createdMilliseconds = creationTime();
     report = create(path.resolve(directory), {
       sourceRef: ref,
       publicPath: sourceRef || '/v2/',
       version: JSON.parse(fs.readFileSync(path.join(project, 'package.json'), 'utf8')).version,
-      createdAt: new Date().toISOString(),
-      releaseId: process.env.SDUOJ_RELEASE_ID || `${Date.now()}-${ref.slice(0, 12)}`,
+      createdAt: new Date(createdMilliseconds).toISOString(),
+      releaseId: process.env.SDUOJ_RELEASE_ID || `${createdMilliseconds}-${ref.slice(0, 12)}`,
       deployment: readDeployment(path.resolve(directory)),
     });
   } else {
