@@ -72,12 +72,13 @@ export default function InterviewSession() {
   });
   const [activeTrack, setActiveTrack] = useState<MediaTrack>('video');
   const [recording, setRecording] = useState(false);
+  const [recordingPending, setRecordingPending] = useState(false);
   const [uploading, setUploading] = useState({ done: 0, total: 0 });
   const previewRef = useRef<HTMLVideoElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const recordingStartedRef = useRef(0);
-  const chunksRef = useRef<Blob[]>([]);
+  const captureGeneration = useRef(0);
+  const capturePending = useRef(false);
   const loadSequence = useRef(0);
   const trackNames: Record<MediaTrack, string> = {
     audio: t('aiInterviewTrackAudio'),
@@ -130,7 +131,6 @@ export default function InterviewSession() {
     void load();
     return () => {
       loadSequence.current += 1;
-      streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, [load]);
 
@@ -148,6 +148,24 @@ export default function InterviewSession() {
   const turnSequence = Math.max(0, (session?.data.turns.length || 1) - 1);
   const turnManifest =
     session?.media_manifest?.groups.filter((group) => group.turn_sequence === turnSequence) || [];
+
+  useEffect(() => {
+    setRecording(false);
+    setRecordingPending(false);
+    return () => {
+      captureGeneration.current += 1;
+      capturePending.current = false;
+      const recorder = recorderRef.current;
+      recorderRef.current = null;
+      if (recorder) {
+        recorder.ondataavailable = null;
+        recorder.onstop = null;
+        if (recorder.state !== 'inactive') recorder.stop();
+      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    };
+  }, [activeTrack, id, ownerId, turnSequence]);
 
   async function testCameraAndMicrophone() {
     setBusy(true);
@@ -193,29 +211,48 @@ export default function InterviewSession() {
   }
 
   async function startRecording() {
-    if (!session) return;
+    if (!session || capturePending.current || recorderRef.current) return;
+    const generation = ++captureGeneration.current;
+    const isCurrent = () => generation === captureGeneration.current;
+    capturePending.current = true;
+    setRecordingPending(true);
     setError('');
+    let stream: MediaStream | undefined;
     try {
-      const stream =
+      stream =
         activeTrack === 'screen'
           ? await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false })
           : await navigator.mediaDevices.getUserMedia({
               video: activeTrack === 'video',
               audio: true,
             });
+      if (!isCurrent()) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       const preferred = activeTrack === 'audio' ? 'audio/webm' : 'video/webm';
       const options = MediaRecorder.isTypeSupported(preferred)
         ? { mimeType: preferred }
         : undefined;
       const recorder = new MediaRecorder(stream, options);
-      chunksRef.current = [];
+      const chunks: Blob[] = [];
+      const started = Date.now();
       recorder.ondataavailable = (event) => {
-        if (event.data.size) chunksRef.current.push(event.data);
+        if (isCurrent() && event.data.size) chunks.push(event.data);
       };
-      recorder.onstop = () => void persistRecording(activeTrack);
+      recorder.onstop = () => {
+        if (!isCurrent()) return;
+        recorder.ondataavailable = null;
+        recorder.onstop = null;
+        recorderRef.current = null;
+        stream?.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+        if (previewRef.current) previewRef.current.srcObject = null;
+        setRecording(false);
+        void persistRecording(activeTrack, chunks, Date.now() - started, isCurrent);
+      };
       recorderRef.current = recorder;
       streamRef.current = stream;
-      recordingStartedRef.current = Date.now();
       if (previewRef.current && activeTrack !== 'audio') {
         previewRef.current.srcObject = stream;
         void previewRef.current.play().catch(() => undefined);
@@ -223,7 +260,17 @@ export default function InterviewSession() {
       recorder.start(10000);
       setRecording(true);
     } catch (reason) {
-      setError(String(reason));
+      stream?.getTracks().forEach((track) => track.stop());
+      if (isCurrent()) {
+        recorderRef.current = null;
+        streamRef.current = null;
+        setError(String(reason));
+      }
+    } finally {
+      if (isCurrent()) {
+        capturePending.current = false;
+        setRecordingPending(false);
+      }
     }
   }
 
@@ -233,11 +280,14 @@ export default function InterviewSession() {
     setRecording(false);
   }
 
-  async function persistRecording(track: MediaTrack) {
-    const blobs = chunksRef.current;
-    const elapsed = Math.max(1000, Date.now() - recordingStartedRef.current);
-    streamRef.current?.getTracks().forEach((mediaTrack) => mediaTrack.stop());
-    streamRef.current = null;
+  async function persistRecording(
+    track: MediaTrack,
+    blobs: Blob[],
+    elapsedMs: number,
+    isCurrent: () => boolean,
+  ) {
+    if (!isCurrent()) return;
+    const elapsed = Math.max(1000, elapsedMs);
     if (!blobs.length) {
       setError(t('aiInterviewNoRecording'));
       return;
@@ -246,6 +296,7 @@ export default function InterviewSession() {
     const duration = Math.max(1, Math.ceil(elapsed / blobs.length));
     try {
       for (let index = 0; index < blobs.length; index += 1) {
+        if (!isCurrent()) return;
         const suffix = track === 'audio' ? 'webm' : 'webm';
         await savePending({
           key: `${id}:${turnSequence}:${track}:${recordingId}:${index}`,
@@ -261,9 +312,9 @@ export default function InterviewSession() {
           blob: blobs[index],
         });
       }
-      await retryPendingMedia();
+      if (isCurrent()) await retryPendingMedia(isCurrent);
     } catch (reason) {
-      setError(String(reason));
+      if (isCurrent()) setError(String(reason));
     }
   }
 
@@ -292,12 +343,13 @@ export default function InterviewSession() {
     }
   }
 
-  async function retryPendingMedia() {
+  async function retryPendingMedia(isCurrent: () => boolean = () => true) {
     if (!ownerId) {
       setError(t('aiInterviewNoAuthCache'));
       return;
     }
     const pending = await pendingFor(ownerId, id, turnSequence);
+    if (!isCurrent()) return;
     if (!pending.length) {
       await load(true);
       return;
@@ -305,7 +357,9 @@ export default function InterviewSession() {
     setUploading({ done: 0, total: pending.length });
     let done = 0;
     for (const item of pending) {
+      if (!isCurrent()) return;
       await uploadPending(item);
+      if (!isCurrent()) return;
       done += 1;
       setUploading({ done, total: pending.length });
     }
@@ -603,6 +657,7 @@ export default function InterviewSession() {
                 <Typography.Title level={4}>{t('aiInterviewAnswerEvidence')}</Typography.Title>
                 <Segmented<MediaTrack>
                   value={activeTrack}
+                  disabled={recording || recordingPending}
                   options={(data.media_policy?.required_tracks || ['video']).map((track) => ({
                     value: track,
                     label: trackNames[track],
@@ -615,6 +670,7 @@ export default function InterviewSession() {
                     <Button
                       type="primary"
                       icon={<PlayCircleOutlined />}
+                      loading={recordingPending}
                       onClick={() => void startRecording()}
                     >
                       {t('aiInterviewRecordTrack', { track: trackNames[activeTrack] })}
