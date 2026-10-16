@@ -203,3 +203,62 @@ test('a rejected permission request releases the guard for a successful retry', 
   view.unmount();
   expect(granted.stop).toHaveBeenCalledTimes(1);
 });
+
+const unavailableSessions: [string, (value: InterviewResource) => InterviewResource][] = [
+  ['cancelled', (value) => ({ ...value, effective_status: 'cancelled' })],
+  ['expired', (value) => ({ ...value, effective_status: 'expired' })],
+  ['cancelled state', (value) => ({ ...value, state: 'cancelled' })],
+  ['failed state', (value) => ({ ...value, state: 'failed' })],
+  ['cancelled data', (value) => ({ ...value, data: { ...value.data, status: 'cancelled' } })],
+  ['running data', (value) => ({ ...value, data: { ...value.data, status: 'running' } })],
+  [
+    'answered turn',
+    (value) => ({ ...value, data: { ...value.data, turns: [{ question: 'Q', answer: 'Done' }] } }),
+  ],
+  ['teacher role', (value) => ({ ...value, role: 'teacher' })],
+];
+
+async function refreshFromPoll(
+  timer: jest.SpyInstance,
+  update: (value: InterviewResource) => InterviewResource,
+) {
+  const previous = await (interviewApi.session as jest.Mock).mock.results[0].value;
+  (interviewApi.session as jest.Mock).mockResolvedValue(update(previous));
+  const poll = timer.mock.calls.find(([, interval]) => interval === 2500)?.[0];
+  expect(poll).toBeInstanceOf(Function);
+  act(() => poll());
+  await waitFor(() => expect(screen.queryByRole('button', { name: /Record / })).toBeNull());
+}
+
+test.each(unavailableSessions)('a same-turn %s refresh stops active capture', async (_, update) => {
+  const timer = jest.spyOn(window, 'setInterval');
+  const granted = streamFixture();
+  (navigator.mediaDevices.getUserMedia as jest.Mock).mockResolvedValue(granted.stream);
+  const view = await openSession();
+  fireEvent.click(screen.getByRole('button', { name: /Record / }));
+  await screen.findByRole('button', { name: /Stop recording/ });
+  await refreshFromPoll(timer, update);
+  await waitFor(() => expect(granted.stop).toHaveBeenCalledTimes(1));
+  expect(Recorder.instances[0].stop).toHaveBeenCalledTimes(1);
+  expect(savePending).not.toHaveBeenCalled();
+  expect(uploadPending).not.toHaveBeenCalled();
+  view.unmount();
+});
+
+test.each(unavailableSessions)(
+  'a same-turn %s refresh rejects late device permission',
+  async (_, update) => {
+    const timer = jest.spyOn(window, 'setInterval');
+    const permission = deferred<MediaStream>();
+    (navigator.mediaDevices.getUserMedia as jest.Mock).mockReturnValue(permission.promise);
+    const view = await openSession();
+    fireEvent.click(screen.getByRole('button', { name: /Record / }));
+    await refreshFromPoll(timer, update);
+    const late = streamFixture();
+    await act(async () => permission.resolve(late.stream));
+    expect(Recorder.instances).toHaveLength(0);
+    expect(late.stop).toHaveBeenCalledTimes(1);
+    expect(savePending).not.toHaveBeenCalled();
+    view.unmount();
+  },
+);

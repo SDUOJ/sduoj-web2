@@ -79,6 +79,7 @@ export default function InterviewSession() {
   const streamRef = useRef<MediaStream | null>(null);
   const captureGeneration = useRef(0);
   const capturePending = useRef(false);
+  const captureContextRef = useRef('');
   const loadSequence = useRef(0);
   const trackNames: Record<MediaTrack, string> = {
     audio: t('aiInterviewTrackAudio'),
@@ -135,17 +136,25 @@ export default function InterviewSession() {
   }, [load]);
 
   useEffect(() => {
-    if (
-      !session ||
-      terminal.has(session.effective_status) ||
-      session.effective_status === 'awaiting_answer'
-    )
-      return;
+    if (!session || terminal.has(session.effective_status)) return;
     const timer = window.setInterval(() => void load(true), 2500);
     return () => window.clearInterval(timer);
   }, [load, session]);
 
   const turnSequence = Math.max(0, (session?.data.turns.length || 1) - 1);
+  const canAnswer = Boolean(
+    session &&
+    session.id === id &&
+    ownerId &&
+    session.data.student_id === ownerId &&
+    session.role === 'student' &&
+    session.state === 'ready' &&
+    session.effective_status === 'awaiting_answer' &&
+    session.data.status === 'awaiting_answer' &&
+    session.data.turns[turnSequence]?.answer === null,
+  );
+  const captureContext = canAnswer ? JSON.stringify([id, ownerId, turnSequence, activeTrack]) : '';
+  captureContextRef.current = captureContext;
   const turnManifest =
     session?.media_manifest?.groups.filter((group) => group.turn_sequence === turnSequence) || [];
 
@@ -164,8 +173,9 @@ export default function InterviewSession() {
       }
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
+      if (previewRef.current) previewRef.current.srcObject = null;
     };
-  }, [activeTrack, id, ownerId, turnSequence]);
+  }, [captureContext]);
 
   async function testCameraAndMicrophone() {
     setBusy(true);
@@ -211,9 +221,10 @@ export default function InterviewSession() {
   }
 
   async function startRecording() {
-    if (!session || capturePending.current || recorderRef.current) return;
+    if (!captureContext || capturePending.current || recorderRef.current) return;
     const generation = ++captureGeneration.current;
-    const isCurrent = () => generation === captureGeneration.current;
+    const isCurrent = () =>
+      generation === captureGeneration.current && captureContext === captureContextRef.current;
     capturePending.current = true;
     setRecordingPending(true);
     setError('');
@@ -651,7 +662,7 @@ export default function InterviewSession() {
               </div>
             ) : null}
 
-            {session.role === 'student' && data.status === 'awaiting_answer' && currentTurn && (
+            {canAnswer && currentTurn && (
               <div className="ai-interview-answer-panel">
                 <Divider />
                 <Typography.Title level={4}>{t('aiInterviewAnswerEvidence')}</Typography.Title>

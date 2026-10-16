@@ -78,7 +78,7 @@ function renderSession() {
   store.dispatch({
     type: 'setUserInfo',
     data: {
-      userId: 'student-42',
+      userId: '42',
       username: 'student',
       nickname: 'Student',
       studentId: '42',
