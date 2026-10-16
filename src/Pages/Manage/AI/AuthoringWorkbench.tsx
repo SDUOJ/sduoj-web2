@@ -235,7 +235,10 @@ export default function AuthoringWorkbench() {
       .split(/[\s,，]+/)
       .filter(Boolean)
       .map(Number);
-    if (result.some((item) => !Number.isSafeInteger(item) || item <= 0)) {
+    if (
+      result.some((item) => !Number.isSafeInteger(item) || item <= 0) ||
+      new Set(result).size !== result.length
+    ) {
       throw new Error(t('aiAuthoringInvalidCheckpointIds'));
     }
     return result;
@@ -269,7 +272,23 @@ export default function AuthoringWorkbench() {
       }
       const suppliedIds = parseCheckpointIds(values.checkpointIds);
       if (suppliedIds.length) recovery.checkpointIds = suppliedIds;
+      if (
+        !Array.isArray(recovery.checkpointIds) ||
+        recovery.checkpointIds.some((item) => !Number.isSafeInteger(item) || item <= 0) ||
+        new Set(recovery.checkpointIds).size !== recovery.checkpointIds.length
+      ) {
+        throw new Error(t('aiAuthoringInvalidCheckpointIds'));
+      }
+      if (
+        recovery.checkpointIds.length > plan.checkpoints.length ||
+        (suppliedIds.length > 0 && suppliedIds.length !== plan.checkpoints.length)
+      ) {
+        throw new Error(t('aiAuthoringCheckpointMismatch'));
+      }
       let code = String(values.problemCode || recovery.code || '').trim();
+      if (recovery.checkpointIds.length && !code) {
+        throw new Error(t('aiAuthoringRecoveryMismatch'));
+      }
       if (!code) {
         sessionStorage.setItem(recoveryKey, JSON.stringify(recovery));
         code = await authoringApi.createProgram(plan.problem);
@@ -280,14 +299,15 @@ export default function AuthoringWorkbench() {
       const native = await authoringApi.getProgram(code);
       if (native.source !== plan.marker) throw new Error(t('aiAuthoringProgramMismatch'));
       await authoringApi.updateDescription(native.defaultDescriptionId, code, plan.description);
-      if (
-        recovery.checkpointIds.length &&
-        recovery.checkpointIds.length !== plan.checkpoints.length
-      ) {
-        throw new Error(t('aiAuthoringCheckpointMismatch'));
-      }
       for (let index = recovery.checkpointIds.length; index < plan.checkpoints.length; index += 1) {
         const uploaded = await authoringApi.uploadCheckpoint(plan.checkpoints[index]);
+        if (
+          !Number.isSafeInteger(uploaded.checkpointId) ||
+          uploaded.checkpointId <= 0 ||
+          recovery.checkpointIds.includes(uploaded.checkpointId)
+        ) {
+          throw new Error(t('aiAuthoringInvalidCheckpointIds'));
+        }
         recovery.checkpointIds.push(uploaded.checkpointId);
         recovery.stage = 'uploading';
         sessionStorage.setItem(recoveryKey, JSON.stringify(recovery));

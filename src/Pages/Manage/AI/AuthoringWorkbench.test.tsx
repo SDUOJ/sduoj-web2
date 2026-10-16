@@ -294,3 +294,93 @@ test.each(['resolve', 'reject'])(
     expect(authoringApi.downloadBundle).toHaveBeenCalledWith(second.id);
   },
 );
+
+function publicationFixture() {
+  current = resource('approved');
+  const plan: AuthoringNativePlan = {
+    resource_id: current.id,
+    version: current.version,
+    revision: 2,
+    package_hash: 'package-hash',
+    marker: 'autolab-ai:author-1:v3',
+    problem: { source: 'autolab-ai:author-1:v3' },
+    description: {},
+    checkpoints: current.data.candidate!.test_plan,
+  };
+  (authoringApi.nativePlan as jest.Mock).mockResolvedValue(plan);
+  (authoringApi.createProgram as jest.Mock).mockResolvedValue('SDUOJ-99');
+  (authoringApi.getProgram as jest.Mock).mockResolvedValue({
+    source: plan.marker,
+    defaultDescriptionId: 88,
+  });
+  (authoringApi.updateDescription as jest.Mock).mockResolvedValue(undefined);
+  (authoringApi.configureProblem as jest.Mock).mockResolvedValue(undefined);
+  (authoringApi.finalize as jest.Mock).mockResolvedValue({ problem_code: 'SDUOJ-99' });
+  return plan;
+}
+
+test('resumes a partial checkpoint upload without recreating the problem or uploading its prefix', async () => {
+  const plan = publicationFixture();
+  (authoringApi.uploadCheckpoint as jest.Mock)
+    .mockResolvedValueOnce({ checkpointId: 101 })
+    .mockRejectedValueOnce(new Error('Upload interrupted'))
+    .mockResolvedValueOnce({ checkpointId: 102 })
+    .mockResolvedValueOnce({ checkpointId: 103 });
+  renderPage();
+  fireEvent.click(await screen.findByRole('button', { name: /录入 OJ/ }));
+  fireEvent.change(await screen.findByLabelText('编程题组 ID'), { target: { value: '8' } });
+  fireEvent.click(screen.getByRole('button', { name: '上传并验证' }));
+  await screen.findByText('Error: Upload interrupted');
+  const recoveryKey = 'autolab-authoring-publication:' + plan.marker;
+  expect(JSON.parse(sessionStorage.getItem(recoveryKey)!)).toMatchObject({
+    code: 'SDUOJ-99',
+    checkpointIds: [101],
+  });
+  expect(authoringApi.finalize).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '上传并验证' }));
+  await waitFor(() => expect(authoringApi.finalize).toHaveBeenCalledTimes(1));
+  expect(authoringApi.createProgram).toHaveBeenCalledTimes(1);
+  expect(
+    (authoringApi.uploadCheckpoint as jest.Mock).mock.calls.map(([checkpoint]) => checkpoint.index),
+  ).toEqual([1, 2, 2, 3]);
+  expect(authoringApi.configureProblem).toHaveBeenCalledWith('SDUOJ-99', plan, [101, 102, 103], 6);
+  expect(sessionStorage.getItem(recoveryKey)).toBeNull();
+});
+
+test.each([[101, 101], [0], [101, 102, 103, 104]])(
+  'rejects invalid saved checkpoint IDs %j before changing native data',
+  async (...ids) => {
+    const plan = publicationFixture();
+    sessionStorage.setItem(
+      'autolab-authoring-publication:' + plan.marker,
+      JSON.stringify({
+        marker: plan.marker,
+        packageHash: plan.package_hash,
+        code: 'SDUOJ-99',
+        checkpointIds: ids,
+        stage: 'uploading',
+      }),
+    );
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: /录入 OJ/ }));
+    fireEvent.change(await screen.findByLabelText('编程题组 ID'), { target: { value: '8' } });
+    fireEvent.click(screen.getByRole('button', { name: '上传并验证' }));
+    await screen.findByRole('alert');
+    expect(authoringApi.updateDescription).not.toHaveBeenCalled();
+    expect(authoringApi.uploadCheckpoint).not.toHaveBeenCalled();
+    expect(authoringApi.finalize).not.toHaveBeenCalled();
+  },
+);
+
+test('manual checkpoint IDs must still describe the complete package', async () => {
+  publicationFixture();
+  renderPage();
+  fireEvent.click(await screen.findByRole('button', { name: /录入 OJ/ }));
+  fireEvent.change(await screen.findByLabelText('编程题组 ID'), { target: { value: '8' } });
+  fireEvent.change(screen.getByLabelText('已上传的完整测试点 ID'), { target: { value: '101' } });
+  fireEvent.click(screen.getByRole('button', { name: '上传并验证' }));
+  await screen.findByText('Error: 恢复的测试点数量与当前测试包不一致');
+  expect(authoringApi.createProgram).not.toHaveBeenCalled();
+  expect(authoringApi.updateDescription).not.toHaveBeenCalled();
+  expect(authoringApi.finalize).not.toHaveBeenCalled();
+});
