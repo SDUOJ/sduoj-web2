@@ -73,13 +73,20 @@ export default function InterviewSession() {
   const [activeTrack, setActiveTrack] = useState<MediaTrack>('video');
   const [recording, setRecording] = useState(false);
   const [recordingPending, setRecordingPending] = useState(false);
+  const [mediaBusy, setMediaBusy] = useState(false);
   const [uploading, setUploading] = useState({ done: 0, total: 0 });
-  const previewRef = useRef<HTMLVideoElement>(null);
+  const previewRef = useRef<HTMLVideoElement | null>(null);
+  const attachPreview = useCallback((node: HTMLVideoElement | null) => {
+    if (previewRef.current && previewRef.current !== node) previewRef.current.srcObject = null;
+    previewRef.current = node;
+  }, []);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const captureGeneration = useRef(0);
   const capturePending = useRef(false);
   const captureContextRef = useRef('');
+  const mediaOperation = useRef<symbol | null>(null);
+  const answerOperation = useRef<symbol | null>(null);
   const loadSequence = useRef(0);
   const trackNames: Record<MediaTrack, string> = {
     audio: t('aiInterviewTrackAudio'),
@@ -161,9 +168,13 @@ export default function InterviewSession() {
   useEffect(() => {
     setRecording(false);
     setRecordingPending(false);
+    setMediaBusy(false);
     return () => {
       captureGeneration.current += 1;
       capturePending.current = false;
+      mediaOperation.current = null;
+      if (answerOperation.current) setBusy(false);
+      answerOperation.current = null;
       const recorder = recorderRef.current;
       recorderRef.current = null;
       if (recorder) {
@@ -221,7 +232,15 @@ export default function InterviewSession() {
   }
 
   async function startRecording() {
-    if (!captureContext || capturePending.current || recorderRef.current) return;
+    if (
+      !captureContext ||
+      capturePending.current ||
+      recorderRef.current ||
+      mediaOperation.current ||
+      answerOperation.current ||
+      busy
+    )
+      return;
     const generation = ++captureGeneration.current;
     const isCurrent = () =>
       generation === captureGeneration.current && captureContext === captureContextRef.current;
@@ -291,6 +310,32 @@ export default function InterviewSession() {
     setRecording(false);
   }
 
+  function beginMediaOperation() {
+    if (
+      !captureContext ||
+      capturePending.current ||
+      recorderRef.current ||
+      mediaOperation.current ||
+      answerOperation.current ||
+      busy
+    )
+      return null;
+    const generation = captureGeneration.current;
+    const token = Symbol();
+    mediaOperation.current = token;
+    setMediaBusy(true);
+    const isCurrent = () =>
+      generation === captureGeneration.current && captureContext === captureContextRef.current;
+    return {
+      isCurrent,
+      finish() {
+        if (mediaOperation.current !== token) return;
+        mediaOperation.current = null;
+        if (isCurrent()) setMediaBusy(false);
+      },
+    };
+  }
+
   async function persistRecording(
     track: MediaTrack,
     blobs: Blob[],
@@ -303,6 +348,8 @@ export default function InterviewSession() {
       setError(t('aiInterviewNoRecording'));
       return;
     }
+    const operation = beginMediaOperation();
+    if (!operation) return;
     const recordingId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const duration = Math.max(1, Math.ceil(elapsed / blobs.length));
     try {
@@ -323,13 +370,17 @@ export default function InterviewSession() {
           blob: blobs[index],
         });
       }
-      if (isCurrent()) await retryPendingMedia(isCurrent);
+      if (isCurrent()) await uploadCurrentMedia(isCurrent);
     } catch (reason) {
       if (isCurrent()) setError(String(reason));
+    } finally {
+      operation.finish();
     }
   }
 
   async function addManualFile(file: File) {
+    const operation = beginMediaOperation();
+    if (!operation) return;
     const item: PendingMedia = {
       key: `${id}:${turnSequence}:${activeTrack}:manual:${Date.now()}`,
       ownerId,
@@ -343,18 +394,29 @@ export default function InterviewSession() {
       filename: file.name,
       blob: file,
     };
-    setBusy(true);
     try {
       await savePending(item);
-      await retryPendingMedia();
+      if (operation.isCurrent()) await uploadCurrentMedia(operation.isCurrent);
     } catch (reason) {
-      setError(String(reason));
+      if (operation.isCurrent()) setError(String(reason));
     } finally {
-      setBusy(false);
+      operation.finish();
     }
   }
 
-  async function retryPendingMedia(isCurrent: () => boolean = () => true) {
+  async function retryPendingMedia() {
+    const operation = beginMediaOperation();
+    if (!operation) return;
+    try {
+      await uploadCurrentMedia(operation.isCurrent);
+    } catch (reason) {
+      if (operation.isCurrent()) setError(String(reason));
+    } finally {
+      operation.finish();
+    }
+  }
+
+  async function uploadCurrentMedia(isCurrent: () => boolean) {
     if (!ownerId) {
       setError(t('aiInterviewNoAuthCache'));
       return;
@@ -378,19 +440,40 @@ export default function InterviewSession() {
   }
 
   async function submitAnswer() {
-    if (!session) return;
+    if (
+      !session ||
+      !captureContext ||
+      capturePending.current ||
+      recorderRef.current ||
+      mediaOperation.current ||
+      answerOperation.current ||
+      busy ||
+      !answer.trim() ||
+      !session.media_manifest?.complete
+    )
+      return;
+    const context = captureContext;
+    const generation = captureGeneration.current;
+    const token = Symbol();
+    answerOperation.current = token;
+    const isCurrent = () =>
+      generation === captureGeneration.current && context === captureContextRef.current;
     const groups =
       session.media_manifest?.groups.filter((group) => group.turn_sequence === turnSequence) || [];
     const fileIds = groups.flatMap((group) => group.segments.map((item) => item.file_id));
     setBusy(true);
     try {
       await interviewApi.answer(id, turnSequence, session.version, answer, fileIds);
+      if (!isCurrent()) return;
       setAnswer('');
       await load();
     } catch (reason) {
-      setError(String(reason));
+      if (isCurrent()) setError(String(reason));
     } finally {
-      setBusy(false);
+      if (answerOperation.current === token) {
+        answerOperation.current = null;
+        if (isCurrent()) setBusy(false);
+      }
     }
   }
 
@@ -668,20 +751,21 @@ export default function InterviewSession() {
                 <Typography.Title level={4}>{t('aiInterviewAnswerEvidence')}</Typography.Title>
                 <Segmented<MediaTrack>
                   value={activeTrack}
-                  disabled={recording || recordingPending}
+                  disabled={recording || recordingPending || mediaBusy || busy}
                   options={(data.media_policy?.required_tracks || ['video']).map((track) => ({
                     value: track,
                     label: trackNames[track],
                   }))}
                   onChange={setActiveTrack}
                 />
-                <video ref={previewRef} className="ai-interview-preview" muted playsInline />
+                <video ref={attachPreview} className="ai-interview-preview" muted playsInline />
                 <Space wrap>
                   {!recording ? (
                     <Button
                       type="primary"
                       icon={<PlayCircleOutlined />}
                       loading={recordingPending}
+                      disabled={mediaBusy || busy}
                       onClick={() => void startRecording()}
                     >
                       {t('aiInterviewRecordTrack', { track: trackNames[activeTrack] })}
@@ -691,13 +775,18 @@ export default function InterviewSession() {
                       {t('aiInterviewStopRecording')}
                     </Button>
                   )}
-                  <Button icon={<CloudUploadOutlined />} onClick={() => void retryPendingMedia()}>
+                  <Button
+                    icon={<CloudUploadOutlined />}
+                    disabled={recording || recordingPending || mediaBusy || busy}
+                    onClick={() => void retryPendingMedia()}
+                  >
                     {t('aiInterviewRetryPending')}
                   </Button>
                   <label className="ai-interview-file-button">
                     {t('aiInterviewUploadMedia')}
                     <input
                       type="file"
+                      disabled={recording || recordingPending || mediaBusy || busy}
                       accept="video/webm,video/mp4,audio/webm,audio/wav,audio/mpeg"
                       onChange={(event) => {
                         const file = event.target.files?.[0];
@@ -721,7 +810,13 @@ export default function InterviewSession() {
                 <Button
                   type="primary"
                   loading={busy}
-                  disabled={!answer.trim() || !requiredComplete || recording}
+                  disabled={
+                    !answer.trim() ||
+                    !requiredComplete ||
+                    recording ||
+                    recordingPending ||
+                    mediaBusy
+                  }
                   onClick={() => void submitAnswer()}
                 >
                   {t('aiInterviewSubmitQuestion')}

@@ -8,7 +8,7 @@ import InterviewSession from './InterviewSession';
 import { interviewApi, InterviewResource, MediaTrack } from './interview-api';
 import { pendingFor, savePending, uploadPending } from './interview-media';
 
-jest.mock('./interview-api', () => ({ interviewApi: { session: jest.fn() } }));
+jest.mock('./interview-api', () => ({ interviewApi: { session: jest.fn(), answer: jest.fn() } }));
 jest.mock('./interview-media', () => ({
   pendingFor: jest.fn(),
   savePending: jest.fn(),
@@ -44,7 +44,7 @@ class Recorder {
   }
 }
 
-async function openSession(tracks: MediaTrack[] = ['video']) {
+async function openSession(tracks: MediaTrack[] = ['video'], complete = false) {
   const session: InterviewResource = {
     id: 'i1',
     kind: 'interview',
@@ -52,6 +52,7 @@ async function openSession(tracks: MediaTrack[] = ['video']) {
     state: 'ready',
     role: 'student',
     effective_status: 'awaiting_answer',
+    media_manifest: { complete, groups: [] },
     data: {
       title: 'Recording fixture',
       student_id: '42',
@@ -259,6 +260,149 @@ test.each(unavailableSessions)(
     expect(Recorder.instances).toHaveLength(0);
     expect(late.stop).toHaveBeenCalledTimes(1);
     expect(savePending).not.toHaveBeenCalled();
+    view.unmount();
+  },
+);
+
+function manualInput() {
+  return document.querySelector('input[type="file"]') as HTMLInputElement;
+}
+
+test('pending device permission excludes answer submission, retry and manual upload', async () => {
+  const permission = deferred<MediaStream>();
+  (navigator.mediaDevices.getUserMedia as jest.Mock).mockReturnValue(permission.promise);
+  const view = await openSession(['video'], true);
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Current answer' } });
+  const submit = screen.getByRole('button', { name: 'Submit answer' });
+  const retry = screen.getByRole('button', { name: /Retry pending uploads/ });
+  expect(submit).toBeEnabled();
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: /Record / }));
+    fireEvent.click(submit);
+    fireEvent.click(retry);
+    fireEvent.change(manualInput(), { target: { files: [new File(['media'], 'manual.webm')] } });
+  });
+  expect(submit).toBeDisabled();
+  expect(retry).toBeDisabled();
+  expect(manualInput()).toBeDisabled();
+  expect(interviewApi.answer).not.toHaveBeenCalled();
+  expect(pendingFor).not.toHaveBeenCalled();
+  expect(savePending).not.toHaveBeenCalled();
+  const late = streamFixture();
+  view.unmount();
+  await act(async () => permission.resolve(late.stream));
+  expect(late.stop).toHaveBeenCalledTimes(1);
+});
+
+test('a pending retry excludes repeated retries, recording, manual upload and answer submission', async () => {
+  const pending = deferred<{ key: string }[]>();
+  (pendingFor as jest.Mock).mockReturnValue(pending.promise);
+  const view = await openSession(['video'], true);
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Current answer' } });
+  const retry = screen.getByRole('button', { name: /Retry pending uploads/ });
+  act(() => {
+    fireEvent.click(retry);
+    fireEvent.click(retry);
+    fireEvent.click(screen.getByRole('button', { name: /Record / }));
+    fireEvent.click(screen.getByRole('button', { name: 'Submit answer' }));
+    fireEvent.change(manualInput(), { target: { files: [new File(['media'], 'manual.webm')] } });
+  });
+  expect(pendingFor).toHaveBeenCalledTimes(1);
+  expect(savePending).not.toHaveBeenCalled();
+  expect(interviewApi.answer).not.toHaveBeenCalled();
+  expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+  await act(async () => pending.resolve([]));
+  await waitFor(() => expect(retry).toBeEnabled());
+  view.unmount();
+});
+
+test('answer submission excludes duplicate submission and new media work until it finishes', async () => {
+  const answer = deferred<void>();
+  (interviewApi.answer as jest.Mock).mockReturnValue(answer.promise);
+  const view = await openSession(['video'], true);
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Current answer' } });
+  const submit = screen.getByRole('button', { name: 'Submit answer' });
+  act(() => {
+    fireEvent.click(submit);
+    fireEvent.click(submit);
+    fireEvent.click(screen.getByRole('button', { name: /Record / }));
+    fireEvent.click(screen.getByRole('button', { name: /Retry pending uploads/ }));
+  });
+  expect(interviewApi.answer).toHaveBeenCalledTimes(1);
+  expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+  expect(pendingFor).not.toHaveBeenCalled();
+  await act(async () => answer.resolve());
+  view.unmount();
+});
+
+test('a manual file still saves and uploads once before releasing the media guard', async () => {
+  const saving = deferred<void>();
+  (savePending as jest.Mock).mockReturnValue(saving.promise);
+  (pendingFor as jest.Mock).mockResolvedValue([{ key: 'manual' }]);
+  const view = await openSession(['video'], true);
+  const file = new File(['media'], 'manual.webm');
+  fireEvent.change(manualInput(), { target: { files: [file] } });
+  expect(manualInput()).toBeDisabled();
+  expect(savePending).toHaveBeenCalledWith(
+    expect.objectContaining({ ownerId: '42', resourceId: 'i1', turnSequence: 0, blob: file }),
+  );
+  await act(async () => saving.resolve());
+  expect(uploadPending).toHaveBeenCalledTimes(1);
+  await waitFor(() => expect(manualInput()).toBeEnabled());
+  view.unmount();
+});
+
+test('a failed pending-media lookup reports its error and releases the retry guard', async () => {
+  (pendingFor as jest.Mock).mockRejectedValueOnce(new Error('Local cache unavailable'));
+  const view = await openSession();
+  const retry = screen.getByRole('button', { name: /Retry pending uploads/ });
+  fireEvent.click(retry);
+  await screen.findByText('Error: Local cache unavailable');
+  expect(retry).toBeEnabled();
+  fireEvent.click(retry);
+  await waitFor(() => expect(pendingFor).toHaveBeenCalledTimes(2));
+  view.unmount();
+});
+
+test('an answer response after leaving cannot refresh the old session', async () => {
+  const answer = deferred<void>();
+  (interviewApi.answer as jest.Mock).mockReturnValue(answer.promise);
+  const view = await openSession(['video'], true);
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Current answer' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Submit answer' }));
+  view.unmount();
+  await act(async () => answer.resolve());
+  expect(interviewApi.session).toHaveBeenCalledTimes(1);
+});
+
+test.each(['retry', 'manual', 'upload'])(
+  'a late %s operation stops at a same-turn cancellation',
+  async (operation) => {
+    const timer = jest.spyOn(window, 'setInterval');
+    const pending = deferred<{ key: string }[]>();
+    const saving = deferred<void>();
+    const uploading = deferred<void>();
+    if (operation === 'retry') (pendingFor as jest.Mock).mockReturnValue(pending.promise);
+    if (operation === 'manual') (savePending as jest.Mock).mockReturnValue(saving.promise);
+    if (operation === 'upload') {
+      (pendingFor as jest.Mock).mockResolvedValue([{ key: 'first' }, { key: 'second' }]);
+      (uploadPending as jest.Mock).mockReturnValue(uploading.promise);
+    }
+    const view = await openSession();
+    if (operation === 'manual')
+      fireEvent.change(manualInput(), { target: { files: [new File(['media'], 'manual.webm')] } });
+    else fireEvent.click(screen.getByRole('button', { name: /Retry pending uploads/ }));
+    if (operation === 'upload') await waitFor(() => expect(uploadPending).toHaveBeenCalledTimes(1));
+    await refreshFromPoll(timer, (value) => ({ ...value, effective_status: 'cancelled' }));
+    const calls = (interviewApi.session as jest.Mock).mock.calls.length;
+    await act(async () => {
+      pending.resolve([{ key: 'late' }]);
+      saving.resolve();
+      uploading.resolve();
+    });
+    expect(uploadPending).toHaveBeenCalledTimes(operation === 'upload' ? 1 : 0);
+    if (operation === 'manual') expect(pendingFor).not.toHaveBeenCalled();
+    expect(interviewApi.session).toHaveBeenCalledTimes(calls);
     view.unmount();
   },
 );
