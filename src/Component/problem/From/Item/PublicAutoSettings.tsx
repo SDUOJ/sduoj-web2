@@ -1,4 +1,4 @@
-import { lazy, Suspense, useId, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -48,6 +48,27 @@ export default function PublicAutoSettings(props: {
       ? Boolean(props.value.standardProgram?.zipFileId)
       : standardMode === 'zip';
   const config = props.value;
+  const latest = useRef({ config, onChange: props.onChange, validatorZipMode, zipMode });
+  latest.current = { config, onChange: props.onChange, validatorZipMode, zipMode };
+  const mounted = useRef(false);
+  const uploadGeneration = useRef({ validator: 0, standard: 0 });
+  const validatorEnabled = Boolean(config.inputValidator);
+  const standardEnabled = Boolean(config.standardProgram);
+  useEffect(() => {
+    const generations = uploadGeneration.current;
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      generations.validator++;
+      generations.standard++;
+    };
+  }, [props.problem?.problemCode]);
+  useEffect(() => {
+    uploadGeneration.current.validator++;
+  }, [validatorZipMode, validatorEnabled]);
+  useEffect(() => {
+    uploadGeneration.current.standard++;
+  }, [zipMode, standardEnabled]);
   const languages = (
     props.languageTemplates ??
     props.problem?.judgeTemplateListDTOList ??
@@ -65,7 +86,15 @@ export default function PublicAutoSettings(props: {
   const dirty = frozenFields(config) !== frozenFields(props.problem?.checkerConfig);
   const eligible = Boolean(gate?.eligible && !dirty);
   const change = (patch: Partial<CheckerConfig>) => {
-    props.onChange({ ...config, ...patch, publicCasePolicy: { ...policy, autoAddEnabled: false } });
+    const current = latest.current;
+    current.onChange({
+      ...current.config,
+      ...patch,
+      publicCasePolicy: {
+        ...(current.config.publicCasePolicy ?? { maxCount: 20 }),
+        autoAddEnabled: false,
+      },
+    });
   };
   const saved = Boolean(props.problem?.problemCode);
   const reasons = gate?.failReasons ?? [
@@ -139,10 +168,19 @@ export default function PublicAutoSettings(props: {
                             message.error(t('publicAuto.zipLimit'));
                             return false;
                           }
+                          const generation = ++uploadGeneration.current.validator;
                           const [uploaded] = await fileUpload([file]);
+                          const current = latest.current;
+                          if (
+                            !mounted.current ||
+                            generation !== uploadGeneration.current.validator ||
+                            !current.validatorZipMode ||
+                            !current.config.inputValidator
+                          )
+                            return false;
                           change({
                             inputValidator: {
-                              ...config.inputValidator!,
+                              ...current.config.inputValidator,
                               source: null,
                               zipFileId: uploaded.id,
                             },
@@ -282,10 +320,19 @@ export default function PublicAutoSettings(props: {
                             message.error(t('publicAuto.zipLimit'));
                             return Upload.LIST_IGNORE;
                           }
+                          const generation = ++uploadGeneration.current.standard;
                           const result = await fileUpload([file]);
+                          const current = latest.current;
+                          if (
+                            !mounted.current ||
+                            generation !== uploadGeneration.current.standard ||
+                            !current.zipMode ||
+                            !current.config.standardProgram
+                          )
+                            return false;
                           change({
                             standardProgram: {
-                              ...config.standardProgram!,
+                              ...current.config.standardProgram,
                               code: null,
                               zipFileId: result[0].id,
                             },
