@@ -885,6 +885,13 @@
   "BatchImport": "批量导入",
   "BatchImportProblems": "批量导入题目",
   "BatchImportUsers": "批量导入用户",
+  "userImport": {
+    "ready": "待提交",
+    "created": "已创建 {{count}} 个用户，未完成行已保留。",
+    "retryFailure": "提交失败，草稿已保留，可编辑后重试。",
+    "submit": "提交有效行（{{count}}）",
+    "summary": "共 {{total}} 行：待提交 {{ready}} 行，校验失败 {{invalid}} 行，提交失败 {{failed}} 行，提交中 {{submitting}} 行。"
+  },
   "Cancel": "取消",
   "ProblemInfoNotLoaded": "未加载题目信息",
   "SubmitAll": "全部提交",

@@ -905,6 +905,13 @@
   "BatchImport": "Batch Import",
   "BatchImportProblems": "Batch Import Problems",
   "BatchImportUsers": "Batch Import Users",
+  "userImport": {
+    "ready": "Ready",
+    "created": "Created {{count}} users. Unfinished rows are retained.",
+    "retryFailure": "Submission failed. Your draft is retained; edit or retry it.",
+    "submit": "Submit valid rows ({{count}})",
+    "summary": "{{total}} rows: {{ready}} ready, {{invalid}} invalid, {{failed}} failed, {{submitting}} submitting."
+  },
   "Cancel": "Cancel",
   "ProblemInfoNotLoaded": "Problem info not loaded",
   "SubmitAll": "Submit All",

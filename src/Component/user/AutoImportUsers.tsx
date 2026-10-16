@@ -1,11 +1,24 @@
-import React, { useMemo, useState } from 'react';
-import { Button, message, Modal, Space, Table, Tag, Upload } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Space,
+  Table,
+  Tag,
+  Upload,
+} from 'antd';
 import { InboxOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import Dragger from 'antd/lib/upload/Dragger';
 import mApi from '../../Utils/API/m-api';
 import { withTranslation } from 'react-i18next';
 import { batchUserFields } from '../../Config/validation/requests';
-import { constraintError } from '../../Config/validation/constraints';
+import { rolesInString } from '../../Type/types';
+import { constraintError, constraintRules } from '../../Config/validation/constraints';
 import {
   matrixToRecords,
   parseXlsxMatrices,
@@ -136,29 +149,55 @@ const mapGender = (v: any): number | undefined =>
 
 const map01 = (v: any): number => (Number(v) === 1 ? 1 : 0);
 
+type ImportEntry = {
+  key: number;
+  user: ParsedUser;
+  state: 'ready' | 'invalid' | 'submitting' | 'failed';
+  errors: string[];
+};
+const fieldLabel: Record<string, string> = { gender: 'sex', studentId: 'student_id' };
+
 const AutoImportUsers = (props: any) => {
   const { t } = props;
   const [visible, setVisible] = useState(false);
-  const [rows, setRows] = useState<ParsedUser[]>([]);
-  const [displayRows, setDisplayRows] = useState<any[]>([]);
-  const [uploadState, setUploadState] = useState<number[]>([]); // 0 idle, 1 uploading, 2 success, 3 invalid, 4 failed
-  const [canSubmitAll, setCanSubmitAll] = useState(true);
+  const [entries, setEntries] = useState<ImportEntry[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [parsing, setParsing] = useState(false);
+  const [editing, setEditing] = useState<number>();
+  const [editForm] = Form.useForm();
+  const importGeneration = useRef(0);
+  useEffect(
+    () => () => {
+      importGeneration.current++;
+    },
+    [],
+  );
 
   const reset = () => {
-    setRows([]);
-    setDisplayRows([]);
-    setUploadState([]);
+    setEntries([]);
+    setEditing(undefined);
+    editForm.resetFields();
   };
 
   const onClose = () => {
+    if (submitting) return;
+    importGeneration.current++;
+    setParsing(false);
     setVisible(false);
     reset();
   };
 
+  const validationErrors = (item: ParsedUser) => {
+    const errors = Object.entries(batchUserFields).flatMap(([key, rule]) => {
+      const error = constraintError(rule, item[key as keyof ParsedUser]);
+      return error ? [`${t(fieldLabel[key] ?? key)}: ${error}`] : [];
+    });
+    if (item.email && !isEmail(item.email)) errors.push(`${t('email')}: ${t('emailError')}`);
+    return errors;
+  };
+
   const parseAndValidate = (data: ExcelUserRow[]) => {
-    const parsed: ParsedUser[] = [];
-    const display: any[] = [];
-    const states: number[] = [];
+    const parsed: ImportEntry[] = [];
     for (let i = 0; i < data.length; i++) {
       const r = data[i];
       // Skip instruction/example row heuristically
@@ -186,34 +225,28 @@ const AutoImportUsers = (props: any) => {
         roles: ['user'],
       };
 
-      // validations（邮箱改为必填并校验格式）
-      const valid =
-        Object.entries(batchUserFields).every(
-          ([key, rule]) => !constraintError(rule, item[key as keyof ParsedUser]),
-        ) &&
-        !!item.email &&
-        isEmail(item.email);
-
-      parsed.push(item);
-      display.push(maskUserForDisplay(item, props.t));
-      states.push(valid ? 0 : 3);
+      const errors = validationErrors(item);
+      parsed.push({ key: i, user: item, state: errors.length ? 'invalid' : 'ready', errors });
     }
-    setRows(parsed);
-    setDisplayRows(display);
-    setUploadState(states);
+    setEntries(parsed);
   };
 
   const onImportExcel = async (file: File) => {
     // Remove the previous import before parsing a new file, including when
     // parsing fails, so an old password cannot remain visible in the modal.
+    if (submitting) return Upload.LIST_IGNORE;
+    const generation = ++importGeneration.current;
     reset();
+    setParsing(false);
     if (file.size === 0 || file.size > USER_IMPORT_LIMITS.maxBytes) {
       message.error(props.t('FileTooLargeMB', { max: 5 }) || '文件大小不符合要求');
       return Upload.LIST_IGNORE;
     }
+    setParsing(true);
     try {
       const { default: readWorkbook } = await import('read-excel-file/browser');
       const data = await parseUserWorkbook(readWorkbook, await file.arrayBuffer());
+      if (generation !== importGeneration.current) return false;
       if (data.length === 0) {
         message.warning(props.t('NoData') || '未读取到数据');
         return false;
@@ -221,7 +254,10 @@ const AutoImportUsers = (props: any) => {
       parseAndValidate(data);
       message.success(props.t('UploadSuccess') || '上传成功');
     } catch {
-      message.error(props.t('FileTypeIncorrect') || '文件格式不正确');
+      if (generation === importGeneration.current)
+        message.error(props.t('FileTypeIncorrect') || '文件格式不正确');
+    } finally {
+      if (generation === importGeneration.current) setParsing(false);
     }
     return false;
   };
@@ -246,41 +282,90 @@ const AutoImportUsers = (props: any) => {
     await writeWorkbook(sheet, { sheet: 'users' }).toFile('批量导入用户模板.xlsx');
   };
 
+  const candidates = entries.filter((entry) => entry.state === 'ready' || entry.state === 'failed');
   const submitAll = async () => {
-    if (rows.length === 0) {
-      message.error(props.t('DataNotLoaded') || '尚未加载数据');
-      return;
-    }
-    // 仅提交校验通过的行（状态为0）；无效行保持“校验失败”
-    const validIdx: number[] = [];
-    const payload: any[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      if (uploadState[i] === 0) {
-        validIdx.push(i);
-        payload.push(rows[i]);
-      }
-    }
-    if (payload.length === 0) {
-      message.warning(props.t('NoData') || '未读取到数据');
-      return;
-    }
-    setCanSubmitAll(false);
+    if (submitting || parsing || !candidates.length) return;
+    const submitted = new Set(candidates.map((entry) => entry.key));
+    setSubmitting(true);
+    setEntries((current) =>
+      current.map((entry) =>
+        submitted.has(entry.key) ? { ...entry, state: 'submitting', errors: [] } : entry,
+      ),
+    );
     try {
-      await mApi.addUsers(payload as any);
-      message.success(props.t('SubmitSuccess') || '提交成功');
-      // 提交成功后清空表格
-      reset();
-    } catch (e) {
-      message.error(props.t('SubmitFailed') || '提交失败');
-      // 提交失败后也清空表格
-      reset();
+      await mApi.addUsers(candidates.map((entry) => ({ ...entry.user, roles: [rolesInString.U] })));
+      setEntries((current) => current.filter((entry) => !submitted.has(entry.key)));
+      message.success(t('userImport.created', { count: submitted.size }));
+    } catch {
+      setEntries((current) =>
+        current.map((entry) =>
+          submitted.has(entry.key)
+            ? { ...entry, state: 'failed', errors: [t('userImport.retryFailure')] }
+            : entry,
+        ),
+      );
+      message.error(t('userImport.retryFailure'));
     } finally {
-      setCanSubmitAll(true);
+      setSubmitting(false);
     }
   };
 
+  const saveEdit = async () => {
+    try {
+      const values = await editForm.validateFields();
+      setEntries((current) =>
+        current.map((entry) => {
+          if (entry.key !== editing) return entry;
+          const user = { ...entry.user, ...values };
+          const errors = validationErrors(user);
+          return { ...entry, user, state: errors.length ? 'invalid' : 'ready', errors };
+        }),
+      );
+      setEditing(undefined);
+      editForm.resetFields();
+    } catch {
+      // Keep field errors and the editable draft in the dialog.
+    }
+  };
+  const displayRows = entries.map((entry) => ({
+    ...maskUserForDisplay(entry.user, t),
+    key: entry.key,
+    state: entry.state,
+    errors: entry.errors,
+  }));
+
   const columns = useMemo(
     () => [
+      {
+        title: t('status'),
+        dataIndex: 'state',
+        render: (state: ImportEntry['state'], row: { errors: string[] }) => (
+          <Space direction="vertical">
+            <Tag
+              color={
+                state === 'invalid' || state === 'failed'
+                  ? 'error'
+                  : state === 'submitting'
+                    ? 'processing'
+                    : 'default'
+              }
+            >
+              {t(
+                state === 'invalid'
+                  ? 'Invalid'
+                  : state === 'failed'
+                    ? 'SubmitFailed'
+                    : state === 'submitting'
+                      ? 'Submitting'
+                      : 'userImport.ready',
+              )}
+            </Tag>
+            {row.errors.map((error, index) => (
+              <span key={index}>{error}</span>
+            ))}
+          </Space>
+        ),
+      },
       { title: t('username') || 'username', dataIndex: 'username' },
       { title: t('password') || 'password', dataIndex: 'password' },
       { title: t('email') || 'email', dataIndex: 'email' },
@@ -303,14 +388,30 @@ const AutoImportUsers = (props: any) => {
         dataIndex: ['features', 'banInfoUpdate'],
         render: (v: number) => (v ? <Tag color="red">1</Tag> : <Tag>0</Tag>),
       },
+      {
+        title: t('operator'),
+        render: (_: unknown, row: { key: number }) => (
+          <Button
+            disabled={submitting || parsing}
+            onClick={() => {
+              const entry = entries.find((item) => item.key === row.key);
+              if (!entry) return;
+              editForm.setFieldsValue(entry.user);
+              setEditing(entry.key);
+            }}
+          >
+            {t('Edit')}
+          </Button>
+        ),
+      },
     ],
-    [t],
+    [t, entries, submitting, parsing, editForm],
   );
 
   return (
     <>
       <Button type="default" onClick={() => setVisible(true)}>
-        <PlusOutlined /> {props.t('BatchImport') || '批量导入'}
+        <PlusOutlined aria-hidden /> {props.t('BatchImport') || '批量导入'}
       </Button>
       <Modal
         title={props.t('BatchImportUsers') || '批量导入用户'}
@@ -323,15 +424,23 @@ const AutoImportUsers = (props: any) => {
             <Button icon={<DownloadOutlined />} onClick={downloadTemplate}>
               {props.t('DownloadTemplate') || '下载模板'}
             </Button>
-            <Button onClick={onClose}>{props.t('Cancel') || '取消'}</Button>
-            <Button type="primary" onClick={submitAll} disabled={!canSubmitAll}>
-              {props.t('SubmitAll') || '全部提交'}
+            <Button onClick={onClose} disabled={submitting}>
+              {props.t('Cancel') || '取消'}
+            </Button>
+            <Button
+              type="primary"
+              onClick={submitAll}
+              loading={submitting}
+              disabled={submitting || parsing || !candidates.length}
+            >
+              {t('userImport.submit', { count: candidates.length })}
             </Button>
           </Space>
         }
       >
         <Dragger
           multiple={false}
+          disabled={submitting || parsing}
           accept={'.xlsx'}
           action=""
           listType="text"
@@ -349,14 +458,60 @@ const AutoImportUsers = (props: any) => {
               '仅支持 .xlsx；前两行为模板说明，请勿删除；从第3行开始填写数据。'}
           </p>
         </Dragger>
-        <div style={{ marginTop: 10 }} />
+        <Alert
+          style={{ marginTop: 10 }}
+          type="info"
+          showIcon
+          message={t('userImport.summary', {
+            total: entries.length,
+            ready: entries.filter((entry) => entry.state === 'ready').length,
+            invalid: entries.filter((entry) => entry.state === 'invalid').length,
+            failed: entries.filter((entry) => entry.state === 'failed').length,
+            submitting: entries.filter((entry) => entry.state === 'submitting').length,
+          })}
+        />
         <Table
           size="small"
-          rowKey={(r: any, idx?: number) => (idx ?? 0).toString()}
+          rowKey="key"
+          loading={parsing}
           pagination={{ pageSize: 8 }}
           columns={columns as any}
           dataSource={displayRows}
         />
+      </Modal>
+      <Modal
+        title={t('EditUser')}
+        open={editing !== undefined}
+        onCancel={() => {
+          setEditing(undefined);
+          editForm.resetFields();
+        }}
+        onOk={() => void saveEdit()}
+        okText={t('Save')}
+        forceRender
+        destroyOnHidden
+      >
+        <Form form={editForm} layout="vertical" preserve={false}>
+          {Object.entries(batchUserFields).map(([key, rule]) => (
+            <Form.Item
+              key={key}
+              name={key}
+              label={t(fieldLabel[key] ?? key)}
+              rules={[
+                ...constraintRules(rule),
+                ...(key === 'email' ? [{ type: 'email' as const, message: t('emailError') }] : []),
+              ]}
+            >
+              {key === 'password' ? (
+                <Input.Password autoComplete="new-password" />
+              ) : key === 'gender' ? (
+                <InputNumber min={0} max={2} precision={0} />
+              ) : (
+                <Input />
+              )}
+            </Form.Item>
+          ))}
+        </Form>
       </Modal>
     </>
   );
