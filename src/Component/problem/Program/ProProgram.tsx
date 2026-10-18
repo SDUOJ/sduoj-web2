@@ -42,6 +42,7 @@ interface ProProgramProps {
 
   tableData: any; // 表格数据
   isLogin: boolean;
+  username?: string;
   isManager?: boolean;
   showInfo: boolean; // 是否展示题目详情
   enableLeftSubmitCount?: boolean;
@@ -254,6 +255,7 @@ const ProProgram = (props: ProProgramProps & WithTranslation) => {
           )}
           <MarkdownText
             id={'problem-content'}
+            retainScope={JSON.stringify([props.name, props.username, props.isLogin])}
             text={problemInfo?.problemDescriptionDTO.markdownDescription}
           />
         </Card>
@@ -273,6 +275,7 @@ const mapStateToProps = (state: any) => {
   const TState: TableState = state.TableReduce;
   return {
     isLogin: State.isLogin,
+    username: State.userInfo?.username,
     isManager: State.userInfo?.roles?.some((role) => role === 'admin' || role === 'superadmin'),
     ProblemInfo: PState.ProblemInfo,
     tableData: { ...TState.tableData },

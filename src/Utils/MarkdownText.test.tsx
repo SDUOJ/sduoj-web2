@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import i18n from '../Config/i18n';
 import MarkdownText from './MarkdownText';
 import { MarkdownPreview } from './MarkdownPreview';
@@ -37,4 +37,74 @@ it('aborts pending preview work when its view unmounts', () => {
   expect(signal?.aborted).toBe(false);
   view.unmount();
   expect(signal?.aborted).toBe(true);
+});
+
+it('keeps the completed statement visible until its next preview commits atomically', async () => {
+  const pending: Array<() => void> = [];
+  jest.mocked(MarkdownPreview).mockImplementation(
+    (text, id) =>
+      new Promise((resolve) => {
+        const target = document.getElementById(id)!;
+        target.className = 'vditor-reset';
+        pending.push(() => {
+          target.textContent = text ?? '';
+          resolve(undefined);
+        });
+      }),
+  );
+  const view = render(<MarkdownText id="atomic" text="First" retainScope="problem-alice" />);
+  await act(async () => pending[0]());
+  const completed = document.querySelector('#atomic > .vditor-reset')!;
+  expect(completed).toBeVisible();
+  view.rerender(<MarkdownText id="atomic" text="Second" retainScope="problem-alice" />);
+  expect(completed).toBeVisible();
+  expect(completed).toHaveTextContent('First');
+  expect(document.querySelector('#atomic > [aria-hidden]')).not.toBeVisible();
+  await act(async () => pending[1]());
+  expect(completed).not.toBeInTheDocument();
+  expect(document.querySelector('#atomic > .vditor-reset')).toHaveTextContent('Second');
+});
+
+it('isolates late preview DOM writes and clears retained content at a scope boundary', async () => {
+  const pending: Array<() => void> = [];
+  jest.mocked(MarkdownPreview).mockImplementation(
+    (text, id) =>
+      new Promise((resolve) => {
+        const target = document.getElementById(id)!;
+        pending.push(() => {
+          target.textContent = text ?? '';
+          resolve(undefined);
+        });
+      }),
+  );
+  const view = render(<MarkdownText id="isolation" text="Private A" retainScope="alice" />);
+  await act(async () => pending[0]());
+  view.rerender(<MarkdownText id="isolation" text="Late A" retainScope="alice" />);
+  view.rerender(<MarkdownText id="isolation" text="Public B" retainScope="bob" />);
+  expect(document.getElementById('isolation')).not.toHaveTextContent('Private A');
+  await act(async () => pending[2]());
+  await act(async () => pending[1]());
+  expect(document.getElementById('isolation')).toHaveTextContent('Public B');
+  expect(document.getElementById('isolation')).not.toHaveTextContent('Late A');
+});
+
+it('never renders into a retained Markdown element that duplicates a pending preview ID', async () => {
+  let collisionId = '';
+  jest.mocked(MarkdownPreview).mockImplementation(async (text, id) => {
+    const target = document.getElementById(id)!;
+    if (text === 'First') {
+      const sequence = Number(id.slice(id.lastIndexOf('-') + 1));
+      collisionId = `collision-pending-${sequence + 1}`;
+      const content = document.createElement('div');
+      content.id = collisionId;
+      target.appendChild(content);
+    } else {
+      expect(id).not.toBe(collisionId);
+      target.textContent = text ?? '';
+    }
+  });
+  const view = render(<MarkdownText id="collision" text="First" retainScope="alice" />);
+  await waitFor(() => expect(document.getElementById(collisionId)).toBeInTheDocument());
+  view.rerender(<MarkdownText id="collision" text="Second" retainScope="alice" />);
+  await waitFor(() => expect(document.getElementById('collision')).toHaveTextContent('Second'));
 });
