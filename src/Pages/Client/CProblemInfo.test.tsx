@@ -14,8 +14,8 @@ jest.mock('../../Component/answerIde/AnswerWorkspace', () => () => <div>IDE edit
 jest.mock(
   '../../Component/problem/Program/ProProgram',
   () =>
-    ({ hideSubmit, headerBefore }: any) => (
-      <div>
+    ({ hideSubmit, headerBefore, nameWithD }: any) => (
+      <div data-testid="program" data-description-key={nameWithD}>
         {headerBefore?.(null)}program{!hideSubmit && <button>legacy submit</button>}
       </div>
     ),
@@ -110,3 +110,47 @@ it.each([
     expect(cApi.runCapabilities).not.toHaveBeenCalled();
   },
 );
+
+it('keeps the displayed description and its Redux key mounted until an uncached version arrives', () => {
+  jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'Version one' });
+  const view = render(
+    <CProblemInfo {...route('SDUOJ-1')} location={{ search: '?descriptionId=1' }} />,
+  );
+  const program = screen.getByTestId('program');
+  jest.mocked(useProblemInfo).mockReturnValue(undefined);
+  view.rerender(<CProblemInfo {...route('SDUOJ-1')} location={{ search: '?descriptionId=2' }} />);
+  expect(screen.getByTestId('program')).toBe(program);
+  expect(program).toHaveAttribute('data-description-key', 'SDUOJ-1-1');
+  expect(screen.getByText('detail:Version one')).toBeInTheDocument();
+  expect(screen.getByText('description:Version one')).toBeInTheDocument();
+  expect(program.closest('[aria-busy]')).toHaveAttribute('aria-busy', 'true');
+
+  jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'Version two' });
+  view.rerender(<CProblemInfo {...route('SDUOJ-1')} location={{ search: '?descriptionId=2' }} />);
+  expect(screen.getByTestId('program')).toBe(program);
+  expect(program).toHaveAttribute('data-description-key', 'SDUOJ-1-2');
+  expect(screen.getByText('detail:Version two')).toBeInTheDocument();
+  expect(program.closest('[aria-busy]')).toHaveAttribute('aria-busy', 'false');
+});
+
+it.each([
+  { username: 'bob', isLogin: true },
+  { username: 'alice', isLogin: false },
+])('clears retained descriptions when the account boundary changes (%j)', (session) => {
+  jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'Private description' });
+  const view = render(<CProblemInfo {...route('SDUOJ-1')} isLogin={true} />);
+  jest.mocked(useProblemInfo).mockReturnValue(undefined);
+  view.rerender(<CProblemInfo {...route('SDUOJ-1')} {...session} />);
+  expect(screen.queryByText('detail:Private description')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('program')).not.toBeInTheDocument();
+});
+
+it('does not revive retained private descriptions when returning to a previous session', () => {
+  jest.mocked(useProblemInfo).mockReturnValue({ problemTitle: 'Private description' });
+  const view = render(<CProblemInfo {...route('SDUOJ-1')} isLogin={true} />);
+  jest.mocked(useProblemInfo).mockReturnValue(undefined);
+  view.rerender(<CProblemInfo {...route('SDUOJ-1')} isLogin={false} />);
+  view.rerender(<CProblemInfo {...route('SDUOJ-1')} isLogin={true} />);
+  expect(screen.queryByText('detail:Private description')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('program')).not.toBeInTheDocument();
+});

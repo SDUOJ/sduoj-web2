@@ -38,6 +38,7 @@ const mapStateToProps = (state: any) => {
   const State: UserState = state.UserReducer;
   return {
     username: State.userInfo?.username,
+    isLogin: State.isLogin,
   };
 };
 

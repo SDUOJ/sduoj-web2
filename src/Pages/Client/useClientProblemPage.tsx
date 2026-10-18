@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button, Card } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -16,7 +17,12 @@ import IdeProblemInfo, { IdeDescriptionTabs } from '../../Component/answerIde/Id
 export default function useClientProblemPage(props: any, hideSubmit = false) {
   const problemCode = props.match.params.ProblemCode;
   const descriptionId = getUrlParams(props.location.search).descriptionId;
-  const nameWithD = problemCode + '-' + descriptionId;
+  const requestedKey = problemCode + '-' + descriptionId;
+  const scope = JSON.stringify([
+    problemCode,
+    props.username ?? null,
+    props.isLogin ?? Boolean(props.username),
+  ]);
 
   const GetProblemInfoAPI = () => {
     return cApi.getProblemInfo({ problemCode: problemCode, descriptionId: descriptionId });
@@ -32,14 +38,25 @@ export default function useClientProblemPage(props: any, hideSubmit = false) {
     return cApi.getSubmissionInfo({ submissionId: submissionId });
   };
 
-  const problemInfo = useProblemInfo(GetProblemInfoAPI, nameWithD);
+  const requestedInfo = useProblemInfo(GetProblemInfoAPI, requestedKey);
+  const [displayed, setDisplayed] = useState({ scope, key: requestedKey, info: requestedInfo });
+  useEffect(() => {
+    if (requestedInfo !== undefined || displayed.scope !== scope) {
+      setDisplayed({ scope, key: requestedKey, info: requestedInfo });
+    }
+  }, [requestedInfo, requestedKey, scope, displayed.scope]);
+  // Keep the displayed key paired with its data: ProProgram also reads this Redux key.
+  const previous = displayed.scope === scope ? displayed : undefined;
+  const problemInfo = requestedInfo !== undefined ? requestedInfo : previous?.info;
+  const nameWithD = requestedInfo !== undefined ? requestedKey : (previous?.key ?? requestedKey);
+  const switchingDescription = requestedInfo === undefined && problemInfo !== undefined;
 
   const showWorkspace = Boolean(
     props.username && problemInfo?.judgeTemplates?.some((item: any) => item.type === 0),
   );
   const statement = (
     <>
-      <Card size={'small'}>
+      <Card size={'small'} aria-busy={switchingDescription}>
         {problemInfo && (
           <ProProgram
             showMdExport={true}

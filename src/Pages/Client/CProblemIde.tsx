@@ -46,4 +46,5 @@ export const CProblemIde = (props: any) => {
 
 export default connect((state: any) => ({
   username: (state.UserReducer as UserState).userInfo?.username,
+  isLogin: (state.UserReducer as UserState).isLogin,
 }))(withTranslation()(withRouter(CProblemIde)));
