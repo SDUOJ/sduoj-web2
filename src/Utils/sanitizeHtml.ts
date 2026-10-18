@@ -20,6 +20,43 @@ const allowedTags = new Set([
   'ul',
 ]);
 
+const footerTags = new Set(['hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'font']);
+const footerStyleProperties = new Set([
+  'display',
+  'color',
+  'background-color',
+  'width',
+  'max-width',
+  'height',
+  'margin',
+  'margin-top',
+  'margin-right',
+  'margin-bottom',
+  'margin-left',
+  'padding',
+  'border',
+  'font-size',
+  'font-weight',
+  'text-align',
+  'text-decoration',
+]);
+
+function retainFooterStyle(element: Element): void {
+  const declarations = (element as HTMLElement).style;
+  const safe: Array<[string, string]> = [];
+  for (const property of Array.from(declarations)) {
+    const value = declarations.getPropertyValue(property);
+    if (
+      footerStyleProperties.has(property) &&
+      (/^[a-zA-Z0-9#.,% -]+$/.test(value) || /^rgba?\([0-9.,%\s]+\)$/i.test(value))
+    ) {
+      safe.push([property, value]);
+    }
+  }
+  element.removeAttribute('style');
+  for (const [property, value] of safe) declarations.setProperty(property, value);
+}
+
 export const MAX_RICH_TEXT_CHARACTERS = 1024 * 1024;
 
 const unsafeProtocol = /^(?:javascript|vbscript|data|file):/i;
@@ -47,7 +84,7 @@ export const isSafeHtmlUrl = (value: string) => {
 };
 
 /** Sanitize server-provided rich text before inserting it into the document. */
-export function sanitizeHtml(input: unknown): string {
+export function sanitizeHtml(input: unknown, options: { footerFormatting?: boolean } = {}): string {
   if (typeof input === 'string' && input.length > MAX_RICH_TEXT_CHARACTERS) return '';
   if (typeof input !== 'string' || input.length === 0) {
     return typeof input === 'string' ? input : '';
@@ -66,13 +103,25 @@ export function sanitizeHtml(input: unknown): string {
   if (root === null) return '';
 
   root.querySelectorAll('*').forEach((element) => {
-    if (!allowedTags.has(element.tagName.toLowerCase())) {
+    const tag = element.tagName.toLowerCase();
+    if (!allowedTags.has(tag) && !(options.footerFormatting && footerTags.has(tag))) {
       element.replaceWith(...Array.from(element.childNodes));
       return;
     }
 
     Array.from(element.attributes).forEach((attribute) => {
       const name = attribute.name.toLowerCase();
+      if (options.footerFormatting && name === 'style') {
+        retainFooterStyle(element);
+        return;
+      }
+      if (
+        options.footerFormatting &&
+        tag === 'font' &&
+        ((name === 'color' && /^[a-zA-Z]+$|^#[0-9a-fA-F]{3,8}$/.test(attribute.value)) ||
+          (name === 'size' && /^[1-7]$/.test(attribute.value)))
+      )
+        return;
       if (
         !allowedAttributes.has(name) ||
         (urlAttributes.has(name) && !isSafeHtmlUrl(attribute.value))

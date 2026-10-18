@@ -41,3 +41,33 @@ it('rejects file and data URL protocols from resource attributes', () => {
   expect(html).not.toMatch(/file:|data:|xlink:href/i);
   expect(html).toContain('>file</a>');
 });
+
+it('preserves the configured footer columns and headings with a restricted formatting profile', () => {
+  const html = sanitizeHtml(
+    '<hr style="max-width:1500px;width:100%;margin:0 auto;height:1px;border:none">' +
+      '<div style="display:flex;max-width:1500px;width:100%;margin:0 auto">' +
+      '<div style="max-width:36%"><h2 style="margin-bottom:0">SDUOJ</h2></div>' +
+      '<div style="max-width:17%;margin-left:auto"><font color="green" size="4">Judger</font></div></div>',
+    { footerFormatting: true },
+  );
+  const root = document.createElement('div');
+  root.innerHTML = html;
+  expect(root.querySelector('hr')?.style.maxWidth).toBe('1500px');
+  expect(root.querySelector('div')?.style.display).toBe('flex');
+  expect(root.querySelector('h2')?.textContent).toBe('SDUOJ');
+  expect(root.querySelector('font')?.getAttribute('color')).toBe('green');
+  expect(root.querySelector('font')?.getAttribute('size')).toBe('4');
+});
+
+it('keeps footer formatting from admitting executable markup or unsafe CSS', () => {
+  const html = sanitizeHtml(
+    '<div onclick="alert(1)" style="display:flex;position:fixed;z-index:99999;background-image:url(https://example.test/track);color:red">' +
+      '<img src="javascript:alert(1)" onerror="alert(1)"><a href="javascript:alert(1)">link</a>' +
+      '<font color="url(https://example.test/track)" size="99">text</font></div>',
+    { footerFormatting: true },
+  );
+  expect(html).toContain('display: flex');
+  expect(html).toContain('color: red');
+  expect(html).not.toMatch(/onclick|onerror|javascript:|position|z-index|url\(|size=/i);
+  expect(sanitizeHtml('<div style="display:flex">content</div>')).not.toContain('style=');
+});

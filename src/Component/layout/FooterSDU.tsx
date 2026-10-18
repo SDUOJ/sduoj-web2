@@ -28,7 +28,11 @@ const FooterSDU = (props: any) => {
   return (
     <>
       <Footer style={{ textAlign: 'center' }}>
-        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(props.copyRight) }} />
+        <div
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(props.copyRight, { footerFormatting: true }),
+          }}
+        />
       </Footer>
     </>
   );
