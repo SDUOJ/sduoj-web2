@@ -15,6 +15,7 @@ import { constraintError } from '../../Config/validation/constraints';
 import saveIcon from '../../Assert/img/save.svg';
 import { UserState } from '../../Type/Iuser';
 import { getVditorResourceUrls } from '../../Utils/vditorResources';
+import { loadVditorRuntime } from '../../Utils/vditorRuntime';
 
 export interface EditorProps {
   value?: string;
@@ -81,6 +82,8 @@ export const Editor = (props: EditorProps & any) => {
   const { t } = useTranslation();
   const reactId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const editorRef = useRef<VditorInstance>();
+  const readyEditorRef = useRef<VditorInstance>();
+  const initializationRef = useRef<Promise<void>>(Promise.resolve());
   const editorElementRef = useRef<HTMLDivElement>(null);
   const initialValueRef = useRef(props.value ?? '');
   const lastExternalValueRef = useRef(initialValueRef.current);
@@ -116,199 +119,237 @@ export const Editor = (props: EditorProps & any) => {
     const initialExternalValue = initialValueRef.current;
     lastExternalValueRef.current = initialExternalValue;
     const { cdn, emojiPath, themePath } = getVditorResourceUrls();
+    const parent = editorElementRef.current;
+    let host: HTMLDivElement | undefined;
+    let disposed = false;
+    let ready = false;
     let vditor0: InstanceType<typeof VditorConstructor>;
-    vditor0 = new VditorConstructor(editorElementRef.current, {
-      height: props.height === undefined ? 800 : props.height,
-      mode: 'ir', //及时渲染模式
-      value: initialExternalValue,
-      cache: cacheEnabled ? { enable: true, id: cacheId } : { enable: false },
-      placeholder: t('editorPlaceholder'),
-      lang: props.langCode,
-      cdn,
-      outline: {
-        enable: false,
-        position: 'left',
-      },
-      hint: {
-        emojiPath,
-      },
-      preview: {
-        delay: 500,
-        theme: { current: 'light', path: themePath },
-        hljs: {
-          lineNumber: false,
-        },
-        markdown: {
-          toc: true,
-          mark: true,
-          footnotes: true,
-          autoSpace: true,
-          sanitize: true,
-        },
-        math: {
-          inlineDigit: true,
-          engine: 'KaTeX',
-        },
-      },
-      toolbar: [
-        'emoji',
-        'headings',
-        'bold',
-        'italic',
-        'strike',
-        'link',
-        '|',
-        'list',
-        'ordered-list',
-        'check',
-        'outdent',
-        'indent',
-        '|',
-        'quote',
-        'line',
-        'code',
-        'inline-code',
-        'insert-before',
-        'insert-after',
-        '|',
-        'upload',
-        'table',
-        '|',
-        'undo',
-        'redo',
-        '|',
-        'outline',
-        'fullscreen',
-        'export',
-        '|',
-        {
-          hotkey: '⌘-S',
-          name: 'save',
-          tipPosition: 's',
-          tip: t('Save'),
-          className: 'right',
-          icon: `<img style="height: 16px" src="${saveIcon}" alt="save"/>`,
-          click() {
-            onChangeRef.current?.(vditor0.getValue());
-          },
-        },
-      ],
-      after() {
-        if (editorRef.current === vditor0) {
-          setReadyVersion((version) => version + 1);
-        }
-      },
-      blur() {
-        onChangeRef.current?.(vditor0.getValue());
-      },
-      upload: {
-        accept: '*/*',
-        multiple: false,
-        filename(name) {
-          return name
-            .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, '')
-            .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, '')
-            .replaceAll('/\\s/g', '');
-        },
-        handler(files: File[]): any {
-          const filenameError = constraintError(contracts.file.name, files[0].name);
-          if (filenameError) {
-            const msg = filenameError;
-            message.error(msg);
-            return Promise.reject(msg);
-          }
-
-          function callback(value: any) {
-            let name = files[0] && files[0].name;
-            name = name
-              .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, '')
-              .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, '')
-              .replaceAll('/\\s/g', '');
-
-            const path = cApi.getFileDownloadUrl(String(value.id), name);
-
-            let suffix = name.substr(name.lastIndexOf('.') + 1).toUpperCase();
-            let picSuffix = [
-              'BMP',
-              'DIB',
-              'PCP',
-              'DIF',
-              'WMF',
-              'GIF',
-              'JPG',
-              'TIF',
-              'EPS',
-              'PSD',
-              'CDR',
-              'IFF',
-              'TGA',
-              'PCD',
-              'MPT',
-              'PNG',
-            ];
-            let text = '';
-            if (picSuffix.indexOf(suffix) !== -1) {
-              if (vditor0 && vditor0.vditor.currentMode === 'wysiwyg') {
-                text += `\n <img src="${path}" alt="${name}" style="zoom:100%;" />`;
-              } else {
-                text += `\n ![${name}](${path})`;
-              }
-            } else {
-              // console.log(vditor0.vditor.currentMode)
-              if (vditor0 && vditor0.vditor.currentMode === 'wysiwyg') {
-                text += `\n <a href="${path}">${name}</a>`;
-              } else {
-                text += `\n [${name}](${path})`;
-              }
-            }
-            document.execCommand('insertHTML', false, text);
-            notification.open({
-              message: t('fileUploadSuccess'),
-              description: (
-                <>
-                  <span>
-                    {t('fileNameLabel')}
-                    {name}
-                  </span>
-                  <br />
-                  {/*<span>文件地址：{path}</span><br/>*/}
-                  <Space>
-                    {t('clickToCopy')}
-                    <CopiedButton text={path} btnText={t('purePath')} />
-                    <CopiedButton text={`[${name}](${path})`} btnText={t('mdLink')} />
-                    <CopiedButton text={`![${name}](${path})`} btnText={t('mdImage')} />
-                  </Space>
-                  <br />
-                  <Space>
-                    <CopiedButton text={`<a href="${path}">${name}</a>`} btnText={t('htmlLink')} />
-                    <CopiedButton
-                      text={`<img src="${path}" alt="${name}" style="zoom:100%;" />`}
-                      btnText={t('htmlImage')}
-                    />
-                  </Space>
-                </>
-              ),
-              duration: null,
-              type: 'success',
-            });
-          }
-
-          void fileUpload(files, callback).catch(() => {
-            message.error(t('fileUploadFailed', { defaultValue: 'File upload failed' }));
-          });
-        },
-      },
-    });
-    editorRef.current = vditor0;
-    return () => {
-      if (editorRef.current === vditor0) editorRef.current = undefined;
+    const destroy = () => {
+      vditor0.disabledCache();
       vditor0.destroy();
     };
-  }, [VditorConstructor, cacheEnabled, cacheId, props.height, props.langCode, t]);
+    initializationRef.current = initializationRef.current
+      .then(async () => {
+        if (disposed) return;
+        const i18n = await loadVditorRuntime(cdn, props.langCode);
+        if (disposed) return;
+        host = document.createElement('div');
+        host.id = `${domId}-runtime`;
+        parent.appendChild(host);
+        await new Promise<void>((resolve) => {
+          vditor0 = new VditorConstructor(host!, {
+            i18n,
+            height: props.height === undefined ? 800 : props.height,
+            mode: 'ir', //及时渲染模式
+            value: initialExternalValue,
+            cache: cacheEnabled ? { enable: true, id: cacheId } : { enable: false },
+            placeholder: t('editorPlaceholder'),
+            lang: props.langCode,
+            cdn,
+            outline: {
+              enable: false,
+              position: 'left',
+            },
+            hint: {
+              emojiPath,
+            },
+            preview: {
+              delay: 500,
+              theme: { current: 'light', path: themePath },
+              hljs: {
+                lineNumber: false,
+              },
+              markdown: {
+                toc: true,
+                mark: true,
+                footnotes: true,
+                autoSpace: true,
+                sanitize: true,
+              },
+              math: {
+                inlineDigit: true,
+                engine: 'KaTeX',
+              },
+            },
+            toolbar: [
+              'emoji',
+              'headings',
+              'bold',
+              'italic',
+              'strike',
+              'link',
+              '|',
+              'list',
+              'ordered-list',
+              'check',
+              'outdent',
+              'indent',
+              '|',
+              'quote',
+              'line',
+              'code',
+              'inline-code',
+              'insert-before',
+              'insert-after',
+              '|',
+              'upload',
+              'table',
+              '|',
+              'undo',
+              'redo',
+              '|',
+              'outline',
+              'fullscreen',
+              'export',
+              '|',
+              {
+                hotkey: '⌘-S',
+                name: 'save',
+                tipPosition: 's',
+                tip: t('Save'),
+                className: 'right',
+                icon: `<img style="height: 16px" src="${saveIcon}" alt="save"/>`,
+                click() {
+                  if (ready && !disposed) onChangeRef.current?.(vditor0.getValue());
+                },
+              },
+            ],
+            after() {
+              ready = true;
+              if (disposed) {
+                destroy();
+              } else if (editorRef.current === vditor0) {
+                readyEditorRef.current = vditor0;
+                setReadyVersion((version) => version + 1);
+              }
+              resolve();
+            },
+            blur() {
+              if (ready && !disposed) onChangeRef.current?.(vditor0.getValue());
+            },
+            upload: {
+              accept: '*/*',
+              multiple: false,
+              filename(name) {
+                return name
+                  .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, '')
+                  .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, '')
+                  .replaceAll('/\\s/g', '');
+              },
+              handler(files: File[]): any {
+                const filenameError = constraintError(contracts.file.name, files[0].name);
+                if (filenameError) {
+                  const msg = filenameError;
+                  message.error(msg);
+                  return Promise.reject(msg);
+                }
+
+                function callback(value: any) {
+                  let name = files[0] && files[0].name;
+                  name = name
+                    .replaceAll(/[^(a-zA-Z0-9\u4e00-\u9fa5.)]/g, '')
+                    .replaceAll(/[?\\/:|<>*[\]()$%{}@~]/g, '')
+                    .replaceAll('/\\s/g', '');
+
+                  const path = cApi.getFileDownloadUrl(String(value.id), name);
+
+                  let suffix = name.substr(name.lastIndexOf('.') + 1).toUpperCase();
+                  let picSuffix = [
+                    'BMP',
+                    'DIB',
+                    'PCP',
+                    'DIF',
+                    'WMF',
+                    'GIF',
+                    'JPG',
+                    'TIF',
+                    'EPS',
+                    'PSD',
+                    'CDR',
+                    'IFF',
+                    'TGA',
+                    'PCD',
+                    'MPT',
+                    'PNG',
+                  ];
+                  let text = '';
+                  if (picSuffix.indexOf(suffix) !== -1) {
+                    if (vditor0 && vditor0.vditor.currentMode === 'wysiwyg') {
+                      text += `\n <img src="${path}" alt="${name}" style="zoom:100%;" />`;
+                    } else {
+                      text += `\n ![${name}](${path})`;
+                    }
+                  } else {
+                    // console.log(vditor0.vditor.currentMode)
+                    if (vditor0 && vditor0.vditor.currentMode === 'wysiwyg') {
+                      text += `\n <a href="${path}">${name}</a>`;
+                    } else {
+                      text += `\n [${name}](${path})`;
+                    }
+                  }
+                  document.execCommand('insertHTML', false, text);
+                  notification.open({
+                    message: t('fileUploadSuccess'),
+                    description: (
+                      <>
+                        <span>
+                          {t('fileNameLabel')}
+                          {name}
+                        </span>
+                        <br />
+                        {/*<span>文件地址：{path}</span><br/>*/}
+                        <Space>
+                          {t('clickToCopy')}
+                          <CopiedButton text={path} btnText={t('purePath')} />
+                          <CopiedButton text={`[${name}](${path})`} btnText={t('mdLink')} />
+                          <CopiedButton text={`![${name}](${path})`} btnText={t('mdImage')} />
+                        </Space>
+                        <br />
+                        <Space>
+                          <CopiedButton
+                            text={`<a href="${path}">${name}</a>`}
+                            btnText={t('htmlLink')}
+                          />
+                          <CopiedButton
+                            text={`<img src="${path}" alt="${name}" style="zoom:100%;" />`}
+                            btnText={t('htmlImage')}
+                          />
+                        </Space>
+                      </>
+                    ),
+                    duration: null,
+                    type: 'success',
+                  });
+                }
+
+                void fileUpload(files, callback).catch(() => {
+                  message.error(t('fileUploadFailed', { defaultValue: 'File upload failed' }));
+                });
+              },
+            },
+          });
+          editorRef.current = vditor0;
+        });
+      })
+      .catch(() => {
+        host?.remove();
+        if (!disposed)
+          message.error(
+            t('editorLoadFailed', { defaultValue: 'Unable to load the editor. Please retry.' }),
+          );
+      });
+    return () => {
+      disposed = true;
+      if (editorRef.current === vditor0) editorRef.current = undefined;
+      if (readyEditorRef.current === vditor0) readyEditorRef.current = undefined;
+      if (ready) destroy();
+      host?.remove();
+    };
+  }, [VditorConstructor, cacheEnabled, cacheId, props.height, props.langCode, domId, t]);
 
   useEffect(() => {
     const nextValue = props.value ?? '';
-    const editor = editorRef.current;
+    const editor = readyEditorRef.current;
     if (editor && lastExternalValueRef.current !== nextValue) {
       lastExternalValueRef.current = nextValue;
       if (editor.getValue() !== nextValue) editor.setValue(nextValue);
@@ -318,7 +359,7 @@ export const Editor = (props: EditorProps & any) => {
   // 未保存草稿：关闭/刷新前拦截，避免用户误以为已写入服务端
   useEffect(() => {
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
-      const editor = editorRef.current;
+      const editor = readyEditorRef.current;
       if (!editor) return;
       const external = lastExternalValueRef.current ?? '';
       if (editor.getValue() !== external) {
@@ -330,7 +371,7 @@ export const Editor = (props: EditorProps & any) => {
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, []);
 
-  return <div ref={editorElementRef} id={domId} className="vditor" />;
+  return <div ref={editorElementRef} id={domId} />;
 };
 
 const mapStateToProps = (state: any) => {

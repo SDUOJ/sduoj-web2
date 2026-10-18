@@ -2,11 +2,16 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { message } from 'antd';
 import { buildEditorCacheId, CopiedButton, Editor } from './Editor';
 import { MD2export } from './Md2export';
+import { loadVditorRuntime } from '../../Utils/vditorRuntime';
+
+jest.mock('../../Utils/vditorRuntime', () => ({ loadVditorRuntime: jest.fn() }));
 
 const instances: Array<{ destroy: jest.Mock; getValue: jest.Mock; setValue: jest.Mock }> = [];
 const options: any[] = [];
 const targets: Array<HTMLElement | string> = [];
 const mockClipboardDestroy = jest.fn();
+let mockDelayInitialization = false;
+const mockInitializers: Array<() => void> = [];
 
 jest.mock('../../Utils/fileUpload', () => ({
   fileUpload: jest.fn(),
@@ -15,14 +20,34 @@ jest.mock('../../Utils/fileUpload', () => ({
 jest.mock('vditor', () =>
   jest.fn().mockImplementation((target, config) => {
     let value = globalThis.localStorage.getItem(config.cache?.id) ?? config.value ?? '';
+    let initialized = !mockDelayInitialization;
+    const requireReady = () => {
+      if (!initialized) throw new Error('Vditor has not initialized');
+    };
     const instance = {
-      destroy: jest.fn(),
-      getValue: jest.fn(() => value),
+      destroy: jest.fn(() => {
+        requireReady();
+        if (config.cache?.enable) globalThis.localStorage.removeItem(config.cache.id);
+      }),
+      disabledCache: jest.fn(() => {
+        config.cache.enable = false;
+      }),
+      getValue: jest.fn(() => {
+        requireReady();
+        return value;
+      }),
       setValue: jest.fn((nextValue: string) => {
+        requireReady();
         value = nextValue;
       }),
       vditor: { currentMode: 'ir' },
     };
+    const initialize = () => {
+      initialized = true;
+      config.after?.();
+    };
+    mockInitializers.push(initialize);
+    if (!mockDelayInitialization) void Promise.resolve().then(initialize);
     instances.push(instance);
     options.push(config);
     targets.push(target);
@@ -37,6 +62,9 @@ jest.mock('clipboard', () =>
   })),
 );
 beforeEach(() => {
+  (loadVditorRuntime as jest.Mock).mockReset().mockResolvedValue({});
+  mockDelayInitialization = false;
+  mockInitializers.length = 0;
   instances.length = 0;
   options.length = 0;
   targets.length = 0;
@@ -294,4 +322,93 @@ it('stops guarding after unmount', async () => {
   });
   view.unmount();
   expect(dispatchBeforeUnload()).toBe(false);
+});
+
+it('waits for async initialization before syncing a fetched document or guarding unload', async () => {
+  mockDelayInitialization = true;
+  const view = render(<Editor value="" langCode="en_US" />);
+  await waitForEditor();
+  view.rerender(<Editor value="fetched document" langCode="en_US" />);
+  expect(instances[0].getValue).not.toHaveBeenCalled();
+  expect(instances[0].setValue).not.toHaveBeenCalled();
+  expect(dispatchBeforeUnload()).toBe(false);
+  expect(instances[0].getValue).not.toHaveBeenCalled();
+
+  act(() => mockInitializers[0]());
+  expect(instances[0].getValue()).toBe('fetched document');
+  expect(dispatchBeforeUnload()).toBe(false);
+  view.unmount();
+  expect(instances[0].destroy).toHaveBeenCalledTimes(1);
+});
+
+it('finishes old initialization before replacing it and preserves replacement drafts on cleanup', async () => {
+  mockDelayInitialization = true;
+  const props = {
+    userIdentity: 'alice',
+    documentIdentity: 'problem:1',
+    fieldIdentity: 'description',
+  };
+  const onChange = jest.fn();
+  const view = render(<Editor {...props} value="one" langCode="en_US" onChange={onChange} />);
+  await waitForEditor();
+  const oldHost = targets[0] as HTMLElement;
+  view.rerender(<Editor {...props} value="two" langCode="zh_CN" onChange={onChange} />);
+  expect(oldHost.isConnected).toBe(false);
+  expect(instances).toHaveLength(1);
+  expect(instances[0].destroy).not.toHaveBeenCalled();
+
+  await act(async () => mockInitializers[0]());
+  await waitForEditor(2);
+  const newHost = targets[1] as HTMLElement;
+  expect(instances[0].destroy).toHaveBeenCalledTimes(1);
+  expect(newHost.isConnected).toBe(true);
+  act(() => mockInitializers[1]());
+  options[0].blur();
+  expect(onChange).not.toHaveBeenCalled();
+  expect(instances[1].getValue()).toBe('two');
+  const key = buildEditorCacheId('alice', 'problem:1', 'description');
+  localStorage.setItem(key, 'replacement draft');
+  view.unmount();
+  expect(instances[1].destroy).toHaveBeenCalledTimes(1);
+  expect(localStorage.getItem(key)).toBe('replacement draft');
+});
+
+it('can initialize a replacement after a resource load fails before construction', async () => {
+  (loadVditorRuntime as jest.Mock).mockRejectedValueOnce(new Error('resource 404'));
+  const view = render(<Editor value="document" langCode="en_US" />);
+  await waitFor(() => expect(message.error).toHaveBeenCalled());
+  expect(instances).toHaveLength(0);
+  view.rerender(<Editor value="document" langCode="zh_CN" />);
+  await waitForEditor();
+  expect(instances[0].getValue()).toBe('document');
+});
+
+it('releases the initialization queue when construction throws', async () => {
+  const Vditor = jest.requireMock('vditor') as jest.Mock;
+  Vditor.mockImplementationOnce(() => {
+    throw new Error('constructor failed');
+  });
+  const view = render(<Editor value="document" langCode="en_US" />);
+  await waitFor(() => expect(message.error).toHaveBeenCalled());
+  view.rerender(<Editor value="document" langCode="zh_CN" />);
+  await waitForEditor();
+  expect(instances[0].getValue()).toBe('document');
+});
+
+it('destroys an editor that finishes initialization after unmount without clearing its draft', async () => {
+  mockDelayInitialization = true;
+  const props = {
+    userIdentity: 'alice',
+    documentIdentity: 'problem:1',
+    fieldIdentity: 'description',
+  };
+  const view = render(<Editor {...props} value="document" langCode="en_US" />);
+  await waitForEditor();
+  const key = buildEditorCacheId('alice', 'problem:1', 'description');
+  localStorage.setItem(key, 'unsaved draft');
+  view.unmount();
+  act(() => mockInitializers[0]());
+  expect(instances[0].destroy).toHaveBeenCalledTimes(1);
+  expect(localStorage.getItem(key)).toBe('unsaved draft');
+  expect((targets[0] as HTMLElement).isConnected).toBe(false);
 });
