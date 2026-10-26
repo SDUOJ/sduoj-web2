@@ -105,7 +105,7 @@ async function inputCase(page: Page) {
   const heading = panel.locator('.ant-collapse-header').filter({ hasText: '自定义测试用例' });
   if ((await heading.getAttribute('aria-expanded')) === 'false') await heading.click();
   // Each test owns a fresh browser context; retain exactly one case, even if samples were loaded.
-  const remove = panel.getByRole('button', { name: '删除', exact: true });
+  const remove = panel.getByRole('button', { name: /^删\s*除$/ });
   while ((await remove.count()) > 1) await remove.last().click();
   if (!(await input.count()))
     await panel.getByRole('button', { name: '+ 添加用例', exact: true }).click();
@@ -225,7 +225,7 @@ test('ordinary custom input produces real results and text comparison', async ({
   expect(payload.context).toEqual({ type: 0, problemCode: fixture.problemCode });
   const result = await completedRun(page, id);
   expect(result.run?.cases[0].stdout).toBe(fixture.customCase.expectedOutput);
-  const panel = page.getByLabel('运行结果', { exact: true });
+  const panel = page.getByRole('tabpanel', { name: '运行结果', exact: true });
   await expect(panel).toContainText(id);
   await expect(panel).toContainText('期望与实际文本相同');
 });
@@ -248,7 +248,9 @@ test('ordinary active run survives reload and cancellation reaches terminal stat
   expect((await response.json()).code).toBe(0);
   expect(response.request().postDataJSON().submissionId).toBe(id);
   expect((await completedRun(page, id)).judgeResult).toBe(99);
-  await expect(page.getByLabel('运行结果', { exact: true })).toContainText('已取消');
+  await expect(page.getByRole('tabpanel', { name: '运行结果', exact: true })).toContainText(
+    '已取消',
+  );
 });
 
 test('ordinary cloud save and history restore preserve exact source', async ({ page }) => {
@@ -274,7 +276,10 @@ test('ordinary cloud save and history restore preserve exact source', async ({ p
   const historyReply = page.waitForResponse((response) =>
     pathIs(response, '/api/ide/history', 'POST'),
   );
-  await page.getByRole('button', { name: '刷新', exact: true }).click();
+  await page
+    .getByRole('tabpanel', { name: '代码历史', exact: true })
+    .getByRole('button', { name: /^刷\s*新$/ })
+    .click();
   const history = await data<Array<{ submissionId: string }>>(await historyReply);
   expect(history[0].submissionId).toBe(snapshot.submissionId);
   const codeReply = page.waitForResponse(
