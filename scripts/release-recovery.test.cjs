@@ -12,6 +12,8 @@ const quote = (value) => `'${value.replaceAll("'", "'\\''")}'`;
 function fixture(context) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sduoj-release-recovery-'));
   context.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const functionsFile = path.join(root, 'release-functions.sh');
+  fs.writeFileSync(functionsFile, functions);
   const bin = path.join(root, 'bin');
   fs.mkdirSync(bin);
   fs.writeFileSync(
@@ -58,7 +60,7 @@ fs.cpSync(source, destination, { recursive: true });
       'bash',
       [
         '-c',
-        `${functions}\nREMOTE_ROOT=${quote(root)}\nPROJECT_ROOT=${quote(root)}\nSCRIPT_DIR=${quote(__dirname)}\ngit() { printf '%s\\n' ${'a'.repeat(40)}; }\nssh_run() { bash -s; }\n${body}`,
+        `source ${quote(functionsFile)}\nREMOTE_ROOT=${quote(root)}\nPROJECT_ROOT=${quote(root)}\nSCRIPT_DIR=${quote(__dirname)}\ngit() { printf '%s\\n' ${'a'.repeat(40)}; }\nssh_run() { bash -s; }\n${body}`,
       ],
       {
         encoding: 'utf8',

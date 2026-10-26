@@ -268,11 +268,13 @@ test('deployment rejects corrupt local and remote staged artifacts before applyi
     const source = fs
       .readFileSync(path.join(__dirname, 'release-v2-pre.sh'), 'utf8')
       .split('\ncase "${1:-}"')[0];
+    const functionsFile = path.join(project, 'scripts/release-functions.sh');
+    fs.writeFileSync(functionsFile, source);
     const result = spawnSync(
       'bash',
       [
         '-c',
-        `${source}
+        `source "$AUDIT_FUNCTIONS"
 PROJECT_ROOT="$AUDIT_PROJECT"
 REMOTE_USER=isolated
 build_pre() { :; }
@@ -287,7 +289,12 @@ deploy fixture
       ],
       {
         encoding: 'utf8',
-        env: { ...process.env, AUDIT_PROJECT: project, AUDIT_REF: metadata.sourceRef },
+        env: {
+          ...process.env,
+          AUDIT_PROJECT: project,
+          AUDIT_REF: metadata.sourceRef,
+          AUDIT_FUNCTIONS: functionsFile,
+        },
       },
     );
     assert.equal(result.status, 1, result.stderr);

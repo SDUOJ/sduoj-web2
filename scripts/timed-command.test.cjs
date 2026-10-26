@@ -99,16 +99,19 @@ test('hung SSH is bounded and standalone rollback remains callable after the tim
   const source = fs
     .readFileSync(path.join(__dirname, 'release-v2-pre.sh'), 'utf8')
     .split('\ncase "${1:-}"')[0];
+  const functionsFile = path.join(directory, 'release-functions.sh');
+  fs.writeFileSync(functionsFile, source);
   const environment = {
     ...process.env,
     PATH: `${directory}:${process.env.PATH}`,
     SDUOJ_DEPLOY_USER: 'fixture',
     SDUOJ_RELEASE_COMMAND_TIMEOUT_SECONDS: '1',
     AUDIT_SCRIPTS: __dirname,
+    AUDIT_FUNCTIONS: functionsFile,
   };
   const timedOut = spawnSync(
     'bash',
-    ['-c', `${source}\nSCRIPT_DIR="$AUDIT_SCRIPTS"\nssh_run readonly-fixture\n`],
+    ['-c', `source "$AUDIT_FUNCTIONS"\nSCRIPT_DIR="$AUDIT_SCRIPTS"\nssh_run readonly-fixture\n`],
     { encoding: 'utf8', env: environment, timeout: 10000 },
   );
   assert.equal(timedOut.status, 124);
@@ -117,7 +120,7 @@ test('hung SSH is bounded and standalone rollback remains callable after the tim
     'bash',
     [
       '-c',
-      `${source}
+      `source "$AUDIT_FUNCTIONS"
 plan() { :; }
 ssh_run() { [[ "$1" == timeout && "$2" == 1 && "$3" == bash ]]; cat >/dev/null; printf 'BOUNDED_ROLLBACK\\n'; }
 smoke() { printf 'SMOKE_OK\\n'; }
