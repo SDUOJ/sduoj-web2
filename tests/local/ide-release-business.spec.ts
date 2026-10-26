@@ -262,7 +262,10 @@ test('ordinary cloud save and history restore preserve exact source', async ({ p
   await save.click();
   const savedResponse = await savedReply;
   const snapshot = await data<{ submissionId: string }>(savedResponse);
-  expect(savedResponse.request().postDataJSON().code).toBe(source);
+  // Monaco selects its model EOL from the emulated platform. Check inserted text,
+  // then require the cloud round trip to preserve the actual editor bytes exactly.
+  const editorSource: string = savedResponse.request().postDataJSON().code;
+  expect(editorSource.replace(/\r\n/g, '\n')).toBe(source);
   await expect(
     page.locator('.ide-cloud-bar').getByRole('button', { name: '已保存', exact: true }),
   ).toBeVisible();
@@ -281,7 +284,7 @@ test('ordinary cloud save and history restore preserve exact source', async ({ p
   );
   await page.getByRole('button', { name: '载入代码', exact: true }).first().click();
   const restored = await data<{ code: string }>(await codeReply);
-  expect(restored.code).toBe(source);
+  expect(restored.code).toBe(editorSource);
   const dialog = page.getByRole('dialog', { name: '当前代码尚未保存', exact: true });
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: '不保存并切换', exact: true }).click();
