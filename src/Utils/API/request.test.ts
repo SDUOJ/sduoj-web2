@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { message } from 'antd';
-import request, { MAX_DOWNLOAD_BYTES, service } from './request';
+import request, { ApiRequestError, MAX_DOWNLOAD_BYTES, service } from './request';
 import axios from 'axios';
 import { AUTH_BOUNDARY_EVENT } from '../authBoundary';
 import i18n from '../../Config/i18n';
@@ -11,6 +11,19 @@ const success = (data: unknown) => ({ code: 0, data, timestamp: Date.now() });
 
 afterEach(() => adapter.reset());
 afterAll(() => adapter.restore());
+
+it('preserves status for callers that explicitly request structured failures', async () => {
+  adapter.onGet('/run/query').reply(404, { code: 404, message: 'Task missing' });
+  await expect(request.getWithErrorDetails('/run/query')).rejects.toMatchObject({
+    name: 'ApiRequestError',
+    message: 'Task missing',
+    status: 404,
+    code: 404,
+  });
+  await expect(request.get('/run/query')).rejects.toBe('Task missing');
+  adapter.onGet('/run/query').reply(200, { code: 404, message: 'Task missing' });
+  await expect(request.getWithErrorDetails('/run/query')).rejects.toBeInstanceOf(ApiRequestError);
+});
 
 it('unwraps GET results and preserves query parameters and credentials', async () => {
   adapter.onGet('/example', { params: { pageNow: 2 } }).reply(200, success({ rows: [1] }));

@@ -5,6 +5,8 @@ import { IUserPropRoles } from '../../Type/Iuser';
 import { withTranslation } from 'react-i18next';
 import { navigationTrees } from '../../Config/router/routeTrees';
 import { IRouter } from '../../Config/router/router';
+import { DevBadge } from '../common/DevOnly';
+import { availableRoutes } from '../../Config/router/developmentRoutes';
 
 // interface IMenuState {
 //     selectedKey: string
@@ -32,7 +34,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
         }
       });
     };
-    find(navigationTrees.manage);
+    find(availableRoutes(navigationTrees.manage));
     if (leaf !== undefined) select.push(leaf);
     setSelectedKey(select);
     setOpenKeys(opened);
@@ -44,9 +46,21 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
       icon: r.icon,
       label:
         r.children === undefined ? (
-          <Link to={r.path}>{props.t(r.title_i18n)}</Link>
+          <Link to={r.path}>
+            <span className="manage-menu-label">
+              <span className="manage-menu-text" title={props.t(r.title_i18n)}>
+                {props.t(r.title_i18n)}
+              </span>
+              {r.devOnly && <DevBadge />}
+            </span>
+          </Link>
         ) : (
-          props.t(r.title_i18n)
+          <span className="manage-menu-label">
+            <span className="manage-menu-text" title={props.t(r.title_i18n)}>
+              {props.t(r.title_i18n)}
+            </span>
+            {r.devOnly && <DevBadge />}
+          </span>
         ),
       children: r.children ? buildItems(r.children) : undefined,
     }));
@@ -63,7 +77,7 @@ const MMenu = (props: IUserPropRoles & RouteComponentProps) => {
           }}
           mode="inline"
           theme="dark"
-          items={buildItems(navigationTrees.manage)}
+          items={buildItems(availableRoutes(navigationTrees.manage))}
         />
       </div>
     </>

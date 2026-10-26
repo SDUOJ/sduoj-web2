@@ -36,6 +36,7 @@ export const routerM: readonly IRouter[] = [
   },
   {
     id: 9401,
+    devOnly: true,
     path: UrlPrefix + '/manage/intelligent',
     exact: true,
     title_i18n: 'aiMenuIntelligent',
@@ -44,6 +45,7 @@ export const routerM: readonly IRouter[] = [
   },
   {
     id: 9402,
+    devOnly: true,
     path: UrlPrefix + '/manage/settings/assistant',
     exact: true,
     title_i18n: 'aiMenuAccount',
@@ -161,6 +163,7 @@ export const routerM: readonly IRouter[] = [
     children: [
       {
         id: 9410,
+        devOnly: true,
         path: UrlPrefix + '/manage/problemSet/tasks',
         exact: true,
         title_i18n: 'aiMenuTasks',
@@ -168,6 +171,7 @@ export const routerM: readonly IRouter[] = [
       },
       {
         id: 9411,
+        devOnly: true,
         path: UrlPrefix + '/manage/problemSet/grading',
         exact: true,
         title_i18n: 'aiMenuGrading',
@@ -175,6 +179,7 @@ export const routerM: readonly IRouter[] = [
       },
       {
         id: 9412,
+        devOnly: true,
         path: UrlPrefix + '/manage/problemSet/exams',
         exact: true,
         title_i18n: 'aiMenuExams',
@@ -182,6 +187,7 @@ export const routerM: readonly IRouter[] = [
       },
       {
         id: 9413,
+        devOnly: true,
         path: UrlPrefix + '/manage/problemSet/plagiarism',
         exact: true,
         title_i18n: 'aiMenuPlagiarism',
@@ -231,6 +237,7 @@ export const routerM: readonly IRouter[] = [
   },
   {
     id: 10,
+    devOnly: true,
     path: UrlPrefix + '/manage/course',
     title_i18n: 'course',
     exact: false,
@@ -238,6 +245,7 @@ export const routerM: readonly IRouter[] = [
     children: [
       {
         id: 101,
+        devOnly: true,
         path: UrlPrefix + '/manage/course/course',
         exact: true,
         title_i18n: 'courseManagement',
@@ -246,6 +254,7 @@ export const routerM: readonly IRouter[] = [
       },
       {
         id: 102,
+        devOnly: true,
         path: UrlPrefix + '/manage/course/classroom',
         exact: true,
         title_i18n: 'classroom',

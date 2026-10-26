@@ -2,6 +2,8 @@ import React, { lazy, Suspense, useState } from 'react';
 import { Button, ConfigProvider, Drawer, Spin } from 'antd';
 import AIRouteBoundary from './AIRouteBoundary';
 import './business-feature.css';
+import { developmentFeaturesEnabled } from '../../../Config/developmentFeatures';
+import { DevBadge } from '../../../Component/common/DevOnly';
 
 const features = {
   tasks: lazy(() => import('./AIOperations')),
@@ -24,6 +26,7 @@ export function FeatureAction({
   context?: Record<string, string | number | undefined>;
 }) {
   const [open, setOpen] = useState(false);
+  if (!developmentFeaturesEnabled()) return null;
   const Page = features[feature] as React.ComponentType<any>;
   const query = new URLSearchParams();
   Object.entries(context).forEach(([key, value]) => {
@@ -31,7 +34,10 @@ export function FeatureAction({
   });
   return (
     <>
-      <Button onClick={() => setOpen(true)}>{children}</Button>
+      <Button onClick={() => setOpen(true)}>
+        {children}
+        <DevBadge />
+      </Button>
       <Drawer
         title={children}
         width="min(1200px, 96vw)"

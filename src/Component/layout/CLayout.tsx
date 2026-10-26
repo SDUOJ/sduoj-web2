@@ -1,6 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { Layout } from 'antd';
-import { useHistory, useLocation } from 'react-router-dom';
+import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import Loading from '../../Utils/Loading';
 import FooterSDU from './FooterSDU';
 import CHeader from './CHeader';
@@ -16,6 +16,13 @@ export default function CLayout() {
   const { pathname } = useLocation();
   const rankWidth = useAppSelector((state) => state.ContestReducer.minWidth);
   const authStatus = useAppSelector((state) => state.UserReducer.authStatus ?? 'unknown');
+  const isIde = Boolean(
+    [
+      `${UrlPrefix}/problem/:ProblemCode/ide`,
+      `${UrlPrefix}/contest/:contestId/problem/:problemCode/ide`,
+      `${UrlPrefix}/problemSet/:problemSetId/problem/:problemGroupId/:problemId/ide`,
+    ].some((path) => matchPath(pathname, { path, exact: true })),
+  );
   const isRank = /\/contest\/.*\/rank/.test(pathname);
 
   useEffect(() => {
@@ -29,7 +36,7 @@ export default function CLayout() {
       {authStatus === 'unknown' && pathname !== UrlPrefix + '/login' ? (
         <Loading />
       ) : (
-        <Layout className="client-layout">
+        <Layout className={`client-layout${isIde ? ' client-layout-ide' : ''}`}>
           <CHeader />
           <Layout.Content className="client-content">
             <div style={{ minWidth: isRank ? Math.max(500, (rankWidth ?? 0) + 100) : 0 }}>
@@ -38,7 +45,7 @@ export default function CLayout() {
               </Suspense>
             </div>
           </Layout.Content>
-          <FooterSDU />
+          {!isIde && <FooterSDU />}
         </Layout>
       )}
     </>

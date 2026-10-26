@@ -25,6 +25,13 @@ jest.mock('antd', () => {
 
 jest.mock('../../common/Form/ModalFormUseForm', () => () => null);
 jest.mock('./UploadForm', () => () => null);
+// This suite tests the modal's request lifecycle. Keep the preview API at its
+// module boundary, as with m-api below, rather than booting app validation/i18n
+// through the real request client under this suite's minimal translation mock.
+jest.mock('../../../Utils/API/c-api', () => ({
+  __esModule: true,
+  default: { publicCaseDetail: jest.fn(), idePublicCaseDetail: jest.fn() },
+}));
 jest.mock('../../../Utils/API/m-api', () => ({
   __esModule: true,
   default: { uploadSingleCheckpoint: jest.fn() },

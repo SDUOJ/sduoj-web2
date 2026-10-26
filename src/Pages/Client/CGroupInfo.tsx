@@ -1,3 +1,5 @@
+import { DevBadge } from '../../Component/common/DevOnly';
+import { developmentFeaturesEnabled } from '../../Config/developmentFeatures';
 import { withRouter } from 'react-router-dom';
 import { Card, Tabs, Tag } from 'antd';
 import React, { Dispatch, useEffect, useState } from 'react';
@@ -40,7 +42,13 @@ const CGroupInfo = (props: any) => {
       setGroupInfo(value);
     });
     const act = keyValueData_g;
-    if (act !== undefined) setActiveKey(act);
+    if (act !== undefined) {
+      setActiveKey(
+        !developmentFeaturesEnabled() && ['course', 'courseManagement'].includes(act)
+          ? 'Announcement'
+          : act,
+      );
+    }
 
     cApi.getProblemSetLabelList({ groupId: groupId }).then((res: any) => {
       const label = res.label;
@@ -138,21 +146,39 @@ const CGroupInfo = (props: any) => {
                     useGroup={false}
                   />
                 </Tabs.TabPane>
-                <Tabs.TabPane tab={t('course')} key="course">
-                  <CourseTab
-                    groupId={groupId}
-                    username={username}
-                    members={groupInfo?.members ?? []}
-                  />
-                </Tabs.TabPane>
+                {developmentFeaturesEnabled() && (
+                  <Tabs.TabPane
+                    tab={
+                      <>
+                        {t('course')}
+                        <DevBadge />
+                      </>
+                    }
+                    key="course"
+                  >
+                    <CourseTab
+                      groupId={groupId}
+                      username={username}
+                      members={groupInfo?.members ?? []}
+                    />
+                  </Tabs.TabPane>
+                )}
                 <Tabs.TabPane tab={t('report')} key="report">
                   <ProblemSetSummary groupId={groupId} />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab={t('user')} key={'member'}>
                   {groupInfo !== undefined && <GroupUserListCard members={groupInfo.members} />}
                 </Tabs.TabPane>
-                {isAdmin && (
-                  <Tabs.TabPane tab={t('courseManagement')} key="courseManagement">
+                {isAdmin && developmentFeaturesEnabled() && (
+                  <Tabs.TabPane
+                    tab={
+                      <>
+                        {t('courseManagement')}
+                        <DevBadge />
+                      </>
+                    }
+                    key="courseManagement"
+                  >
                     <CourseManagement groupId={groupId} />
                   </Tabs.TabPane>
                 )}

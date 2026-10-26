@@ -1,3 +1,4 @@
+import DevOnly, { DevBadge } from '../../Component/common/DevOnly';
 import { FeatureAction } from './AI/BusinessFeature';
 import { Button, Card, Col, Form, Input, InputNumber, Row, Select, Space } from 'antd';
 import MApi from '../../Utils/API/m-api';
@@ -51,11 +52,7 @@ const MProblemSet = (props: any) => {
       };
       mApi.getProblemGroupSearch({ search: '' }).then((res: any) => {
         // Accept both a bare array and a paged { rows } envelope.
-        const list: any[] = Array.isArray(res)
-          ? res
-          : Array.isArray(res?.rows)
-            ? res.rows
-            : [];
+        const list: any[] = Array.isArray(res) ? res : Array.isArray(res?.rows) ? res.rows : [];
         let data: any = [];
         for (let x of list) {
           data.push({
@@ -511,7 +508,12 @@ const MProblemSet = (props: any) => {
         title={props.t('ProblemSetList')}
         extra={
           <Space>
-            <Button href={UrlPrefix + '/manage/intelligent'}>智能管理</Button>
+            <DevOnly>
+              <Button href={UrlPrefix + '/manage/intelligent'}>
+                智能管理
+                <DevBadge />
+              </Button>
+            </DevOnly>
             <FeatureAction feature="exams">考务管理</FeatureAction>
             <FeatureAction feature="interviews">实验验收</FeatureAction>
             <ModalFormUseForm

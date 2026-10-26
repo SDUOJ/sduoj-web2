@@ -117,3 +117,24 @@
     text-align: center;
   }
 }
+
+.client-layout-ide .client-content {
+  margin: 64px 0 0;
+  height: calc(100dvh - 64px);
+  overflow: hidden;
+}
+
+.client-layout-ide .client-content > div {
+  height: 100%;
+}
+
+.client-ide-entry {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+  .client-layout-ide .client-content {
+    margin: 108px 0 0;
+    height: calc(100dvh - 108px);
+  }
+}

@@ -1,3 +1,5 @@
+import { DevBadge } from '../common/DevOnly';
+import { developmentFeaturesEnabled } from '../../Config/developmentFeatures';
 import { Link, matchPath, withRouter } from 'react-router-dom';
 import { Button, Card, Space, Tabs } from 'antd';
 import { isValueEmpty } from '../../Utils/empty';
@@ -60,16 +62,18 @@ const PSHeader = (props: any) => {
             style={{ marginTop: 25 }}
             extra={
               <Space style={{ marginTop: 12 }} wrap>
-                {problemSetInfo.isAdmin === true && (
+                {problemSetInfo.isAdmin === true && developmentFeaturesEnabled() && (
                   <>
                     <Button size={'small'} href={`${UrlPrefix}/workspace?psid=${problemSetId}`}>
                       AI 任务中心
+                      <DevBadge />
                     </Button>
                     <Button
                       size={'small'}
                       href={`${UrlPrefix}/manage/problemSet/grading?psid=${problemSetId}`}
                     >
                       AI 批阅
+                      <DevBadge />
                     </Button>
                   </>
                 )}

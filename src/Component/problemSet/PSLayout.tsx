@@ -1,4 +1,4 @@
-import { withRouter } from 'react-router-dom';
+import { matchPath, withRouter } from 'react-router-dom';
 import PSHeader from './PSHeader';
 import Loading from '../../Utils/Loading';
 import { routeTrees } from '../../Config/router/routeTrees';
@@ -13,8 +13,15 @@ import { WaterMark } from '@ant-design/pro-layout';
 import { UserState } from '../../Type/Iuser';
 import ErrorBoundary from '../../Utils/ErrorBoundary';
 import QRFloat from '../autolab/QRFloat';
+import { UrlPrefix } from '../../Config/constValue';
 
 const PSLayout = (props: any) => {
+  const isIde = Boolean(
+    matchPath(props.location.pathname, {
+      path: `${UrlPrefix}/problemSet/:problemSetId/problem/:problemGroupId/:problemId/ide`,
+      exact: true,
+    }),
+  );
   // const path = props.location.pathname
   let minWidth = 500;
 
@@ -40,7 +47,9 @@ const PSLayout = (props: any) => {
 
   const content = (
     <ErrorBoundary>
-      <PSHeader />
+      <div hidden={isIde}>
+        <PSHeader />
+      </div>
       <Suspense fallback={<Loading />}>
         <RouteSwitch routes={routeTrees.problemSet} />
       </Suspense>
@@ -51,23 +60,34 @@ const PSLayout = (props: any) => {
     <>
       <LoginCheck jump={true} />
       {authStatus === 'authenticated' && (
-        <div style={minWidth <= 1500 ? { textAlign: 'center', margin: '0 auto' } : undefined}>
+        <div
+          style={
+            isIde
+              ? { height: '100%', minHeight: 0 }
+              : minWidth <= 1500
+                ? { textAlign: 'center', margin: '0 auto' }
+                : undefined
+          }
+        >
           <div
             style={
-              minWidth <= 1500
-                ? {
-                    textAlign: 'left',
-                    maxWidth: '1500px',
-                    margin: '0 auto',
-                  }
-                : {
-                    textAlign: 'left',
-                    maxWidth: '1500px',
-                    marginLeft: Math.max(0, ((pageWidth as number) - minWidth) / 2),
-                  }
+              isIde
+                ? { height: '100%', minHeight: 0 }
+                : minWidth <= 1500
+                  ? {
+                      textAlign: 'left',
+                      maxWidth: '1500px',
+                      margin: '0 auto',
+                    }
+                  : {
+                      textAlign: 'left',
+                      maxWidth: '1500px',
+                      marginLeft: Math.max(0, ((pageWidth as number) - minWidth) / 2),
+                    }
             }
           >
             <WaterMark
+              style={isIde ? { height: '100%' } : undefined}
               rotate={-25}
               gapX={200}
               gapY={200}

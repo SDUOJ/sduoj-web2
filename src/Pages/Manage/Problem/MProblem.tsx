@@ -1,3 +1,4 @@
+import DevOnly, { DevBadge } from '../../../Component/common/DevOnly';
 import React from 'react';
 import { Button, Card, Space } from 'antd';
 import MApi from '../../../Utils/API/m-api';
@@ -239,7 +240,12 @@ const MProblem = () => {
               <Button href={UrlPrefix + '/manage/problemSet/problem_group'}>
                 客观题 / 主观题组
               </Button>
-              <Button href={UrlPrefix + '/manage/intelligent'}>智能管理</Button>
+              <DevOnly>
+                <Button href={UrlPrefix + '/manage/intelligent'}>
+                  智能管理
+                  <DevBadge />
+                </Button>
+              </DevOnly>
               <ModalFormUseForm
                 TableName={'ProblemList'}
                 width={600}

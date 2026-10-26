@@ -1,5 +1,5 @@
 import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Badge, Button, Card, Col, message, Result, Row, Spin } from 'antd';
 import ProProgram from '../problem/Program/ProProgram';
 import cApi from '../../Utils/API/c-api';
@@ -22,21 +22,10 @@ import dealFloat from '../../Utils/dealFloat';
 import { TimeRangeState } from '../../Utils/Time';
 import { isValueEmpty } from '../../Utils/empty';
 import mApi from '../../Utils/API/m-api';
+import { useProblemGuards } from './problemGuards';
 
-export const installProblemGuards = () => {
-  const preventContextMenu = (event: MouseEvent) => event.preventDefault();
-  const preventDevTools = (event: KeyboardEvent) => {
-    if (event.key === 'F12') event.preventDefault();
-  };
-  document.addEventListener('contextmenu', preventContextMenu);
-  window.addEventListener('keydown', preventDevTools);
-  return () => {
-    document.removeEventListener('contextmenu', preventContextMenu);
-    window.removeEventListener('keydown', preventDevTools);
-  };
-};
-
-const Problem = (props: any) => {
+export const Problem = (props: any) => {
+  useProblemGuards();
   const psid = props.match.params.problemSetId;
   const gid = props.match.params.problemGroupId;
   const pid = props.match.params.problemId;
@@ -59,12 +48,13 @@ const Problem = (props: any) => {
     const groups = Array.isArray(problemSetInfo.groupInfo)
       ? [...problemSetInfo.groupInfo]
       : { ...problemSetInfo.groupInfo };
+    const problems = Array.isArray(groupInfo.problemInfo)
+      ? [...groupInfo.problemInfo]
+      : { ...groupInfo.problemInfo };
+    problems[pid] = { ...problemMeta, ...data };
     groups[gid] = {
       ...groupInfo,
-      problemInfo: {
-        ...groupInfo.problemInfo,
-        [pid]: { ...problemMeta, ...data },
-      },
+      problemInfo: problems,
     };
     dispatch({
       type: 'setProblemSetInfo',
@@ -175,6 +165,30 @@ const Problem = (props: any) => {
     );
   }
 
+  const examActions = hasTimer && (
+    <>
+      <Reconfirm
+        btnProps={{ block: true, danger: true, type: 'primary' }}
+        btnText={props.t('SubmitPaper')}
+        confirm={props.username}
+        API={() => {
+          cApi.finishProblemSet({ router: { psid, gid: 0, pid: 0 } }).then(() => {
+            message.success(props.t('examSubmittedSuccess'));
+            props.history.replace(UrlPrefix + '/problemSetPublic/' + psid);
+          });
+        }}
+        todo={props.t('SubmitPaper')}
+      />
+      <div style={{ marginTop: 24 }}>
+        <Timer
+          deadline={parseInt(problemSetInfo?.tm_end)}
+          inline
+          onFinish={() => props.history.replace(UrlPrefix + '/problemSetPublic/' + psid)}
+        />
+      </div>
+    </>
+  );
+
   return (
     <div style={{ textAlign: 'center', margin: '0 auto' }}>
       <div
@@ -185,8 +199,9 @@ const Problem = (props: any) => {
           userSelect: 'none',
         }}
       >
-        <Row gutter={20} style={{ marginTop: '24px' }}>
-          <Col span={17}>
+        <Row gutter={20} style={{ marginTop: props.embedded ? 0 : '24px' }}>
+          <Col span={props.embedded ? 24 : 17}>
+            {props.embedded && examActions && <div style={{ marginBottom: 24 }}>{examActions}</div>}
             <Card
               title={
                 <>
@@ -226,28 +241,37 @@ const Problem = (props: any) => {
                 switch (groupType) {
                   case 2:
                     return (
-                      <ProProgram
-                        key={proName}
-                        showMdExport={false}
-                        name={proName}
-                        nameWithD={proName}
-                        GetProblemInfoAPI={GetProblemInfoAPI}
-                        enableLeftSubmitCount={true}
-                        SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
-                          return submitAPI({
-                            judgeTemplateId: judgeTemplate,
-                            code: code,
-                            zipFileId: zipId,
-                            problemSetId: psid,
-                          });
-                        }}
-                        SubmissionListAPI={SubmissionListAPI}
-                        QuerySubmissionAPI={QuerySubmissionAPI}
-                        {...publicCheckPointAPI}
-                        scoreMod={'show'}
-                        testcaseMod={'show'}
-                        showInfo={false}
-                      />
+                      <>
+                        {!props.embedded && (
+                          <Link to={`${UrlPrefix}/problemSet/${psid}/problem/${gid}/${pid}/ide`}>
+                            <Button type="primary" style={{ marginBottom: 16 }}>
+                              {props.t('answerIde.open')}
+                            </Button>
+                          </Link>
+                        )}
+                        <ProProgram
+                          key={proName}
+                          showMdExport={false}
+                          name={proName}
+                          nameWithD={proName}
+                          GetProblemInfoAPI={GetProblemInfoAPI}
+                          enableLeftSubmitCount={true}
+                          SubmitAPI={(judgeTemplate: string, code: string, zipId: string) => {
+                            return submitAPI({
+                              judgeTemplateId: judgeTemplate,
+                              code: code,
+                              zipFileId: zipId,
+                              problemSetId: psid,
+                            });
+                          }}
+                          SubmissionListAPI={SubmissionListAPI}
+                          QuerySubmissionAPI={QuerySubmissionAPI}
+                          {...publicCheckPointAPI}
+                          scoreMod={'show'}
+                          testcaseMod={'show'}
+                          showInfo={false}
+                        />
+                      </>
                     );
                   case 1: {
                     const timeState_running = TimeRangeState(
@@ -289,106 +313,92 @@ const Problem = (props: any) => {
                 }
               })()}
             </Card>
-            <ProblemSetPageCtrl />
+            {!props.embedded && <ProblemSetPageCtrl />}
+            {props.embedded && groupType === 2 && (
+              <div style={{ marginTop: 24 }}>
+                <ProProgramDetail problemInfo={problemInfo} />
+                <RecentSubmissionList
+                  name={'Pro-SubmissionList-Recent-' + proName}
+                  API={SubmissionListAPI}
+                  QuerySubmissionAPI={QuerySubmissionAPI}
+                />
+              </div>
+            )}
           </Col>
-          <Col span={7}>
-            <div>
-              {hasTimer && (
-                <>
-                  <Reconfirm
-                    btnProps={{ block: true, danger: true, type: 'primary' }}
-                    btnText={props.t('SubmitPaper')}
-                    confirm={props.username}
-                    API={() => {
-                      cApi.finishProblemSet({ router: { psid: psid, gid: 0, pid: 0 } }).then(() => {
-                        message.success(props.t('examSubmittedSuccess'));
-                        props.history.replace(UrlPrefix + '/problemSetPublic/' + psid);
-                      });
-                    }}
-                    todo={props.t('SubmitPaper')}
-                  />
-                  <div style={{ marginTop: 24 }}>
-                    <Timer
-                      deadline={parseInt(problemSetInfo?.tm_end)}
-                      inline={true}
-                      onFinish={() => {
-                        props.history.replace(UrlPrefix + '/problemSetPublic/' + psid);
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-            <div style={hasTimer ? { marginTop: 25 } : {}}>
-              {problemSetInfo?.groupInfo.map((group: any, g_index: number) => {
-                return (
-                  <div key={`group-${group.index ?? g_index}`}>
-                    <Card size={'small'} title={group.name} variant={'borderless'}>
-                      <Row gutter={10}>
-                        {group.problemInfo.map((problem: any, index: number) => {
-                          return (
-                            <Col
-                              key={`problem-${group.index ?? g_index}-${problem.index ?? index}`}
-                              span={3}
-                            >
-                              <Button
-                                ghost={true}
-                                size={'middle'}
-                                type={
-                                  g_index.toString() === gid && index.toString() === pid
-                                    ? 'primary'
-                                    : 'text'
-                                }
-                                shape={'round'}
-                                onClick={() => {
-                                  props.history.push(
-                                    UrlPrefix +
-                                      '/problemSet/' +
-                                      psid +
-                                      '/problem/' +
-                                      group.index +
-                                      '/' +
-                                      index,
-                                  );
-                                }}
+          {!props.embedded && (
+            <Col span={7}>
+              <div>{examActions}</div>
+              <div style={hasTimer ? { marginTop: 25 } : {}}>
+                {problemSetInfo?.groupInfo.map((group: any, g_index: number) => {
+                  return (
+                    <div key={`group-${group.index ?? g_index}`}>
+                      <Card size={'small'} title={group.name} variant={'borderless'}>
+                        <Row gutter={10}>
+                          {group.problemInfo.map((problem: any, index: number) => {
+                            return (
+                              <Col
+                                key={`problem-${group.index ?? g_index}-${problem.index ?? index}`}
+                                span={3}
                               >
-                                <Badge dot={problem.collect === 1} offset={[10, 0]}>
-                                  <span
-                                    style={{
-                                      fontWeight: 'bold',
-                                      color: problem.hasAnswer ? '#3ad506' : undefined,
-                                    }}
-                                  >
-                                    {index + 1}
-                                  </span>
-                                </Badge>
-                              </Button>
-                            </Col>
-                          );
-                        })}
-                      </Row>
-                    </Card>
-                  </div>
-                );
-              })}
-            </div>
-            <div>
-              {groupType === 2 && (
-                <>
-                  <div style={{ marginTop: 25 }}>
-                    <ProProgramDetail problemInfo={problemInfo} />
-                  </div>
-                  <div style={{ marginTop: 25 }}>
-                    <RecentSubmissionList
-                      name={'Pro-SubmissionList-Recent-' + proName}
-                      API={SubmissionListAPI}
-                      QuerySubmissionAPI={QuerySubmissionAPI}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </Col>
+                                <Button
+                                  ghost={true}
+                                  size={'middle'}
+                                  type={
+                                    g_index.toString() === gid && index.toString() === pid
+                                      ? 'primary'
+                                      : 'text'
+                                  }
+                                  shape={'round'}
+                                  onClick={() => {
+                                    props.history.push(
+                                      UrlPrefix +
+                                        '/problemSet/' +
+                                        psid +
+                                        '/problem/' +
+                                        group.index +
+                                        '/' +
+                                        index,
+                                    );
+                                  }}
+                                >
+                                  <Badge dot={problem.collect === 1} offset={[10, 0]}>
+                                    <span
+                                      style={{
+                                        fontWeight: 'bold',
+                                        color: problem.hasAnswer ? '#3ad506' : undefined,
+                                      }}
+                                    >
+                                      {index + 1}
+                                    </span>
+                                  </Badge>
+                                </Button>
+                              </Col>
+                            );
+                          })}
+                        </Row>
+                      </Card>
+                    </div>
+                  );
+                })}
+              </div>
+              <div>
+                {groupType === 2 && (
+                  <>
+                    <div style={{ marginTop: 25 }}>
+                      <ProProgramDetail problemInfo={problemInfo} />
+                    </div>
+                    <div style={{ marginTop: 25 }}>
+                      <RecentSubmissionList
+                        name={'Pro-SubmissionList-Recent-' + proName}
+                        API={SubmissionListAPI}
+                        QuerySubmissionAPI={QuerySubmissionAPI}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+          )}
         </Row>
       </div>
     </div>

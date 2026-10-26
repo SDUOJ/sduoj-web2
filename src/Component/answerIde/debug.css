@@ -1,0 +1,331 @@
+.ide-debug-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.ide-debug-body > .ide-split {
+  flex: 1;
+  min-width: 0;
+}
+.ide-debug-editor {
+  position: relative;
+}
+.ide-debug-toolbar {
+  position: absolute;
+  z-index: 5;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 6px;
+  border: 1px solid #d9dfe8;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 2px 7px #0002;
+}
+.ide-debug-toolbar-grip {
+  color: #7b8492;
+  padding-right: 3px;
+}
+.ide-debug-toolbar button:last-child {
+  color: #c74646;
+}
+.ide-debug-status {
+  padding: 4px 8px;
+  color: #657084;
+  font-size: 12px;
+}
+.ide-debug-sidebar {
+  flex: 0 0 248px;
+  min-width: 0;
+  max-width: 35%;
+  overflow: auto;
+  background: #f4f5f7;
+  border-right: 1px solid #dce1e9;
+  font-size: 12px;
+}
+.ide-debug-sidebar > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.ide-debug-sidebar > .ide-debug-status {
+  display: block;
+  padding: 5px 12px 10px;
+}
+.ide-debug-sidebar .ant-alert {
+  margin: 4px 6px;
+}
+.ide-debug-sidebar details {
+  border-top: 1px solid #e1e5eb;
+}
+.ide-debug-sidebar summary {
+  cursor: pointer;
+  padding: 6px 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.ide-debug-sidebar summary .ant-btn {
+  margin-left: 8px;
+}
+.ide-debug-sidebar p {
+  margin: 8px 14px;
+  color: #737d8d;
+}
+.ide-debug-sidebar kbd {
+  font-weight: normal;
+  float: right;
+  color: #737d8d;
+}
+.ide-debug-variable-tree {
+  list-style: none;
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+.ide-debug-variable-row {
+  display: flex;
+  align-items: center;
+  min-height: 25px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ide-debug-variable-name {
+  color: #245da8;
+}
+.ide-debug-variable-value {
+  color: #8b471b;
+}
+.ide-debug-tree-spacer {
+  flex: 0 0 20px;
+}
+.ide-debug-stack > button {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 14px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.ide-debug-stack > button.selected {
+  background: #dae7f6;
+}
+.ide-debug-stack > button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.ide-debug-breakpoint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px;
+}
+.ide-debug-breakpoint-row .ant-btn {
+  margin-left: auto;
+}
+.ide-debug-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e24646;
+}
+.ide-debug-breakpoint {
+  background: #e24646;
+  border-radius: 50%;
+  width: 10px !important;
+  height: 10px !important;
+  margin: 6px;
+}
+.ide-debug-current-line {
+  background: #f8e6a580;
+}
+.ide-debug-current-arrow::before {
+  content: '➜';
+  color: #b47d00;
+  font-size: 18px;
+}
+.ide-debug-terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  color: #d4d4d4;
+  background: #1e1e1e;
+  padding: 8px 14px;
+  font-family: Consolas, 'SFMono-Regular', monospace;
+}
+.ide-debug-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #b8bec9;
+}
+.ide-debug-terminal-header .ant-btn {
+  color: #b8bec9;
+}
+.ide-debug-terminal pre {
+  flex: 1;
+  min-height: 60px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+  margin: 8px 0;
+}
+.ide-debug-terminal form {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  align-items: center;
+}
+.ide-debug-terminal form > span {
+  color: #85c8a4;
+}
+.ide-debug-terminal form .ant-input,
+.ide-debug-terminal form textarea.ant-input {
+  color: #e6e6e6;
+  background: #292929;
+  border-color: #505050;
+  font-family: inherit;
+}
+.ide-debug-terminal form .ant-input::placeholder {
+  color: #9a9a9a;
+}
+.ide-debug-terminal small {
+  padding-top: 6px;
+  color: #aaa;
+  font-family: system-ui;
+}
+@media (max-width: 760px) {
+  .ide-debug-sidebar {
+    flex-basis: 180px;
+    max-width: 42%;
+  }
+  .ide-debug-toolbar {
+    left: auto;
+    right: 8px;
+    transform: none;
+  }
+}
+
+.ide-debug-variable-row {
+  white-space: nowrap;
+  min-width: 0;
+}
+.ide-debug-variable-name {
+  flex: 0 0 auto;
+  max-width: 65%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ide-debug-variable-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Give terminal flex children a definite height so input stays visible while output scrolls. */
+.ide-console-tabs > .ant-tabs-content-holder > .ant-tabs-content,
+.ide-console-tabs > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+  height: 100%;
+  min-height: 0;
+}
+.ide-debug-terminal {
+  overflow: hidden;
+}
+.ide-debug-terminal pre {
+  min-height: 0;
+}
+
+/* Reserve a toolbar row instead of covering line one or Monaco hover widgets. */
+.ide-debug-editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ide-debug-toolbar {
+  position: static;
+  transform: none;
+  align-self: center;
+  flex: 0 0 32px;
+  box-shadow: none;
+  margin: 2px 0;
+}
+.ide-debug-editor > :last-child {
+  flex: 1;
+  min-height: 0;
+}
+.ide-debug-sidebar-host {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 45%;
+  position: relative;
+  background: #f3f3f3;
+  overflow: hidden;
+}
+.ide-debug-sidebar-host .ide-debug-sidebar {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  padding-top: 0;
+}
+.ide-debug-collapse {
+  position: absolute;
+  right: 2px;
+  top: 6px;
+  z-index: 1;
+}
+.ide-debug-sidebar > header {
+  padding-right: 32px;
+  height: 36px;
+}
+.ide-debug-resizer {
+  flex: 0 0 4px;
+  cursor: col-resize;
+  touch-action: none;
+  background: #e8e8e8;
+}
+.ide-debug-resizer:hover,
+.ide-debug-resizer:focus-visible {
+  background: #007acc;
+}
+.ide-debug-terminal form .ant-input,
+.ide-debug-terminal form textarea.ant-input {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  resize: none;
+}
+.ide-debug-terminal form {
+  align-items: baseline;
+}
+.ide-debug-terminal small {
+  display: none;
+}
+.ide-debug-watch {
+  display: flex;
+  align-items: center;
+  padding: 0 10px 0 18px;
+  min-height: 26px;
+}
+.ide-debug-watch > span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

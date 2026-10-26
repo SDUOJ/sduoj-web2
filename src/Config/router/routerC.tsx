@@ -6,30 +6,35 @@ import { UrlPrefix } from '../constValue';
 export const routerC: readonly IBaseRouter[] = [
   {
     id: 9300,
+    devOnly: true,
     path: UrlPrefix + '/workspace',
     exact: true,
     component: aiPage(() => import('../../Pages/Manage/AI/AIOperations')),
   },
   {
     id: 9301,
+    devOnly: true,
     path: UrlPrefix + '/courses/knowledge',
     exact: true,
     component: aiPage(() => import('../../Pages/Manage/AI/CourseKnowledgeWorkbench')),
   },
   {
     id: 9302,
+    devOnly: true,
     path: UrlPrefix + '/practice/interviews/:id',
     exact: true,
     component: aiPage(() => import('../../Pages/Manage/AI/InterviewSession')),
   },
   {
     id: 9303,
+    devOnly: true,
     path: UrlPrefix + '/practice/interviews',
     exact: true,
     component: aiPage(() => import('../../Pages/Manage/AI/InterviewWorkbench')),
   },
   {
     id: 9304,
+    devOnly: true,
     path: UrlPrefix + '/account/assistant',
     exact: true,
     component: aiPage(() => import('../../Pages/Manage/AI/AIAdmin')),
@@ -57,6 +62,18 @@ export const routerC: readonly IBaseRouter[] = [
     path: UrlPrefix + '/problem',
     exact: true,
     component: lazy(() => import('../../Pages/Client/CProblem')),
+  },
+  {
+    id: 52,
+    path: UrlPrefix + '/problem/:ProblemCode/ide',
+    exact: true,
+    component: lazy(() => import('../../Pages/Client/CProblemIde')),
+  },
+  {
+    id: 53,
+    path: UrlPrefix + '/contest/:contestId/problem/:problemCode/ide',
+    exact: true,
+    component: lazy(() => import('../../Pages/Client/CContextProblemIde')),
   },
   {
     id: 51,
@@ -145,6 +162,13 @@ export const routerC: readonly IBaseRouter[] = [
 ];
 
 export const router_ProblemSet: readonly IRouter[] = [
+  {
+    id: 54,
+    path: UrlPrefix + '/problemSet/:problemSetId/problem/:problemGroupId/:problemId/ide',
+    title_i18n: 'answerIde.open',
+    exact: true,
+    component: lazy(() => import('../../Pages/Client/CContextProblemIde')),
+  },
   {
     id: 13,
     path: UrlPrefix + '/problemSet/:problemSetId/overview',

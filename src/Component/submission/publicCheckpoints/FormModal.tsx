@@ -6,6 +6,7 @@ import ModalFormUseForm from '../../common/Form/ModalFormUseForm';
 import mApi from '../../../Utils/API/m-api';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import UploadForm from './UploadForm';
+import PublicCaseDetail from '../../problem/PublicCaseDetail';
 
 const PublicCheckpointsFormModal = (props: any) => {
   const { t } = useTranslation();
@@ -145,6 +146,14 @@ const PublicCheckpointsFormModal = (props: any) => {
                 render: (v, row: any) => {
                   return (
                     <Space size={0}>
+                      {props.problemCode && (
+                        <PublicCaseDetail
+                          problemId={String(row.problemId)}
+                          problemCode={props.problemCode}
+                          context={props.ideContext}
+                          checkpointId={String(row.checkpointId)}
+                        />
+                      )}
                       <Button
                         size={'small'}
                         type={'link'}

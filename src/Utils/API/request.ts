@@ -158,7 +158,11 @@ const messageDisabledList = [
   '/submit/queryACProblem',
   '/group/my',
   '/problem_set/upcoming',
+  '/ps/ide/',
 ];
+
+const messageDisabled = (url: string) =>
+  messageDisabledList.some((item) => (item.endsWith('/') ? url.startsWith(item) : item === url));
 
 const parseErrorMessage = (payload: unknown, fallback = '请求失败') => {
   if (payload === undefined || payload === null) return fallback;
@@ -184,17 +188,41 @@ const parseErrorMessage = (payload: unknown, fallback = '请求失败') => {
 
 const rejection = (message: string) => Promise.reject(message);
 
+export class ApiRequestError extends Error {
+  constructor(
+    message: string,
+    readonly status?: number,
+    readonly code?: number,
+  ) {
+    super(message);
+    this.name = 'ApiRequestError';
+  }
+}
+
 const dealResponse = async <Payload>(
   resp: Promise<AxiosResponse<unknown>>,
   url: string,
+  errorDetails = false,
 ): Promise<Payload> => {
+  const reject = (message: string, response?: { status: number; data: unknown }) => {
+    const code = isApiRecord(response?.data) ? response.data.code : undefined;
+    return errorDetails
+      ? Promise.reject(
+          new ApiRequestError(
+            message,
+            response?.status,
+            typeof code === 'number' ? code : undefined,
+          ),
+        )
+      : rejection(message);
+  };
   try {
     const response = await resp;
     if (!isApiEnvelope(response.data)) {
       const invalidResponse = i18n.t('InvalidApiResponse');
       message.error(invalidResponse);
       reportApiFailure(new Error(invalidResponse), url);
-      return rejection(invalidResponse);
+      return reject(invalidResponse, response);
     }
     const rawTimestamp = response.data.timestamp;
     const timestamp = rawTimestamp === null || rawTimestamp === '' ? NaN : Number(rawTimestamp);
@@ -207,7 +235,7 @@ const dealResponse = async <Payload>(
       if (Math.abs(timestamp - Date.now()) > 60000) {
         window.location.replace(UrlPrefix + '/error/time');
         message.error('本地时间异常');
-        return rejection('本地时间异常');
+        return reject('本地时间异常', response);
       }
     }
     switch (response.data.code) {
@@ -215,7 +243,7 @@ const dealResponse = async <Payload>(
         return response.data.data as Payload;
       default:
         message.error(parseErrorMessage(response.data));
-        return rejection(parseErrorMessage(response.data));
+        return reject(parseErrorMessage(response.data), response);
     }
   } catch (error: unknown) {
     if (axios.isCancel(error) || error instanceof CanceledError) throw error;
@@ -226,20 +254,20 @@ const dealResponse = async <Payload>(
     }
     if (response === undefined) {
       // respect silence list for network unreachable as well
-      if (messageDisabledList.indexOf(url) === -1) message.error('服务器不可达');
-      return rejection('服务器不可达');
+      if (!messageDisabled(url)) message.error('服务器不可达');
+      return reject('服务器不可达');
     }
     if (response.status === 400) {
       const errorMsg = parseErrorMessage(response.data, '请求参数错误');
       message.error(errorMsg);
-      return rejection(errorMsg);
+      return reject(errorMsg, response);
     }
     if (response.status === 403 && url.startsWith('/manage/')) invalidateAuthBoundary();
     const payload = response.data;
     switch (response.status === 401 ? 401 : isApiRecord(payload) ? payload.code : undefined) {
       case 401:
         invalidateAuthBoundary();
-        if (messageDisabledList.indexOf(url) === -1) {
+        if (!messageDisabled(url)) {
           const current = new URL(window.location.href);
           const inApp =
             current.pathname === UrlPrefix || current.pathname.startsWith(UrlPrefix + '/');
@@ -256,21 +284,26 @@ const dealResponse = async <Payload>(
           }
           message.error(parseErrorMessage(payload, '未登录或登录已过期'));
         }
-        return rejection(parseErrorMessage(payload, '未登录或登录已过期'));
+        return reject(parseErrorMessage(payload, '未登录或登录已过期'), response);
       default: {
         const errorMsg = parseErrorMessage(payload);
-        if (messageDisabledList.indexOf(url) === -1) message.error(errorMsg);
-        return rejection(errorMsg);
+        if (!messageDisabled(url)) message.error(errorMsg);
+        return reject(errorMsg, response);
       }
     }
   }
 };
 
-const get: Get = async <Payload>(url: string, params?: object, config?: AxiosRequestConfig) => {
+const getResult = async <Payload>(
+  url: string,
+  params?: object,
+  config?: AxiosRequestConfig,
+  errorDetails = false,
+) => {
   const error = requestConstraintError(url, config?.params ?? params, 'GET');
   if (error) {
     message.error(error);
-    return rejection(error);
+    return errorDetails ? Promise.reject(new ApiRequestError(error, 400)) : rejection(error);
   }
   return await dealResponse<Payload>(
     guardedRequest(url, config, (guardedConfig) =>
@@ -281,8 +314,10 @@ const get: Get = async <Payload>(url: string, params?: object, config?: AxiosReq
       }),
     ),
     url,
+    errorDetails,
   );
 };
+const get: Get = getResult;
 
 const post: Post = async <Payload>(url: string, data: unknown, config?: AxiosRequestConfig) => {
   const error = requestConstraintError(url, data);
@@ -303,6 +338,8 @@ const post: Post = async <Payload>(url: string, data: unknown, config?: AxiosReq
 
 const request = {
   get,
+  getWithErrorDetails: <Payload>(url: string, params?: object, config?: AxiosRequestConfig) =>
+    getResult<Payload>(url, params, config, true),
   post,
   getZipFile,
   downloadFile,

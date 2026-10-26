@@ -1,4 +1,11 @@
 import {
+  CodeSnapshot,
+  IdeContext,
+  RunRecovery,
+  RunDetail,
+  RunRequest,
+} from '../../Component/answerIde/runTypes';
+import {
   forgetInfo,
   loginInfo,
   problemListQuery,
@@ -55,6 +62,23 @@ type AcceptanceQueueCache = {
 };
 
 let acceptanceQueueCache: AcceptanceQueueCache | undefined;
+
+type PublicCaseData = {
+  checkpointId: string;
+  inputFileId: string;
+  outputFileId: string;
+  input: string;
+  output: string;
+  inputSize: number;
+  outputSize: number;
+  canRun: boolean;
+};
+
+const codeSnapshot = (value: CodeSnapshot): CodeSnapshot => ({
+  ...value,
+  savedAt: Number(value.savedAt),
+  judgeTemplateId: String(value.judgeTemplateId),
+});
 
 const cApi = {
   // Config
@@ -176,7 +200,7 @@ const cApi = {
     return request.post('/contest/participate', data);
   },
   async submitContestProblem(data: contestSubmissionPayload) {
-    return request.post('/contest/createSubmission', data);
+    return request.post<string>('/contest/createSubmission', data);
   },
   async getContestInfo(data: { contestId: string }) {
     return request.get<ContestInfo>('/contest/query', data);
@@ -194,7 +218,7 @@ const cApi = {
     return request.get<ContestRankRow[]>('/contest/rank', data);
   },
   async submitInContest(data: contestSubmissionPayload) {
-    return request.post('/contest/createSubmission', data);
+    return request.post<string>('/contest/createSubmission', data);
   },
   async getContestReport(data: contestReportParams) {
     return request.post('/contest/comprehensiveReport', data);
@@ -253,6 +277,42 @@ const cApi = {
     zipFileId?: string;
   }) {
     return request.post('/submit/create', data);
+  },
+
+  // 自定义用例评测（biz_type=CASES）
+  async runCapabilities() {
+    return request.get<{ enabled: boolean; maxCases: number }>('/run/capabilities');
+  },
+  async publicCaseDetail(params: { problemId: string; checkpointId: string }) {
+    return request.get<PublicCaseData>('/problem/publicCaseDetail', params);
+  },
+  async idePublicCaseDetail(context: IdeContext, checkpointId: string) {
+    return request.post<PublicCaseData>('/ide/publicCase', { context, checkpointId });
+  },
+  async runCases(data: RunRequest) {
+    return request.post<string>('/run/cases', data);
+  },
+  async getRunQuery(data: { submissionId: string }) {
+    return request.getWithErrorDetails<RunDetail>('/run/query', data);
+  },
+  async getLatestRun(context: IdeContext): Promise<RunRecovery> {
+    const value = await request.post<RunRecovery>('/run/latest', context);
+    return {
+      ...value,
+      cooldownUntil: value.cooldownUntil == null ? undefined : Number(value.cooldownUntil),
+    };
+  },
+  async saveIdeCode(data: { context: IdeContext; judgeTemplateId: string; code: string }) {
+    return codeSnapshot(await request.post<CodeSnapshot>('/ide/save', data));
+  },
+  async getIdeHistory(data: { context: IdeContext; judgeTemplateId?: string; beforeId?: string }) {
+    return (await request.post<CodeSnapshot[]>('/ide/history', data)).map(codeSnapshot);
+  },
+  async getIdeCode(submissionId: string) {
+    return codeSnapshot(await request.get<CodeSnapshot>('/ide/code', { submissionId }));
+  },
+  async cancelRun(data: { submissionId: string }) {
+    return request.post('/run/cancel', data);
   },
 
   // 题目相关
