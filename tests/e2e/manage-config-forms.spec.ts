@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 type ApiCalls = {
@@ -89,7 +90,10 @@ async function openPage(
   return { errors, calls };
 }
 
-test('problem set create rejects blank name/tag before submit', async ({ page }) => {
+test('problem set create rejects blank name/tag before submit', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors, calls } = await openPage(page, '/v2/manage/problemSet/problem_set');
   await page
     .getByRole('button', { name: /Create/i })
@@ -100,21 +104,23 @@ test('problem set create rejects blank name/tag before submit', async ({ page })
 
   // StepsForm: walk Next without filling required fields — must not create.
   for (let i = 0; i < 4; i += 1) {
-    const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
+    const next = dialog.locator('.ant-btn:visible').filter({ hasText: /^(Next|下一步)$/ });
     if (!(await next.count())) break;
-    await next.first().click({ force: true });
+    await next.first().click();
     await page.waitForTimeout(100);
     if (calls.createProblemSet.length) break;
   }
-  const finish = dialog.getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ });
+  const finish = dialog
+    .locator('.ant-btn:visible')
+    .filter({ hasText: /^(Finish|Submit|完成|提交)$/ });
   if (await finish.count()) {
-    await finish.first().click({ force: true });
+    await finish.first().click();
   }
   expect(calls.createProblemSet).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('problem group create requires a non-blank name', async ({ page }) => {
+test('problem group create requires a non-blank name', async ({ page, browserName }, testInfo) => {
   const { errors, calls } = await openPage(page, '/v2/manage/problemSet/problem_group');
   await page
     .getByRole('button', { name: /Create/i })
@@ -128,10 +134,13 @@ test('problem group create requires a non-blank name', async ({ page }) => {
     .click();
   await expect(dialog).toBeVisible();
   expect(calls.createProblemGroup).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('course create rejects blank name and invalid tag', async ({ page }) => {
+test('course create rejects blank name and invalid tag', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors, calls } = await openPage(page, '/v2/manage/course/course', {
     extraRoutes: {
       '/ps/course/list': { rows: [], totalNum: 0, pageIndex: 1, pageSize: 20 },
@@ -147,17 +156,20 @@ test('course create rejects blank name and invalid tag', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(calls.createCourse).toEqual([]);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('intelligent management page is reachable for admins', async ({ page }) => {
+test('intelligent management page is reachable for admins', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors } = await openPage(page, '/v2/manage/intelligent');
   // page shell should render without crash
   await expect(page.getByRole('button').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('assistant settings page is reachable for admins', async ({ page }) => {
+test('assistant settings page is reachable for admins', async ({ page, browserName }, testInfo) => {
   const { errors } = await openPage(page, '/v2/manage/settings/assistant', {
     extraRoutes: {
       '/ai/admin/settings': {},
@@ -165,5 +177,5 @@ test('assistant settings page is reachable for admins', async ({ page }) => {
     },
   });
   await expect(page.getByRole('button').first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });

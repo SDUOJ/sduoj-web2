@@ -1,4 +1,5 @@
-import { expect, Page, test, TestInfo, WebSocketRoute } from '@playwright/test';
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
+import { expect, Page, test, WebSocketRoute } from '@playwright/test';
 
 const problem = (markdown: string) => ({
   problemId: 1,
@@ -31,19 +32,6 @@ const submission = {
   judgeTemplateTitle: 'C++',
 };
 
-async function expectErrorBudget(errors: string[], browserName: string, testInfo: TestInfo) {
-  const resizeNotification = 'ResizeObserver loop completed with undelivered notifications.';
-  const allowed: string[] =
-    browserName === 'webkit' ? errors.filter((error) => error === resizeNotification) : [];
-  const unexpected = errors.filter((error) => !allowed.includes(error));
-  await testInfo.attach('browser-error-budget', {
-    contentType: 'application/json',
-    body: JSON.stringify({ allowedResizeObserverNotifications: allowed.length, unexpected }),
-  });
-  expect(allowed.length).toBeLessThanOrEqual(2);
-  expect(unexpected).toEqual([]);
-}
-
 async function installApi(page: Page, markdown = '') {
   await page.addInitScript(() => localStorage.setItem('language', 'en'));
   await page.route('**/api/**', async (route) => {
@@ -58,6 +46,9 @@ async function installApi(page: Page, markdown = '') {
         break;
       case '/submit/queryACProblem':
         data = [];
+        break;
+      case '/run/capabilities':
+        data = { enabled: true, maxCases: 10 };
         break;
       case '/problem/query':
         data = problem(markdown);
@@ -100,7 +91,7 @@ test('actual Vditor renderer keeps Markdown, math, and tables while rejecting ex
   expect(
     await page.evaluate(() => (window as unknown as { __markdownXss?: boolean }).__markdownXss),
   ).toBeUndefined();
-  await expectErrorBudget(errors, browserName, testInfo);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
 test('oversized Markdown gets a visible fallback and does not load renderer content', async ({
@@ -113,7 +104,7 @@ test('oversized Markdown gets a visible fallback and does not load renderer cont
   await page.goto('/v2/problem/SECURITY-1');
   await expect(page.getByRole('alert')).toContainText('Unable to preview this content');
   await expect(page.locator('#problem-content')).toBeEmpty();
-  await expectErrorBudget(errors, browserName, testInfo);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
 test('judging rejects unsupported frames, reconnects, and deduplicates legacy checkpoint replay', async ({

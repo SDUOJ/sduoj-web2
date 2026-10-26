@@ -39,6 +39,9 @@ async function installFixtures(
       case '/submit/queryACProblem':
         data = [];
         break;
+      case '/run/capabilities':
+        data = { enabled: true, maxCases: 10 };
+        break;
       case '/problem/query':
         data = problem;
         break;

@@ -108,7 +108,12 @@ for (const [language, fixture] of Object.entries(fixtures)) {
     page,
     baseURL,
   }, info) => {
-    expect(['127.0.0.1', 'localhost']).toContain(new URL(baseURL!).hostname);
+    const proxy = process.env.IDE_LIVE_PROXY;
+    if (proxy) {
+      expect(['127.0.0.1', 'localhost']).toContain(new URL(proxy).hostname);
+    } else {
+      expect(['127.0.0.1', 'localhost']).toContain(new URL(baseURL!).hostname);
+    }
     const failures: string[] = [];
     const requests: object[] = [];
     let debugSnapshot: {

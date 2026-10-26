@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 type UserRow = {
@@ -89,20 +90,22 @@ async function openUserManage(page: Page, fixture: Fixture = {}) {
 
 async function advanceSteps(page: Page, dialog: ReturnType<Page['getByRole']>) {
   for (let i = 0; i < 4; i += 1) {
-    const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
+    const next = dialog.locator('.ant-btn:visible').filter({ hasText: /^(Next|下一步)$/ });
     if (!(await next.count())) break;
-    await next.first().click({ force: true });
+    await next.first().click();
     await page.waitForTimeout(120);
   }
-  const finish = dialog.getByRole('button', { name: /^(Finish|Submit|完成|提交)$/ });
+  const finish = dialog
+    .locator('.ant-btn:visible')
+    .filter({ hasText: /^(Finish|Submit|完成|提交)$/ });
   if (await finish.count()) {
-    await finish.first().click({ force: true });
+    await finish.first().click();
     return true;
   }
   return false;
 }
 
-test('user list renders rows and opens edit dialog', async ({ page }) => {
+test('user list renders rows and opens edit dialog', async ({ page, browserName }, testInfo) => {
   const { errors, getUpdateCalls } = await openUserManage(page, {
     rows: [userRow(), userRow({ userId: '2', username: 'fe_95', nickname: 'Bob' })],
   });
@@ -126,10 +129,13 @@ test('user list renders rows and opens edit dialog', async ({ page }) => {
   await advanceSteps(page, dialog);
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
   expect(getUpdateCalls()[0]).toMatchObject({ username: 'fe_94', userId: '13667' });
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('user create validates username and submits a full profile', async ({ page }) => {
+test('user create validates username and submits a full profile', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors, getAddCalls } = await openUserManage(page);
   await page
     .getByRole('button', { name: /AddUser|Add User|Create/i })
@@ -157,10 +163,13 @@ test('user create validates username and submits a full profile', async ({ page 
   await expect.poll(() => getAddCalls().length, { timeout: 5000 }).toBe(1);
   const payload = Array.isArray(getAddCalls()[0]) ? getAddCalls()[0][0] : getAddCalls()[0];
   expect(String(payload.username)).toContain('valid_user');
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('user password change dialog submits admin password', async ({ page }) => {
+test('user password change dialog submits admin password', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors, getUpdateCalls } = await openUserManage(page);
   // superadmin sees More dropdown with Change Password
   const row = page.getByRole('row', { name: /fe_94/ });
@@ -183,10 +192,10 @@ test('user password change dialog submits admin password', async ({ page }) => {
     .first()
     .click();
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('batch delete sends selected usernames', async ({ page }) => {
+test('batch delete sends selected usernames', async ({ page, browserName }, testInfo) => {
   const { errors, getDeleteCalls } = await openUserManage(page, {
     rows: [userRow({ userId: '1' }), userRow({ userId: '2', username: 'fe_95' })],
   });
@@ -199,5 +208,5 @@ test('batch delete sends selected usernames', async ({ page }) => {
   // DeleteConfirm is a Popconfirm with Yes/No
   await page.getByRole('button', { name: /^Yes$/i }).first().click();
   await expect.poll(() => getDeleteCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });

@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 const now = Date.now();
@@ -99,7 +100,8 @@ async function openContestAs(
 
 test('student participant sees rank and problems but no admin export controls', async ({
   page,
-}) => {
+  browserName,
+}, testInfo) => {
   const { errors } = await openContestAs(page, '/v2/contest/42/rank', {
     username: 'student_a',
     roles: ['user'],
@@ -110,10 +112,10 @@ test('student participant sees rank and problems but no admin export controls', 
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toBeVisible();
   // non-admin should not get export controls
   await expect(page.getByRole('button', { name: /^Export$/i })).toHaveCount(0);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('admin organizer sees export controls on rank', async ({ page }) => {
+test('admin organizer sees export controls on rank', async ({ page, browserName }, testInfo) => {
   const { errors } = await openContestAs(page, '/v2/contest/42/rank', {
     username: 'test_admin',
     roles: ['admin', 'superadmin'],
@@ -134,10 +136,13 @@ test('admin organizer sees export controls on rank', async ({ page }) => {
   await expect(page.getByText('Alice')).toBeVisible();
   // admin export button is present for organizers
   await expect(page.getByRole('button', { name: /Export/i }).first()).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('unregistered visitor on private contest is locked to register', async ({ page }) => {
+test('unregistered visitor on private contest is locked to register', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors } = await openContestAs(page, '/v2/contest/42', {
     username: 'visitor',
     roles: ['user'],
@@ -166,10 +171,13 @@ test('unregistered visitor on private contest is locked to register', async ({ p
   });
   await expect(page).toHaveURL(/\/contest\/42\/register/);
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toHaveCount(0);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('auditor without membership still browses public contest overview', async ({ page }) => {
+test('auditor without membership still browses public contest overview', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors } = await openContestAs(page, '/v2/contest/42/overview', {
     username: 'auditor',
     roles: ['user'],
@@ -177,5 +185,5 @@ test('auditor without membership still browses public contest overview', async (
   });
   await expect(page.getByText('Role Matrix Contest')).toBeVisible();
   await expect(page.getByText('A+B')).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });

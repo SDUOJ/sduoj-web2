@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 const DAY = 24 * 3600_000;
@@ -56,17 +57,21 @@ async function openPublic(page: Page, info: Record<string, unknown> | null, stat
   return { errors };
 }
 
-test('public problem set running window offers start answering', async ({ page }) => {
+test('public problem set running window offers start answering', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors } = await openPublic(page, publicInfo());
   await expect(page.getByText('Public Practice Set')).toBeVisible();
   await expect(page.getByText(/Finish before the deadline/)).toBeVisible();
   await expect(page.getByRole('button', { name: /Start Answering/i })).toBeEnabled();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
 test('public problem set wait window keeps start disabled and shows countdown', async ({
   page,
-}) => {
+  browserName,
+}, testInfo) => {
   const { errors } = await openPublic(
     page,
     publicInfo({ tm_start: String(now + DAY), tm_end: String(now + 2 * DAY) }),
@@ -74,28 +79,31 @@ test('public problem set wait window keeps start disabled and shows countdown', 
   await expect(page.getByText('Public Practice Set')).toBeVisible();
   await expect(page.getByText(/Countdown/i)).toBeVisible();
   await expect(page.getByRole('button', { name: /Start Answering/i })).toBeDisabled();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('public problem set ended window disables start', async ({ page }) => {
+test('public problem set ended window disables start', async ({ page, browserName }, testInfo) => {
   const { errors } = await openPublic(
     page,
     publicInfo({ tm_start: String(now - 2 * DAY), tm_end: String(now - DAY) }),
   );
   await expect(page.getByRole('button', { name: /Ended|Start Answering/i })).toBeDisabled();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('public problem set finished attempt is locked', async ({ page }) => {
+test('public problem set finished attempt is locked', async ({ page, browserName }, testInfo) => {
   const { errors } = await openPublic(page, publicInfo({ finish: 1 }));
   await expect(page.getByRole('button', { name: /Submitted/i })).toBeDisabled();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('public problem set missing info fails gracefully', async ({ page }) => {
+test('public problem set missing info fails gracefully', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { errors } = await openPublic(page, null, 404);
   // page should not crash; start control stays disabled with empty label
   const start = page.getByRole('button', { name: /^$|Start Answering|Submitted|Ended/i });
   await expect(start).toBeDisabled();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });

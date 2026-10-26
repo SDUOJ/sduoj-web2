@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 type ContestFeatures = {
@@ -174,7 +175,10 @@ async function openContest(
   };
 }
 
-test('public contest register joins without a password and lands on overview', async ({ page }) => {
+test('public contest register joins without a password and lands on overview', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     features: baseFeatures({ openness: 'public' }),
   });
@@ -186,10 +190,13 @@ test('public contest register joins without a password and lands on overview', a
   await page.getByRole('button', { name: /^Register$/ }).click();
   await expect(page).toHaveURL(/\/contest\/42\/overview/);
   expect(getParticipateCalls()).toEqual([{ contestId: '42' }]);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('protected contest register requires a password before joining', async ({ page }) => {
+test('protected contest register requires a password before joining', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     features: baseFeatures({ openness: 'protected' }),
   });
@@ -204,10 +211,13 @@ test('protected contest register requires a password before joining', async ({ p
   await page.getByRole('button', { name: /^Register$/ }).click();
   await expect(page).toHaveURL(/\/contest\/42\/overview/);
   expect(getParticipateCalls()).toEqual([{ contestId: '42', password: 'secret' }]);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('private contest keeps unregistered users on register-only navigation', async ({ page }) => {
+test('private contest keeps unregistered users on register-only navigation', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     features: baseFeatures({ openness: 'private' }),
     participants: [],
@@ -221,10 +231,13 @@ test('private contest keeps unregistered users on register-only navigation', asy
   await expect(page.getByText(/Contest password/i)).toBeVisible();
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toHaveCount(0);
   await expect(page.getByRole('menuitem', { name: /Register/i })).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('already-registered users are redirected away from the register page', async ({ page }) => {
+test('already-registered users are redirected away from the register page', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     features: baseFeatures({ openness: 'public' }),
     participants: ['student_a'],
@@ -237,10 +250,13 @@ test('already-registered users are redirected away from the register page', asyn
   await expect(page.getByRole('button', { name: /^Register$/ })).toHaveCount(0);
   await expect(page.getByRole('menuitem', { name: /Register/i })).toHaveCount(0);
   await expect(page.getByText('A + B')).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('wait-state contests only expose the register navigation entry', async ({ page }) => {
+test('wait-state contests only expose the register navigation entry', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     gmtStart: String(now + HOUR),
     gmtEnd: String(now + 2 * HOUR),
@@ -255,10 +271,13 @@ test('wait-state contests only expose the register navigation entry', async ({ p
   await expect(page.getByRole('menuitem', { name: /Overview/i })).toHaveCount(0);
   await expect(page.getByRole('menuitem', { name: /Rank/i })).toHaveCount(0);
   await expect(page.getByRole('menuitem', { name: /Submission List/i })).toHaveCount(0);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('rank page renders sealed-board style rows from the contest rank feed', async ({ page }) => {
+test('rank page renders sealed-board style rows from the contest rank feed', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const contest = contestFixture({
     features: baseFeatures({ openness: 'public', frozenTime: 30 }),
     participants: ['student_a', 'student_b'],
@@ -295,7 +314,7 @@ test('rank page renders sealed-board style rows from the contest rank feed', asy
   await expect(page.getByText('Alice')).toBeVisible();
   await expect(page.getByText('Bob')).toBeVisible();
   await expect(page.getByText('Matrix Contest')).toBeVisible();
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
 async function openContestCreateDialog(page: Page) {
@@ -370,7 +389,8 @@ async function goStepNext(page: Page, dialog: ReturnType<Page['getByRole']>) {
 
 test('contest management dialog rejects overflowing frozenTime and accepts a valid seal window', async ({
   page,
-}) => {
+  browserName,
+}, testInfo) => {
   const { dialog, errors, getSubmitted } = await openContestCreateDialog(page);
   await fillContestBasics(page, 'Sealed Board Contest');
   await goStepNext(page, dialog);
@@ -401,10 +421,13 @@ test('contest management dialog rejects overflowing frozenTime and accepts a val
     .click();
   await expect.poll(() => getSubmitted(), { timeout: 5000 }).toBeTruthy();
   expect(getSubmitted().features.frozenTime).toBe(30);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });
 
-test('contest running-time submit switch is part of the management payload', async ({ page }) => {
+test('contest running-time submit switch is part of the management payload', async ({
+  page,
+  browserName,
+}, testInfo) => {
   const { dialog, errors, getSubmitted } = await openContestCreateDialog(page);
   await fillContestBasics(page, 'Submit Gate Contest');
   await goStepNext(page, dialog);
@@ -428,5 +451,5 @@ test('contest running-time submit switch is part of the management payload', asy
   await expect.poll(() => getSubmitted(), { timeout: 5000 }).toBeTruthy();
   expect(getSubmitted().features.contestRunning.allowToSubmit).toBe(0);
   expect(getSubmitted().features.contestEnd.allowToSubmit).toBe(1);
-  expect(errors).toEqual([]);
+  await expectBrowserErrorBudget(errors, browserName, testInfo);
 });

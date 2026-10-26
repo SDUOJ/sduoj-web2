@@ -1,3 +1,4 @@
+import { expectBrowserErrorBudget } from '../helpers/browserErrorBudget';
 import { test, expect, Page } from '@playwright/test';
 
 /**
@@ -40,7 +41,7 @@ async function withMock(
   return captured;
 }
 
-test('announcement overlong title never posts', async ({ page }) => {
+test('announcement overlong title never posts', async ({ page, browserName }, testInfo) => {
   const cap = await withMock(page, (p) => {
     if (p === '/user/getProfile') return { username: 'a', roles: ['admin'], features: {} };
     if (p === '/site/getCopyright') return 'SDUOJ';
@@ -56,10 +57,10 @@ test('announcement overlong title never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('notice'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectBrowserErrorBudget(cap.errors, browserName, testInfo);
 });
 
-test('classroom overlong name never posts', async ({ page }) => {
+test('classroom overlong name never posts', async ({ page, browserName }, testInfo) => {
   const cap = await withMock(page, (p) => {
     if (p === '/user/getProfile') return { username: 'a', roles: ['admin'], features: {} };
     if (p === '/site/getCopyright') return 'SDUOJ';
@@ -77,10 +78,10 @@ test('classroom overlong name never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('class'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectBrowserErrorBudget(cap.errors, browserName, testInfo);
 });
 
-test('late permission discount zero never posts', async ({ page }) => {
+test('late permission discount zero never posts', async ({ page, browserName }, testInfo) => {
   const cap = await withMock(page, (p) => {
     if (p === '/user/getProfile') return { username: 'a', roles: ['admin'], features: {} };
     if (p === '/site/getCopyright') return 'SDUOJ';
@@ -120,10 +121,10 @@ test('late permission discount zero never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^OK$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('late/add'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectBrowserErrorBudget(cap.errors, browserName, testInfo);
 });
 
-test('judge template overlong title never posts', async ({ page }) => {
+test('judge template overlong title never posts', async ({ page, browserName }, testInfo) => {
   const cap = await withMock(page, (p) => {
     if (p === '/user/getProfile') return { username: 'a', roles: ['admin'], features: {} };
     if (p === '/site/getCopyright') return 'SDUOJ';
@@ -139,5 +140,5 @@ test('judge template overlong title never posts', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
   expect(cap.posts.filter((x) => x.path.includes('judgetemplate'))).toEqual([]);
-  expect(cap.errors).toEqual([]);
+  await expectBrowserErrorBudget(cap.errors, browserName, testInfo);
 });
