@@ -227,6 +227,7 @@ test('ordinary custom input produces real results and text comparison', async ({
   expect(result.run?.cases[0].stdout).toBe(fixture.customCase.expectedOutput);
   const panel = page.getByRole('tabpanel', { name: '运行结果', exact: true });
   await expect(panel).toContainText(id);
+  await panel.getByRole('button', { name: /输出差异$/ }).click();
   await expect(panel).toContainText('期望与实际文本相同');
 });
 
