@@ -60,10 +60,7 @@ const CodeHistory = () => {
         dataSource={list}
         renderItem={(item) => (
           <List.Item
-            actions={[
-              <a key="list-loadmore-edit">edit</a>,
-              <a key="list-loadmore-more">more</a>,
-            ]}
+            actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
           >
             <Skeleton avatar title={false} active>
               <List.Item.Meta

@@ -39,9 +39,7 @@ export const applyCheckpointUpdate = (
   const next = [...current];
   const prev = next[checkpointIndex];
   const normalizedId =
-    caseID == null || caseID === '' || Number(caseID) === 0
-      ? prev?.caseID
-      : String(caseID);
+    caseID == null || caseID === '' || Number(caseID) === 0 ? prev?.caseID : String(caseID);
   next[checkpointIndex] = {
     ...prev,
     caseIndex: checkpointIndex + 1,

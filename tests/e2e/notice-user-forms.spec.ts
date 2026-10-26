@@ -30,7 +30,10 @@ async function openAnnouncementManage(page: Page) {
     });
   });
   await page.goto('/v2/manage/announcement');
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   return {
@@ -117,7 +120,10 @@ async function openUserManage(page: Page) {
 }
 
 async function fillUserBasics(dialog: ReturnType<Page['getByRole']>, username: string) {
-  await dialog.getByLabel(/Username/i).first().fill(username);
+  await dialog
+    .getByLabel(/Username/i)
+    .first()
+    .fill(username);
   const passwordFields = dialog.locator('input[type="password"]');
   await passwordFields.nth(0).fill('Abcdef12');
   await passwordFields.nth(1).fill('Abcdef12');

@@ -119,7 +119,10 @@ test('user list renders rows and opens edit dialog', async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog.getByLabel(/Username/i).first()).toBeDisabled();
   // nickname editable
-  await dialog.getByLabel(/Nickname/i).first().fill('Alice Updated');
+  await dialog
+    .getByLabel(/Nickname/i)
+    .first()
+    .fill('Alice Updated');
   await advanceSteps(page, dialog);
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
   expect(getUpdateCalls()[0]).toMatchObject({ username: 'fe_94', userId: '13667' });
@@ -135,7 +138,10 @@ test('user create validates username and submits a full profile', async ({ page 
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
 
-  await dialog.getByLabel(/Username/i).first().fill('ab');
+  await dialog
+    .getByLabel(/Username/i)
+    .first()
+    .fill('ab');
   await dialog.locator('input[type="password"]').nth(0).fill('Abcdef12');
   await dialog.locator('input[type="password"]').nth(1).fill('Abcdef12');
   await dialog.getByLabel(/Email/i).first().fill('ab@example.invalid');
@@ -143,7 +149,10 @@ test('user create validates username and submits a full profile', async ({ page 
   await expect(dialog).toBeVisible();
   expect(getAddCalls()).toEqual([]);
 
-  await dialog.getByLabel(/Username/i).first().fill('valid_user02');
+  await dialog
+    .getByLabel(/Username/i)
+    .first()
+    .fill('valid_user02');
   await advanceSteps(page, dialog);
   await expect.poll(() => getAddCalls().length, { timeout: 5000 }).toBe(1);
   const payload = Array.isArray(getAddCalls()[0]) ? getAddCalls()[0][0] : getAddCalls()[0];
@@ -155,15 +164,24 @@ test('user password change dialog submits admin password', async ({ page }) => {
   const { errors, getUpdateCalls } = await openUserManage(page);
   // superadmin sees More dropdown with Change Password
   const row = page.getByRole('row', { name: /fe_94/ });
-  await row.getByRole('button', { name: /^More$/i }).first().click();
-  await page.getByRole('button', { name: /Change Password/i }).first().click();
+  await row
+    .getByRole('button', { name: /^More$/i })
+    .first()
+    .click();
+  await page
+    .getByRole('button', { name: /Change Password/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   // ItemPassword admin policy renders password + confirm
   const passwords = dialog.locator('input[type="password"]');
   await passwords.nth(0).fill('Abcdef12');
   await passwords.nth(1).fill('Abcdef12');
-  await dialog.getByRole('button', { name: /^(Finish|Submit|OK|确定)$/i }).first().click();
+  await dialog
+    .getByRole('button', { name: /^(Finish|Submit|OK|确定)$/i })
+    .first()
+    .click();
   await expect.poll(() => getUpdateCalls().length, { timeout: 5000 }).toBeGreaterThan(0);
   expect(errors).toEqual([]);
 });
@@ -174,7 +192,10 @@ test('batch delete sends selected usernames', async ({ page }) => {
   });
   // select both rows
   await page.locator('.ant-table-thead .ant-checkbox-input').first().check();
-  await page.getByRole('button', { name: /Batch deletion/i }).first().click();
+  await page
+    .getByRole('button', { name: /Batch deletion/i })
+    .first()
+    .click();
   // DeleteConfirm is a Popconfirm with Yes/No
   await page.getByRole('button', { name: /^Yes$/i }).first().click();
   await expect.poll(() => getDeleteCalls().length, { timeout: 5000 }).toBeGreaterThan(0);

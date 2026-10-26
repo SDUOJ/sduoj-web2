@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 
-export function TimeRangeState(start: number | string | null | undefined, end: number | string | null | undefined) {
+export function TimeRangeState(
+  start: number | string | null | undefined,
+  end: number | string | null | undefined,
+) {
   const startMs = toMillis(start);
   const endMs = toMillis(end);
   if (startMs > Date.now()) return 'wait';

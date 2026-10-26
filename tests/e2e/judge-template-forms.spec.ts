@@ -74,7 +74,10 @@ async function openTemplate(page: Page, type: 'io' | 'advanced' = 'io') {
 }
 
 async function openCreateDialog(page: Page) {
-  await page.getByRole('button', { name: /Create/i }).first().click();
+  await page
+    .getByRole('button', { name: /Create/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   return dialog;
@@ -106,7 +109,10 @@ test('io template form rejects blank title and overlong comment', async ({ page 
 
   // overlong comment (varchar 255)
   await dialog.getByLabel(/^Title$/i).fill('Valid IO');
-  await dialog.getByLabel(/note|comment/i).first().fill('c'.repeat(256));
+  await dialog
+    .getByLabel(/note|comment/i)
+    .first()
+    .fill('c'.repeat(256));
   await fillShellScript(page, dialog);
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect(dialog).toBeVisible();
@@ -119,7 +125,10 @@ test('io template form accepts a valid payload', async ({ page }) => {
   const dialog = await openCreateDialog(page);
 
   await dialog.getByLabel(/^Title$/i).fill('Valid IO');
-  await dialog.getByLabel(/note|comment/i).first().fill('ok');
+  await dialog
+    .getByLabel(/note|comment/i)
+    .first()
+    .fill('ok');
   await fillShellScript(page, dialog);
   await dialog.getByRole('button', { name: /^Submit$/i }).click();
   await expect.poll(() => getCreateCalls().length, { timeout: 5000 }).toBe(1);
@@ -139,7 +148,10 @@ test('advanced template form gates create the same way', async ({ page }) => {
 test('template edit dialog loads existing row and updates', async ({ page }) => {
   const { errors, getUpdateCalls } = await openTemplate(page, 'io');
   const row = page.getByRole('row', { name: /Standard IO/ });
-  await row.getByRole('button', { name: /^Edit$/i }).first().click();
+  await row
+    .getByRole('button', { name: /^Edit$/i })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByLabel(/^Title$/i)).toHaveValue('Standard IO');
   await dialog.getByLabel(/^Title$/i).fill('Standard IO v2');

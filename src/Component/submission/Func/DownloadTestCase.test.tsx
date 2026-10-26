@@ -137,26 +137,16 @@ it('hides the download button without a problem code', async () => {
 it('hides the download button when manage checkpoint list is denied', async () => {
   (mApi.getCheckpointList as jest.Mock).mockRejectedValue(new Error('403'));
   render(
-    <DownloadTestCaseInner
-      t={t}
-      problemCode="SDUOJ-1"
-      TestCaseStateList={privateCases as any}
-    />,
+    <DownloadTestCaseInner t={t} problemCode="SDUOJ-1" TestCaseStateList={privateCases as any} />,
   );
-  await waitFor(() =>
-    expect(mApi.getCheckpointList).toHaveBeenCalledWith('SDUOJ-1'),
-  );
+  await waitFor(() => expect(mApi.getCheckpointList).toHaveBeenCalledWith('SDUOJ-1'));
   expect(screen.queryByRole('button', { name: /downloadData|下载数据/ })).toBeNull();
 });
 
 it('hides the download button when the problem has no downloadable checkpoints', async () => {
   (mApi.getCheckpointList as jest.Mock).mockResolvedValue([]);
   render(
-    <DownloadTestCaseInner
-      t={t}
-      problemCode="SDUOJ-1"
-      TestCaseStateList={privateCases as any}
-    />,
+    <DownloadTestCaseInner t={t} problemCode="SDUOJ-1" TestCaseStateList={privateCases as any} />,
   );
   await waitFor(() => expect(mApi.getCheckpointList).toHaveBeenCalled());
   expect(screen.queryByRole('button', { name: /downloadData|下载数据/ })).toBeNull();

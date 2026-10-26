@@ -93,7 +93,8 @@ export const resolveManagedTargets = (
   for (const row of rows) {
     if (!row.caseID) continue;
     const managed = usable.find(
-      (item) => !used.has(String(item.checkpointId)) && String(item.checkpointId) === String(row.caseID),
+      (item) =>
+        !used.has(String(item.checkpointId)) && String(item.checkpointId) === String(row.caseID),
     );
     if (managed) claim(row, managed);
   }
@@ -112,7 +113,9 @@ export const resolveManagedTargets = (
 
   // 私有点：按顺序对齐 caseIndex 为空的 manage 记录
   const privateManage = usable.filter(
-    (item) => !used.has(String(item.checkpointId)) && (item.caseIndex == null || item.caseIndex === undefined),
+    (item) =>
+      !used.has(String(item.checkpointId)) &&
+      (item.caseIndex == null || item.caseIndex === undefined),
   );
   let cursor = 0;
   for (const row of rows) {
@@ -197,9 +200,7 @@ const DownloadTestCase = (props: DownloadTestCaseProps) => {
     setDownloading(true);
     try {
       const files = buildZipFileRequests(resolved);
-      const zipName = props.problemCode
-        ? `${props.problemCode}-testcases.zip`
-        : 'testcases.zip';
+      const zipName = props.problemCode ? `${props.problemCode}-testcases.zip` : 'testcases.zip';
       await mApi.zipDownload(files, zipName);
     } catch (error) {
       message.error(props.t('DownloadFailed'));

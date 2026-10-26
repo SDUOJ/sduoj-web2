@@ -10,11 +10,7 @@ export const getExamGroupListFunc = (
   isActive: () => boolean = () => true,
 ) => {
   if (!isActive()) return;
-  const groups: any[] = Array.isArray(res)
-    ? res
-    : Array.isArray(res?.rows)
-      ? res.rows
-      : [];
+  const groups: any[] = Array.isArray(res) ? res : Array.isArray(res?.rows) ? res.rows : [];
   let data: { [key: string]: SExamProListInfo } = {};
   let plistIndex = 0;
   for (const x of groups) {

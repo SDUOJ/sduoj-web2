@@ -18,7 +18,11 @@ const MAnnouncement = () => {
     <>
       <ItemTop />
       <ItemTitle constraint={contracts.notice.title} />
-      <ItemEditor label={t('AnnouncementContent')} name={'text'} constraint={contracts.notice.text} />
+      <ItemEditor
+        label={t('AnnouncementContent')}
+        name={'text'}
+        constraint={contracts.notice.text}
+      />
     </>
   );
 

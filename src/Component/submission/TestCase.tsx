@@ -158,7 +158,9 @@ const TestCase = (props: TestCaseProp & ViewType) => {
   const type = NameList[props.caseType];
 
   const visible = !(
-    props.caseTime === undefined && props.caseMemory === undefined && props.caseScore === undefined
+    props.caseTime === undefined &&
+    props.caseMemory === undefined &&
+    props.caseScore === undefined
   );
 
   const content: any = visible ? (

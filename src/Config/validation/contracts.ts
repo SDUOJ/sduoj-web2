@@ -267,7 +267,11 @@ export const contracts = {
       required: true,
       minItems: 1,
       maxItems: 128,
-      items: { kind: 'string', maxUtf16: 63, source: 'autolab.problem_objective.answer varchar(63)' },
+      items: {
+        kind: 'string',
+        maxUtf16: 63,
+        source: 'autolab.problem_objective.answer varchar(63)',
+      },
       source: 'ser/objective.py objective_base.answer List[str]',
     } as Constraint,
   },

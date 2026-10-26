@@ -238,25 +238,13 @@ const MAutolab: React.FC = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        name="email"
-        label="邮箱"
-        rules={constraintRules(contracts.course.ta_email)}
-      >
+      <Form.Item name="email" label="邮箱" rules={constraintRules(contracts.course.ta_email)}>
         <Input />
       </Form.Item>
-      <Form.Item
-        name="office"
-        label="办公室"
-        rules={constraintRules(contracts.course.ta_office)}
-      >
+      <Form.Item name="office" label="办公室" rules={constraintRules(contracts.course.ta_office)}>
         <Input />
       </Form.Item>
-      <Form.Item
-        name="remark"
-        label="备注"
-        rules={constraintRules(contracts.course.ta_remark)}
-      >
+      <Form.Item name="remark" label="备注" rules={constraintRules(contracts.course.ta_remark)}>
         <Input />
       </Form.Item>
     </>
