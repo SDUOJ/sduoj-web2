@@ -380,7 +380,7 @@ async function fillContestBasics(page: Page, title: string) {
 async function goStepNext(page: Page, dialog: ReturnType<Page['getByRole']>) {
   const next = dialog.getByRole('button', { name: /^(Next|下一步)$/ });
   if (await next.count()) {
-    await next.first().click({ force: true });
+    await next.first().click();
     await page.waitForTimeout(200);
     return true;
   }
@@ -402,7 +402,7 @@ test('contest management dialog rejects overflowing frozenTime and accepts a val
   await dialog
     .getByRole('button', { name: /^(Next|下一步)$/ })
     .first()
-    .click({ force: true });
+    .click();
   await page.waitForTimeout(200);
   await expect(frozen).toBeVisible();
   expect(getSubmitted()).toBeUndefined();
@@ -411,7 +411,7 @@ test('contest management dialog rejects overflowing frozenTime and accepts a val
   await dialog
     .getByRole('button', { name: /^(Next|下一步)$/ })
     .first()
-    .click({ force: true });
+    .click();
   await page.waitForTimeout(200);
   // Management step is left behind (form kept mounted but hidden).
   await expect(frozen).toBeHidden();
