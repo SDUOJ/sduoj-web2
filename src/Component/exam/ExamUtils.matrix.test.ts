@@ -1,7 +1,12 @@
 import { getDescription } from './ExamUtils';
 
+// The adapter renders viewer-local time; fixtures must use the local calendar
+// so the same wall-clock assertions hold on UTC CI and Asia/Shanghai laptops.
+const localIso = (day: number, hour: number, minute = 0) =>
+  new Date(2026, 9, day, hour, minute).toISOString();
+
 describe('exam description adapter', () => {
-  it.each([[undefined], [null], [{}], [{ startTime: '2026-10-05T09:00:00+08:00' }]])(
+  it.each([[undefined], [null], [{}], [{ startTime: localIso(5, 9) }]])(
     'returns empty for incomplete exam info %#',
     (info) => {
       expect(getDescription(info)).toBe('');
@@ -10,8 +15,8 @@ describe('exam description adapter', () => {
 
   it('formats a same-day exam window with duration', () => {
     const description = getDescription({
-      startTime: '2026-10-05T09:00:00+08:00',
-      endTime: '2026-10-05T11:00:00+08:00',
+      startTime: localIso(5, 9),
+      endTime: localIso(5, 11),
     });
     expect(description).toContain('考试时长：');
     expect(description).toContain('2时');
@@ -23,8 +28,8 @@ describe('exam description adapter', () => {
 
   it('includes the end date when the exam crosses midnight', () => {
     const description = getDescription({
-      startTime: '2026-10-05T22:00:00+08:00',
-      endTime: '2026-10-06T02:00:00+08:00',
+      startTime: localIso(5, 22),
+      endTime: localIso(6, 2),
     });
     expect(description).toContain('考试时长：');
     expect(description).toContain('4时');
@@ -37,16 +42,16 @@ describe('exam description adapter', () => {
 
   it('keeps zero-length exams from throwing', () => {
     const description = getDescription({
-      startTime: '2026-10-05T09:00:00+08:00',
-      endTime: '2026-10-05T09:00:00+08:00',
+      startTime: localIso(5, 9),
+      endTime: localIso(5, 9),
     });
     expect(description).toContain('考试时长：0秒');
     expect(description).toContain('09:00 - 09:00');
   });
 
   it('accepts unix millisecond timestamps as well as ISO strings', () => {
-    const start = Date.parse('2026-10-05T09:00:00+08:00');
-    const end = Date.parse('2026-10-05T10:30:00+08:00');
+    const start = Date.parse(localIso(5, 9));
+    const end = Date.parse(localIso(5, 10, 30));
     const description = getDescription({ startTime: start, endTime: end });
     expect(description).toContain('考试时长：');
     expect(description).toContain('1时30分');
