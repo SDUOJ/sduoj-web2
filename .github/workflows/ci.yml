@@ -4,6 +4,7 @@ on:
   push:
     branches: [master, feature/upgrade-antd-v5]
   workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
