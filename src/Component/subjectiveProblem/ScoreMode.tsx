@@ -2,6 +2,7 @@ import { withTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, InputNumber, Radio, Row, Space } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import MarkdownText from '../../Utils/MarkdownText';
+import 'Assert/css/GradeReview.css';
 
 const ScoreMode = (props: any) => {
   const { reviewInfo, setReviewInfo } = props;
@@ -74,10 +75,11 @@ const ScoreMode = (props: any) => {
                 <>
                   {data.answer !== undefined && (
                     <Alert
+                      className="grade-rubric-note"
                       message={
                         <MarkdownText id={`problemReview-answer-${data.key}`} text={data.answer} />
                       }
-                      type="success"
+                      type="info"
                     />
                   )}
                   {(() => {

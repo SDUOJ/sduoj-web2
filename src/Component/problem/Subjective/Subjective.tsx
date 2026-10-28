@@ -5,6 +5,8 @@ import { Alert, Button, Card, message, Space, Upload, Select, Divider } from 'an
 import Editor from '../../common/Editor';
 import Title from 'antd/es/typography/Title';
 import { isValueEmpty } from '../../../Utils/empty';
+import GradeReviewRequest from '../../subjectiveProblem/GradeReviewRequest';
+import 'Assert/css/GradeReview.css';
 
 // 主观题组件：支持三种子类型
 // 0 文件题 1 文本题 2 验收题（排队）
@@ -457,6 +459,16 @@ const Subjective = (props: any) => {
       )}
       {props.finish === true && (
         <Card title={<Title level={5}> 批阅与答案 </Title>} style={{ marginTop: 24 }}>
+          {answerSheet?.judgeLock === '<AUTO>' &&
+            answerSheet?.hasJudge &&
+            props.router &&
+            answerSheet?.gradeReview && (
+              <GradeReviewRequest
+                review={answerSheet.gradeReview}
+                router={props.router}
+                onSubmitted={updateAnswerSheet}
+              />
+            )}
           {isValueEmpty(answerSheet?.judgeLog) && (
             <>
               {isValueEmpty(answerSheet?.judgeLock) && <>未批阅</>}
@@ -469,6 +481,7 @@ const Subjective = (props: any) => {
               return (
                 <>
                   <Card
+                    key={index}
                     title={
                       <div style={{ fontSize: 16 }}>
                         【{data.jScore}/{data.score}】{data.name}
@@ -479,13 +492,14 @@ const Subjective = (props: any) => {
                   >
                     {config && !isValueEmpty(config?.answer) && (
                       <Alert
+                        className="grade-rubric-note"
                         message={
                           <MarkdownText
                             id={`subjective-problem-answer-${index}`}
                             text={config?.answer}
                           />
                         }
-                        type="success"
+                        type="info"
                       />
                     )}
                   </Card>

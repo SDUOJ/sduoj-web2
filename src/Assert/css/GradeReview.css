@@ -1,0 +1,16 @@
+.grade-rubric-note.ant-alert {
+  background: #f6f8fc;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #a5b4fc;
+  border-radius: 8px;
+  color: #475569;
+}
+
+.grade-rubric-note .ant-alert-message {
+  color: #475569;
+  line-height: 1.75;
+}
+
+.grade-review-notes {
+  margin-bottom: 16px;
+}
