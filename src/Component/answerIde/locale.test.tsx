@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import i18n from '../../Config/i18n';
+import cApi from '../../Utils/API/c-api';
 import AnswerWorkspace from './AnswerWorkspace';
 import RunResults from './RunResults';
 import en from '../../Assert/lang/en.json';
@@ -25,6 +26,11 @@ it('provides matching translation keys and displays English workspace/results', 
   expect(Object.keys(en.answerIde).sort()).toEqual(Object.keys(zh.answerIde).sort());
   expect(Object.keys(en.answerIde.state).sort()).toEqual(Object.keys(zh.answerIde.state).sort());
   await i18n.changeLanguage('en');
+  let resolveRecovery!: (value: Awaited<ReturnType<typeof cApi.getLatestRun>>) => void;
+  const recovery = new Promise<Awaited<ReturnType<typeof cApi.getLatestRun>>>((resolve) => {
+    resolveRecovery = resolve;
+  });
+  jest.mocked(cApi.getLatestRun).mockReturnValueOnce(recovery);
   const page = render(
     <Provider store={createStore((state = {}) => state)}>
       <AnswerWorkspace
@@ -55,6 +61,11 @@ it('provides matching translation keys and displays English workspace/results', 
       />
     </Provider>,
   );
+  expect(screen.getByRole('button', { name: 'Restoring run…' })).toBeVisible();
+  expect(cApi.getLatestRun).toHaveBeenCalledWith({ type: 0, problemCode: 'P' });
+  await act(async () => {
+    resolveRecovery({ detail: null, hasActiveRun: false });
+  });
   expect(await screen.findByRole('button', { name: 'Run custom cases' })).toBeVisible();
   expect(screen.getByText('Standard output')).toBeVisible();
   expect(screen.getByText('Standard error')).toBeVisible();
