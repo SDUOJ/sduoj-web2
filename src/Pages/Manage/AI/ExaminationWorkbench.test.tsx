@@ -5,6 +5,10 @@ import request from '../../../Utils/API/request';
 import { aiPlatform, PlatformResource } from '../../../Utils/API/ai-platform';
 import i18n from '../../../Config/i18n';
 
+// These component flows select multiple exams and open publication controls.
+// Keep semantic assertions intact while allowing coverage on slower CI runners.
+jest.setTimeout(15000);
+
 jest.mock('antd', () => {
   const actual = jest.requireActual('antd');
   const react = jest.requireActual('react');
@@ -216,7 +220,7 @@ test('requires explicit formal acknowledgement after teacher review', async () =
       formal_ack: true,
     }),
   );
-}, 15000);
+});
 
 test('monitors submissions and resets replace-seat confirmation between exams', async () => {
   const first = plannedExam({

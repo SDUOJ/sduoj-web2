@@ -401,6 +401,11 @@ const cApi = {
   async getJudgeList(data: problemSetJudgeListQuery) {
     return request.post('/ps/judge/list', data);
   },
+  async requestGradeReview(
+    data: problemSetRouterQuery & { reason: string; grade_version: string },
+  ) {
+    return request.post('/ps/answer_sheet/gradeReview', data);
+  },
   // 查询题单内所有验收题可用队列（去重排序）缓存30s
   async getAcceptanceQueueList(data: { psid: number }) {
     if (

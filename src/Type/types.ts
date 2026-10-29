@@ -139,6 +139,7 @@ export interface problemSetJudgeListQuery {
   judgeLock?: string | null;
   hasJudge?: number | null;
   review_queue?: string | null;
+  review_filter?: 'ai' | 'pending' | 'any' | 'resolved' | null;
 }
 
 export interface problemSetJudgeInfoQuery {

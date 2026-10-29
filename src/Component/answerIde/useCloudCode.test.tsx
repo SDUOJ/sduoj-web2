@@ -50,6 +50,7 @@ function Fixture({
     <>
       <textarea aria-label="source" value={code} onChange={(e) => setCode(e.target.value)} />
       {cloud.controls}
+      {cloud.error && <div>{cloud.error}</div>}
       {cloud.history}
     </>
   );
@@ -109,7 +110,8 @@ it('restores cloud code for a new browser while preserving an existing local dra
   render(<Fixture />);
   await waitFor(() => expect(screen.getByRole('button', { name: '保存到云端' })).toBeEnabled());
   expect(screen.getByLabelText('source')).toHaveValue('edited');
-  expect(screen.getByText('有未保存的更改')).toBeVisible();
+  expect(screen.getByRole('button', { name: '保存到云端' })).toBeEnabled();
+  expect(document.querySelector('.ant-tag')).not.toBeInTheDocument();
 });
 it('saves the correct business problem and enforces a 30-second manual cooldown', async () => {
   jest.useFakeTimers();
@@ -128,11 +130,11 @@ it('saves the correct business problem and enforces a 30-second manual cooldown'
       code: 'edited',
     });
     fireEvent.change(screen.getByLabelText('source'), { target: { value: 'next edit' } });
-    expect(screen.getByRole('button', { name: /秒后可保存/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '保存到云端' })).toBeDisabled();
     await act(async () => {
       jest.advanceTimersByTime(29000);
     });
-    expect(screen.getByRole('button', { name: /秒后可保存/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '保存到云端' })).toBeDisabled();
     await act(async () => {
       jest.advanceTimersByTime(1000);
     });

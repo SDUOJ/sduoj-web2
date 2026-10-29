@@ -1,0 +1,54 @@
+{
+  "c": {
+    "complete": "#include <stdio.h>\nint main(){ pri|; }",
+    "label": "printf",
+    "semantic": "int add(int left, int right){return left+right;}\nint main(){return add(1,2);}",
+    "definition": [2, 20],
+    "signature": [2, 23],
+    "debug": "#include <stdio.h>\nint main() {\n int value=41;\n value += 1;\n int input=0;\n scanf(\"%d\", &input);\n printf(\"ECHO:%d\\n\", value+input);\n return 0;\n}\n",
+    "breakpoints": [4, 7],
+    "bad": "int main( { !!!",
+    "loop": "int main(){volatile unsigned long n=0; while(1){n++;}}",
+    "title": "C11 (GNU GCC 7.5.0)",
+    "templateId": "19"
+  },
+  "cpp": {
+    "complete": "#include <string>\nint main(){std::string text; text.sub|;}",
+    "label": "substr",
+    "semantic": "int add(int left, int right){return left+right;}\nint main(){return add(1,2);}",
+    "definition": [2, 20],
+    "signature": [2, 23],
+    "debug": "#include <iostream>\nint main() {\n int value=41;\n value += 1;\n int input=0;\n std::cin >> input;\n std::cout << \"ECHO:\" << value+input << std::endl;\n return 0;\n}\n",
+    "breakpoints": [4, 7],
+    "bad": "int main( { !!!",
+    "loop": "int main(){volatile unsigned long n=0; while(true){n++;}}",
+    "title": "C++17 (GNU G++ 7.5.0)",
+    "templateId": "32"
+  },
+  "python": {
+    "complete": "pri|",
+    "label": "print",
+    "semantic": "def add(left, right):\n return left+right\nvalue=add(1,2)\n",
+    "definition": [3, 8],
+    "signature": [3, 12],
+    "debug": "value=41\nvalue += 1\nnumber=int(input())\nprint(\"ECHO:\"+str(value+number))\n",
+    "breakpoints": [2, 4],
+    "bad": "def broken(:\n !!!",
+    "loop": "n=0\nwhile True:\n n+=1\n",
+    "title": "Python3.11",
+    "templateId": "38"
+  },
+  "java": {
+    "complete": "public class Main { public static void main(String[] args){ String text=\"\"; text.sub|; } }",
+    "label": "substring",
+    "semantic": "public class Main {\n static int add(int left,int right){return left+right;}\n public static void main(String[] args){ int value=add(1,2); }\n}",
+    "definition": [3, 51],
+    "signature": [3, 55],
+    "debug": "import java.util.Scanner;\npublic class Main {\n public static void main(String[] args) {\n  int value=41;\n  value += 1;\n  Scanner scanner=new Scanner(System.in);\n  int number=scanner.nextInt();\n  System.out.println(\"ECHO:\"+(value+number));\n }\n}\n",
+    "breakpoints": [5, 8],
+    "bad": "public class Main { !!!",
+    "loop": "public class Main {public static void main(String[] args){long n=0;while(true){n++;}}}",
+    "title": "Java21",
+    "templateId": "51"
+  }
+}

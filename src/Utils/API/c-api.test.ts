@@ -366,3 +366,16 @@ test('preserves typed problem-set summary and search payloads', async () => {
     },
   ]);
 });
+
+test('sends a grade-review request to the native answer-sheet endpoint without changing its version', async () => {
+  const payload = {
+    router: { psid: 12, gid: 3, pid: 4 },
+    reason: '请核对第二项评分',
+    grade_version: 'grade-v7',
+  };
+  adapter
+    .onPost('/ps/answer_sheet/gradeReview', payload)
+    .reply(200, success({ status: 'pending' }));
+  await expect(cApi.requestGradeReview(payload)).resolves.toEqual({ status: 'pending' });
+  expect(JSON.parse(adapter.history.post[0].data)).toEqual(payload);
+});

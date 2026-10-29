@@ -1,8 +1,12 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { Grid, Tabs } from 'antd';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Button, Grid } from 'antd';
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import SplitPane from './SplitPane';
 import './answerIde.css';
+
+const ToolbarHostContext = createContext<HTMLElement | null>(null);
+export const useAnswerToolbarHost = () => useContext(ToolbarHostContext);
 
 export default function AnswerLayout(props: {
   identity: string;
@@ -32,27 +36,41 @@ export default function AnswerLayout(props: {
     }
   }, [layout, storageKey]);
   const narrow = screens.lg === false;
+  const [toolbarHost, setToolbarHost] = useState<HTMLDivElement | null>(null);
   return (
     <div className={`ide-mobile-layout${narrow ? ' ide-layout-narrow' : ''}`}>
-      <div style={{ display: narrow ? undefined : 'none' }}>
-        <Tabs
-          activeKey={layout.tab}
-          onChange={(tab) => setLayout((previous) => ({ ...previous, tab }))}
-          items={[
-            { key: 'statement', label: t('answerIde.statement') },
-            { key: 'code', label: t('answerIde.code') },
-          ]}
-        />
+      <div className="ide-narrow-toolbar" style={{ display: narrow ? undefined : 'none' }}>
+        <Button
+          className="ide-pane-switch"
+          icon={
+            layout.tab === 'code' ? (
+              <ArrowLeftOutlined aria-hidden />
+            ) : (
+              <ArrowRightOutlined aria-hidden />
+            )
+          }
+          onClick={() =>
+            setLayout((previous) => ({
+              ...previous,
+              tab: previous.tab === 'code' ? 'statement' : 'code',
+            }))
+          }
+        >
+          {t(layout.tab === 'code' ? 'answerIde.statement' : 'answerIde.code')}
+        </Button>
+        <div className="ide-toolbar-host" ref={setToolbarHost} />
       </div>
-      <SplitPane
-        firstHidden={narrow && layout.tab !== 'statement'}
-        secondHidden={narrow && layout.tab !== 'code'}
-        label={t('answerIde.statementWidth')}
-        ratio={layout.ratio}
-        onChange={(ratio) => setLayout((previous) => ({ ...previous, ratio }))}
-        first={props.statement}
-        second={props.workspace}
-      />
+      <ToolbarHostContext.Provider value={narrow ? toolbarHost : null}>
+        <SplitPane
+          firstHidden={narrow && layout.tab !== 'statement'}
+          secondHidden={narrow && layout.tab !== 'code'}
+          label={t('answerIde.statementWidth')}
+          ratio={layout.ratio}
+          onChange={(ratio) => setLayout((previous) => ({ ...previous, ratio }))}
+          first={props.statement}
+          second={props.workspace}
+        />
+      </ToolbarHostContext.Provider>
     </div>
   );
 }

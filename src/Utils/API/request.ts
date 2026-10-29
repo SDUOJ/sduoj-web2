@@ -168,7 +168,11 @@ const messageDisabledList = [
   '/submit/queryACProblem',
   '/group/my',
   '/problem_set/upcoming',
+  '/ps/ide/',
 ];
+
+const messageDisabled = (url: string) =>
+  messageDisabledList.some((item) => (item.endsWith('/') ? url.startsWith(item) : item === url));
 
 const parseErrorMessage = (payload: unknown, fallback = '请求失败') => {
   if (payload === undefined || payload === null) return fallback;
@@ -260,7 +264,7 @@ const dealResponse = async <Payload>(
     }
     if (response === undefined) {
       // respect silence list for network unreachable as well
-      if (messageDisabledList.indexOf(url) === -1) message.error('服务器不可达');
+      if (!messageDisabled(url)) message.error('服务器不可达');
       return reject('服务器不可达');
     }
     if (response.status === 400) {
@@ -272,7 +276,7 @@ const dealResponse = async <Payload>(
     switch (response.status === 401 ? 401 : isApiRecord(payload) ? payload.code : undefined) {
       case 401:
         invalidateAuthBoundary();
-        if (messageDisabledList.indexOf(url) === -1) {
+        if (!messageDisabled(url)) {
           const current = new URL(window.location.href);
           const inApp =
             current.pathname === UrlPrefix || current.pathname.startsWith(UrlPrefix + '/');
@@ -292,7 +296,7 @@ const dealResponse = async <Payload>(
         return reject(parseErrorMessage(payload, '未登录或登录已过期'), response);
       default: {
         const errorMsg = parseErrorMessage(payload);
-        if (messageDisabledList.indexOf(url) === -1) message.error(errorMsg);
+        if (!messageDisabled(url)) message.error(errorMsg);
         return reject(errorMsg, response);
       }
     }

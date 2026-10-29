@@ -1,5 +1,6 @@
 import { FeatureAction } from '../../Pages/Manage/AI/BusinessFeature';
-import { Button, Card, Col, Form, Input, message, Modal, Row, Select, Space } from 'antd';
+import { Alert, Button, Card, Col, Form, Input, message, Modal, Row, Select, Space } from 'antd';
+import GradeReviewTags from '../subjectiveProblem/GradeReviewTags';
 import React, { Dispatch, useEffect, useState } from 'react';
 import 'Assert/css/Review.css';
 import ScoreMode from '../subjectiveProblem/ScoreMode';
@@ -16,7 +17,7 @@ import SubjectivePreview from './SubjectivePreview';
 import SwitchX from '../common/Form/Item/SwitchX';
 import { UrlPrefix } from '../../Config/constValue';
 
-const Review = (props: any) => {
+export const Review = (props: any) => {
   const psid = parseInt(props.match.params.problemSetId);
   const problemSetInfo = useProblemSetInfo(psid.toString());
 
@@ -28,6 +29,7 @@ const Review = (props: any) => {
   const [autoNext, setAutoNext] = useState<number>(0);
   const [clickSubmit, setClickSubmit] = useState<boolean>(false);
   const [queueOptions, setQueueOptions] = useState<any[]>([]); // 验收队列下拉选项
+  const canEdit = judgeInfo.canEdit ?? judgeInfo.judgeLock_username === props.username;
 
   useEffect(() => {
     if (vis === false) {
@@ -190,6 +192,17 @@ const Review = (props: any) => {
           },
           { title: props.t('Reviewer'), dataIndex: 'judgeLock', key: 'judgeLock' },
           {
+            title: '已评阅分数',
+            key: 'score',
+            render: (row: any) =>
+              row.hasJudge && row.score != null ? `${row.score} / ${row.max_score}` : '—',
+          },
+          {
+            title: '复查状态',
+            key: 'gradeReview',
+            render: (row: any) => <GradeReviewTags review={row.gradeReview} />,
+          },
+          {
             title: props.t('operator'),
             key: 'operator',
             render: (rows: any) => {
@@ -298,6 +311,19 @@ const Review = (props: any) => {
               <Form.Item label={props.t('Problem')} name={'proStr'}>
                 <Select onChange={onFinish} style={{ width: 180 }} allowClear options={options} />
               </Form.Item>
+              <Form.Item label="复查" name="review_filter">
+                <Select
+                  allowClear
+                  onChange={onFinish}
+                  style={{ width: 190 }}
+                  options={[
+                    { value: 'any', label: '需人工复查（全部）' },
+                    { value: 'ai', label: 'AI 建议人工复查' },
+                    { value: 'pending', label: '学生申请待复核' },
+                    { value: 'resolved', label: '复核已处理' },
+                  ]}
+                />
+              </Form.Item>
             </Space>
           );
         }}
@@ -318,6 +344,25 @@ const Review = (props: any) => {
         footer={false}
         destroyOnHidden={true}
       >
+        <Space direction="vertical" className="grade-review-notes" style={{ width: '100%' }}>
+          <GradeReviewTags review={judgeInfo.gradeReview} />
+          {judgeInfo.gradeReview?.ai_needs_review && (
+            <Alert
+              type="warning"
+              showIcon
+              message="AI 建议人工复查"
+              description={judgeInfo.gradeReview.ai_reason}
+            />
+          )}
+          {judgeInfo.gradeReview?.status === 'pending' && (
+            <Alert
+              type="info"
+              showIcon
+              message="学生申请人工复核"
+              description={judgeInfo.gradeReview.reason}
+            />
+          )}
+        </Space>
         {judgeInfo?.type === 2 && (
           // 验收题型：仅展示右侧评分面板
           <Row gutter={24}>
@@ -355,7 +400,7 @@ const Review = (props: any) => {
                     </Form.Item>
                   </div>
                   <Button
-                    disabled={judgeInfo.judgeLock_username !== props.username}
+                    disabled={!canEdit}
                     block={true}
                     type="primary"
                     onClick={() => {
@@ -391,10 +436,7 @@ const Review = (props: any) => {
                     {props.t('SubmitScores')}{' '}
                   </Button>
                   <Button
-                    disabled={
-                      judgeInfo.judgeLock_username !== props.username ||
-                      Object.keys(reviewInfo).length !== 0
-                    }
+                    disabled={!canEdit || Object.keys(reviewInfo).length !== 0}
                     block={true}
                     style={{ marginTop: 12 }}
                     type="default"
@@ -426,7 +468,7 @@ const Review = (props: any) => {
                     <span style={{ fontWeight: 'bolder' }}> {props.t('FullScore')} </span>
                     {props.t('AndSubmitScores')}
                   </Button>
-                  {judgeInfo.judgeLock_username === props.username && (
+                  {canEdit && (
                     <Button
                       danger
                       block
@@ -499,7 +541,7 @@ const Review = (props: any) => {
                     </Form.Item>
                   </div>
                   <Button
-                    disabled={judgeInfo.judgeLock_username !== props.username}
+                    disabled={!canEdit}
                     block={true}
                     type="primary"
                     onClick={() => {
@@ -535,10 +577,7 @@ const Review = (props: any) => {
                     {props.t('SubmitScores')}{' '}
                   </Button>
                   <Button
-                    disabled={
-                      judgeInfo.judgeLock_username !== props.username ||
-                      Object.keys(reviewInfo).length !== 0
-                    }
+                    disabled={!canEdit || Object.keys(reviewInfo).length !== 0}
                     block={true}
                     style={{ marginTop: 12 }}
                     type="default"
@@ -570,7 +609,7 @@ const Review = (props: any) => {
                     <span style={{ fontWeight: 'bolder' }}> {props.t('FullScore')} </span>
                     {props.t('AndSubmitScores')}
                   </Button>
-                  {judgeInfo.judgeLock_username === props.username && (
+                  {canEdit && (
                     <Button
                       danger
                       block

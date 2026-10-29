@@ -54,18 +54,24 @@ test('remote rollback generation preserves literal remote variables without a lo
   const source = fs
     .readFileSync(path.join(__dirname, 'release-v2-pre.sh'), 'utf8')
     .split('\ncase "${1:-}"')[0];
+  const functionsFile = path.join(root, 'release-functions.sh');
+  fs.writeFileSync(functionsFile, source);
   const captured = path.join(root, 'remote-apply.sh');
   const result = spawnSync(
     'bash',
     [
       '-c',
-      `${source}
+      `source "$AUDIT_FUNCTIONS"
 unset root
 ssh_run() { cat > "$AUDIT_CAPTURE"; }
 remote_apply fixture
 `,
     ],
-    { encoding: 'utf8', env: { ...process.env, AUDIT_CAPTURE: captured }, timeout: 5000 },
+    {
+      encoding: 'utf8',
+      env: { ...process.env, AUDIT_FUNCTIONS: functionsFile, AUDIT_CAPTURE: captured },
+      timeout: 5000,
+    },
   );
   assert.equal(result.status, 0, result.stderr);
   const emitted = fs.readFileSync(captured, 'utf8');

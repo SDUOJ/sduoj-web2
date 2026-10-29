@@ -1,11 +1,6 @@
 import i18n from '../../Config/i18n';
-export interface IdeContext {
-  type: 0 | 1 | 2;
-  bizId?: string;
-  problemCode?: string;
-  groupIndex?: number;
-  problemIndex?: number;
-}
+import type { IdeContext } from '../../Utils/API/ide-intelligence';
+export type { IdeContext } from '../../Utils/API/ide-intelligence';
 export interface CodeSnapshot {
   submissionId: string;
   savedAt: number;

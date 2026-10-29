@@ -4,7 +4,7 @@ import { developmentFeaturesEnabled } from '../developmentFeatures';
 import { availableRoutes } from './developmentRoutes';
 import { flattenRouteTree } from './routeIntegrity';
 import { routerM } from './routerM';
-import { routerC } from './routerC';
+import { routerC, router_ProblemSet } from './routerC';
 import { routerLayout } from './router';
 import RouteSwitch from './RouteSwitch';
 import DevOnly, { DevBadge } from '../../Component/common/DevOnly';
@@ -160,4 +160,19 @@ it('hides unfinished management menu entries in release and keeps ordinary manag
   ).not.toBeInTheDocument();
   expect(screen.queryByText('DEV')).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: /题目|Problem/ })).toBeVisible();
+});
+
+it('keeps all three released IDE contexts available while hiding unfinished AI routes', () => {
+  releaseEnv();
+  const stable = flattenRouteTree(
+    availableRoutes([...routerC, ...router_ProblemSet, ...routerM, ...routerLayout]),
+  ).map((route) => route.path);
+  expect(stable).toEqual(
+    expect.arrayContaining([
+      '/v2/problem/:ProblemCode/ide',
+      '/v2/contest/:contestId/problem/:problemCode/ide',
+      '/v2/problemSet/:problemSetId/problem/:problemGroupId/:problemId/ide',
+    ]),
+  );
+  for (const path of devPaths) expect(stable).not.toContain(path);
 });

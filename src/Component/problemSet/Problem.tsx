@@ -281,6 +281,7 @@ export const Problem = (props: any) => {
                     return (
                       <Subjective
                         key={proName}
+                        router={{ psid, gid, pid }}
                         problemInfo={problemInfo}
                         onAnswerM={submitAPI}
                         getAS={getAs}

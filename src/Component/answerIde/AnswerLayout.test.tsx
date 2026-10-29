@@ -16,10 +16,10 @@ it('switches narrow-screen tabs without losing editor state and restores the sel
   const page = render(<AnswerLayout {...props} />);
   expect(screen.getByText('Statement content')).toBeVisible();
   expect(screen.getByLabelText('code')).not.toBeVisible();
-  fireEvent.click(screen.getByRole('tab', { name: '代码与运行' }));
+  fireEvent.click(screen.getByRole('button', { name: '代码与运行' }));
   fireEvent.change(screen.getByLabelText('code'), { target: { value: 'edited' } });
-  fireEvent.click(screen.getByRole('tab', { name: '题目' }));
-  fireEvent.click(screen.getByRole('tab', { name: '代码与运行' }));
+  fireEvent.click(screen.getByRole('button', { name: '题目' }));
+  fireEvent.click(screen.getByRole('button', { name: '代码与运行' }));
   expect(screen.getByLabelText('code')).toHaveValue('edited');
   page.unmount();
   render(<AnswerLayout {...props} />);
@@ -44,7 +44,7 @@ it('keeps the editor mounted across desktop/mobile breakpoint changes', () => {
   fireEvent.change(editor, { target: { value: 'unsaved edit' } });
   breakpoint.mockReturnValue({ lg: false });
   page.rerender(<AnswerLayout {...props} />);
-  fireEvent.click(screen.getByRole('tab', { name: '代码与运行' }));
+  fireEvent.click(screen.getByRole('button', { name: '代码与运行' }));
   expect(screen.getByLabelText('code')).toBe(editor);
   expect(editor).toHaveValue('unsaved edit');
   breakpoint.mockReturnValue({ lg: true });

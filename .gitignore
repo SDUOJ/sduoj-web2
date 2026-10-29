@@ -17,6 +17,7 @@
 # production
 /build
 /build-test
+/build-release-*
 
 # misc
 .idea

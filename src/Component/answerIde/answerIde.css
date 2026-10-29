@@ -261,20 +261,13 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: 12px 16px 8px;
+  padding: 6px 12px;
   gap: 8px;
   border-bottom: 1px solid var(--client-border, #e3e8f0);
 }
 
 .ide-actions .ant-btn {
   font-weight: 500;
-}
-
-.ide-shortcuts {
-  width: 100%;
-  margin-bottom: 0;
-  color: #596579;
-  font-size: 12px;
 }
 
 .ide-editor-panel,
@@ -287,10 +280,10 @@
 
 .ide-language-bar {
   display: flex;
-  flex: 1 1 240px;
+  flex: 1 1 auto;
   min-width: 0;
-  gap: 8px 12px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
   align-items: center;
   color: #596579;
   font-size: 12px;
@@ -451,8 +444,27 @@
   flex-direction: column;
 }
 
-.ide-mobile-layout .ant-tabs > .ant-tabs-nav {
-  margin: 0;
+.ide-narrow-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--client-border, #e3e8f0);
+}
+
+.ide-pane-switch {
+  flex-shrink: 0;
+}
+
+.ide-toolbar-host {
+  flex: 1;
+  min-width: 0;
+}
+
+.ide-toolbar-host .ide-workspace-toolbar {
+  padding: 0;
+  border: 0;
+  flex-wrap: nowrap;
 }
 
 .ide-mobile-layout > .ide-split {
@@ -469,9 +481,6 @@
   .online-ide-body {
     padding: 6px 8px 8px;
   }
-  .ide-shortcuts {
-    display: none;
-  }
   .ide-statement-panel .program-heading {
     padding-inline: 12px;
   }
@@ -480,7 +489,7 @@
     font-size: 12px;
   }
   .ide-workspace-toolbar {
-    padding: 10px 12px;
+    padding: 6px 8px;
   }
   .ide-workspace-toolbar .ant-btn {
     padding-inline: 10px;
@@ -592,22 +601,52 @@
 }
 
 .ide-cloud-bar {
-  width: 100%;
+  min-width: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 6px 10px;
+  gap: 6px;
   font-size: 12px;
   color: #596579;
 }
-.ide-cloud-bar .ant-tag {
-  margin-inline-end: 0;
+.ide-save-button,
+.ide-actions {
+  flex-shrink: 0;
 }
-.ide-cloud-bar .ant-alert {
-  width: 100%;
+.ide-language-bar > .ant-select {
+  flex-shrink: 0;
 }
-.ide-save-time {
-  flex: 1;
+.ide-save-button-saved .ant-btn:disabled {
+  color: #15803d;
+  background: transparent;
+  border-color: transparent;
+}
+@media (max-width: 640px) {
+  .ide-workspace-toolbar {
+    gap: 4px 8px;
+  }
+  .ide-language-bar {
+    flex-basis: 100%;
+    gap: 6px;
+  }
+  .ide-actions {
+    margin-left: auto;
+  }
+  .ide-narrow-toolbar {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .ide-toolbar-host,
+  .ide-toolbar-host .ide-workspace-toolbar {
+    display: contents;
+  }
+  .ide-toolbar-host .ide-language-bar {
+    order: -1;
+  }
+  .ide-narrow-toolbar .ant-btn {
+    padding-inline: 8px;
+    font-size: 12px;
+  }
 }
 
 .ide-console-collapsed > .ant-tabs-content-holder {

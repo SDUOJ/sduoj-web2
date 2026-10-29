@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Empty, List, Modal, Space, Tag } from 'antd';
+import { Button, Empty, List, Modal, Space, Tooltip } from 'antd';
 import { CheckCircleOutlined, CloudUploadOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import cApi from '../../Utils/API/c-api';
@@ -186,41 +186,46 @@ export function useCloudCode(options: {
       setError(t('answerIde.cloudLoadError'));
     }
   };
-  if (!enabled) return { save, controls: null, history: null };
+  if (!enabled) return { save, error: undefined, controls: null, history: null };
   return {
     save,
+    error,
     controls: (
       <div className="ide-cloud-bar">
-        <Tag color={dirty ? 'orange' : currentSaved ? 'green' : undefined}>
-          {!dirty && currentSaved && <CheckCircleOutlined aria-hidden />}
-          {saving
-            ? t('answerIde.cloudSaving')
-            : loading
-              ? t('answerIde.cloudLoading')
-              : dirty
-                ? t('answerIde.cloudUnsaved')
-                : currentSaved
-                  ? t('answerIde.cloudSaved')
-                  : t('answerIde.cloudNeverSaved')}
-        </Tag>
-        <span className="ide-save-time">
-          {currentSaved
-            ? t('answerIde.lastSaved', { time: date(currentSaved.savedAt) })
-            : t('answerIde.autoSaveHint')}
-        </span>
-        <Button
-          size="small"
-          icon={<CloudUploadOutlined aria-hidden />}
-          loading={saving}
-          disabled={saving || loading || empty || !dirty || cooldown > 0}
-          title={empty ? t('answerIde.emptyCodeNotSaved') : undefined}
-          onClick={() => void save()}
+        <Tooltip
+          title={[
+            'Ctrl/⌘+S',
+            currentSaved ? t('answerIde.lastSaved', { time: date(currentSaved.savedAt) }) : '',
+            loading ? t('answerIde.cloudLoading') : dirty ? t('answerIde.cloudUnsaved') : '',
+            empty
+              ? t('answerIde.emptyCodeNotSaved')
+              : cooldown > 0
+                ? t('answerIde.saveCooldown', { count: cooldown })
+                : t('answerIde.autoSaveHint'),
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         >
-          {cooldown > 0
-            ? t('answerIde.saveCooldown', { count: cooldown })
-            : t('answerIde.saveCloud')}
-        </Button>
-        {error && <Alert type="warning" showIcon message={error} />}
+          <span
+            className={`ide-save-button${!dirty && currentSaved ? ' ide-save-button-saved' : ''}`}
+          >
+            <Button
+              size="small"
+              icon={
+                !dirty && currentSaved ? (
+                  <CheckCircleOutlined aria-hidden />
+                ) : (
+                  <CloudUploadOutlined aria-hidden />
+                )
+              }
+              loading={saving}
+              disabled={saving || loading || empty || !dirty || cooldown > 0}
+              onClick={() => void save()}
+            >
+              {t(!dirty && currentSaved ? 'answerIde.cloudSaved' : 'answerIde.saveCloud')}
+            </Button>
+          </span>
+        </Tooltip>
       </div>
     ),
     history: (
