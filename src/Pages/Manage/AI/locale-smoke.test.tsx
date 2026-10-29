@@ -72,16 +72,28 @@ it('translates manual question intake, file recognition, and validation errors',
 });
 
 it('translates the plagiarism list and scan dialog', async () => {
-  render(
+  const view = render(
     <MemoryRouter>
       <PlagiarismWorkbench />
     </MemoryRouter>,
   );
   expect(await screen.findByText('No plagiarism records')).toBeVisible();
-  fireEvent.click(screen.getByRole('button', { name: /New/ }));
-  await waitFor(() => expect(screen.getByLabelText('Similarity threshold')).toBeVisible());
-  expect(screen.getByLabelText('Problem set ID')).toBeVisible();
-  expectEnglishMarkup();
+  expect(screen.queryByLabelText('Similarity threshold')).not.toBeInTheDocument();
+  jest.useFakeTimers();
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /New/ }));
+    // rc-dialog prepares its visible panel over animation frames, even without CSS motion.
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(screen.getByLabelText('Similarity threshold')).toBeVisible());
+    expect(screen.getByLabelText('Problem set ID')).toBeVisible();
+    expectEnglishMarkup();
+  } finally {
+    view.unmount();
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  }
 });
 
 it('translates the question workflow, intake form, and selected-question fallback states', async () => {
