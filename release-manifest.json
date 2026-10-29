@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "sourceRef": "e751ce87deec45f8fa2766979e2a101b855073bf",
+  "sourceRef": "f8e9a25db4fc9fbb2d6cf27dd96b4adb6570061a",
   "publicPath": "/v2/",
   "version": "0.1.0",
-  "createdAt": "2026-10-29T03:53:41.695Z",
-  "releaseId": "1793246021695-e751ce87deec",
+  "createdAt": "2026-10-29T04:32:51.375Z",
+  "releaseId": "1793248371375-f8e9a25db4fc",
   "deployment": {
     "environment": "production",
     "apiOrigin": "https://oj.qd.sdu.edu.cn",
