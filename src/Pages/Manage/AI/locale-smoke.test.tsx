@@ -32,6 +32,14 @@ jest.mock('../../../Utils/API/ai-plagiarism', () => ({
 }));
 jest.mock('./AITaskMonitor', () => () => null);
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
+
 beforeEach(async () => {
   await i18n.changeLanguage('en');
   jest.clearAllMocks();
@@ -167,20 +175,42 @@ it('translates exam creation fields and selected-exam publishing controls', asyn
     state: 'review',
     data: { title: 'Queue exam', mode: 'TEST', candidate: { rooms: [], unassigned: [] } },
   };
-  jest.mocked(aiPlatform.list).mockResolvedValue({ rows: [resource], totalNum: 1 });
-  jest.mocked(aiPlatform.get).mockResolvedValue(resource);
-  render(
+  const list = deferred<Awaited<ReturnType<typeof aiPlatform.list>>>();
+  const selected = deferred<Awaited<ReturnType<typeof aiPlatform.get>>>();
+  jest.mocked(aiPlatform.list).mockReturnValueOnce(list.promise);
+  jest.mocked(aiPlatform.get).mockReturnValueOnce(selected.promise);
+  const view = render(
     <MemoryRouter>
       <ExaminationWorkbench />
     </MemoryRouter>,
   );
+  expect(aiPlatform.list).toHaveBeenCalledWith('exam');
+  expect(screen.queryByRole('button', { name: 'View' })).not.toBeInTheDocument();
+  await act(async () => {
+    list.resolve({ rows: [resource], totalNum: 1 });
+  });
   fireEvent.click(await screen.findByRole('button', { name: 'View' }));
+  expect(aiPlatform.get).toHaveBeenCalledWith('exam-1');
+  expect(screen.queryByLabelText('Operation reason')).not.toBeInTheDocument();
+  await act(async () => {
+    selected.resolve(resource);
+  });
   expect(await screen.findByLabelText('Operation reason')).toBeVisible();
   expect(screen.getByRole('button', { name: /Prepare publication content/ })).toBeVisible();
-  fireEvent.click(screen.getByRole('button', { name: /New exam/ }));
-  await waitFor(() => expect(screen.getByLabelText('Exam name')).toBeVisible(), {
-    timeout: 5000,
-  });
-  expect(screen.getByPlaceholderText('Student ID,Name,OJ username')).toBeVisible();
-  expectEnglishMarkup();
+  jest.useFakeTimers();
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /New exam/ }));
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(screen.getByLabelText('Exam name')).toBeVisible(), {
+      timeout: 5000,
+    });
+    expect(screen.getByPlaceholderText('Student ID,Name,OJ username')).toBeVisible();
+    expectEnglishMarkup();
+  } finally {
+    view.unmount();
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  }
 });

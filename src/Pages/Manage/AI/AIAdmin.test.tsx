@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { MemoryRouter } from 'react-router-dom';
 import AIAdmin from './AIAdmin';
 import { aiPlatform } from '../../../Utils/API/ai-platform';
+import type { StorageAudit } from '../../../Utils/API/ai-platform';
 import i18n from '../../../Config/i18n';
 
 jest.mock('../../../Utils/API/ai-platform', () => ({
@@ -23,6 +24,14 @@ jest.mock('../../../Utils/API/ai-platform', () => ({
     reconcile: jest.fn(),
   },
 }));
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
 
 beforeEach(async () => {
   await i18n.changeLanguage('zh');
@@ -112,7 +121,7 @@ test('renders empty admin panes and keeps key write-only', async () => {
 });
 
 test('dry-run preview is read-only and cleanup requires an explicit reason', async () => {
-  (aiPlatform.cleanupOrphans as jest.Mock).mockResolvedValue({
+  const planned: Awaited<ReturnType<typeof aiPlatform.cleanupOrphans>> = {
     applied: false,
     planned_file_count: 1,
     planned_bytes: 12,
@@ -122,33 +131,71 @@ test('dry-run preview is read-only and cleanup requires an explicit reason', asy
     deleted_files: [],
     skipped_files: [],
     remaining_eligible_file_count: 1,
-    audit: {},
-  });
-  render(
+    audit: {} as StorageAudit,
+  };
+  const account = deferred<Awaited<ReturnType<typeof aiPlatform.account>>>();
+  const preview = deferred<Awaited<ReturnType<typeof aiPlatform.cleanupOrphans>>>();
+  const applied = deferred<Awaited<ReturnType<typeof aiPlatform.cleanupOrphans>>>();
+  jest.mocked(aiPlatform.account).mockReturnValueOnce(account.promise);
+  jest
+    .mocked(aiPlatform.cleanupOrphans)
+    .mockReturnValueOnce(preview.promise)
+    .mockReturnValueOnce(applied.promise);
+  const view = render(
     <MemoryRouter>
       <AIAdmin />
     </MemoryRouter>,
   );
+  expect(screen.queryByRole('tab', { name: '队列与存储' })).not.toBeInTheDocument();
+  await act(async () => {
+    account.resolve({ subject_id: '42', status: 'active', balance: '10' });
+  });
   await waitFor(() => expect(screen.getByText('队列与存储')).toBeInTheDocument());
   fireEvent.click(screen.getByRole('tab', { name: '队列与存储' }));
-  fireEvent.click(screen.getByRole('button', { name: '生成 dry-run 预览' }));
+  const storage = within(screen.getByRole('tabpanel', { name: '队列与存储' }));
+  fireEvent.click(storage.getByRole('button', { name: '生成 dry-run 预览' }));
   await waitFor(() => expect(aiPlatform.cleanupOrphans).toHaveBeenCalledWith({ apply: false }));
+  expect(storage.queryByText(/dry-run：1 个文件/)).not.toBeInTheDocument();
+  expect(storage.getByRole('button', { name: '执行计划清理' })).toBeDisabled();
+  await act(async () => {
+    preview.resolve(planned);
+  });
   expect(screen.getByText(/dry-run：1 个文件/)).toBeInTheDocument();
   expect(aiPlatform.cleanupOrphans).toHaveBeenCalledTimes(1);
-  fireEvent.click(screen.getByRole('button', { name: '执行计划清理' }));
-  expect(await screen.findByText('执行有界孤儿清理')).toBeInTheDocument();
-  const dialogs = screen.getAllByRole('dialog');
-  expect(dialogs).toHaveLength(1);
-  const submit = within(dialogs[0]).getByRole('button', { name: '确认删除' });
-  expect(submit).toBeDisabled();
-  fireEvent.change(within(dialogs[0]).getByPlaceholderText('请输入本次清理原因'), {
-    target: { value: 'Remove verified dev orphan' },
-  });
-  fireEvent.click(submit);
-  await waitFor(() => expect(aiPlatform.cleanupOrphans).toHaveBeenCalledTimes(2));
-  expect(
-    (aiPlatform.cleanupOrphans as jest.Mock).mock.calls.filter(([body]) => body.apply),
-  ).toHaveLength(1);
+  jest.useFakeTimers();
+  try {
+    fireEvent.click(storage.getByRole('button', { name: '执行计划清理' }));
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+    expect(await screen.findByText('执行有界孤儿清理')).toBeInTheDocument();
+    const dialogs = screen.getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    const submit = within(dialogs[0]).getByRole('button', { name: '确认删除' });
+    expect(submit).toBeDisabled();
+    fireEvent.change(within(dialogs[0]).getByPlaceholderText('请输入本次清理原因'), {
+      target: { value: 'Remove verified dev orphan' },
+    });
+    expect(submit).toBeEnabled();
+    fireEvent.click(submit);
+    await waitFor(() => expect(aiPlatform.cleanupOrphans).toHaveBeenCalledTimes(2));
+    expect(
+      (aiPlatform.cleanupOrphans as jest.Mock).mock.calls.filter(([body]) => body.apply),
+    ).toHaveLength(1);
+    expect(aiPlatform.cleanupOrphans).toHaveBeenLastCalledWith({
+      apply: true,
+      reason: 'Remove verified dev orphan',
+      max_files: 1,
+      max_bytes: 12,
+    });
+    await act(async () => {
+      applied.resolve(planned);
+    });
+  } finally {
+    view.unmount();
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  }
 }, 15000);
 
 test('loads without unconnected Form warnings', async () => {
